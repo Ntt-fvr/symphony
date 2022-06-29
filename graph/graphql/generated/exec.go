@@ -243,14 +243,28 @@ type ComplexityRoot struct {
 	}
 
 	Block struct {
-		Cid                    func(childComplexity int) int
-		Details                func(childComplexity int) int
-		ID                     func(childComplexity int) int
-		InputParamDefinitions  func(childComplexity int) int
-		NextBlocks             func(childComplexity int) int
-		OutputParamDefinitions func(childComplexity int) int
-		PrevBlocks             func(childComplexity int) int
-		UIRepresentation       func(childComplexity int) int
+		BackOffRate                     func(childComplexity int) int
+		Cid                             func(childComplexity int) int
+		Details                         func(childComplexity int) int
+		EnableErrorHandling             func(childComplexity int) int
+		EnableInputStateTransformation  func(childComplexity int) int
+		EnableInputTransformation       func(childComplexity int) int
+		EnableOutputStateTransformation func(childComplexity int) int
+		EnableOutputTransformation      func(childComplexity int) int
+		EnableRetryPolicy               func(childComplexity int) int
+		ID                              func(childComplexity int) int
+		InputStateTransfStrategy        func(childComplexity int) int
+		InputStateTransformation        func(childComplexity int) int
+		InputTransfStrategy             func(childComplexity int) int
+		MaxAttemps                      func(childComplexity int) int
+		NextBlocks                      func(childComplexity int) int
+		OutputStateTransfStrategy       func(childComplexity int) int
+		OutputStateTransformation       func(childComplexity int) int
+		OutputTransfStrategy            func(childComplexity int) int
+		PrevBlocks                      func(childComplexity int) int
+		RetryInterval                   func(childComplexity int) int
+		UIRepresentation                func(childComplexity int) int
+		Units                           func(childComplexity int) int
 	}
 
 	BlockInstance struct {
@@ -325,6 +339,12 @@ type ComplexityRoot struct {
 		IsMandatory            func(childComplexity int) int
 		Title                  func(childComplexity int) int
 		Type                   func(childComplexity int) int
+	}
+
+	ChoiceBlock struct {
+		DefaultExitPoint func(childComplexity int) int
+		EntryPoint       func(childComplexity int) int
+		Rules            func(childComplexity int) int
 	}
 
 	ClockActivity struct {
@@ -670,6 +690,13 @@ type ComplexityRoot struct {
 		Node   func(childComplexity int) int
 	}
 
+	ExecuteFlowBlock struct {
+		EntryPoint func(childComplexity int) int
+		ExitPoint  func(childComplexity int) int
+		Flow       func(childComplexity int) int
+		Params     func(childComplexity int) int
+	}
+
 	ExitPoint struct {
 		Cid             func(childComplexity int) int
 		Condition       func(childComplexity int) int
@@ -806,6 +833,12 @@ type ComplexityRoot struct {
 		Node   func(childComplexity int) int
 	}
 
+	ForEachBlock struct {
+		EntryPoint        func(childComplexity int) int
+		ExitPoint         func(childComplexity int) int
+		InternalExitPoint func(childComplexity int) int
+	}
+
 	Formula struct {
 		CounterformulaFk func(childComplexity int) int
 		ID               func(childComplexity int) int
@@ -862,6 +895,16 @@ type ComplexityRoot struct {
 		PropertyCategory func(childComplexity int) int
 		Read             func(childComplexity int) int
 		ServiceType      func(childComplexity int) int
+	}
+
+	InvokeRestAPIBlock struct {
+		Body              func(childComplexity int) int
+		ConnectionTimeOut func(childComplexity int) int
+		EntryPoint        func(childComplexity int) int
+		ExitPoint         func(childComplexity int) int
+		Headers           func(childComplexity int) int
+		Method            func(childComplexity int) int
+		URL               func(childComplexity int) int
 	}
 
 	Kpi struct {
@@ -1383,6 +1426,12 @@ type ComplexityRoot struct {
 		HasNextPage     func(childComplexity int) int
 		HasPreviousPage func(childComplexity int) int
 		StartCursor     func(childComplexity int) int
+	}
+
+	ParallelBlock struct {
+		EntryPoint        func(childComplexity int) int
+		ExitPoint         func(childComplexity int) int
+		InternalExitPoint func(childComplexity int) int
 	}
 
 	ParameterCatalog struct {
@@ -2038,6 +2087,15 @@ type ComplexityRoot struct {
 		Node   func(childComplexity int) int
 	}
 
+	TimerBlock struct {
+		Behavior          func(childComplexity int) int
+		Datetime          func(childComplexity int) int
+		EnableExpressionL func(childComplexity int) int
+		ExitPoint         func(childComplexity int) int
+		Expression        func(childComplexity int) int
+		Seconds           func(childComplexity int) int
+	}
+
 	TopologyLink struct {
 		Source func(childComplexity int) int
 		Target func(childComplexity int) int
@@ -2177,6 +2235,15 @@ type ComplexityRoot struct {
 		Permissions func(childComplexity int) int
 		Tenant      func(childComplexity int) int
 		User        func(childComplexity int) int
+	}
+
+	WaitForSignalBlock struct {
+		Blocked      func(childComplexity int) int
+		CustomFilter func(childComplexity int) int
+		EntryPoint   func(childComplexity int) int
+		ExitPoint    func(childComplexity int) int
+		SignalModule func(childComplexity int) int
+		Type         func(childComplexity int) int
 	}
 
 	WorkOrder struct {
@@ -2331,8 +2398,14 @@ type BlockResolver interface {
 	NextBlocks(ctx context.Context, obj *ent.Block) ([]*ent.Block, error)
 	PrevBlocks(ctx context.Context, obj *ent.Block) ([]*ent.Block, error)
 	Details(ctx context.Context, obj *ent.Block) (models.BlockDetails, error)
-	InputParamDefinitions(ctx context.Context, obj *ent.Block) ([]*flowschema.VariableDefinition, error)
-	OutputParamDefinitions(ctx context.Context, obj *ent.Block) ([]*flowschema.VariableDefinition, error)
+
+	InputTransfStrategy(ctx context.Context, obj *ent.Block) (*enum.TransfStrategy, error)
+
+	OutputTransfStrategy(ctx context.Context, obj *ent.Block) (*enum.TransfStrategy, error)
+
+	InputStateTransfStrategy(ctx context.Context, obj *ent.Block) (*enum.TransfStrategy, error)
+
+	Units(ctx context.Context, obj *ent.Block) (*models.RetryUnit, error)
 }
 type BlockVariableResolver interface {
 	Block(ctx context.Context, obj *flowschema.BlockVariable) (*ent.Block, error)
@@ -3299,6 +3372,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.BasicPermissionRule.IsAllowed(childComplexity), true
 
+	case "Block.backoffRate":
+		if e.complexity.Block.BackOffRate == nil {
+			break
+		}
+
+		return e.complexity.Block.BackOffRate(childComplexity), true
+
 	case "Block.cid":
 		if e.complexity.Block.Cid == nil {
 			break
@@ -3313,6 +3393,48 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Block.Details(childComplexity), true
 
+	case "Block.enableErrorHandling":
+		if e.complexity.Block.EnableErrorHandling == nil {
+			break
+		}
+
+		return e.complexity.Block.EnableErrorHandling(childComplexity), true
+
+	case "Block.enableInputStateTransformation":
+		if e.complexity.Block.EnableInputStateTransformation == nil {
+			break
+		}
+
+		return e.complexity.Block.EnableInputStateTransformation(childComplexity), true
+
+	case "Block.enableInputTransformation":
+		if e.complexity.Block.EnableInputTransformation == nil {
+			break
+		}
+
+		return e.complexity.Block.EnableInputTransformation(childComplexity), true
+
+	case "Block.enableOutputStateTransformation":
+		if e.complexity.Block.EnableOutputStateTransformation == nil {
+			break
+		}
+
+		return e.complexity.Block.EnableOutputStateTransformation(childComplexity), true
+
+	case "Block.enableOutputTransformation":
+		if e.complexity.Block.EnableOutputTransformation == nil {
+			break
+		}
+
+		return e.complexity.Block.EnableOutputTransformation(childComplexity), true
+
+	case "Block.enableRetryPolicy":
+		if e.complexity.Block.EnableRetryPolicy == nil {
+			break
+		}
+
+		return e.complexity.Block.EnableRetryPolicy(childComplexity), true
+
 	case "Block.id":
 		if e.complexity.Block.ID == nil {
 			break
@@ -3320,12 +3442,33 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Block.ID(childComplexity), true
 
-	case "Block.inputParamDefinitions":
-		if e.complexity.Block.InputParamDefinitions == nil {
+	case "Block.inputStateTransfStrategy":
+		if e.complexity.Block.InputStateTransfStrategy == nil {
 			break
 		}
 
-		return e.complexity.Block.InputParamDefinitions(childComplexity), true
+		return e.complexity.Block.InputStateTransfStrategy(childComplexity), true
+
+	case "Block.inputStateTransformation":
+		if e.complexity.Block.InputStateTransformation == nil {
+			break
+		}
+
+		return e.complexity.Block.InputStateTransformation(childComplexity), true
+
+	case "Block.inputTransfStrategy":
+		if e.complexity.Block.InputTransfStrategy == nil {
+			break
+		}
+
+		return e.complexity.Block.InputTransfStrategy(childComplexity), true
+
+	case "Block.maxAttemps":
+		if e.complexity.Block.MaxAttemps == nil {
+			break
+		}
+
+		return e.complexity.Block.MaxAttemps(childComplexity), true
 
 	case "Block.nextBlocks":
 		if e.complexity.Block.NextBlocks == nil {
@@ -3334,12 +3477,26 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Block.NextBlocks(childComplexity), true
 
-	case "Block.outputParamDefinitions":
-		if e.complexity.Block.OutputParamDefinitions == nil {
+	case "Block.outputStateTransfStrategy":
+		if e.complexity.Block.OutputStateTransfStrategy == nil {
 			break
 		}
 
-		return e.complexity.Block.OutputParamDefinitions(childComplexity), true
+		return e.complexity.Block.OutputStateTransfStrategy(childComplexity), true
+
+	case "Block.outputStateTransformation":
+		if e.complexity.Block.OutputStateTransformation == nil {
+			break
+		}
+
+		return e.complexity.Block.OutputStateTransformation(childComplexity), true
+
+	case "Block.outputTransfStrategy":
+		if e.complexity.Block.OutputTransfStrategy == nil {
+			break
+		}
+
+		return e.complexity.Block.OutputTransfStrategy(childComplexity), true
 
 	case "Block.prevBlocks":
 		if e.complexity.Block.PrevBlocks == nil {
@@ -3348,12 +3505,26 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Block.PrevBlocks(childComplexity), true
 
+	case "Block.retryInterval":
+		if e.complexity.Block.RetryInterval == nil {
+			break
+		}
+
+		return e.complexity.Block.RetryInterval(childComplexity), true
+
 	case "Block.uiRepresentation":
 		if e.complexity.Block.UIRepresentation == nil {
 			break
 		}
 
 		return e.complexity.Block.UIRepresentation(childComplexity), true
+
+	case "Block.units":
+		if e.complexity.Block.Units == nil {
+			break
+		}
+
+		return e.complexity.Block.Units(childComplexity), true
 
 	case "BlockInstance.block":
 		if e.complexity.BlockInstance.Block == nil {
@@ -3704,6 +3875,27 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.CheckListItemDefinition.Type(childComplexity), true
+
+	case "ChoiceBlock.defaultExitPoint":
+		if e.complexity.ChoiceBlock.DefaultExitPoint == nil {
+			break
+		}
+
+		return e.complexity.ChoiceBlock.DefaultExitPoint(childComplexity), true
+
+	case "ChoiceBlock.entryPoint":
+		if e.complexity.ChoiceBlock.EntryPoint == nil {
+			break
+		}
+
+		return e.complexity.ChoiceBlock.EntryPoint(childComplexity), true
+
+	case "ChoiceBlock.rules":
+		if e.complexity.ChoiceBlock.Rules == nil {
+			break
+		}
+
+		return e.complexity.ChoiceBlock.Rules(childComplexity), true
 
 	case "ClockActivity.author":
 		if e.complexity.ClockActivity.Author == nil {
@@ -5008,6 +5200,34 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.EventSeverityEdge.Node(childComplexity), true
 
+	case "ExecuteFlowBlock.entryPoint":
+		if e.complexity.ExecuteFlowBlock.EntryPoint == nil {
+			break
+		}
+
+		return e.complexity.ExecuteFlowBlock.EntryPoint(childComplexity), true
+
+	case "ExecuteFlowBlock.exitPoint":
+		if e.complexity.ExecuteFlowBlock.ExitPoint == nil {
+			break
+		}
+
+		return e.complexity.ExecuteFlowBlock.ExitPoint(childComplexity), true
+
+	case "ExecuteFlowBlock.flow":
+		if e.complexity.ExecuteFlowBlock.Flow == nil {
+			break
+		}
+
+		return e.complexity.ExecuteFlowBlock.Flow(childComplexity), true
+
+	case "ExecuteFlowBlock.params":
+		if e.complexity.ExecuteFlowBlock.Params == nil {
+			break
+		}
+
+		return e.complexity.ExecuteFlowBlock.Params(childComplexity), true
+
 	case "ExitPoint.cid":
 		if e.complexity.ExitPoint.Cid == nil {
 			break
@@ -5603,6 +5823,27 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.FlowInstanceEdge.Node(childComplexity), true
 
+	case "ForEachBlock.entryPoint":
+		if e.complexity.ForEachBlock.EntryPoint == nil {
+			break
+		}
+
+		return e.complexity.ForEachBlock.EntryPoint(childComplexity), true
+
+	case "ForEachBlock.exitPoint":
+		if e.complexity.ForEachBlock.ExitPoint == nil {
+			break
+		}
+
+		return e.complexity.ForEachBlock.ExitPoint(childComplexity), true
+
+	case "ForEachBlock.internalExitPoint":
+		if e.complexity.ForEachBlock.InternalExitPoint == nil {
+			break
+		}
+
+		return e.complexity.ForEachBlock.InternalExitPoint(childComplexity), true
+
 	case "Formula.counterformulaFk":
 		if e.complexity.Formula.CounterformulaFk == nil {
 			break
@@ -5861,6 +6102,55 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.InventoryPolicy.ServiceType(childComplexity), true
+
+	case "InvokeRestAPIBlock.body":
+		if e.complexity.InvokeRestAPIBlock.Body == nil {
+			break
+		}
+
+		return e.complexity.InvokeRestAPIBlock.Body(childComplexity), true
+
+	case "InvokeRestAPIBlock.connectionTimeOut":
+		if e.complexity.InvokeRestAPIBlock.ConnectionTimeOut == nil {
+			break
+		}
+
+		return e.complexity.InvokeRestAPIBlock.ConnectionTimeOut(childComplexity), true
+
+	case "InvokeRestAPIBlock.entryPoint":
+		if e.complexity.InvokeRestAPIBlock.EntryPoint == nil {
+			break
+		}
+
+		return e.complexity.InvokeRestAPIBlock.EntryPoint(childComplexity), true
+
+	case "InvokeRestAPIBlock.exitPoint":
+		if e.complexity.InvokeRestAPIBlock.ExitPoint == nil {
+			break
+		}
+
+		return e.complexity.InvokeRestAPIBlock.ExitPoint(childComplexity), true
+
+	case "InvokeRestAPIBlock.headers":
+		if e.complexity.InvokeRestAPIBlock.Headers == nil {
+			break
+		}
+
+		return e.complexity.InvokeRestAPIBlock.Headers(childComplexity), true
+
+	case "InvokeRestAPIBlock.method":
+		if e.complexity.InvokeRestAPIBlock.Method == nil {
+			break
+		}
+
+		return e.complexity.InvokeRestAPIBlock.Method(childComplexity), true
+
+	case "InvokeRestAPIBlock.url":
+		if e.complexity.InvokeRestAPIBlock.URL == nil {
+			break
+		}
+
+		return e.complexity.InvokeRestAPIBlock.URL(childComplexity), true
 
 	case "Kpi.description":
 		if e.complexity.Kpi.Description == nil {
@@ -9526,6 +9816,27 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.PageInfo.StartCursor(childComplexity), true
 
+	case "ParallelBlock.entryPoint":
+		if e.complexity.ParallelBlock.EntryPoint == nil {
+			break
+		}
+
+		return e.complexity.ParallelBlock.EntryPoint(childComplexity), true
+
+	case "ParallelBlock.exitPoint":
+		if e.complexity.ParallelBlock.ExitPoint == nil {
+			break
+		}
+
+		return e.complexity.ParallelBlock.ExitPoint(childComplexity), true
+
+	case "ParallelBlock.internalExitPoint":
+		if e.complexity.ParallelBlock.InternalExitPoint == nil {
+			break
+		}
+
+		return e.complexity.ParallelBlock.InternalExitPoint(childComplexity), true
+
 	case "ParameterCatalog.isDisabled":
 		if e.complexity.ParameterCatalog.Disabled == nil {
 			break
@@ -12926,6 +13237,48 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.ThresholdEdge.Node(childComplexity), true
 
+	case "TimerBlock.behavior":
+		if e.complexity.TimerBlock.Behavior == nil {
+			break
+		}
+
+		return e.complexity.TimerBlock.Behavior(childComplexity), true
+
+	case "TimerBlock.datetime":
+		if e.complexity.TimerBlock.Datetime == nil {
+			break
+		}
+
+		return e.complexity.TimerBlock.Datetime(childComplexity), true
+
+	case "TimerBlock.enableExpressionL":
+		if e.complexity.TimerBlock.EnableExpressionL == nil {
+			break
+		}
+
+		return e.complexity.TimerBlock.EnableExpressionL(childComplexity), true
+
+	case "TimerBlock.exitPoint":
+		if e.complexity.TimerBlock.ExitPoint == nil {
+			break
+		}
+
+		return e.complexity.TimerBlock.ExitPoint(childComplexity), true
+
+	case "TimerBlock.expression":
+		if e.complexity.TimerBlock.Expression == nil {
+			break
+		}
+
+		return e.complexity.TimerBlock.Expression(childComplexity), true
+
+	case "TimerBlock.seconds":
+		if e.complexity.TimerBlock.Seconds == nil {
+			break
+		}
+
+		return e.complexity.TimerBlock.Seconds(childComplexity), true
+
 	case "TopologyLink.source":
 		if e.complexity.TopologyLink.Source == nil {
 			break
@@ -13476,6 +13829,48 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Viewer.User(childComplexity), true
+
+	case "WaitForSignalBlock.blocked":
+		if e.complexity.WaitForSignalBlock.Blocked == nil {
+			break
+		}
+
+		return e.complexity.WaitForSignalBlock.Blocked(childComplexity), true
+
+	case "WaitForSignalBlock.customFilter":
+		if e.complexity.WaitForSignalBlock.CustomFilter == nil {
+			break
+		}
+
+		return e.complexity.WaitForSignalBlock.CustomFilter(childComplexity), true
+
+	case "WaitForSignalBlock.entryPoint":
+		if e.complexity.WaitForSignalBlock.EntryPoint == nil {
+			break
+		}
+
+		return e.complexity.WaitForSignalBlock.EntryPoint(childComplexity), true
+
+	case "WaitForSignalBlock.exitPoint":
+		if e.complexity.WaitForSignalBlock.ExitPoint == nil {
+			break
+		}
+
+		return e.complexity.WaitForSignalBlock.ExitPoint(childComplexity), true
+
+	case "WaitForSignalBlock.signalModule":
+		if e.complexity.WaitForSignalBlock.SignalModule == nil {
+			break
+		}
+
+		return e.complexity.WaitForSignalBlock.SignalModule(childComplexity), true
+
+	case "WaitForSignalBlock.type":
+		if e.complexity.WaitForSignalBlock.Type == nil {
+			break
+		}
+
+		return e.complexity.WaitForSignalBlock.Type(childComplexity), true
 
 	case "WorkOrder.activities":
 		if e.complexity.WorkOrder.Activities == nil {
@@ -19671,6 +20066,20 @@ type TriggerType
   variables: [VariableDefinition!]!
 }
 
+enum TransfStrategy
+@goModel(
+    model: "github.com/facebookincubator/symphony/pkg/ent/schema/enum.TransfStrategy"
+  ){
+  REPLACE
+  MERGE
+}
+
+enum RetryUnit {
+  SECONDS
+  MINUTES
+  HOURS
+}
+
 # Block definitions
 
 type Block implements Node {
@@ -19679,9 +20088,27 @@ type Block implements Node {
   nextBlocks: [Block!]!
   prevBlocks: [Block!]!
   details: BlockDetails!
-  inputParamDefinitions: [VariableDefinition!]!
-  outputParamDefinitions: [VariableDefinition!]!
+  #inputParamDefinitions: [VariableDefinition!]!
+  #outputParamDefinitions: [VariableDefinition!]!
   uiRepresentation: BlockUIRepresentation
+  enableInputTransformation: Boolean!
+  inputTransfStrategy: TransfStrategy
+  #inputParamDefinitions: String
+  enableOutputTransformation: Boolean!
+  outputTransfStrategy: TransfStrategy
+  #outputParamDefinitions: String
+  enableInputStateTransformation: Boolean!
+  inputStateTransfStrategy: TransfStrategy
+  inputStateTransformation: String
+  enableOutputStateTransformation: Boolean!
+  outputStateTransfStrategy: TransfStrategy
+  outputStateTransformation: String
+  enableErrorHandling: Boolean
+  enableRetryPolicy: Boolean
+  retryInterval: Int
+  units: RetryUnit
+  maxAttemps: Int 
+  backoffRate: Int
 }
 
 type BlockVariable
@@ -19795,6 +20222,7 @@ type EndBlock {
 
 type DecisionRoute {
   exitPoint: ExitPoint
+  #name: String!
 }
 
 type DecisionBlock {
@@ -19836,6 +20264,87 @@ type ActionBlock {
   workerType: WorkerType
 }
 
+enum GoToType{
+  ORIGIN
+  DESTINATION
+}
+
+type ChoiceBlock {
+  entryPoint: EntryPoint!
+  defaultExitPoint: ExitPoint!
+  rules: [DecisionRoute!]!
+}
+
+enum TimerBehavior{
+  FIXED_INTERVAL
+  SPECIFIC_DATETIME
+}
+
+type TimerBlock {
+  behavior: TimerBehavior!
+  seconds: Int
+  datetime: Time
+  enableExpressionL: Boolean
+  expression: String
+  exitPoint: ExitPoint!
+}
+
+type ExecuteFlowBlock {
+  flow: Flow
+  params: [VariableExpression!]!
+  entryPoint: EntryPoint!
+  exitPoint: ExitPoint!
+}
+
+enum UrlMethod {
+  GET
+  POST
+  PUT
+  DELETE
+  PATCH
+}
+
+type InvokeRestAPIBlock {
+  entryPoint: EntryPoint!
+  method: UrlMethod!
+  url: String!
+  connectionTimeOut: Int!
+  body: String!
+  headers: String!
+  exitPoint: ExitPoint!
+}
+
+type ForEachBlock {
+  entryPoint: EntryPoint!
+  internalExitPoint: ExitPoint!
+  exitPoint: ExitPoint!
+}
+
+type ParallelBlock {
+  entryPoint: EntryPoint!
+  internalExitPoint: ExitPoint!
+  exitPoint: ExitPoint!
+}
+
+enum SignalType {
+  INVENTORY
+  CONFIGURATION_MANAGEMENT
+}
+
+enum SignalModule {
+  INVENTORY
+  CONFIGURATION_MANAGEMENT
+}
+
+type WaitForSignalBlock {
+  entryPoint: EntryPoint!
+  exitPoint: ExitPoint!
+  type: SignalType
+  signalModule: SignalModule
+  customFilter: String
+  blocked: Boolean!
+}
+
 union BlockDetails =
     StartBlock
   | EndBlock
@@ -19845,6 +20354,15 @@ union BlockDetails =
   | TriggerBlock
   | ActionBlock
   | TrueFalseBlock
+  | ChoiceBlock
+  | TimerBlock
+  | WaitForSignalBlock
+  | InvokeRestAPIBlock
+  | ExecuteFlowBlock
+  | ForEachBlock
+  | ParallelBlock
+
+
 
 input StartBlockInput {
   cid: String!
@@ -19877,6 +20395,7 @@ input TrueFalseBlockInput {
 input GotoBlockInput {
   cid: String!
   targetBlockCid: String
+  type: GoToType!
   uiRepresentation: BlockUIRepresentationInput
 }
 
@@ -19923,6 +20442,83 @@ type Connector {
   target: EntryPoint!
 }
 
+input BaseBlockInput {
+  enableInputTransformation: Boolean!
+  inputTransfStrategy: TransfStrategy
+  inputParamDefinitions: String
+  enableOutputTransformation: Boolean!
+  outputTransfStrategy: TransfStrategy
+  outputParamDefinitions: String
+  enableInputStateTransformation: Boolean!
+  inputStateTransfStrategy: TransfStrategy
+  inputStateParamDefinitions: String
+  enableOutputStateTransformation: Boolean!
+  outputStateTransfStrategy: TransfStrategy
+  outputStateParamDefinitions: String
+  enableErrorHandling: Boolean
+  enableRetryPolicy: Boolean
+  retryInterval: Int
+  units: RetryUnit
+  maxAttemps: Int
+  backoffRate: Int
+}
+
+
+input ChoiceBlockInput {
+  cid: String!
+  entryPoint: EntryPointInput!
+  routes: [DecisionRouteInput!]
+  basicDefinitions: BaseBlockInput!
+  uiRepresentation: BlockUIRepresentationInput
+}
+
+input TimerBlockInput {
+  cid: String!
+  exitPoint: ExitPointInput!
+  entryPoint: EntryPointInput!
+  behavior: TimerBehavior!
+  seconds: Int
+  datetime: Time
+  enableExpressionL: Boolean
+  expression: String
+  uiRepresentation: BlockUIRepresentationInput
+}
+
+input WaitForSignalBlockInput {
+  cid: String!
+  entryPoint: EntryPointInput!
+  exitPoint: ExitPointInput!
+  type: SignalType!
+  signalModule: SignalModule!
+  customFilter: String
+  blocked: Boolean!
+  backoffRate: Int
+  basicDefinitions: BaseBlockInput!
+  uiRepresentation: BlockUIRepresentationInput
+}
+
+input InvokeRestAPIBlockInput {
+  cid: String!
+  entryPoint: EntryPointInput!
+  exitPoint: ExitPointInput!
+  method: UrlMethod!
+  url: String!
+  connectionTimeOut: Int!
+  body: String!
+  headers: String!
+  basicDefinitions: BaseBlockInput!
+  uiRepresentation: BlockUIRepresentationInput
+}
+
+input ExecuteFlowBlockInput {
+  cid: String!
+  entryPoint: EntryPointInput!
+  exitPoint: ExitPointInput!
+  flow: ID!
+  basicDefinitions: BaseBlockInput!
+  uiRepresentation: BlockUIRepresentationInput
+}
+
 input ImportFlowDraftInput {
   id: ID!
   name: String!
@@ -19936,6 +20532,11 @@ input ImportFlowDraftInput {
   triggerBlocks: [TriggerBlockInput!]
   actionBlocks: [ActionBlockInput!]
   trueFalseBlocks: [TrueFalseBlockInput!]
+  choiceBlocks: [DecisionBlockInput!]
+  executeFlowBlocks: [ExecuteFlowBlockInput!]
+  timerBlocks: [TimerBlockInput!]
+  waitForSignalBlocks: [WaitForSignalBlockInput!]
+  invokeRestAPIBlocks: [InvokeRestAPIBlockInput!]
   connectors: [ConnectorInput!]
 }
 
@@ -34295,76 +34896,6 @@ func (ec *executionContext) _Block_details(ctx context.Context, field graphql.Co
 	return ec.marshalNBlockDetails2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐBlockDetails(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Block_inputParamDefinitions(ctx context.Context, field graphql.CollectedField, obj *ent.Block) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "Block",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   true,
-		IsResolver: true,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Block().InputParamDefinitions(rctx, obj)
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.([]*flowschema.VariableDefinition)
-	fc.Result = res
-	return ec.marshalNVariableDefinition2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋflowengineᚋflowschemaᚐVariableDefinitionᚄ(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _Block_outputParamDefinitions(ctx context.Context, field graphql.CollectedField, obj *ent.Block) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "Block",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   true,
-		IsResolver: true,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Block().OutputParamDefinitions(rctx, obj)
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.([]*flowschema.VariableDefinition)
-	fc.Result = res
-	return ec.marshalNVariableDefinition2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋflowengineᚋflowschemaᚐVariableDefinitionᚄ(ctx, field.Selections, res)
-}
-
 func (ec *executionContext) _Block_uiRepresentation(ctx context.Context, field graphql.CollectedField, obj *ent.Block) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -34395,6 +34926,530 @@ func (ec *executionContext) _Block_uiRepresentation(ctx context.Context, field g
 	res := resTmp.(*flowschema.BlockUIRepresentation)
 	fc.Result = res
 	return ec.marshalOBlockUIRepresentation2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋflowengineᚋflowschemaᚐBlockUIRepresentation(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Block_enableInputTransformation(ctx context.Context, field graphql.CollectedField, obj *ent.Block) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Block",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.EnableInputTransformation, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Block_inputTransfStrategy(ctx context.Context, field graphql.CollectedField, obj *ent.Block) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Block",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Block().InputTransfStrategy(rctx, obj)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*enum.TransfStrategy)
+	fc.Result = res
+	return ec.marshalOTransfStrategy2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋschemaᚋenumᚐTransfStrategy(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Block_enableOutputTransformation(ctx context.Context, field graphql.CollectedField, obj *ent.Block) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Block",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.EnableOutputTransformation, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Block_outputTransfStrategy(ctx context.Context, field graphql.CollectedField, obj *ent.Block) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Block",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Block().OutputTransfStrategy(rctx, obj)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*enum.TransfStrategy)
+	fc.Result = res
+	return ec.marshalOTransfStrategy2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋschemaᚋenumᚐTransfStrategy(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Block_enableInputStateTransformation(ctx context.Context, field graphql.CollectedField, obj *ent.Block) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Block",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.EnableInputStateTransformation, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Block_inputStateTransfStrategy(ctx context.Context, field graphql.CollectedField, obj *ent.Block) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Block",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Block().InputStateTransfStrategy(rctx, obj)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*enum.TransfStrategy)
+	fc.Result = res
+	return ec.marshalOTransfStrategy2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋschemaᚋenumᚐTransfStrategy(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Block_inputStateTransformation(ctx context.Context, field graphql.CollectedField, obj *ent.Block) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Block",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.InputStateTransformation, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalOString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Block_enableOutputStateTransformation(ctx context.Context, field graphql.CollectedField, obj *ent.Block) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Block",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.EnableOutputStateTransformation, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Block_outputStateTransfStrategy(ctx context.Context, field graphql.CollectedField, obj *ent.Block) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Block",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.OutputStateTransfStrategy, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(enum.TransfStrategy)
+	fc.Result = res
+	return ec.marshalOTransfStrategy2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋschemaᚋenumᚐTransfStrategy(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Block_outputStateTransformation(ctx context.Context, field graphql.CollectedField, obj *ent.Block) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Block",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.OutputStateTransformation, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalOString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Block_enableErrorHandling(ctx context.Context, field graphql.CollectedField, obj *ent.Block) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Block",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.EnableErrorHandling, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalOBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Block_enableRetryPolicy(ctx context.Context, field graphql.CollectedField, obj *ent.Block) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Block",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.EnableRetryPolicy, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalOBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Block_retryInterval(ctx context.Context, field graphql.CollectedField, obj *ent.Block) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Block",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.RetryInterval, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalOInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Block_units(ctx context.Context, field graphql.CollectedField, obj *ent.Block) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Block",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Block().Units(rctx, obj)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*models.RetryUnit)
+	fc.Result = res
+	return ec.marshalORetryUnit2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐRetryUnit(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Block_maxAttemps(ctx context.Context, field graphql.CollectedField, obj *ent.Block) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Block",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.MaxAttemps, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalOInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Block_backoffRate(ctx context.Context, field graphql.CollectedField, obj *ent.Block) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Block",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.BackOffRate, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalOInt2int(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _BlockInstance_id(ctx context.Context, field graphql.CollectedField, obj *ent.BlockInstance) (ret graphql.Marshaler) {
@@ -36073,6 +37128,111 @@ func (ec *executionContext) _CheckListItemDefinition_helpText(ctx context.Contex
 	res := resTmp.(*string)
 	fc.Result = res
 	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ChoiceBlock_entryPoint(ctx context.Context, field graphql.CollectedField, obj *models.ChoiceBlock) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "ChoiceBlock",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.EntryPoint, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*ent.EntryPoint)
+	fc.Result = res
+	return ec.marshalNEntryPoint2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐEntryPoint(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ChoiceBlock_defaultExitPoint(ctx context.Context, field graphql.CollectedField, obj *models.ChoiceBlock) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "ChoiceBlock",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.DefaultExitPoint, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*ent.ExitPoint)
+	fc.Result = res
+	return ec.marshalNExitPoint2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐExitPoint(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ChoiceBlock_rules(ctx context.Context, field graphql.CollectedField, obj *models.ChoiceBlock) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "ChoiceBlock",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Rules, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*models.DecisionRoute)
+	fc.Result = res
+	return ec.marshalNDecisionRoute2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐDecisionRouteᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _ClockActivity_author(ctx context.Context, field graphql.CollectedField, obj *models.ClockActivity) (ret graphql.Marshaler) {
@@ -42398,6 +43558,143 @@ func (ec *executionContext) _EventSeverityEdge_cursor(ctx context.Context, field
 	return ec.marshalNCursor2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐCursor(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _ExecuteFlowBlock_flow(ctx context.Context, field graphql.CollectedField, obj *models.ExecuteFlowBlock) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "ExecuteFlowBlock",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Flow, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*ent.Flow)
+	fc.Result = res
+	return ec.marshalOFlow2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐFlow(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ExecuteFlowBlock_params(ctx context.Context, field graphql.CollectedField, obj *models.ExecuteFlowBlock) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "ExecuteFlowBlock",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Params, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*flowschema.VariableExpression)
+	fc.Result = res
+	return ec.marshalNVariableExpression2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋflowengineᚋflowschemaᚐVariableExpressionᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ExecuteFlowBlock_entryPoint(ctx context.Context, field graphql.CollectedField, obj *models.ExecuteFlowBlock) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "ExecuteFlowBlock",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.EntryPoint, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*ent.EntryPoint)
+	fc.Result = res
+	return ec.marshalNEntryPoint2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐEntryPoint(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ExecuteFlowBlock_exitPoint(ctx context.Context, field graphql.CollectedField, obj *models.ExecuteFlowBlock) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "ExecuteFlowBlock",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ExitPoint, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*ent.ExitPoint)
+	fc.Result = res
+	return ec.marshalNExitPoint2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐExitPoint(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _ExitPoint_id(ctx context.Context, field graphql.CollectedField, obj *ent.ExitPoint) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -45301,6 +46598,111 @@ func (ec *executionContext) _FlowInstanceEdge_cursor(ctx context.Context, field 
 	return ec.marshalNCursor2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐCursor(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _ForEachBlock_entryPoint(ctx context.Context, field graphql.CollectedField, obj *models.ForEachBlock) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "ForEachBlock",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.EntryPoint, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*ent.EntryPoint)
+	fc.Result = res
+	return ec.marshalNEntryPoint2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐEntryPoint(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ForEachBlock_internalExitPoint(ctx context.Context, field graphql.CollectedField, obj *models.ForEachBlock) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "ForEachBlock",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.InternalExitPoint, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*ent.ExitPoint)
+	fc.Result = res
+	return ec.marshalNExitPoint2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐExitPoint(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ForEachBlock_exitPoint(ctx context.Context, field graphql.CollectedField, obj *models.ForEachBlock) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "ForEachBlock",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ExitPoint, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*ent.ExitPoint)
+	fc.Result = res
+	return ec.marshalNExitPoint2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐExitPoint(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _Formula_id(ctx context.Context, field graphql.CollectedField, obj *ent.Formula) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -46561,6 +47963,251 @@ func (ec *executionContext) _InventoryPolicy_serviceType(ctx context.Context, fi
 	res := resTmp.(*models2.Cud)
 	fc.Result = res
 	return ec.marshalNCUD2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋauthzᚋmodelsᚐCud(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _InvokeRestAPIBlock_entryPoint(ctx context.Context, field graphql.CollectedField, obj *models.InvokeRestAPIBlock) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "InvokeRestAPIBlock",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.EntryPoint, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*ent.EntryPoint)
+	fc.Result = res
+	return ec.marshalNEntryPoint2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐEntryPoint(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _InvokeRestAPIBlock_method(ctx context.Context, field graphql.CollectedField, obj *models.InvokeRestAPIBlock) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "InvokeRestAPIBlock",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Method, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(models.URLMethod)
+	fc.Result = res
+	return ec.marshalNUrlMethod2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐURLMethod(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _InvokeRestAPIBlock_url(ctx context.Context, field graphql.CollectedField, obj *models.InvokeRestAPIBlock) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "InvokeRestAPIBlock",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.URL, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _InvokeRestAPIBlock_connectionTimeOut(ctx context.Context, field graphql.CollectedField, obj *models.InvokeRestAPIBlock) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "InvokeRestAPIBlock",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ConnectionTimeOut, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _InvokeRestAPIBlock_body(ctx context.Context, field graphql.CollectedField, obj *models.InvokeRestAPIBlock) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "InvokeRestAPIBlock",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Body, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _InvokeRestAPIBlock_headers(ctx context.Context, field graphql.CollectedField, obj *models.InvokeRestAPIBlock) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "InvokeRestAPIBlock",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Headers, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _InvokeRestAPIBlock_exitPoint(ctx context.Context, field graphql.CollectedField, obj *models.InvokeRestAPIBlock) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "InvokeRestAPIBlock",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ExitPoint, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*ent.ExitPoint)
+	fc.Result = res
+	return ec.marshalNExitPoint2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐExitPoint(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Kpi_id(ctx context.Context, field graphql.CollectedField, obj *ent.Kpi) (ret graphql.Marshaler) {
@@ -61071,6 +62718,111 @@ func (ec *executionContext) _PageInfo_endCursor(ctx context.Context, field graph
 	res := resTmp.(*ent.Cursor)
 	fc.Result = res
 	return ec.marshalOCursor2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐCursor(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ParallelBlock_entryPoint(ctx context.Context, field graphql.CollectedField, obj *models.ParallelBlock) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "ParallelBlock",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.EntryPoint, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*ent.EntryPoint)
+	fc.Result = res
+	return ec.marshalNEntryPoint2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐEntryPoint(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ParallelBlock_internalExitPoint(ctx context.Context, field graphql.CollectedField, obj *models.ParallelBlock) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "ParallelBlock",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.InternalExitPoint, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*ent.ExitPoint)
+	fc.Result = res
+	return ec.marshalNExitPoint2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐExitPoint(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ParallelBlock_exitPoint(ctx context.Context, field graphql.CollectedField, obj *models.ParallelBlock) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "ParallelBlock",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ExitPoint, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*ent.ExitPoint)
+	fc.Result = res
+	return ec.marshalNExitPoint2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐExitPoint(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _ParameterCatalog_id(ctx context.Context, field graphql.CollectedField, obj *ent.ParameterCatalog) (ret graphql.Marshaler) {
@@ -76608,6 +78360,204 @@ func (ec *executionContext) _ThresholdEdge_cursor(ctx context.Context, field gra
 	return ec.marshalNCursor2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐCursor(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _TimerBlock_behavior(ctx context.Context, field graphql.CollectedField, obj *models.TimerBlock) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "TimerBlock",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Behavior, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(models.TimerBehavior)
+	fc.Result = res
+	return ec.marshalNTimerBehavior2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐTimerBehavior(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _TimerBlock_seconds(ctx context.Context, field graphql.CollectedField, obj *models.TimerBlock) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "TimerBlock",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Seconds, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*int)
+	fc.Result = res
+	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _TimerBlock_datetime(ctx context.Context, field graphql.CollectedField, obj *models.TimerBlock) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "TimerBlock",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Datetime, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*time.Time)
+	fc.Result = res
+	return ec.marshalOTime2ᚖtimeᚐTime(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _TimerBlock_enableExpressionL(ctx context.Context, field graphql.CollectedField, obj *models.TimerBlock) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "TimerBlock",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.EnableExpressionL, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*bool)
+	fc.Result = res
+	return ec.marshalOBoolean2ᚖbool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _TimerBlock_expression(ctx context.Context, field graphql.CollectedField, obj *models.TimerBlock) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "TimerBlock",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Expression, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _TimerBlock_exitPoint(ctx context.Context, field graphql.CollectedField, obj *models.TimerBlock) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "TimerBlock",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ExitPoint, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*ent.ExitPoint)
+	fc.Result = res
+	return ec.marshalNExitPoint2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐExitPoint(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _TopologyLink_type(ctx context.Context, field graphql.CollectedField, obj *models.TopologyLink) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -79301,6 +81251,207 @@ func (ec *executionContext) _Viewer_permissions(ctx context.Context, field graph
 	res := resTmp.(*models2.PermissionSettings)
 	fc.Result = res
 	return ec.marshalNPermissionSettings2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋauthzᚋmodelsᚐPermissionSettings(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _WaitForSignalBlock_entryPoint(ctx context.Context, field graphql.CollectedField, obj *models.WaitForSignalBlock) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "WaitForSignalBlock",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.EntryPoint, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*ent.EntryPoint)
+	fc.Result = res
+	return ec.marshalNEntryPoint2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐEntryPoint(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _WaitForSignalBlock_exitPoint(ctx context.Context, field graphql.CollectedField, obj *models.WaitForSignalBlock) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "WaitForSignalBlock",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ExitPoint, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*ent.ExitPoint)
+	fc.Result = res
+	return ec.marshalNExitPoint2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐExitPoint(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _WaitForSignalBlock_type(ctx context.Context, field graphql.CollectedField, obj *models.WaitForSignalBlock) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "WaitForSignalBlock",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Type, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*models.SignalType)
+	fc.Result = res
+	return ec.marshalOSignalType2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐSignalType(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _WaitForSignalBlock_signalModule(ctx context.Context, field graphql.CollectedField, obj *models.WaitForSignalBlock) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "WaitForSignalBlock",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.SignalModule, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*models.SignalModule)
+	fc.Result = res
+	return ec.marshalOSignalModule2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐSignalModule(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _WaitForSignalBlock_customFilter(ctx context.Context, field graphql.CollectedField, obj *models.WaitForSignalBlock) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "WaitForSignalBlock",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CustomFilter, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _WaitForSignalBlock_blocked(ctx context.Context, field graphql.CollectedField, obj *models.WaitForSignalBlock) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "WaitForSignalBlock",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Blocked, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _WorkOrder_id(ctx context.Context, field graphql.CollectedField, obj *ent.WorkOrder) (ret graphql.Marshaler) {
@@ -86678,6 +88829,162 @@ func (ec *executionContext) unmarshalInputAutomationPolicyInput(ctx context.Cont
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputBaseBlockInput(ctx context.Context, obj interface{}) (models.BaseBlockInput, error) {
+	var it models.BaseBlockInput
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "enableInputTransformation":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("enableInputTransformation"))
+			it.EnableInputTransformation, err = ec.unmarshalNBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "inputTransfStrategy":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("inputTransfStrategy"))
+			it.InputTransfStrategy, err = ec.unmarshalOTransfStrategy2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋschemaᚋenumᚐTransfStrategy(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "inputParamDefinitions":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("inputParamDefinitions"))
+			it.InputParamDefinitions, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "enableOutputTransformation":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("enableOutputTransformation"))
+			it.EnableOutputTransformation, err = ec.unmarshalNBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "outputTransfStrategy":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("outputTransfStrategy"))
+			it.OutputTransfStrategy, err = ec.unmarshalOTransfStrategy2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋschemaᚋenumᚐTransfStrategy(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "outputParamDefinitions":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("outputParamDefinitions"))
+			it.OutputParamDefinitions, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "enableInputStateTransformation":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("enableInputStateTransformation"))
+			it.EnableInputStateTransformation, err = ec.unmarshalNBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "inputStateTransfStrategy":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("inputStateTransfStrategy"))
+			it.InputStateTransfStrategy, err = ec.unmarshalOTransfStrategy2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋschemaᚋenumᚐTransfStrategy(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "inputStateParamDefinitions":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("inputStateParamDefinitions"))
+			it.InputStateParamDefinitions, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "enableOutputStateTransformation":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("enableOutputStateTransformation"))
+			it.EnableOutputStateTransformation, err = ec.unmarshalNBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "outputStateTransfStrategy":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("outputStateTransfStrategy"))
+			it.OutputStateTransfStrategy, err = ec.unmarshalOTransfStrategy2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋschemaᚋenumᚐTransfStrategy(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "outputStateParamDefinitions":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("outputStateParamDefinitions"))
+			it.OutputStateParamDefinitions, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "enableErrorHandling":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("enableErrorHandling"))
+			it.EnableErrorHandling, err = ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "enableRetryPolicy":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("enableRetryPolicy"))
+			it.EnableRetryPolicy, err = ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "retryInterval":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("retryInterval"))
+			it.RetryInterval, err = ec.unmarshalOInt2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "units":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("units"))
+			it.Units, err = ec.unmarshalORetryUnit2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐRetryUnit(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "maxAttemps":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("maxAttemps"))
+			it.MaxAttemps, err = ec.unmarshalOInt2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "backoffRate":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("backoffRate"))
+			it.BackoffRate, err = ec.unmarshalOInt2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputBasicCUDInput(ctx context.Context, obj interface{}) (models2.BasicCUDInput, error) {
 	var it models2.BasicCUDInput
 	var asMap = obj.(map[string]interface{})
@@ -87109,6 +89416,58 @@ func (ec *executionContext) unmarshalInputCheckListItemInput(ctx context.Context
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("cellData"))
 			it.CellData, err = ec.unmarshalOSurveyCellScanData2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐSurveyCellScanDataᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputChoiceBlockInput(ctx context.Context, obj interface{}) (models.ChoiceBlockInput, error) {
+	var it models.ChoiceBlockInput
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "cid":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("cid"))
+			it.Cid, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "entryPoint":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("entryPoint"))
+			it.EntryPoint, err = ec.unmarshalNEntryPointInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐEntryPointInput(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "routes":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("routes"))
+			it.Routes, err = ec.unmarshalODecisionRouteInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐDecisionRouteInputᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "basicDefinitions":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("basicDefinitions"))
+			it.BasicDefinitions, err = ec.unmarshalNBaseBlockInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐBaseBlockInput(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "uiRepresentation":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("uiRepresentation"))
+			it.UIRepresentation, err = ec.unmarshalOBlockUIRepresentationInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋflowengineᚋflowschemaᚐBlockUIRepresentation(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -91128,6 +93487,66 @@ func (ec *executionContext) unmarshalInputEventSeverityOrder(ctx context.Context
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputExecuteFlowBlockInput(ctx context.Context, obj interface{}) (models.ExecuteFlowBlockInput, error) {
+	var it models.ExecuteFlowBlockInput
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "cid":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("cid"))
+			it.Cid, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "entryPoint":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("entryPoint"))
+			it.EntryPoint, err = ec.unmarshalNEntryPointInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐEntryPointInput(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "exitPoint":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("exitPoint"))
+			it.ExitPoint, err = ec.unmarshalNExitPointInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐExitPointInput(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "flow":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("flow"))
+			it.Flow, err = ec.unmarshalNID2int(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "basicDefinitions":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("basicDefinitions"))
+			it.BasicDefinitions, err = ec.unmarshalNBaseBlockInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐBaseBlockInput(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "uiRepresentation":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("uiRepresentation"))
+			it.UIRepresentation, err = ec.unmarshalOBlockUIRepresentationInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋflowengineᚋflowschemaᚐBlockUIRepresentation(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputExitPointInput(ctx context.Context, obj interface{}) (models.ExitPointInput, error) {
 	var it models.ExitPointInput
 	var asMap = obj.(map[string]interface{})
@@ -91546,6 +93965,14 @@ func (ec *executionContext) unmarshalInputGotoBlockInput(ctx context.Context, ob
 			if err != nil {
 				return it, err
 			}
+		case "type":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("type"))
+			it.Type, err = ec.unmarshalNGoToType2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐGoToType(ctx, v)
+			if err != nil {
+				return it, err
+			}
 		case "uiRepresentation":
 			var err error
 
@@ -91662,6 +94089,46 @@ func (ec *executionContext) unmarshalInputImportFlowDraftInput(ctx context.Conte
 			if err != nil {
 				return it, err
 			}
+		case "choiceBlocks":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("choiceBlocks"))
+			it.ChoiceBlocks, err = ec.unmarshalODecisionBlockInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐDecisionBlockInputᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "executeFlowBlocks":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("executeFlowBlocks"))
+			it.ExecuteFlowBlocks, err = ec.unmarshalOExecuteFlowBlockInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐExecuteFlowBlockInputᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "timerBlocks":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("timerBlocks"))
+			it.TimerBlocks, err = ec.unmarshalOTimerBlockInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐTimerBlockInputᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "waitForSignalBlocks":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("waitForSignalBlocks"))
+			it.WaitForSignalBlocks, err = ec.unmarshalOWaitForSignalBlockInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐWaitForSignalBlockInputᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "invokeRestAPIBlocks":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("invokeRestAPIBlocks"))
+			it.InvokeRestAPIBlocks, err = ec.unmarshalOInvokeRestAPIBlockInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐInvokeRestAPIBlockInputᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
 		case "connectors":
 			var err error
 
@@ -91751,6 +94218,98 @@ func (ec *executionContext) unmarshalInputInventoryPolicyInput(ctx context.Conte
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("serviceType"))
 			it.ServiceType, err = ec.unmarshalOBasicCUDInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋauthzᚋmodelsᚐBasicCUDInput(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputInvokeRestAPIBlockInput(ctx context.Context, obj interface{}) (models.InvokeRestAPIBlockInput, error) {
+	var it models.InvokeRestAPIBlockInput
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "cid":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("cid"))
+			it.Cid, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "entryPoint":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("entryPoint"))
+			it.EntryPoint, err = ec.unmarshalNEntryPointInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐEntryPointInput(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "exitPoint":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("exitPoint"))
+			it.ExitPoint, err = ec.unmarshalNExitPointInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐExitPointInput(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "method":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("method"))
+			it.Method, err = ec.unmarshalNUrlMethod2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐURLMethod(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "url":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("url"))
+			it.URL, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "connectionTimeOut":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("connectionTimeOut"))
+			it.ConnectionTimeOut, err = ec.unmarshalNInt2int(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "body":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("body"))
+			it.Body, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "headers":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("headers"))
+			it.Headers, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "basicDefinitions":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("basicDefinitions"))
+			it.BasicDefinitions, err = ec.unmarshalNBaseBlockInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐBaseBlockInput(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "uiRepresentation":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("uiRepresentation"))
+			it.UIRepresentation, err = ec.unmarshalOBlockUIRepresentationInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋflowengineᚋflowschemaᚐBlockUIRepresentation(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -96116,6 +98675,90 @@ func (ec *executionContext) unmarshalInputThresholdOrder(ctx context.Context, ob
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputTimerBlockInput(ctx context.Context, obj interface{}) (models.TimerBlockInput, error) {
+	var it models.TimerBlockInput
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "cid":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("cid"))
+			it.Cid, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "exitPoint":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("exitPoint"))
+			it.ExitPoint, err = ec.unmarshalNExitPointInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐExitPointInput(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "entryPoint":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("entryPoint"))
+			it.EntryPoint, err = ec.unmarshalNEntryPointInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐEntryPointInput(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "behavior":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("behavior"))
+			it.Behavior, err = ec.unmarshalNTimerBehavior2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐTimerBehavior(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "seconds":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("seconds"))
+			it.Seconds, err = ec.unmarshalOInt2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "datetime":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("datetime"))
+			it.Datetime, err = ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "enableExpressionL":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("enableExpressionL"))
+			it.EnableExpressionL, err = ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "expression":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("expression"))
+			it.Expression, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "uiRepresentation":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("uiRepresentation"))
+			it.UIRepresentation, err = ec.unmarshalOBlockUIRepresentationInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋflowengineᚋflowschemaᚐBlockUIRepresentation(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputTriggerBlockInput(ctx context.Context, obj interface{}) (models.TriggerBlockInput, error) {
 	var it models.TriggerBlockInput
 	var asMap = obj.(map[string]interface{})
@@ -96584,6 +99227,98 @@ func (ec *executionContext) unmarshalInputVendorOrder(ctx context.Context, obj i
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputWaitForSignalBlockInput(ctx context.Context, obj interface{}) (models.WaitForSignalBlockInput, error) {
+	var it models.WaitForSignalBlockInput
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "cid":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("cid"))
+			it.Cid, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "entryPoint":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("entryPoint"))
+			it.EntryPoint, err = ec.unmarshalNEntryPointInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐEntryPointInput(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "exitPoint":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("exitPoint"))
+			it.ExitPoint, err = ec.unmarshalNExitPointInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐExitPointInput(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "type":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("type"))
+			it.Type, err = ec.unmarshalNSignalType2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐSignalType(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "signalModule":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("signalModule"))
+			it.SignalModule, err = ec.unmarshalNSignalModule2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐSignalModule(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "customFilter":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("customFilter"))
+			it.CustomFilter, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "blocked":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("blocked"))
+			it.Blocked, err = ec.unmarshalNBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "backoffRate":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("backoffRate"))
+			it.BackoffRate, err = ec.unmarshalOInt2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "basicDefinitions":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("basicDefinitions"))
+			it.BasicDefinitions, err = ec.unmarshalNBaseBlockInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐBaseBlockInput(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "uiRepresentation":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("uiRepresentation"))
+			it.UIRepresentation, err = ec.unmarshalOBlockUIRepresentationInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋflowengineᚋflowschemaᚐBlockUIRepresentation(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputWorkOrderDefinitionInput(ctx context.Context, obj interface{}) (models.WorkOrderDefinitionInput, error) {
 	var it models.WorkOrderDefinitionInput
 	var asMap = obj.(map[string]interface{})
@@ -96924,6 +99659,55 @@ func (ec *executionContext) _BlockDetails(ctx context.Context, sel ast.Selection
 			return graphql.Null
 		}
 		return ec._TrueFalseBlock(ctx, sel, obj)
+	case models.ChoiceBlock:
+		return ec._ChoiceBlock(ctx, sel, &obj)
+	case *models.ChoiceBlock:
+		if obj == nil {
+			return graphql.Null
+		}
+		return ec._ChoiceBlock(ctx, sel, obj)
+	case models.TimerBlock:
+		return ec._TimerBlock(ctx, sel, &obj)
+	case *models.TimerBlock:
+		if obj == nil {
+			return graphql.Null
+		}
+		return ec._TimerBlock(ctx, sel, obj)
+	case models.WaitForSignalBlock:
+		return ec._WaitForSignalBlock(ctx, sel, &obj)
+	case *models.WaitForSignalBlock:
+		if obj == nil {
+			return graphql.Null
+		}
+		return ec._WaitForSignalBlock(ctx, sel, obj)
+	case models.InvokeRestAPIBlock:
+		return ec._InvokeRestAPIBlock(ctx, sel, &obj)
+	case *models.InvokeRestAPIBlock:
+		if obj == nil {
+			return graphql.Null
+		}
+		return ec._InvokeRestAPIBlock(ctx, sel, obj)
+	case models.ExecuteFlowBlock:
+		return ec._ExecuteFlowBlock(ctx, sel, &obj)
+	case *models.ExecuteFlowBlock:
+		if obj == nil {
+			return graphql.Null
+		}
+		return ec._ExecuteFlowBlock(ctx, sel, obj)
+	case models.ForEachBlock:
+		return ec._ForEachBlock(ctx, sel, &obj)
+	case *models.ForEachBlock:
+		if obj == nil {
+			return graphql.Null
+		}
+		return ec._ForEachBlock(ctx, sel, obj)
+	case models.ParallelBlock:
+		return ec._ParallelBlock(ctx, sel, &obj)
+	case *models.ParallelBlock:
+		if obj == nil {
+			return graphql.Null
+		}
+		return ec._ParallelBlock(ctx, sel, obj)
 	default:
 		panic(fmt.Errorf("unexpected type %T", obj))
 	}
@@ -98191,36 +100975,88 @@ func (ec *executionContext) _Block(ctx context.Context, sel ast.SelectionSet, ob
 				}
 				return res
 			})
-		case "inputParamDefinitions":
-			field := field
-			out.Concurrently(i, func() (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._Block_inputParamDefinitions(ctx, field, obj)
-				if res == graphql.Null {
-					atomic.AddUint32(&invalids, 1)
-				}
-				return res
-			})
-		case "outputParamDefinitions":
-			field := field
-			out.Concurrently(i, func() (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._Block_outputParamDefinitions(ctx, field, obj)
-				if res == graphql.Null {
-					atomic.AddUint32(&invalids, 1)
-				}
-				return res
-			})
 		case "uiRepresentation":
 			out.Values[i] = ec._Block_uiRepresentation(ctx, field, obj)
+		case "enableInputTransformation":
+			out.Values[i] = ec._Block_enableInputTransformation(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&invalids, 1)
+			}
+		case "inputTransfStrategy":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Block_inputTransfStrategy(ctx, field, obj)
+				return res
+			})
+		case "enableOutputTransformation":
+			out.Values[i] = ec._Block_enableOutputTransformation(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&invalids, 1)
+			}
+		case "outputTransfStrategy":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Block_outputTransfStrategy(ctx, field, obj)
+				return res
+			})
+		case "enableInputStateTransformation":
+			out.Values[i] = ec._Block_enableInputStateTransformation(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&invalids, 1)
+			}
+		case "inputStateTransfStrategy":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Block_inputStateTransfStrategy(ctx, field, obj)
+				return res
+			})
+		case "inputStateTransformation":
+			out.Values[i] = ec._Block_inputStateTransformation(ctx, field, obj)
+		case "enableOutputStateTransformation":
+			out.Values[i] = ec._Block_enableOutputStateTransformation(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&invalids, 1)
+			}
+		case "outputStateTransfStrategy":
+			out.Values[i] = ec._Block_outputStateTransfStrategy(ctx, field, obj)
+		case "outputStateTransformation":
+			out.Values[i] = ec._Block_outputStateTransformation(ctx, field, obj)
+		case "enableErrorHandling":
+			out.Values[i] = ec._Block_enableErrorHandling(ctx, field, obj)
+		case "enableRetryPolicy":
+			out.Values[i] = ec._Block_enableRetryPolicy(ctx, field, obj)
+		case "retryInterval":
+			out.Values[i] = ec._Block_retryInterval(ctx, field, obj)
+		case "units":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Block_units(ctx, field, obj)
+				return res
+			})
+		case "maxAttemps":
+			out.Values[i] = ec._Block_maxAttemps(ctx, field, obj)
+		case "backoffRate":
+			out.Values[i] = ec._Block_backoffRate(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -98665,6 +101501,43 @@ func (ec *executionContext) _CheckListItemDefinition(ctx context.Context, sel as
 			out.Values[i] = ec._CheckListItemDefinition_enumSelectionMode(ctx, field, obj)
 		case "helpText":
 			out.Values[i] = ec._CheckListItemDefinition_helpText(ctx, field, obj)
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var choiceBlockImplementors = []string{"ChoiceBlock", "BlockDetails"}
+
+func (ec *executionContext) _ChoiceBlock(ctx context.Context, sel ast.SelectionSet, obj *models.ChoiceBlock) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, choiceBlockImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("ChoiceBlock")
+		case "entryPoint":
+			out.Values[i] = ec._ChoiceBlock_entryPoint(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "defaultExitPoint":
+			out.Values[i] = ec._ChoiceBlock_defaultExitPoint(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "rules":
+			out.Values[i] = ec._ChoiceBlock_rules(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -101074,6 +103947,45 @@ func (ec *executionContext) _EventSeverityEdge(ctx context.Context, sel ast.Sele
 	return out
 }
 
+var executeFlowBlockImplementors = []string{"ExecuteFlowBlock", "BlockDetails"}
+
+func (ec *executionContext) _ExecuteFlowBlock(ctx context.Context, sel ast.SelectionSet, obj *models.ExecuteFlowBlock) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, executeFlowBlockImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("ExecuteFlowBlock")
+		case "flow":
+			out.Values[i] = ec._ExecuteFlowBlock_flow(ctx, field, obj)
+		case "params":
+			out.Values[i] = ec._ExecuteFlowBlock_params(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "entryPoint":
+			out.Values[i] = ec._ExecuteFlowBlock_entryPoint(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "exitPoint":
+			out.Values[i] = ec._ExecuteFlowBlock_exitPoint(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
 var exitPointImplementors = []string{"ExitPoint", "Node"}
 
 func (ec *executionContext) _ExitPoint(ctx context.Context, sel ast.SelectionSet, obj *ent.ExitPoint) graphql.Marshaler {
@@ -101963,6 +104875,43 @@ func (ec *executionContext) _FlowInstanceEdge(ctx context.Context, sel ast.Selec
 	return out
 }
 
+var forEachBlockImplementors = []string{"ForEachBlock", "BlockDetails"}
+
+func (ec *executionContext) _ForEachBlock(ctx context.Context, sel ast.SelectionSet, obj *models.ForEachBlock) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, forEachBlockImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("ForEachBlock")
+		case "entryPoint":
+			out.Values[i] = ec._ForEachBlock_entryPoint(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "internalExitPoint":
+			out.Values[i] = ec._ForEachBlock_internalExitPoint(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "exitPoint":
+			out.Values[i] = ec._ForEachBlock_exitPoint(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
 var formulaImplementors = []string{"Formula", "Node"}
 
 func (ec *executionContext) _Formula(ctx context.Context, sel ast.SelectionSet, obj *ent.Formula) graphql.Marshaler {
@@ -102300,6 +105249,63 @@ func (ec *executionContext) _InventoryPolicy(ctx context.Context, sel ast.Select
 			}
 		case "serviceType":
 			out.Values[i] = ec._InventoryPolicy_serviceType(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var invokeRestAPIBlockImplementors = []string{"InvokeRestAPIBlock", "BlockDetails"}
+
+func (ec *executionContext) _InvokeRestAPIBlock(ctx context.Context, sel ast.SelectionSet, obj *models.InvokeRestAPIBlock) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, invokeRestAPIBlockImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("InvokeRestAPIBlock")
+		case "entryPoint":
+			out.Values[i] = ec._InvokeRestAPIBlock_entryPoint(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "method":
+			out.Values[i] = ec._InvokeRestAPIBlock_method(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "url":
+			out.Values[i] = ec._InvokeRestAPIBlock_url(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "connectionTimeOut":
+			out.Values[i] = ec._InvokeRestAPIBlock_connectionTimeOut(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "body":
+			out.Values[i] = ec._InvokeRestAPIBlock_body(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "headers":
+			out.Values[i] = ec._InvokeRestAPIBlock_headers(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "exitPoint":
+			out.Values[i] = ec._InvokeRestAPIBlock_exitPoint(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
@@ -105515,6 +108521,43 @@ func (ec *executionContext) _PageInfo(ctx context.Context, sel ast.SelectionSet,
 			out.Values[i] = ec._PageInfo_startCursor(ctx, field, obj)
 		case "endCursor":
 			out.Values[i] = ec._PageInfo_endCursor(ctx, field, obj)
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var parallelBlockImplementors = []string{"ParallelBlock", "BlockDetails"}
+
+func (ec *executionContext) _ParallelBlock(ctx context.Context, sel ast.SelectionSet, obj *models.ParallelBlock) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, parallelBlockImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("ParallelBlock")
+		case "entryPoint":
+			out.Values[i] = ec._ParallelBlock_entryPoint(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "internalExitPoint":
+			out.Values[i] = ec._ParallelBlock_internalExitPoint(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "exitPoint":
+			out.Values[i] = ec._ParallelBlock_exitPoint(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -110132,6 +113175,46 @@ func (ec *executionContext) _ThresholdEdge(ctx context.Context, sel ast.Selectio
 	return out
 }
 
+var timerBlockImplementors = []string{"TimerBlock", "BlockDetails"}
+
+func (ec *executionContext) _TimerBlock(ctx context.Context, sel ast.SelectionSet, obj *models.TimerBlock) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, timerBlockImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("TimerBlock")
+		case "behavior":
+			out.Values[i] = ec._TimerBlock_behavior(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "seconds":
+			out.Values[i] = ec._TimerBlock_seconds(ctx, field, obj)
+		case "datetime":
+			out.Values[i] = ec._TimerBlock_datetime(ctx, field, obj)
+		case "enableExpressionL":
+			out.Values[i] = ec._TimerBlock_enableExpressionL(ctx, field, obj)
+		case "expression":
+			out.Values[i] = ec._TimerBlock_expression(ctx, field, obj)
+		case "exitPoint":
+			out.Values[i] = ec._TimerBlock_exitPoint(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
 var topologyLinkImplementors = []string{"TopologyLink"}
 
 func (ec *executionContext) _TopologyLink(ctx context.Context, sel ast.SelectionSet, obj *models.TopologyLink) graphql.Marshaler {
@@ -111039,6 +114122,49 @@ func (ec *executionContext) _Viewer(ctx context.Context, sel ast.SelectionSet, o
 				}
 				return res
 			})
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var waitForSignalBlockImplementors = []string{"WaitForSignalBlock", "BlockDetails"}
+
+func (ec *executionContext) _WaitForSignalBlock(ctx context.Context, sel ast.SelectionSet, obj *models.WaitForSignalBlock) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, waitForSignalBlockImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("WaitForSignalBlock")
+		case "entryPoint":
+			out.Values[i] = ec._WaitForSignalBlock_entryPoint(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "exitPoint":
+			out.Values[i] = ec._WaitForSignalBlock_exitPoint(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "type":
+			out.Values[i] = ec._WaitForSignalBlock_type(ctx, field, obj)
+		case "signalModule":
+			out.Values[i] = ec._WaitForSignalBlock_signalModule(ctx, field, obj)
+		case "customFilter":
+			out.Values[i] = ec._WaitForSignalBlock_customFilter(ctx, field, obj)
+		case "blocked":
+			out.Values[i] = ec._WaitForSignalBlock_blocked(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -112942,6 +116068,11 @@ func (ec *executionContext) marshalNAutomationPolicy2ᚖgithubᚗcomᚋfacebooki
 	return ec._AutomationPolicy(ctx, sel, v)
 }
 
+func (ec *executionContext) unmarshalNBaseBlockInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐBaseBlockInput(ctx context.Context, v interface{}) (*models.BaseBlockInput, error) {
+	res, err := ec.unmarshalInputBaseBlockInput(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
 func (ec *executionContext) marshalNBasicPermissionRule2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋauthzᚋmodelsᚐBasicPermissionRule(ctx context.Context, sel ast.SelectionSet, v *models2.BasicPermissionRule) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
@@ -114602,6 +117733,11 @@ func (ec *executionContext) marshalNEntryPoint2ᚖgithubᚗcomᚋfacebookincubat
 	return ec._EntryPoint(ctx, sel, v)
 }
 
+func (ec *executionContext) unmarshalNEntryPointInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐEntryPointInput(ctx context.Context, v interface{}) (*models.EntryPointInput, error) {
+	res, err := ec.unmarshalInputEntryPointInput(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
 func (ec *executionContext) marshalNEquipment2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐEquipment(ctx context.Context, sel ast.SelectionSet, v ent.Equipment) graphql.Marshaler {
 	return ec._Equipment(ctx, sel, &v)
 }
@@ -115382,6 +118518,11 @@ func (ec *executionContext) marshalNEventSeverityFilterType2githubᚗcomᚋfaceb
 	return v
 }
 
+func (ec *executionContext) unmarshalNExecuteFlowBlockInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐExecuteFlowBlockInput(ctx context.Context, v interface{}) (*models.ExecuteFlowBlockInput, error) {
+	res, err := ec.unmarshalInputExecuteFlowBlockInput(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
 func (ec *executionContext) marshalNExitPoint2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐExitPointᚄ(ctx context.Context, sel ast.SelectionSet, v []*ent.ExitPoint) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
@@ -115427,6 +118568,11 @@ func (ec *executionContext) marshalNExitPoint2ᚖgithubᚗcomᚋfacebookincubato
 		return graphql.Null
 	}
 	return ec._ExitPoint(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalNExitPointInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐExitPointInput(ctx context.Context, v interface{}) (*models.ExitPointInput, error) {
+	res, err := ec.unmarshalInputExitPointInput(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
 func (ec *executionContext) unmarshalNExportStatus2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋexporttaskᚐStatus(ctx context.Context, v interface{}) (exporttask.Status, error) {
@@ -115970,6 +119116,16 @@ func (ec *executionContext) marshalNGeneralFilter2ᚖgithubᚗcomᚋfacebookincu
 	return ec._GeneralFilter(ctx, sel, v)
 }
 
+func (ec *executionContext) unmarshalNGoToType2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐGoToType(ctx context.Context, v interface{}) (models.GoToType, error) {
+	var res models.GoToType
+	err := res.UnmarshalGQL(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNGoToType2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐGoToType(ctx context.Context, sel ast.SelectionSet, v models.GoToType) graphql.Marshaler {
+	return v
+}
+
 func (ec *executionContext) unmarshalNGotoBlockInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐGotoBlockInput(ctx context.Context, v interface{}) (models.GotoBlockInput, error) {
 	res, err := ec.unmarshalInputGotoBlockInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -116151,6 +119307,11 @@ func (ec *executionContext) marshalNInventoryPolicy2ᚖgithubᚗcomᚋfacebookin
 		return graphql.Null
 	}
 	return ec._InventoryPolicy(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalNInvokeRestAPIBlockInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐInvokeRestAPIBlockInput(ctx context.Context, v interface{}) (*models.InvokeRestAPIBlockInput, error) {
+	res, err := ec.unmarshalInputInvokeRestAPIBlockInput(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
 func (ec *executionContext) marshalNKpi2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐKpi(ctx context.Context, sel ast.SelectionSet, v ent.Kpi) graphql.Marshaler {
@@ -119530,6 +122691,26 @@ func (ec *executionContext) unmarshalNServiceTypeEditData2githubᚗcomᚋfaceboo
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
+func (ec *executionContext) unmarshalNSignalModule2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐSignalModule(ctx context.Context, v interface{}) (models.SignalModule, error) {
+	var res models.SignalModule
+	err := res.UnmarshalGQL(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNSignalModule2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐSignalModule(ctx context.Context, sel ast.SelectionSet, v models.SignalModule) graphql.Marshaler {
+	return v
+}
+
+func (ec *executionContext) unmarshalNSignalType2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐSignalType(ctx context.Context, v interface{}) (models.SignalType, error) {
+	var res models.SignalType
+	err := res.UnmarshalGQL(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNSignalType2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐSignalType(ctx context.Context, sel ast.SelectionSet, v models.SignalType) graphql.Marshaler {
+	return v
+}
+
 func (ec *executionContext) unmarshalNSlotFilterInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐSlotFilterInput(ctx context.Context, v interface{}) (models.SlotFilterInput, error) {
 	res, err := ec.unmarshalInputSlotFilterInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -120150,6 +123331,21 @@ func (ec *executionContext) marshalNTime2timeᚐTime(ctx context.Context, sel as
 	return res
 }
 
+func (ec *executionContext) unmarshalNTimerBehavior2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐTimerBehavior(ctx context.Context, v interface{}) (models.TimerBehavior, error) {
+	var res models.TimerBehavior
+	err := res.UnmarshalGQL(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNTimerBehavior2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐTimerBehavior(ctx context.Context, sel ast.SelectionSet, v models.TimerBehavior) graphql.Marshaler {
+	return v
+}
+
+func (ec *executionContext) unmarshalNTimerBlockInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐTimerBlockInput(ctx context.Context, v interface{}) (*models.TimerBlockInput, error) {
+	res, err := ec.unmarshalInputTimerBlockInput(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
 func (ec *executionContext) marshalNTopologyLink2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐTopologyLinkᚄ(ctx context.Context, sel ast.SelectionSet, v []*models.TopologyLink) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
@@ -120250,6 +123446,16 @@ func (ec *executionContext) unmarshalNTrueFalseBlockInput2ᚖgithubᚗcomᚋface
 func (ec *executionContext) unmarshalNUpdateUserGroupsInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐUpdateUserGroupsInput(ctx context.Context, v interface{}) (models.UpdateUserGroupsInput, error) {
 	res, err := ec.unmarshalInputUpdateUserGroupsInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalNUrlMethod2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐURLMethod(ctx context.Context, v interface{}) (models.URLMethod, error) {
+	var res models.URLMethod
+	err := res.UnmarshalGQL(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNUrlMethod2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐURLMethod(ctx context.Context, sel ast.SelectionSet, v models.URLMethod) graphql.Marshaler {
+	return v
 }
 
 func (ec *executionContext) marshalNUser2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐUser(ctx context.Context, sel ast.SelectionSet, v ent.User) graphql.Marshaler {
@@ -120935,6 +124141,11 @@ func (ec *executionContext) unmarshalNVendorFilterType2githubᚗcomᚋfacebookin
 
 func (ec *executionContext) marshalNVendorFilterType2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐVendorFilterType(ctx context.Context, sel ast.SelectionSet, v models.VendorFilterType) graphql.Marshaler {
 	return v
+}
+
+func (ec *executionContext) unmarshalNWaitForSignalBlockInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐWaitForSignalBlockInput(ctx context.Context, v interface{}) (*models.WaitForSignalBlockInput, error) {
+	res, err := ec.unmarshalInputWaitForSignalBlockInput(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
 func (ec *executionContext) marshalNWorkOrder2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐWorkOrder(ctx context.Context, sel ast.SelectionSet, v ent.WorkOrder) graphql.Marshaler {
@@ -123096,6 +126307,30 @@ func (ec *executionContext) marshalOEventSeverityOrderField2ᚖgithubᚗcomᚋfa
 	return v
 }
 
+func (ec *executionContext) unmarshalOExecuteFlowBlockInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐExecuteFlowBlockInputᚄ(ctx context.Context, v interface{}) ([]*models.ExecuteFlowBlockInput, error) {
+	if v == nil {
+		return nil, nil
+	}
+	var vSlice []interface{}
+	if v != nil {
+		if tmp1, ok := v.([]interface{}); ok {
+			vSlice = tmp1
+		} else {
+			vSlice = []interface{}{v}
+		}
+	}
+	var err error
+	res := make([]*models.ExecuteFlowBlockInput, len(vSlice))
+	for i := range vSlice {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
+		res[i], err = ec.unmarshalNExecuteFlowBlockInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐExecuteFlowBlockInput(ctx, vSlice[i])
+		if err != nil {
+			return nil, err
+		}
+	}
+	return res, nil
+}
+
 func (ec *executionContext) marshalOExitPoint2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐExitPoint(ctx context.Context, sel ast.SelectionSet, v *ent.ExitPoint) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
@@ -123768,6 +127003,30 @@ func (ec *executionContext) unmarshalOInventoryPolicyInput2ᚖgithubᚗcomᚋfac
 	}
 	res, err := ec.unmarshalInputInventoryPolicyInput(ctx, v)
 	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalOInvokeRestAPIBlockInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐInvokeRestAPIBlockInputᚄ(ctx context.Context, v interface{}) ([]*models.InvokeRestAPIBlockInput, error) {
+	if v == nil {
+		return nil, nil
+	}
+	var vSlice []interface{}
+	if v != nil {
+		if tmp1, ok := v.([]interface{}); ok {
+			vSlice = tmp1
+		} else {
+			vSlice = []interface{}{v}
+		}
+	}
+	var err error
+	res := make([]*models.InvokeRestAPIBlockInput, len(vSlice))
+	for i := range vSlice {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
+		res[i], err = ec.unmarshalNInvokeRestAPIBlockInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐInvokeRestAPIBlockInput(ctx, vSlice[i])
+		if err != nil {
+			return nil, err
+		}
+	}
+	return res, nil
 }
 
 func (ec *executionContext) marshalOKpi2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐKpi(ctx context.Context, sel ast.SelectionSet, v *ent.Kpi) graphql.Marshaler {
@@ -125587,6 +128846,22 @@ func (ec *executionContext) marshalORecommendationsSourcesOrderField2ᚖgithub�
 	return v
 }
 
+func (ec *executionContext) unmarshalORetryUnit2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐRetryUnit(ctx context.Context, v interface{}) (*models.RetryUnit, error) {
+	if v == nil {
+		return nil, nil
+	}
+	var res = new(models.RetryUnit)
+	err := res.UnmarshalGQL(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalORetryUnit2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐRetryUnit(ctx context.Context, sel ast.SelectionSet, v *models.RetryUnit) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return v
+}
+
 func (ec *executionContext) marshalORule2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐRuleᚄ(ctx context.Context, sel ast.SelectionSet, v []*ent.Rule) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
@@ -125915,6 +129190,38 @@ func (ec *executionContext) marshalOServiceTypeConnection2ᚖgithubᚗcomᚋface
 		return graphql.Null
 	}
 	return ec._ServiceTypeConnection(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalOSignalModule2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐSignalModule(ctx context.Context, v interface{}) (*models.SignalModule, error) {
+	if v == nil {
+		return nil, nil
+	}
+	var res = new(models.SignalModule)
+	err := res.UnmarshalGQL(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalOSignalModule2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐSignalModule(ctx context.Context, sel ast.SelectionSet, v *models.SignalModule) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return v
+}
+
+func (ec *executionContext) unmarshalOSignalType2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐSignalType(ctx context.Context, v interface{}) (*models.SignalType, error) {
+	if v == nil {
+		return nil, nil
+	}
+	var res = new(models.SignalType)
+	err := res.UnmarshalGQL(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalOSignalType2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐSignalType(ctx context.Context, sel ast.SelectionSet, v *models.SignalType) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return v
 }
 
 func (ec *executionContext) unmarshalOSlotFilterInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐSlotFilterInput(ctx context.Context, v interface{}) (*models.SlotFilterInput, error) {
@@ -126669,6 +129976,56 @@ func (ec *executionContext) marshalOTime2ᚖtimeᚐTime(ctx context.Context, sel
 	return graphql.MarshalTime(*v)
 }
 
+func (ec *executionContext) unmarshalOTimerBlockInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐTimerBlockInputᚄ(ctx context.Context, v interface{}) ([]*models.TimerBlockInput, error) {
+	if v == nil {
+		return nil, nil
+	}
+	var vSlice []interface{}
+	if v != nil {
+		if tmp1, ok := v.([]interface{}); ok {
+			vSlice = tmp1
+		} else {
+			vSlice = []interface{}{v}
+		}
+	}
+	var err error
+	res := make([]*models.TimerBlockInput, len(vSlice))
+	for i := range vSlice {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
+		res[i], err = ec.unmarshalNTimerBlockInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐTimerBlockInput(ctx, vSlice[i])
+		if err != nil {
+			return nil, err
+		}
+	}
+	return res, nil
+}
+
+func (ec *executionContext) unmarshalOTransfStrategy2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋschemaᚋenumᚐTransfStrategy(ctx context.Context, v interface{}) (enum.TransfStrategy, error) {
+	var res enum.TransfStrategy
+	err := res.UnmarshalGQL(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalOTransfStrategy2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋschemaᚋenumᚐTransfStrategy(ctx context.Context, sel ast.SelectionSet, v enum.TransfStrategy) graphql.Marshaler {
+	return v
+}
+
+func (ec *executionContext) unmarshalOTransfStrategy2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋschemaᚋenumᚐTransfStrategy(ctx context.Context, v interface{}) (*enum.TransfStrategy, error) {
+	if v == nil {
+		return nil, nil
+	}
+	var res = new(enum.TransfStrategy)
+	err := res.UnmarshalGQL(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalOTransfStrategy2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋschemaᚋenumᚐTransfStrategy(ctx context.Context, sel ast.SelectionSet, v *enum.TransfStrategy) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return v
+}
+
 func (ec *executionContext) unmarshalOTriggerBlockInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐTriggerBlockInputᚄ(ctx context.Context, v interface{}) ([]*models.TriggerBlockInput, error) {
 	if v == nil {
 		return nil, nil
@@ -127001,6 +130358,30 @@ func (ec *executionContext) marshalOViewer2githubᚗcomᚋfacebookincubatorᚋsy
 		return graphql.Null
 	}
 	return ec._Viewer(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalOWaitForSignalBlockInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐWaitForSignalBlockInputᚄ(ctx context.Context, v interface{}) ([]*models.WaitForSignalBlockInput, error) {
+	if v == nil {
+		return nil, nil
+	}
+	var vSlice []interface{}
+	if v != nil {
+		if tmp1, ok := v.([]interface{}); ok {
+			vSlice = tmp1
+		} else {
+			vSlice = []interface{}{v}
+		}
+	}
+	var err error
+	res := make([]*models.WaitForSignalBlockInput, len(vSlice))
+	for i := range vSlice {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
+		res[i], err = ec.unmarshalNWaitForSignalBlockInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐWaitForSignalBlockInput(ctx, vSlice[i])
+		if err != nil {
+			return nil, err
+		}
+	}
+	return res, nil
 }
 
 func (ec *executionContext) marshalOWorkOrder2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐWorkOrder(ctx context.Context, sel ast.SelectionSet, v *ent.WorkOrder) graphql.Marshaler {

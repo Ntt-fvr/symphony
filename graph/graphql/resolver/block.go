@@ -660,3 +660,115 @@ func (r mutationResolver) EditBlockInstance(ctx context.Context, input models.Ed
 
 	return mutation.Save(ctx)
 }
+
+func (r blockResolver) EnableInputTransformation(ctx context.Context, obj *ent.Block) bool {
+	return obj.EnableInputTransformation
+}
+
+func (r blockResolver) EnableOutputTransformation(ctx context.Context, obj *ent.Block) bool {
+	return obj.EnableOutputTransformation
+}
+
+func (r blockResolver) EnableInputStateTransformation(ctx context.Context, obj *ent.Block) bool {
+	return obj.EnableInputStateTransformation
+}
+
+func (r blockResolver) EnableOutputStateTransformation(ctx context.Context, obj *ent.Block) bool {
+	return obj.EnableOutputTransformation
+}
+
+func (r blockResolver) EnableErrorHandling(ctx context.Context, obj *ent.Block) bool {
+	return obj.EnableErrorHandling
+}
+
+func (r blockResolver) EnableRetryPolicy(ctx context.Context, obj *ent.Block) bool {
+	return obj.EnableRetryPolicy
+}
+
+func (r blockResolver) InputTransfStrategy(ctx context.Context, obj *ent.Block) (*enum.TransfStrategy, error) {
+	client := ent.FromContext(ctx)
+	b, err := client.Block.Get(ctx, obj.ID)
+
+	if err != nil {
+		return nil, fmt.Errorf("has occurred error on process: %w", err)
+	}
+	return (*enum.TransfStrategy)(&b.InputTransfStrategy), nil
+}
+
+func (r blockResolver) OutputTransfStrategy(ctx context.Context, obj *ent.Block) (*enum.TransfStrategy, error) {
+	client := ent.FromContext(ctx)
+	b, err := client.Block.Get(ctx, obj.ID)
+
+	if err != nil {
+		return nil, fmt.Errorf("has occurred error on process: %w", err)
+	}
+	return (*enum.TransfStrategy)(&b.OutputTransfStrategy), nil
+}
+
+func (r blockResolver) InputStateTransfStrategy(ctx context.Context, obj *ent.Block) (*enum.TransfStrategy, error) {
+	client := ent.FromContext(ctx)
+	b, err := client.Block.Get(ctx, obj.ID)
+
+	if err != nil {
+		return nil, fmt.Errorf("has occurred error on process: %w", err)
+	}
+	return (*enum.TransfStrategy)(&b.InputStateTransfStrategy), nil
+}
+
+func (r blockResolver) OutputStateTransfStrategy(ctx context.Context, obj *ent.Block) (*enum.TransfStrategy, error) {
+	client := ent.FromContext(ctx)
+	b, err := client.Block.Get(ctx, obj.ID)
+
+	if err != nil {
+		return nil, fmt.Errorf("has occurred error on process: %w", err)
+	}
+	return (*enum.TransfStrategy)(&b.OutputStateTransfStrategy), nil
+}
+
+func (r blockResolver) BackoffRate(ctx context.Context, obj *ent.Block) (int, error) {
+	client := ent.FromContext(ctx)
+	b, err := client.Block.Get(ctx, obj.ID)
+
+	if err != nil {
+		return b.ID, fmt.Errorf("has occurred error on process: %w", err)
+	}
+	return b.BackOffRate, nil
+}
+
+func (r blockResolver) MaxAttemps(ctx context.Context, obj *ent.Block) (int, error) {
+	client := ent.FromContext(ctx)
+	b, err := client.Block.Get(ctx, obj.ID)
+
+	if err != nil {
+		return b.ID, fmt.Errorf("has occurred error on process: %w", err)
+	}
+	return b.MaxAttemps, nil
+}
+
+func (r blockResolver) RetryInterval(ctx context.Context, obj *ent.Block) (int, error) {
+	client := ent.FromContext(ctx)
+	b, err := client.Block.Get(ctx, obj.ID)
+
+	if err != nil {
+		return b.ID, fmt.Errorf("has occurred error on process: %w", err)
+	}
+	return b.RetryInterval, nil
+}
+
+func (r blockResolver) Units(ctx context.Context, obj *ent.Block) (*models.RetryUnit, error) {
+	client := ent.FromContext(ctx)
+	b, err := client.Block.Get(ctx, obj.ID)
+
+	if err != nil {
+		return nil, fmt.Errorf("has occurred error on process: %w", err)
+	}
+	return (*models.RetryUnit)(&b.RetryUnit), nil
+}
+
+func (r blockResolver) InputStateTransformation(ctx context.Context, obj *ent.Block) (string, error) {
+	return obj.InputStateTransformation, nil
+}
+
+func (r blockResolver) OutputStateTransformation(ctx context.Context, obj *ent.Block) (string, error) {
+	return obj.OutputStateTransformation, nil
+}
