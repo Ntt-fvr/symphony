@@ -13,7 +13,7 @@ import type {BaseBlockInputType} from '../BaseBlockSettingsTypes';
 
 type DecisionRouteInputType = {|
   cid: string,
-  name: String,
+  name: string,
   condition: string,
 |};
 
@@ -21,18 +21,16 @@ export type DecisionBlockInputType = {
   routes: DecisionRouteInputType,
   ...BaseBlockInputType,
 };
-export type DecisionSettings = $ReadOnly<{|
-  routes: DecisionRouteInputType,
+export type DecisionSettingsType = $ReadOnly<{|
+  routes: Array<DecisionRouteInputType>,
 |}>;
 
-export const initialDecisionSettings: DecisionSettings = {
-  routes: {
-    cid: null,
-    name: null,
-    condition: null,
-  },
+export const initialDecisionSettings: DecisionSettingsType = {
+  routes: undefined,
 };
 
-export const setDecisionSettings: DecisionSettings = newDecisionSettings => {
-  return newDecisionSettings;
+export const setDecisionSettings: DecisionSettingsType = (
+  newDecisionSettings: Array<DecisionRouteInputType>,
+) => {
+  return {routes: newDecisionSettings};
 };

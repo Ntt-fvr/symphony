@@ -9,7 +9,7 @@
  */
 'use strict';
 
-export type InputSettings = {
+export type InputSettingsType = {
   enableInputTransformation: boolean,
   inputTransfStrategy: string,
   inputParamDefinitions: string,
@@ -18,15 +18,17 @@ export type InputSettings = {
   inputStateParamDefinitions: string,
 };
 
-export const initialInputSettings: InputSettings = {
-  enableInputTransformation: null,
-  inputTransfStrategy: null,
-  inputParamDefinitions: null,
-  enableInputStateTransformation: null,
-  inputStateTransfStrategy: null,
-  inputStateParamDefinitions: null,
+export const initialInputSettings: InputSettingsType = {
+  enableInputTransformation: undefined,
+  inputTransfStrategy: undefined,
+  inputParamDefinitions: undefined,
+  enableInputStateTransformation: undefined,
+  inputStateTransfStrategy: undefined,
+  inputStateParamDefinitions: undefined,
 };
 
-export const setInputSettings = newInputSettings => {
+export const setInputSettings: InputSettingsType = (
+  newInputSettings: InputSettingsType,
+) => {
   return newInputSettings;
 };

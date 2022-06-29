@@ -8,25 +8,25 @@
  * @format
  */
 'use strict';
+
 import type {BlockUIRepresentationInput} from '../BaseBlockSettingsTypes';
 
-export type GoToBlockInputType = {
+export type StartBlockInputType = {
   cid: string,
-  targetBlockCid?: ?string,
+  paramDefinitions: string,
   uiRepresentation?: ?BlockUIRepresentationInput,
-  type: string,
 };
 
-export type GoToSettings = $ReadOnly<{|
-  goToType: string,
-  targetBlockCid: string,
+export type ManualStartSettingsType = $ReadOnly<{|
+  paramDefinitions: string,
 |}>;
 
-export const initialGoToSettings: GoToSettings = {
-  goToType: null,
-  targetBlockCid: null,
+export const initialManualStartSettings: ManualStartSettingsType = {
+  paramDefinitions: null,
 };
 
-export const setGoToSettings: GoToSettings = newGoToSettings => {
-  return newGoToSettings;
+export const setManualStartSettings: ManualStartSettingsType = (
+  newManualStartSettings: ManualStartSettingsType,
+) => {
+  return newManualStartSettings;
 };

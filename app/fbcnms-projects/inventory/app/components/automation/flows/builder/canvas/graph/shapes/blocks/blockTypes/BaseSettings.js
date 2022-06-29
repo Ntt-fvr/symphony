@@ -33,12 +33,12 @@ import {
 import {
   initialDecisionSettings,
   setDecisionSettings,
-} from './decision/DecisionSettings';
+} from './decision/DecisionSettingsType';
 import {initialEndSettings, setEndSettings} from './end/EndSettings';
 import {
   initialExecuteFlowSettings,
   setExecuteFlowSettings,
-} from './executeFlow/ExecuteFlowSettings';
+} from './executeFlow/ExecuteFlowSettingsType';
 import {
   initialExecuteNetworkActionSettings,
   setExecuteNetworkActionSettings,
@@ -47,20 +47,23 @@ import {
   initialForEachLoopSettings,
   setForEachLoopSettings,
 } from './forEachLoop/ForEachLoopSettings';
-import {initialGoToSettings, setGoToSettings} from './goTo/GoToSettings';
+import {initialGoToSettings, setGoToSettings} from './goTo/GoToSettingsType';
 import {
   initialInvokeRestApiSettings,
   setInvokeRestApiSettings,
-} from './invokeRestApi/InvokeRestApiSettings';
+} from './invokeRestApi/InvokeRestApiSettingsType';
 import {
   initialManualStartSettings,
   setManualStartSettings,
-} from './manualStart/ManualStartSettings';
+} from './manualStart/ManualStartSettingsType';
 import {
   initialParallelSettings,
   setParallelSettings,
 } from './parallel/ParallelSettings';
-import {initialTimerSettings, setTimerSettings} from './timer/TimerSettings';
+import {
+  initialTimerSettings,
+  setTimerSettings,
+} from './timer/TimerSettingsType';
 import {
   initialTriggerStartSettings,
   setTriggerStartSettings,
@@ -84,7 +87,7 @@ import {
 import {
   initialWaitSignalSettings,
   setWaitSignalSettings,
-} from './waitSignal/WaitSignalSettings';
+} from './waitSignal/WaitSignalSettingsType';
 
 export const getInitialBlockSettings = type => {
   switch (type) {

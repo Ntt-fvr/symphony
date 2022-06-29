@@ -9,7 +9,7 @@
  */
 'use strict';
 
-export type ErrorHandling = {
+export type ErrorHandlingType = {
   enableErrorHandling: boolean,
   enableRetryPolicy: boolean,
   retryInterval: number,
@@ -19,16 +19,18 @@ export type ErrorHandling = {
   errorCatching: boolean,
 };
 
-export const initialErrorSettings: ErrorHandling = {
-  enableErrorHandling: null,
-  enableRetryPolicy: null,
-  retryInterval: null,
-  units: null,
-  maxAttemps: null,
-  backoffRate: null,
-  errorCatching: null,
+export const initialErrorSettings: ErrorHandlingType = {
+  enableErrorHandling: undefined,
+  enableRetryPolicy: undefined,
+  retryInterval: undefined,
+  units: undefined,
+  maxAttemps: undefined,
+  backoffRate: undefined,
+  errorCatching: undefined,
 };
 
-export const setErrorSettings = newErrorSettings => {
+export const setErrorSettings: ErrorHandlingType = (
+  newErrorSettings: ErrorHandlingType,
+) => {
   return newErrorSettings;
 };

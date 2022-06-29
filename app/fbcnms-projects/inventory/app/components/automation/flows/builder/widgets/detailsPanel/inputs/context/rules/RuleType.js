@@ -12,7 +12,7 @@ export type RuleType = {|
   id: string,
   name: string,
   index?: ?number,
-  value?: ?string,
+  rule?: ?string,
   isDeleted?: ?boolean,
   isDefault?: ?boolean,
 |};

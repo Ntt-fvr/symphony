@@ -9,20 +9,22 @@
  */
 'use strict';
 
-export type WaitSignalSettings = $ReadOnly<{|
+export type WaitSignalSettingsType = $ReadOnly<{|
   signalType: string,
   signalModule: string,
   customFilter: string,
   blocked: true,
 |}>;
 
-export const initialWaitSignalSettings: WaitSignalSettings = {
+export const initialWaitSignalSettings: WaitSignalSettingsType = {
   signalType: null,
   signalModule: null,
   customFilter: null,
   blocked: null,
 };
 
-export const setWaitSignalSettings: WaitSignalSettings = newWaitSignalSettings => {
+export const setWaitSignalSettings: WaitSignalSettingsType = (
+  newWaitSignalSettings: WaitSignalSettingsType,
+) => {
   return newWaitSignalSettings;
 };

@@ -14,20 +14,20 @@ import type {
   ImportFlowDraftInput,
   ImportFlowDraftMutationResponse,
 } from '../../../../mutations/__generated__/ImportFlowDraftMutation.graphql';
-import type {DecisionBlockInputType} from '../builder/canvas/graph/shapes/blocks/blockTypes/decision/DecisionSettings';
+import type {DecisionBlockInputType} from '../builder/canvas/graph/shapes/blocks/blockTypes/decision/DecisionSettingsType';
 import type {EndBlockInputType} from '../builder/canvas/graph/shapes/blocks/blockTypes/end/EndSettings';
-import type {ExecuteFlowBlockInputType} from '../builder/canvas/graph/shapes/blocks/blockTypes/executeFlow/ExecuteFlowSettings';
-import type {GoToBlockInputType} from '../builder/canvas/graph/shapes/blocks/blockTypes/goTo/GoToSettings';
+import type {ExecuteFlowBlockInputType} from '../builder/canvas/graph/shapes/blocks/blockTypes/executeFlow/ExecuteFlowSettingsType';
+import type {GoToBlockInputType} from '../builder/canvas/graph/shapes/blocks/blockTypes/goTo/GoToSettingsType';
 import type {IBlock} from '../builder/canvas/graph/shapes/blocks/BaseBlock';
 import type {IConnector} from '../builder/canvas/graph/shapes/connectors/BaseConnector';
 import type {IShape} from '../builder/canvas/graph/facades/shapes/BaseShape';
-import type {InvokeRestAPIBlockInputType} from '../builder/canvas/graph/shapes/blocks/blockTypes/invokeRestApi/InvokeRestApiSettings';
+import type {InvokeRestAPIBlockInputType} from '../builder/canvas/graph/shapes/blocks/blockTypes/invokeRestApi/InvokeRestApiSettingsType';
 import type {MutationCallbacks} from '../../../../mutations/MutationCallbacks';
 import type {
   PublishFlowInput,
   PublishFlowMutationResponse,
 } from '../../../../mutations/__generated__/PublishFlowMutation.graphql';
-import type {StartBlockInputType} from '../builder/canvas/graph/shapes/blocks/blockTypes/manualStart/ManualStartSettings';
+import type {StartBlockInputType} from '../builder/canvas/graph/shapes/blocks/blockTypes/manualStart/ManualStartSettingsType';
 import type {TrueFalseBlockInputType} from '../builder/canvas/graph/shapes/blocks/blockTypes/trueFalse/TrueFalseSettings';
 
 import {TYPE as TimerType} from '../builder/canvas/graph/facades/shapes/vertexes/triggers/Timer';
@@ -93,9 +93,14 @@ export function mapStartBlockForSave(block: IBlock): StartBlockInputType {
 
 export function mapDecisionBlockForSave(block: IBlock): DecisionBlockInputType {
   const {routes} = block.settings;
+  const newRoutes = routes?.map(route => ({
+    cid: route.id,
+    name: route.name,
+    condition: route.rule,
+  }));
   return {
     ...mapBlockForSave(block),
-    routes: routes,
+    routes: newRoutes,
   };
 }
 
@@ -229,32 +234,7 @@ export function mapEndBlockForSave(block: IBlock): EndBlockInputType {
 }
 
 function mapBlockForSave(block: IBlock): BaseBlockInputType {
-  const {
-    enableInputTransformation,
-    inputTransfStrategy,
-    inputParamDefinitions,
-    enableInputStateTransformation,
-    inputStateTransfStrategy,
-    inputStateParamDefinitions,
-  } = block.inputSettings;
-
-  const {
-    enableOutputTransformation,
-    outputParamDefinitions,
-    outputTranfStrategy,
-    enableOutputStateTransformation,
-    outputStateTransfStrategy,
-    outputStateParamDefinitions,
-  } = block.outputSettings;
-
-  const {
-    enableErrorHandling,
-    enableRetryPolicy,
-    retryInterval,
-    units,
-    maxAttemps,
-    backoffRate,
-  } = block.errorSettings;
+  const {inputSettings, outputSettings, errorSettings} = block;
 
   return {
     cid: block.id,
@@ -263,24 +243,9 @@ function mapBlockForSave(block: IBlock): BaseBlockInputType {
       xPosition: Math.floor(block.model.attributes.position.x),
       yPosition: Math.floor(block.model.attributes.position.y),
     },
-    enableInputTransformation: enableInputTransformation,
-    inputTransfStrategy: inputTransfStrategy,
-    inputParamDefinitions: inputParamDefinitions,
-    enableInputStateTransformation: enableInputStateTransformation,
-    inputStateTransfStrategy: inputStateTransfStrategy,
-    inputStateParamDefinitions: inputStateParamDefinitions,
-    enableOutputTransformation: enableOutputTransformation,
-    outputTranfStrategy: outputTranfStrategy,
-    outputParamDefinitions: outputParamDefinitions,
-    enableOutputStateTransformation: enableOutputStateTransformation,
-    outputStateTransfStrategy: outputStateTransfStrategy,
-    outputStateParamDefinitions: outputStateParamDefinitions,
-    enableErrorHandling: enableErrorHandling,
-    enableRetryPolicy: enableRetryPolicy,
-    retryInterval: retryInterval,
-    units: units,
-    maxAttemps: maxAttemps,
-    backoffRate: backoffRate,
+    ...inputSettings,
+    ...outputSettings,
+    ...errorSettings,
   };
 }
 
