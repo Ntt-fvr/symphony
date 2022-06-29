@@ -47,42 +47,43 @@ const ConfigurationTimer = ({block}: Props) => {
     {name: 'Date', id: 'date'},
     {name: 'Time and Timezone?', id: 'time_and_timezone'},
   ];
-  const [settingsValues, handleInputChange, handleAllInputChange] = useForm({
-    behavior: 'fixed_interval',
-    expressionLanguage: false,
-    timerSignal: false,
-    secondsNumber: 0,
-    secondsExpression: '',
-    dateTimerExpression: 'date',
-    pointingFixedInterval: '',
-    pointingDateTime: '',
+  const [
+    timerSettingsValues,
+    handleInputChange,
+    handleAllInputChange,
+  ] = useForm({
+    behavior: settings.behavior || 'fixed_interval',
+    datetime: settings.datetime || 'date',
+    enableExpressionL: settings.enableExpressionL || false,
+    expression: settings.expression || 'null',
+    exitPoint: settings.exitPoint || false,
+    seconds: settings.seconds || 0,
   });
 
   const classes = useStyles();
 
   useEffect(() => {
-    block.setSettings(settingsValues);
-  }, [settingsValues]);
+    block.setSettings(timerSettingsValues);
+  }, [timerSettingsValues]);
 
   const {
     behavior,
-    expressionLanguage,
-    secondsNumber,
-    secondsExpression,
-    dateTimerExpression,
-    timerSignal,
-    pointingFixedInterval,
-    pointingDateTime,
-  } = settingsValues;
+    enableExpressionL,
+    seconds,
+    datetime,
+    expression,
+    exitPoint,
+  } = timerSettingsValues;
 
   useEffect(() => {
-    const copy = Object.assign({}, settingsValues);
-    copy['secondsNumber'] = 0;
-    copy['secondsExpression'] = '';
-    copy['dateTimerExpression'] = '';
-    copy['pointingFixedInterval'] = '';
-    copy['pointingDateTime'] = '';
-    handleAllInputChange(copy);
+    if (timerSettingsValues.behavior) {
+      const copy = Object.assign({}, timerSettingsValues);
+      copy['seconds'] = 0;
+      copy['datetime'] = 'date';
+      copy['expression'] = '';
+      copy['seconds'] = '';
+      handleAllInputChange(copy);
+    }
   }, [behavior]);
 
   return (
@@ -96,98 +97,71 @@ const ConfigurationTimer = ({block}: Props) => {
           items={behaviors}
         />
       </Grid>
-      {behavior && behavior !== FIXED_INTERVAL && (
-        <Grid item xs={12} className={classes.grid}>
-          <Switch
-            label={'Expression Language'}
-            name={'expressionLanguage'}
-            value={expressionLanguage}
-            handleInputChange={handleInputChange}
-          />
-        </Grid>
-      )}
 
-      {behavior &&
-        behavior !== FIXED_INTERVAL &&
-        (expressionLanguage ? (
-          <Grid item xs={12} className={classes.gridCodeEditor}>
-            <CodeEditor
-              mode="javascript"
-              value={''}
-              title={'Expression Language'}
-            />
-          </Grid>
-        ) : (
+      {behavior === FIXED_INTERVAL && (
+        <>
           <Grid item xs={12} className={classes.grid}>
-            <TextField
-              label={'Seconds'}
-              type={'number'}
-              name={'secondsNumber'}
-              value={secondsNumber}
+            <Switch
+              label={'Expression Language'}
+              name={'enableExpressionL'}
+              value={enableExpressionL}
               handleInputChange={handleInputChange}
             />
           </Grid>
-        ))}
-
-      {behavior === FIXED_INTERVAL && (
-        <Grid item xs={12} className={classes.grid}>
-          <TextField
-            label={'Seconds'}
-            type={'number'}
-            name={'secondsNumber'}
-            value={secondsNumber}
-            handleInputChange={handleInputChange}
-          />
-        </Grid>
+          {enableExpressionL ? (
+            <Grid item xs={12} className={classes.gridCodeEditor}>
+              <CodeEditor
+                mode="javascript"
+                value={expression}
+                name={'expression'}
+                onChange={handleInputChange}
+                title={'Expression Language'}
+              />
+            </Grid>
+          ) : (
+            <Grid item xs={12} className={classes.grid}>
+              <TextField
+                label={'Seconds'}
+                type={'number'}
+                name={'seconds'}
+                value={seconds}
+                handleInputChange={handleInputChange}
+              />
+            </Grid>
+          )}
+        </>
       )}
-      <Grid item xs={12} className={classes.grid}>
-        <Select
-          label={'Date and Time'}
-          name={'dateTimerExpression'}
-          value={dateTimerExpression}
-          onChange={handleInputChange}
-          items={dateTimeValues}
-        />
-      </Grid>
-      <Grid item xs={12} className={classes.gridCodeEditor}>
-        <CodeEditor
-          mode="javascript"
-          value={''}
-          title={'Expression Language'}
-        />
-      </Grid>
+      {behavior && behavior !== FIXED_INTERVAL && (
+        <>
+          <Grid item xs={12} className={classes.grid}>
+            <Select
+              label={'Date and Time'}
+              name={'datetime'}
+              value={datetime}
+              onChange={handleInputChange}
+              items={dateTimeValues}
+            />
+          </Grid>
+          <Grid item xs={12} className={classes.gridCodeEditor}>
+            <CodeEditor
+              mode="javascript"
+              value={expression}
+              name={'expression'}
+              onChange={handleInputChange}
+              title={'Expression Language'}
+            />
+          </Grid>
+        </>
+      )}
 
       <Grid item xs={12} className={classes.grid}>
         <Switch
           label={'Link to change timer signal'}
-          name={'timerSignal'}
-          value={timerSignal}
+          name={'exitPoint'}
+          value={exitPoint}
           handleInputChange={handleInputChange}
         />
       </Grid>
-      {timerSignal ? (
-        behavior === FIXED_INTERVAL ? (
-          <Grid item xs={12} className={classes.grid}>
-            <TextField
-              label={'Seconds'}
-              type={'number'}
-              name={'secondsNumber'}
-              value={secondsNumber}
-              handleInputChange={handleInputChange}
-            />
-          </Grid>
-        ) : (
-          <Grid item xs={12} className={classes.gridCodeEditor}>
-            <CodeEditor
-              mode="javascript"
-              value={''}
-              title={'Expression Language'}
-            />
-          </Grid>
-        )
-      ) : (
-        ''
-      )}
     </>
   );
 };

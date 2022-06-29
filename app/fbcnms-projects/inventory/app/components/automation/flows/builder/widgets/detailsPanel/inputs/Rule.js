@@ -108,7 +108,8 @@ const Rule = (props: Props) => {
       <AccordionDetails className={classes.accordionDetails}>
         <CodeEditor
           mode="javascript"
-          rule={rule}
+          value={rule.rule}
+          isRuleExpression={true}
           onChange={newRule =>
             dispatch({
               type: 'UPDATE_RULE_VALUE',

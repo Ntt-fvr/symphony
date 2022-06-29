@@ -18,17 +18,17 @@ import type {
 } from '../../facades/shapes/vertexes/BaseVertext';
 import type {Paper} from '../../facades/Paper';
 
-import type {DecisionSettings} from './blockTypes/decision/DecisionSettings';
+import type {DecisionSettingsType} from './blockTypes/decision/DecisionSettingsType';
 import type {EndSettings} from './blockTypes/end/EndSettings';
-import type {ErrorHandling} from './blockTypes/ErrorSettings';
-import type {ExecuteFlowSettings} from './blockTypes/executeFlow/ExecuteFlowSettings';
-import type {GoToSettings} from './blockTypes/goTo/GoToSettings';
-import type {InputSettings} from './blockTypes/InputSettings';
-import type {InvokeRestApiSettings} from './blockTypes/invokeRestApi/InvokeRestApiSettings';
-import type {ManualStartSettings} from './blockTypes/manualStart/ManualStartSettings';
-import type {OutputSettings} from './blockTypes/OutputSettings';
-import type {TimerSettings} from './blockTypes/timer/TimerSettings';
-import type {WaitSignalSettings} from './blockTypes/waitSignal/WaitSignalSettings';
+import type {ErrorHandlingType} from './blockTypes/ErrorSettings';
+import type {ExecuteFlowSettingsType} from './blockTypes/executeFlow/ExecuteFlowSettingsType';
+import type {GoToSettingsType} from './blockTypes/goTo/GoToSettingsType';
+import type {InputSettingsType} from './blockTypes/InputSettingsType';
+import type {InvokeRestApiSettingsType} from './blockTypes/invokeRestApi/InvokeRestApiSettingsType';
+import type {ManualStartSettingsType} from './blockTypes/manualStart/ManualStartSettingsType';
+import type {OutputSettingsType} from './blockTypes/OutputSettingsType';
+import type {TimerSettingsType} from './blockTypes/timer/TimerSettingsType';
+import type {WaitSignalSettingsType} from './blockTypes/waitSignal/WaitSignalSettingsType';
 
 import BaseConnector from '../connectors/BaseConnector';
 import {DISPLAY_SETTINGS} from '../../utils/helpers';
@@ -45,11 +45,11 @@ import {
 import {
   initialInputSettings,
   setInputSettings,
-} from './blockTypes/InputSettings';
+} from './blockTypes/InputSettingsType';
 import {
   initialOutputSettings,
   setOutputSettings,
-} from './blockTypes/OutputSettings';
+} from './blockTypes/OutputSettingsType';
 
 const DUPLICATION_SHIFT = {
   x: 84,
@@ -65,16 +65,15 @@ const selectionHighlighting = {
   },
 };
 
-type settingsTypes = {
-  ...WaitSignalSettings,
-  ...TimerSettings,
-  ...GoToSettings,
-  ...DecisionSettings,
-  ...ManualStartSettings,
-  ...EndSettings,
-  ...InvokeRestApiSettings,
-  ...ExecuteFlowSettings,
-};
+type settingsTypes =
+  | WaitSignalSettingsType
+  | TimerSettingsType
+  | GoToSettingsType
+  | DecisionSettingsType
+  | ManualStartSettingsType
+  | EndSettings
+  | InvokeRestApiSettingsType
+  | ExecuteFlowSettingsType;
 
 export interface IBlock {
   +id: string;
@@ -85,9 +84,9 @@ export interface IBlock {
   +type: string;
   +name: string;
   +settings: settingsTypes;
-  +inputSettings: InputSettings;
-  +outputSettings: OutputSettings;
-  +errorSettings: ErrorHandling;
+  +inputSettings: InputSettingsType;
+  +outputSettings: OutputSettingsType;
+  +errorSettings: ErrorHandlingType;
   +isSelected: boolean;
   +getPorts: () => $ReadOnlyArray<VertexPort>;
   +getInputPort: () => ?VertexPort;
@@ -117,9 +116,9 @@ export default class BaseBlock implements IBlock {
   type: string;
   name: string;
   settings: settingsTypes;
-  inputSettings: InputSettings;
-  outputSettings: OutputSettings;
-  errorSettings: ErrorHandling;
+  inputSettings: InputSettingsType;
+  outputSettings: OutputSettingsType;
+  errorSettings: ErrorHandlingType;
   isSelected: boolean;
   id: string;
   outConnectors: Array<IConnector>;
@@ -271,7 +270,7 @@ export default class BaseBlock implements IBlock {
     return this.clone(false);
   }
 
-  clone(addToGraph?: boolean = true) {
+  clone(addToGraph: boolean = true) {
     const clonedModel = this.model.clone();
     clonedModel.position(
       this.model.attributes.position.x + DUPLICATION_SHIFT.x,
