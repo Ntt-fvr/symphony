@@ -8,15 +8,10 @@
  * @format
  */
 
-import RelationshipTypeItem from './RelationshipTypeItem';
-
-import TextField from '@material-ui/core/TextField';
-import fbt from 'fbt';
-import {makeStyles} from '@material-ui/styles';
-
 import type {AddConfigurationParameterTypeMutationResponse} from '../../mutations/__generated__/AddConfigurationParameterTypeMutation.graphql';
 import type {AddConfigurationParameterTypeMutationVariables} from '../../mutations/__generated__/AddConfigurationParameterTypeMutation.graphql';
 import type {AddEditResourceSpecificationQuery} from './__generated__/AddEditResourceSpecificationQuery.graphql';
+import type {AddResourceSpecificationMutationVariables} from '../../mutations/__generated__/AddResourceSpecificationMutation.graphql';
 import type {AddResourceSpecificationRelationshipListMutationVariables} from '../../mutations/__generated__/AddResourceSpecificationRelationshipListMutation.graphql';
 import type {EditConfigurationParameterTypeMutationVariables} from '../../mutations/__generated__/EditConfigurationParameterTypeMutation.graphql';
 import type {EditResourceSpecificationMutationVariables} from '../../mutations/__generated__/EditResourceSpecificationMutation.graphql';
@@ -40,8 +35,11 @@ import MenuItem from '@material-ui/core/MenuItem';
 import ParameterTypesTableDispatcher from '../form/context/property_types/ParameterTypesTableDispatcher';
 import PropertyTypesTableDispatcher from '../form/context/property_types/PropertyTypesTableDispatcher';
 import React, {useMemo, useState} from 'react';
+import RelationshipTypeItem from './RelationshipTypeItem';
 import SaveDialogConfirm from './SaveDialogConfirm';
 import TableConfigureAction from '../action_catalog/TableConfigureAction';
+import TextField from '@material-ui/core/TextField';
+import fbt from 'fbt';
 import inventoryTheme from '../../common/theme';
 import {camelCase, omit, startCase} from 'lodash';
 import {convertParameterTypeToMutationInput} from '../../common/ParameterType';
@@ -49,6 +47,7 @@ import {convertPropertyTypeToMutationInput} from '../../common/PropertyType';
 import {convertTableTypeToMutationInput} from '../context/TableTypeState';
 import {graphql} from 'relay-runtime';
 import {isTempId} from '../../common/EntUtils';
+import {makeStyles} from '@material-ui/styles';
 import {toMutableParameterType} from '../../common/ParameterType';
 import {toMutablePropertyType} from '../../common/PropertyType';
 import {useDisabledButton} from '../assurance/common/useDisabledButton';
@@ -184,7 +183,7 @@ export const AddEditResourceSpecification = (props: Props) => {
 
   const nameEdit = useFormInput(dataForm.name);
 
-  //const vendorEdit = useFormInput(dataForm.vendor.id);
+  const vendorEdit = useFormInput(dataForm?.vendor?.id);
 
   const namesFilter = filterData?.map(item => item.name);
 
@@ -266,7 +265,7 @@ export const AddEditResourceSpecification = (props: Props) => {
       input: {
         id: dataForm.id,
         name: nameEdit.value,
-        //vendor: vendorEdit.value,
+        vendor: vendorEdit.value,
         vendor: 'nokia',
         resourceType: dataForm.resourceType.id,
         resourcePropertyTypes: convertPropertyTypeToMutationInput(
@@ -419,7 +418,8 @@ export const AddEditResourceSpecification = (props: Props) => {
                   select
                   label="Vendor"
                   variant="outlined"
-                  fullWidth>
+                  fullWidth
+                  {...vendorEdit}>
                   {vendorData?.map((item, index) => (
                     <MenuItem key={index} value={item.id}>
                       {startCase(camelCase(item.name))}

@@ -354,7 +354,7 @@ export const EditResourceTypeItem = (props: Props) => {
                     className={classes.iconVisibility}
                     skin="gray"
                     icon={VisibilityIcon}
-                    onClick={() => showEditFormData({item})}
+                    onClick={() => showEditFormData(item)}
                   />
                 </Grid>
                 <Divider />
