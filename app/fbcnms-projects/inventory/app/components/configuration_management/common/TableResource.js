@@ -71,7 +71,7 @@ const TableResource = (props: Props) => {
             <TableRow>
               <StyledTableCell>Resource</StyledTableCell>
               <StyledTableCell>Parameter</StyledTableCell>
-              <StyledTableCell>Current value</StyledTableCell>
+              {/* <StyledTableCell>Current value</StyledTableCell> */}
               <StyledTableCell>New value</StyledTableCell>
             </TableRow>
           </TableHead>
@@ -90,7 +90,7 @@ const TableResource = (props: Props) => {
                   </Button>
                 </TableCell>
                 <TableCell>{item.parameter}</TableCell>
-                <TableCell>{item.currentValue}</TableCell>
+                {/* <TableCell>{item.currentValue}</TableCell> */}
                 <TableCell>{item.newValue}</TableCell>
               </StyledTableRow>
             ))}

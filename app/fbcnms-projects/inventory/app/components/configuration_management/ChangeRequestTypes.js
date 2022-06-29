@@ -22,7 +22,6 @@ import {ChangeRequestByBulk} from './ChangeRequestByBulk';
 import {ChangeRequestDetails} from './ChangeRequestDetails';
 import {ChangeRequestSearchConfig} from './ChangeRequestSearchConfig';
 import {CircleIndicator} from '../resource_instance/CircleIndicator';
-import {ConstructionOutlined} from '@material-ui/icons';
 import {Grid} from '@material-ui/core';
 import {
   buildPropertyFilterConfigs,
@@ -30,7 +29,6 @@ import {
 } from '../comparison_view/FilterUtils';
 import {fetchQuery, graphql} from 'relay-runtime';
 import {makeStyles} from '@material-ui/styles';
-import {useDocumentCategoryByLocationTypeNodes} from '../../common/LocationType';
 import {useMemo} from 'react';
 
 export const PROJECTS_PAGE_SIZE = 10;
@@ -109,6 +107,8 @@ const ChangeRequestTypes = () => {
   const [openBulkRequest, setOpenBulkRequest] = useState(false);
   const [changeRequestInitial, setChangeRequestInitial] = useState([]);
   const [changeRequest, setChangeRequest] = useState([]);
+  const [infoCSV, setinfoCSV] = useState([])
+  const [nameFile, setNameFile] = useState('')
   const classes = useStyles();
 
   const locationTypesFilterConfigs = useLocationTypes();
@@ -220,18 +220,22 @@ const ChangeRequestTypes = () => {
   const handleOpenDetails = () => {
     setOpenDetails(prevStateDetails => !prevStateDetails);
   };
-  const bulk = () => {
+  const bulk = (infoCSV ,nameFile) => {
     setOpenBulkRequest(prevStateBulk => !prevStateBulk);
+    setinfoCSV(infoCSV)
+    setNameFile(nameFile)
   };
   if (openDetails) {
     return (
-      <ChangeRequestDetails data={dataRow} setOpenDetails={setOpenDetails} />
+      <ChangeRequestDetails data={dataRow} setOpenDetails={setOpenDetails}  />
     );
   }
   if (openBulkRequest) {
     return (
       <ChangeRequestByBulk
         onClick={() => setOpenBulkRequest(prevStateBulk => !prevStateBulk)}
+        infoCSV={infoCSV}
+        nameFile={nameFile}
       />
     );
   }

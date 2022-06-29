@@ -9,12 +9,15 @@
  */
 
 import Button from '@material-ui/core/Button';
-import React from 'react';
+import React, {useState} from 'react';
 import Text from '@symphony/design-system/components/Text';
 import classNames from 'classnames';
 import {Grid} from '@material-ui/core';
 import {makeStyles} from '@material-ui/styles';
 import Select from '@symphony/design-system/components/Select/Select';
+import {uploadFileNifi} from '../../FileUpload/FileUploadUtilsNifi';
+import shortid from 'shortid';
+import { csvToArray } from '../csvToArray';
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -22,6 +25,19 @@ const useStyles = makeStyles(() => ({
     margin: '0',
   },
 }));
+
+const valuesNF = [
+  {
+    key: 'enrichment-data',
+    value: 'enrichment-data',
+    label: 'enrichment-data',
+  },
+  {
+    key: 'nf-initial-parameters',
+    value: 'nf-initial-parameters',
+    label: 'nf-initial-parameters',
+  },
+];
 
 export type MouseEventHandler = (
   SyntheticMouseEvent<HTMLElement>,
@@ -51,12 +67,37 @@ const ButtonsChangeRequest = (props: Props) => {
   } = props;
   const classes = useStyles();
 
+  const [selectedValue, setSelectedValue] = useState('');
+
+  const fileValidate = value => {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.csv';
+    input.onchange = e => {
+      const file = e.target.files[0];
+      const fileId = shortid.generate();
+
+      if (value == 'enrichment-data') {
+        uploadFileNifi(fileId,file);
+      } else {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          const text = e.target.result;
+          onClickBulk(csvToArray(text), file.name);
+        };
+        reader.readAsText(file);
+      }
+    };
+    input.click();
+    setSelectedValue(value);
+  };
+
   return (
     <Grid className={classes.root}>
       <Select
-        options={[]}
-        // selectedValue={workOrder.priority}
-        // onChange={value => _setWorkOrderDetail('priority', value)}
+        options={valuesNF}
+        selectedValue={selectedValue}
+        onChange={value => fileValidate(value)}
       />
 
       <Button
