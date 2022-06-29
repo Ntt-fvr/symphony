@@ -13,6 +13,7 @@ import (
 	"github.com/facebookincubator/ent-contrib/entgql"
 	"github.com/facebookincubator/symphony/pkg/authz"
 	"github.com/facebookincubator/symphony/pkg/ent/privacy"
+	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
 	"github.com/facebookincubator/symphony/pkg/flowengine/flowschema"
 	"github.com/facebookincubator/symphony/pkg/hooks"
 )
@@ -20,6 +21,10 @@ import (
 // Block defines the block schema.
 type Block struct {
 	schema
+}
+type DecisionRoute struct {
+	ExitPoint ExitPoint
+	Condition string
 }
 
 // Fields returns block fields.
@@ -51,6 +56,102 @@ func (Block) Fields() []ent.Field {
 		field.JSON("input_params", []*flowschema.VariableExpression{}).
 			Optional(),
 		field.JSON("ui_representation", &flowschema.BlockUIRepresentation{}).
+			Optional(),
+		field.Bool("enable_input_transformation").
+			Optional(),
+		field.Enum("input_transf_strategy").
+			NamedValues(
+				"Replace", "REPLACE",
+				"Merge", "MERGE",
+			),
+		field.String("input_transformation").
+			Optional(),
+		field.Bool("enable_output_transformation").
+			Optional(),
+		field.Enum("output_transf_strategy").
+			NamedValues(
+				"Replace", "REPLACE",
+				"Merge", "MERGE",
+			),
+		field.String("output_transformation").
+			Optional(),
+		field.Bool("enable_input_state_transformation").
+			Optional(),
+		field.Enum("input_state_transf_strategy").
+			NamedValues(
+				"Replace", "REPLACE",
+				"Merge", "MERGE",
+			),
+		field.String("input_state_transformation").
+			Optional(),
+		field.Bool("enable_output_state_transformation").
+			Optional(),
+		field.Enum("output_state_transf_strategy").
+			GoType(enum.TransfStrategy("")),
+		field.String("output_state_transformation").
+			Optional(),
+		field.Bool("enable_error_handling").
+			Optional(),
+		field.Bool("enable_retry_policy").
+			Optional(),
+		field.Int("retryInterval").
+			Optional(),
+		field.Enum("retry_unit").
+			NamedValues(
+				"SECONDS", "seconds",
+				"MINUTES", "minutes",
+				"HOURS", "hours",
+			),
+		field.Int("maxAttemps").
+			Optional(),
+		field.Int("backOffRate").
+			Optional(),
+
+		field.Enum("timer_behavior").
+			NamedValues(
+				"FIXED_INTERVAL", "fixed_interval",
+				"SPECIFIC_DATETIME", "specific_time",
+			).
+			Optional(),
+		field.Int("seconds").
+			Optional(),
+		field.Bool("enable_timer_expression").
+			Optional(),
+		field.String("timer_expression").
+			Optional(),
+		field.Time("timer_specific_date").
+			Optional(),
+
+		field.Enum("url_method").
+			NamedValues(
+				"POST", "fixed_interval",
+				"GET", "specific_time",
+				"PUT", "put",
+				"DELETE", "delete",
+				"PATCH", "patch",
+			).
+			Optional(),
+		field.Int("connection_timeout").
+			Optional(),
+		field.String("body").
+			Optional(),
+		field.Strings("headers").
+			Optional(),
+
+		field.Enum("signal_type").
+			NamedValues(
+				"POST", "fixed_interval",
+				"GET", "specific_time",
+			).Optional(),
+		field.Enum("signal_module").
+			NamedValues(
+				"INVENTORY", "inventory",
+				"CM", "cm",
+			).
+			Optional(),
+		field.String("custom_filter").
+			Optional(),
+		field.Bool("block_flow").
 			Optional(),
 	}
 }

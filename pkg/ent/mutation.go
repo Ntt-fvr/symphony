@@ -3171,43 +3171,79 @@ func (m *AppointmentMutation) ResetEdge(name string) error {
 // nodes in the graph.
 type BlockMutation struct {
 	config
-	op                      Op
-	typ                     string
-	id                      *int
-	create_time             *time.Time
-	update_time             *time.Time
-	cid                     *string
-	_type                   *block.Type
-	action_type             *flowschema.ActionTypeID
-	trigger_type            *flowschema.TriggerTypeID
-	start_param_definitions *[]*flowschema.VariableDefinition
-	input_params            *[]*flowschema.VariableExpression
-	ui_representation       **flowschema.BlockUIRepresentation
-	clearedFields           map[string]struct{}
-	flow                    *int
-	clearedflow             bool
-	flow_template           *int
-	clearedflow_template    bool
-	flow_draft              *int
-	clearedflow_draft       bool
-	sub_flow                *int
-	clearedsub_flow         bool
-	source_block            map[int]struct{}
-	removedsource_block     map[int]struct{}
-	clearedsource_block     bool
-	goto_block              *int
-	clearedgoto_block       bool
-	instances               map[int]struct{}
-	removedinstances        map[int]struct{}
-	clearedinstances        bool
-	entry_point             *int
-	clearedentry_point      bool
-	exit_points             map[int]struct{}
-	removedexit_points      map[int]struct{}
-	clearedexit_points      bool
-	done                    bool
-	oldValue                func(context.Context) (*Block, error)
-	predicates              []predicate.Block
+	op                                 Op
+	typ                                string
+	id                                 *int
+	create_time                        *time.Time
+	update_time                        *time.Time
+	cid                                *string
+	_type                              *block.Type
+	action_type                        *flowschema.ActionTypeID
+	trigger_type                       *flowschema.TriggerTypeID
+	start_param_definitions            *[]*flowschema.VariableDefinition
+	input_params                       *[]*flowschema.VariableExpression
+	ui_representation                  **flowschema.BlockUIRepresentation
+	enable_input_transformation        *bool
+	input_transf_strategy              *block.InputTransfStrategy
+	input_transformation               *string
+	enable_output_transformation       *bool
+	output_transf_strategy             *block.OutputTransfStrategy
+	output_transformation              *string
+	enable_input_state_transformation  *bool
+	input_state_transf_strategy        *block.InputStateTransfStrategy
+	input_state_transformation         *string
+	enable_output_state_transformation *bool
+	output_state_transf_strategy       *enum.TransfStrategy
+	output_state_transformation        *string
+	enable_error_handling              *bool
+	enable_retry_policy                *bool
+	retryInterval                      *int
+	addretryInterval                   *int
+	retry_unit                         *block.RetryUnit
+	maxAttemps                         *int
+	addmaxAttemps                      *int
+	backOffRate                        *int
+	addbackOffRate                     *int
+	timer_behavior                     *block.TimerBehavior
+	seconds                            *int
+	addseconds                         *int
+	enable_timer_expression            *bool
+	timer_expression                   *string
+	timer_specific_date                *time.Time
+	url_method                         *block.URLMethod
+	connection_timeout                 *int
+	addconnection_timeout              *int
+	body                               *string
+	headers                            *[]string
+	signal_type                        *block.SignalType
+	signal_module                      *block.SignalModule
+	custom_filter                      *string
+	block_flow                         *bool
+	clearedFields                      map[string]struct{}
+	flow                               *int
+	clearedflow                        bool
+	flow_template                      *int
+	clearedflow_template               bool
+	flow_draft                         *int
+	clearedflow_draft                  bool
+	sub_flow                           *int
+	clearedsub_flow                    bool
+	source_block                       map[int]struct{}
+	removedsource_block                map[int]struct{}
+	clearedsource_block                bool
+	goto_block                         *int
+	clearedgoto_block                  bool
+	instances                          map[int]struct{}
+	removedinstances                   map[int]struct{}
+	clearedinstances                   bool
+	entry_point                        *int
+	clearedentry_point                 bool
+	exit_points                        map[int]struct{}
+	removedexit_points                 map[int]struct{}
+	clearedexit_points                 bool
+	done                               bool
+	oldValue                           func(context.Context) (*Block, error)
+	predicates                         []predicate.Block
 }
 
 var _ ent.Mutation = (*BlockMutation)(nil)
@@ -3687,6 +3723,1596 @@ func (m *BlockMutation) ResetUIRepresentation() {
 	delete(m.clearedFields, block.FieldUIRepresentation)
 }
 
+// SetEnableInputTransformation sets the enable_input_transformation field.
+func (m *BlockMutation) SetEnableInputTransformation(b bool) {
+	m.enable_input_transformation = &b
+}
+
+// EnableInputTransformation returns the enable_input_transformation value in the mutation.
+func (m *BlockMutation) EnableInputTransformation() (r bool, exists bool) {
+	v := m.enable_input_transformation
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldEnableInputTransformation returns the old enable_input_transformation value of the Block.
+// If the Block object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *BlockMutation) OldEnableInputTransformation(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldEnableInputTransformation is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldEnableInputTransformation requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldEnableInputTransformation: %w", err)
+	}
+	return oldValue.EnableInputTransformation, nil
+}
+
+// ClearEnableInputTransformation clears the value of enable_input_transformation.
+func (m *BlockMutation) ClearEnableInputTransformation() {
+	m.enable_input_transformation = nil
+	m.clearedFields[block.FieldEnableInputTransformation] = struct{}{}
+}
+
+// EnableInputTransformationCleared returns if the field enable_input_transformation was cleared in this mutation.
+func (m *BlockMutation) EnableInputTransformationCleared() bool {
+	_, ok := m.clearedFields[block.FieldEnableInputTransformation]
+	return ok
+}
+
+// ResetEnableInputTransformation reset all changes of the "enable_input_transformation" field.
+func (m *BlockMutation) ResetEnableInputTransformation() {
+	m.enable_input_transformation = nil
+	delete(m.clearedFields, block.FieldEnableInputTransformation)
+}
+
+// SetInputTransfStrategy sets the input_transf_strategy field.
+func (m *BlockMutation) SetInputTransfStrategy(bts block.InputTransfStrategy) {
+	m.input_transf_strategy = &bts
+}
+
+// InputTransfStrategy returns the input_transf_strategy value in the mutation.
+func (m *BlockMutation) InputTransfStrategy() (r block.InputTransfStrategy, exists bool) {
+	v := m.input_transf_strategy
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldInputTransfStrategy returns the old input_transf_strategy value of the Block.
+// If the Block object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *BlockMutation) OldInputTransfStrategy(ctx context.Context) (v block.InputTransfStrategy, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldInputTransfStrategy is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldInputTransfStrategy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldInputTransfStrategy: %w", err)
+	}
+	return oldValue.InputTransfStrategy, nil
+}
+
+// ResetInputTransfStrategy reset all changes of the "input_transf_strategy" field.
+func (m *BlockMutation) ResetInputTransfStrategy() {
+	m.input_transf_strategy = nil
+}
+
+// SetInputTransformation sets the input_transformation field.
+func (m *BlockMutation) SetInputTransformation(s string) {
+	m.input_transformation = &s
+}
+
+// InputTransformation returns the input_transformation value in the mutation.
+func (m *BlockMutation) InputTransformation() (r string, exists bool) {
+	v := m.input_transformation
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldInputTransformation returns the old input_transformation value of the Block.
+// If the Block object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *BlockMutation) OldInputTransformation(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldInputTransformation is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldInputTransformation requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldInputTransformation: %w", err)
+	}
+	return oldValue.InputTransformation, nil
+}
+
+// ClearInputTransformation clears the value of input_transformation.
+func (m *BlockMutation) ClearInputTransformation() {
+	m.input_transformation = nil
+	m.clearedFields[block.FieldInputTransformation] = struct{}{}
+}
+
+// InputTransformationCleared returns if the field input_transformation was cleared in this mutation.
+func (m *BlockMutation) InputTransformationCleared() bool {
+	_, ok := m.clearedFields[block.FieldInputTransformation]
+	return ok
+}
+
+// ResetInputTransformation reset all changes of the "input_transformation" field.
+func (m *BlockMutation) ResetInputTransformation() {
+	m.input_transformation = nil
+	delete(m.clearedFields, block.FieldInputTransformation)
+}
+
+// SetEnableOutputTransformation sets the enable_output_transformation field.
+func (m *BlockMutation) SetEnableOutputTransformation(b bool) {
+	m.enable_output_transformation = &b
+}
+
+// EnableOutputTransformation returns the enable_output_transformation value in the mutation.
+func (m *BlockMutation) EnableOutputTransformation() (r bool, exists bool) {
+	v := m.enable_output_transformation
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldEnableOutputTransformation returns the old enable_output_transformation value of the Block.
+// If the Block object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *BlockMutation) OldEnableOutputTransformation(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldEnableOutputTransformation is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldEnableOutputTransformation requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldEnableOutputTransformation: %w", err)
+	}
+	return oldValue.EnableOutputTransformation, nil
+}
+
+// ClearEnableOutputTransformation clears the value of enable_output_transformation.
+func (m *BlockMutation) ClearEnableOutputTransformation() {
+	m.enable_output_transformation = nil
+	m.clearedFields[block.FieldEnableOutputTransformation] = struct{}{}
+}
+
+// EnableOutputTransformationCleared returns if the field enable_output_transformation was cleared in this mutation.
+func (m *BlockMutation) EnableOutputTransformationCleared() bool {
+	_, ok := m.clearedFields[block.FieldEnableOutputTransformation]
+	return ok
+}
+
+// ResetEnableOutputTransformation reset all changes of the "enable_output_transformation" field.
+func (m *BlockMutation) ResetEnableOutputTransformation() {
+	m.enable_output_transformation = nil
+	delete(m.clearedFields, block.FieldEnableOutputTransformation)
+}
+
+// SetOutputTransfStrategy sets the output_transf_strategy field.
+func (m *BlockMutation) SetOutputTransfStrategy(bts block.OutputTransfStrategy) {
+	m.output_transf_strategy = &bts
+}
+
+// OutputTransfStrategy returns the output_transf_strategy value in the mutation.
+func (m *BlockMutation) OutputTransfStrategy() (r block.OutputTransfStrategy, exists bool) {
+	v := m.output_transf_strategy
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldOutputTransfStrategy returns the old output_transf_strategy value of the Block.
+// If the Block object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *BlockMutation) OldOutputTransfStrategy(ctx context.Context) (v block.OutputTransfStrategy, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldOutputTransfStrategy is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldOutputTransfStrategy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldOutputTransfStrategy: %w", err)
+	}
+	return oldValue.OutputTransfStrategy, nil
+}
+
+// ResetOutputTransfStrategy reset all changes of the "output_transf_strategy" field.
+func (m *BlockMutation) ResetOutputTransfStrategy() {
+	m.output_transf_strategy = nil
+}
+
+// SetOutputTransformation sets the output_transformation field.
+func (m *BlockMutation) SetOutputTransformation(s string) {
+	m.output_transformation = &s
+}
+
+// OutputTransformation returns the output_transformation value in the mutation.
+func (m *BlockMutation) OutputTransformation() (r string, exists bool) {
+	v := m.output_transformation
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldOutputTransformation returns the old output_transformation value of the Block.
+// If the Block object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *BlockMutation) OldOutputTransformation(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldOutputTransformation is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldOutputTransformation requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldOutputTransformation: %w", err)
+	}
+	return oldValue.OutputTransformation, nil
+}
+
+// ClearOutputTransformation clears the value of output_transformation.
+func (m *BlockMutation) ClearOutputTransformation() {
+	m.output_transformation = nil
+	m.clearedFields[block.FieldOutputTransformation] = struct{}{}
+}
+
+// OutputTransformationCleared returns if the field output_transformation was cleared in this mutation.
+func (m *BlockMutation) OutputTransformationCleared() bool {
+	_, ok := m.clearedFields[block.FieldOutputTransformation]
+	return ok
+}
+
+// ResetOutputTransformation reset all changes of the "output_transformation" field.
+func (m *BlockMutation) ResetOutputTransformation() {
+	m.output_transformation = nil
+	delete(m.clearedFields, block.FieldOutputTransformation)
+}
+
+// SetEnableInputStateTransformation sets the enable_input_state_transformation field.
+func (m *BlockMutation) SetEnableInputStateTransformation(b bool) {
+	m.enable_input_state_transformation = &b
+}
+
+// EnableInputStateTransformation returns the enable_input_state_transformation value in the mutation.
+func (m *BlockMutation) EnableInputStateTransformation() (r bool, exists bool) {
+	v := m.enable_input_state_transformation
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldEnableInputStateTransformation returns the old enable_input_state_transformation value of the Block.
+// If the Block object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *BlockMutation) OldEnableInputStateTransformation(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldEnableInputStateTransformation is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldEnableInputStateTransformation requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldEnableInputStateTransformation: %w", err)
+	}
+	return oldValue.EnableInputStateTransformation, nil
+}
+
+// ClearEnableInputStateTransformation clears the value of enable_input_state_transformation.
+func (m *BlockMutation) ClearEnableInputStateTransformation() {
+	m.enable_input_state_transformation = nil
+	m.clearedFields[block.FieldEnableInputStateTransformation] = struct{}{}
+}
+
+// EnableInputStateTransformationCleared returns if the field enable_input_state_transformation was cleared in this mutation.
+func (m *BlockMutation) EnableInputStateTransformationCleared() bool {
+	_, ok := m.clearedFields[block.FieldEnableInputStateTransformation]
+	return ok
+}
+
+// ResetEnableInputStateTransformation reset all changes of the "enable_input_state_transformation" field.
+func (m *BlockMutation) ResetEnableInputStateTransformation() {
+	m.enable_input_state_transformation = nil
+	delete(m.clearedFields, block.FieldEnableInputStateTransformation)
+}
+
+// SetInputStateTransfStrategy sets the input_state_transf_strategy field.
+func (m *BlockMutation) SetInputStateTransfStrategy(bsts block.InputStateTransfStrategy) {
+	m.input_state_transf_strategy = &bsts
+}
+
+// InputStateTransfStrategy returns the input_state_transf_strategy value in the mutation.
+func (m *BlockMutation) InputStateTransfStrategy() (r block.InputStateTransfStrategy, exists bool) {
+	v := m.input_state_transf_strategy
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldInputStateTransfStrategy returns the old input_state_transf_strategy value of the Block.
+// If the Block object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *BlockMutation) OldInputStateTransfStrategy(ctx context.Context) (v block.InputStateTransfStrategy, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldInputStateTransfStrategy is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldInputStateTransfStrategy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldInputStateTransfStrategy: %w", err)
+	}
+	return oldValue.InputStateTransfStrategy, nil
+}
+
+// ResetInputStateTransfStrategy reset all changes of the "input_state_transf_strategy" field.
+func (m *BlockMutation) ResetInputStateTransfStrategy() {
+	m.input_state_transf_strategy = nil
+}
+
+// SetInputStateTransformation sets the input_state_transformation field.
+func (m *BlockMutation) SetInputStateTransformation(s string) {
+	m.input_state_transformation = &s
+}
+
+// InputStateTransformation returns the input_state_transformation value in the mutation.
+func (m *BlockMutation) InputStateTransformation() (r string, exists bool) {
+	v := m.input_state_transformation
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldInputStateTransformation returns the old input_state_transformation value of the Block.
+// If the Block object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *BlockMutation) OldInputStateTransformation(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldInputStateTransformation is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldInputStateTransformation requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldInputStateTransformation: %w", err)
+	}
+	return oldValue.InputStateTransformation, nil
+}
+
+// ClearInputStateTransformation clears the value of input_state_transformation.
+func (m *BlockMutation) ClearInputStateTransformation() {
+	m.input_state_transformation = nil
+	m.clearedFields[block.FieldInputStateTransformation] = struct{}{}
+}
+
+// InputStateTransformationCleared returns if the field input_state_transformation was cleared in this mutation.
+func (m *BlockMutation) InputStateTransformationCleared() bool {
+	_, ok := m.clearedFields[block.FieldInputStateTransformation]
+	return ok
+}
+
+// ResetInputStateTransformation reset all changes of the "input_state_transformation" field.
+func (m *BlockMutation) ResetInputStateTransformation() {
+	m.input_state_transformation = nil
+	delete(m.clearedFields, block.FieldInputStateTransformation)
+}
+
+// SetEnableOutputStateTransformation sets the enable_output_state_transformation field.
+func (m *BlockMutation) SetEnableOutputStateTransformation(b bool) {
+	m.enable_output_state_transformation = &b
+}
+
+// EnableOutputStateTransformation returns the enable_output_state_transformation value in the mutation.
+func (m *BlockMutation) EnableOutputStateTransformation() (r bool, exists bool) {
+	v := m.enable_output_state_transformation
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldEnableOutputStateTransformation returns the old enable_output_state_transformation value of the Block.
+// If the Block object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *BlockMutation) OldEnableOutputStateTransformation(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldEnableOutputStateTransformation is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldEnableOutputStateTransformation requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldEnableOutputStateTransformation: %w", err)
+	}
+	return oldValue.EnableOutputStateTransformation, nil
+}
+
+// ClearEnableOutputStateTransformation clears the value of enable_output_state_transformation.
+func (m *BlockMutation) ClearEnableOutputStateTransformation() {
+	m.enable_output_state_transformation = nil
+	m.clearedFields[block.FieldEnableOutputStateTransformation] = struct{}{}
+}
+
+// EnableOutputStateTransformationCleared returns if the field enable_output_state_transformation was cleared in this mutation.
+func (m *BlockMutation) EnableOutputStateTransformationCleared() bool {
+	_, ok := m.clearedFields[block.FieldEnableOutputStateTransformation]
+	return ok
+}
+
+// ResetEnableOutputStateTransformation reset all changes of the "enable_output_state_transformation" field.
+func (m *BlockMutation) ResetEnableOutputStateTransformation() {
+	m.enable_output_state_transformation = nil
+	delete(m.clearedFields, block.FieldEnableOutputStateTransformation)
+}
+
+// SetOutputStateTransfStrategy sets the output_state_transf_strategy field.
+func (m *BlockMutation) SetOutputStateTransfStrategy(es enum.TransfStrategy) {
+	m.output_state_transf_strategy = &es
+}
+
+// OutputStateTransfStrategy returns the output_state_transf_strategy value in the mutation.
+func (m *BlockMutation) OutputStateTransfStrategy() (r enum.TransfStrategy, exists bool) {
+	v := m.output_state_transf_strategy
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldOutputStateTransfStrategy returns the old output_state_transf_strategy value of the Block.
+// If the Block object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *BlockMutation) OldOutputStateTransfStrategy(ctx context.Context) (v enum.TransfStrategy, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldOutputStateTransfStrategy is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldOutputStateTransfStrategy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldOutputStateTransfStrategy: %w", err)
+	}
+	return oldValue.OutputStateTransfStrategy, nil
+}
+
+// ResetOutputStateTransfStrategy reset all changes of the "output_state_transf_strategy" field.
+func (m *BlockMutation) ResetOutputStateTransfStrategy() {
+	m.output_state_transf_strategy = nil
+}
+
+// SetOutputStateTransformation sets the output_state_transformation field.
+func (m *BlockMutation) SetOutputStateTransformation(s string) {
+	m.output_state_transformation = &s
+}
+
+// OutputStateTransformation returns the output_state_transformation value in the mutation.
+func (m *BlockMutation) OutputStateTransformation() (r string, exists bool) {
+	v := m.output_state_transformation
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldOutputStateTransformation returns the old output_state_transformation value of the Block.
+// If the Block object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *BlockMutation) OldOutputStateTransformation(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldOutputStateTransformation is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldOutputStateTransformation requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldOutputStateTransformation: %w", err)
+	}
+	return oldValue.OutputStateTransformation, nil
+}
+
+// ClearOutputStateTransformation clears the value of output_state_transformation.
+func (m *BlockMutation) ClearOutputStateTransformation() {
+	m.output_state_transformation = nil
+	m.clearedFields[block.FieldOutputStateTransformation] = struct{}{}
+}
+
+// OutputStateTransformationCleared returns if the field output_state_transformation was cleared in this mutation.
+func (m *BlockMutation) OutputStateTransformationCleared() bool {
+	_, ok := m.clearedFields[block.FieldOutputStateTransformation]
+	return ok
+}
+
+// ResetOutputStateTransformation reset all changes of the "output_state_transformation" field.
+func (m *BlockMutation) ResetOutputStateTransformation() {
+	m.output_state_transformation = nil
+	delete(m.clearedFields, block.FieldOutputStateTransformation)
+}
+
+// SetEnableErrorHandling sets the enable_error_handling field.
+func (m *BlockMutation) SetEnableErrorHandling(b bool) {
+	m.enable_error_handling = &b
+}
+
+// EnableErrorHandling returns the enable_error_handling value in the mutation.
+func (m *BlockMutation) EnableErrorHandling() (r bool, exists bool) {
+	v := m.enable_error_handling
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldEnableErrorHandling returns the old enable_error_handling value of the Block.
+// If the Block object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *BlockMutation) OldEnableErrorHandling(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldEnableErrorHandling is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldEnableErrorHandling requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldEnableErrorHandling: %w", err)
+	}
+	return oldValue.EnableErrorHandling, nil
+}
+
+// ClearEnableErrorHandling clears the value of enable_error_handling.
+func (m *BlockMutation) ClearEnableErrorHandling() {
+	m.enable_error_handling = nil
+	m.clearedFields[block.FieldEnableErrorHandling] = struct{}{}
+}
+
+// EnableErrorHandlingCleared returns if the field enable_error_handling was cleared in this mutation.
+func (m *BlockMutation) EnableErrorHandlingCleared() bool {
+	_, ok := m.clearedFields[block.FieldEnableErrorHandling]
+	return ok
+}
+
+// ResetEnableErrorHandling reset all changes of the "enable_error_handling" field.
+func (m *BlockMutation) ResetEnableErrorHandling() {
+	m.enable_error_handling = nil
+	delete(m.clearedFields, block.FieldEnableErrorHandling)
+}
+
+// SetEnableRetryPolicy sets the enable_retry_policy field.
+func (m *BlockMutation) SetEnableRetryPolicy(b bool) {
+	m.enable_retry_policy = &b
+}
+
+// EnableRetryPolicy returns the enable_retry_policy value in the mutation.
+func (m *BlockMutation) EnableRetryPolicy() (r bool, exists bool) {
+	v := m.enable_retry_policy
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldEnableRetryPolicy returns the old enable_retry_policy value of the Block.
+// If the Block object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *BlockMutation) OldEnableRetryPolicy(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldEnableRetryPolicy is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldEnableRetryPolicy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldEnableRetryPolicy: %w", err)
+	}
+	return oldValue.EnableRetryPolicy, nil
+}
+
+// ClearEnableRetryPolicy clears the value of enable_retry_policy.
+func (m *BlockMutation) ClearEnableRetryPolicy() {
+	m.enable_retry_policy = nil
+	m.clearedFields[block.FieldEnableRetryPolicy] = struct{}{}
+}
+
+// EnableRetryPolicyCleared returns if the field enable_retry_policy was cleared in this mutation.
+func (m *BlockMutation) EnableRetryPolicyCleared() bool {
+	_, ok := m.clearedFields[block.FieldEnableRetryPolicy]
+	return ok
+}
+
+// ResetEnableRetryPolicy reset all changes of the "enable_retry_policy" field.
+func (m *BlockMutation) ResetEnableRetryPolicy() {
+	m.enable_retry_policy = nil
+	delete(m.clearedFields, block.FieldEnableRetryPolicy)
+}
+
+// SetRetryInterval sets the retryInterval field.
+func (m *BlockMutation) SetRetryInterval(i int) {
+	m.retryInterval = &i
+	m.addretryInterval = nil
+}
+
+// RetryInterval returns the retryInterval value in the mutation.
+func (m *BlockMutation) RetryInterval() (r int, exists bool) {
+	v := m.retryInterval
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldRetryInterval returns the old retryInterval value of the Block.
+// If the Block object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *BlockMutation) OldRetryInterval(ctx context.Context) (v int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldRetryInterval is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldRetryInterval requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldRetryInterval: %w", err)
+	}
+	return oldValue.RetryInterval, nil
+}
+
+// AddRetryInterval adds i to retryInterval.
+func (m *BlockMutation) AddRetryInterval(i int) {
+	if m.addretryInterval != nil {
+		*m.addretryInterval += i
+	} else {
+		m.addretryInterval = &i
+	}
+}
+
+// AddedRetryInterval returns the value that was added to the retryInterval field in this mutation.
+func (m *BlockMutation) AddedRetryInterval() (r int, exists bool) {
+	v := m.addretryInterval
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearRetryInterval clears the value of retryInterval.
+func (m *BlockMutation) ClearRetryInterval() {
+	m.retryInterval = nil
+	m.addretryInterval = nil
+	m.clearedFields[block.FieldRetryInterval] = struct{}{}
+}
+
+// RetryIntervalCleared returns if the field retryInterval was cleared in this mutation.
+func (m *BlockMutation) RetryIntervalCleared() bool {
+	_, ok := m.clearedFields[block.FieldRetryInterval]
+	return ok
+}
+
+// ResetRetryInterval reset all changes of the "retryInterval" field.
+func (m *BlockMutation) ResetRetryInterval() {
+	m.retryInterval = nil
+	m.addretryInterval = nil
+	delete(m.clearedFields, block.FieldRetryInterval)
+}
+
+// SetRetryUnit sets the retry_unit field.
+func (m *BlockMutation) SetRetryUnit(bu block.RetryUnit) {
+	m.retry_unit = &bu
+}
+
+// RetryUnit returns the retry_unit value in the mutation.
+func (m *BlockMutation) RetryUnit() (r block.RetryUnit, exists bool) {
+	v := m.retry_unit
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldRetryUnit returns the old retry_unit value of the Block.
+// If the Block object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *BlockMutation) OldRetryUnit(ctx context.Context) (v block.RetryUnit, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldRetryUnit is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldRetryUnit requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldRetryUnit: %w", err)
+	}
+	return oldValue.RetryUnit, nil
+}
+
+// ResetRetryUnit reset all changes of the "retry_unit" field.
+func (m *BlockMutation) ResetRetryUnit() {
+	m.retry_unit = nil
+}
+
+// SetMaxAttemps sets the maxAttemps field.
+func (m *BlockMutation) SetMaxAttemps(i int) {
+	m.maxAttemps = &i
+	m.addmaxAttemps = nil
+}
+
+// MaxAttemps returns the maxAttemps value in the mutation.
+func (m *BlockMutation) MaxAttemps() (r int, exists bool) {
+	v := m.maxAttemps
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldMaxAttemps returns the old maxAttemps value of the Block.
+// If the Block object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *BlockMutation) OldMaxAttemps(ctx context.Context) (v int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldMaxAttemps is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldMaxAttemps requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldMaxAttemps: %w", err)
+	}
+	return oldValue.MaxAttemps, nil
+}
+
+// AddMaxAttemps adds i to maxAttemps.
+func (m *BlockMutation) AddMaxAttemps(i int) {
+	if m.addmaxAttemps != nil {
+		*m.addmaxAttemps += i
+	} else {
+		m.addmaxAttemps = &i
+	}
+}
+
+// AddedMaxAttemps returns the value that was added to the maxAttemps field in this mutation.
+func (m *BlockMutation) AddedMaxAttemps() (r int, exists bool) {
+	v := m.addmaxAttemps
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearMaxAttemps clears the value of maxAttemps.
+func (m *BlockMutation) ClearMaxAttemps() {
+	m.maxAttemps = nil
+	m.addmaxAttemps = nil
+	m.clearedFields[block.FieldMaxAttemps] = struct{}{}
+}
+
+// MaxAttempsCleared returns if the field maxAttemps was cleared in this mutation.
+func (m *BlockMutation) MaxAttempsCleared() bool {
+	_, ok := m.clearedFields[block.FieldMaxAttemps]
+	return ok
+}
+
+// ResetMaxAttemps reset all changes of the "maxAttemps" field.
+func (m *BlockMutation) ResetMaxAttemps() {
+	m.maxAttemps = nil
+	m.addmaxAttemps = nil
+	delete(m.clearedFields, block.FieldMaxAttemps)
+}
+
+// SetBackOffRate sets the backOffRate field.
+func (m *BlockMutation) SetBackOffRate(i int) {
+	m.backOffRate = &i
+	m.addbackOffRate = nil
+}
+
+// BackOffRate returns the backOffRate value in the mutation.
+func (m *BlockMutation) BackOffRate() (r int, exists bool) {
+	v := m.backOffRate
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldBackOffRate returns the old backOffRate value of the Block.
+// If the Block object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *BlockMutation) OldBackOffRate(ctx context.Context) (v int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldBackOffRate is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldBackOffRate requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldBackOffRate: %w", err)
+	}
+	return oldValue.BackOffRate, nil
+}
+
+// AddBackOffRate adds i to backOffRate.
+func (m *BlockMutation) AddBackOffRate(i int) {
+	if m.addbackOffRate != nil {
+		*m.addbackOffRate += i
+	} else {
+		m.addbackOffRate = &i
+	}
+}
+
+// AddedBackOffRate returns the value that was added to the backOffRate field in this mutation.
+func (m *BlockMutation) AddedBackOffRate() (r int, exists bool) {
+	v := m.addbackOffRate
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearBackOffRate clears the value of backOffRate.
+func (m *BlockMutation) ClearBackOffRate() {
+	m.backOffRate = nil
+	m.addbackOffRate = nil
+	m.clearedFields[block.FieldBackOffRate] = struct{}{}
+}
+
+// BackOffRateCleared returns if the field backOffRate was cleared in this mutation.
+func (m *BlockMutation) BackOffRateCleared() bool {
+	_, ok := m.clearedFields[block.FieldBackOffRate]
+	return ok
+}
+
+// ResetBackOffRate reset all changes of the "backOffRate" field.
+func (m *BlockMutation) ResetBackOffRate() {
+	m.backOffRate = nil
+	m.addbackOffRate = nil
+	delete(m.clearedFields, block.FieldBackOffRate)
+}
+
+// SetTimerBehavior sets the timer_behavior field.
+func (m *BlockMutation) SetTimerBehavior(bb block.TimerBehavior) {
+	m.timer_behavior = &bb
+}
+
+// TimerBehavior returns the timer_behavior value in the mutation.
+func (m *BlockMutation) TimerBehavior() (r block.TimerBehavior, exists bool) {
+	v := m.timer_behavior
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTimerBehavior returns the old timer_behavior value of the Block.
+// If the Block object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *BlockMutation) OldTimerBehavior(ctx context.Context) (v block.TimerBehavior, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldTimerBehavior is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldTimerBehavior requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTimerBehavior: %w", err)
+	}
+	return oldValue.TimerBehavior, nil
+}
+
+// ClearTimerBehavior clears the value of timer_behavior.
+func (m *BlockMutation) ClearTimerBehavior() {
+	m.timer_behavior = nil
+	m.clearedFields[block.FieldTimerBehavior] = struct{}{}
+}
+
+// TimerBehaviorCleared returns if the field timer_behavior was cleared in this mutation.
+func (m *BlockMutation) TimerBehaviorCleared() bool {
+	_, ok := m.clearedFields[block.FieldTimerBehavior]
+	return ok
+}
+
+// ResetTimerBehavior reset all changes of the "timer_behavior" field.
+func (m *BlockMutation) ResetTimerBehavior() {
+	m.timer_behavior = nil
+	delete(m.clearedFields, block.FieldTimerBehavior)
+}
+
+// SetSeconds sets the seconds field.
+func (m *BlockMutation) SetSeconds(i int) {
+	m.seconds = &i
+	m.addseconds = nil
+}
+
+// Seconds returns the seconds value in the mutation.
+func (m *BlockMutation) Seconds() (r int, exists bool) {
+	v := m.seconds
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldSeconds returns the old seconds value of the Block.
+// If the Block object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *BlockMutation) OldSeconds(ctx context.Context) (v int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldSeconds is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldSeconds requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldSeconds: %w", err)
+	}
+	return oldValue.Seconds, nil
+}
+
+// AddSeconds adds i to seconds.
+func (m *BlockMutation) AddSeconds(i int) {
+	if m.addseconds != nil {
+		*m.addseconds += i
+	} else {
+		m.addseconds = &i
+	}
+}
+
+// AddedSeconds returns the value that was added to the seconds field in this mutation.
+func (m *BlockMutation) AddedSeconds() (r int, exists bool) {
+	v := m.addseconds
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearSeconds clears the value of seconds.
+func (m *BlockMutation) ClearSeconds() {
+	m.seconds = nil
+	m.addseconds = nil
+	m.clearedFields[block.FieldSeconds] = struct{}{}
+}
+
+// SecondsCleared returns if the field seconds was cleared in this mutation.
+func (m *BlockMutation) SecondsCleared() bool {
+	_, ok := m.clearedFields[block.FieldSeconds]
+	return ok
+}
+
+// ResetSeconds reset all changes of the "seconds" field.
+func (m *BlockMutation) ResetSeconds() {
+	m.seconds = nil
+	m.addseconds = nil
+	delete(m.clearedFields, block.FieldSeconds)
+}
+
+// SetEnableTimerExpression sets the enable_timer_expression field.
+func (m *BlockMutation) SetEnableTimerExpression(b bool) {
+	m.enable_timer_expression = &b
+}
+
+// EnableTimerExpression returns the enable_timer_expression value in the mutation.
+func (m *BlockMutation) EnableTimerExpression() (r bool, exists bool) {
+	v := m.enable_timer_expression
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldEnableTimerExpression returns the old enable_timer_expression value of the Block.
+// If the Block object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *BlockMutation) OldEnableTimerExpression(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldEnableTimerExpression is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldEnableTimerExpression requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldEnableTimerExpression: %w", err)
+	}
+	return oldValue.EnableTimerExpression, nil
+}
+
+// ClearEnableTimerExpression clears the value of enable_timer_expression.
+func (m *BlockMutation) ClearEnableTimerExpression() {
+	m.enable_timer_expression = nil
+	m.clearedFields[block.FieldEnableTimerExpression] = struct{}{}
+}
+
+// EnableTimerExpressionCleared returns if the field enable_timer_expression was cleared in this mutation.
+func (m *BlockMutation) EnableTimerExpressionCleared() bool {
+	_, ok := m.clearedFields[block.FieldEnableTimerExpression]
+	return ok
+}
+
+// ResetEnableTimerExpression reset all changes of the "enable_timer_expression" field.
+func (m *BlockMutation) ResetEnableTimerExpression() {
+	m.enable_timer_expression = nil
+	delete(m.clearedFields, block.FieldEnableTimerExpression)
+}
+
+// SetTimerExpression sets the timer_expression field.
+func (m *BlockMutation) SetTimerExpression(s string) {
+	m.timer_expression = &s
+}
+
+// TimerExpression returns the timer_expression value in the mutation.
+func (m *BlockMutation) TimerExpression() (r string, exists bool) {
+	v := m.timer_expression
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTimerExpression returns the old timer_expression value of the Block.
+// If the Block object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *BlockMutation) OldTimerExpression(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldTimerExpression is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldTimerExpression requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTimerExpression: %w", err)
+	}
+	return oldValue.TimerExpression, nil
+}
+
+// ClearTimerExpression clears the value of timer_expression.
+func (m *BlockMutation) ClearTimerExpression() {
+	m.timer_expression = nil
+	m.clearedFields[block.FieldTimerExpression] = struct{}{}
+}
+
+// TimerExpressionCleared returns if the field timer_expression was cleared in this mutation.
+func (m *BlockMutation) TimerExpressionCleared() bool {
+	_, ok := m.clearedFields[block.FieldTimerExpression]
+	return ok
+}
+
+// ResetTimerExpression reset all changes of the "timer_expression" field.
+func (m *BlockMutation) ResetTimerExpression() {
+	m.timer_expression = nil
+	delete(m.clearedFields, block.FieldTimerExpression)
+}
+
+// SetTimerSpecificDate sets the timer_specific_date field.
+func (m *BlockMutation) SetTimerSpecificDate(t time.Time) {
+	m.timer_specific_date = &t
+}
+
+// TimerSpecificDate returns the timer_specific_date value in the mutation.
+func (m *BlockMutation) TimerSpecificDate() (r time.Time, exists bool) {
+	v := m.timer_specific_date
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTimerSpecificDate returns the old timer_specific_date value of the Block.
+// If the Block object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *BlockMutation) OldTimerSpecificDate(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldTimerSpecificDate is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldTimerSpecificDate requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTimerSpecificDate: %w", err)
+	}
+	return oldValue.TimerSpecificDate, nil
+}
+
+// ClearTimerSpecificDate clears the value of timer_specific_date.
+func (m *BlockMutation) ClearTimerSpecificDate() {
+	m.timer_specific_date = nil
+	m.clearedFields[block.FieldTimerSpecificDate] = struct{}{}
+}
+
+// TimerSpecificDateCleared returns if the field timer_specific_date was cleared in this mutation.
+func (m *BlockMutation) TimerSpecificDateCleared() bool {
+	_, ok := m.clearedFields[block.FieldTimerSpecificDate]
+	return ok
+}
+
+// ResetTimerSpecificDate reset all changes of the "timer_specific_date" field.
+func (m *BlockMutation) ResetTimerSpecificDate() {
+	m.timer_specific_date = nil
+	delete(m.clearedFields, block.FieldTimerSpecificDate)
+}
+
+// SetURLMethod sets the url_method field.
+func (m *BlockMutation) SetURLMethod(bm block.URLMethod) {
+	m.url_method = &bm
+}
+
+// URLMethod returns the url_method value in the mutation.
+func (m *BlockMutation) URLMethod() (r block.URLMethod, exists bool) {
+	v := m.url_method
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldURLMethod returns the old url_method value of the Block.
+// If the Block object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *BlockMutation) OldURLMethod(ctx context.Context) (v block.URLMethod, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldURLMethod is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldURLMethod requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldURLMethod: %w", err)
+	}
+	return oldValue.URLMethod, nil
+}
+
+// ClearURLMethod clears the value of url_method.
+func (m *BlockMutation) ClearURLMethod() {
+	m.url_method = nil
+	m.clearedFields[block.FieldURLMethod] = struct{}{}
+}
+
+// URLMethodCleared returns if the field url_method was cleared in this mutation.
+func (m *BlockMutation) URLMethodCleared() bool {
+	_, ok := m.clearedFields[block.FieldURLMethod]
+	return ok
+}
+
+// ResetURLMethod reset all changes of the "url_method" field.
+func (m *BlockMutation) ResetURLMethod() {
+	m.url_method = nil
+	delete(m.clearedFields, block.FieldURLMethod)
+}
+
+// SetConnectionTimeout sets the connection_timeout field.
+func (m *BlockMutation) SetConnectionTimeout(i int) {
+	m.connection_timeout = &i
+	m.addconnection_timeout = nil
+}
+
+// ConnectionTimeout returns the connection_timeout value in the mutation.
+func (m *BlockMutation) ConnectionTimeout() (r int, exists bool) {
+	v := m.connection_timeout
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldConnectionTimeout returns the old connection_timeout value of the Block.
+// If the Block object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *BlockMutation) OldConnectionTimeout(ctx context.Context) (v int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldConnectionTimeout is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldConnectionTimeout requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldConnectionTimeout: %w", err)
+	}
+	return oldValue.ConnectionTimeout, nil
+}
+
+// AddConnectionTimeout adds i to connection_timeout.
+func (m *BlockMutation) AddConnectionTimeout(i int) {
+	if m.addconnection_timeout != nil {
+		*m.addconnection_timeout += i
+	} else {
+		m.addconnection_timeout = &i
+	}
+}
+
+// AddedConnectionTimeout returns the value that was added to the connection_timeout field in this mutation.
+func (m *BlockMutation) AddedConnectionTimeout() (r int, exists bool) {
+	v := m.addconnection_timeout
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearConnectionTimeout clears the value of connection_timeout.
+func (m *BlockMutation) ClearConnectionTimeout() {
+	m.connection_timeout = nil
+	m.addconnection_timeout = nil
+	m.clearedFields[block.FieldConnectionTimeout] = struct{}{}
+}
+
+// ConnectionTimeoutCleared returns if the field connection_timeout was cleared in this mutation.
+func (m *BlockMutation) ConnectionTimeoutCleared() bool {
+	_, ok := m.clearedFields[block.FieldConnectionTimeout]
+	return ok
+}
+
+// ResetConnectionTimeout reset all changes of the "connection_timeout" field.
+func (m *BlockMutation) ResetConnectionTimeout() {
+	m.connection_timeout = nil
+	m.addconnection_timeout = nil
+	delete(m.clearedFields, block.FieldConnectionTimeout)
+}
+
+// SetBody sets the body field.
+func (m *BlockMutation) SetBody(s string) {
+	m.body = &s
+}
+
+// Body returns the body value in the mutation.
+func (m *BlockMutation) Body() (r string, exists bool) {
+	v := m.body
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldBody returns the old body value of the Block.
+// If the Block object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *BlockMutation) OldBody(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldBody is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldBody requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldBody: %w", err)
+	}
+	return oldValue.Body, nil
+}
+
+// ClearBody clears the value of body.
+func (m *BlockMutation) ClearBody() {
+	m.body = nil
+	m.clearedFields[block.FieldBody] = struct{}{}
+}
+
+// BodyCleared returns if the field body was cleared in this mutation.
+func (m *BlockMutation) BodyCleared() bool {
+	_, ok := m.clearedFields[block.FieldBody]
+	return ok
+}
+
+// ResetBody reset all changes of the "body" field.
+func (m *BlockMutation) ResetBody() {
+	m.body = nil
+	delete(m.clearedFields, block.FieldBody)
+}
+
+// SetHeaders sets the headers field.
+func (m *BlockMutation) SetHeaders(s []string) {
+	m.headers = &s
+}
+
+// Headers returns the headers value in the mutation.
+func (m *BlockMutation) Headers() (r []string, exists bool) {
+	v := m.headers
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldHeaders returns the old headers value of the Block.
+// If the Block object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *BlockMutation) OldHeaders(ctx context.Context) (v []string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldHeaders is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldHeaders requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldHeaders: %w", err)
+	}
+	return oldValue.Headers, nil
+}
+
+// ClearHeaders clears the value of headers.
+func (m *BlockMutation) ClearHeaders() {
+	m.headers = nil
+	m.clearedFields[block.FieldHeaders] = struct{}{}
+}
+
+// HeadersCleared returns if the field headers was cleared in this mutation.
+func (m *BlockMutation) HeadersCleared() bool {
+	_, ok := m.clearedFields[block.FieldHeaders]
+	return ok
+}
+
+// ResetHeaders reset all changes of the "headers" field.
+func (m *BlockMutation) ResetHeaders() {
+	m.headers = nil
+	delete(m.clearedFields, block.FieldHeaders)
+}
+
+// SetSignalType sets the signal_type field.
+func (m *BlockMutation) SetSignalType(bt block.SignalType) {
+	m.signal_type = &bt
+}
+
+// SignalType returns the signal_type value in the mutation.
+func (m *BlockMutation) SignalType() (r block.SignalType, exists bool) {
+	v := m.signal_type
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldSignalType returns the old signal_type value of the Block.
+// If the Block object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *BlockMutation) OldSignalType(ctx context.Context) (v block.SignalType, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldSignalType is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldSignalType requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldSignalType: %w", err)
+	}
+	return oldValue.SignalType, nil
+}
+
+// ClearSignalType clears the value of signal_type.
+func (m *BlockMutation) ClearSignalType() {
+	m.signal_type = nil
+	m.clearedFields[block.FieldSignalType] = struct{}{}
+}
+
+// SignalTypeCleared returns if the field signal_type was cleared in this mutation.
+func (m *BlockMutation) SignalTypeCleared() bool {
+	_, ok := m.clearedFields[block.FieldSignalType]
+	return ok
+}
+
+// ResetSignalType reset all changes of the "signal_type" field.
+func (m *BlockMutation) ResetSignalType() {
+	m.signal_type = nil
+	delete(m.clearedFields, block.FieldSignalType)
+}
+
+// SetSignalModule sets the signal_module field.
+func (m *BlockMutation) SetSignalModule(bm block.SignalModule) {
+	m.signal_module = &bm
+}
+
+// SignalModule returns the signal_module value in the mutation.
+func (m *BlockMutation) SignalModule() (r block.SignalModule, exists bool) {
+	v := m.signal_module
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldSignalModule returns the old signal_module value of the Block.
+// If the Block object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *BlockMutation) OldSignalModule(ctx context.Context) (v block.SignalModule, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldSignalModule is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldSignalModule requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldSignalModule: %w", err)
+	}
+	return oldValue.SignalModule, nil
+}
+
+// ClearSignalModule clears the value of signal_module.
+func (m *BlockMutation) ClearSignalModule() {
+	m.signal_module = nil
+	m.clearedFields[block.FieldSignalModule] = struct{}{}
+}
+
+// SignalModuleCleared returns if the field signal_module was cleared in this mutation.
+func (m *BlockMutation) SignalModuleCleared() bool {
+	_, ok := m.clearedFields[block.FieldSignalModule]
+	return ok
+}
+
+// ResetSignalModule reset all changes of the "signal_module" field.
+func (m *BlockMutation) ResetSignalModule() {
+	m.signal_module = nil
+	delete(m.clearedFields, block.FieldSignalModule)
+}
+
+// SetCustomFilter sets the custom_filter field.
+func (m *BlockMutation) SetCustomFilter(s string) {
+	m.custom_filter = &s
+}
+
+// CustomFilter returns the custom_filter value in the mutation.
+func (m *BlockMutation) CustomFilter() (r string, exists bool) {
+	v := m.custom_filter
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCustomFilter returns the old custom_filter value of the Block.
+// If the Block object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *BlockMutation) OldCustomFilter(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldCustomFilter is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldCustomFilter requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCustomFilter: %w", err)
+	}
+	return oldValue.CustomFilter, nil
+}
+
+// ClearCustomFilter clears the value of custom_filter.
+func (m *BlockMutation) ClearCustomFilter() {
+	m.custom_filter = nil
+	m.clearedFields[block.FieldCustomFilter] = struct{}{}
+}
+
+// CustomFilterCleared returns if the field custom_filter was cleared in this mutation.
+func (m *BlockMutation) CustomFilterCleared() bool {
+	_, ok := m.clearedFields[block.FieldCustomFilter]
+	return ok
+}
+
+// ResetCustomFilter reset all changes of the "custom_filter" field.
+func (m *BlockMutation) ResetCustomFilter() {
+	m.custom_filter = nil
+	delete(m.clearedFields, block.FieldCustomFilter)
+}
+
+// SetBlockFlow sets the block_flow field.
+func (m *BlockMutation) SetBlockFlow(b bool) {
+	m.block_flow = &b
+}
+
+// BlockFlow returns the block_flow value in the mutation.
+func (m *BlockMutation) BlockFlow() (r bool, exists bool) {
+	v := m.block_flow
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldBlockFlow returns the old block_flow value of the Block.
+// If the Block object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *BlockMutation) OldBlockFlow(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldBlockFlow is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldBlockFlow requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldBlockFlow: %w", err)
+	}
+	return oldValue.BlockFlow, nil
+}
+
+// ClearBlockFlow clears the value of block_flow.
+func (m *BlockMutation) ClearBlockFlow() {
+	m.block_flow = nil
+	m.clearedFields[block.FieldBlockFlow] = struct{}{}
+}
+
+// BlockFlowCleared returns if the field block_flow was cleared in this mutation.
+func (m *BlockMutation) BlockFlowCleared() bool {
+	_, ok := m.clearedFields[block.FieldBlockFlow]
+	return ok
+}
+
+// ResetBlockFlow reset all changes of the "block_flow" field.
+func (m *BlockMutation) ResetBlockFlow() {
+	m.block_flow = nil
+	delete(m.clearedFields, block.FieldBlockFlow)
+}
+
 // SetFlowID sets the flow edge to Flow by id.
 func (m *BlockMutation) SetFlowID(id int) {
 	m.flow = &id
@@ -4094,7 +5720,7 @@ func (m *BlockMutation) Type() string {
 // this mutation. Note that, in order to get all numeric
 // fields that were in/decremented, call AddedFields().
 func (m *BlockMutation) Fields() []string {
-	fields := make([]string, 0, 9)
+	fields := make([]string, 0, 40)
 	if m.create_time != nil {
 		fields = append(fields, block.FieldCreateTime)
 	}
@@ -4122,6 +5748,99 @@ func (m *BlockMutation) Fields() []string {
 	if m.ui_representation != nil {
 		fields = append(fields, block.FieldUIRepresentation)
 	}
+	if m.enable_input_transformation != nil {
+		fields = append(fields, block.FieldEnableInputTransformation)
+	}
+	if m.input_transf_strategy != nil {
+		fields = append(fields, block.FieldInputTransfStrategy)
+	}
+	if m.input_transformation != nil {
+		fields = append(fields, block.FieldInputTransformation)
+	}
+	if m.enable_output_transformation != nil {
+		fields = append(fields, block.FieldEnableOutputTransformation)
+	}
+	if m.output_transf_strategy != nil {
+		fields = append(fields, block.FieldOutputTransfStrategy)
+	}
+	if m.output_transformation != nil {
+		fields = append(fields, block.FieldOutputTransformation)
+	}
+	if m.enable_input_state_transformation != nil {
+		fields = append(fields, block.FieldEnableInputStateTransformation)
+	}
+	if m.input_state_transf_strategy != nil {
+		fields = append(fields, block.FieldInputStateTransfStrategy)
+	}
+	if m.input_state_transformation != nil {
+		fields = append(fields, block.FieldInputStateTransformation)
+	}
+	if m.enable_output_state_transformation != nil {
+		fields = append(fields, block.FieldEnableOutputStateTransformation)
+	}
+	if m.output_state_transf_strategy != nil {
+		fields = append(fields, block.FieldOutputStateTransfStrategy)
+	}
+	if m.output_state_transformation != nil {
+		fields = append(fields, block.FieldOutputStateTransformation)
+	}
+	if m.enable_error_handling != nil {
+		fields = append(fields, block.FieldEnableErrorHandling)
+	}
+	if m.enable_retry_policy != nil {
+		fields = append(fields, block.FieldEnableRetryPolicy)
+	}
+	if m.retryInterval != nil {
+		fields = append(fields, block.FieldRetryInterval)
+	}
+	if m.retry_unit != nil {
+		fields = append(fields, block.FieldRetryUnit)
+	}
+	if m.maxAttemps != nil {
+		fields = append(fields, block.FieldMaxAttemps)
+	}
+	if m.backOffRate != nil {
+		fields = append(fields, block.FieldBackOffRate)
+	}
+	if m.timer_behavior != nil {
+		fields = append(fields, block.FieldTimerBehavior)
+	}
+	if m.seconds != nil {
+		fields = append(fields, block.FieldSeconds)
+	}
+	if m.enable_timer_expression != nil {
+		fields = append(fields, block.FieldEnableTimerExpression)
+	}
+	if m.timer_expression != nil {
+		fields = append(fields, block.FieldTimerExpression)
+	}
+	if m.timer_specific_date != nil {
+		fields = append(fields, block.FieldTimerSpecificDate)
+	}
+	if m.url_method != nil {
+		fields = append(fields, block.FieldURLMethod)
+	}
+	if m.connection_timeout != nil {
+		fields = append(fields, block.FieldConnectionTimeout)
+	}
+	if m.body != nil {
+		fields = append(fields, block.FieldBody)
+	}
+	if m.headers != nil {
+		fields = append(fields, block.FieldHeaders)
+	}
+	if m.signal_type != nil {
+		fields = append(fields, block.FieldSignalType)
+	}
+	if m.signal_module != nil {
+		fields = append(fields, block.FieldSignalModule)
+	}
+	if m.custom_filter != nil {
+		fields = append(fields, block.FieldCustomFilter)
+	}
+	if m.block_flow != nil {
+		fields = append(fields, block.FieldBlockFlow)
+	}
 	return fields
 }
 
@@ -4148,6 +5867,68 @@ func (m *BlockMutation) Field(name string) (ent.Value, bool) {
 		return m.InputParams()
 	case block.FieldUIRepresentation:
 		return m.UIRepresentation()
+	case block.FieldEnableInputTransformation:
+		return m.EnableInputTransformation()
+	case block.FieldInputTransfStrategy:
+		return m.InputTransfStrategy()
+	case block.FieldInputTransformation:
+		return m.InputTransformation()
+	case block.FieldEnableOutputTransformation:
+		return m.EnableOutputTransformation()
+	case block.FieldOutputTransfStrategy:
+		return m.OutputTransfStrategy()
+	case block.FieldOutputTransformation:
+		return m.OutputTransformation()
+	case block.FieldEnableInputStateTransformation:
+		return m.EnableInputStateTransformation()
+	case block.FieldInputStateTransfStrategy:
+		return m.InputStateTransfStrategy()
+	case block.FieldInputStateTransformation:
+		return m.InputStateTransformation()
+	case block.FieldEnableOutputStateTransformation:
+		return m.EnableOutputStateTransformation()
+	case block.FieldOutputStateTransfStrategy:
+		return m.OutputStateTransfStrategy()
+	case block.FieldOutputStateTransformation:
+		return m.OutputStateTransformation()
+	case block.FieldEnableErrorHandling:
+		return m.EnableErrorHandling()
+	case block.FieldEnableRetryPolicy:
+		return m.EnableRetryPolicy()
+	case block.FieldRetryInterval:
+		return m.RetryInterval()
+	case block.FieldRetryUnit:
+		return m.RetryUnit()
+	case block.FieldMaxAttemps:
+		return m.MaxAttemps()
+	case block.FieldBackOffRate:
+		return m.BackOffRate()
+	case block.FieldTimerBehavior:
+		return m.TimerBehavior()
+	case block.FieldSeconds:
+		return m.Seconds()
+	case block.FieldEnableTimerExpression:
+		return m.EnableTimerExpression()
+	case block.FieldTimerExpression:
+		return m.TimerExpression()
+	case block.FieldTimerSpecificDate:
+		return m.TimerSpecificDate()
+	case block.FieldURLMethod:
+		return m.URLMethod()
+	case block.FieldConnectionTimeout:
+		return m.ConnectionTimeout()
+	case block.FieldBody:
+		return m.Body()
+	case block.FieldHeaders:
+		return m.Headers()
+	case block.FieldSignalType:
+		return m.SignalType()
+	case block.FieldSignalModule:
+		return m.SignalModule()
+	case block.FieldCustomFilter:
+		return m.CustomFilter()
+	case block.FieldBlockFlow:
+		return m.BlockFlow()
 	}
 	return nil, false
 }
@@ -4175,6 +5956,68 @@ func (m *BlockMutation) OldField(ctx context.Context, name string) (ent.Value, e
 		return m.OldInputParams(ctx)
 	case block.FieldUIRepresentation:
 		return m.OldUIRepresentation(ctx)
+	case block.FieldEnableInputTransformation:
+		return m.OldEnableInputTransformation(ctx)
+	case block.FieldInputTransfStrategy:
+		return m.OldInputTransfStrategy(ctx)
+	case block.FieldInputTransformation:
+		return m.OldInputTransformation(ctx)
+	case block.FieldEnableOutputTransformation:
+		return m.OldEnableOutputTransformation(ctx)
+	case block.FieldOutputTransfStrategy:
+		return m.OldOutputTransfStrategy(ctx)
+	case block.FieldOutputTransformation:
+		return m.OldOutputTransformation(ctx)
+	case block.FieldEnableInputStateTransformation:
+		return m.OldEnableInputStateTransformation(ctx)
+	case block.FieldInputStateTransfStrategy:
+		return m.OldInputStateTransfStrategy(ctx)
+	case block.FieldInputStateTransformation:
+		return m.OldInputStateTransformation(ctx)
+	case block.FieldEnableOutputStateTransformation:
+		return m.OldEnableOutputStateTransformation(ctx)
+	case block.FieldOutputStateTransfStrategy:
+		return m.OldOutputStateTransfStrategy(ctx)
+	case block.FieldOutputStateTransformation:
+		return m.OldOutputStateTransformation(ctx)
+	case block.FieldEnableErrorHandling:
+		return m.OldEnableErrorHandling(ctx)
+	case block.FieldEnableRetryPolicy:
+		return m.OldEnableRetryPolicy(ctx)
+	case block.FieldRetryInterval:
+		return m.OldRetryInterval(ctx)
+	case block.FieldRetryUnit:
+		return m.OldRetryUnit(ctx)
+	case block.FieldMaxAttemps:
+		return m.OldMaxAttemps(ctx)
+	case block.FieldBackOffRate:
+		return m.OldBackOffRate(ctx)
+	case block.FieldTimerBehavior:
+		return m.OldTimerBehavior(ctx)
+	case block.FieldSeconds:
+		return m.OldSeconds(ctx)
+	case block.FieldEnableTimerExpression:
+		return m.OldEnableTimerExpression(ctx)
+	case block.FieldTimerExpression:
+		return m.OldTimerExpression(ctx)
+	case block.FieldTimerSpecificDate:
+		return m.OldTimerSpecificDate(ctx)
+	case block.FieldURLMethod:
+		return m.OldURLMethod(ctx)
+	case block.FieldConnectionTimeout:
+		return m.OldConnectionTimeout(ctx)
+	case block.FieldBody:
+		return m.OldBody(ctx)
+	case block.FieldHeaders:
+		return m.OldHeaders(ctx)
+	case block.FieldSignalType:
+		return m.OldSignalType(ctx)
+	case block.FieldSignalModule:
+		return m.OldSignalModule(ctx)
+	case block.FieldCustomFilter:
+		return m.OldCustomFilter(ctx)
+	case block.FieldBlockFlow:
+		return m.OldBlockFlow(ctx)
 	}
 	return nil, fmt.Errorf("unknown Block field %s", name)
 }
@@ -4247,6 +6090,223 @@ func (m *BlockMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetUIRepresentation(v)
 		return nil
+	case block.FieldEnableInputTransformation:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetEnableInputTransformation(v)
+		return nil
+	case block.FieldInputTransfStrategy:
+		v, ok := value.(block.InputTransfStrategy)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetInputTransfStrategy(v)
+		return nil
+	case block.FieldInputTransformation:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetInputTransformation(v)
+		return nil
+	case block.FieldEnableOutputTransformation:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetEnableOutputTransformation(v)
+		return nil
+	case block.FieldOutputTransfStrategy:
+		v, ok := value.(block.OutputTransfStrategy)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetOutputTransfStrategy(v)
+		return nil
+	case block.FieldOutputTransformation:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetOutputTransformation(v)
+		return nil
+	case block.FieldEnableInputStateTransformation:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetEnableInputStateTransformation(v)
+		return nil
+	case block.FieldInputStateTransfStrategy:
+		v, ok := value.(block.InputStateTransfStrategy)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetInputStateTransfStrategy(v)
+		return nil
+	case block.FieldInputStateTransformation:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetInputStateTransformation(v)
+		return nil
+	case block.FieldEnableOutputStateTransformation:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetEnableOutputStateTransformation(v)
+		return nil
+	case block.FieldOutputStateTransfStrategy:
+		v, ok := value.(enum.TransfStrategy)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetOutputStateTransfStrategy(v)
+		return nil
+	case block.FieldOutputStateTransformation:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetOutputStateTransformation(v)
+		return nil
+	case block.FieldEnableErrorHandling:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetEnableErrorHandling(v)
+		return nil
+	case block.FieldEnableRetryPolicy:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetEnableRetryPolicy(v)
+		return nil
+	case block.FieldRetryInterval:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetRetryInterval(v)
+		return nil
+	case block.FieldRetryUnit:
+		v, ok := value.(block.RetryUnit)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetRetryUnit(v)
+		return nil
+	case block.FieldMaxAttemps:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetMaxAttemps(v)
+		return nil
+	case block.FieldBackOffRate:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetBackOffRate(v)
+		return nil
+	case block.FieldTimerBehavior:
+		v, ok := value.(block.TimerBehavior)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTimerBehavior(v)
+		return nil
+	case block.FieldSeconds:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetSeconds(v)
+		return nil
+	case block.FieldEnableTimerExpression:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetEnableTimerExpression(v)
+		return nil
+	case block.FieldTimerExpression:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTimerExpression(v)
+		return nil
+	case block.FieldTimerSpecificDate:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTimerSpecificDate(v)
+		return nil
+	case block.FieldURLMethod:
+		v, ok := value.(block.URLMethod)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetURLMethod(v)
+		return nil
+	case block.FieldConnectionTimeout:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetConnectionTimeout(v)
+		return nil
+	case block.FieldBody:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetBody(v)
+		return nil
+	case block.FieldHeaders:
+		v, ok := value.([]string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetHeaders(v)
+		return nil
+	case block.FieldSignalType:
+		v, ok := value.(block.SignalType)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetSignalType(v)
+		return nil
+	case block.FieldSignalModule:
+		v, ok := value.(block.SignalModule)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetSignalModule(v)
+		return nil
+	case block.FieldCustomFilter:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCustomFilter(v)
+		return nil
+	case block.FieldBlockFlow:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetBlockFlow(v)
+		return nil
 	}
 	return fmt.Errorf("unknown Block field %s", name)
 }
@@ -4254,13 +6314,41 @@ func (m *BlockMutation) SetField(name string, value ent.Value) error {
 // AddedFields returns all numeric fields that were incremented
 // or decremented during this mutation.
 func (m *BlockMutation) AddedFields() []string {
-	return nil
+	var fields []string
+	if m.addretryInterval != nil {
+		fields = append(fields, block.FieldRetryInterval)
+	}
+	if m.addmaxAttemps != nil {
+		fields = append(fields, block.FieldMaxAttemps)
+	}
+	if m.addbackOffRate != nil {
+		fields = append(fields, block.FieldBackOffRate)
+	}
+	if m.addseconds != nil {
+		fields = append(fields, block.FieldSeconds)
+	}
+	if m.addconnection_timeout != nil {
+		fields = append(fields, block.FieldConnectionTimeout)
+	}
+	return fields
 }
 
 // AddedField returns the numeric value that was in/decremented
 // from a field with the given name. The second value indicates
 // that this field was not set, or was not define in the schema.
 func (m *BlockMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case block.FieldRetryInterval:
+		return m.AddedRetryInterval()
+	case block.FieldMaxAttemps:
+		return m.AddedMaxAttemps()
+	case block.FieldBackOffRate:
+		return m.AddedBackOffRate()
+	case block.FieldSeconds:
+		return m.AddedSeconds()
+	case block.FieldConnectionTimeout:
+		return m.AddedConnectionTimeout()
+	}
 	return nil, false
 }
 
@@ -4269,6 +6357,41 @@ func (m *BlockMutation) AddedField(name string) (ent.Value, bool) {
 // type mismatch the field type.
 func (m *BlockMutation) AddField(name string, value ent.Value) error {
 	switch name {
+	case block.FieldRetryInterval:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddRetryInterval(v)
+		return nil
+	case block.FieldMaxAttemps:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddMaxAttemps(v)
+		return nil
+	case block.FieldBackOffRate:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddBackOffRate(v)
+		return nil
+	case block.FieldSeconds:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddSeconds(v)
+		return nil
+	case block.FieldConnectionTimeout:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddConnectionTimeout(v)
+		return nil
 	}
 	return fmt.Errorf("unknown Block numeric field %s", name)
 }
@@ -4291,6 +6414,84 @@ func (m *BlockMutation) ClearedFields() []string {
 	}
 	if m.FieldCleared(block.FieldUIRepresentation) {
 		fields = append(fields, block.FieldUIRepresentation)
+	}
+	if m.FieldCleared(block.FieldEnableInputTransformation) {
+		fields = append(fields, block.FieldEnableInputTransformation)
+	}
+	if m.FieldCleared(block.FieldInputTransformation) {
+		fields = append(fields, block.FieldInputTransformation)
+	}
+	if m.FieldCleared(block.FieldEnableOutputTransformation) {
+		fields = append(fields, block.FieldEnableOutputTransformation)
+	}
+	if m.FieldCleared(block.FieldOutputTransformation) {
+		fields = append(fields, block.FieldOutputTransformation)
+	}
+	if m.FieldCleared(block.FieldEnableInputStateTransformation) {
+		fields = append(fields, block.FieldEnableInputStateTransformation)
+	}
+	if m.FieldCleared(block.FieldInputStateTransformation) {
+		fields = append(fields, block.FieldInputStateTransformation)
+	}
+	if m.FieldCleared(block.FieldEnableOutputStateTransformation) {
+		fields = append(fields, block.FieldEnableOutputStateTransformation)
+	}
+	if m.FieldCleared(block.FieldOutputStateTransformation) {
+		fields = append(fields, block.FieldOutputStateTransformation)
+	}
+	if m.FieldCleared(block.FieldEnableErrorHandling) {
+		fields = append(fields, block.FieldEnableErrorHandling)
+	}
+	if m.FieldCleared(block.FieldEnableRetryPolicy) {
+		fields = append(fields, block.FieldEnableRetryPolicy)
+	}
+	if m.FieldCleared(block.FieldRetryInterval) {
+		fields = append(fields, block.FieldRetryInterval)
+	}
+	if m.FieldCleared(block.FieldMaxAttemps) {
+		fields = append(fields, block.FieldMaxAttemps)
+	}
+	if m.FieldCleared(block.FieldBackOffRate) {
+		fields = append(fields, block.FieldBackOffRate)
+	}
+	if m.FieldCleared(block.FieldTimerBehavior) {
+		fields = append(fields, block.FieldTimerBehavior)
+	}
+	if m.FieldCleared(block.FieldSeconds) {
+		fields = append(fields, block.FieldSeconds)
+	}
+	if m.FieldCleared(block.FieldEnableTimerExpression) {
+		fields = append(fields, block.FieldEnableTimerExpression)
+	}
+	if m.FieldCleared(block.FieldTimerExpression) {
+		fields = append(fields, block.FieldTimerExpression)
+	}
+	if m.FieldCleared(block.FieldTimerSpecificDate) {
+		fields = append(fields, block.FieldTimerSpecificDate)
+	}
+	if m.FieldCleared(block.FieldURLMethod) {
+		fields = append(fields, block.FieldURLMethod)
+	}
+	if m.FieldCleared(block.FieldConnectionTimeout) {
+		fields = append(fields, block.FieldConnectionTimeout)
+	}
+	if m.FieldCleared(block.FieldBody) {
+		fields = append(fields, block.FieldBody)
+	}
+	if m.FieldCleared(block.FieldHeaders) {
+		fields = append(fields, block.FieldHeaders)
+	}
+	if m.FieldCleared(block.FieldSignalType) {
+		fields = append(fields, block.FieldSignalType)
+	}
+	if m.FieldCleared(block.FieldSignalModule) {
+		fields = append(fields, block.FieldSignalModule)
+	}
+	if m.FieldCleared(block.FieldCustomFilter) {
+		fields = append(fields, block.FieldCustomFilter)
+	}
+	if m.FieldCleared(block.FieldBlockFlow) {
+		fields = append(fields, block.FieldBlockFlow)
 	}
 	return fields
 }
@@ -4320,6 +6521,84 @@ func (m *BlockMutation) ClearField(name string) error {
 		return nil
 	case block.FieldUIRepresentation:
 		m.ClearUIRepresentation()
+		return nil
+	case block.FieldEnableInputTransformation:
+		m.ClearEnableInputTransformation()
+		return nil
+	case block.FieldInputTransformation:
+		m.ClearInputTransformation()
+		return nil
+	case block.FieldEnableOutputTransformation:
+		m.ClearEnableOutputTransformation()
+		return nil
+	case block.FieldOutputTransformation:
+		m.ClearOutputTransformation()
+		return nil
+	case block.FieldEnableInputStateTransformation:
+		m.ClearEnableInputStateTransformation()
+		return nil
+	case block.FieldInputStateTransformation:
+		m.ClearInputStateTransformation()
+		return nil
+	case block.FieldEnableOutputStateTransformation:
+		m.ClearEnableOutputStateTransformation()
+		return nil
+	case block.FieldOutputStateTransformation:
+		m.ClearOutputStateTransformation()
+		return nil
+	case block.FieldEnableErrorHandling:
+		m.ClearEnableErrorHandling()
+		return nil
+	case block.FieldEnableRetryPolicy:
+		m.ClearEnableRetryPolicy()
+		return nil
+	case block.FieldRetryInterval:
+		m.ClearRetryInterval()
+		return nil
+	case block.FieldMaxAttemps:
+		m.ClearMaxAttemps()
+		return nil
+	case block.FieldBackOffRate:
+		m.ClearBackOffRate()
+		return nil
+	case block.FieldTimerBehavior:
+		m.ClearTimerBehavior()
+		return nil
+	case block.FieldSeconds:
+		m.ClearSeconds()
+		return nil
+	case block.FieldEnableTimerExpression:
+		m.ClearEnableTimerExpression()
+		return nil
+	case block.FieldTimerExpression:
+		m.ClearTimerExpression()
+		return nil
+	case block.FieldTimerSpecificDate:
+		m.ClearTimerSpecificDate()
+		return nil
+	case block.FieldURLMethod:
+		m.ClearURLMethod()
+		return nil
+	case block.FieldConnectionTimeout:
+		m.ClearConnectionTimeout()
+		return nil
+	case block.FieldBody:
+		m.ClearBody()
+		return nil
+	case block.FieldHeaders:
+		m.ClearHeaders()
+		return nil
+	case block.FieldSignalType:
+		m.ClearSignalType()
+		return nil
+	case block.FieldSignalModule:
+		m.ClearSignalModule()
+		return nil
+	case block.FieldCustomFilter:
+		m.ClearCustomFilter()
+		return nil
+	case block.FieldBlockFlow:
+		m.ClearBlockFlow()
 		return nil
 	}
 	return fmt.Errorf("unknown Block nullable field %s", name)
@@ -4356,6 +6635,99 @@ func (m *BlockMutation) ResetField(name string) error {
 		return nil
 	case block.FieldUIRepresentation:
 		m.ResetUIRepresentation()
+		return nil
+	case block.FieldEnableInputTransformation:
+		m.ResetEnableInputTransformation()
+		return nil
+	case block.FieldInputTransfStrategy:
+		m.ResetInputTransfStrategy()
+		return nil
+	case block.FieldInputTransformation:
+		m.ResetInputTransformation()
+		return nil
+	case block.FieldEnableOutputTransformation:
+		m.ResetEnableOutputTransformation()
+		return nil
+	case block.FieldOutputTransfStrategy:
+		m.ResetOutputTransfStrategy()
+		return nil
+	case block.FieldOutputTransformation:
+		m.ResetOutputTransformation()
+		return nil
+	case block.FieldEnableInputStateTransformation:
+		m.ResetEnableInputStateTransformation()
+		return nil
+	case block.FieldInputStateTransfStrategy:
+		m.ResetInputStateTransfStrategy()
+		return nil
+	case block.FieldInputStateTransformation:
+		m.ResetInputStateTransformation()
+		return nil
+	case block.FieldEnableOutputStateTransformation:
+		m.ResetEnableOutputStateTransformation()
+		return nil
+	case block.FieldOutputStateTransfStrategy:
+		m.ResetOutputStateTransfStrategy()
+		return nil
+	case block.FieldOutputStateTransformation:
+		m.ResetOutputStateTransformation()
+		return nil
+	case block.FieldEnableErrorHandling:
+		m.ResetEnableErrorHandling()
+		return nil
+	case block.FieldEnableRetryPolicy:
+		m.ResetEnableRetryPolicy()
+		return nil
+	case block.FieldRetryInterval:
+		m.ResetRetryInterval()
+		return nil
+	case block.FieldRetryUnit:
+		m.ResetRetryUnit()
+		return nil
+	case block.FieldMaxAttemps:
+		m.ResetMaxAttemps()
+		return nil
+	case block.FieldBackOffRate:
+		m.ResetBackOffRate()
+		return nil
+	case block.FieldTimerBehavior:
+		m.ResetTimerBehavior()
+		return nil
+	case block.FieldSeconds:
+		m.ResetSeconds()
+		return nil
+	case block.FieldEnableTimerExpression:
+		m.ResetEnableTimerExpression()
+		return nil
+	case block.FieldTimerExpression:
+		m.ResetTimerExpression()
+		return nil
+	case block.FieldTimerSpecificDate:
+		m.ResetTimerSpecificDate()
+		return nil
+	case block.FieldURLMethod:
+		m.ResetURLMethod()
+		return nil
+	case block.FieldConnectionTimeout:
+		m.ResetConnectionTimeout()
+		return nil
+	case block.FieldBody:
+		m.ResetBody()
+		return nil
+	case block.FieldHeaders:
+		m.ResetHeaders()
+		return nil
+	case block.FieldSignalType:
+		m.ResetSignalType()
+		return nil
+	case block.FieldSignalModule:
+		m.ResetSignalModule()
+		return nil
+	case block.FieldCustomFilter:
+		m.ResetCustomFilter()
+		return nil
+	case block.FieldBlockFlow:
+		m.ResetBlockFlow()
 		return nil
 	}
 	return fmt.Errorf("unknown Block field %s", name)

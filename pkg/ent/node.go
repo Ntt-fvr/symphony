@@ -463,7 +463,7 @@ func (b *Block) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
 		ID:     b.ID,
 		Type:   "Block",
-		Fields: make([]*Field, 9),
+		Fields: make([]*Field, 40),
 		Edges:  make([]*Edge, 9),
 	}
 	var buf []byte
@@ -537,6 +537,254 @@ func (b *Block) Node(ctx context.Context) (node *Node, err error) {
 	node.Fields[8] = &Field{
 		Type:  "*flowschema.BlockUIRepresentation",
 		Name:  "ui_representation",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(b.EnableInputTransformation); err != nil {
+		return nil, err
+	}
+	node.Fields[9] = &Field{
+		Type:  "bool",
+		Name:  "enable_input_transformation",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(b.InputTransfStrategy); err != nil {
+		return nil, err
+	}
+	node.Fields[10] = &Field{
+		Type:  "block.InputTransfStrategy",
+		Name:  "input_transf_strategy",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(b.InputTransformation); err != nil {
+		return nil, err
+	}
+	node.Fields[11] = &Field{
+		Type:  "string",
+		Name:  "input_transformation",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(b.EnableOutputTransformation); err != nil {
+		return nil, err
+	}
+	node.Fields[12] = &Field{
+		Type:  "bool",
+		Name:  "enable_output_transformation",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(b.OutputTransfStrategy); err != nil {
+		return nil, err
+	}
+	node.Fields[13] = &Field{
+		Type:  "block.OutputTransfStrategy",
+		Name:  "output_transf_strategy",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(b.OutputTransformation); err != nil {
+		return nil, err
+	}
+	node.Fields[14] = &Field{
+		Type:  "string",
+		Name:  "output_transformation",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(b.EnableInputStateTransformation); err != nil {
+		return nil, err
+	}
+	node.Fields[15] = &Field{
+		Type:  "bool",
+		Name:  "enable_input_state_transformation",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(b.InputStateTransfStrategy); err != nil {
+		return nil, err
+	}
+	node.Fields[16] = &Field{
+		Type:  "block.InputStateTransfStrategy",
+		Name:  "input_state_transf_strategy",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(b.InputStateTransformation); err != nil {
+		return nil, err
+	}
+	node.Fields[17] = &Field{
+		Type:  "string",
+		Name:  "input_state_transformation",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(b.EnableOutputStateTransformation); err != nil {
+		return nil, err
+	}
+	node.Fields[18] = &Field{
+		Type:  "bool",
+		Name:  "enable_output_state_transformation",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(b.OutputStateTransfStrategy); err != nil {
+		return nil, err
+	}
+	node.Fields[19] = &Field{
+		Type:  "enum.TransfStrategy",
+		Name:  "output_state_transf_strategy",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(b.OutputStateTransformation); err != nil {
+		return nil, err
+	}
+	node.Fields[20] = &Field{
+		Type:  "string",
+		Name:  "output_state_transformation",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(b.EnableErrorHandling); err != nil {
+		return nil, err
+	}
+	node.Fields[21] = &Field{
+		Type:  "bool",
+		Name:  "enable_error_handling",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(b.EnableRetryPolicy); err != nil {
+		return nil, err
+	}
+	node.Fields[22] = &Field{
+		Type:  "bool",
+		Name:  "enable_retry_policy",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(b.RetryInterval); err != nil {
+		return nil, err
+	}
+	node.Fields[23] = &Field{
+		Type:  "int",
+		Name:  "retryInterval",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(b.RetryUnit); err != nil {
+		return nil, err
+	}
+	node.Fields[24] = &Field{
+		Type:  "block.RetryUnit",
+		Name:  "retry_unit",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(b.MaxAttemps); err != nil {
+		return nil, err
+	}
+	node.Fields[25] = &Field{
+		Type:  "int",
+		Name:  "maxAttemps",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(b.BackOffRate); err != nil {
+		return nil, err
+	}
+	node.Fields[26] = &Field{
+		Type:  "int",
+		Name:  "backOffRate",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(b.TimerBehavior); err != nil {
+		return nil, err
+	}
+	node.Fields[27] = &Field{
+		Type:  "block.TimerBehavior",
+		Name:  "timer_behavior",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(b.Seconds); err != nil {
+		return nil, err
+	}
+	node.Fields[28] = &Field{
+		Type:  "int",
+		Name:  "seconds",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(b.EnableTimerExpression); err != nil {
+		return nil, err
+	}
+	node.Fields[29] = &Field{
+		Type:  "bool",
+		Name:  "enable_timer_expression",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(b.TimerExpression); err != nil {
+		return nil, err
+	}
+	node.Fields[30] = &Field{
+		Type:  "string",
+		Name:  "timer_expression",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(b.TimerSpecificDate); err != nil {
+		return nil, err
+	}
+	node.Fields[31] = &Field{
+		Type:  "time.Time",
+		Name:  "timer_specific_date",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(b.URLMethod); err != nil {
+		return nil, err
+	}
+	node.Fields[32] = &Field{
+		Type:  "block.URLMethod",
+		Name:  "url_method",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(b.ConnectionTimeout); err != nil {
+		return nil, err
+	}
+	node.Fields[33] = &Field{
+		Type:  "int",
+		Name:  "connection_timeout",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(b.Body); err != nil {
+		return nil, err
+	}
+	node.Fields[34] = &Field{
+		Type:  "string",
+		Name:  "body",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(b.Headers); err != nil {
+		return nil, err
+	}
+	node.Fields[35] = &Field{
+		Type:  "[]string",
+		Name:  "headers",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(b.SignalType); err != nil {
+		return nil, err
+	}
+	node.Fields[36] = &Field{
+		Type:  "block.SignalType",
+		Name:  "signal_type",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(b.SignalModule); err != nil {
+		return nil, err
+	}
+	node.Fields[37] = &Field{
+		Type:  "block.SignalModule",
+		Name:  "signal_module",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(b.CustomFilter); err != nil {
+		return nil, err
+	}
+	node.Fields[38] = &Field{
+		Type:  "string",
+		Name:  "custom_filter",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(b.BlockFlow); err != nil {
+		return nil, err
+	}
+	node.Fields[39] = &Field{
+		Type:  "bool",
+		Name:  "block_flow",
 		Value: string(buf),
 	}
 	node.Edges[0] = &Edge{

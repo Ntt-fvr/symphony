@@ -593,3 +593,40 @@ const (
 func (vt BaseTypeWO) String() string {
 	return string(vt)
 }
+
+// TransfStrategy is a type of tranformation strategy
+type TransfStrategy string
+
+// Possible tranformation strategy type values.
+const (
+	TransfStrategyReplace TransfStrategy = "replace"
+	TransfStrategyMerge   TransfStrategy = "merge"
+)
+
+// Values returns strategy item type possible values.
+func (TransfStrategy) Values() []string {
+	return []string{
+		TransfStrategyReplace.String(),
+		TransfStrategyMerge.String(),
+	}
+}
+
+// String implements Getter interface.
+func (c TransfStrategy) String() string {
+	return string(c)
+}
+
+// Set sets the value stored in transformation strategy item type.
+func (c *TransfStrategy) Set(s string) {
+	*c = TransfStrategy(s)
+}
+
+// UnmarshalGQL implements graphql.Unmarshaler interface.
+func (c *TransfStrategy) UnmarshalGQL(v interface{}) error {
+	return UnmarshalGQL(v, c)
+}
+
+// MarshalGQL implements graphql.Marshaler interface.
+func (c TransfStrategy) MarshalGQL(w io.Writer) {
+	_ = MarshalGQL(w, c)
+}
