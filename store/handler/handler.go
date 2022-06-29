@@ -123,8 +123,10 @@ func (h *Handler) put(w http.ResponseWriter, r *http.Request) {
 		}
 		err error
 	)
+	var name string
+	fmt.Scan(&name)
 	rsp.Key = uuid.New().String()
-	key := getKey(r, rsp.Key)
+	key := name + getKey(r, rsp.Key)
 	if rsp.URL, err = h.bucket.SignedURL(ctx, key,
 		&blob.SignedURLOptions{
 			Method:      http.MethodPut,
