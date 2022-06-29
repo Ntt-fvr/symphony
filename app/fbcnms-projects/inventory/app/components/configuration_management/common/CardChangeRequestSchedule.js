@@ -45,10 +45,14 @@ const DATE_FORMAT = 'YYYY-MM-DD[T]HH:mm:ss';
 
 const CardChangeRequestSchedule = (props: Props) => {
   const {schedule, onSchedule} = props;
+  const [dataSchedule, setDataSchedule] = useState(schedule);
+  const [checkedHidden, setCheckedHidden] = useState();
 
-  const [checkedHidden, setCheckedHidden] = useState(true);
+  console.log('card', dataSchedule, checkedHidden);
 
-  console.log('card', schedule, checkedHidden);
+  dataSchedule?.type === 'AS_SOON_AS_APPROVED'
+    ? () => setCheckedHidden(true)
+    : () => setCheckedHidden(false); //() => setCheckedHidden(checkedHidden)
 
   return (
     <Grid container>
@@ -56,14 +60,20 @@ const CardChangeRequestSchedule = (props: Props) => {
         <FormControlLabel
           style={{padding: '0 0 0 40px'}}
           onChange={() => setCheckedHidden(!checkedHidden)}
-          checked={schedule?.type === 'AS_SOON_AS_APPROVED' && false}
+          checked={
+            dataSchedule?.type === 'AS_SOON_AS_APPROVED' && !checkedHidden
+          }
+          // checked={checkedHidden}
           value="approved"
           control={<Radio color="primary" />}
           label="As soon as approved "
         />
         <FormControlLabel
           onChange={() => setCheckedHidden(!checkedHidden)}
-          checked={schedule?.type === 'SCHEDULED_CHANGE' && true}
+          checked={
+            dataSchedule?.type !== 'AS_SOON_AS_APPROVED' && !checkedHidden
+          }
+          // checked={checkedHidden}
           // () => setCheckedHidden(checkedHidden))
           value="approval"
           control={<Radio color="primary" />}
@@ -71,7 +81,8 @@ const CardChangeRequestSchedule = (props: Props) => {
         />
         <Divider />
       </Grid>
-      <Hidden xsUp={schedule?.type === 'SCHEDULED_CHANGE' && true}>
+      <Hidden
+        xsUp={dataSchedule?.type === 'AS_SOON_AS_APPROVED' && !checkedHidden}>
         <Grid style={{margin: '0 0 20px 0'}} item xs={12}>
           <Text
             style={{padding: '33px 0 0 40px'}}
@@ -97,9 +108,7 @@ const CardChangeRequestSchedule = (props: Props) => {
                 name="day"
                 // onChange={handleOnSelectDay}
                 value={
-                  schedule?.type === 'SCHEDULED_CHANGE'
-                    ? schedule?.weekDay
-                    : schedule?.type === 'AS_SOON_AS_APPROVED' && undefined
+                  schedule?.type === 'SCHEDULED_CHANGE' && dataSchedule?.weekDay
                 }
                 variant="outlined">
                 {days.map((item, index) => (
@@ -118,9 +127,8 @@ const CardChangeRequestSchedule = (props: Props) => {
                   mask="__:__ _M"
                   inputVariant="outlined"
                   value={
-                    schedule?.type === 'SCHEDULED_CHANGE'
-                      ? schedule?.time.slice(0, schedule?.time.length - 1)
-                      : schedule?.type === 'AS_SOON_AS_APPROVED' && null
+                    schedule?.type === 'SCHEDULED_CHANGE' &&
+                    dataSchedule?.time.slice(0, schedule?.time.length - 1)
                   }
                   // onChange={date => handleDateChange(date)}
                 />
