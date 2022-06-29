@@ -13,8 +13,6 @@ import (
 
 	"github.com/pkg/errors"
 
-	"github.com/facebookincubator/symphony/pkg/ent/blockinstance"
-
 	"github.com/facebookincubator/symphony/pkg/ent/predicate"
 
 	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
@@ -180,22 +178,6 @@ func (r mutationResolver) StartFlow(ctx context.Context, input models.StartFlowI
 		SetStartDate(input.StartDate).
 		Save(ctx)
 	if err != nil {
-		return nil, err
-	}
-	startBlock, err := flowInstance.QueryTemplate().
-		QueryBlocks().
-		Where(block.TypeEQ(block.TypeStart)).
-		Only(ctx)
-	if err != nil {
-		return nil, fmt.Errorf("failed to find flow start block. id=%q", flowInstance.ID)
-	}
-	if _, err = client.BlockInstance.Create().
-		SetBlock(startBlock).
-		SetFlowInstance(flowInstance).
-		SetStatus(blockinstance.StatusCompleted).
-		SetStartDate(input.StartDate).
-		SetInputs(input.Params).
-		Save(ctx); err != nil {
 		return nil, err
 	}
 	return flowInstance, nil
