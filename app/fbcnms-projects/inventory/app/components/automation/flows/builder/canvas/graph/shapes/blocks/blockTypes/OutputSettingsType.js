@@ -9,7 +9,7 @@
  */
 'use strict';
 
-export type OutputSettings = {
+export type OutputSettingsType = {
   enableOutputTransformation: boolean,
   outputParamDefinitions: string,
   outputTranfStrategy: string,
@@ -21,18 +21,20 @@ export type OutputSettings = {
   additionMethod: string,
 };
 
-export const initialOutputSettings: OutputSettings = {
-  enableOutputTransformation: null,
-  outputTranfStrategy: null,
-  outputParamDefinitions: null,
-  enableOutputStateTransformation: null,
-  outputStateTransfStrategy: null,
-  outputStateParamDefinitions: null,
-  addOriginal: null,
-  addOriginalJson: null,
-  additionMethod: null,
+export const initialOutputSettings: OutputSettingsType = {
+  enableOutputTransformation: undefined,
+  outputTranfStrategy: undefined,
+  outputParamDefinitions: undefined,
+  enableOutputStateTransformation: undefined,
+  outputStateTransfStrategy: undefined,
+  outputStateParamDefinitions: undefined,
+  addOriginal: undefined,
+  addOriginalJson: undefined,
+  additionMethod: undefined,
 };
 
-export const setOutputSettings = newOutputSettings => {
+export const setOutputSettings: OutputSettingsType = (
+  newOutputSettings: OutputSettingsType,
+) => {
   return newOutputSettings;
 };

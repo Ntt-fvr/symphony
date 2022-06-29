@@ -15,14 +15,16 @@ export type ExecuteFlowBlockInputType = {
   ...BaseBlockInputType,
 };
 
-export type ExecuteFlowSettings = $ReadOnly<{|
+export type ExecuteFlowSettingsType = $ReadOnly<{|
   flow: string,
 |}>;
 
-export const initialExecuteFlowSettings: ExecuteFlowSettings = {
+export const initialExecuteFlowSettings: ExecuteFlowSettingsType = {
   flow: null,
 };
 
-export const setExecuteFlowSettings: ExecuteFlowSettings = newExecuteFlowSettings => {
+export const setExecuteFlowSettings: ExecuteFlowSettingsType = (
+  newExecuteFlowSettings: ExecuteFlowSettingsType,
+) => {
   return newExecuteFlowSettings;
 };

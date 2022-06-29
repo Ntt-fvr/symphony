@@ -30,7 +30,7 @@ export type InvokeRestAPIBlockInputType = {
   headers: string,
   ...BaseBlockInputType,
 };
-export type InvokeRestApiSettings = $ReadOnly<{|
+export type InvokeRestApiSettingsType = $ReadOnly<{|
   entryPoint: EntryPointInput,
   exitPoint: ExitPointInput,
   method: string,
@@ -40,7 +40,7 @@ export type InvokeRestApiSettings = $ReadOnly<{|
   headers: string,
 |}>;
 
-export const initialInvokeRestApiSettings: InvokeRestApiSettings = {
+export const initialInvokeRestApiSettings: InvokeRestApiSettingsType = {
   entryPoint: null,
   exitPoint: null,
   method: null,
@@ -50,6 +50,8 @@ export const initialInvokeRestApiSettings: InvokeRestApiSettings = {
   headers: null,
 };
 
-export const setInvokeRestApiSettings: InvokeRestApiSettings = newInvokeRestApiSettings => {
+export const setInvokeRestApiSettings: InvokeRestApiSettingsType = (
+  newInvokeRestApiSettings: InvokeRestApiSettingsType,
+) => {
   return newInvokeRestApiSettings;
 };

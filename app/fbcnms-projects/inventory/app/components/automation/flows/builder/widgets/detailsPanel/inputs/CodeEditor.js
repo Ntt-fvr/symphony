@@ -38,16 +38,18 @@ type Props = $ReadOnly<{|
 |}>;
 
 const CodeEditor = (props: Props) => {
-  const {mode, onChange, rule, title, value, name} = props;
+  const {mode, onChange, title, value, name, isRuleExpression = false} = props;
   const classes = useStyles();
 
   const changeEditorValue = newValue => {
-    onChange({
-      target: {
-        name,
-        value: newValue,
-      },
-    });
+    isRuleExpression
+      ? onChange(newValue)
+      : onChange({
+          target: {
+            name,
+            value: newValue,
+          },
+        });
   };
 
   return (
@@ -56,7 +58,7 @@ const CodeEditor = (props: Props) => {
       <div className={classes.codeEditor}>
         <AceEditor
           mode={mode}
-          value={rule?.value || value || ''}
+          value={value || ''}
           theme="tomorrow"
           onChange={changeEditorValue}
           fontSize={14}

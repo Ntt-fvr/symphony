@@ -57,7 +57,7 @@ export function rulesTableReducer(
     case 'UPDATE_RULE_VALUE':
       return editRule(state, action.id, rule => ({
         ...rule,
-        value: action.rule,
+        rule: action.rule,
       }));
     case 'CHANGE_RULE_INDEX':
       const sortedNotDeletedState = state

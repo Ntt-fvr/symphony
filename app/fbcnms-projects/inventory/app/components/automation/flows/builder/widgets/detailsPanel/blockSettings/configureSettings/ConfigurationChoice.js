@@ -8,6 +8,8 @@
  * @format
  */
 
+import type {IBlock} from '../../../../canvas/graph/shapes/blocks/BaseBlock';
+
 import * as React from 'react';
 import Button from '@symphony/design-system/components/Button';
 import FormAction from '@symphony/design-system/components/Form/FormAction';
@@ -16,11 +18,20 @@ import RulesTableDispatcher from '../../inputs/context/rules/RulesTableDispatche
 import fbt from 'fbt';
 import {Grid} from '@material-ui/core';
 import {PlusIcon} from '@symphony/design-system/icons';
+import {useEffect} from 'react';
 import {useRulesReducer} from '../../inputs/context/rules/RulesTableState';
+
+type Props = $ReadOnly<{|
+  block: IBlock,
+|}>;
 
 const ConfigurationChoice = (props: Props) => {
   const {block} = props;
   const [rules, rulesDispatcher] = useRulesReducer([]);
+
+  useEffect(() => {
+    block.setSettings(rules);
+  }, [rules]);
 
   return (
     <Grid container xs={12} spacing={2}>
