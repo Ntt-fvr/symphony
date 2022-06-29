@@ -60,6 +60,12 @@ func New(cfg Config) *Handler {
 		Handler(ochttp.WithRouteTag(
 			http.HandlerFunc(h.put), "put",
 		))
+	router.Path("/putNifi").
+		Methods(http.MethodGet).
+		Queries("contentType", "{contentType}").
+		Handler(ochttp.WithRouteTag(
+			http.HandlerFunc(h.putNifi), "putNifi",
+		))
 	router.Path("/delete").
 		Queries("key", "{key}").
 		Methods(http.MethodDelete).
