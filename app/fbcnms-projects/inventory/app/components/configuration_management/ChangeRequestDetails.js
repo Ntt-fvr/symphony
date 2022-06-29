@@ -178,7 +178,6 @@ const ChangeRequestDetails = (props: Props) => {
   const dateSchedule = changeRequest?.scheduler;
 
   const [schedule, setSchedule] = useState(dateSchedule);
-  console.log('FRIST ', schedule, changeRequest);
 
   const resourceTypeFilter = dataQuery?.resourceSpecifications?.edges?.find(
     chRq => chRq?.node?.id === idRS,

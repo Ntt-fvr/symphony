@@ -25,7 +25,7 @@ import {
   MuiPickersUtilsProvider,
 } from '@material-ui/pickers';
 import {MenuItem} from '@material-ui/core';
-import {useCallback, useEffect, useState} from 'react';
+import {useEffect, useState} from 'react';
 
 export type Props = $ReadOnly<{|
   schedule?: any,
@@ -56,9 +56,6 @@ const CardChangeRequestSchedule = (props: Props) => {
     scheduleChange: true,
   });
 
-  console.log('IN->', schedule);
-  console.log('STATE->', dataSchedule);
-
   useEffect(() => {
     dataSchedule?.type == TYPE_SCHEDULE.AS_SOON_AS_APROVED
       ? setCheckedHidden({
@@ -77,6 +74,7 @@ const CardChangeRequestSchedule = (props: Props) => {
       asSoonAsAproved: false,
       scheduleChange: true,
     });
+    console.log(dataSchedule, {...checkedHidden});
   };
   const handleChangeAproved = () => {
     setDataSchedule({
@@ -89,9 +87,7 @@ const CardChangeRequestSchedule = (props: Props) => {
     });
   };
   const handleDateChange = date => {
-    console.log(date);
     const timeUp = moment(date).format(DATE_FORMAT);
-    console.log(timeUp + 'Z');
     setSchedule({...schedule, time: timeUp});
     setDataSchedule({...dataSchedule, time: timeUp});
   };
@@ -167,7 +163,7 @@ const CardChangeRequestSchedule = (props: Props) => {
                   inputVariant="outlined"
                   value={
                     dataSchedule?.type === 'SCHEDULED_CHANGE' &&
-                    dataSchedule?.time.slice(0, schedule?.time.length - 1)
+                    dataSchedule?.time?.slice(0, schedule?.time?.length - 1)
                   }
                   onChange={handleDateChange}
                 />
