@@ -47,6 +47,7 @@ func (Block) Fields() []ent.Field {
 				"NetworkAction", "NETWORK_ACTION",
 				"Timer", "TIMER",
 				"InvokeRestAPI", "INVOKE_REST_API",
+				"WaitForSignal", "WAIT_FOR_SIGNAL",
 				"ForEach", "FOREACH",
 				"Parallel", "PARALLEL",
 			),

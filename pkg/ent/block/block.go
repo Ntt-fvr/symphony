@@ -293,6 +293,7 @@ const (
 	TypeNetworkAction Type = "NETWORK_ACTION"
 	TypeTimer         Type = "TIMER"
 	TypeInvokeRestAPI Type = "INVOKE_REST_API"
+	TypeWaitForSignal Type = "WAIT_FOR_SIGNAL"
 	TypeForEach       Type = "FOREACH"
 	TypeParallel      Type = "PARALLEL"
 )
@@ -304,7 +305,7 @@ func (_type Type) String() string {
 // TypeValidator is a validator for the "type" field enum values. It is called by the builders before save.
 func TypeValidator(_type Type) error {
 	switch _type {
-	case TypeStart, TypeEnd, TypeDecision, TypeSubFlow, TypeGoTo, TypeTrigger, TypeAction, TypeTrueFalse, TypeChoice, TypeExecuteFlow, TypeNetworkAction, TypeTimer, TypeInvokeRestAPI, TypeForEach, TypeParallel:
+	case TypeStart, TypeEnd, TypeDecision, TypeSubFlow, TypeGoTo, TypeTrigger, TypeAction, TypeTrueFalse, TypeChoice, TypeExecuteFlow, TypeNetworkAction, TypeTimer, TypeInvokeRestAPI, TypeWaitForSignal, TypeForEach, TypeParallel:
 		return nil
 	default:
 		return fmt.Errorf("block: invalid enum value for type field: %q", _type)

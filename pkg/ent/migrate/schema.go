@@ -149,7 +149,7 @@ var (
 		{Name: "create_time", Type: field.TypeTime},
 		{Name: "update_time", Type: field.TypeTime},
 		{Name: "cid", Type: field.TypeString},
-		{Name: "type", Type: field.TypeEnum, Enums: []string{"START", "END", "DECISION", "SUB_FLOW", "GO_TO", "TRIGGER", "ACTION", "TRUE_FALSE", "CHOICE", "EXECUTE_FLOW", "NETWORK_ACTION", "TIMER", "INVOKE_REST_API", "FOREACH", "PARALLEL"}},
+		{Name: "type", Type: field.TypeEnum, Enums: []string{"START", "END", "DECISION", "SUB_FLOW", "GO_TO", "TRIGGER", "ACTION", "TRUE_FALSE", "CHOICE", "EXECUTE_FLOW", "NETWORK_ACTION", "TIMER", "INVOKE_REST_API", "WAIT_FOR_SIGNAL", "FOREACH", "PARALLEL"}},
 		{Name: "action_type", Type: field.TypeEnum, Nullable: true, Enums: []string{"work_order", "update_inventory", "update_workforce", "worker"}},
 		{Name: "trigger_type", Type: field.TypeEnum, Nullable: true, Enums: []string{"work_order"}},
 		{Name: "start_param_definitions", Type: field.TypeJSON, Nullable: true},
