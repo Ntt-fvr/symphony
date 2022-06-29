@@ -85,7 +85,7 @@ const TableResource = (props: Props) => {
                       variant={'subtitle1'}
                       weight={'medium'}
                       color={'primary'}>
-                      {item.resource}
+                      {item.resources}
                     </Text>
                   </Button>
                 </TableCell>

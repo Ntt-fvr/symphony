@@ -30,8 +30,6 @@ import {
 import {fetchQuery, graphql} from 'relay-runtime';
 import {makeStyles} from '@material-ui/styles';
 import {useMemo} from 'react';
-import SnackbarItem from '@fbcnms/ui/components/SnackbarItem';
-import { useEnqueueSnackbar } from '@fbcnms/ui/hooks/useSnackbar';
 
 export const PROJECTS_PAGE_SIZE = 10;
 const useStyles = makeStyles(() => ({
@@ -112,7 +110,6 @@ const ChangeRequestTypes = () => {
   const [infoCSV, setinfoCSV] = useState([])
   const [nameFile, setNameFile] = useState('')
   const classes = useStyles();
-  const enqueueSnackbar = useEnqueueSnackbar();
 
   const locationTypesFilterConfigs = useLocationTypes();
   const possibleProperties = usePropertyFilters('queryChangeRequest');

@@ -12,3 +12,14 @@ export const csvToArray = (str, delimiter = ',') => {
   });
   return arrayValues;
 };
+
+export const ValidateHeader = (str, delimiter, header) => {
+  const headers = str.slice(0, str.indexOf('\n')).split(delimiter);
+  let arrHeader = [];
+
+  headers.map(function (row) {
+    arrHeader.push(row);
+  });
+
+  return JSON.stringify(header) === JSON.stringify(arrHeader);
+};

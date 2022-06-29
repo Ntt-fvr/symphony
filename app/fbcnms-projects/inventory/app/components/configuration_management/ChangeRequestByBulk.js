@@ -12,18 +12,20 @@ import Button from '@material-ui/core/Button';
 import ButtonUpload from './common/ButtonUpload';
 import CloudUploadIcon from '@material-ui/icons/CloudUpload';
 import ConfigureTitle from './common/ConfigureTitle';
-import DialogStatus from '../configure/DialogStatus';
+import DialogStatus from '../configure/DialogStatusBulk';
 import React, {useState} from 'react';
 import TextField from '@material-ui/core/TextField';
 import TextInput from '@symphony/design-system/components/Input/TextInput';
 import fbt from 'fbt';
 import {CardAccordion} from './common/CardAccordion';
-import {CardSuggested} from '../CardSuggested';
+import {CardSuggested} from '../CardSuggestedBulk';
 import {FormField} from './common/FormField';
 import {Grid} from '@material-ui/core';
 import {TableResource} from './common/TableResource';
 import {makeStyles} from '@material-ui/styles';
-import {csvToArray} from './csvToArray';
+import {csvToArray, ValidateHeader} from './csvToArray';
+import SnackbarItem from '@fbcnms/ui/components/SnackbarItem';
+import {useEnqueueSnackbar} from '@fbcnms/ui/hooks/useSnackbar';
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -45,6 +47,8 @@ const useStyles = makeStyles(() => ({
     },
   },
 }));
+
+const headerCSV = ['resources', 'parameter', 'newValue'];
 
 const DEFAULT_DATA_SCHEDULE = {
   date: new Date(),
@@ -68,6 +72,16 @@ const ChangeRequestByBulk = (props: Props) => {
     setOpenModal(prevStateOpenModal => !prevStateOpenModal);
   };
 
+  const enqueueSnackbar = useEnqueueSnackbar();
+
+  const messageStatusFile = (message, variant) => {
+    enqueueSnackbar(message, {
+      children: key => (
+        <SnackbarItem id={key} message={message} variant={variant} />
+      ),
+    });
+  };
+
   const fileValidate = () => {
     const input = document.createElement('input');
     input.type = 'file';
@@ -77,8 +91,12 @@ const ChangeRequestByBulk = (props: Props) => {
       const reader = new FileReader();
       reader.onload = function (e) {
         const text = e.target.result;
-        setInfoTable(csvToArray(text));
-        setNameFileSelected(file.name);
+        if (ValidateHeader(text, ',', headerCSV)) {
+          setInfoTable(csvToArray(text));
+          setNameFileSelected(file.name);
+        } else {
+          messageStatusFile('Invalid file header', 'error');
+        }
       };
       reader.readAsText(file);
     };
@@ -179,6 +197,8 @@ const ChangeRequestByBulk = (props: Props) => {
             setOpenModal(prevStateOpenModal => !prevStateOpenModal)
           }
           onClick={onClick}
+          infoCSV={infoTable.length === 0 ? infoCSV : infoTable}
+          schedule={schedule}
         />
       )}
     </div>

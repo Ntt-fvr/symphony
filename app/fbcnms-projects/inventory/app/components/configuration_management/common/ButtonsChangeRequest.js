@@ -15,7 +15,7 @@ import {makeStyles} from '@material-ui/styles';
 import Select from '@symphony/design-system/components/Select/Select';
 import {uploadFileNifi} from '../../FileUpload/FileUploadUtilsNifi';
 import shortid from 'shortid';
-import {csvToArray} from '../csvToArray';
+import {csvToArray, csvToHeader, ValidateHeader} from '../csvToArray';
 import SnackbarItem from '@fbcnms/ui/components/SnackbarItem';
 import {useEnqueueSnackbar} from '@fbcnms/ui/hooks/useSnackbar';
 
@@ -38,6 +38,8 @@ const valuesNF = [
     label: 'nf-initial-parameters',
   },
 ];
+
+const headerCSV = ['resources', 'parameter', 'newValue'];
 
 export type MouseEventHandler = (
   SyntheticMouseEvent<HTMLElement>,
@@ -100,7 +102,11 @@ const ButtonsChangeRequest = (props: Props) => {
         const reader = new FileReader();
         reader.onload = function (e) {
           const text = e.target.result;
-          onClickBulk(csvToArray(text), file.name);
+          if (ValidateHeader(text, ',', headerCSV)) {
+            onClickBulk(csvToArray(text), file.name);
+          } else {
+            messageStatusFile('Invalid file header', 'error');
+          }
         };
         reader.readAsText(file);
       }
