@@ -25,7 +25,7 @@ import {
   MuiPickersUtilsProvider,
 } from '@material-ui/pickers';
 import {MenuItem} from '@material-ui/core';
-import {useState} from 'react';
+import {useCallback, useEffect, useState} from 'react';
 
 export type Props = $ReadOnly<{|
   schedule?: any,
@@ -45,38 +45,66 @@ const days = [
 const CardChangeRequestSchedule = (props: Props) => {
   const {schedule, onSchedule} = props;
   const [dataSchedule, setDataSchedule] = useState(schedule);
-  const [checkedHidden, setCheckedHidden] = useState();
+  const [checkedHidden, setCheckedHidden] = useState({
+    as: false,
+    schedule: true,
+  });
 
-  dataSchedule?.type === 'AS_SOON_AS_APPROVED'
-    ? () => setCheckedHidden(true)
-    : () => setCheckedHidden(false);
+  console.log('dt2->', dataSchedule);
+  console.log('2->', checkedHidden);
+
+  useEffect(() => {
+    dataSchedule?.type == 'AS_SOON_AS_APPROVED'
+      ? setCheckedHidden({
+          as: true,
+          schedule: false,
+        })
+      : checkedHidden;
+    console.log(dataSchedule);
+  }, [dataSchedule?.type]);
+
+  const cambio = () => {
+    setDataSchedule({
+      ...dataSchedule,
+      type: 'SCHEDULED_CHANGE',
+    });
+    setCheckedHidden({
+      as: false,
+      schedule: true,
+    });
+  };
+  const cambio2 = () => {
+    setDataSchedule({
+      ...dataSchedule,
+      type: 'AS_SOON_AS_APPROVED',
+    });
+    setCheckedHidden({
+      as: true,
+      schedule: false,
+    });
+  };
 
   return (
     <Grid container>
       <Grid item xs={12}>
         <FormControlLabel
           style={{padding: '0 0 0 40px'}}
-          onChange={() => setCheckedHidden(!checkedHidden)}
-          checked={
-            dataSchedule?.type === 'AS_SOON_AS_APPROVED' && !checkedHidden
-          }
+          onChange={cambio2}
+          checked={checkedHidden.as}
           value="approved"
           control={<Radio color="primary" />}
           label="As soon as approved "
         />
         <FormControlLabel
-          onChange={() => setCheckedHidden(!checkedHidden)}
-          checked={
-            dataSchedule?.type !== 'AS_SOON_AS_APPROVED' && !checkedHidden
-          }
+          onChange={cambio}
+          checked={checkedHidden.schedule}
           value="approval"
           control={<Radio color="primary" />}
           label="Schedule with approval"
         />
         <Divider />
       </Grid>
-      <Hidden
-        xsUp={dataSchedule?.type === 'AS_SOON_AS_APPROVED' && !checkedHidden}>
+      <Hidden xsUp={!checkedHidden.schedule}>
         <Grid style={{margin: '0 0 20px 0'}} item xs={12}>
           <Text
             style={{padding: '33px 0 0 40px'}}
