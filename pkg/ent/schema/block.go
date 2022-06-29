@@ -42,6 +42,13 @@ func (Block) Fields() []ent.Field {
 				"Trigger", "TRIGGER",
 				"Action", "ACTION",
 				"TrueFalse", "TRUE_FALSE",
+				"Choice", "CHOICE",
+				"ExecuteFlow", "EXECUTE_FLOW",
+				"NetworkAction", "NETWORK_ACTION",
+				"Timer", "TIMER",
+				"InvokeRestAPI", "INVOKE_REST_API",
+				"ForEach", "FOREACH",
+				"Parallel", "PARALLEL",
 			),
 		field.Enum("action_type").
 			GoType(flowschema.ActionTypeID("")).
