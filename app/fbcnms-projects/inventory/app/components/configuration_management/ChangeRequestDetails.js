@@ -12,11 +12,11 @@ import ButtonAlarmStatus from './common/ButtonAlarmStatus';
 import ButtonSaveDelete from './common/ButtonSaveDelete';
 import CommentsActivitiesBox from '../comments/CommentsActivitiesBox';
 import ConfigureTitle from './common/ConfigureTitle';
-import React from 'react';
+import React, {useState} from 'react';
 import TextField from '@material-ui/core/TextField';
 import fbt from 'fbt';
 import {CardAccordion} from './common/CardAccordion';
-import {CardSuggested} from './common/CardSuggested';
+import {CardChangeRequestSchedule} from './common/CardChangeRequestSchedule';
 import {FormField} from './common/FormField';
 import {Grid} from '@material-ui/core';
 import {TableResource} from './common/TableResource';
@@ -75,6 +75,12 @@ const ChangeRequest = graphql`
       status
       type
       requester
+      #
+      scheduler {
+        time
+        type
+        weekDay
+      }
       #
       items {
         id
@@ -161,9 +167,15 @@ const ChangeRequestDetails = (props: Props) => {
       id: idChangeRequest,
     },
   });
+
   const CHRQ = response2?.queryChangeRequest?.find(
     chRq => chRq?.id === idChangeRequest,
   );
+
+  const dateSchedule = CHRQ?.scheduler;
+
+  const [schedule, setSchedule] = useState(dateSchedule);
+
   const RT = response2?.resourceSpecifications?.edges?.find(
     chRq => chRq?.node?.id === te,
   );
@@ -258,8 +270,11 @@ const ChangeRequestDetails = (props: Props) => {
             <CardAccordion title={'Target parameters'}>
               <TableResource valuesTable={CHRQ} />
             </CardAccordion>
-            <CardAccordion title={'Suggested change request schedule'}>
-              <CardSuggested />
+            <CardAccordion title={'Change request schedule'}>
+              <CardChangeRequestSchedule
+                onSchedule={setSchedule}
+                schedule={schedule}
+              />
             </CardAccordion>
           </Grid>
           <Grid item xs={4}>
