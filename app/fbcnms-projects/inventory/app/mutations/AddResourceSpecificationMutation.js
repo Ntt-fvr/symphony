@@ -26,6 +26,10 @@ const mutation = graphql`
     addResourceSpecification(input: $input) {
       id
       name
+      vendor {
+        id
+        name
+      }
       resourcePropertyTypes {
         externalId
         name

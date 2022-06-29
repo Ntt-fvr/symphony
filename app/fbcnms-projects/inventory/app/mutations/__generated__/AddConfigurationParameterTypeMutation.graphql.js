@@ -124,6 +124,7 @@ export type ResourceRef = {|
   available?: ?boolean,
   belongsTo?: ?ResourceRef,
   changeItems?: ?$ReadOnlyArray<?ChangeItemRef>,
+  cmVersions?: ?$ReadOnlyArray<?CMVersionRef>,
   composedOf?: ?$ReadOnlyArray<?ResourceRef>,
   createTime?: ?any,
   crossConnection?: ?ResourceRef,
