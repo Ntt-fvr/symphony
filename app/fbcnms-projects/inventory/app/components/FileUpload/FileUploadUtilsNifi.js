@@ -9,46 +9,45 @@
  */
 
 import axios from 'axios';
-import AddImageMutation from '../../mutations/AddImageMutation';
+import AddFilesNifi from '../../mutations/AddFilesNifi';
+
 
 export async function uploadFileNifi(
   id: string,
-  file: File,
-  //onUpload: (File, string) => void
+  file: File
 ) {
-
-  console.log(file.type)
-  const signingResponse = await axios.get('/store/putNifi' + '?contentType=text/csv', {
-    params: {
-      contentType: file.type
+  const signingResponse = await axios.get(
+    '/store/putNifi',
+    {
+      params: {
+        contentType: file.type,
+        nameFile: file.name
+      },
     },
-  });
+  );
 
   const config = {
     headers: {
       'Content-Type': file.type,
     },
   };
-  console.log(signingResponse.data.URL)
+  console.log(signingResponse.data.URL);
   await axios.put(signingResponse.data.URL, file, config);
-  console.log(signingResponse.data.key)
+  console.log(signingResponse.data.key);
 
   const onDocumentUploaded = (files, key) => {
-    const workOrderId = "433791696897";
-    console.log(files)
+    const workOrderId = '433791696897';
+    console.log(files);
     const variables: AddImageMutationVariables = {
       input: {
-        entityType: 'WORK_ORDER',
-        entityId: workOrderId,
         imgKey: key,
         fileName: file.name,
         fileSize: file.size,
-        modified: "2006-01-02T15:04:05Z",
+        modified: '2006-01-02T15:04:05Z',
         contentType: file.type,
       },
     };
-  
-    
+
     const updater = store => {
       const newNode = store.getRootField('addImage');
       const workOrderProxy = store.get(workOrderId);
@@ -68,15 +67,15 @@ export async function uploadFileNifi(
 
     const callbacks: MutationCallbacks<AddImageMutationResponse> = {
       onCompleted: () => {
-        setIsLoadingDocument(false);
+        return true
       },
-      onError: () => {},
+      onError: () => {
+        return false
+      },
     };
 
-    AddImageMutation(variables, callbacks, updater);
+    AddFilesNifi(variables, callbacks, updater);
   };
 
-  onDocumentUploaded(file, signingResponse.data.key)
-
-//   onUpload(file, signingResponse.data.key);
+  onDocumentUploaded(file, 'gdsdsd');
 }

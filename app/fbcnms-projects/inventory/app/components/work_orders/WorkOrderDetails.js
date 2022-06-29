@@ -341,7 +341,6 @@ const WorkOrderDetails = ({
       },
     };
      
-    console.log(variables)
     const updater = store => {
       const newNode = store.getRootField('addImage');
       const workOrderProxy = store.get(workOrderId);

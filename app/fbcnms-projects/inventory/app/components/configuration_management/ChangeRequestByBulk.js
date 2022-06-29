@@ -18,7 +18,7 @@ import TextField from '@material-ui/core/TextField';
 import TextInput from '@symphony/design-system/components/Input/TextInput';
 import fbt from 'fbt';
 import {CardAccordion} from './common/CardAccordion';
-import {CardSuggested} from './common/CardSuggested';
+import {CardSuggested} from '../CardSuggested';
 import {FormField} from './common/FormField';
 import {Grid} from '@material-ui/core';
 import {TableResource} from './common/TableResource';
@@ -46,6 +46,12 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
+const DEFAULT_DATA_SCHEDULE = {
+  date: new Date(),
+  day: 'MONDAY',
+  type: 'AS_SOON_AS_APPROVED',
+};
+
 export type Props = $ReadOnly<{|
   onClick: () => void,
 |}>;
@@ -55,6 +61,7 @@ const ChangeRequestByBulk = (props: Props) => {
   console.log(props);
   const [infoTable, setInfoTable] = useState(props.infoCSV);
   const [nameFileSelected, setNameFileSelected] = useState(props.nameFile);
+  const [schedule, setSchedule] = useState(DEFAULT_DATA_SCHEDULE);
   const classes = useStyles();
   const [openModal, setOpenModal] = useState(false);
   const handleOpenModal = () => {
@@ -143,7 +150,10 @@ const ChangeRequestByBulk = (props: Props) => {
             </FormField>
           </Grid>
           <Grid item xs={8} container direction="row" alignItems="center">
-            <ButtonUpload variant="text" leftIcon={CloudUploadIcon} onClick={fileValidate}>
+            <ButtonUpload
+              variant="text"
+              leftIcon={CloudUploadIcon}
+              onClick={fileValidate}>
               Upload file
             </ButtonUpload>
           </Grid>
@@ -157,7 +167,7 @@ const ChangeRequestByBulk = (props: Props) => {
             </CardAccordion>
             <Grid item xs={6}>
               <CardAccordion title={'Suggested change request schedule'}>
-                <CardSuggested />
+                <CardSuggested onSchedule={setSchedule} schedule={schedule} />
               </CardAccordion>
             </Grid>
           </Grid>

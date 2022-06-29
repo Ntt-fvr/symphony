@@ -9,15 +9,15 @@
  */
 
 import Button from '@material-ui/core/Button';
-import React, {useState} from 'react';
-import Text from '@symphony/design-system/components/Text';
-import classNames from 'classnames';
+import React from 'react';
 import {Grid} from '@material-ui/core';
 import {makeStyles} from '@material-ui/styles';
 import Select from '@symphony/design-system/components/Select/Select';
 import {uploadFileNifi} from '../../FileUpload/FileUploadUtilsNifi';
 import shortid from 'shortid';
-import { csvToArray } from '../csvToArray';
+import {csvToArray} from '../csvToArray';
+import SnackbarItem from '@fbcnms/ui/components/SnackbarItem';
+import {useEnqueueSnackbar} from '@fbcnms/ui/hooks/useSnackbar';
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -67,7 +67,15 @@ const ButtonsChangeRequest = (props: Props) => {
   } = props;
   const classes = useStyles();
 
-  const [selectedValue, setSelectedValue] = useState('');
+  const enqueueSnackbar = useEnqueueSnackbar();
+
+  const messageStatusFile = (message, variant) => {
+    enqueueSnackbar(message, {
+      children: key => (
+        <SnackbarItem id={key} message={message} variant={variant} />
+      ),
+    });
+  };
 
   const fileValidate = value => {
     const input = document.createElement('input');
@@ -78,7 +86,16 @@ const ButtonsChangeRequest = (props: Props) => {
       const fileId = shortid.generate();
 
       if (value == 'enrichment-data') {
-        uploadFileNifi(fileId,file);
+        const blob = file.slice(0, file.size, file.type);
+        const renameFile = new File([blob], `nifi/${file.name}`, {
+          type: file.type,
+        });
+        const uploadFile = uploadFileNifi(fileId, renameFile);
+        if (uploadFile) {
+          messageStatusFile('File successfully loaded', 'success');
+        } else {
+          messageStatusFile('Error loading file', 'error');
+        }
       } else {
         const reader = new FileReader();
         reader.onload = function (e) {
@@ -89,15 +106,14 @@ const ButtonsChangeRequest = (props: Props) => {
       }
     };
     input.click();
-    setSelectedValue(value);
   };
 
   return (
     <Grid className={classes.root}>
       <Select
         options={valuesNF}
-        selectedValue={selectedValue}
         onChange={value => fileValidate(value)}
+        label="NF Initial Configuration"
       />
 
       <Button
@@ -105,7 +121,8 @@ const ButtonsChangeRequest = (props: Props) => {
         disabled={disabled}
         style={{padding: '10px 16px', margin: '0 0 0 20px'}}
         variant={variant}
-        color={color}>
+        color={color}
+        onChange={() => fileValidate}>
         Create bulk request
       </Button>
     </Grid>
