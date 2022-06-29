@@ -3,9 +3,10 @@ directive @lambdaOnMutate(
   update: Boolean
   delete: Boolean
 ) on OBJECT | INTERFACE
-directive @withSubscription on OBJECT | INTERFACE | FIELD_DEFINITION
-directive @custom(http: CustomHTTP, dql: String) on FIELD_DEFINITION
-directive @remote on OBJECT | INTERFACE | UNION | INPUT_OBJECT | ENUM
+directive @default(
+  add: DgraphDefault
+  update: DgraphDefault
+) on FIELD_DEFINITION
 directive @secret(field: String!, pred: String) on OBJECT | INTERFACE
 directive @auth(
   password: AuthRule
@@ -14,24 +15,23 @@ directive @auth(
   update: AuthRule
   delete: AuthRule
 ) on OBJECT | INTERFACE
-directive @remoteResponse(name: String) on FIELD_DEFINITION
-directive @default(
-  add: DgraphDefault
-  update: DgraphDefault
-) on FIELD_DEFINITION
+directive @remote on OBJECT | INTERFACE | UNION | INPUT_OBJECT | ENUM
+directive @withSubscription on OBJECT | INTERFACE | FIELD_DEFINITION
+directive @custom(http: CustomHTTP, dql: String) on FIELD_DEFINITION
 directive @lambda on FIELD_DEFINITION
-directive @generate(
-  query: GenerateQueryParams
-  mutation: GenerateMutationParams
-  subscription: Boolean
-) on OBJECT | INTERFACE
-directive @hasInverse(field: String!) on FIELD_DEFINITION
-directive @search(by: [DgraphIndex!]) on FIELD_DEFINITION
 directive @dgraph(
   type: String
   pred: String
 ) on OBJECT | INTERFACE | FIELD_DEFINITION
 directive @id(interface: Boolean) on FIELD_DEFINITION
+directive @remoteResponse(name: String) on FIELD_DEFINITION
+directive @hasInverse(field: String!) on FIELD_DEFINITION
+directive @search(by: [DgraphIndex!]) on FIELD_DEFINITION
+directive @generate(
+  query: GenerateQueryParams
+  mutation: GenerateMutationParams
+  subscription: Boolean
+) on OBJECT | INTERFACE
 enum _CancellationRequestOrdering {
   id_asc
   id_desc
@@ -1210,6 +1210,7 @@ input AddResourceInput {
   isEditable: Boolean
   actionScheduler: ActionSchedulerRef
   changeItems: [ChangeItemRef]
+  cmVersions: [CMVersionRef]
 }
 
 input AddResourceOrderIMInput {
@@ -4907,6 +4908,12 @@ type Resource implements DefaultConfig {
     first: Int
     offset: Int
   ): [ChangeItem]
+  cmVersions(
+    filter: CMVersionFilter
+    order: CMVersionOrder
+    first: Int
+    offset: Int
+  ): [CMVersion]
   composedOfAggregate(filter: ResourceFilter): ResourceAggregateResult
   logicalLinksAggregate(filter: ResourceFilter): ResourceAggregateResult
   logicalLinkInvAggregate(filter: ResourceFilter): ResourceAggregateResult
@@ -4915,6 +4922,7 @@ type Resource implements DefaultConfig {
   ): ResourcePropertyAggregateResult
   numericPoolsAggregate(filter: NumericPoolFilter): NumericPoolAggregateResult
   changeItemsAggregate(filter: ChangeItemFilter): ChangeItemAggregateResult
+  cmVersionsAggregate(filter: CMVersionFilter): CMVersionAggregateResult
 }
 
 type ResourceAggregateResult {
@@ -4972,6 +4980,7 @@ enum ResourceHasFilter {
   isEditable
   actionScheduler
   changeItems
+  cmVersions
 }
 
 input ResourceOrder {
@@ -5150,6 +5159,7 @@ input ResourcePatch {
   isEditable: Boolean
   actionScheduler: ActionSchedulerRef
   changeItems: [ChangeItemRef]
+  cmVersions: [CMVersionRef]
 }
 
 type ResourceProperty implements DefaultConfig {
@@ -5314,6 +5324,7 @@ input ResourceRef {
   isEditable: Boolean
   actionScheduler: ActionSchedulerRef
   changeItems: [ChangeItemRef]
+  cmVersions: [CMVersionRef]
 }
 
 type ResourceReference {
@@ -7100,4 +7111,3 @@ enum WeekDay {
 input WithinFilter {
   polygon: PolygonRef!
 }
-

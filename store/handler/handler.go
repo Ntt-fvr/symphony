@@ -60,6 +60,12 @@ func New(cfg Config) *Handler {
 		Handler(ochttp.WithRouteTag(
 			http.HandlerFunc(h.put), "put",
 		))
+	router.Path("/putNifi").
+		Methods(http.MethodGet).
+		Queries("contentType", "{contentType}").
+		Handler(ochttp.WithRouteTag(
+			http.HandlerFunc(h.putNifi), "putNifi",
+		))
 	router.Path("/delete").
 		Queries("key", "{key}").
 		Methods(http.MethodDelete).
@@ -117,8 +123,10 @@ func (h *Handler) put(w http.ResponseWriter, r *http.Request) {
 		}
 		err error
 	)
+	var name string
+	fmt.Scan(&name)
 	rsp.Key = uuid.New().String()
-	key := getKey(r, rsp.Key)
+	key := name + getKey(r, rsp.Key)
 	if rsp.URL, err = h.bucket.SignedURL(ctx, key,
 		&blob.SignedURLOptions{
 			Method:      http.MethodPut,
