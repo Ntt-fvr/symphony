@@ -457,8 +457,8 @@ func (bc *BlockCreate) SetNillableBody(s *string) *BlockCreate {
 }
 
 // SetHeaders sets the headers field.
-func (bc *BlockCreate) SetHeaders(s []string) *BlockCreate {
-	bc.mutation.SetHeaders(s)
+func (bc *BlockCreate) SetHeaders(fv []*flowschema.VariableValue) *BlockCreate {
+	bc.mutation.SetHeaders(fv)
 	return bc
 }
 

@@ -633,8 +633,8 @@ func (bu *BlockUpdate) ClearBody() *BlockUpdate {
 }
 
 // SetHeaders sets the headers field.
-func (bu *BlockUpdate) SetHeaders(s []string) *BlockUpdate {
-	bu.mutation.SetHeaders(s)
+func (bu *BlockUpdate) SetHeaders(fv []*flowschema.VariableValue) *BlockUpdate {
+	bu.mutation.SetHeaders(fv)
 	return bu
 }
 
@@ -2632,8 +2632,8 @@ func (buo *BlockUpdateOne) ClearBody() *BlockUpdateOne {
 }
 
 // SetHeaders sets the headers field.
-func (buo *BlockUpdateOne) SetHeaders(s []string) *BlockUpdateOne {
-	buo.mutation.SetHeaders(s)
+func (buo *BlockUpdateOne) SetHeaders(fv []*flowschema.VariableValue) *BlockUpdateOne {
+	buo.mutation.SetHeaders(fv)
 	return buo
 }
 

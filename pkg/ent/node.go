@@ -759,7 +759,7 @@ func (b *Block) Node(ctx context.Context) (node *Node, err error) {
 		return nil, err
 	}
 	node.Fields[36] = &Field{
-		Type:  "[]string",
+		Type:  "[]*flowschema.VariableValue",
 		Name:  "headers",
 		Value: string(buf),
 	}

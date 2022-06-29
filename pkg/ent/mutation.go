@@ -3215,7 +3215,7 @@ type BlockMutation struct {
 	connection_timeout                 *int
 	addconnection_timeout              *int
 	body                               *string
-	headers                            *[]string
+	headers                            *[]*flowschema.VariableValue
 	signal_type                        *block.SignalType
 	signal_module                      *block.SignalModule
 	custom_filter                      *string
@@ -5115,12 +5115,12 @@ func (m *BlockMutation) ResetBody() {
 }
 
 // SetHeaders sets the headers field.
-func (m *BlockMutation) SetHeaders(s []string) {
-	m.headers = &s
+func (m *BlockMutation) SetHeaders(fv []*flowschema.VariableValue) {
+	m.headers = &fv
 }
 
 // Headers returns the headers value in the mutation.
-func (m *BlockMutation) Headers() (r []string, exists bool) {
+func (m *BlockMutation) Headers() (r []*flowschema.VariableValue, exists bool) {
 	v := m.headers
 	if v == nil {
 		return
@@ -5132,7 +5132,7 @@ func (m *BlockMutation) Headers() (r []string, exists bool) {
 // If the Block object wasn't provided to the builder, the object is fetched
 // from the database.
 // An error is returned if the mutation operation is not UpdateOne, or database query fails.
-func (m *BlockMutation) OldHeaders(ctx context.Context) (v []string, err error) {
+func (m *BlockMutation) OldHeaders(ctx context.Context) (v []*flowschema.VariableValue, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, fmt.Errorf("OldHeaders is allowed only on UpdateOne operations")
 	}
@@ -6338,7 +6338,7 @@ func (m *BlockMutation) SetField(name string, value ent.Value) error {
 		m.SetBody(v)
 		return nil
 	case block.FieldHeaders:
-		v, ok := value.([]string)
+		v, ok := value.([]*flowschema.VariableValue)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}

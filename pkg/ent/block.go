@@ -100,7 +100,7 @@ type Block struct {
 	// Body holds the value of the "body" field.
 	Body string `json:"body,omitempty"`
 	// Headers holds the value of the "headers" field.
-	Headers []string `json:"headers,omitempty"`
+	Headers []*flowschema.VariableValue `json:"headers,omitempty"`
 	// SignalType holds the value of the "signal_type" field.
 	SignalType block.SignalType `json:"signal_type,omitempty"`
 	// SignalModule holds the value of the "signal_module" field.

@@ -135,7 +135,7 @@ func (Block) Fields() []ent.Field {
 			Optional(),
 		field.String("body").
 			Optional(),
-		field.Strings("headers").
+		field.JSON("headers", []*flowschema.VariableValue{}).
 			Optional(),
 
 		field.Enum("signal_type").
