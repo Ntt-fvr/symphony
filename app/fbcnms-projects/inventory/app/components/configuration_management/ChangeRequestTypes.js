@@ -103,12 +103,12 @@ export type Props = $ReadOnly<{||}>;
 const ChangeRequestTypes = () => {
   const [filters, setFilters] = useState([]);
   const [openDetails, setOpenDetails] = useState(false);
-  const [dataRow, setDataRow] = useState({});
+  const [dataIdChangeRequest, setDataIdChangeRequest] = useState('');
   const [openBulkRequest, setOpenBulkRequest] = useState(false);
   const [changeRequestInitial, setChangeRequestInitial] = useState([]);
   const [changeRequest, setChangeRequest] = useState([]);
-  const [infoCSV, setinfoCSV] = useState([])
-  const [nameFile, setNameFile] = useState('')
+  const [infoCSV, setinfoCSV] = useState([]);
+  const [nameFile, setNameFile] = useState('');
   const classes = useStyles();
 
   const locationTypesFilterConfigs = useLocationTypes();
@@ -116,7 +116,6 @@ const ChangeRequestTypes = () => {
   const projectPropertiesFilterConfigs = buildPropertyFilterConfigs(
     possibleProperties,
   );
-  
 
   const filterConfigs = useMemo(
     () =>
@@ -216,19 +215,22 @@ const ChangeRequestTypes = () => {
   ];
 
   const showInfo = data => {
-    setDataRow(data);
+    setDataIdChangeRequest(data);
   };
   const handleOpenDetails = () => {
     setOpenDetails(prevStateDetails => !prevStateDetails);
   };
-  const bulk = (infoCSV ,nameFile) => {
+  const bulk = (infoCSV, nameFile) => {
     setOpenBulkRequest(prevStateBulk => !prevStateBulk);
-    setinfoCSV(infoCSV)
-    setNameFile(nameFile)
+    setinfoCSV(infoCSV);
+    setNameFile(nameFile);
   };
   if (openDetails) {
     return (
-      <ChangeRequestDetails data={dataRow} setOpenDetails={setOpenDetails}  />
+      <ChangeRequestDetails
+        idChangeRequest={dataIdChangeRequest}
+        setOpenDetails={setOpenDetails}
+      />
     );
   }
   if (openBulkRequest) {
@@ -275,7 +277,6 @@ const ChangeRequestTypes = () => {
           <div className={classes.searchBar}>
             <PowerSearchBar
               placeholder="Filter"
-              getSelectedFilter={filters => setFilters(filters)}
               filterConfigs={filterConfigs}
               filterValues={filters}
               searchConfig={ChangeRequestSearchConfig}
@@ -303,7 +304,7 @@ const ChangeRequestTypes = () => {
                 <Button
                   onClick={() => {
                     handleOpenDetails();
-                    showInfo(row);
+                    showInfo(row.id);
                   }}
                   variant="text"
                   tooltip={row.id ?? ''}>
