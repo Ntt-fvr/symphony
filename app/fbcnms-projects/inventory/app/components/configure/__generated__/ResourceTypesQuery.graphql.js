@@ -35,7 +35,8 @@ export type ResourceTypesQueryResponse = {|
         +id: string,
         +name: string,
         +resourceType: ?{|
-          +id: string
+          +id: string,
+          +resourceTypeClass: ResourceTypeClassKind,
         |},
         +resourcePropertyTypes: $ReadOnlyArray<?{|
           +id: string,
@@ -87,6 +88,7 @@ query ResourceTypesQuery {
         name
         resourceType {
           id
+          resourceTypeClass
         }
         resourcePropertyTypes {
           id
@@ -129,7 +131,14 @@ v1 = {
   "name": "name",
   "storageKey": null
 },
-v2 = [
+v2 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "resourceTypeClass",
+  "storageKey": null
+},
+v3 = [
   {
     "alias": null,
     "args": null,
@@ -163,13 +172,7 @@ v2 = [
                 "name": "resourceTypeBaseType",
                 "storageKey": null
               },
-              {
-                "alias": null,
-                "args": null,
-                "kind": "ScalarField",
-                "name": "resourceTypeClass",
-                "storageKey": null
-              }
+              (v2/*: any*/)
             ],
             "storageKey": null
           }
@@ -213,7 +216,8 @@ v2 = [
                 "name": "resourceType",
                 "plural": false,
                 "selections": [
-                  (v0/*: any*/)
+                  (v0/*: any*/),
+                  (v2/*: any*/)
                 ],
                 "storageKey": null
               },
@@ -358,7 +362,7 @@ return {
     "kind": "Fragment",
     "metadata": null,
     "name": "ResourceTypesQuery",
-    "selections": (v2/*: any*/),
+    "selections": (v3/*: any*/),
     "type": "Query",
     "abstractKey": null
   },
@@ -367,19 +371,19 @@ return {
     "argumentDefinitions": [],
     "kind": "Operation",
     "name": "ResourceTypesQuery",
-    "selections": (v2/*: any*/)
+    "selections": (v3/*: any*/)
   },
   "params": {
-    "cacheID": "1433617df5e4bab0bae7418f52e62b47",
+    "cacheID": "37a1dd4b3a0a56a7ff2121960ec39a61",
     "id": null,
     "metadata": {},
     "name": "ResourceTypesQuery",
     "operationKind": "query",
-    "text": "query ResourceTypesQuery {\n  resourceTypes {\n    edges {\n      node {\n        id\n        name\n        resourceTypeBaseType\n        resourceTypeClass\n      }\n    }\n  }\n  resourceSpecifications {\n    edges {\n      node {\n        id\n        name\n        resourceType {\n          id\n        }\n        resourcePropertyTypes {\n          id\n          name\n          type\n          nodeType\n          index\n          stringValue\n          intValue\n          booleanValue\n          floatValue\n          latitudeValue\n          longitudeValue\n          rangeFromValue\n          rangeToValue\n          isEditable\n          isMandatory\n          isInstanceProperty\n          isDeleted\n          category\n        }\n      }\n    }\n  }\n}\n"
+    "text": "query ResourceTypesQuery {\n  resourceTypes {\n    edges {\n      node {\n        id\n        name\n        resourceTypeBaseType\n        resourceTypeClass\n      }\n    }\n  }\n  resourceSpecifications {\n    edges {\n      node {\n        id\n        name\n        resourceType {\n          id\n          resourceTypeClass\n        }\n        resourcePropertyTypes {\n          id\n          name\n          type\n          nodeType\n          index\n          stringValue\n          intValue\n          booleanValue\n          floatValue\n          latitudeValue\n          longitudeValue\n          rangeFromValue\n          rangeToValue\n          isEditable\n          isMandatory\n          isInstanceProperty\n          isDeleted\n          category\n        }\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = '0cc37789f568af8d8f94fce937ecbdd4';
+(node/*: any*/).hash = 'b6c4a6af6ef7f3541db59cc009aa9029';
 
 module.exports = node;

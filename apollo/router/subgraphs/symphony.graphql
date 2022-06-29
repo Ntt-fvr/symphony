@@ -658,6 +658,17 @@ input AddImageInput {
   documentCategoryId: ID
 }
 
+input AddFilesInput {
+  imgKey: String!
+  fileName: String!
+  fileSize: Int!
+  modified: Time!
+  contentType: String!
+  category: String
+  annotation: String
+  documentCategoryId: ID
+}
+
 type Comment implements Node {
   id: ID!
   author: User!
@@ -7942,6 +7953,7 @@ type Mutation {
   ): EquipmentPosition!
   addComment(input: CommentInput!): Comment!
   addImage(input: AddImageInput!): File!
+  addFiles(input: AddFilesInput!): File!
   addHyperlink(input: AddHyperlinkInput!): Hyperlink!
   deleteHyperlink(id: ID!): Hyperlink!
   deleteImage(
