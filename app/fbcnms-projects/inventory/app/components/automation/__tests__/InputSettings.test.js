@@ -11,13 +11,15 @@
 import {
   initialInputSettings,
   setInputSettings,
-} from '../flows/builder/canvas/graph/shapes/blocks/blockTypes/InputSettings';
+} from '../flows/builder/canvas/graph/shapes/blocks/blockTypes/InputSettingsType';
 
 describe('Suite Test InputSettings: ', () => {
   test('AUT-FE-05058 Test InputSettings', () => {
-    expect(initialInputSettings.enableInputTransformation).toStrictEqual(null);
+    expect(initialInputSettings.enableInputTransformation).toStrictEqual(
+      undefined,
+    );
     expect(initialInputSettings.enableInputStateTransformation).toStrictEqual(
-      null,
+      undefined,
     );
     const setInitialInputSettings = setInputSettings({
       ...initialInputSettings,
@@ -28,6 +30,6 @@ describe('Suite Test InputSettings: ', () => {
     );
     expect(
       setInitialInputSettings.enableInputStateTransformation,
-    ).toStrictEqual(null);
+    ).toStrictEqual(undefined);
   });
 });

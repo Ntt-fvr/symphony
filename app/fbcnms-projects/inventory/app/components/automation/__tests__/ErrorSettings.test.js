@@ -15,13 +15,13 @@ import {
 
 describe('Suite Test ErrorSettings: ', () => {
   test('AUT-FE-05056 Test ErrorSettings', () => {
-    expect(initialErrorSettings.enableRetryPolicy).toStrictEqual(null);
-    expect(initialErrorSettings.units).toStrictEqual(null);
+    expect(initialErrorSettings.enableRetryPolicy).toStrictEqual(undefined);
+    expect(initialErrorSettings.units).toStrictEqual(undefined);
     const setInitialErrorSettings = setErrorSettings({
       ...initialErrorSettings,
       enableRetryPolicy: true,
     });
     expect(setInitialErrorSettings.enableRetryPolicy).toStrictEqual(true);
-    expect(setInitialErrorSettings.units).toStrictEqual(null);
+    expect(setInitialErrorSettings.units).toStrictEqual(undefined);
   });
 });

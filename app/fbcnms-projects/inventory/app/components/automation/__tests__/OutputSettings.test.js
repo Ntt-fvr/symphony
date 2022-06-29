@@ -11,14 +11,16 @@
 import {
   initialOutputSettings,
   setOutputSettings,
-} from '../flows/builder/canvas/graph/shapes/blocks/blockTypes/OutputSettings';
+} from '../flows/builder/canvas/graph/shapes/blocks/blockTypes/OutputSettingsType';
 
 describe('Suite Test OutputSettings: ', () => {
   test('AUT-FE-05057 Test OutputSettings', () => {
     expect(initialOutputSettings.enableOutputTransformation).toStrictEqual(
-      null,
+      undefined,
     );
-    expect(initialOutputSettings.outputParamDefinitions).toStrictEqual(null);
+    expect(initialOutputSettings.outputParamDefinitions).toStrictEqual(
+      undefined,
+    );
     const setInitialOutputSettings = setOutputSettings({
       ...initialOutputSettings,
       enableOutputTransformation: true,
@@ -26,6 +28,8 @@ describe('Suite Test OutputSettings: ', () => {
     expect(setInitialOutputSettings.enableOutputTransformation).toStrictEqual(
       true,
     );
-    expect(setInitialOutputSettings.outputParamDefinitions).toStrictEqual(null);
+    expect(setInitialOutputSettings.outputParamDefinitions).toStrictEqual(
+      undefined,
+    );
   });
 });
