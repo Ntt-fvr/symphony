@@ -21,7 +21,7 @@ import FormAction from '@symphony/design-system/components/Form/FormAction';
 import FormField from '@symphony/design-system/components/FormField/FormField';
 import IconButton from '@material-ui/core/IconButton';
 import OutlinedInput from '@material-ui/core/OutlinedInput';
-import React, {useState} from 'react';
+import React, {useRef, useState} from 'react';
 import Select from '@material-ui/core/Select';
 import Table from '@material-ui/core/Table';
 import TableCell from '@material-ui/core/TableCell';
@@ -68,6 +68,7 @@ type Props = $ReadOnly<{|
   tableTypes: Array<TableType>,
   nameCard: string,
   selectMultiple?: boolean,
+  data: any,
   // supportDelete?: boolean,
 |}>;
 
@@ -75,20 +76,12 @@ const TableContextForm = ({
   tableTypes,
   nameCard,
   selectMultiple,
+  data,
 }: // supportDelete,
 Props) => {
   const classes = useStyles();
   const {dispatch} = useContext(TableTypesDispatcher);
-
-  const options = [
-    {id: '1', name: 'one'},
-    {id: '2', name: 'two'},
-    {id: '3', name: 'three'},
-    {id: '4', name: 'four'},
-    {id: '5', name: 'five'},
-    {id: '6', name: 'six'},
-  ];
-
+  const valueItem = useRef('');
   const [selectChip, setSelectChip] = useState([]);
 
   return (
@@ -149,7 +142,7 @@ Props) => {
                               ))}
                             </>
                           )}>
-                          {options.map((item, index) => (
+                          {data.map((item, index) => (
                             <MenuItem key={index} value={item.name}>
                               {item.name}
                             </MenuItem>
@@ -199,11 +192,13 @@ Props) => {
                                 dispatch({
                                   type: 'UPDATE_PROPERTY_TYPE_NAME',
                                   ...item,
-                                  options: target.value,
+                                  resourceSpecification: target.value,
                                 });
                               }}>
-                              {options.map((item, index) => (
-                                <MenuItem key={index} value={item.name}>
+                              {data.map((item, index) => (
+                                <MenuItem
+                                  key={index}
+                                  value={(valueItem.current = item.id)}>
                                   {item.name}
                                 </MenuItem>
                               ))}

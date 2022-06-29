@@ -25,4 +25,5 @@ export type TableDispatcherActionType =
       id: string,
       name: string,
       options: string,
+      resourceSpecification: string,
     |};
