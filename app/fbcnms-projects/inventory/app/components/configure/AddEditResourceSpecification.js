@@ -112,7 +112,7 @@ export const AddEditResourceSpecification = (props: Props) => {
 
   const nameEdit = useFormInput(dataForm.name);
 
-  const vendorEdit = useFormInput(dataForm.vendor);
+  const vendorEdit = useFormInput(dataForm.vendor.id);
 
   const namesFilter = filterData?.map(item => item.name);
 
