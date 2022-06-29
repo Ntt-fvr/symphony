@@ -128,18 +128,18 @@ export default function RelationshipTypeItem(props: Props) {
       resourceSpecification: '',
     },
   ];
-  const dimanycMapTable = (dataFormTable ?? [])
+  const dynamicMapTable = (dataFormTable ?? [])
     .filter(Boolean)
     .map(toMutableTableType);
 
   const [tableTypesSlots, tableTypesDispatcherSlots] = useTableTypesReducer(
-    dimanycMapTable,
+    dynamicMapTable,
   );
   const [tableTypesPorts, tableTypesDispatcherPorts] = useTableTypesReducer(
-    dimanycMapTable,
+    dynamicMapTable,
   );
   const [tableTypesCards, tableTypesDispatcherCards] = useTableTypesReducer(
-    dimanycMapTable,
+    dynamicMapTable,
   );
 
   callback(tableTypesPorts);

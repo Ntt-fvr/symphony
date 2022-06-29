@@ -30,6 +30,7 @@ import {ResourceNetworkCard} from './ResourceNetworkCard';
 import {camelCase, startCase} from 'lodash';
 import {graphql} from 'relay-runtime';
 import {makeStyles} from '@material-ui/styles';
+import {useHistory} from 'react-router';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -140,8 +141,6 @@ const ResourcePropertiesCard = (props: Props) => {
   const history = useHistory();
   const urlParams = new URLSearchParams(history.location.search);
   const resourceId = urlParams.get('resource');
-
-  console.log(selectedResourceId);
 
   const validateForm = data => {
     return (
