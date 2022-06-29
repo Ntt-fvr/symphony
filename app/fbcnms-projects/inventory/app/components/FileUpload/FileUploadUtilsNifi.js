@@ -11,29 +11,25 @@
 import axios from 'axios';
 import AddFilesNifi from '../../mutations/AddFilesNifi';
 
+const DATE_FORMAT = 'YYYY-MM-DD[T]HH:mm:ss';
 
-export async function uploadFileNifi(
-  id: string,
-  file: File
-) {
-  const signingResponse = await axios.get(
-    '/store/putNifi',
-    {
-      params: {
-        contentType: file.type,
-        nameFile: file.name
-      },
+export async function uploadFileNifi(id: string, file: File) {
+  const signingResponse = await axios.get('/store/putNifi', {
+    params: {
+      contentType: file.type,
+      nameFile: file.name,
     },
-  );
+  });
 
   const config = {
     headers: {
       'Content-Type': file.type,
     },
   };
-  console.log(signingResponse.data.URL);
+
   await axios.put(signingResponse.data.URL, file, config);
-  console.log(signingResponse.data.key);
+
+  const createdTime = moment(new Date()).format(DATE_FORMAT);
 
   const onDocumentUploaded = (files, key) => {
     const workOrderId = '433791696897';
@@ -43,7 +39,7 @@ export async function uploadFileNifi(
         imgKey: key,
         fileName: file.name,
         fileSize: file.size,
-        modified: '2006-01-02T15:04:05Z',
+        modified: createdTimeP,
         contentType: file.type,
       },
     };
@@ -67,15 +63,15 @@ export async function uploadFileNifi(
 
     const callbacks: MutationCallbacks<AddImageMutationResponse> = {
       onCompleted: () => {
-        return true
+        return true;
       },
       onError: () => {
-        return false
+        return false;
       },
     };
 
     AddFilesNifi(variables, callbacks, updater);
   };
 
-  onDocumentUploaded(file, 'gdsdsd');
+  onDocumentUploaded(file, signingResponse.data.key);
 }

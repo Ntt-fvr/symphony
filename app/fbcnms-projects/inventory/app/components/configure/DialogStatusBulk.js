@@ -147,7 +147,7 @@ const DialogStatus = (props: Props) => {
       });
     });
 
-console.log(itemsChangeRequest)
+
 
     const variables: AddRequestChangeMutationVariables = {
       input: [
