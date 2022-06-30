@@ -109,6 +109,14 @@ type Block struct {
 	CustomFilter string `json:"custom_filter,omitempty"`
 	// BlockFlow holds the value of the "block_flow" field.
 	BlockFlow bool `json:"block_flow,omitempty"`
+	// KafkaBrokers holds the value of the "kafka_brokers" field.
+	KafkaBrokers []string `json:"kafka_brokers,omitempty"`
+	// KafkaTopic holds the value of the "kafka_topic" field.
+	KafkaTopic string `json:"kafka_topic,omitempty"`
+	// KafkaMessage holds the value of the "kafka_message" field.
+	KafkaMessage string `json:"kafka_message,omitempty"`
+	// KafkaEnableExpression holds the value of the "kafka_enable_expression" field.
+	KafkaEnableExpression bool `json:"kafka_enable_expression,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the BlockQuery when eager-loading is set.
 	Edges                          BlockEdges `json:"edges"`
@@ -300,6 +308,10 @@ func (*Block) scanValues() []interface{} {
 		&sql.NullString{}, // signal_module
 		&sql.NullString{}, // custom_filter
 		&sql.NullBool{},   // block_flow
+		&[]byte{},         // kafka_brokers
+		&sql.NullString{}, // kafka_topic
+		&sql.NullString{}, // kafka_message
+		&sql.NullBool{},   // kafka_enable_expression
 	}
 }
 
@@ -545,7 +557,30 @@ func (b *Block) assignValues(values ...interface{}) error {
 	} else if value.Valid {
 		b.BlockFlow = value.Bool
 	}
-	values = values[41:]
+
+	if value, ok := values[41].(*[]byte); !ok {
+		return fmt.Errorf("unexpected type %T for field kafka_brokers", values[41])
+	} else if value != nil && len(*value) > 0 {
+		if err := json.Unmarshal(*value, &b.KafkaBrokers); err != nil {
+			return fmt.Errorf("unmarshal field kafka_brokers: %v", err)
+		}
+	}
+	if value, ok := values[42].(*sql.NullString); !ok {
+		return fmt.Errorf("unexpected type %T for field kafka_topic", values[42])
+	} else if value.Valid {
+		b.KafkaTopic = value.String
+	}
+	if value, ok := values[43].(*sql.NullString); !ok {
+		return fmt.Errorf("unexpected type %T for field kafka_message", values[43])
+	} else if value.Valid {
+		b.KafkaMessage = value.String
+	}
+	if value, ok := values[44].(*sql.NullBool); !ok {
+		return fmt.Errorf("unexpected type %T for field kafka_enable_expression", values[44])
+	} else if value.Valid {
+		b.KafkaEnableExpression = value.Bool
+	}
+	values = values[45:]
 	if len(values) == len(block.ForeignKeys) {
 		if value, ok := values[0].(*sql.NullInt64); !ok {
 			return fmt.Errorf("unexpected type %T for edge-field block_sub_flow", value)
@@ -735,6 +770,14 @@ func (b *Block) String() string {
 	builder.WriteString(b.CustomFilter)
 	builder.WriteString(", block_flow=")
 	builder.WriteString(fmt.Sprintf("%v", b.BlockFlow))
+	builder.WriteString(", kafka_brokers=")
+	builder.WriteString(fmt.Sprintf("%v", b.KafkaBrokers))
+	builder.WriteString(", kafka_topic=")
+	builder.WriteString(b.KafkaTopic)
+	builder.WriteString(", kafka_message=")
+	builder.WriteString(b.KafkaMessage)
+	builder.WriteString(", kafka_enable_expression=")
+	builder.WriteString(fmt.Sprintf("%v", b.KafkaEnableExpression))
 	builder.WriteByte(')')
 	return builder.String()
 }

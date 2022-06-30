@@ -724,6 +724,78 @@ func (bu *BlockUpdate) ClearBlockFlow() *BlockUpdate {
 	return bu
 }
 
+// SetKafkaBrokers sets the kafka_brokers field.
+func (bu *BlockUpdate) SetKafkaBrokers(s []string) *BlockUpdate {
+	bu.mutation.SetKafkaBrokers(s)
+	return bu
+}
+
+// ClearKafkaBrokers clears the value of kafka_brokers.
+func (bu *BlockUpdate) ClearKafkaBrokers() *BlockUpdate {
+	bu.mutation.ClearKafkaBrokers()
+	return bu
+}
+
+// SetKafkaTopic sets the kafka_topic field.
+func (bu *BlockUpdate) SetKafkaTopic(s string) *BlockUpdate {
+	bu.mutation.SetKafkaTopic(s)
+	return bu
+}
+
+// SetNillableKafkaTopic sets the kafka_topic field if the given value is not nil.
+func (bu *BlockUpdate) SetNillableKafkaTopic(s *string) *BlockUpdate {
+	if s != nil {
+		bu.SetKafkaTopic(*s)
+	}
+	return bu
+}
+
+// ClearKafkaTopic clears the value of kafka_topic.
+func (bu *BlockUpdate) ClearKafkaTopic() *BlockUpdate {
+	bu.mutation.ClearKafkaTopic()
+	return bu
+}
+
+// SetKafkaMessage sets the kafka_message field.
+func (bu *BlockUpdate) SetKafkaMessage(s string) *BlockUpdate {
+	bu.mutation.SetKafkaMessage(s)
+	return bu
+}
+
+// SetNillableKafkaMessage sets the kafka_message field if the given value is not nil.
+func (bu *BlockUpdate) SetNillableKafkaMessage(s *string) *BlockUpdate {
+	if s != nil {
+		bu.SetKafkaMessage(*s)
+	}
+	return bu
+}
+
+// ClearKafkaMessage clears the value of kafka_message.
+func (bu *BlockUpdate) ClearKafkaMessage() *BlockUpdate {
+	bu.mutation.ClearKafkaMessage()
+	return bu
+}
+
+// SetKafkaEnableExpression sets the kafka_enable_expression field.
+func (bu *BlockUpdate) SetKafkaEnableExpression(b bool) *BlockUpdate {
+	bu.mutation.SetKafkaEnableExpression(b)
+	return bu
+}
+
+// SetNillableKafkaEnableExpression sets the kafka_enable_expression field if the given value is not nil.
+func (bu *BlockUpdate) SetNillableKafkaEnableExpression(b *bool) *BlockUpdate {
+	if b != nil {
+		bu.SetKafkaEnableExpression(*b)
+	}
+	return bu
+}
+
+// ClearKafkaEnableExpression clears the value of kafka_enable_expression.
+func (bu *BlockUpdate) ClearKafkaEnableExpression() *BlockUpdate {
+	bu.mutation.ClearKafkaEnableExpression()
+	return bu
+}
+
 // SetFlowID sets the flow edge to Flow by id.
 func (bu *BlockUpdate) SetFlowID(id int) *BlockUpdate {
 	bu.mutation.SetFlowID(id)
@@ -1646,6 +1718,58 @@ func (bu *BlockUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeBool,
 			Column: block.FieldBlockFlow,
+		})
+	}
+	if value, ok := bu.mutation.KafkaBrokers(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeJSON,
+			Value:  value,
+			Column: block.FieldKafkaBrokers,
+		})
+	}
+	if bu.mutation.KafkaBrokersCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeJSON,
+			Column: block.FieldKafkaBrokers,
+		})
+	}
+	if value, ok := bu.mutation.KafkaTopic(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: block.FieldKafkaTopic,
+		})
+	}
+	if bu.mutation.KafkaTopicCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Column: block.FieldKafkaTopic,
+		})
+	}
+	if value, ok := bu.mutation.KafkaMessage(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: block.FieldKafkaMessage,
+		})
+	}
+	if bu.mutation.KafkaMessageCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Column: block.FieldKafkaMessage,
+		})
+	}
+	if value, ok := bu.mutation.KafkaEnableExpression(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Value:  value,
+			Column: block.FieldKafkaEnableExpression,
+		})
+	}
+	if bu.mutation.KafkaEnableExpressionCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Column: block.FieldKafkaEnableExpression,
 		})
 	}
 	if bu.mutation.FlowCleared() {
@@ -2723,6 +2847,78 @@ func (buo *BlockUpdateOne) ClearBlockFlow() *BlockUpdateOne {
 	return buo
 }
 
+// SetKafkaBrokers sets the kafka_brokers field.
+func (buo *BlockUpdateOne) SetKafkaBrokers(s []string) *BlockUpdateOne {
+	buo.mutation.SetKafkaBrokers(s)
+	return buo
+}
+
+// ClearKafkaBrokers clears the value of kafka_brokers.
+func (buo *BlockUpdateOne) ClearKafkaBrokers() *BlockUpdateOne {
+	buo.mutation.ClearKafkaBrokers()
+	return buo
+}
+
+// SetKafkaTopic sets the kafka_topic field.
+func (buo *BlockUpdateOne) SetKafkaTopic(s string) *BlockUpdateOne {
+	buo.mutation.SetKafkaTopic(s)
+	return buo
+}
+
+// SetNillableKafkaTopic sets the kafka_topic field if the given value is not nil.
+func (buo *BlockUpdateOne) SetNillableKafkaTopic(s *string) *BlockUpdateOne {
+	if s != nil {
+		buo.SetKafkaTopic(*s)
+	}
+	return buo
+}
+
+// ClearKafkaTopic clears the value of kafka_topic.
+func (buo *BlockUpdateOne) ClearKafkaTopic() *BlockUpdateOne {
+	buo.mutation.ClearKafkaTopic()
+	return buo
+}
+
+// SetKafkaMessage sets the kafka_message field.
+func (buo *BlockUpdateOne) SetKafkaMessage(s string) *BlockUpdateOne {
+	buo.mutation.SetKafkaMessage(s)
+	return buo
+}
+
+// SetNillableKafkaMessage sets the kafka_message field if the given value is not nil.
+func (buo *BlockUpdateOne) SetNillableKafkaMessage(s *string) *BlockUpdateOne {
+	if s != nil {
+		buo.SetKafkaMessage(*s)
+	}
+	return buo
+}
+
+// ClearKafkaMessage clears the value of kafka_message.
+func (buo *BlockUpdateOne) ClearKafkaMessage() *BlockUpdateOne {
+	buo.mutation.ClearKafkaMessage()
+	return buo
+}
+
+// SetKafkaEnableExpression sets the kafka_enable_expression field.
+func (buo *BlockUpdateOne) SetKafkaEnableExpression(b bool) *BlockUpdateOne {
+	buo.mutation.SetKafkaEnableExpression(b)
+	return buo
+}
+
+// SetNillableKafkaEnableExpression sets the kafka_enable_expression field if the given value is not nil.
+func (buo *BlockUpdateOne) SetNillableKafkaEnableExpression(b *bool) *BlockUpdateOne {
+	if b != nil {
+		buo.SetKafkaEnableExpression(*b)
+	}
+	return buo
+}
+
+// ClearKafkaEnableExpression clears the value of kafka_enable_expression.
+func (buo *BlockUpdateOne) ClearKafkaEnableExpression() *BlockUpdateOne {
+	buo.mutation.ClearKafkaEnableExpression()
+	return buo
+}
+
 // SetFlowID sets the flow edge to Flow by id.
 func (buo *BlockUpdateOne) SetFlowID(id int) *BlockUpdateOne {
 	buo.mutation.SetFlowID(id)
@@ -3643,6 +3839,58 @@ func (buo *BlockUpdateOne) sqlSave(ctx context.Context) (_node *Block, err error
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeBool,
 			Column: block.FieldBlockFlow,
+		})
+	}
+	if value, ok := buo.mutation.KafkaBrokers(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeJSON,
+			Value:  value,
+			Column: block.FieldKafkaBrokers,
+		})
+	}
+	if buo.mutation.KafkaBrokersCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeJSON,
+			Column: block.FieldKafkaBrokers,
+		})
+	}
+	if value, ok := buo.mutation.KafkaTopic(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: block.FieldKafkaTopic,
+		})
+	}
+	if buo.mutation.KafkaTopicCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Column: block.FieldKafkaTopic,
+		})
+	}
+	if value, ok := buo.mutation.KafkaMessage(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: block.FieldKafkaMessage,
+		})
+	}
+	if buo.mutation.KafkaMessageCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Column: block.FieldKafkaMessage,
+		})
+	}
+	if value, ok := buo.mutation.KafkaEnableExpression(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Value:  value,
+			Column: block.FieldKafkaEnableExpression,
+		})
+	}
+	if buo.mutation.KafkaEnableExpressionCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Column: block.FieldKafkaEnableExpression,
 		})
 	}
 	if buo.mutation.FlowCleared() {

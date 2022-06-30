@@ -50,6 +50,7 @@ func (Block) Fields() []ent.Field {
 				"WaitForSignal", "WAIT_FOR_SIGNAL",
 				"ForEach", "FOREACH",
 				"Parallel", "PARALLEL",
+				"Kafka", "KAFKA",
 			),
 		field.Enum("action_type").
 			GoType(flowschema.ActionTypeID("")).
@@ -156,6 +157,15 @@ func (Block) Fields() []ent.Field {
 		field.String("custom_filter").
 			Optional(),
 		field.Bool("block_flow").
+			Optional(),
+
+		field.Strings("kafka_brokers").
+			Optional(),
+		field.String("kafka_topic").
+			Optional(),
+		field.String("kafka_message").
+			Optional(),
+		field.Bool("kafka_enable_expression").
 			Optional(),
 	}
 }

@@ -518,6 +518,54 @@ func (bc *BlockCreate) SetNillableBlockFlow(b *bool) *BlockCreate {
 	return bc
 }
 
+// SetKafkaBrokers sets the kafka_brokers field.
+func (bc *BlockCreate) SetKafkaBrokers(s []string) *BlockCreate {
+	bc.mutation.SetKafkaBrokers(s)
+	return bc
+}
+
+// SetKafkaTopic sets the kafka_topic field.
+func (bc *BlockCreate) SetKafkaTopic(s string) *BlockCreate {
+	bc.mutation.SetKafkaTopic(s)
+	return bc
+}
+
+// SetNillableKafkaTopic sets the kafka_topic field if the given value is not nil.
+func (bc *BlockCreate) SetNillableKafkaTopic(s *string) *BlockCreate {
+	if s != nil {
+		bc.SetKafkaTopic(*s)
+	}
+	return bc
+}
+
+// SetKafkaMessage sets the kafka_message field.
+func (bc *BlockCreate) SetKafkaMessage(s string) *BlockCreate {
+	bc.mutation.SetKafkaMessage(s)
+	return bc
+}
+
+// SetNillableKafkaMessage sets the kafka_message field if the given value is not nil.
+func (bc *BlockCreate) SetNillableKafkaMessage(s *string) *BlockCreate {
+	if s != nil {
+		bc.SetKafkaMessage(*s)
+	}
+	return bc
+}
+
+// SetKafkaEnableExpression sets the kafka_enable_expression field.
+func (bc *BlockCreate) SetKafkaEnableExpression(b bool) *BlockCreate {
+	bc.mutation.SetKafkaEnableExpression(b)
+	return bc
+}
+
+// SetNillableKafkaEnableExpression sets the kafka_enable_expression field if the given value is not nil.
+func (bc *BlockCreate) SetNillableKafkaEnableExpression(b *bool) *BlockCreate {
+	if b != nil {
+		bc.SetKafkaEnableExpression(*b)
+	}
+	return bc
+}
+
 // SetFlowID sets the flow edge to Flow by id.
 func (bc *BlockCreate) SetFlowID(id int) *BlockCreate {
 	bc.mutation.SetFlowID(id)
@@ -1187,6 +1235,38 @@ func (bc *BlockCreate) createSpec() (*Block, *sqlgraph.CreateSpec) {
 			Column: block.FieldBlockFlow,
 		})
 		_node.BlockFlow = value
+	}
+	if value, ok := bc.mutation.KafkaBrokers(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeJSON,
+			Value:  value,
+			Column: block.FieldKafkaBrokers,
+		})
+		_node.KafkaBrokers = value
+	}
+	if value, ok := bc.mutation.KafkaTopic(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: block.FieldKafkaTopic,
+		})
+		_node.KafkaTopic = value
+	}
+	if value, ok := bc.mutation.KafkaMessage(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: block.FieldKafkaMessage,
+		})
+		_node.KafkaMessage = value
+	}
+	if value, ok := bc.mutation.KafkaEnableExpression(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Value:  value,
+			Column: block.FieldKafkaEnableExpression,
+		})
+		_node.KafkaEnableExpression = value
 	}
 	if nodes := bc.mutation.FlowIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

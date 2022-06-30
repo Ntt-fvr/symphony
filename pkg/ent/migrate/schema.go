@@ -149,7 +149,7 @@ var (
 		{Name: "create_time", Type: field.TypeTime},
 		{Name: "update_time", Type: field.TypeTime},
 		{Name: "cid", Type: field.TypeString},
-		{Name: "type", Type: field.TypeEnum, Enums: []string{"START", "END", "DECISION", "SUB_FLOW", "GO_TO", "TRIGGER", "ACTION", "TRUE_FALSE", "CHOICE", "EXECUTE_FLOW", "NETWORK_ACTION", "TIMER", "INVOKE_REST_API", "WAIT_FOR_SIGNAL", "FOREACH", "PARALLEL"}},
+		{Name: "type", Type: field.TypeEnum, Enums: []string{"START", "END", "DECISION", "SUB_FLOW", "GO_TO", "TRIGGER", "ACTION", "TRUE_FALSE", "CHOICE", "EXECUTE_FLOW", "NETWORK_ACTION", "TIMER", "INVOKE_REST_API", "WAIT_FOR_SIGNAL", "FOREACH", "PARALLEL", "KAFKA"}},
 		{Name: "action_type", Type: field.TypeEnum, Nullable: true, Enums: []string{"work_order", "update_inventory", "update_workforce", "worker"}},
 		{Name: "trigger_type", Type: field.TypeEnum, Nullable: true, Enums: []string{"work_order"}},
 		{Name: "start_param_definitions", Type: field.TypeJSON, Nullable: true},
@@ -187,6 +187,10 @@ var (
 		{Name: "signal_module", Type: field.TypeEnum, Nullable: true, Enums: []string{"inventory", "cm"}},
 		{Name: "custom_filter", Type: field.TypeString, Nullable: true},
 		{Name: "block_flow", Type: field.TypeBool, Nullable: true},
+		{Name: "kafka_brokers", Type: field.TypeJSON, Nullable: true},
+		{Name: "kafka_topic", Type: field.TypeString, Nullable: true},
+		{Name: "kafka_message", Type: field.TypeString, Nullable: true},
+		{Name: "kafka_enable_expression", Type: field.TypeBool, Nullable: true},
 		{Name: "block_sub_flow", Type: field.TypeInt, Nullable: true},
 		{Name: "block_goto_block", Type: field.TypeInt, Nullable: true},
 		{Name: "flow_blocks", Type: field.TypeInt, Nullable: true},
@@ -201,35 +205,35 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:  "blocks_flows_sub_flow",
-				Columns: []*schema.Column{BlocksColumns[42]},
+				Columns: []*schema.Column{BlocksColumns[46]},
 
 				RefColumns: []*schema.Column{FlowsColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
 				Symbol:  "blocks_blocks_goto_block",
-				Columns: []*schema.Column{BlocksColumns[43]},
+				Columns: []*schema.Column{BlocksColumns[47]},
 
 				RefColumns: []*schema.Column{BlocksColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
 				Symbol:  "blocks_flows_blocks",
-				Columns: []*schema.Column{BlocksColumns[44]},
+				Columns: []*schema.Column{BlocksColumns[48]},
 
 				RefColumns: []*schema.Column{FlowsColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
 				Symbol:  "blocks_flow_drafts_blocks",
-				Columns: []*schema.Column{BlocksColumns[45]},
+				Columns: []*schema.Column{BlocksColumns[49]},
 
 				RefColumns: []*schema.Column{FlowDraftsColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
 				Symbol:  "blocks_flow_execution_templates_blocks",
-				Columns: []*schema.Column{BlocksColumns[46]},
+				Columns: []*schema.Column{BlocksColumns[50]},
 
 				RefColumns: []*schema.Column{FlowExecutionTemplatesColumns[0]},
 				OnDelete:   schema.SetNull,
@@ -239,17 +243,17 @@ var (
 			{
 				Name:    "block_cid_flow_draft_blocks",
 				Unique:  true,
-				Columns: []*schema.Column{BlocksColumns[3], BlocksColumns[45]},
+				Columns: []*schema.Column{BlocksColumns[3], BlocksColumns[49]},
 			},
 			{
 				Name:    "block_cid_flow_blocks",
 				Unique:  true,
-				Columns: []*schema.Column{BlocksColumns[3], BlocksColumns[44]},
+				Columns: []*schema.Column{BlocksColumns[3], BlocksColumns[48]},
 			},
 			{
 				Name:    "block_cid_flow_execution_template_blocks",
 				Unique:  true,
-				Columns: []*schema.Column{BlocksColumns[3], BlocksColumns[46]},
+				Columns: []*schema.Column{BlocksColumns[3], BlocksColumns[50]},
 			},
 		},
 	}

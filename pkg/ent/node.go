@@ -463,7 +463,7 @@ func (b *Block) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
 		ID:     b.ID,
 		Type:   "Block",
-		Fields: make([]*Field, 41),
+		Fields: make([]*Field, 45),
 		Edges:  make([]*Edge, 9),
 	}
 	var buf []byte
@@ -793,6 +793,38 @@ func (b *Block) Node(ctx context.Context) (node *Node, err error) {
 	node.Fields[40] = &Field{
 		Type:  "bool",
 		Name:  "block_flow",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(b.KafkaBrokers); err != nil {
+		return nil, err
+	}
+	node.Fields[41] = &Field{
+		Type:  "[]string",
+		Name:  "kafka_brokers",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(b.KafkaTopic); err != nil {
+		return nil, err
+	}
+	node.Fields[42] = &Field{
+		Type:  "string",
+		Name:  "kafka_topic",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(b.KafkaMessage); err != nil {
+		return nil, err
+	}
+	node.Fields[43] = &Field{
+		Type:  "string",
+		Name:  "kafka_message",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(b.KafkaEnableExpression); err != nil {
+		return nil, err
+	}
+	node.Fields[44] = &Field{
+		Type:  "bool",
+		Name:  "kafka_enable_expression",
 		Value: string(buf),
 	}
 	node.Edges[0] = &Edge{

@@ -105,6 +105,14 @@ const (
 	FieldCustomFilter = "custom_filter"
 	// FieldBlockFlow holds the string denoting the block_flow field in the database.
 	FieldBlockFlow = "block_flow"
+	// FieldKafkaBrokers holds the string denoting the kafka_brokers field in the database.
+	FieldKafkaBrokers = "kafka_brokers"
+	// FieldKafkaTopic holds the string denoting the kafka_topic field in the database.
+	FieldKafkaTopic = "kafka_topic"
+	// FieldKafkaMessage holds the string denoting the kafka_message field in the database.
+	FieldKafkaMessage = "kafka_message"
+	// FieldKafkaEnableExpression holds the string denoting the kafka_enable_expression field in the database.
+	FieldKafkaEnableExpression = "kafka_enable_expression"
 
 	// EdgeFlow holds the string denoting the flow edge name in mutations.
 	EdgeFlow = "flow"
@@ -230,6 +238,10 @@ var Columns = []string{
 	FieldSignalModule,
 	FieldCustomFilter,
 	FieldBlockFlow,
+	FieldKafkaBrokers,
+	FieldKafkaTopic,
+	FieldKafkaMessage,
+	FieldKafkaEnableExpression,
 }
 
 // ForeignKeys holds the SQL foreign-keys that are owned by the Block type.
@@ -296,6 +308,7 @@ const (
 	TypeWaitForSignal Type = "WAIT_FOR_SIGNAL"
 	TypeForEach       Type = "FOREACH"
 	TypeParallel      Type = "PARALLEL"
+	TypeKafka         Type = "KAFKA"
 )
 
 func (_type Type) String() string {
@@ -305,7 +318,7 @@ func (_type Type) String() string {
 // TypeValidator is a validator for the "type" field enum values. It is called by the builders before save.
 func TypeValidator(_type Type) error {
 	switch _type {
-	case TypeStart, TypeEnd, TypeDecision, TypeSubFlow, TypeGoTo, TypeTrigger, TypeAction, TypeTrueFalse, TypeChoice, TypeExecuteFlow, TypeNetworkAction, TypeTimer, TypeInvokeRestAPI, TypeWaitForSignal, TypeForEach, TypeParallel:
+	case TypeStart, TypeEnd, TypeDecision, TypeSubFlow, TypeGoTo, TypeTrigger, TypeAction, TypeTrueFalse, TypeChoice, TypeExecuteFlow, TypeNetworkAction, TypeTimer, TypeInvokeRestAPI, TypeWaitForSignal, TypeForEach, TypeParallel, TypeKafka:
 		return nil
 	default:
 		return fmt.Errorf("block: invalid enum value for type field: %q", _type)

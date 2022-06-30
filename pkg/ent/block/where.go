@@ -274,6 +274,27 @@ func BlockFlow(v bool) predicate.Block {
 	})
 }
 
+// KafkaTopic applies equality check predicate on the "kafka_topic" field. It's identical to KafkaTopicEQ.
+func KafkaTopic(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldKafkaTopic), v))
+	})
+}
+
+// KafkaMessage applies equality check predicate on the "kafka_message" field. It's identical to KafkaMessageEQ.
+func KafkaMessage(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldKafkaMessage), v))
+	})
+}
+
+// KafkaEnableExpression applies equality check predicate on the "kafka_enable_expression" field. It's identical to KafkaEnableExpressionEQ.
+func KafkaEnableExpression(v bool) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldKafkaEnableExpression), v))
+	})
+}
+
 // CreateTimeEQ applies the EQ predicate on the "create_time" field.
 func CreateTimeEQ(v time.Time) predicate.Block {
 	return predicate.Block(func(s *sql.Selector) {
@@ -3026,6 +3047,298 @@ func BlockFlowIsNil() predicate.Block {
 func BlockFlowNotNil() predicate.Block {
 	return predicate.Block(func(s *sql.Selector) {
 		s.Where(sql.NotNull(s.C(FieldBlockFlow)))
+	})
+}
+
+// KafkaBrokersIsNil applies the IsNil predicate on the "kafka_brokers" field.
+func KafkaBrokersIsNil() predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldKafkaBrokers)))
+	})
+}
+
+// KafkaBrokersNotNil applies the NotNil predicate on the "kafka_brokers" field.
+func KafkaBrokersNotNil() predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldKafkaBrokers)))
+	})
+}
+
+// KafkaTopicEQ applies the EQ predicate on the "kafka_topic" field.
+func KafkaTopicEQ(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldKafkaTopic), v))
+	})
+}
+
+// KafkaTopicNEQ applies the NEQ predicate on the "kafka_topic" field.
+func KafkaTopicNEQ(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldKafkaTopic), v))
+	})
+}
+
+// KafkaTopicIn applies the In predicate on the "kafka_topic" field.
+func KafkaTopicIn(vs ...string) predicate.Block {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Block(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.In(s.C(FieldKafkaTopic), v...))
+	})
+}
+
+// KafkaTopicNotIn applies the NotIn predicate on the "kafka_topic" field.
+func KafkaTopicNotIn(vs ...string) predicate.Block {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Block(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.NotIn(s.C(FieldKafkaTopic), v...))
+	})
+}
+
+// KafkaTopicGT applies the GT predicate on the "kafka_topic" field.
+func KafkaTopicGT(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldKafkaTopic), v))
+	})
+}
+
+// KafkaTopicGTE applies the GTE predicate on the "kafka_topic" field.
+func KafkaTopicGTE(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldKafkaTopic), v))
+	})
+}
+
+// KafkaTopicLT applies the LT predicate on the "kafka_topic" field.
+func KafkaTopicLT(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldKafkaTopic), v))
+	})
+}
+
+// KafkaTopicLTE applies the LTE predicate on the "kafka_topic" field.
+func KafkaTopicLTE(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldKafkaTopic), v))
+	})
+}
+
+// KafkaTopicContains applies the Contains predicate on the "kafka_topic" field.
+func KafkaTopicContains(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.Contains(s.C(FieldKafkaTopic), v))
+	})
+}
+
+// KafkaTopicHasPrefix applies the HasPrefix predicate on the "kafka_topic" field.
+func KafkaTopicHasPrefix(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.HasPrefix(s.C(FieldKafkaTopic), v))
+	})
+}
+
+// KafkaTopicHasSuffix applies the HasSuffix predicate on the "kafka_topic" field.
+func KafkaTopicHasSuffix(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.HasSuffix(s.C(FieldKafkaTopic), v))
+	})
+}
+
+// KafkaTopicIsNil applies the IsNil predicate on the "kafka_topic" field.
+func KafkaTopicIsNil() predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldKafkaTopic)))
+	})
+}
+
+// KafkaTopicNotNil applies the NotNil predicate on the "kafka_topic" field.
+func KafkaTopicNotNil() predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldKafkaTopic)))
+	})
+}
+
+// KafkaTopicEqualFold applies the EqualFold predicate on the "kafka_topic" field.
+func KafkaTopicEqualFold(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.EqualFold(s.C(FieldKafkaTopic), v))
+	})
+}
+
+// KafkaTopicContainsFold applies the ContainsFold predicate on the "kafka_topic" field.
+func KafkaTopicContainsFold(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.ContainsFold(s.C(FieldKafkaTopic), v))
+	})
+}
+
+// KafkaMessageEQ applies the EQ predicate on the "kafka_message" field.
+func KafkaMessageEQ(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldKafkaMessage), v))
+	})
+}
+
+// KafkaMessageNEQ applies the NEQ predicate on the "kafka_message" field.
+func KafkaMessageNEQ(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldKafkaMessage), v))
+	})
+}
+
+// KafkaMessageIn applies the In predicate on the "kafka_message" field.
+func KafkaMessageIn(vs ...string) predicate.Block {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Block(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.In(s.C(FieldKafkaMessage), v...))
+	})
+}
+
+// KafkaMessageNotIn applies the NotIn predicate on the "kafka_message" field.
+func KafkaMessageNotIn(vs ...string) predicate.Block {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Block(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.NotIn(s.C(FieldKafkaMessage), v...))
+	})
+}
+
+// KafkaMessageGT applies the GT predicate on the "kafka_message" field.
+func KafkaMessageGT(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldKafkaMessage), v))
+	})
+}
+
+// KafkaMessageGTE applies the GTE predicate on the "kafka_message" field.
+func KafkaMessageGTE(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldKafkaMessage), v))
+	})
+}
+
+// KafkaMessageLT applies the LT predicate on the "kafka_message" field.
+func KafkaMessageLT(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldKafkaMessage), v))
+	})
+}
+
+// KafkaMessageLTE applies the LTE predicate on the "kafka_message" field.
+func KafkaMessageLTE(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldKafkaMessage), v))
+	})
+}
+
+// KafkaMessageContains applies the Contains predicate on the "kafka_message" field.
+func KafkaMessageContains(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.Contains(s.C(FieldKafkaMessage), v))
+	})
+}
+
+// KafkaMessageHasPrefix applies the HasPrefix predicate on the "kafka_message" field.
+func KafkaMessageHasPrefix(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.HasPrefix(s.C(FieldKafkaMessage), v))
+	})
+}
+
+// KafkaMessageHasSuffix applies the HasSuffix predicate on the "kafka_message" field.
+func KafkaMessageHasSuffix(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.HasSuffix(s.C(FieldKafkaMessage), v))
+	})
+}
+
+// KafkaMessageIsNil applies the IsNil predicate on the "kafka_message" field.
+func KafkaMessageIsNil() predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldKafkaMessage)))
+	})
+}
+
+// KafkaMessageNotNil applies the NotNil predicate on the "kafka_message" field.
+func KafkaMessageNotNil() predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldKafkaMessage)))
+	})
+}
+
+// KafkaMessageEqualFold applies the EqualFold predicate on the "kafka_message" field.
+func KafkaMessageEqualFold(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.EqualFold(s.C(FieldKafkaMessage), v))
+	})
+}
+
+// KafkaMessageContainsFold applies the ContainsFold predicate on the "kafka_message" field.
+func KafkaMessageContainsFold(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.ContainsFold(s.C(FieldKafkaMessage), v))
+	})
+}
+
+// KafkaEnableExpressionEQ applies the EQ predicate on the "kafka_enable_expression" field.
+func KafkaEnableExpressionEQ(v bool) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldKafkaEnableExpression), v))
+	})
+}
+
+// KafkaEnableExpressionNEQ applies the NEQ predicate on the "kafka_enable_expression" field.
+func KafkaEnableExpressionNEQ(v bool) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldKafkaEnableExpression), v))
+	})
+}
+
+// KafkaEnableExpressionIsNil applies the IsNil predicate on the "kafka_enable_expression" field.
+func KafkaEnableExpressionIsNil() predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldKafkaEnableExpression)))
+	})
+}
+
+// KafkaEnableExpressionNotNil applies the NotNil predicate on the "kafka_enable_expression" field.
+func KafkaEnableExpressionNotNil() predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldKafkaEnableExpression)))
 	})
 }
 
