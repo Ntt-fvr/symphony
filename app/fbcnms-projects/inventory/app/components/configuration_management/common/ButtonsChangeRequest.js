@@ -128,7 +128,7 @@ const ButtonsChangeRequest = (props: Props) => {
         style={{padding: '10px 16px', margin: '0 0 0 20px'}}
         variant={variant}
         color={color}
-        onChange={() => fileValidate}>
+        onClick={() => fileValidate('')}>
         Create bulk request
       </Button>
     </Grid>
