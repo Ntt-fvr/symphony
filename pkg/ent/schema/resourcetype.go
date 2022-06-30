@@ -30,6 +30,7 @@ func (ResourceType) Fields() []ent.Field {
 				"PORT",
 				"CARD",
 				"VLAN",
+				"NETWORK_FUNCTION",
 			).Annotations(entgql.OrderField("RESOURCE_TYPE_CLASS")),
 		field.Enum("ResourceTypeBaseType").
 			Values(
