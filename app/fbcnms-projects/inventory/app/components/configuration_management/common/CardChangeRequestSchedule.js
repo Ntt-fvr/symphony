@@ -74,7 +74,6 @@ const CardChangeRequestSchedule = (props: Props) => {
       asSoonAsAproved: false,
       scheduleChange: true,
     });
-    console.log(dataSchedule, {...checkedHidden});
   };
   const handleChangeAproved = () => {
     setDataSchedule({
