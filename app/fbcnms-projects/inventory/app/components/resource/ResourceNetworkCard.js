@@ -7,6 +7,9 @@
  * @flow strict-local
  * @format
  */
+
+import type {UpdateResourceMutationVariables} from '../../mutations/__generated__/UpdateResourceMutation.graphql';
+
 import Button from '@material-ui/core/Button';
 import Card from '@symphony/design-system/components/Card/Card';
 import CardActions from '@material-ui/core/CardActions';
@@ -17,10 +20,15 @@ import Grid from '@material-ui/core/Grid';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import ModalSteper from './ModalSteper';
-import React, {useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
+import RelayEnvironment from '../../common/RelayEnvironment';
 import Typography from '@material-ui/core/Typography';
+import UpdateResourceMutation from '../../mutations/UpdateResourceMutation';
 import symphony from '@symphony/design-system/theme/symphony';
+import {fetchQuery, graphql} from 'relay-runtime';
 import {makeStyles} from '@material-ui/styles';
+
+import {useLocation} from 'react-router-dom';
 
 const useStyles = makeStyles(() => ({
   cardContentFilter: {
@@ -33,6 +41,21 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
+const ResourceNetworkCardQuery = graphql`
+  query ResourceNetworkCardQuery($filter: ResourceFilter) {
+    queryResource(filter: $filter) {
+      id
+      name
+      resourceSpecification
+      logicalLinks {
+        id
+        name
+        resourceSpecification
+      }
+    }
+  }
+`;
+
 type Props = $ReadOnly<{|
   onAddResourceSlot: (selectedResourceType: {}) => void,
   dataListStepper: any,
@@ -43,12 +66,41 @@ export const ResourceNetworkCard = (props: Props) => {
   const classes = useStyles();
   const [openDialog, setOpenDialog] = useState(false);
   const [openDialogFilter, setOpenDialogFilter] = useState(null);
+  const [resourceLogicLinks, setResourceLogicLinks] = useState({});
+
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+
+  useEffect(() => {
+    isResourceLogicLinks();
+  }, []);
+
+  const isResourceLogicLinks = useCallback(() => {
+    fetchQuery(RelayEnvironment, ResourceNetworkCardQuery, {
+      filter: {
+        id: queryParams.get('resource'),
+      },
+    }).then(data => {
+      setResourceLogicLinks(data);
+    });
+  }, [setResourceLogicLinks]);
 
   const handleClickDialogFilter = event => {
     setOpenDialogFilter(event.currentTarget);
   };
   const handleCloseDialogFilter = () => {
     setOpenDialogFilter(null);
+  };
+  const SaveLogicalLinks = input => {
+    const variables: UpdateResourceMutationVariables = {
+      input: {...input, filter: {id: queryParams.get('resource')}},
+    };
+    UpdateResourceMutation(variables, {
+      onCompleted: () => {
+        isResourceLogicLinks();
+        setOpenDialog(false);
+      },
+    });
   };
 
   return (
@@ -97,34 +149,46 @@ export const ResourceNetworkCard = (props: Props) => {
         <CardContent>
           <Grid container spacing={3}>
             <Grid item xs={3}>
-              <Typography color="primary">Name</Typography>
+              <Typography color="primary">Resource</Typography>
+            </Grid>
+            <Grid item xs={2}>
+              <Typography color="primary">Resource Type</Typography>
+            </Grid>
+            <Grid item xs={2}>
+              <Typography color="primary">Resource Type Class</Typography>
             </Grid>
             <Grid item xs={3}>
-              <Typography color="primary">Resource External ID</Typography>
+              <Typography color="primary">Resource Basetype</Typography>
             </Grid>
-            <Grid item xs={3}>
-              <Typography color="primary">Resource type</Typography>
-            </Grid>
-            <Grid item xs={3}>
-              <Typography color="primary">Relationship Type</Typography>
+            <Grid item xs={2}>
+              <Typography color="primary">ID</Typography>
             </Grid>
             <Grid item xs={12}>
               <Divider variant="middle" style={{margin: 0}} />
             </Grid>
-            <Grid item xs={3}>
-              <Button color="primary" disableRipple>
-                <Typography>OLT_1212323434</Typography>
-              </Button>
-            </Grid>
-            <Grid item xs={3}>
-              <Typography>32243242332</Typography>
-            </Grid>
-            <Grid item xs={3}>
-              <Typography>OLT</Typography>
-            </Grid>
-            <Grid item xs={3}>
-              <Typography>Logical</Typography>
-            </Grid>
+            {resourceLogicLinks?.queryResource
+              ?.flatMap(({logicalLinks}) => logicalLinks)
+              .map(logicalLink => (
+                <>
+                  <Grid item xs={3}>
+                    <Button color="primary" disableRipple>
+                      <Typography>{logicalLink.name}</Typography>
+                    </Button>
+                  </Grid>
+                  <Grid item xs={2}>
+                    <Typography>OLT</Typography>
+                  </Grid>
+                  <Grid item xs={2}>
+                    <Typography>Port</Typography>
+                  </Grid>
+                  <Grid item xs={3}>
+                    <Typography>Logical</Typography>
+                  </Grid>
+                  <Grid item xs={2}>
+                    <Typography>{logicalLink.resourceSpecification}</Typography>
+                  </Grid>
+                </>
+              ))}
           </Grid>
         </CardContent>
         <CardActions>
@@ -138,7 +202,7 @@ export const ResourceNetworkCard = (props: Props) => {
           openModal={openDialog}
           onClose={() => setOpenDialog(false)}
           dataListStepper={dataListStepper}
-          saveModal={() => setOpenDialog(false)}
+          saveModal={SaveLogicalLinks}
           addButtonLink={onAddResourceSlot}
           titleSteps={[
             'Resource type',
