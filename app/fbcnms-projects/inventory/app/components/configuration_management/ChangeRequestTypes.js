@@ -234,7 +234,7 @@
    };
    if (openDetails) {
      return (
-       <ChangeRequestDetails data={dataRow} setOpenDetails={setOpenDetails} />
+       <ChangeRequestDetails idChangeRequest={dataRow} setOpenDetails={setOpenDetails} />
      );
    }
    if (openBulkRequest) {
