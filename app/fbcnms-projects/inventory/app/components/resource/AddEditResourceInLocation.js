@@ -11,6 +11,7 @@
 import React, {useState} from 'react';
 
 import type {AddResourceMutationVariables} from '../../mutations/__generated__/AddResourceMutation.graphql';
+import type {UpdateResourceMutationVariables} from '../../mutations/__generated__/UpdateResourceMutation.graphql';
 
 import AddResourceMutation from '../../mutations/AddResourceMutation';
 import Button from '@material-ui/core/Button';
@@ -23,11 +24,13 @@ import InputAdornment from '@material-ui/core/InputAdornment';
 import MomentUtils from '@date-io/moment';
 import SaveDialogConfirm from '../configure/SaveDialogConfirm';
 import TextField from '@material-ui/core/TextField';
+import UpdateResourceMutation from '../../mutations/UpdateResourceMutation';
 import moment from 'moment';
 import symphony from '@symphony/design-system/theme/symphony';
 import {DateTimePicker, MuiPickersUtilsProvider} from '@material-ui/pickers';
 import {MenuItem} from '@material-ui/core';
 import {makeStyles} from '@material-ui/styles';
+import {useLocation} from 'react-router-dom';
 
 const useStyles = makeStyles(() => ({
   formField: {
@@ -117,6 +120,9 @@ const AddEditResourceInLocation = (props: Props) => {
   const [slotEndDate, setSlotEndDate] = useState(moment);
   const [slotInstallDate, setSlotInstallDate] = useState(moment);
 
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+
   function handleChange({target}) {
     setResourceType({
       data: {
@@ -138,6 +144,33 @@ const AddEditResourceInLocation = (props: Props) => {
       ],
     };
     AddResourceMutation(variables, {
+      onCompleted: () => {
+        isCompleted();
+        setResourceType({data: {}});
+        closeFormAddEdit();
+      },
+    });
+  }
+
+  function handleCreateLogicLinkForm() {
+    const input = {
+      input: {
+        set: {
+          logicalLinks: {
+            name: resourceType.data.name,
+            resourceSpecification: dataformModal.id,
+            isDeleted: false,
+          },
+        },
+        filter: {
+          id: queryParams.get('resource'),
+        },
+      },
+    };
+
+    const variablesWithLogicLinks: UpdateResourceMutationVariables = input;
+
+    UpdateResourceMutation(variablesWithLogicLinks, {
       onCompleted: () => {
         isCompleted();
         setResourceType({data: {}});
@@ -440,7 +473,11 @@ const AddEditResourceInLocation = (props: Props) => {
         <SaveDialogConfirm
           open={dialogOpen}
           onClose={() => setDialogOpen(false)}
-          saveItem={handleCreateForm}
+          saveItem={
+            dataformModal.isNewResource
+              ? handleCreateLogicLinkForm
+              : handleCreateForm
+          }
           resource={''}
           typeAlert={'warning'}
           customMessage="are you sure you want to leave without saving changes?"

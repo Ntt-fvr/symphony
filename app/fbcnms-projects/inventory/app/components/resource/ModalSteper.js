@@ -378,7 +378,9 @@ const ModalSteper = (props: Props) => {
                   disabled={selectedIndex !== null ? true : false}
                   textButton="New Resource"
                   onClick={() =>
-                    !addButtonLink ? undefined : addButtonLink(getDataList)
+                    !addButtonLink
+                      ? undefined
+                      : addButtonLink({...getDataList, isNewResource: true})
                   }
                 />
               )}
