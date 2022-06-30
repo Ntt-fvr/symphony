@@ -105,7 +105,7 @@
  const ChangeRequestTypes = () => {
    const [filters, setFilters] = useState([]);
    const [openDetails, setOpenDetails] = useState(false);
-   const [dataRow, setDataRow] = useState({});
+   const [dataRow, setDataRow] = useState('');
    const [openBulkRequest, setOpenBulkRequest] = useState(false);
    const [changeRequestInitial, setChangeRequestInitial] = useState([]);
    const [changeRequest, setChangeRequest] = useState([]);
@@ -312,7 +312,7 @@
                  <Button
                    onClick={() => {
                      handleOpenDetails();
-                     showInfo(row);
+                     showInfo(row.id);
                    }}
                    variant="text"
                    tooltip={row.id ?? ''}>
