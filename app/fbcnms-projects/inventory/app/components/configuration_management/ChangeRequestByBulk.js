@@ -21,7 +21,7 @@ import {CardAccordion} from './common/CardAccordion';
 import {CardSuggested} from '../CardSuggestedBulk';
 import {FormField} from './common/FormField';
 import {Grid} from '@material-ui/core';
-import {TableResource} from './common/TableResource';
+import {TableResource} from './common/TableResourceBulk';
 import {makeStyles} from '@material-ui/styles';
 import {csvToArray, ValidateHeader} from './csvToArray';
 import SnackbarItem from '@fbcnms/ui/components/SnackbarItem';
@@ -62,7 +62,6 @@ export type Props = $ReadOnly<{|
 
 const ChangeRequestByBulk = (props: Props) => {
   const {onClick, infoCSV, nameFile} = props;
-  console.log(props);
   const [infoTable, setInfoTable] = useState(props.infoCSV);
   const [nameFileSelected, setNameFileSelected] = useState(props.nameFile);
   const [schedule, setSchedule] = useState(DEFAULT_DATA_SCHEDULE);

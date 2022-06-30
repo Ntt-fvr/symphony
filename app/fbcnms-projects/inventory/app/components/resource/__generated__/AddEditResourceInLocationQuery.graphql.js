@@ -15,6 +15,7 @@
 /*::
 import type { ConcreteRequest } from 'relay-runtime';
 export type ConfigurationParameterTypeHasFilter = "booleanValue" | "category" | "createTime" | "externalId" | "floatValue" | "index" | "intValue" | "isDeleted" | "isEditable" | "isListable" | "isMandatory" | "isPrioritary" | "latitudeValue" | "longitudeValue" | "mappingIn" | "mappingOut" | "name" | "nodeType" | "parameters" | "rangeFromValue" | "rangeToValue" | "rawValue" | "resourceSpecification" | "stringValue" | "tags" | "type" | "updateTime" | "%future added value";
+export type ParameterKind = "bool" | "date" | "datetime_local" | "email" | "enum" | "float" | "gps_location" | "int" | "range" | "string" | "%future added value";
 export type ConfigurationParameterTypeFilter = {|
   and?: ?$ReadOnlyArray<?ConfigurationParameterTypeFilter>,
   has?: ?$ReadOnlyArray<?ConfigurationParameterTypeHasFilter>,
@@ -33,14 +34,14 @@ export type AddEditResourceInLocationQueryVariables = {|
 |};
 export type AddEditResourceInLocationQueryResponse = {|
   +queryConfigurationParameterType: ?$ReadOnlyArray<?{|
-    +stringValue: ?string,
+    +id: string,
+    +name: string,
+    +type: ParameterKind,
     +intValue: ?number,
-    +booleanValue: ?boolean,
     +floatValue: ?number,
-    +latitudeValue: ?number,
-    +longitudeValue: ?number,
-    +rangeFromValue: ?number,
-    +rangeToValue: ?number,
+    +stringValue: ?string,
+    +booleanValue: ?boolean,
+    +resourceSpecification: string,
   |}>
 |};
 export type AddEditResourceInLocationQuery = {|
@@ -55,15 +56,14 @@ query AddEditResourceInLocationQuery(
   $filter: ConfigurationParameterTypeFilter
 ) {
   queryConfigurationParameterType(filter: $filter) {
-    stringValue
-    intValue
-    booleanValue
-    floatValue
-    latitudeValue
-    longitudeValue
-    rangeFromValue
-    rangeToValue
     id
+    name
+    type
+    intValue
+    floatValue
+    stringValue
+    booleanValue
+    resourceSpecification
   }
 }
 */
@@ -78,94 +78,86 @@ var v0 = [
 ],
 v1 = [
   {
-    "kind": "Variable",
-    "name": "filter",
-    "variableName": "filter"
+    "alias": null,
+    "args": [
+      {
+        "kind": "Variable",
+        "name": "filter",
+        "variableName": "filter"
+      }
+    ],
+    "concreteType": "ConfigurationParameterType",
+    "kind": "LinkedField",
+    "name": "queryConfigurationParameterType",
+    "plural": true,
+    "selections": [
+      {
+        "alias": null,
+        "args": null,
+        "kind": "ScalarField",
+        "name": "id",
+        "storageKey": null
+      },
+      {
+        "alias": null,
+        "args": null,
+        "kind": "ScalarField",
+        "name": "name",
+        "storageKey": null
+      },
+      {
+        "alias": null,
+        "args": null,
+        "kind": "ScalarField",
+        "name": "type",
+        "storageKey": null
+      },
+      {
+        "alias": null,
+        "args": null,
+        "kind": "ScalarField",
+        "name": "intValue",
+        "storageKey": null
+      },
+      {
+        "alias": null,
+        "args": null,
+        "kind": "ScalarField",
+        "name": "floatValue",
+        "storageKey": null
+      },
+      {
+        "alias": null,
+        "args": null,
+        "kind": "ScalarField",
+        "name": "stringValue",
+        "storageKey": null
+      },
+      {
+        "alias": null,
+        "args": null,
+        "kind": "ScalarField",
+        "name": "booleanValue",
+        "storageKey": null
+      },
+      {
+        "alias": null,
+        "args": null,
+        "kind": "ScalarField",
+        "name": "resourceSpecification",
+        "storageKey": null
+      }
+    ],
+    "storageKey": null
   }
-],
-v2 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "stringValue",
-  "storageKey": null
-},
-v3 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "intValue",
-  "storageKey": null
-},
-v4 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "booleanValue",
-  "storageKey": null
-},
-v5 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "floatValue",
-  "storageKey": null
-},
-v6 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "latitudeValue",
-  "storageKey": null
-},
-v7 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "longitudeValue",
-  "storageKey": null
-},
-v8 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "rangeFromValue",
-  "storageKey": null
-},
-v9 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "rangeToValue",
-  "storageKey": null
-};
+];
 return {
   "fragment": {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Fragment",
     "metadata": null,
     "name": "AddEditResourceInLocationQuery",
-    "selections": [
-      {
-        "alias": null,
-        "args": (v1/*: any*/),
-        "concreteType": "ConfigurationParameterType",
-        "kind": "LinkedField",
-        "name": "queryConfigurationParameterType",
-        "plural": true,
-        "selections": [
-          (v2/*: any*/),
-          (v3/*: any*/),
-          (v4/*: any*/),
-          (v5/*: any*/),
-          (v6/*: any*/),
-          (v7/*: any*/),
-          (v8/*: any*/),
-          (v9/*: any*/)
-        ],
-        "storageKey": null
-      }
-    ],
+    "selections": (v1/*: any*/),
     "type": "Query",
     "abstractKey": null
   },
@@ -174,46 +166,19 @@ return {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
     "name": "AddEditResourceInLocationQuery",
-    "selections": [
-      {
-        "alias": null,
-        "args": (v1/*: any*/),
-        "concreteType": "ConfigurationParameterType",
-        "kind": "LinkedField",
-        "name": "queryConfigurationParameterType",
-        "plural": true,
-        "selections": [
-          (v2/*: any*/),
-          (v3/*: any*/),
-          (v4/*: any*/),
-          (v5/*: any*/),
-          (v6/*: any*/),
-          (v7/*: any*/),
-          (v8/*: any*/),
-          (v9/*: any*/),
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "id",
-            "storageKey": null
-          }
-        ],
-        "storageKey": null
-      }
-    ]
+    "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "e70f6c547b04f5d3347e69192bcb78fd",
+    "cacheID": "6cedb02f69e90dd21fdf09f3759846d1",
     "id": null,
     "metadata": {},
     "name": "AddEditResourceInLocationQuery",
     "operationKind": "query",
-    "text": "query AddEditResourceInLocationQuery(\n  $filter: ConfigurationParameterTypeFilter\n) {\n  queryConfigurationParameterType(filter: $filter) {\n    stringValue\n    intValue\n    booleanValue\n    floatValue\n    latitudeValue\n    longitudeValue\n    rangeFromValue\n    rangeToValue\n    id\n  }\n}\n"
+    "text": "query AddEditResourceInLocationQuery(\n  $filter: ConfigurationParameterTypeFilter\n) {\n  queryConfigurationParameterType(filter: $filter) {\n    id\n    name\n    type\n    intValue\n    floatValue\n    stringValue\n    booleanValue\n    resourceSpecification\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = 'eb9166f2e7d5cb040b685a239cbcba4f';
+(node/*: any*/).hash = '8c39e20bff781c193b461e96c9217692';
 
 module.exports = node;
