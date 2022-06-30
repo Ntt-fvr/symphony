@@ -224,6 +224,22 @@ func (r blockResolver) Details(ctx context.Context, obj *ent.Block) (models.Bloc
 			WorkOrderType: workOrderType,
 			WorkerType:    workerType,
 		}, nil
+	case block.TypeChoice:
+		var rules []*models.DecisionRoute
+		exitPoints, err := obj.QueryExitPoints().
+			Where(exitpoint.RoleEQ(flowschema.ExitPointRoleDecision)).
+			All(ctx)
+		if err != nil {
+			return nil, fmt.Errorf("failed to query exit points: %w", err)
+		}
+		for _, exitPoint := range exitPoints {
+			rules = append(rules, &models.DecisionRoute{ExitPoint: exitPoint})
+		}
+		return &models.ChoiceBlock{
+			EntryPoint:       entryPoint,
+			DefaultExitPoint: exitPoint,
+			Rules:            rules,
+		}, nil
 	default:
 		return nil, fmt.Errorf("type %q is unknown", obj.Type)
 	}
@@ -771,4 +787,92 @@ func (r blockResolver) InputStateTransformation(ctx context.Context, obj *ent.Bl
 
 func (r blockResolver) OutputStateTransformation(ctx context.Context, obj *ent.Block) (string, error) {
 	return obj.OutputStateTransformation, nil
+}
+
+func (r blockResolver) InputTransformation(ctx context.Context, obj *ent.Block) (string, error) {
+	return obj.InputTransformation, nil
+}
+
+func (r blockResolver) OutputTransformation(ctx context.Context, obj *ent.Block) (string, error) {
+	return obj.OutputTransformation, nil
+}
+
+func (r mutationResolver) AddChoiceBlock(ctx context.Context, flowDraftID int, input models.ChoiceBlockInput) (*ent.Block, error) {
+	mutation := addBlockMutation(ctx, input.Cid, block.TypeChoice, flowDraftID, input.UIRepresentation)
+	b, err := mutation.Save(ctx)
+	if err != nil {
+		return nil, err
+	}
+	client := r.ClientFrom(ctx)
+	for _, route := range input.Routes {
+		if route.Cid != nil {
+			var inputVariables []*models.VariableExpressionInput
+			inputVariables = append(inputVariables, route.Condition)
+			variableExpressions, err := getBlockVariables(ctx, inputVariables, b.ID)
+			if err != nil {
+				return nil, err
+			}
+			if len(variableExpressions) != 1 {
+				return nil, fmt.Errorf("there is not a condition for route %s", *route.Cid)
+			}
+			if _, err := client.ExitPoint.Create().
+				SetRole(flowschema.ExitPointRoleDecision).
+				SetCid(*route.Cid).
+				SetParentBlockID(b.ID).
+				SetCondition(variableExpressions[0]).
+				Save(ctx); err != nil {
+				return nil, fmt.Errorf("failed to create decision exit points: %w", err)
+			}
+		}
+	}
+	return b, nil
+}
+
+func (r mutationResolver) AddExecuteFlowBlock(ctx context.Context, flowDraftID int, input models.ExecuteFlowBlockInput) (*ent.Block, error) {
+	mutation := addBlockMutation(ctx, input.Cid, block.TypeSubFlow, flowDraftID, input.UIRepresentation)
+	b, err := mutation.SetSubFlowID(input.Flow).
+		Save(ctx)
+	if err != nil {
+		return nil, err
+	}
+	blockVariables, err := getBlockVariables(ctx, input.Params, b.ID)
+	if err != nil {
+		return nil, err
+	}
+	return b.Update().
+		SetInputParams(blockVariables).
+		Save(ctx)
+}
+
+func (r mutationResolver) AddTimerBlock(ctx context.Context, flowDraftID int, input models.TimerBlockInput) (*ent.Block, error) {
+	mutation := addBlockMutation(ctx, input.Cid, block.TypeTimer, flowDraftID, input.UIRepresentation)
+	b, err := mutation.Save(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	return b.Update().
+		SetEnableTimerExpression(*input.EnableExpressionL).
+		SetTimerExpression(*input.Expression).
+		SetTimerBehavior((block.TimerBehavior)(input.Behavior)).
+		SetNillableSeconds(input.Seconds).
+		//SetTimerSpecificDate(input.SpecificDatetime).
+		Save(ctx)
+}
+
+func (r mutationResolver) AddInvokeRestAPIBlock(ctx context.Context, flowDraftID int, input models.InvokeRestAPIBlockInput) (*ent.Block, error) {
+	mutation := addBlockMutation(ctx, input.Cid, block.TypeInvokeRestAPI, flowDraftID, input.UIRepresentation)
+	b, err := mutation.Save(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	return b.Update().
+		SetBody(input.Body).
+		SetConnectionTimeout(input.ConnectionTimeOut).
+		SetHeaders(input.Headers).
+		SetURL(input.URL).
+		SetURLMethod(block.URLMethod(input.Method)).
+		Save(ctx)
+
 }

@@ -266,6 +266,32 @@ func (r mutationResolver) collectBlockVariables(input models.ImportFlowDraftInpu
 			blockVariableInputs = append(blockVariableInputs, route.Condition.BlockVariables...)
 		}
 	}
+	for _, blk := range input.ChoiceBlocks {
+		for _, route := range blk.Routes {
+			blockVariableInputs = append(blockVariableInputs, route.Condition.BlockVariables...)
+		}
+	}
+	/*for _, blk := range input.ExecuteFlowBlocks {
+		for _, variableExpression := range blk.Params {
+			blockVariableInputs = append(blockVariableInputs, variableExpression.BlockVariables...)
+		}
+	}
+	for _, blk := range input.WaitForSignalBlocks {
+		for _, variableExpression := range blk.Params {
+			blockVariableInputs = append(blockVariableInputs, variableExpression.BlockVariables...)
+		}
+	}
+	for _, blk := range input.TimerBlocks {
+		for _, variableExpression := range blk.Params {
+			blockVariableInputs = append(blockVariableInputs, variableExpression.BlockVariables...)
+		}
+	}
+	for _, blk := range input.InvokeRestAPIBlocks {
+		for _, variableExpression := range blk.Params {
+			blockVariableInputs = append(blockVariableInputs, variableExpression.BlockVariables...)
+		}
+	}*/
+
 	return blockVariableInputs
 }
 
@@ -293,6 +319,18 @@ func (r mutationResolver) collectBlockCids(input models.ImportFlowDraftInput) []
 		blockCids = append(blockCids, blk.Cid)
 	}
 	for _, blk := range input.TrueFalseBlocks {
+		blockCids = append(blockCids, blk.Cid)
+	}
+	for _, blk := range input.ChoiceBlocks {
+		blockCids = append(blockCids, blk.Cid)
+	}
+	for _, blk := range input.ExecuteFlowBlocks {
+		blockCids = append(blockCids, blk.Cid)
+	}
+	for _, blk := range input.ExecuteFlowBlocks {
+		blockCids = append(blockCids, blk.Cid)
+	}
+	for _, blk := range input.InvokeRestAPIBlocks {
 		blockCids = append(blockCids, blk.Cid)
 	}
 	return blockCids
@@ -500,6 +538,29 @@ func (r mutationResolver) importBlocks(ctx context.Context, input models.ImportF
 			case *models.ActionBlockInput:
 				if ok := r.paramsHaveDependencies(blkInput.Params, createdBlockCIDs); ok {
 					if _, err := r.AddActionBlock(ctx, input.ID, *blkInput); err != nil {
+						return err
+					}
+					createdBlockCIDs[blkInput.Cid] = struct{}{}
+				} else {
+					newBlockInputs = append(newBlockInputs, blkInput)
+				}
+			case *models.ChoiceBlockInput:
+				routes := blkInput.Routes
+				var paramsDecision []*models.VariableExpressionInput
+				for _, route := range routes {
+					paramsDecision = append(paramsDecision, route.Condition)
+				}
+				if ok := r.paramsHaveDependencies(paramsDecision, createdBlockCIDs); ok {
+					if _, err := r.AddChoiceBlock(ctx, input.ID, *blkInput); err != nil {
+						return err
+					}
+					createdBlockCIDs[blkInput.Cid] = struct{}{}
+				} else {
+					newBlockInputs = append(newBlockInputs, blkInput)
+				}
+			case *models.ExecuteFlowBlockInput:
+				if ok := r.paramsHaveDependencies(blkInput.Params, createdBlockCIDs); ok {
+					if _, err := r.AddExecuteFlowBlock(ctx, input.ID, *blkInput); err != nil {
 						return err
 					}
 					createdBlockCIDs[blkInput.Cid] = struct{}{}

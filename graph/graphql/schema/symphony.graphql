@@ -5526,15 +5526,15 @@ type Block implements Node {
   nextBlocks: [Block!]!
   prevBlocks: [Block!]!
   details: BlockDetails!
-  #inputParamDefinitions: [VariableDefinition!]!
-  #outputParamDefinitions: [VariableDefinition!]!
+  inputParamDefinitions: [VariableDefinition!]!
+  outputParamDefinitions: [VariableDefinition!]!
   uiRepresentation: BlockUIRepresentation
   enableInputTransformation: Boolean!
   inputTransfStrategy: TransfStrategy
-  #inputParamDefinitions: String
+  inputTransformation: String
   enableOutputTransformation: Boolean!
   outputTransfStrategy: TransfStrategy
-  #outputParamDefinitions: String
+  outputTransformation: String
   enableInputStateTransformation: Boolean!
   inputStateTransfStrategy: TransfStrategy
   inputStateTransformation: String
@@ -5660,7 +5660,6 @@ type EndBlock {
 
 type DecisionRoute {
   exitPoint: ExitPoint
-  #name: String!
 }
 
 type DecisionBlock {
@@ -5748,7 +5747,7 @@ type InvokeRestAPIBlock {
   url: String!
   connectionTimeOut: Int!
   body: String!
-  headers: String!
+  headers: [VariableValue!]!
   exitPoint: ExitPoint!
 }
 
@@ -5916,7 +5915,7 @@ input TimerBlockInput {
   entryPoint: EntryPointInput!
   behavior: TimerBehavior!
   seconds: Int
-  datetime: Time
+  specificDatetime: Time
   enableExpressionL: Boolean
   expression: String
   uiRepresentation: BlockUIRepresentationInput
@@ -5943,7 +5942,7 @@ input InvokeRestAPIBlockInput {
   url: String!
   connectionTimeOut: Int!
   body: String!
-  headers: String!
+  headers: [VariableValueInput]!
   basicDefinitions: BaseBlockInput!
   uiRepresentation: BlockUIRepresentationInput
 }
@@ -5953,6 +5952,7 @@ input ExecuteFlowBlockInput {
   entryPoint: EntryPointInput!
   exitPoint: ExitPointInput!
   flow: ID!
+  params: [VariableExpressionInput!]!
   basicDefinitions: BaseBlockInput!
   uiRepresentation: BlockUIRepresentationInput
 }
@@ -7742,6 +7742,10 @@ type Mutation {
   addTriggerBlock(flowDraftId: ID!, input: TriggerBlockInput!): Block!
   addActionBlock(flowDraftId: ID!, input: ActionBlockInput!): Block!
   addTrueFalseBlock(flowDraftId: ID!, input: TrueFalseBlockInput!): Block!
+  addChoiceBlock(flowDraftId: ID!, input: ChoiceBlockInput!): Block!
+  addExecuteFlowBlock(flowDraftId: ID!, input: ExecuteFlowBlockInput!): Block!
+  addTimerBlock(flowDraftId: ID!, input: TimerBlockInput!): Block!
+  addInvokeRestAPIBlock(flowDraftId: ID!, input: InvokeRestAPIBlockInput!): Block!
   editBlock(input: EditBlockInput!): Block!
   deleteBlock(id: ID!): Boolean!
   addConnector(flowDraftId: ID!, input: ConnectorInput!): Connector!

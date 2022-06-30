@@ -1172,6 +1172,7 @@ type ExecuteFlowBlockInput struct {
 	EntryPoint       *EntryPointInput                  `json:"entryPoint"`
 	ExitPoint        *ExitPointInput                   `json:"exitPoint"`
 	Flow             int                               `json:"flow"`
+	Params           []*VariableExpressionInput        `json:"params"`
 	BasicDefinitions *BaseBlockInput                   `json:"basicDefinitions"`
 	UIRepresentation *flowschema.BlockUIRepresentation `json:"uiRepresentation"`
 }
@@ -1280,13 +1281,13 @@ type ImportFlowDraftInput struct {
 }
 
 type InvokeRestAPIBlock struct {
-	EntryPoint        *ent.EntryPoint `json:"entryPoint"`
-	Method            URLMethod       `json:"method"`
-	URL               string          `json:"url"`
-	ConnectionTimeOut int             `json:"connectionTimeOut"`
-	Body              string          `json:"body"`
-	Headers           string          `json:"headers"`
-	ExitPoint         *ent.ExitPoint  `json:"exitPoint"`
+	EntryPoint        *ent.EntryPoint             `json:"entryPoint"`
+	Method            URLMethod                   `json:"method"`
+	URL               string                      `json:"url"`
+	ConnectionTimeOut int                         `json:"connectionTimeOut"`
+	Body              string                      `json:"body"`
+	Headers           []*flowschema.VariableValue `json:"headers"`
+	ExitPoint         *ent.ExitPoint              `json:"exitPoint"`
 }
 
 func (InvokeRestAPIBlock) IsBlockDetails() {}
@@ -1299,7 +1300,7 @@ type InvokeRestAPIBlockInput struct {
 	URL               string                            `json:"url"`
 	ConnectionTimeOut int                               `json:"connectionTimeOut"`
 	Body              string                            `json:"body"`
-	Headers           string                            `json:"headers"`
+	Headers           []*flowschema.VariableValue       `json:"headers"`
 	BasicDefinitions  *BaseBlockInput                   `json:"basicDefinitions"`
 	UIRepresentation  *flowschema.BlockUIRepresentation `json:"uiRepresentation"`
 }
@@ -1839,7 +1840,7 @@ type TimerBlockInput struct {
 	EntryPoint        *EntryPointInput                  `json:"entryPoint"`
 	Behavior          TimerBehavior                     `json:"behavior"`
 	Seconds           *int                              `json:"seconds"`
-	Datetime          *time.Time                        `json:"datetime"`
+	SpecificDatetime  *time.Time                        `json:"specificDatetime"`
 	EnableExpressionL *bool                             `json:"enableExpressionL"`
 	Expression        *string                           `json:"expression"`
 	UIRepresentation  *flowschema.BlockUIRepresentation `json:"uiRepresentation"`
