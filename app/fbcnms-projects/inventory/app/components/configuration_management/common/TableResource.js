@@ -71,6 +71,7 @@ const TableResource = (props: Props) => {
             <TableRow>
               <StyledTableCell>Resource</StyledTableCell>
               <StyledTableCell>Parameter</StyledTableCell>
+              <StyledTableCell>Current value</StyledTableCell>
               <StyledTableCell>New value</StyledTableCell>
             </TableRow>
           </TableHead>
