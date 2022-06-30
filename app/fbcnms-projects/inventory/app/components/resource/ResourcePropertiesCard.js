@@ -372,12 +372,12 @@ const ResourcePropertiesCard = (props: Props) => {
                     ) : null}
                     {selectedTab === 'configuration' ? (
                       <Configuration
-                      // resource={item}
-                      // cmVersion={resourceData.queryCMVersion.find(
-                      //   cm =>
-                      //     cm.resource.id === item.id &&
-                      //     cm.status === 'CURRENT',
-                      // )}
+                        resource={item}
+                        cmVersion={resourceData.queryCMVersion.find(
+                          cm =>
+                            cm.resource.id === item.id &&
+                            cm.status === 'CURRENT',
+                        )}
                       />
                     ) : null}
                     {selectedTab === 'services' ? <div>Services</div> : null}

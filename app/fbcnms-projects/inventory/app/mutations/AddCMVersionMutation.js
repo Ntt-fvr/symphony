@@ -30,15 +30,16 @@ const mutation = graphql`
           name
         }
         parameters {
-          id
-          intValue
-          stringValue
-          booleanValue
-          floatValue
-          latitudeValue
-          longitudeValue
-          rangeFromValue
-          rangeToValue
+          parameterType {
+            id
+            name
+            type
+            intValue
+            floatValue
+            stringValue
+            booleanValue
+            resourceSpecification
+          }
         }
       }
     }
