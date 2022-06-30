@@ -776,23 +776,23 @@ func (bu *BlockUpdate) ClearKafkaMessage() *BlockUpdate {
 	return bu
 }
 
-// SetKafkaEnableExpression sets the kafka_enable_expression field.
-func (bu *BlockUpdate) SetKafkaEnableExpression(b bool) *BlockUpdate {
-	bu.mutation.SetKafkaEnableExpression(b)
+// SetKafkaMessageType sets the kafka_message_type field.
+func (bu *BlockUpdate) SetKafkaMessageType(emt enum.KafkaMessageType) *BlockUpdate {
+	bu.mutation.SetKafkaMessageType(emt)
 	return bu
 }
 
-// SetNillableKafkaEnableExpression sets the kafka_enable_expression field if the given value is not nil.
-func (bu *BlockUpdate) SetNillableKafkaEnableExpression(b *bool) *BlockUpdate {
-	if b != nil {
-		bu.SetKafkaEnableExpression(*b)
+// SetNillableKafkaMessageType sets the kafka_message_type field if the given value is not nil.
+func (bu *BlockUpdate) SetNillableKafkaMessageType(emt *enum.KafkaMessageType) *BlockUpdate {
+	if emt != nil {
+		bu.SetKafkaMessageType(*emt)
 	}
 	return bu
 }
 
-// ClearKafkaEnableExpression clears the value of kafka_enable_expression.
-func (bu *BlockUpdate) ClearKafkaEnableExpression() *BlockUpdate {
-	bu.mutation.ClearKafkaEnableExpression()
+// ClearKafkaMessageType clears the value of kafka_message_type.
+func (bu *BlockUpdate) ClearKafkaMessageType() *BlockUpdate {
+	bu.mutation.ClearKafkaMessageType()
 	return bu
 }
 
@@ -1190,6 +1190,11 @@ func (bu *BlockUpdate) check() error {
 	if v, ok := bu.mutation.SignalModule(); ok {
 		if err := block.SignalModuleValidator(v); err != nil {
 			return &ValidationError{Name: "signal_module", err: fmt.Errorf("ent: validator failed for field \"signal_module\": %w", err)}
+		}
+	}
+	if v, ok := bu.mutation.KafkaMessageType(); ok {
+		if err := block.KafkaMessageTypeValidator(v); err != nil {
+			return &ValidationError{Name: "kafka_message_type", err: fmt.Errorf("ent: validator failed for field \"kafka_message_type\": %w", err)}
 		}
 	}
 	return nil
@@ -1759,17 +1764,17 @@ func (bu *BlockUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: block.FieldKafkaMessage,
 		})
 	}
-	if value, ok := bu.mutation.KafkaEnableExpression(); ok {
+	if value, ok := bu.mutation.KafkaMessageType(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeBool,
+			Type:   field.TypeEnum,
 			Value:  value,
-			Column: block.FieldKafkaEnableExpression,
+			Column: block.FieldKafkaMessageType,
 		})
 	}
-	if bu.mutation.KafkaEnableExpressionCleared() {
+	if bu.mutation.KafkaMessageTypeCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeBool,
-			Column: block.FieldKafkaEnableExpression,
+			Type:   field.TypeEnum,
+			Column: block.FieldKafkaMessageType,
 		})
 	}
 	if bu.mutation.FlowCleared() {
@@ -2899,23 +2904,23 @@ func (buo *BlockUpdateOne) ClearKafkaMessage() *BlockUpdateOne {
 	return buo
 }
 
-// SetKafkaEnableExpression sets the kafka_enable_expression field.
-func (buo *BlockUpdateOne) SetKafkaEnableExpression(b bool) *BlockUpdateOne {
-	buo.mutation.SetKafkaEnableExpression(b)
+// SetKafkaMessageType sets the kafka_message_type field.
+func (buo *BlockUpdateOne) SetKafkaMessageType(emt enum.KafkaMessageType) *BlockUpdateOne {
+	buo.mutation.SetKafkaMessageType(emt)
 	return buo
 }
 
-// SetNillableKafkaEnableExpression sets the kafka_enable_expression field if the given value is not nil.
-func (buo *BlockUpdateOne) SetNillableKafkaEnableExpression(b *bool) *BlockUpdateOne {
-	if b != nil {
-		buo.SetKafkaEnableExpression(*b)
+// SetNillableKafkaMessageType sets the kafka_message_type field if the given value is not nil.
+func (buo *BlockUpdateOne) SetNillableKafkaMessageType(emt *enum.KafkaMessageType) *BlockUpdateOne {
+	if emt != nil {
+		buo.SetKafkaMessageType(*emt)
 	}
 	return buo
 }
 
-// ClearKafkaEnableExpression clears the value of kafka_enable_expression.
-func (buo *BlockUpdateOne) ClearKafkaEnableExpression() *BlockUpdateOne {
-	buo.mutation.ClearKafkaEnableExpression()
+// ClearKafkaMessageType clears the value of kafka_message_type.
+func (buo *BlockUpdateOne) ClearKafkaMessageType() *BlockUpdateOne {
+	buo.mutation.ClearKafkaMessageType()
 	return buo
 }
 
@@ -3313,6 +3318,11 @@ func (buo *BlockUpdateOne) check() error {
 	if v, ok := buo.mutation.SignalModule(); ok {
 		if err := block.SignalModuleValidator(v); err != nil {
 			return &ValidationError{Name: "signal_module", err: fmt.Errorf("ent: validator failed for field \"signal_module\": %w", err)}
+		}
+	}
+	if v, ok := buo.mutation.KafkaMessageType(); ok {
+		if err := block.KafkaMessageTypeValidator(v); err != nil {
+			return &ValidationError{Name: "kafka_message_type", err: fmt.Errorf("ent: validator failed for field \"kafka_message_type\": %w", err)}
 		}
 	}
 	return nil
@@ -3880,17 +3890,17 @@ func (buo *BlockUpdateOne) sqlSave(ctx context.Context) (_node *Block, err error
 			Column: block.FieldKafkaMessage,
 		})
 	}
-	if value, ok := buo.mutation.KafkaEnableExpression(); ok {
+	if value, ok := buo.mutation.KafkaMessageType(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeBool,
+			Type:   field.TypeEnum,
 			Value:  value,
-			Column: block.FieldKafkaEnableExpression,
+			Column: block.FieldKafkaMessageType,
 		})
 	}
-	if buo.mutation.KafkaEnableExpressionCleared() {
+	if buo.mutation.KafkaMessageTypeCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeBool,
-			Column: block.FieldKafkaEnableExpression,
+			Type:   field.TypeEnum,
+			Column: block.FieldKafkaMessageType,
 		})
 	}
 	if buo.mutation.FlowCleared() {

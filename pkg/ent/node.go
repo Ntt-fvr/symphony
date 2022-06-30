@@ -819,12 +819,12 @@ func (b *Block) Node(ctx context.Context) (node *Node, err error) {
 		Name:  "kafka_message",
 		Value: string(buf),
 	}
-	if buf, err = json.Marshal(b.KafkaEnableExpression); err != nil {
+	if buf, err = json.Marshal(b.KafkaMessageType); err != nil {
 		return nil, err
 	}
 	node.Fields[44] = &Field{
-		Type:  "bool",
-		Name:  "kafka_enable_expression",
+		Type:  "enum.KafkaMessageType",
+		Name:  "kafka_message_type",
 		Value: string(buf),
 	}
 	node.Edges[0] = &Edge{

@@ -630,3 +630,42 @@ func (c *TransfStrategy) UnmarshalGQL(v interface{}) error {
 func (c TransfStrategy) MarshalGQL(w io.Writer) {
 	_ = MarshalGQL(w, c)
 }
+
+// KafkaMessageType is a type of message
+type KafkaMessageType string
+
+// Possible tranformation strategy type values.
+const (
+	KafkaMessageTypeExpression KafkaMessageType = "expression"
+	KafkaMessageTypeInput      KafkaMessageType = "input"
+	KafkaMessageTypeState      KafkaMessageType = "state"
+)
+
+// Values returns kafka message type possible values.
+func (KafkaMessageType) Values() []string {
+	return []string{
+		KafkaMessageTypeExpression.String(),
+		KafkaMessageTypeInput.String(),
+		KafkaMessageTypeState.String(),
+	}
+}
+
+// String implements Getter interface.
+func (c KafkaMessageType) String() string {
+	return string(c)
+}
+
+// Set sets the value stored in kafka message type.
+func (c *KafkaMessageType) Set(s string) {
+	*c = KafkaMessageType(s)
+}
+
+// UnmarshalGQL implements graphql.Unmarshaler interface.
+func (c *KafkaMessageType) UnmarshalGQL(v interface{}) error {
+	return UnmarshalGQL(v, c)
+}
+
+// MarshalGQL implements graphql.Marshaler interface.
+func (c KafkaMessageType) MarshalGQL(w io.Writer) {
+	_ = MarshalGQL(w, c)
+}

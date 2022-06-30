@@ -111,8 +111,8 @@ const (
 	FieldKafkaTopic = "kafka_topic"
 	// FieldKafkaMessage holds the string denoting the kafka_message field in the database.
 	FieldKafkaMessage = "kafka_message"
-	// FieldKafkaEnableExpression holds the string denoting the kafka_enable_expression field in the database.
-	FieldKafkaEnableExpression = "kafka_enable_expression"
+	// FieldKafkaMessageType holds the string denoting the kafka_message_type field in the database.
+	FieldKafkaMessageType = "kafka_message_type"
 
 	// EdgeFlow holds the string denoting the flow edge name in mutations.
 	EdgeFlow = "flow"
@@ -241,7 +241,7 @@ var Columns = []string{
 	FieldKafkaBrokers,
 	FieldKafkaTopic,
 	FieldKafkaMessage,
-	FieldKafkaEnableExpression,
+	FieldKafkaMessageType,
 }
 
 // ForeignKeys holds the SQL foreign-keys that are owned by the Block type.
@@ -507,6 +507,16 @@ func SignalModuleValidator(sm SignalModule) error {
 	}
 }
 
+// KafkaMessageTypeValidator is a validator for the "kafka_message_type" field enum values. It is called by the builders before save.
+func KafkaMessageTypeValidator(kmt enum.KafkaMessageType) error {
+	switch kmt {
+	case "expression", "input", "state":
+		return nil
+	default:
+		return fmt.Errorf("block: invalid enum value for kafka_message_type field: %q", kmt)
+	}
+}
+
 // MarshalGQL implements graphql.Marshaler interface.
 func (_type Type) MarshalGQL(w io.Writer) {
 	io.WriteString(w, strconv.Quote(_type.String()))
@@ -656,3 +666,10 @@ func (sm *SignalModule) UnmarshalGQL(val interface{}) error {
 	}
 	return nil
 }
+
+var (
+	// enum.KafkaMessageType must implement graphql.Marshaler.
+	_ graphql.Marshaler = enum.KafkaMessageType("")
+	// enum.KafkaMessageType must implement graphql.Unmarshaler.
+	_ graphql.Unmarshaler = (*enum.KafkaMessageType)(nil)
+)

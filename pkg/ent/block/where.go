@@ -288,13 +288,6 @@ func KafkaMessage(v string) predicate.Block {
 	})
 }
 
-// KafkaEnableExpression applies equality check predicate on the "kafka_enable_expression" field. It's identical to KafkaEnableExpressionEQ.
-func KafkaEnableExpression(v bool) predicate.Block {
-	return predicate.Block(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldKafkaEnableExpression), v))
-	})
-}
-
 // CreateTimeEQ applies the EQ predicate on the "create_time" field.
 func CreateTimeEQ(v time.Time) predicate.Block {
 	return predicate.Block(func(s *sql.Selector) {
@@ -3314,31 +3307,67 @@ func KafkaMessageContainsFold(v string) predicate.Block {
 	})
 }
 
-// KafkaEnableExpressionEQ applies the EQ predicate on the "kafka_enable_expression" field.
-func KafkaEnableExpressionEQ(v bool) predicate.Block {
+// KafkaMessageTypeEQ applies the EQ predicate on the "kafka_message_type" field.
+func KafkaMessageTypeEQ(v enum.KafkaMessageType) predicate.Block {
+	vc := v
 	return predicate.Block(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldKafkaEnableExpression), v))
+		s.Where(sql.EQ(s.C(FieldKafkaMessageType), vc))
 	})
 }
 
-// KafkaEnableExpressionNEQ applies the NEQ predicate on the "kafka_enable_expression" field.
-func KafkaEnableExpressionNEQ(v bool) predicate.Block {
+// KafkaMessageTypeNEQ applies the NEQ predicate on the "kafka_message_type" field.
+func KafkaMessageTypeNEQ(v enum.KafkaMessageType) predicate.Block {
+	vc := v
 	return predicate.Block(func(s *sql.Selector) {
-		s.Where(sql.NEQ(s.C(FieldKafkaEnableExpression), v))
+		s.Where(sql.NEQ(s.C(FieldKafkaMessageType), vc))
 	})
 }
 
-// KafkaEnableExpressionIsNil applies the IsNil predicate on the "kafka_enable_expression" field.
-func KafkaEnableExpressionIsNil() predicate.Block {
+// KafkaMessageTypeIn applies the In predicate on the "kafka_message_type" field.
+func KafkaMessageTypeIn(vs ...enum.KafkaMessageType) predicate.Block {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
 	return predicate.Block(func(s *sql.Selector) {
-		s.Where(sql.IsNull(s.C(FieldKafkaEnableExpression)))
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.In(s.C(FieldKafkaMessageType), v...))
 	})
 }
 
-// KafkaEnableExpressionNotNil applies the NotNil predicate on the "kafka_enable_expression" field.
-func KafkaEnableExpressionNotNil() predicate.Block {
+// KafkaMessageTypeNotIn applies the NotIn predicate on the "kafka_message_type" field.
+func KafkaMessageTypeNotIn(vs ...enum.KafkaMessageType) predicate.Block {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
 	return predicate.Block(func(s *sql.Selector) {
-		s.Where(sql.NotNull(s.C(FieldKafkaEnableExpression)))
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.NotIn(s.C(FieldKafkaMessageType), v...))
+	})
+}
+
+// KafkaMessageTypeIsNil applies the IsNil predicate on the "kafka_message_type" field.
+func KafkaMessageTypeIsNil() predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldKafkaMessageType)))
+	})
+}
+
+// KafkaMessageTypeNotNil applies the NotNil predicate on the "kafka_message_type" field.
+func KafkaMessageTypeNotNil() predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldKafkaMessageType)))
 	})
 }
 

@@ -190,7 +190,7 @@ var (
 		{Name: "kafka_brokers", Type: field.TypeJSON, Nullable: true},
 		{Name: "kafka_topic", Type: field.TypeString, Nullable: true},
 		{Name: "kafka_message", Type: field.TypeString, Nullable: true},
-		{Name: "kafka_enable_expression", Type: field.TypeBool, Nullable: true},
+		{Name: "kafka_message_type", Type: field.TypeEnum, Nullable: true, Enums: []string{"expression", "input", "state"}},
 		{Name: "block_sub_flow", Type: field.TypeInt, Nullable: true},
 		{Name: "block_goto_block", Type: field.TypeInt, Nullable: true},
 		{Name: "flow_blocks", Type: field.TypeInt, Nullable: true},

@@ -552,16 +552,16 @@ func (bc *BlockCreate) SetNillableKafkaMessage(s *string) *BlockCreate {
 	return bc
 }
 
-// SetKafkaEnableExpression sets the kafka_enable_expression field.
-func (bc *BlockCreate) SetKafkaEnableExpression(b bool) *BlockCreate {
-	bc.mutation.SetKafkaEnableExpression(b)
+// SetKafkaMessageType sets the kafka_message_type field.
+func (bc *BlockCreate) SetKafkaMessageType(emt enum.KafkaMessageType) *BlockCreate {
+	bc.mutation.SetKafkaMessageType(emt)
 	return bc
 }
 
-// SetNillableKafkaEnableExpression sets the kafka_enable_expression field if the given value is not nil.
-func (bc *BlockCreate) SetNillableKafkaEnableExpression(b *bool) *BlockCreate {
-	if b != nil {
-		bc.SetKafkaEnableExpression(*b)
+// SetNillableKafkaMessageType sets the kafka_message_type field if the given value is not nil.
+func (bc *BlockCreate) SetNillableKafkaMessageType(emt *enum.KafkaMessageType) *BlockCreate {
+	if emt != nil {
+		bc.SetKafkaMessageType(*emt)
 	}
 	return bc
 }
@@ -879,6 +879,11 @@ func (bc *BlockCreate) check() error {
 	if v, ok := bc.mutation.SignalModule(); ok {
 		if err := block.SignalModuleValidator(v); err != nil {
 			return &ValidationError{Name: "signal_module", err: fmt.Errorf("ent: validator failed for field \"signal_module\": %w", err)}
+		}
+	}
+	if v, ok := bc.mutation.KafkaMessageType(); ok {
+		if err := block.KafkaMessageTypeValidator(v); err != nil {
+			return &ValidationError{Name: "kafka_message_type", err: fmt.Errorf("ent: validator failed for field \"kafka_message_type\": %w", err)}
 		}
 	}
 	return nil
@@ -1260,13 +1265,13 @@ func (bc *BlockCreate) createSpec() (*Block, *sqlgraph.CreateSpec) {
 		})
 		_node.KafkaMessage = value
 	}
-	if value, ok := bc.mutation.KafkaEnableExpression(); ok {
+	if value, ok := bc.mutation.KafkaMessageType(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeBool,
+			Type:   field.TypeEnum,
 			Value:  value,
-			Column: block.FieldKafkaEnableExpression,
+			Column: block.FieldKafkaMessageType,
 		})
-		_node.KafkaEnableExpression = value
+		_node.KafkaMessageType = value
 	}
 	if nodes := bc.mutation.FlowIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

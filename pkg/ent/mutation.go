@@ -3223,7 +3223,7 @@ type BlockMutation struct {
 	kafka_brokers                      *[]string
 	kafka_topic                        *string
 	kafka_message                      *string
-	kafka_enable_expression            *bool
+	kafka_message_type                 *enum.KafkaMessageType
 	clearedFields                      map[string]struct{}
 	flow                               *int
 	clearedflow                        bool
@@ -5518,54 +5518,54 @@ func (m *BlockMutation) ResetKafkaMessage() {
 	delete(m.clearedFields, block.FieldKafkaMessage)
 }
 
-// SetKafkaEnableExpression sets the kafka_enable_expression field.
-func (m *BlockMutation) SetKafkaEnableExpression(b bool) {
-	m.kafka_enable_expression = &b
+// SetKafkaMessageType sets the kafka_message_type field.
+func (m *BlockMutation) SetKafkaMessageType(emt enum.KafkaMessageType) {
+	m.kafka_message_type = &emt
 }
 
-// KafkaEnableExpression returns the kafka_enable_expression value in the mutation.
-func (m *BlockMutation) KafkaEnableExpression() (r bool, exists bool) {
-	v := m.kafka_enable_expression
+// KafkaMessageType returns the kafka_message_type value in the mutation.
+func (m *BlockMutation) KafkaMessageType() (r enum.KafkaMessageType, exists bool) {
+	v := m.kafka_message_type
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldKafkaEnableExpression returns the old kafka_enable_expression value of the Block.
+// OldKafkaMessageType returns the old kafka_message_type value of the Block.
 // If the Block object wasn't provided to the builder, the object is fetched
 // from the database.
 // An error is returned if the mutation operation is not UpdateOne, or database query fails.
-func (m *BlockMutation) OldKafkaEnableExpression(ctx context.Context) (v bool, err error) {
+func (m *BlockMutation) OldKafkaMessageType(ctx context.Context) (v enum.KafkaMessageType, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, fmt.Errorf("OldKafkaEnableExpression is allowed only on UpdateOne operations")
+		return v, fmt.Errorf("OldKafkaMessageType is allowed only on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, fmt.Errorf("OldKafkaEnableExpression requires an ID field in the mutation")
+		return v, fmt.Errorf("OldKafkaMessageType requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
-		return v, fmt.Errorf("querying old value for OldKafkaEnableExpression: %w", err)
+		return v, fmt.Errorf("querying old value for OldKafkaMessageType: %w", err)
 	}
-	return oldValue.KafkaEnableExpression, nil
+	return oldValue.KafkaMessageType, nil
 }
 
-// ClearKafkaEnableExpression clears the value of kafka_enable_expression.
-func (m *BlockMutation) ClearKafkaEnableExpression() {
-	m.kafka_enable_expression = nil
-	m.clearedFields[block.FieldKafkaEnableExpression] = struct{}{}
+// ClearKafkaMessageType clears the value of kafka_message_type.
+func (m *BlockMutation) ClearKafkaMessageType() {
+	m.kafka_message_type = nil
+	m.clearedFields[block.FieldKafkaMessageType] = struct{}{}
 }
 
-// KafkaEnableExpressionCleared returns if the field kafka_enable_expression was cleared in this mutation.
-func (m *BlockMutation) KafkaEnableExpressionCleared() bool {
-	_, ok := m.clearedFields[block.FieldKafkaEnableExpression]
+// KafkaMessageTypeCleared returns if the field kafka_message_type was cleared in this mutation.
+func (m *BlockMutation) KafkaMessageTypeCleared() bool {
+	_, ok := m.clearedFields[block.FieldKafkaMessageType]
 	return ok
 }
 
-// ResetKafkaEnableExpression reset all changes of the "kafka_enable_expression" field.
-func (m *BlockMutation) ResetKafkaEnableExpression() {
-	m.kafka_enable_expression = nil
-	delete(m.clearedFields, block.FieldKafkaEnableExpression)
+// ResetKafkaMessageType reset all changes of the "kafka_message_type" field.
+func (m *BlockMutation) ResetKafkaMessageType() {
+	m.kafka_message_type = nil
+	delete(m.clearedFields, block.FieldKafkaMessageType)
 }
 
 // SetFlowID sets the flow edge to Flow by id.
@@ -6108,8 +6108,8 @@ func (m *BlockMutation) Fields() []string {
 	if m.kafka_message != nil {
 		fields = append(fields, block.FieldKafkaMessage)
 	}
-	if m.kafka_enable_expression != nil {
-		fields = append(fields, block.FieldKafkaEnableExpression)
+	if m.kafka_message_type != nil {
+		fields = append(fields, block.FieldKafkaMessageType)
 	}
 	return fields
 }
@@ -6207,8 +6207,8 @@ func (m *BlockMutation) Field(name string) (ent.Value, bool) {
 		return m.KafkaTopic()
 	case block.FieldKafkaMessage:
 		return m.KafkaMessage()
-	case block.FieldKafkaEnableExpression:
-		return m.KafkaEnableExpression()
+	case block.FieldKafkaMessageType:
+		return m.KafkaMessageType()
 	}
 	return nil, false
 }
@@ -6306,8 +6306,8 @@ func (m *BlockMutation) OldField(ctx context.Context, name string) (ent.Value, e
 		return m.OldKafkaTopic(ctx)
 	case block.FieldKafkaMessage:
 		return m.OldKafkaMessage(ctx)
-	case block.FieldKafkaEnableExpression:
-		return m.OldKafkaEnableExpression(ctx)
+	case block.FieldKafkaMessageType:
+		return m.OldKafkaMessageType(ctx)
 	}
 	return nil, fmt.Errorf("unknown Block field %s", name)
 }
@@ -6625,12 +6625,12 @@ func (m *BlockMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetKafkaMessage(v)
 		return nil
-	case block.FieldKafkaEnableExpression:
-		v, ok := value.(bool)
+	case block.FieldKafkaMessageType:
+		v, ok := value.(enum.KafkaMessageType)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.SetKafkaEnableExpression(v)
+		m.SetKafkaMessageType(v)
 		return nil
 	}
 	return fmt.Errorf("unknown Block field %s", name)
@@ -6830,8 +6830,8 @@ func (m *BlockMutation) ClearedFields() []string {
 	if m.FieldCleared(block.FieldKafkaMessage) {
 		fields = append(fields, block.FieldKafkaMessage)
 	}
-	if m.FieldCleared(block.FieldKafkaEnableExpression) {
-		fields = append(fields, block.FieldKafkaEnableExpression)
+	if m.FieldCleared(block.FieldKafkaMessageType) {
+		fields = append(fields, block.FieldKafkaMessageType)
 	}
 	return fields
 }
@@ -6952,8 +6952,8 @@ func (m *BlockMutation) ClearField(name string) error {
 	case block.FieldKafkaMessage:
 		m.ClearKafkaMessage()
 		return nil
-	case block.FieldKafkaEnableExpression:
-		m.ClearKafkaEnableExpression()
+	case block.FieldKafkaMessageType:
+		m.ClearKafkaMessageType()
 		return nil
 	}
 	return fmt.Errorf("unknown Block nullable field %s", name)
@@ -7096,8 +7096,8 @@ func (m *BlockMutation) ResetField(name string) error {
 	case block.FieldKafkaMessage:
 		m.ResetKafkaMessage()
 		return nil
-	case block.FieldKafkaEnableExpression:
-		m.ResetKafkaEnableExpression()
+	case block.FieldKafkaMessageType:
+		m.ResetKafkaMessageType()
 		return nil
 	}
 	return fmt.Errorf("unknown Block field %s", name)

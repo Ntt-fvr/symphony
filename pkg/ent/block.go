@@ -115,8 +115,8 @@ type Block struct {
 	KafkaTopic string `json:"kafka_topic,omitempty"`
 	// KafkaMessage holds the value of the "kafka_message" field.
 	KafkaMessage string `json:"kafka_message,omitempty"`
-	// KafkaEnableExpression holds the value of the "kafka_enable_expression" field.
-	KafkaEnableExpression bool `json:"kafka_enable_expression,omitempty"`
+	// KafkaMessageType holds the value of the "kafka_message_type" field.
+	KafkaMessageType enum.KafkaMessageType `json:"kafka_message_type,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the BlockQuery when eager-loading is set.
 	Edges                          BlockEdges `json:"edges"`
@@ -311,7 +311,7 @@ func (*Block) scanValues() []interface{} {
 		&[]byte{},         // kafka_brokers
 		&sql.NullString{}, // kafka_topic
 		&sql.NullString{}, // kafka_message
-		&sql.NullBool{},   // kafka_enable_expression
+		&sql.NullString{}, // kafka_message_type
 	}
 }
 
@@ -575,10 +575,10 @@ func (b *Block) assignValues(values ...interface{}) error {
 	} else if value.Valid {
 		b.KafkaMessage = value.String
 	}
-	if value, ok := values[44].(*sql.NullBool); !ok {
-		return fmt.Errorf("unexpected type %T for field kafka_enable_expression", values[44])
+	if value, ok := values[44].(*sql.NullString); !ok {
+		return fmt.Errorf("unexpected type %T for field kafka_message_type", values[44])
 	} else if value.Valid {
-		b.KafkaEnableExpression = value.Bool
+		b.KafkaMessageType = enum.KafkaMessageType(value.String)
 	}
 	values = values[45:]
 	if len(values) == len(block.ForeignKeys) {
@@ -776,8 +776,8 @@ func (b *Block) String() string {
 	builder.WriteString(b.KafkaTopic)
 	builder.WriteString(", kafka_message=")
 	builder.WriteString(b.KafkaMessage)
-	builder.WriteString(", kafka_enable_expression=")
-	builder.WriteString(fmt.Sprintf("%v", b.KafkaEnableExpression))
+	builder.WriteString(", kafka_message_type=")
+	builder.WriteString(fmt.Sprintf("%v", b.KafkaMessageType))
 	builder.WriteByte(')')
 	return builder.String()
 }

@@ -165,7 +165,8 @@ func (Block) Fields() []ent.Field {
 			Optional(),
 		field.String("kafka_message").
 			Optional(),
-		field.Bool("kafka_enable_expression").
+		field.Enum("kafka_message_type").
+			GoType(enum.KafkaMessageType("")).
 			Optional(),
 	}
 }
