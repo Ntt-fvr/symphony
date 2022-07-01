@@ -147,92 +147,91 @@ func (ff *FlowFactory) executeBlock(
 
 	var executorResult *blocks.ExecutorResult
 
-	if executeInActivity(automationBlock.Type) {
-		err := workflow.ExecuteActivity(automationBlock.WorkflowCtx, ff.ExecutorActivity, automationBlock, input, state).
-			Get(automationBlock.WorkflowCtx, &executorResult)
+	blockInstance := blocks.GetBlockInstances(automationBlock, input, state, ff.updateBlockInstanceStatus)
+	switch automationBlock.Type {
+	case block.TypeExecuteFlow:
+		executeFlow, ok := blockInstance.(*blocks.ExecuteFlowBlock)
+		if ok {
+			executeFlow.FlowExecutor = flowExecutorFunction
+
+			result, err := executeFlow.Execute()
+			if err != nil {
+				return nil, err
+			}
+
+			executorResult = result
+		} else {
+			executorResult = nil
+		}
+	case block.TypeForEach:
+		foreachFlow, ok := blockInstance.(*blocks.ForEachBlock)
+		if ok {
+			foreachFlow.SearchBlock = func(blockID int) *model.Block {
+				entBlock, exists := automationBlocks[blockID]
+				if exists {
+					return &entBlock
+				}
+				return nil
+			}
+
+			foreachFlow.ExecuteBlock = ff.executeBlock
+
+			result, err := foreachFlow.Execute()
+			if err != nil {
+				return nil, err
+			}
+
+			executorResult = result
+		} else {
+			executorResult = nil
+		}
+	case block.TypeParallel:
+		parallelBlock, ok := blockInstance.(*blocks.ParallelBlock)
+		if ok {
+			result, err := parallelBlock.Execute()
+			if err != nil {
+				return nil, err
+			}
+
+			executorResult = result
+		} else {
+			executorResult = nil
+		}
+	case block.TypeTimer:
+		timerFlow, ok := blockInstance.(*blocks.TimerBlock)
+		if ok {
+			timerFlow.TimerFunction = timerFunction
+
+			result, err := timerFlow.Execute()
+			if err != nil {
+				return nil, err
+			}
+
+			executorResult = result
+		} else {
+			executorResult = nil
+		}
+	case block.TypeWaitForSignal:
+		waitForSignalFlow, ok := blockInstance.(*blocks.WaitForSignalBlock)
+		if ok {
+			waitForSignalFlow.WaitForSignalFunction = waitForSignalFunction
+
+			result, err := waitForSignalFlow.Execute()
+			if err != nil {
+				return nil, err
+			}
+
+			executorResult = result
+		} else {
+			executorResult = nil
+		}
+	default:
+		err := workflow.ExecuteActivity(
+			automationBlock.WorkflowCtx, ff.ExecutorActivity, automationBlock, input, state,
+		).Get(automationBlock.WorkflowCtx, &executorResult)
 
 		if err != nil {
 			return nil, err
-		}
-	} else {
-		blockInstance := blocks.GetBlockInstances(automationBlock, input, state, ff.updateBlockInstanceStatus)
-		switch automationBlock.Type {
-		case block.TypeExecuteFlow:
-			executeFlow, ok := blockInstance.(*blocks.ExecuteFlowBlock)
-			if ok {
-				executeFlow.FlowExecutor = flowExecutorFunction
-
-				result, err := executeFlow.Execute()
-				if err != nil {
-					return nil, err
-				}
-
-				executorResult = result
-			} else {
-				executorResult = nil
-			}
-		case block.TypeForEach:
-			foreachFlow, ok := blockInstance.(*blocks.ForEachBlock)
-			if ok {
-				foreachFlow.SearchBlock = func(blockID int) *model.Block {
-					entBlock, exists := automationBlocks[blockID]
-					if exists {
-						return &entBlock
-					}
-					return nil
-				}
-
-				foreachFlow.ExecuteBlock = ff.executeBlock
-
-				result, err := foreachFlow.Execute()
-				if err != nil {
-					return nil, err
-				}
-
-				executorResult = result
-			} else {
-				executorResult = nil
-			}
-		case block.TypeParallel:
-			parallelBlock, ok := blockInstance.(*blocks.ParallelBlock)
-			if ok {
-				result, err := parallelBlock.Execute()
-				if err != nil {
-					return nil, err
-				}
-
-				executorResult = result
-			} else {
-				executorResult = nil
-			}
-		case block.TypeTimer:
-			timerFlow, ok := blockInstance.(*blocks.TimerBlock)
-			if ok {
-				timerFlow.TimerFunction = timerFunction
-
-				result, err := timerFlow.Execute()
-				if err != nil {
-					return nil, err
-				}
-
-				executorResult = result
-			} else {
-				executorResult = nil
-			}
-		case block.TypeWaitForSignal:
-			waitForSignalFlow, ok := blockInstance.(*blocks.WaitForSignalBlock)
-			if ok {
-				waitForSignalFlow.WaitForSignalFunction = waitForSignalFunction
-
-				result, err := waitForSignalFlow.Execute()
-				if err != nil {
-					return nil, err
-				}
-
-				executorResult = result
-			} else {
-				executorResult = nil
-			}
 		}
 	}
 

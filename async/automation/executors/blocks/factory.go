@@ -64,6 +64,18 @@ func GetBlockInstances(
 			timeout:   automationBlock.ConnectionTimeout,
 			headers:   headers,
 		}
+	case block.TypeDecision:
+		executorBlock = &KafkaBlock{
+			baseBlock:   baseBlock,
+			topic:       automationBlock.KafkaTopic,
+			expression:  automationBlock.KafkaMessage,
+			brokers:     automationBlock.KafkaBrokers,
+			messageType: automationBlock.KafkaMessageType,
+		}
+	case block.TypeParallel:
+		executorBlock = &ParallelBlock{
+			baseBlock: baseBlock,
+		}
 	case block.TypeTimer:
 		executorBlock = &TimerBlock{
 			baseBlock:         baseBlock,
@@ -73,8 +85,8 @@ func GetBlockInstances(
 			enableExpressionL: automationBlock.EnableTimerExpression,
 			expression:        automationBlock.TimerExpression,
 		}
-	case block.TypeParallel:
-		executorBlock = &ParallelBlock{
+	case block.TypeWaitForSignal:
+		executorBlock = &WaitForSignalBlock{
 			baseBlock: baseBlock,
 		}
 	}
