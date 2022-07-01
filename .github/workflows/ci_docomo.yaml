@@ -82,7 +82,7 @@ jobs:
         uses: aws-actions/amazon-ecr-login@v1
         
       - name: Login ECR
-        run: aws ecr get-login-password --region --region us-west-2 | docker login --username AWS --password-stdin $ECR_REGISTRY
+        run: aws ecr get-login-password --region us-west-2 | docker login --username AWS --password-stdin $ECR_REGISTRY
 
       - name: Getting Lastest version in ECR
         run: echo "LATEST=$(aws ecr list-images --repository-name $ECR_REPOSITORY | jq '.imageIds | map (.imageTag) | .[]' | grep ${{ matrix.image }} | sed 's/"//g' | head -n 1)" >> $GITHUB_ENV
