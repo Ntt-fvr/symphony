@@ -14,7 +14,6 @@ import * as React from 'react';
 import {useEffect, useState} from 'react';
 import MutipleSelectInput from '../comparison_view/MutipleSelectInput';
 import PowerSearchFilter from '../comparison_view/PowerSearchFilter';
-import {priorityValues} from '../../common/FilterTypes';
 import {fetchQuery, graphql} from 'relay-runtime';
 import RelayEnvironment from '../../common/RelayEnvironment';
 
