@@ -156,14 +156,19 @@ const ChangeRequestDetails = (props: Props) => {
   const rs = filterChangeRequest?.items.map(
     itemRS => itemRS?.parameterType?.resourceSpecification,
   );
-  const idRS = rs[0].toString();
+
+  const [idResourceSpecification] = rs;
+
+  const idRS = idResourceSpecification?.toString();
+
+  const confirm = rs.length === 0 ? [] : [idRS];
 
   const dataQuery = useLazyLoadQuery<ChangeRequestDetailsQuery>(ChangeRequest, {
     filterBy: [
       {
         filterType: 'ID',
         operator: 'IS_ONE_OF',
-        idSet: [idRS],
+        idSet: confirm,
       },
     ],
     filter: {
@@ -183,21 +188,23 @@ const ChangeRequestDetails = (props: Props) => {
     chRq => chRq?.node?.id === idRS,
   );
 
-  const resourceType = useFormInput(resourceTypeFilter.node.resourceType.name);
-  const changeSource = useFormInput(changeRequest.source);
-  const description = useFormInput(changeRequest.description);
+  const resourceType = useFormInput(
+    resourceTypeFilter?.node?.resourceType?.name,
+  );
+  const changeSource = useFormInput(changeRequest?.source);
+  const description = useFormInput(changeRequest?.description);
 
   const editSchedule = () => {
     const variables: EditScheduleChangeRequestMutationVariables = {
       input: {
         filter: {
-          id: changeRequest.id,
+          id: changeRequest?.id,
         },
         set: {
           scheduler: {
-            time: schedule.time,
-            type: schedule.type,
-            weekDay: schedule.weekDay,
+            time: schedule?.time,
+            type: schedule?.type,
+            weekDay: schedule?.weekDay,
           },
         },
       },
@@ -233,8 +240,8 @@ const ChangeRequestDetails = (props: Props) => {
         <Grid style={{}}>
           <ButtonAlarmStatus
             className={classes.buttonStatus}
-            skin={changeRequest.status}>
-            Status: {stringCapitalizeFisrt(changeRequest.status)}
+            skin={changeRequest?.status}>
+            Status: {stringCapitalizeFisrt(changeRequest?.status)}
           </ButtonAlarmStatus>
         </Grid>
         <Grid container spacing={2}>
@@ -251,7 +258,7 @@ const ChangeRequestDetails = (props: Props) => {
                       label="Id"
                       variant="outlined"
                       name="ID"
-                      value={changeRequest.id}
+                      value={changeRequest?.id}
                       disabled
                     />
                   </Grid>

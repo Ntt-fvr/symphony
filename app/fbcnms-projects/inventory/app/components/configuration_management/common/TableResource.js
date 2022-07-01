@@ -61,6 +61,7 @@ export type Props = $ReadOnly<{|
 
 const TableResource = (props: Props) => {
   const {valuesTable} = props;
+
   const classes = useStyles();
   const items = valuesTable?.items;
   return (
