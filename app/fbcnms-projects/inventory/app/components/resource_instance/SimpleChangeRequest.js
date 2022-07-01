@@ -75,6 +75,7 @@ const SimpleChangeRequest = (props: Props) => {
         </Grid>
         <Grid>
           <Button
+            data-testid="btn-submit"
             disabled={parameters.filter(p => !isTempId(p.id)).length === 0}
             variant="contained"
             color="primary"
@@ -86,16 +87,22 @@ const SimpleChangeRequest = (props: Props) => {
       </Grid>
       <Grid>
         <CardPlusDnD
+          data-testid="card-plus-dnd"
           onChange={setParameters}
           parameters={parameters}
           cmVersionParams={cmVersion.parameters}
         />
       </Grid>
       <Grid>
-        <CardSuggested onSchedule={setSchedule} schedule={schedule} />
+        <CardSuggested
+          data-testid="card-suggested"
+          onSchedule={setSchedule}
+          schedule={schedule}
+        />
       </Grid>
       {openModalStatus && (
         <DialogStatus
+          data-testid="dialog-status"
           description={description}
           onChangeDescription={setDescription}
           cmVersion={cmVersion}
