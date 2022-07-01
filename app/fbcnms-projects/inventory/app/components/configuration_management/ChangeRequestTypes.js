@@ -68,6 +68,8 @@ const ChangeRequestTypesQuery = graphql`
       }
       source
       status
+      createTime
+      updateTime
     }
     resourceSpecifications(filterBy: $filterBy) {
       edges {
@@ -103,7 +105,7 @@ export type Props = $ReadOnly<{||}>;
 const ChangeRequestTypes = () => {
   const [filters, setFilters] = useState([]);
   const [openDetails, setOpenDetails] = useState(false);
-  const [dataIdChangeRequest, setDataIdChangeRequest] = useState('');
+  const [dataRow, setDataRow] = useState('');
   const [openBulkRequest, setOpenBulkRequest] = useState(false);
   const [changeRequestInitial, setChangeRequestInitial] = useState([]);
   const [changeRequest, setChangeRequest] = useState([]);
@@ -143,6 +145,7 @@ const ChangeRequestTypes = () => {
         },
       ],
     }).then(data => {
+      console.log(data)
       const dataModify = data.queryChangeRequest.map(item => {
         delete item.writable;
         return {
@@ -163,24 +166,30 @@ const ChangeRequestTypes = () => {
           item.type =
             datas.resourceSpecifications.edges[0].node.resourceType.name;
         });
+        console.log(dataModify);
         setChangeRequestInitial(dataModify);
         setChangeRequest(dataModify);
       });
     });
   };
 
+  const formatDate = date => {
+    const dateConvert = new Date(date);
+    return dateConvert.toLocaleDateString();
+  };
+
   const tableColumns = [
     {
       key: 'creation date',
       title: 'Creation date',
-      render: row => row.creationDate ?? '01/03/22',
-      tooltip: row => row.creationDate ?? '01/03/22',
+      render: row => formatDate(row.createTime) ?? '',
+      tooltip: row => formatDate(row.createTime) ?? '',
     },
     {
       key: 'last modification date',
       title: `${fbt('Last modification date', '')}`,
-      render: row => row.lastModificationDate ?? '01/05/22',
-      tooltip: row => row.lastModificationDate ?? '01/03/05',
+      render: row => formatDate(row.updateTime) ?? '',
+      tooltip: row => formatDate(row.updateTime) ?? '',
     },
     {
       key: 'resource type',
@@ -215,7 +224,7 @@ const ChangeRequestTypes = () => {
   ];
 
   const showInfo = data => {
-    setDataIdChangeRequest(data);
+    setDataRow(data);
   };
   const handleOpenDetails = () => {
     setOpenDetails(prevStateDetails => !prevStateDetails);
@@ -228,7 +237,7 @@ const ChangeRequestTypes = () => {
   if (openDetails) {
     return (
       <ChangeRequestDetails
-        idChangeRequest={dataIdChangeRequest}
+        idChangeRequest={dataRow}
         setOpenDetails={setOpenDetails}
       />
     );
@@ -236,7 +245,10 @@ const ChangeRequestTypes = () => {
   if (openBulkRequest) {
     return (
       <ChangeRequestByBulk
-        onClick={() => setOpenBulkRequest(prevStateBulk => !prevStateBulk)}
+        onClick={() => {
+          setOpenBulkRequest(prevStateBulk => !prevStateBulk);
+          dataListInitial();
+        }}
         infoCSV={infoCSV}
         nameFile={nameFile}
       />
@@ -277,6 +289,7 @@ const ChangeRequestTypes = () => {
           <div className={classes.searchBar}>
             <PowerSearchBar
               placeholder="Filter"
+              getSelectedFilter={filters => setFilters(filters)}
               filterConfigs={filterConfigs}
               filterValues={filters}
               searchConfig={ChangeRequestSearchConfig}
