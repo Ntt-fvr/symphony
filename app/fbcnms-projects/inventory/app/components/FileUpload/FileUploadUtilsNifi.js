@@ -39,7 +39,7 @@ export async function uploadFileNifi(id: string, file: File) {
         imgKey: key,
         fileName: file.name,
         fileSize: file.size,
-        modified: createdTimeP,
+        modified: createdTime,
         contentType: file.type,
       },
     };
