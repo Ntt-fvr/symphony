@@ -9,12 +9,12 @@
  */
 'use strict';
 
-type CreateWorkorderSettings = $ReadOnly<{|
+export type CreateWorkorderSettings = $ReadOnly<{|
   createWorkorderSettings: string,
 |}>;
 
 export const initialCreateWorkorderSettings: CreateWorkorderSettings = {
-  createWorkorderSettings: 'CreateWorkorderSettings',
+  createWorkorderSettings: null,
 };
 
 export const setCreateWorkorderSettings: CreateWorkorderSettings = newCreateWorkorderSettings => {

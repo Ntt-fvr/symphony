@@ -9,12 +9,12 @@
  */
 'use strict';
 
-type TriggerStartSettings = $ReadOnly<{|
+export type TriggerStartSettings = $ReadOnly<{|
   triggerStartSettings: string,
 |}>;
 
 export const initialTriggerStartSettings: TriggerStartSettings = {
-  triggerStartSettings: 'TriggerStartSettings',
+  triggerStartSettings: null,
 };
 
 export const setTriggerStartSettings: TriggerStartSettings = newTriggerStartSettings => {

@@ -14,6 +14,8 @@ import {render, screen} from '@testing-library/react';
 
 import ManualStartBlockType from '../flows/builder/canvas/graph/shapes/blocks/blockTypes/manualStart/ManualStartBlockType';
 import ManualStartPresentation from '../flows/builder/canvas/graph/shapes/blocks/blockTypes/manualStart/ManualStartPresentation';
+import {TYPE} from '../flows/builder/canvas/graph/facades/shapes/vertexes/administrative/ManualStart';
+import {setBlockSettings} from '../flows/builder/canvas/graph/shapes/blocks/blockTypes/BaseSettings';
 import {useGraph} from '../flows/builder/canvas/graph/graphAPIContext/GraphContext';
 
 describe('Suite Test Components /ManualStart/: ', () => {
@@ -33,5 +35,14 @@ describe('Suite Test Components /ManualStart/: ', () => {
     render(<TestComponent />);
     const text = screen.getByText(/startBlock/i);
     expect(text).toBeInTheDocument();
+  });
+
+  it('AUT-FE-05045 Test setManualStartSettings', () => {
+    const settings = {
+      paramDefinitions: 'testParams',
+    };
+
+    const objectTest = setBlockSettings(TYPE, settings);
+    expect(objectTest.paramDefinitions).toStrictEqual('testParams');
   });
 });

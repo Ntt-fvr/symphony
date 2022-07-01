@@ -9,12 +9,12 @@
  */
 'use strict';
 
-type ParallelSettings = $ReadOnly<{|
+export type ParallelSettings = $ReadOnly<{|
   parallelSettings: string,
 |}>;
 
 export const initialParallelSettings: ParallelSettings = {
-  parallelSettings: 'ParallelSettings',
+  parallelSettings: null,
 };
 
 export const setParallelSettings: ParallelSettings = newParallelSettings => {

@@ -8,8 +8,15 @@
  * @format
  */
 
+import type {ParallelSettings} from '../flows/builder/canvas/graph/shapes/blocks/blockTypes/parallel/ParallelSettings';
+
 import '@testing-library/jest-dom';
 import React, {useMemo} from 'react';
+import {TYPE} from '../flows/builder/canvas/graph/facades/shapes/vertexes/logic/Parallel';
+import {
+  getInitialBlockSettings,
+  setBlockSettings,
+} from '../flows/builder/canvas/graph/shapes/blocks/blockTypes/BaseSettings';
 import {render, screen} from '@testing-library/react';
 
 import ParallelBlockType from '../flows/builder/canvas/graph/shapes/blocks/blockTypes/parallel/ParallelBlockType';
@@ -35,5 +42,17 @@ describe('Suite Test Components /Parallel/: ', () => {
 
     const text = screen.getByText(/parallelBlock/i);
     expect(text).toBeInTheDocument();
+  });
+
+  test('AUT-FE-05054 Test setParallelSettings', () => {
+    const objectTest: ParallelSettings = getInitialBlockSettings(TYPE);
+
+    expect(objectTest.parallelSettings).toStrictEqual(null);
+
+    const setObjectTest: ParallelSettings = setBlockSettings(TYPE, {
+      ...objectTest,
+      parallelSettings: true,
+    });
+    expect(setObjectTest.parallelSettings).toStrictEqual(true);
   });
 });

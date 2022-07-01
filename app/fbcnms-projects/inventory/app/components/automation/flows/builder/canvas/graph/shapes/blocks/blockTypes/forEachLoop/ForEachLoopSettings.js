@@ -9,12 +9,12 @@
  */
 'use strict';
 
-type ForEachLoopSettings = $ReadOnly<{|
+export type ForEachLoopSettings = $ReadOnly<{|
   forEachLoopSettings: string,
 |}>;
 
 export const initialForEachLoopSettings: ForEachLoopSettings = {
-  forEachLoopSettings: 'ForEachLoopSettings',
+  forEachLoopSettings: null,
 };
 
 export const setForEachLoopSettings: ForEachLoopSettings = newForEachLoopSettings => {
