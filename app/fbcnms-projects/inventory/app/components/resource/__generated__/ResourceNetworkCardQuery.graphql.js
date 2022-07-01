@@ -30,36 +30,40 @@ export type StringHashFilter = {|
   eq?: ?string,
   in?: ?$ReadOnlyArray<?string>,
 |};
-export type ModalSteperQueryVariables = {|
+export type ResourceNetworkCardQueryVariables = {|
   filter?: ?ResourceFilter
 |};
-export type ModalSteperQueryResponse = {|
+export type ResourceNetworkCardQueryResponse = {|
   +queryResource: ?$ReadOnlyArray<?{|
     +id: string,
     +name: string,
+    +resourceSpecification: string,
     +logicalLinks: ?$ReadOnlyArray<?{|
       +id: string,
       +name: string,
+      +resourceSpecification: string,
     |}>,
   |}>
 |};
-export type ModalSteperQuery = {|
-  variables: ModalSteperQueryVariables,
-  response: ModalSteperQueryResponse,
+export type ResourceNetworkCardQuery = {|
+  variables: ResourceNetworkCardQueryVariables,
+  response: ResourceNetworkCardQueryResponse,
 |};
 */
 
 
 /*
-query ModalSteperQuery(
+query ResourceNetworkCardQuery(
   $filter: ResourceFilter
 ) {
   queryResource(filter: $filter) {
     id
     name
+    resourceSpecification
     logicalLinks {
       id
       name
+      resourceSpecification
     }
   }
 }
@@ -87,7 +91,14 @@ v2 = {
   "name": "name",
   "storageKey": null
 },
-v3 = [
+v3 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "resourceSpecification",
+  "storageKey": null
+},
+v4 = [
   {
     "alias": null,
     "args": [
@@ -104,6 +115,7 @@ v3 = [
     "selections": [
       (v1/*: any*/),
       (v2/*: any*/),
+      (v3/*: any*/),
       {
         "alias": null,
         "args": null,
@@ -113,7 +125,8 @@ v3 = [
         "plural": true,
         "selections": [
           (v1/*: any*/),
-          (v2/*: any*/)
+          (v2/*: any*/),
+          (v3/*: any*/)
         ],
         "storageKey": null
       }
@@ -126,8 +139,8 @@ return {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Fragment",
     "metadata": null,
-    "name": "ModalSteperQuery",
-    "selections": (v3/*: any*/),
+    "name": "ResourceNetworkCardQuery",
+    "selections": (v4/*: any*/),
     "type": "Query",
     "abstractKey": null
   },
@@ -135,20 +148,20 @@ return {
   "operation": {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
-    "name": "ModalSteperQuery",
-    "selections": (v3/*: any*/)
+    "name": "ResourceNetworkCardQuery",
+    "selections": (v4/*: any*/)
   },
   "params": {
-    "cacheID": "91039da7a7cdf62fb4463540b9f17703",
+    "cacheID": "835e70ed1d1664d69bf0d75176be13e4",
     "id": null,
     "metadata": {},
-    "name": "ModalSteperQuery",
+    "name": "ResourceNetworkCardQuery",
     "operationKind": "query",
-    "text": "query ModalSteperQuery(\n  $filter: ResourceFilter\n) {\n  queryResource(filter: $filter) {\n    id\n    name\n    logicalLinks {\n      id\n      name\n    }\n  }\n}\n"
+    "text": "query ResourceNetworkCardQuery(\n  $filter: ResourceFilter\n) {\n  queryResource(filter: $filter) {\n    id\n    name\n    resourceSpecification\n    logicalLinks {\n      id\n      name\n      resourceSpecification\n    }\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = '7ae9174c6b095d876c5dbe3876c25023';
+(node/*: any*/).hash = '5c3eb68dfd53e7ee5df8931267e54148';
 
 module.exports = node;

@@ -130,7 +130,7 @@ function customStepIcon(props) {
   );
 }
 
-const ModalSteperListLogicLinkQuery = graphql`
+const ModalSteperListResourceInstanceQuery = graphql`
   query ModalSteperQuery($filter: ResourceFilter) {
     queryResource(filter: $filter) {
       id
@@ -142,6 +142,7 @@ const ModalSteperListLogicLinkQuery = graphql`
     }
   }
 `;
+
 type Props = $ReadOnly<{|
   openModal: boolean,
   titleSteps: Array<string>,
@@ -165,16 +166,17 @@ const ModalSteper = (props: Props) => {
   const [selectedIndex, setSelectedIndex] = useState(null);
   const [getDataList, setGetDataList] = useState({});
   const [searchData, setSearchData] = useState('');
-  const [resourceLogicLinks, setResourceLogicLinks] = useState({});
+  const [resourceInstance, setResourceInstance] = useState({});
   const [selectedId, setSelectedId] = useState({});
+  const [logicalLinkInput, setLogicalLinkInput] = useState({});
 
-  const isResourceLogicLinks = useCallback(() => {
-    fetchQuery(RelayEnvironment, ModalSteperListLogicLinkQuery, {
+  const listResourceInstance = useCallback(() => {
+    fetchQuery(RelayEnvironment, ModalSteperListResourceInstanceQuery, {
       filter: {resourceSpecification: selectedId},
     }).then(data => {
-      setResourceLogicLinks(data);
+      setResourceInstance(data);
     });
-  }, [setResourceLogicLinks, selectedId]);
+  }, [setResourceInstance, selectedId]);
 
   const connector = (
     <StepConnector
@@ -186,9 +188,17 @@ const ModalSteper = (props: Props) => {
     />
   );
 
+  const handleSaveNextModal = () => {
+    if (activeStep === titleSteps.length) {
+      if (titleSteps.length >= 2 && activeStep === 3) {
+        saveModal(logicalLinkInput);
+      } else saveModal(getDataList);
+    } else handleNext();
+  };
+
   const handleNext = () => {
     if (activeStep === 2) {
-      isResourceLogicLinks();
+      listResourceInstance();
     }
     setActiveStep(prevActiveStep => prevActiveStep + 1);
     setSelectedIndex(null);
@@ -199,7 +209,17 @@ const ModalSteper = (props: Props) => {
       setSelectedId({eq: item.node.id});
     }
     setSelectedIndex(index);
-    setGetDataList(item.node);
+    if (activeStep !== 3) {
+      setGetDataList(item.node);
+    } else {
+      setLogicalLinkInput({
+        set: {
+          logicalLinks: {
+            id: item.id,
+          },
+        },
+      });
+    }
   };
 
   const searchResourceType = dataListStepper?.resourceTypes?.edges.filter(
@@ -219,14 +239,12 @@ const ModalSteper = (props: Props) => {
   );
 
   const searchRInstance =
-    resourceLogicLinks?.queryResource
-      ?.flatMap(item => item.logicalLinks)
-      ?.filter(item =>
-        item?.name
-          .toString()
-          .toLowerCase()
-          .includes(searchData.toLocaleLowerCase()),
-      ) || [];
+    resourceInstance?.queryResource?.filter(item =>
+      item?.name
+        .toString()
+        .toLowerCase()
+        .includes(searchData.toLocaleLowerCase()),
+    ) || [];
 
   return (
     <div>
@@ -360,7 +378,9 @@ const ModalSteper = (props: Props) => {
                   disabled={selectedIndex !== null ? true : false}
                   textButton="New Resource"
                   onClick={() =>
-                    !addButtonLink ? undefined : addButtonLink(getDataList)
+                    !addButtonLink
+                      ? undefined
+                      : addButtonLink({...getDataList, isNewResource: true})
                   }
                 />
               )}
@@ -376,11 +396,7 @@ const ModalSteper = (props: Props) => {
               variant="contained"
               color="primary"
               disabled={selectedIndex !== null ? false : true}
-              onClick={
-                activeStep === titleSteps.length
-                  ? () => saveModal(getDataList)
-                  : handleNext
-              }>
+              onClick={handleSaveNextModal}>
               {titleSteps.length >= 2 && activeStep === 3 ? 'Add Link' : 'Next'}
             </Button>
           </Grid>
