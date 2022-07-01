@@ -166,7 +166,6 @@ const ChangeRequestTypes = () => {
           item.type =
             datas.resourceSpecifications.edges[0].node.resourceType.name;
         });
-        console.log(dataModify);
         setChangeRequestInitial(dataModify);
         setChangeRequest(dataModify);
       });
