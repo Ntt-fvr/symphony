@@ -8,7 +8,6 @@
  * @format
  */
 
-import '@testing-library/jest-dom';
 import React, {useState} from 'react';
 import {fireEvent, render, screen} from '@testing-library/react';
 
@@ -31,13 +30,13 @@ describe('Test component <DialogModal/>', () => {
     title: 'titleTest',
   };
 
-  test('AUT-FE-05041 Render componet <DialogModal/> alert', () => {
+  test('AUT-FE-05041 Render component <DialogModal/> alert', () => {
     render(<DialogModal {...mockPropsAlert} />);
     const title = screen.getByText(/title/i);
     expect(title).toBeInTheDocument();
   });
 
-  test('AUT-FE-05042 Render componet <DialogModal/> with children', () => {
+  test('AUT-FE-05042 Render component <DialogModal/> with children', () => {
     render(
       <DialogModal {...mockPropsInput}>
         <h1>i have children</h1>

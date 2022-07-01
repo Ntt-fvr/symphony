@@ -8,7 +8,6 @@
  * @format
  */
 
-import '@testing-library/jest-dom';
 import React, {useMemo} from 'react';
 import {render, screen} from '@testing-library/react';
 
@@ -47,14 +46,14 @@ describe('Suite Test Components /InvokeRestApi/: ', () => {
   test('AUT-FE-05047 Test setInvokeRestApiSettings', () => {
     const objectTest: InvokeRestApiSettings = getInitialBlockSettings(TYPE);
 
-    expect(objectTest.body).toStrictEqual(null);
-    expect(objectTest.headers).toStrictEqual(null);
+    expect(objectTest.body).toStrictEqual(undefined);
+    expect(objectTest.headers).toStrictEqual(undefined);
 
     const setObjectTest: InvokeRestApiSettings = setBlockSettings(TYPE, {
       ...objectTest,
       body: 'testParams',
     });
     expect(setObjectTest.body).toStrictEqual('testParams');
-    expect(setObjectTest.headers).toStrictEqual(null);
+    expect(setObjectTest.headers).toStrictEqual(undefined);
   });
 });
