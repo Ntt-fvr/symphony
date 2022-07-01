@@ -62,7 +62,6 @@ export type Props = $ReadOnly<{|
 
 const ChangeRequestByBulk = (props: Props) => {
   const {onClick, infoCSV, nameFile} = props;
-  console.log(props);
   const [infoTable, setInfoTable] = useState(props.infoCSV);
   const [nameFileSelected, setNameFileSelected] = useState(props.nameFile);
   const [schedule, setSchedule] = useState(DEFAULT_DATA_SCHEDULE);
