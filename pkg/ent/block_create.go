@@ -21,6 +21,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/flow"
 	"github.com/facebookincubator/symphony/pkg/ent/flowdraft"
 	"github.com/facebookincubator/symphony/pkg/ent/flowexecutiontemplate"
+	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
 	"github.com/facebookincubator/symphony/pkg/flowengine/flowschema"
 )
 
@@ -114,6 +115,454 @@ func (bc *BlockCreate) SetInputParams(fe []*flowschema.VariableExpression) *Bloc
 // SetUIRepresentation sets the ui_representation field.
 func (bc *BlockCreate) SetUIRepresentation(fur *flowschema.BlockUIRepresentation) *BlockCreate {
 	bc.mutation.SetUIRepresentation(fur)
+	return bc
+}
+
+// SetEnableInputTransformation sets the enable_input_transformation field.
+func (bc *BlockCreate) SetEnableInputTransformation(b bool) *BlockCreate {
+	bc.mutation.SetEnableInputTransformation(b)
+	return bc
+}
+
+// SetNillableEnableInputTransformation sets the enable_input_transformation field if the given value is not nil.
+func (bc *BlockCreate) SetNillableEnableInputTransformation(b *bool) *BlockCreate {
+	if b != nil {
+		bc.SetEnableInputTransformation(*b)
+	}
+	return bc
+}
+
+// SetInputTransfStrategy sets the input_transf_strategy field.
+func (bc *BlockCreate) SetInputTransfStrategy(es enum.TransfStrategy) *BlockCreate {
+	bc.mutation.SetInputTransfStrategy(es)
+	return bc
+}
+
+// SetInputTransformation sets the input_transformation field.
+func (bc *BlockCreate) SetInputTransformation(s string) *BlockCreate {
+	bc.mutation.SetInputTransformation(s)
+	return bc
+}
+
+// SetNillableInputTransformation sets the input_transformation field if the given value is not nil.
+func (bc *BlockCreate) SetNillableInputTransformation(s *string) *BlockCreate {
+	if s != nil {
+		bc.SetInputTransformation(*s)
+	}
+	return bc
+}
+
+// SetEnableOutputTransformation sets the enable_output_transformation field.
+func (bc *BlockCreate) SetEnableOutputTransformation(b bool) *BlockCreate {
+	bc.mutation.SetEnableOutputTransformation(b)
+	return bc
+}
+
+// SetNillableEnableOutputTransformation sets the enable_output_transformation field if the given value is not nil.
+func (bc *BlockCreate) SetNillableEnableOutputTransformation(b *bool) *BlockCreate {
+	if b != nil {
+		bc.SetEnableOutputTransformation(*b)
+	}
+	return bc
+}
+
+// SetOutputTransfStrategy sets the output_transf_strategy field.
+func (bc *BlockCreate) SetOutputTransfStrategy(es enum.TransfStrategy) *BlockCreate {
+	bc.mutation.SetOutputTransfStrategy(es)
+	return bc
+}
+
+// SetOutputTransformation sets the output_transformation field.
+func (bc *BlockCreate) SetOutputTransformation(s string) *BlockCreate {
+	bc.mutation.SetOutputTransformation(s)
+	return bc
+}
+
+// SetNillableOutputTransformation sets the output_transformation field if the given value is not nil.
+func (bc *BlockCreate) SetNillableOutputTransformation(s *string) *BlockCreate {
+	if s != nil {
+		bc.SetOutputTransformation(*s)
+	}
+	return bc
+}
+
+// SetEnableInputStateTransformation sets the enable_input_state_transformation field.
+func (bc *BlockCreate) SetEnableInputStateTransformation(b bool) *BlockCreate {
+	bc.mutation.SetEnableInputStateTransformation(b)
+	return bc
+}
+
+// SetNillableEnableInputStateTransformation sets the enable_input_state_transformation field if the given value is not nil.
+func (bc *BlockCreate) SetNillableEnableInputStateTransformation(b *bool) *BlockCreate {
+	if b != nil {
+		bc.SetEnableInputStateTransformation(*b)
+	}
+	return bc
+}
+
+// SetInputStateTransfStrategy sets the input_state_transf_strategy field.
+func (bc *BlockCreate) SetInputStateTransfStrategy(es enum.TransfStrategy) *BlockCreate {
+	bc.mutation.SetInputStateTransfStrategy(es)
+	return bc
+}
+
+// SetInputStateTransformation sets the input_state_transformation field.
+func (bc *BlockCreate) SetInputStateTransformation(s string) *BlockCreate {
+	bc.mutation.SetInputStateTransformation(s)
+	return bc
+}
+
+// SetNillableInputStateTransformation sets the input_state_transformation field if the given value is not nil.
+func (bc *BlockCreate) SetNillableInputStateTransformation(s *string) *BlockCreate {
+	if s != nil {
+		bc.SetInputStateTransformation(*s)
+	}
+	return bc
+}
+
+// SetEnableOutputStateTransformation sets the enable_output_state_transformation field.
+func (bc *BlockCreate) SetEnableOutputStateTransformation(b bool) *BlockCreate {
+	bc.mutation.SetEnableOutputStateTransformation(b)
+	return bc
+}
+
+// SetNillableEnableOutputStateTransformation sets the enable_output_state_transformation field if the given value is not nil.
+func (bc *BlockCreate) SetNillableEnableOutputStateTransformation(b *bool) *BlockCreate {
+	if b != nil {
+		bc.SetEnableOutputStateTransformation(*b)
+	}
+	return bc
+}
+
+// SetOutputStateTransfStrategy sets the output_state_transf_strategy field.
+func (bc *BlockCreate) SetOutputStateTransfStrategy(es enum.TransfStrategy) *BlockCreate {
+	bc.mutation.SetOutputStateTransfStrategy(es)
+	return bc
+}
+
+// SetOutputStateTransformation sets the output_state_transformation field.
+func (bc *BlockCreate) SetOutputStateTransformation(s string) *BlockCreate {
+	bc.mutation.SetOutputStateTransformation(s)
+	return bc
+}
+
+// SetNillableOutputStateTransformation sets the output_state_transformation field if the given value is not nil.
+func (bc *BlockCreate) SetNillableOutputStateTransformation(s *string) *BlockCreate {
+	if s != nil {
+		bc.SetOutputStateTransformation(*s)
+	}
+	return bc
+}
+
+// SetEnableErrorHandling sets the enable_error_handling field.
+func (bc *BlockCreate) SetEnableErrorHandling(b bool) *BlockCreate {
+	bc.mutation.SetEnableErrorHandling(b)
+	return bc
+}
+
+// SetNillableEnableErrorHandling sets the enable_error_handling field if the given value is not nil.
+func (bc *BlockCreate) SetNillableEnableErrorHandling(b *bool) *BlockCreate {
+	if b != nil {
+		bc.SetEnableErrorHandling(*b)
+	}
+	return bc
+}
+
+// SetEnableRetryPolicy sets the enable_retry_policy field.
+func (bc *BlockCreate) SetEnableRetryPolicy(b bool) *BlockCreate {
+	bc.mutation.SetEnableRetryPolicy(b)
+	return bc
+}
+
+// SetNillableEnableRetryPolicy sets the enable_retry_policy field if the given value is not nil.
+func (bc *BlockCreate) SetNillableEnableRetryPolicy(b *bool) *BlockCreate {
+	if b != nil {
+		bc.SetEnableRetryPolicy(*b)
+	}
+	return bc
+}
+
+// SetRetryInterval sets the retryInterval field.
+func (bc *BlockCreate) SetRetryInterval(i int) *BlockCreate {
+	bc.mutation.SetRetryInterval(i)
+	return bc
+}
+
+// SetNillableRetryInterval sets the retryInterval field if the given value is not nil.
+func (bc *BlockCreate) SetNillableRetryInterval(i *int) *BlockCreate {
+	if i != nil {
+		bc.SetRetryInterval(*i)
+	}
+	return bc
+}
+
+// SetRetryUnit sets the retry_unit field.
+func (bc *BlockCreate) SetRetryUnit(bu block.RetryUnit) *BlockCreate {
+	bc.mutation.SetRetryUnit(bu)
+	return bc
+}
+
+// SetMaxAttemps sets the maxAttemps field.
+func (bc *BlockCreate) SetMaxAttemps(i int) *BlockCreate {
+	bc.mutation.SetMaxAttemps(i)
+	return bc
+}
+
+// SetNillableMaxAttemps sets the maxAttemps field if the given value is not nil.
+func (bc *BlockCreate) SetNillableMaxAttemps(i *int) *BlockCreate {
+	if i != nil {
+		bc.SetMaxAttemps(*i)
+	}
+	return bc
+}
+
+// SetBackOffRate sets the backOffRate field.
+func (bc *BlockCreate) SetBackOffRate(i int) *BlockCreate {
+	bc.mutation.SetBackOffRate(i)
+	return bc
+}
+
+// SetNillableBackOffRate sets the backOffRate field if the given value is not nil.
+func (bc *BlockCreate) SetNillableBackOffRate(i *int) *BlockCreate {
+	if i != nil {
+		bc.SetBackOffRate(*i)
+	}
+	return bc
+}
+
+// SetTimerBehavior sets the timer_behavior field.
+func (bc *BlockCreate) SetTimerBehavior(bb block.TimerBehavior) *BlockCreate {
+	bc.mutation.SetTimerBehavior(bb)
+	return bc
+}
+
+// SetNillableTimerBehavior sets the timer_behavior field if the given value is not nil.
+func (bc *BlockCreate) SetNillableTimerBehavior(bb *block.TimerBehavior) *BlockCreate {
+	if bb != nil {
+		bc.SetTimerBehavior(*bb)
+	}
+	return bc
+}
+
+// SetSeconds sets the seconds field.
+func (bc *BlockCreate) SetSeconds(i int) *BlockCreate {
+	bc.mutation.SetSeconds(i)
+	return bc
+}
+
+// SetNillableSeconds sets the seconds field if the given value is not nil.
+func (bc *BlockCreate) SetNillableSeconds(i *int) *BlockCreate {
+	if i != nil {
+		bc.SetSeconds(*i)
+	}
+	return bc
+}
+
+// SetEnableTimerExpression sets the enable_timer_expression field.
+func (bc *BlockCreate) SetEnableTimerExpression(b bool) *BlockCreate {
+	bc.mutation.SetEnableTimerExpression(b)
+	return bc
+}
+
+// SetNillableEnableTimerExpression sets the enable_timer_expression field if the given value is not nil.
+func (bc *BlockCreate) SetNillableEnableTimerExpression(b *bool) *BlockCreate {
+	if b != nil {
+		bc.SetEnableTimerExpression(*b)
+	}
+	return bc
+}
+
+// SetTimerExpression sets the timer_expression field.
+func (bc *BlockCreate) SetTimerExpression(s string) *BlockCreate {
+	bc.mutation.SetTimerExpression(s)
+	return bc
+}
+
+// SetNillableTimerExpression sets the timer_expression field if the given value is not nil.
+func (bc *BlockCreate) SetNillableTimerExpression(s *string) *BlockCreate {
+	if s != nil {
+		bc.SetTimerExpression(*s)
+	}
+	return bc
+}
+
+// SetTimerSpecificDate sets the timer_specific_date field.
+func (bc *BlockCreate) SetTimerSpecificDate(t time.Time) *BlockCreate {
+	bc.mutation.SetTimerSpecificDate(t)
+	return bc
+}
+
+// SetNillableTimerSpecificDate sets the timer_specific_date field if the given value is not nil.
+func (bc *BlockCreate) SetNillableTimerSpecificDate(t *time.Time) *BlockCreate {
+	if t != nil {
+		bc.SetTimerSpecificDate(*t)
+	}
+	return bc
+}
+
+// SetURLMethod sets the url_method field.
+func (bc *BlockCreate) SetURLMethod(bm block.URLMethod) *BlockCreate {
+	bc.mutation.SetURLMethod(bm)
+	return bc
+}
+
+// SetNillableURLMethod sets the url_method field if the given value is not nil.
+func (bc *BlockCreate) SetNillableURLMethod(bm *block.URLMethod) *BlockCreate {
+	if bm != nil {
+		bc.SetURLMethod(*bm)
+	}
+	return bc
+}
+
+// SetURL sets the url field.
+func (bc *BlockCreate) SetURL(s string) *BlockCreate {
+	bc.mutation.SetURL(s)
+	return bc
+}
+
+// SetNillableURL sets the url field if the given value is not nil.
+func (bc *BlockCreate) SetNillableURL(s *string) *BlockCreate {
+	if s != nil {
+		bc.SetURL(*s)
+	}
+	return bc
+}
+
+// SetConnectionTimeout sets the connection_timeout field.
+func (bc *BlockCreate) SetConnectionTimeout(i int) *BlockCreate {
+	bc.mutation.SetConnectionTimeout(i)
+	return bc
+}
+
+// SetNillableConnectionTimeout sets the connection_timeout field if the given value is not nil.
+func (bc *BlockCreate) SetNillableConnectionTimeout(i *int) *BlockCreate {
+	if i != nil {
+		bc.SetConnectionTimeout(*i)
+	}
+	return bc
+}
+
+// SetBody sets the body field.
+func (bc *BlockCreate) SetBody(s string) *BlockCreate {
+	bc.mutation.SetBody(s)
+	return bc
+}
+
+// SetNillableBody sets the body field if the given value is not nil.
+func (bc *BlockCreate) SetNillableBody(s *string) *BlockCreate {
+	if s != nil {
+		bc.SetBody(*s)
+	}
+	return bc
+}
+
+// SetHeaders sets the headers field.
+func (bc *BlockCreate) SetHeaders(fv []*flowschema.VariableValue) *BlockCreate {
+	bc.mutation.SetHeaders(fv)
+	return bc
+}
+
+// SetSignalType sets the signal_type field.
+func (bc *BlockCreate) SetSignalType(bt block.SignalType) *BlockCreate {
+	bc.mutation.SetSignalType(bt)
+	return bc
+}
+
+// SetNillableSignalType sets the signal_type field if the given value is not nil.
+func (bc *BlockCreate) SetNillableSignalType(bt *block.SignalType) *BlockCreate {
+	if bt != nil {
+		bc.SetSignalType(*bt)
+	}
+	return bc
+}
+
+// SetSignalModule sets the signal_module field.
+func (bc *BlockCreate) SetSignalModule(bm block.SignalModule) *BlockCreate {
+	bc.mutation.SetSignalModule(bm)
+	return bc
+}
+
+// SetNillableSignalModule sets the signal_module field if the given value is not nil.
+func (bc *BlockCreate) SetNillableSignalModule(bm *block.SignalModule) *BlockCreate {
+	if bm != nil {
+		bc.SetSignalModule(*bm)
+	}
+	return bc
+}
+
+// SetCustomFilter sets the custom_filter field.
+func (bc *BlockCreate) SetCustomFilter(s string) *BlockCreate {
+	bc.mutation.SetCustomFilter(s)
+	return bc
+}
+
+// SetNillableCustomFilter sets the custom_filter field if the given value is not nil.
+func (bc *BlockCreate) SetNillableCustomFilter(s *string) *BlockCreate {
+	if s != nil {
+		bc.SetCustomFilter(*s)
+	}
+	return bc
+}
+
+// SetBlockFlow sets the block_flow field.
+func (bc *BlockCreate) SetBlockFlow(b bool) *BlockCreate {
+	bc.mutation.SetBlockFlow(b)
+	return bc
+}
+
+// SetNillableBlockFlow sets the block_flow field if the given value is not nil.
+func (bc *BlockCreate) SetNillableBlockFlow(b *bool) *BlockCreate {
+	if b != nil {
+		bc.SetBlockFlow(*b)
+	}
+	return bc
+}
+
+// SetKafkaBrokers sets the kafka_brokers field.
+func (bc *BlockCreate) SetKafkaBrokers(s []string) *BlockCreate {
+	bc.mutation.SetKafkaBrokers(s)
+	return bc
+}
+
+// SetKafkaTopic sets the kafka_topic field.
+func (bc *BlockCreate) SetKafkaTopic(s string) *BlockCreate {
+	bc.mutation.SetKafkaTopic(s)
+	return bc
+}
+
+// SetNillableKafkaTopic sets the kafka_topic field if the given value is not nil.
+func (bc *BlockCreate) SetNillableKafkaTopic(s *string) *BlockCreate {
+	if s != nil {
+		bc.SetKafkaTopic(*s)
+	}
+	return bc
+}
+
+// SetKafkaMessage sets the kafka_message field.
+func (bc *BlockCreate) SetKafkaMessage(s string) *BlockCreate {
+	bc.mutation.SetKafkaMessage(s)
+	return bc
+}
+
+// SetNillableKafkaMessage sets the kafka_message field if the given value is not nil.
+func (bc *BlockCreate) SetNillableKafkaMessage(s *string) *BlockCreate {
+	if s != nil {
+		bc.SetKafkaMessage(*s)
+	}
+	return bc
+}
+
+// SetKafkaMessageType sets the kafka_message_type field.
+func (bc *BlockCreate) SetKafkaMessageType(emt enum.KafkaMessageType) *BlockCreate {
+	bc.mutation.SetKafkaMessageType(emt)
+	return bc
+}
+
+// SetNillableKafkaMessageType sets the kafka_message_type field if the given value is not nil.
+func (bc *BlockCreate) SetNillableKafkaMessageType(emt *enum.KafkaMessageType) *BlockCreate {
+	if emt != nil {
+		bc.SetKafkaMessageType(*emt)
+	}
 	return bc
 }
 
@@ -372,6 +821,71 @@ func (bc *BlockCreate) check() error {
 			return &ValidationError{Name: "trigger_type", err: fmt.Errorf("ent: validator failed for field \"trigger_type\": %w", err)}
 		}
 	}
+	if _, ok := bc.mutation.InputTransfStrategy(); !ok {
+		return &ValidationError{Name: "input_transf_strategy", err: errors.New("ent: missing required field \"input_transf_strategy\"")}
+	}
+	if v, ok := bc.mutation.InputTransfStrategy(); ok {
+		if err := block.InputTransfStrategyValidator(v); err != nil {
+			return &ValidationError{Name: "input_transf_strategy", err: fmt.Errorf("ent: validator failed for field \"input_transf_strategy\": %w", err)}
+		}
+	}
+	if _, ok := bc.mutation.OutputTransfStrategy(); !ok {
+		return &ValidationError{Name: "output_transf_strategy", err: errors.New("ent: missing required field \"output_transf_strategy\"")}
+	}
+	if v, ok := bc.mutation.OutputTransfStrategy(); ok {
+		if err := block.OutputTransfStrategyValidator(v); err != nil {
+			return &ValidationError{Name: "output_transf_strategy", err: fmt.Errorf("ent: validator failed for field \"output_transf_strategy\": %w", err)}
+		}
+	}
+	if _, ok := bc.mutation.InputStateTransfStrategy(); !ok {
+		return &ValidationError{Name: "input_state_transf_strategy", err: errors.New("ent: missing required field \"input_state_transf_strategy\"")}
+	}
+	if v, ok := bc.mutation.InputStateTransfStrategy(); ok {
+		if err := block.InputStateTransfStrategyValidator(v); err != nil {
+			return &ValidationError{Name: "input_state_transf_strategy", err: fmt.Errorf("ent: validator failed for field \"input_state_transf_strategy\": %w", err)}
+		}
+	}
+	if _, ok := bc.mutation.OutputStateTransfStrategy(); !ok {
+		return &ValidationError{Name: "output_state_transf_strategy", err: errors.New("ent: missing required field \"output_state_transf_strategy\"")}
+	}
+	if v, ok := bc.mutation.OutputStateTransfStrategy(); ok {
+		if err := block.OutputStateTransfStrategyValidator(v); err != nil {
+			return &ValidationError{Name: "output_state_transf_strategy", err: fmt.Errorf("ent: validator failed for field \"output_state_transf_strategy\": %w", err)}
+		}
+	}
+	if _, ok := bc.mutation.RetryUnit(); !ok {
+		return &ValidationError{Name: "retry_unit", err: errors.New("ent: missing required field \"retry_unit\"")}
+	}
+	if v, ok := bc.mutation.RetryUnit(); ok {
+		if err := block.RetryUnitValidator(v); err != nil {
+			return &ValidationError{Name: "retry_unit", err: fmt.Errorf("ent: validator failed for field \"retry_unit\": %w", err)}
+		}
+	}
+	if v, ok := bc.mutation.TimerBehavior(); ok {
+		if err := block.TimerBehaviorValidator(v); err != nil {
+			return &ValidationError{Name: "timer_behavior", err: fmt.Errorf("ent: validator failed for field \"timer_behavior\": %w", err)}
+		}
+	}
+	if v, ok := bc.mutation.URLMethod(); ok {
+		if err := block.URLMethodValidator(v); err != nil {
+			return &ValidationError{Name: "url_method", err: fmt.Errorf("ent: validator failed for field \"url_method\": %w", err)}
+		}
+	}
+	if v, ok := bc.mutation.SignalType(); ok {
+		if err := block.SignalTypeValidator(v); err != nil {
+			return &ValidationError{Name: "signal_type", err: fmt.Errorf("ent: validator failed for field \"signal_type\": %w", err)}
+		}
+	}
+	if v, ok := bc.mutation.SignalModule(); ok {
+		if err := block.SignalModuleValidator(v); err != nil {
+			return &ValidationError{Name: "signal_module", err: fmt.Errorf("ent: validator failed for field \"signal_module\": %w", err)}
+		}
+	}
+	if v, ok := bc.mutation.KafkaMessageType(); ok {
+		if err := block.KafkaMessageTypeValidator(v); err != nil {
+			return &ValidationError{Name: "kafka_message_type", err: fmt.Errorf("ent: validator failed for field \"kafka_message_type\": %w", err)}
+		}
+	}
 	return nil
 }
 
@@ -470,6 +984,294 @@ func (bc *BlockCreate) createSpec() (*Block, *sqlgraph.CreateSpec) {
 			Column: block.FieldUIRepresentation,
 		})
 		_node.UIRepresentation = value
+	}
+	if value, ok := bc.mutation.EnableInputTransformation(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Value:  value,
+			Column: block.FieldEnableInputTransformation,
+		})
+		_node.EnableInputTransformation = value
+	}
+	if value, ok := bc.mutation.InputTransfStrategy(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeEnum,
+			Value:  value,
+			Column: block.FieldInputTransfStrategy,
+		})
+		_node.InputTransfStrategy = value
+	}
+	if value, ok := bc.mutation.InputTransformation(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: block.FieldInputTransformation,
+		})
+		_node.InputTransformation = value
+	}
+	if value, ok := bc.mutation.EnableOutputTransformation(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Value:  value,
+			Column: block.FieldEnableOutputTransformation,
+		})
+		_node.EnableOutputTransformation = value
+	}
+	if value, ok := bc.mutation.OutputTransfStrategy(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeEnum,
+			Value:  value,
+			Column: block.FieldOutputTransfStrategy,
+		})
+		_node.OutputTransfStrategy = value
+	}
+	if value, ok := bc.mutation.OutputTransformation(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: block.FieldOutputTransformation,
+		})
+		_node.OutputTransformation = value
+	}
+	if value, ok := bc.mutation.EnableInputStateTransformation(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Value:  value,
+			Column: block.FieldEnableInputStateTransformation,
+		})
+		_node.EnableInputStateTransformation = value
+	}
+	if value, ok := bc.mutation.InputStateTransfStrategy(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeEnum,
+			Value:  value,
+			Column: block.FieldInputStateTransfStrategy,
+		})
+		_node.InputStateTransfStrategy = value
+	}
+	if value, ok := bc.mutation.InputStateTransformation(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: block.FieldInputStateTransformation,
+		})
+		_node.InputStateTransformation = value
+	}
+	if value, ok := bc.mutation.EnableOutputStateTransformation(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Value:  value,
+			Column: block.FieldEnableOutputStateTransformation,
+		})
+		_node.EnableOutputStateTransformation = value
+	}
+	if value, ok := bc.mutation.OutputStateTransfStrategy(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeEnum,
+			Value:  value,
+			Column: block.FieldOutputStateTransfStrategy,
+		})
+		_node.OutputStateTransfStrategy = value
+	}
+	if value, ok := bc.mutation.OutputStateTransformation(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: block.FieldOutputStateTransformation,
+		})
+		_node.OutputStateTransformation = value
+	}
+	if value, ok := bc.mutation.EnableErrorHandling(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Value:  value,
+			Column: block.FieldEnableErrorHandling,
+		})
+		_node.EnableErrorHandling = value
+	}
+	if value, ok := bc.mutation.EnableRetryPolicy(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Value:  value,
+			Column: block.FieldEnableRetryPolicy,
+		})
+		_node.EnableRetryPolicy = value
+	}
+	if value, ok := bc.mutation.RetryInterval(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: block.FieldRetryInterval,
+		})
+		_node.RetryInterval = value
+	}
+	if value, ok := bc.mutation.RetryUnit(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeEnum,
+			Value:  value,
+			Column: block.FieldRetryUnit,
+		})
+		_node.RetryUnit = value
+	}
+	if value, ok := bc.mutation.MaxAttemps(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: block.FieldMaxAttemps,
+		})
+		_node.MaxAttemps = value
+	}
+	if value, ok := bc.mutation.BackOffRate(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: block.FieldBackOffRate,
+		})
+		_node.BackOffRate = value
+	}
+	if value, ok := bc.mutation.TimerBehavior(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeEnum,
+			Value:  value,
+			Column: block.FieldTimerBehavior,
+		})
+		_node.TimerBehavior = value
+	}
+	if value, ok := bc.mutation.Seconds(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: block.FieldSeconds,
+		})
+		_node.Seconds = value
+	}
+	if value, ok := bc.mutation.EnableTimerExpression(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Value:  value,
+			Column: block.FieldEnableTimerExpression,
+		})
+		_node.EnableTimerExpression = value
+	}
+	if value, ok := bc.mutation.TimerExpression(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: block.FieldTimerExpression,
+		})
+		_node.TimerExpression = value
+	}
+	if value, ok := bc.mutation.TimerSpecificDate(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeTime,
+			Value:  value,
+			Column: block.FieldTimerSpecificDate,
+		})
+		_node.TimerSpecificDate = value
+	}
+	if value, ok := bc.mutation.URLMethod(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeEnum,
+			Value:  value,
+			Column: block.FieldURLMethod,
+		})
+		_node.URLMethod = value
+	}
+	if value, ok := bc.mutation.URL(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: block.FieldURL,
+		})
+		_node.URL = value
+	}
+	if value, ok := bc.mutation.ConnectionTimeout(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: block.FieldConnectionTimeout,
+		})
+		_node.ConnectionTimeout = value
+	}
+	if value, ok := bc.mutation.Body(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: block.FieldBody,
+		})
+		_node.Body = value
+	}
+	if value, ok := bc.mutation.Headers(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeJSON,
+			Value:  value,
+			Column: block.FieldHeaders,
+		})
+		_node.Headers = value
+	}
+	if value, ok := bc.mutation.SignalType(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeEnum,
+			Value:  value,
+			Column: block.FieldSignalType,
+		})
+		_node.SignalType = value
+	}
+	if value, ok := bc.mutation.SignalModule(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeEnum,
+			Value:  value,
+			Column: block.FieldSignalModule,
+		})
+		_node.SignalModule = value
+	}
+	if value, ok := bc.mutation.CustomFilter(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: block.FieldCustomFilter,
+		})
+		_node.CustomFilter = value
+	}
+	if value, ok := bc.mutation.BlockFlow(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Value:  value,
+			Column: block.FieldBlockFlow,
+		})
+		_node.BlockFlow = value
+	}
+	if value, ok := bc.mutation.KafkaBrokers(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeJSON,
+			Value:  value,
+			Column: block.FieldKafkaBrokers,
+		})
+		_node.KafkaBrokers = value
+	}
+	if value, ok := bc.mutation.KafkaTopic(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: block.FieldKafkaTopic,
+		})
+		_node.KafkaTopic = value
+	}
+	if value, ok := bc.mutation.KafkaMessage(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: block.FieldKafkaMessage,
+		})
+		_node.KafkaMessage = value
+	}
+	if value, ok := bc.mutation.KafkaMessageType(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeEnum,
+			Value:  value,
+			Column: block.FieldKafkaMessageType,
+		})
+		_node.KafkaMessageType = value
 	}
 	if nodes := bc.mutation.FlowIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

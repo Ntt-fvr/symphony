@@ -104,14 +104,14 @@ const queryConfigurationParameterType = graphql`
     $filter: ConfigurationParameterTypeFilter
   ) {
     queryConfigurationParameterType(filter: $filter) {
-      id
-      name
-      type
-      intValue
-      floatValue
       stringValue
+      intValue
       booleanValue
-      resourceSpecification
+      floatValue
+      latitudeValue
+      longitudeValue
+      rangeFromValue
+      rangeToValue
     }
   }
 `;
@@ -166,13 +166,10 @@ const AddEditResourceInLocation = (props: Props) => {
     ?.map(p => p)
     .filter(Boolean);
 
-  const convertParametersMap = (data: T): T =>
+  const convertParametersMap = (data: T): Array<T> =>
     data?.map(prop => {
       return {
-        parameterType: {
-          ...prop,
-          resourceSpecification: dataformModal.id,
-        },
+        ...prop,
       };
     });
 
@@ -228,22 +225,16 @@ const AddEditResourceInLocation = (props: Props) => {
   }
 
   const selectListData = {
-    lifecycleStatus: ['PLANNING', 'INSTALLING', 'OPERATING', 'RETIRING'],
+    lifecycleStatus: ['PLANNING', 'INSTALLING', 'OPERATING', 'RETIRED'],
     typePlanningSubStatus: [
       'PROPOSED',
-      'FEASIBILITY_CHECKED',
+      'FEASIBILITY CHECKED',
       'DESIGNED',
       'ORDERED',
     ],
     planningSubStatus: ['ACTIVATED', 'DESACTIVATED'],
-    operationalSubStatus: ['WORKING', 'NOT_WORKING'],
-    usageSubStatus: [
-      'AVAILABLE',
-      'RESERVED',
-      'NO_AVAILABLE',
-      'ASSIGNED',
-      'TERMINATING',
-    ],
+    operationalSubStatus: ['WORKING', 'NOT WORKING'],
+    usageSubStatus: ['AVAILABLE', 'RESERVED', 'NOT AVAILABLE', 'ASSIGNED'],
   };
 
   return (

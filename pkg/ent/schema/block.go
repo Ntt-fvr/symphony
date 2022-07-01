@@ -13,6 +13,7 @@ import (
 	"github.com/facebookincubator/ent-contrib/entgql"
 	"github.com/facebookincubator/symphony/pkg/authz"
 	"github.com/facebookincubator/symphony/pkg/ent/privacy"
+	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
 	"github.com/facebookincubator/symphony/pkg/flowengine/flowschema"
 	"github.com/facebookincubator/symphony/pkg/hooks"
 )
@@ -20,6 +21,10 @@ import (
 // Block defines the block schema.
 type Block struct {
 	schema
+}
+type DecisionRoute struct {
+	ExitPoint ExitPoint
+	Condition string
 }
 
 // Fields returns block fields.
@@ -37,6 +42,15 @@ func (Block) Fields() []ent.Field {
 				"Trigger", "TRIGGER",
 				"Action", "ACTION",
 				"TrueFalse", "TRUE_FALSE",
+				"Choice", "CHOICE",
+				"ExecuteFlow", "EXECUTE_FLOW",
+				"NetworkAction", "NETWORK_ACTION",
+				"Timer", "TIMER",
+				"InvokeRestAPI", "INVOKE_REST_API",
+				"WaitForSignal", "WAIT_FOR_SIGNAL",
+				"ForEach", "FOREACH",
+				"Parallel", "PARALLEL",
+				"Kafka", "KAFKA",
 			),
 		field.Enum("action_type").
 			GoType(flowschema.ActionTypeID("")).
@@ -51,6 +65,108 @@ func (Block) Fields() []ent.Field {
 		field.JSON("input_params", []*flowschema.VariableExpression{}).
 			Optional(),
 		field.JSON("ui_representation", &flowschema.BlockUIRepresentation{}).
+			Optional(),
+		field.Bool("enable_input_transformation").
+			Optional(),
+		field.Enum("input_transf_strategy").
+			GoType(enum.TransfStrategy("")),
+		field.String("input_transformation").
+			Optional(),
+		field.Bool("enable_output_transformation").
+			Optional(),
+		field.Enum("output_transf_strategy").
+			GoType(enum.TransfStrategy("")),
+		field.String("output_transformation").
+			Optional(),
+		field.Bool("enable_input_state_transformation").
+			Optional(),
+		field.Enum("input_state_transf_strategy").
+			GoType(enum.TransfStrategy("")),
+		field.String("input_state_transformation").
+			Optional(),
+		field.Bool("enable_output_state_transformation").
+			Optional(),
+		field.Enum("output_state_transf_strategy").
+			GoType(enum.TransfStrategy("")),
+		field.String("output_state_transformation").
+			Optional(),
+		field.Bool("enable_error_handling").
+			Optional(),
+		field.Bool("enable_retry_policy").
+			Optional(),
+		field.Int("retryInterval").
+			Optional(),
+		field.Enum("retry_unit").
+			NamedValues(
+				"SECONDS", "seconds",
+				"MINUTES", "minutes",
+				"HOURS", "hours",
+			),
+		field.Int("maxAttemps").
+			Optional(),
+		field.Int("backOffRate").
+			Optional(),
+
+		field.Enum("timer_behavior").
+			NamedValues(
+				"FIXED_INTERVAL", "fixed_interval",
+				"SPECIFIC_DATETIME", "specific_time",
+			).
+			Optional(),
+		field.Int("seconds").
+			Optional(),
+		field.Bool("enable_timer_expression").
+			Optional(),
+		field.String("timer_expression").
+			Optional(),
+		field.Time("timer_specific_date").
+			Optional(),
+
+		field.Enum("url_method").
+			NamedValues(
+				"POST", "post",
+				"GET", "get",
+				"PUT", "put",
+				"DELETE", "delete",
+				"PATCH", "patch",
+			).
+			Optional(),
+		field.String("url").
+			Optional(),
+		field.Int("connection_timeout").
+			Optional(),
+		field.String("body").
+			Optional(),
+		field.JSON("headers", []*flowschema.VariableValue{}).
+			Optional(),
+
+		field.Enum("signal_type").
+			NamedValues(
+				"NOTIFICATION", "notification",
+				"WOCREATION", "wo_creation",
+				"CRCREATION", "cr_creation",
+				"WOUPDATE", "wo_update",
+				"CRUPDATE", "cr_update",
+			).Optional(),
+		field.Enum("signal_module").
+			NamedValues(
+				"INVENTORY", "inventory",
+				"CM", "cm",
+			).
+			Optional(),
+		field.String("custom_filter").
+			Optional(),
+		field.Bool("block_flow").
+			Optional(),
+
+		field.Strings("kafka_brokers").
+			Optional(),
+		field.String("kafka_topic").
+			Optional(),
+		field.String("kafka_message").
+			Optional(),
+		field.Enum("kafka_message_type").
+			GoType(enum.KafkaMessageType("")).
 			Optional(),
 	}
 }

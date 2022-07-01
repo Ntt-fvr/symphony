@@ -41,8 +41,6 @@ export type ChangeRequestTypesQueryResponse = {|
     |}>,
     +source: ?ChangeRequestSource,
     +status: ChangeRequestStatus,
-    +createTime: ?any,
-    +updateTime: ?any,
   |}>,
   +resourceSpecifications: {|
     +edges: $ReadOnlyArray<{|
@@ -79,8 +77,6 @@ query ChangeRequestTypesQuery(
     }
     source
     status
-    createTime
-    updateTime
   }
   resourceSpecifications(filterBy: $filterBy) {
     edges {
@@ -173,20 +169,6 @@ v3 = [
         "kind": "ScalarField",
         "name": "status",
         "storageKey": null
-      },
-      {
-        "alias": null,
-        "args": null,
-        "kind": "ScalarField",
-        "name": "createTime",
-        "storageKey": null
-      },
-      {
-        "alias": null,
-        "args": null,
-        "kind": "ScalarField",
-        "name": "updateTime",
-        "storageKey": null
       }
     ],
     "storageKey": null
@@ -264,16 +246,16 @@ return {
     "selections": (v3/*: any*/)
   },
   "params": {
-    "cacheID": "cd0ea81a8d9a8e15a11c3be3a7f618eb",
+    "cacheID": "b292a64e9ff521cac151693f9ca686ff",
     "id": null,
     "metadata": {},
     "name": "ChangeRequestTypesQuery",
     "operationKind": "query",
-    "text": "query ChangeRequestTypesQuery(\n  $filterBy: [ResourceSpecificationFilterInput!]\n) {\n  queryChangeRequest {\n    id\n    items {\n      id\n      resource {\n        id\n        resourceSpecification\n      }\n    }\n    source\n    status\n    createTime\n    updateTime\n  }\n  resourceSpecifications(filterBy: $filterBy) {\n    edges {\n      node {\n        id\n        name\n        resourceType {\n          id\n          name\n        }\n      }\n    }\n  }\n}\n"
+    "text": "query ChangeRequestTypesQuery(\n  $filterBy: [ResourceSpecificationFilterInput!]\n) {\n  queryChangeRequest {\n    id\n    items {\n      id\n      resource {\n        id\n        resourceSpecification\n      }\n    }\n    source\n    status\n  }\n  resourceSpecifications(filterBy: $filterBy) {\n    edges {\n      node {\n        id\n        name\n        resourceType {\n          id\n          name\n        }\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = '7180c27f679f87987b5639215a11bfc4';
+(node/*: any*/).hash = '125a9b03f38125855858f28ae9657b95';
 
 module.exports = node;

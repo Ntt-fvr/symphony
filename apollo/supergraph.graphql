@@ -1,4 +1,3 @@
-
 schema
   @core(feature: "https://specs.apollo.dev/core/v0.2"),
   @core(feature: "https://specs.apollo.dev/join/v0.1", for: EXECUTION)
@@ -1897,6 +1896,27 @@ input AutomationPolicyInput {
   templates: BasicCUDInput
 }
 
+input BaseBlockInput {
+  backoffRate: Int
+  enableErrorHandling: Boolean
+  enableInputStateTransformation: Boolean!
+  enableInputTransformation: Boolean!
+  enableOutputStateTransformation: Boolean!
+  enableOutputTransformation: Boolean!
+  enableRetryPolicy: Boolean
+  inputParamDefinitions: String
+  inputStateParamDefinitions: String
+  inputStateTransfStrategy: TransfStrategy
+  inputTransfStrategy: TransfStrategy
+  maxAttemps: Int
+  outputParamDefinitions: String
+  outputStateParamDefinitions: String
+  outputStateTransfStrategy: TransfStrategy
+  outputTransfStrategy: TransfStrategy
+  retryInterval: Int
+  units: RetryUnit
+}
+
 input BasicCUDInput {
   create: BasicPermissionRuleInput
   delete: BasicPermissionRuleInput
@@ -1912,17 +1932,35 @@ input BasicPermissionRuleInput {
 }
 
 type Block implements Node {
+  backoffRate: Int
   cid: String!
   details: BlockDetails!
+  enableErrorHandling: Boolean
+  enableInputStateTransformation: Boolean!
+  enableInputTransformation: Boolean!
+  enableOutputStateTransformation: Boolean!
+  enableOutputTransformation: Boolean!
+  enableRetryPolicy: Boolean
   id: ID!
   inputParamDefinitions: [VariableDefinition!]!
+  inputStateTransfStrategy: TransfStrategy
+  inputStateTransformation: String
+  inputTransfStrategy: TransfStrategy
+  inputTransformation: String
+  maxAttemps: Int
   nextBlocks: [Block!]!
   outputParamDefinitions: [VariableDefinition!]!
+  outputStateTransfStrategy: TransfStrategy
+  outputStateTransformation: String
+  outputTransfStrategy: TransfStrategy
+  outputTransformation: String
   prevBlocks: [Block!]!
+  retryInterval: Int
   uiRepresentation: BlockUIRepresentation
+  units: RetryUnit
 }
 
-union BlockDetails = ActionBlock | DecisionBlock | EndBlock | GotoBlock | StartBlock | SubflowBlock | TriggerBlock | TrueFalseBlock
+union BlockDetails = ActionBlock | ChoiceBlock | DecisionBlock | EndBlock | ExecuteFlowBlock | ForEachBlock | GotoBlock | InvokeRestAPIBlock | ParallelBlock | StartBlock | SubflowBlock | TimerBlock | TriggerBlock | TrueFalseBlock | WaitForSignalBlock
 
 type BlockInstance implements Node {
   block: Block!
@@ -2732,6 +2770,20 @@ enum CheckListItemType {
   string
   wifi_scan
   yes_no
+}
+
+type ChoiceBlock {
+  defaultExitPoint: ExitPoint!
+  entryPoint: EntryPoint!
+  rules: [DecisionRoute!]!
+}
+
+input ChoiceBlockInput {
+  basicDefinitions: BaseBlockInput!
+  cid: String!
+  entryPoint: EntryPointInput!
+  routes: [DecisionRouteInput!]
+  uiRepresentation: BlockUIRepresentationInput
 }
 
 type ClockActivity {
@@ -4607,6 +4659,23 @@ enum EventSeverityOrderField {
   UPDATED_AT
 }
 
+type ExecuteFlowBlock {
+  entryPoint: EntryPoint!
+  exitPoint: ExitPoint!
+  flow: Flow
+  params: [VariableExpression!]!
+}
+
+input ExecuteFlowBlockInput {
+  basicDefinitions: BaseBlockInput!
+  cid: String!
+  entryPoint: EntryPointInput!
+  exitPoint: ExitPointInput!
+  flow: ID!
+  params: [VariableExpressionInput!]!
+  uiRepresentation: BlockUIRepresentationInput
+}
+
 type ExitPoint implements Node {
   cid: String
   condition: VariableExpression
@@ -5118,6 +5187,12 @@ enum FlowStatus {
   UNPUBLISHED
 }
 
+type ForEachBlock {
+  entryPoint: EntryPoint!
+  exitPoint: ExitPoint!
+  internalExitPoint: ExitPoint!
+}
+
 type Formula implements Node {
   counterformulaFk: [CounterFormula]
   id: ID!
@@ -5274,6 +5349,11 @@ input GeometryRef {
   y: String
 }
 
+enum GoToType {
+  DESTINATION
+  ORIGIN
+}
+
 type GotoBlock {
   entryPoint: EntryPoint!
   target: Block
@@ -5282,6 +5362,7 @@ type GotoBlock {
 input GotoBlockInput {
   cid: String!
   targetBlockCid: String
+  type: GoToType!
   uiRepresentation: BlockUIRepresentationInput
 }
 
@@ -5313,18 +5394,23 @@ enum ImageEntity {
 
 input ImportFlowDraftInput {
   actionBlocks: [ActionBlockInput!]
+  choiceBlocks: [ChoiceBlockInput!]
   connectors: [ConnectorInput!]
   decisionBlocks: [DecisionBlockInput!]
   description: String
   endBlocks: [EndBlockInput!]
   endParamDefinitions: [VariableDefinitionInput!]!
+  executeFlowBlocks: [ExecuteFlowBlockInput!]
   gotoBlocks: [GotoBlockInput!]
   id: ID!
+  invokeRestAPIBlocks: [InvokeRestAPIBlockInput!]
   name: String!
   startBlock: StartBlockInput
   subflowBlocks: [SubflowBlockInput!]
+  timerBlocks: [TimerBlockInput!]
   triggerBlocks: [TriggerBlockInput!]
   trueFalseBlocks: [TrueFalseBlockInput!]
+  waitForSignalBlocks: [WaitForSignalBlockInput!]
 }
 
 scalar Int64
@@ -5386,6 +5472,30 @@ input InventoryPolicyInput {
   propertyCategory: PropertyCategoryCUDInput
   read: BasicPermissionRuleInput
   serviceType: BasicCUDInput
+}
+
+type InvokeRestAPIBlock {
+  body: String!
+  connectionTimeOut: Int!
+  entryPoint: EntryPoint!
+  exitPoint: ExitPoint!
+  headers: [VariableValue!]!
+  method: UrlMethod!
+  url: String!
+}
+
+input InvokeRestAPIBlockInput {
+  basicDefinitions: BaseBlockInput!
+  body: String!
+  cid: String!
+  connectionTimeOut: Int!
+  entryPoint: EntryPointInput!
+  exitPoint: ExitPointInput!
+  headers: [VariableValueInput]!
+  method: UrlMethod!
+  params: [VariableExpressionInput!]!
+  uiRepresentation: BlockUIRepresentationInput
+  url: String!
 }
 
 type Kpi implements Node {
@@ -6235,6 +6345,7 @@ type Mutation {
   addChangeRequestActivity(input: [AddChangeRequestActivityInput!]!): AddChangeRequestActivityPayload @join__field(graph: DGRAPHSERVICE)
   addCharacteristic(input: [AddCharacteristicInput!]!): AddCharacteristicPayload @join__field(graph: DGRAPHSERVICE)
   addCharacteristicRelationship(input: [AddCharacteristicRelationshipInput!]!): AddCharacteristicRelationshipPayload @join__field(graph: DGRAPHSERVICE)
+  addChoiceBlock(flowDraftId: ID!, input: ChoiceBlockInput!): Block! @join__field(graph: SYMPHONY)
   addComment(input: CommentInput!): Comment! @join__field(graph: SYMPHONY)
   addComparator(input: AddComparatorInput!): Comparator! @join__field(graph: SYMPHONY)
   addConfigParamTag(input: [AddConfigParamTagInput!]!): AddConfigParamTagPayload @join__field(graph: DGRAPHSERVICE)
@@ -6252,6 +6363,7 @@ type Mutation {
   addEquipmentPortType(input: AddEquipmentPortTypeInput!): EquipmentPortType! @join__field(graph: SYMPHONY)
   addEquipmentType(input: AddEquipmentTypeInput!): EquipmentType! @join__field(graph: SYMPHONY)
   addEventSeverity(input: AddEventSeverityInput!): EventSeverity! @join__field(graph: SYMPHONY)
+  addExecuteFlowBlock(flowDraftId: ID!, input: ExecuteFlowBlockInput!): Block! @join__field(graph: SYMPHONY)
   addExternalReference(input: [AddExternalReferenceInput!]!, upsert: Boolean): AddExternalReferencePayload @join__field(graph: DGRAPHSERVICE)
   addFeature(input: [AddFeatureInput!]!): AddFeaturePayload @join__field(graph: DGRAPHSERVICE)
   addFiles(input: AddFilesInput!): File! @join__field(graph: SYMPHONY)
@@ -6263,6 +6375,7 @@ type Mutation {
   addGotoBlock(flowDraftId: ID!, input: GotoBlockInput!): Block! @join__field(graph: SYMPHONY)
   addHyperlink(input: AddHyperlinkInput!): Hyperlink! @join__field(graph: SYMPHONY)
   addImage(input: AddImageInput!): File! @join__field(graph: SYMPHONY)
+  addInvokeRestAPIBlock(flowDraftId: ID!, input: InvokeRestAPIBlockInput!): Block! @join__field(graph: SYMPHONY)
   addKpi(input: AddKpiInput!): Kpi! @join__field(graph: SYMPHONY)
   addKpiCategory(input: AddKpiCategoryInput!): KpiCategory! @join__field(graph: SYMPHONY)
   addKqi(input: AddKqiInput!): Kqi! @join__field(graph: SYMPHONY)
@@ -6333,10 +6446,12 @@ type Mutation {
   addSubscriber(input: [AddSubscriberInput!]!): AddSubscriberPayload @join__field(graph: DGRAPHSERVICE)
   addTech(input: AddTechInput!): Tech! @join__field(graph: SYMPHONY)
   addThreshold(input: AddThresholdInput!): Threshold! @join__field(graph: SYMPHONY)
+  addTimerBlock(flowDraftId: ID!, input: TimerBlockInput!): Block! @join__field(graph: SYMPHONY)
   addTriggerBlock(flowDraftId: ID!, input: TriggerBlockInput!): Block! @join__field(graph: SYMPHONY)
   addTrueFalseBlock(flowDraftId: ID!, input: TrueFalseBlockInput!): Block! @join__field(graph: SYMPHONY)
   addUsersGroup(input: AddUsersGroupInput!): UsersGroup! @join__field(graph: SYMPHONY)
   addVendor(input: AddVendorInput!): Vendor! @join__field(graph: SYMPHONY)
+  addWaitForSignalBlock(flowDraftId: ID!, input: WaitForSignalBlockInput!): Block! @join__field(graph: SYMPHONY)
   addWiFiScans(
     """wifi scan data"""
     data: [SurveyWiFiScanData]!
@@ -6933,6 +7048,12 @@ type PageInfo {
 
   """When paginating forwards, the cursor to continue."""
   startCursor: Cursor
+}
+
+type ParallelBlock {
+  entryPoint: EntryPoint!
+  exitPoint: ExitPoint!
+  internalExitPoint: ExitPoint!
 }
 
 type Parameter implements DefaultConfig {
@@ -10089,6 +10210,12 @@ enum ResourceTypeRelationshipOrderField {
   UPDATED_AT
 }
 
+enum RetryUnit {
+  HOURS
+  MINUTES
+  SECONDS
+}
+
 enum RollbackPolicyConfig {
   APPROVED
   REJECTED
@@ -11154,6 +11281,16 @@ input ServiceTypeEditData {
   properties: [PropertyTypeInput]
 }
 
+enum SignalModule {
+  CONFIGURATION_MANAGEMENT
+  INVENTORY
+}
+
+enum SignalType {
+  CONFIGURATION_MANAGEMENT
+  INVENTORY
+}
+
 input SlotFilterInput {
   slotEndDate: Time!
   slotStartDate: Time!
@@ -11725,6 +11862,33 @@ enum ThresholdOrderField {
 
 scalar Time
 
+enum TimerBehavior {
+  FIXED_INTERVAL
+  SPECIFIC_DATETIME
+}
+
+type TimerBlock {
+  behavior: TimerBehavior!
+  datetime: Time
+  enableExpressionL: Boolean
+  exitPoint: ExitPoint!
+  expression: String
+  seconds: Int
+}
+
+input TimerBlockInput {
+  behavior: TimerBehavior!
+  cid: String!
+  enableExpressionL: Boolean
+  entryPoint: EntryPointInput!
+  exitPoint: ExitPointInput!
+  expression: String
+  params: [VariableExpressionInput!]!
+  seconds: Int
+  specificDatetime: Time
+  uiRepresentation: BlockUIRepresentationInput
+}
+
 type TopologyLink {
   source: Node!
   target: Node!
@@ -11733,6 +11897,11 @@ type TopologyLink {
 
 enum TopologyLinkType {
   PHYSICAL
+}
+
+enum TransfStrategy {
+  MERGE
+  REPLACE
 }
 
 type TriggerBlock {
@@ -12249,6 +12418,14 @@ input UpdateUserGroupsInput {
   removeGroupIds: [ID!]!
 }
 
+enum UrlMethod {
+  DELETE
+  GET
+  PATCH
+  POST
+  PUT
+}
+
 enum UsageSubStatus {
   ASSIGNED
   AVAILABLE
@@ -12540,6 +12717,28 @@ type Viewer {
   permissions: PermissionSettings!
   tenant: String!
   user: User
+}
+
+type WaitForSignalBlock {
+  blocked: Boolean!
+  customFilter: String
+  entryPoint: EntryPoint!
+  exitPoint: ExitPoint!
+  signalModule: SignalModule
+  type: SignalType
+}
+
+input WaitForSignalBlockInput {
+  basicDefinitions: BaseBlockInput!
+  blocked: Boolean!
+  cid: String!
+  customFilter: String
+  entryPoint: EntryPointInput!
+  exitPoint: ExitPointInput!
+  params: [VariableExpressionInput!]!
+  signalModule: SignalModule!
+  type: SignalType!
+  uiRepresentation: BlockUIRepresentationInput
 }
 
 enum WeekDay {
@@ -13041,5 +13240,5 @@ scalar join__FieldSet
 
 enum join__Graph {
   DGRAPHSERVICE @join__graph(name: "dgraphservice" url: "http://dgraph-dgraph-alpha.dgraph.svc.cluster.local:8080/graphql")
-  SYMPHONY @join__graph(name: "symphony" url: "http://graph/query")
+  SYMPHONY @join__graph(name: "symphony" url: "http://symphony-graph/query")
 }

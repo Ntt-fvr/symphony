@@ -224,6 +224,22 @@ func (r blockResolver) Details(ctx context.Context, obj *ent.Block) (models.Bloc
 			WorkOrderType: workOrderType,
 			WorkerType:    workerType,
 		}, nil
+	case block.TypeChoice:
+		var rules []*models.DecisionRoute
+		exitPoints, err := obj.QueryExitPoints().
+			Where(exitpoint.RoleEQ(flowschema.ExitPointRoleDecision)).
+			All(ctx)
+		if err != nil {
+			return nil, fmt.Errorf("failed to query exit points: %w", err)
+		}
+		for _, exitPoint := range exitPoints {
+			rules = append(rules, &models.DecisionRoute{ExitPoint: exitPoint})
+		}
+		return &models.ChoiceBlock{
+			EntryPoint:       entryPoint,
+			DefaultExitPoint: exitPoint,
+			Rules:            rules,
+		}, nil
 	default:
 		return nil, fmt.Errorf("type %q is unknown", obj.Type)
 	}
@@ -659,4 +675,218 @@ func (r mutationResolver) EditBlockInstance(ctx context.Context, input models.Ed
 		SetOutputs(input.Outputs)
 
 	return mutation.Save(ctx)
+}
+
+func (r blockResolver) EnableInputTransformation(ctx context.Context, obj *ent.Block) bool {
+	return obj.EnableInputTransformation
+}
+
+func (r blockResolver) EnableOutputTransformation(ctx context.Context, obj *ent.Block) bool {
+	return obj.EnableOutputTransformation
+}
+
+func (r blockResolver) EnableInputStateTransformation(ctx context.Context, obj *ent.Block) bool {
+	return obj.EnableInputStateTransformation
+}
+
+func (r blockResolver) EnableOutputStateTransformation(ctx context.Context, obj *ent.Block) bool {
+	return obj.EnableOutputTransformation
+}
+
+func (r blockResolver) EnableErrorHandling(ctx context.Context, obj *ent.Block) bool {
+	return obj.EnableErrorHandling
+}
+
+func (r blockResolver) EnableRetryPolicy(ctx context.Context, obj *ent.Block) bool {
+	return obj.EnableRetryPolicy
+}
+
+func (r blockResolver) InputTransfStrategy(ctx context.Context, obj *ent.Block) (*enum.TransfStrategy, error) {
+	client := ent.FromContext(ctx)
+	b, err := client.Block.Get(ctx, obj.ID)
+
+	if err != nil {
+		return nil, fmt.Errorf("has occurred error on process: %w", err)
+	}
+	return (*enum.TransfStrategy)(&b.InputTransfStrategy), nil
+}
+
+func (r blockResolver) OutputTransfStrategy(ctx context.Context, obj *ent.Block) (*enum.TransfStrategy, error) {
+	client := ent.FromContext(ctx)
+	b, err := client.Block.Get(ctx, obj.ID)
+
+	if err != nil {
+		return nil, fmt.Errorf("has occurred error on process: %w", err)
+	}
+	return (*enum.TransfStrategy)(&b.OutputTransfStrategy), nil
+}
+
+func (r blockResolver) InputStateTransfStrategy(ctx context.Context, obj *ent.Block) (*enum.TransfStrategy, error) {
+	client := ent.FromContext(ctx)
+	b, err := client.Block.Get(ctx, obj.ID)
+
+	if err != nil {
+		return nil, fmt.Errorf("has occurred error on process: %w", err)
+	}
+	return (*enum.TransfStrategy)(&b.InputStateTransfStrategy), nil
+}
+
+func (r blockResolver) OutputStateTransfStrategy(ctx context.Context, obj *ent.Block) (*enum.TransfStrategy, error) {
+	client := ent.FromContext(ctx)
+	b, err := client.Block.Get(ctx, obj.ID)
+
+	if err != nil {
+		return nil, fmt.Errorf("has occurred error on process: %w", err)
+	}
+	return (*enum.TransfStrategy)(&b.OutputStateTransfStrategy), nil
+}
+
+func (r blockResolver) BackoffRate(ctx context.Context, obj *ent.Block) (int, error) {
+	client := ent.FromContext(ctx)
+	b, err := client.Block.Get(ctx, obj.ID)
+
+	if err != nil {
+		return b.ID, fmt.Errorf("has occurred error on process: %w", err)
+	}
+	return b.BackOffRate, nil
+}
+
+func (r blockResolver) MaxAttemps(ctx context.Context, obj *ent.Block) (int, error) {
+	client := ent.FromContext(ctx)
+	b, err := client.Block.Get(ctx, obj.ID)
+
+	if err != nil {
+		return b.ID, fmt.Errorf("has occurred error on process: %w", err)
+	}
+	return b.MaxAttemps, nil
+}
+
+func (r blockResolver) RetryInterval(ctx context.Context, obj *ent.Block) (int, error) {
+	client := ent.FromContext(ctx)
+	b, err := client.Block.Get(ctx, obj.ID)
+
+	if err != nil {
+		return b.ID, fmt.Errorf("has occurred error on process: %w", err)
+	}
+	return b.RetryInterval, nil
+}
+
+func (r blockResolver) Units(ctx context.Context, obj *ent.Block) (*models.RetryUnit, error) {
+	client := ent.FromContext(ctx)
+	b, err := client.Block.Get(ctx, obj.ID)
+
+	if err != nil {
+		return nil, fmt.Errorf("has occurred error on process: %w", err)
+	}
+	return (*models.RetryUnit)(&b.RetryUnit), nil
+}
+
+func (r blockResolver) InputStateTransformation(ctx context.Context, obj *ent.Block) (string, error) {
+	return obj.InputStateTransformation, nil
+}
+
+func (r blockResolver) OutputStateTransformation(ctx context.Context, obj *ent.Block) (string, error) {
+	return obj.OutputStateTransformation, nil
+}
+
+func (r blockResolver) InputTransformation(ctx context.Context, obj *ent.Block) (string, error) {
+	return obj.InputTransformation, nil
+}
+
+func (r blockResolver) OutputTransformation(ctx context.Context, obj *ent.Block) (string, error) {
+	return obj.OutputTransformation, nil
+}
+
+func (r mutationResolver) AddChoiceBlock(ctx context.Context, flowDraftID int, input models.ChoiceBlockInput) (*ent.Block, error) {
+	mutation := addBlockMutation(ctx, input.Cid, block.TypeChoice, flowDraftID, input.UIRepresentation)
+	b, err := mutation.Save(ctx)
+	if err != nil {
+		return nil, err
+	}
+	client := r.ClientFrom(ctx)
+	for _, route := range input.Routes {
+		if route.Cid != nil {
+			var inputVariables []*models.VariableExpressionInput
+			inputVariables = append(inputVariables, route.Condition)
+			variableExpressions, err := getBlockVariables(ctx, inputVariables, b.ID)
+			if err != nil {
+				return nil, err
+			}
+			if len(variableExpressions) != 1 {
+				return nil, fmt.Errorf("there is not a condition for route %s", *route.Cid)
+			}
+			if _, err := client.ExitPoint.Create().
+				SetRole(flowschema.ExitPointRoleDecision).
+				SetCid(*route.Cid).
+				SetParentBlockID(b.ID).
+				SetCondition(variableExpressions[0]).
+				Save(ctx); err != nil {
+				return nil, fmt.Errorf("failed to create decision exit points: %w", err)
+			}
+		}
+	}
+	return b, nil
+}
+
+func (r mutationResolver) AddExecuteFlowBlock(ctx context.Context, flowDraftID int, input models.ExecuteFlowBlockInput) (*ent.Block, error) {
+	mutation := addBlockMutation(ctx, input.Cid, block.TypeSubFlow, flowDraftID, input.UIRepresentation)
+	b, err := mutation.SetSubFlowID(input.Flow).
+		Save(ctx)
+	if err != nil {
+		return nil, err
+	}
+	blockVariables, err := getBlockVariables(ctx, input.Params, b.ID)
+	if err != nil {
+		return nil, err
+	}
+	return b.Update().
+		SetInputParams(blockVariables).
+		Save(ctx)
+}
+
+func (r mutationResolver) AddTimerBlock(ctx context.Context, flowDraftID int, input models.TimerBlockInput) (*ent.Block, error) {
+	mutation := addBlockMutation(ctx, input.Cid, block.TypeTimer, flowDraftID, input.UIRepresentation)
+	b, err := mutation.Save(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	return b.Update().
+		SetEnableTimerExpression(*input.EnableExpressionL).
+		SetTimerExpression(*input.Expression).
+		SetTimerBehavior((block.TimerBehavior)(input.Behavior)).
+		SetNillableSeconds(input.Seconds).
+		//SetTimerSpecificDate(input.SpecificDatetime).
+		Save(ctx)
+}
+
+func (r mutationResolver) AddInvokeRestAPIBlock(ctx context.Context, flowDraftID int, input models.InvokeRestAPIBlockInput) (*ent.Block, error) {
+	mutation := addBlockMutation(ctx, input.Cid, block.TypeInvokeRestAPI, flowDraftID, input.UIRepresentation)
+	b, err := mutation.Save(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	return b.Update().
+		SetBody(input.Body).
+		SetConnectionTimeout(input.ConnectionTimeOut).
+		SetHeaders(input.Headers).
+		SetURL(input.URL).
+		SetURLMethod(block.URLMethod(input.Method)).
+		Save(ctx)
+
+}
+
+func (r mutationResolver) AddWaitForSignalBlock(ctx context.Context, flowDraftID int, input models.WaitForSignalBlockInput) (*ent.Block, error) {
+	mutation := addBlockMutation(ctx, input.Cid, block.TypeInvokeRestAPI, flowDraftID, input.UIRepresentation)
+	b, err := mutation.Save(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return b.Update().
+		SetSignalModule((block.SignalModule)(input.SignalModule)).
+		SetSignalType((block.SignalType)(input.Type)).
+		SetCustomFilter(*input.CustomFilter).
+		SetBlockFlow(input.Blocked).
+		Save(ctx)
 }

@@ -14,6 +14,7 @@ import (
 
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/facebook/ent"
+	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
 	"github.com/facebookincubator/symphony/pkg/flowengine/flowschema"
 )
 
@@ -40,6 +41,78 @@ const (
 	FieldInputParams = "input_params"
 	// FieldUIRepresentation holds the string denoting the ui_representation field in the database.
 	FieldUIRepresentation = "ui_representation"
+	// FieldEnableInputTransformation holds the string denoting the enable_input_transformation field in the database.
+	FieldEnableInputTransformation = "enable_input_transformation"
+	// FieldInputTransfStrategy holds the string denoting the input_transf_strategy field in the database.
+	FieldInputTransfStrategy = "input_transf_strategy"
+	// FieldInputTransformation holds the string denoting the input_transformation field in the database.
+	FieldInputTransformation = "input_transformation"
+	// FieldEnableOutputTransformation holds the string denoting the enable_output_transformation field in the database.
+	FieldEnableOutputTransformation = "enable_output_transformation"
+	// FieldOutputTransfStrategy holds the string denoting the output_transf_strategy field in the database.
+	FieldOutputTransfStrategy = "output_transf_strategy"
+	// FieldOutputTransformation holds the string denoting the output_transformation field in the database.
+	FieldOutputTransformation = "output_transformation"
+	// FieldEnableInputStateTransformation holds the string denoting the enable_input_state_transformation field in the database.
+	FieldEnableInputStateTransformation = "enable_input_state_transformation"
+	// FieldInputStateTransfStrategy holds the string denoting the input_state_transf_strategy field in the database.
+	FieldInputStateTransfStrategy = "input_state_transf_strategy"
+	// FieldInputStateTransformation holds the string denoting the input_state_transformation field in the database.
+	FieldInputStateTransformation = "input_state_transformation"
+	// FieldEnableOutputStateTransformation holds the string denoting the enable_output_state_transformation field in the database.
+	FieldEnableOutputStateTransformation = "enable_output_state_transformation"
+	// FieldOutputStateTransfStrategy holds the string denoting the output_state_transf_strategy field in the database.
+	FieldOutputStateTransfStrategy = "output_state_transf_strategy"
+	// FieldOutputStateTransformation holds the string denoting the output_state_transformation field in the database.
+	FieldOutputStateTransformation = "output_state_transformation"
+	// FieldEnableErrorHandling holds the string denoting the enable_error_handling field in the database.
+	FieldEnableErrorHandling = "enable_error_handling"
+	// FieldEnableRetryPolicy holds the string denoting the enable_retry_policy field in the database.
+	FieldEnableRetryPolicy = "enable_retry_policy"
+	// FieldRetryInterval holds the string denoting the retryinterval field in the database.
+	FieldRetryInterval = "retry_interval"
+	// FieldRetryUnit holds the string denoting the retry_unit field in the database.
+	FieldRetryUnit = "retry_unit"
+	// FieldMaxAttemps holds the string denoting the maxattemps field in the database.
+	FieldMaxAttemps = "max_attemps"
+	// FieldBackOffRate holds the string denoting the backoffrate field in the database.
+	FieldBackOffRate = "back_off_rate"
+	// FieldTimerBehavior holds the string denoting the timer_behavior field in the database.
+	FieldTimerBehavior = "timer_behavior"
+	// FieldSeconds holds the string denoting the seconds field in the database.
+	FieldSeconds = "seconds"
+	// FieldEnableTimerExpression holds the string denoting the enable_timer_expression field in the database.
+	FieldEnableTimerExpression = "enable_timer_expression"
+	// FieldTimerExpression holds the string denoting the timer_expression field in the database.
+	FieldTimerExpression = "timer_expression"
+	// FieldTimerSpecificDate holds the string denoting the timer_specific_date field in the database.
+	FieldTimerSpecificDate = "timer_specific_date"
+	// FieldURLMethod holds the string denoting the url_method field in the database.
+	FieldURLMethod = "url_method"
+	// FieldURL holds the string denoting the url field in the database.
+	FieldURL = "url"
+	// FieldConnectionTimeout holds the string denoting the connection_timeout field in the database.
+	FieldConnectionTimeout = "connection_timeout"
+	// FieldBody holds the string denoting the body field in the database.
+	FieldBody = "body"
+	// FieldHeaders holds the string denoting the headers field in the database.
+	FieldHeaders = "headers"
+	// FieldSignalType holds the string denoting the signal_type field in the database.
+	FieldSignalType = "signal_type"
+	// FieldSignalModule holds the string denoting the signal_module field in the database.
+	FieldSignalModule = "signal_module"
+	// FieldCustomFilter holds the string denoting the custom_filter field in the database.
+	FieldCustomFilter = "custom_filter"
+	// FieldBlockFlow holds the string denoting the block_flow field in the database.
+	FieldBlockFlow = "block_flow"
+	// FieldKafkaBrokers holds the string denoting the kafka_brokers field in the database.
+	FieldKafkaBrokers = "kafka_brokers"
+	// FieldKafkaTopic holds the string denoting the kafka_topic field in the database.
+	FieldKafkaTopic = "kafka_topic"
+	// FieldKafkaMessage holds the string denoting the kafka_message field in the database.
+	FieldKafkaMessage = "kafka_message"
+	// FieldKafkaMessageType holds the string denoting the kafka_message_type field in the database.
+	FieldKafkaMessageType = "kafka_message_type"
 
 	// EdgeFlow holds the string denoting the flow edge name in mutations.
 	EdgeFlow = "flow"
@@ -133,6 +206,42 @@ var Columns = []string{
 	FieldStartParamDefinitions,
 	FieldInputParams,
 	FieldUIRepresentation,
+	FieldEnableInputTransformation,
+	FieldInputTransfStrategy,
+	FieldInputTransformation,
+	FieldEnableOutputTransformation,
+	FieldOutputTransfStrategy,
+	FieldOutputTransformation,
+	FieldEnableInputStateTransformation,
+	FieldInputStateTransfStrategy,
+	FieldInputStateTransformation,
+	FieldEnableOutputStateTransformation,
+	FieldOutputStateTransfStrategy,
+	FieldOutputStateTransformation,
+	FieldEnableErrorHandling,
+	FieldEnableRetryPolicy,
+	FieldRetryInterval,
+	FieldRetryUnit,
+	FieldMaxAttemps,
+	FieldBackOffRate,
+	FieldTimerBehavior,
+	FieldSeconds,
+	FieldEnableTimerExpression,
+	FieldTimerExpression,
+	FieldTimerSpecificDate,
+	FieldURLMethod,
+	FieldURL,
+	FieldConnectionTimeout,
+	FieldBody,
+	FieldHeaders,
+	FieldSignalType,
+	FieldSignalModule,
+	FieldCustomFilter,
+	FieldBlockFlow,
+	FieldKafkaBrokers,
+	FieldKafkaTopic,
+	FieldKafkaMessage,
+	FieldKafkaMessageType,
 }
 
 // ForeignKeys holds the SQL foreign-keys that are owned by the Block type.
@@ -183,14 +292,23 @@ type Type string
 
 // Type values.
 const (
-	TypeStart     Type = "START"
-	TypeEnd       Type = "END"
-	TypeDecision  Type = "DECISION"
-	TypeSubFlow   Type = "SUB_FLOW"
-	TypeGoTo      Type = "GO_TO"
-	TypeTrigger   Type = "TRIGGER"
-	TypeAction    Type = "ACTION"
-	TypeTrueFalse Type = "TRUE_FALSE"
+	TypeStart         Type = "START"
+	TypeEnd           Type = "END"
+	TypeDecision      Type = "DECISION"
+	TypeSubFlow       Type = "SUB_FLOW"
+	TypeGoTo          Type = "GO_TO"
+	TypeTrigger       Type = "TRIGGER"
+	TypeAction        Type = "ACTION"
+	TypeTrueFalse     Type = "TRUE_FALSE"
+	TypeChoice        Type = "CHOICE"
+	TypeExecuteFlow   Type = "EXECUTE_FLOW"
+	TypeNetworkAction Type = "NETWORK_ACTION"
+	TypeTimer         Type = "TIMER"
+	TypeInvokeRestAPI Type = "INVOKE_REST_API"
+	TypeWaitForSignal Type = "WAIT_FOR_SIGNAL"
+	TypeForEach       Type = "FOREACH"
+	TypeParallel      Type = "PARALLEL"
+	TypeKafka         Type = "KAFKA"
 )
 
 func (_type Type) String() string {
@@ -200,7 +318,7 @@ func (_type Type) String() string {
 // TypeValidator is a validator for the "type" field enum values. It is called by the builders before save.
 func TypeValidator(_type Type) error {
 	switch _type {
-	case TypeStart, TypeEnd, TypeDecision, TypeSubFlow, TypeGoTo, TypeTrigger, TypeAction, TypeTrueFalse:
+	case TypeStart, TypeEnd, TypeDecision, TypeSubFlow, TypeGoTo, TypeTrigger, TypeAction, TypeTrueFalse, TypeChoice, TypeExecuteFlow, TypeNetworkAction, TypeTimer, TypeInvokeRestAPI, TypeWaitForSignal, TypeForEach, TypeParallel, TypeKafka:
 		return nil
 	default:
 		return fmt.Errorf("block: invalid enum value for type field: %q", _type)
@@ -224,6 +342,178 @@ func TriggerTypeValidator(tt flowschema.TriggerTypeID) error {
 		return nil
 	default:
 		return fmt.Errorf("block: invalid enum value for trigger_type field: %q", tt)
+	}
+}
+
+// InputTransfStrategyValidator is a validator for the "input_transf_strategy" field enum values. It is called by the builders before save.
+func InputTransfStrategyValidator(its enum.TransfStrategy) error {
+	switch its {
+	case "replace", "merge":
+		return nil
+	default:
+		return fmt.Errorf("block: invalid enum value for input_transf_strategy field: %q", its)
+	}
+}
+
+// OutputTransfStrategyValidator is a validator for the "output_transf_strategy" field enum values. It is called by the builders before save.
+func OutputTransfStrategyValidator(ots enum.TransfStrategy) error {
+	switch ots {
+	case "replace", "merge":
+		return nil
+	default:
+		return fmt.Errorf("block: invalid enum value for output_transf_strategy field: %q", ots)
+	}
+}
+
+// InputStateTransfStrategyValidator is a validator for the "input_state_transf_strategy" field enum values. It is called by the builders before save.
+func InputStateTransfStrategyValidator(ists enum.TransfStrategy) error {
+	switch ists {
+	case "replace", "merge":
+		return nil
+	default:
+		return fmt.Errorf("block: invalid enum value for input_state_transf_strategy field: %q", ists)
+	}
+}
+
+// OutputStateTransfStrategyValidator is a validator for the "output_state_transf_strategy" field enum values. It is called by the builders before save.
+func OutputStateTransfStrategyValidator(osts enum.TransfStrategy) error {
+	switch osts {
+	case "replace", "merge":
+		return nil
+	default:
+		return fmt.Errorf("block: invalid enum value for output_state_transf_strategy field: %q", osts)
+	}
+}
+
+// RetryUnit defines the type for the retry_unit enum field.
+type RetryUnit string
+
+// RetryUnit values.
+const (
+	RetryUnitSECONDS RetryUnit = "seconds"
+	RetryUnitMINUTES RetryUnit = "minutes"
+	RetryUnitHOURS   RetryUnit = "hours"
+)
+
+func (ru RetryUnit) String() string {
+	return string(ru)
+}
+
+// RetryUnitValidator is a validator for the "retry_unit" field enum values. It is called by the builders before save.
+func RetryUnitValidator(ru RetryUnit) error {
+	switch ru {
+	case RetryUnitSECONDS, RetryUnitMINUTES, RetryUnitHOURS:
+		return nil
+	default:
+		return fmt.Errorf("block: invalid enum value for retry_unit field: %q", ru)
+	}
+}
+
+// TimerBehavior defines the type for the timer_behavior enum field.
+type TimerBehavior string
+
+// TimerBehavior values.
+const (
+	TimerBehaviorFIXED_INTERVAL    TimerBehavior = "fixed_interval"
+	TimerBehaviorSPECIFIC_DATETIME TimerBehavior = "specific_time"
+)
+
+func (tb TimerBehavior) String() string {
+	return string(tb)
+}
+
+// TimerBehaviorValidator is a validator for the "timer_behavior" field enum values. It is called by the builders before save.
+func TimerBehaviorValidator(tb TimerBehavior) error {
+	switch tb {
+	case TimerBehaviorFIXED_INTERVAL, TimerBehaviorSPECIFIC_DATETIME:
+		return nil
+	default:
+		return fmt.Errorf("block: invalid enum value for timer_behavior field: %q", tb)
+	}
+}
+
+// URLMethod defines the type for the url_method enum field.
+type URLMethod string
+
+// URLMethod values.
+const (
+	URLMethodPOST   URLMethod = "post"
+	URLMethodGET    URLMethod = "get"
+	URLMethodPUT    URLMethod = "put"
+	URLMethodDELETE URLMethod = "delete"
+	URLMethodPATCH  URLMethod = "patch"
+)
+
+func (um URLMethod) String() string {
+	return string(um)
+}
+
+// URLMethodValidator is a validator for the "url_method" field enum values. It is called by the builders before save.
+func URLMethodValidator(um URLMethod) error {
+	switch um {
+	case URLMethodPOST, URLMethodGET, URLMethodPUT, URLMethodDELETE, URLMethodPATCH:
+		return nil
+	default:
+		return fmt.Errorf("block: invalid enum value for url_method field: %q", um)
+	}
+}
+
+// SignalType defines the type for the signal_type enum field.
+type SignalType string
+
+// SignalType values.
+const (
+	SignalTypeNOTIFICATION SignalType = "notification"
+	SignalTypeWOCREATION   SignalType = "wo_creation"
+	SignalTypeCRCREATION   SignalType = "cr_creation"
+	SignalTypeWOUPDATE     SignalType = "wo_update"
+	SignalTypeCRUPDATE     SignalType = "cr_update"
+)
+
+func (st SignalType) String() string {
+	return string(st)
+}
+
+// SignalTypeValidator is a validator for the "signal_type" field enum values. It is called by the builders before save.
+func SignalTypeValidator(st SignalType) error {
+	switch st {
+	case SignalTypeNOTIFICATION, SignalTypeWOCREATION, SignalTypeCRCREATION, SignalTypeWOUPDATE, SignalTypeCRUPDATE:
+		return nil
+	default:
+		return fmt.Errorf("block: invalid enum value for signal_type field: %q", st)
+	}
+}
+
+// SignalModule defines the type for the signal_module enum field.
+type SignalModule string
+
+// SignalModule values.
+const (
+	SignalModuleINVENTORY SignalModule = "inventory"
+	SignalModuleCM        SignalModule = "cm"
+)
+
+func (sm SignalModule) String() string {
+	return string(sm)
+}
+
+// SignalModuleValidator is a validator for the "signal_module" field enum values. It is called by the builders before save.
+func SignalModuleValidator(sm SignalModule) error {
+	switch sm {
+	case SignalModuleINVENTORY, SignalModuleCM:
+		return nil
+	default:
+		return fmt.Errorf("block: invalid enum value for signal_module field: %q", sm)
+	}
+}
+
+// KafkaMessageTypeValidator is a validator for the "kafka_message_type" field enum values. It is called by the builders before save.
+func KafkaMessageTypeValidator(kmt enum.KafkaMessageType) error {
+	switch kmt {
+	case "expression", "input", "state":
+		return nil
+	default:
+		return fmt.Errorf("block: invalid enum value for kafka_message_type field: %q", kmt)
 	}
 }
 
@@ -257,4 +547,129 @@ var (
 	_ graphql.Marshaler = flowschema.TriggerTypeID("")
 	// flowschema.TriggerTypeID must implement graphql.Unmarshaler.
 	_ graphql.Unmarshaler = (*flowschema.TriggerTypeID)(nil)
+)
+
+var (
+	// enum.TransfStrategy must implement graphql.Marshaler.
+	_ graphql.Marshaler = enum.TransfStrategy("")
+	// enum.TransfStrategy must implement graphql.Unmarshaler.
+	_ graphql.Unmarshaler = (*enum.TransfStrategy)(nil)
+)
+
+var (
+	// enum.TransfStrategy must implement graphql.Marshaler.
+	_ graphql.Marshaler = enum.TransfStrategy("")
+	// enum.TransfStrategy must implement graphql.Unmarshaler.
+	_ graphql.Unmarshaler = (*enum.TransfStrategy)(nil)
+)
+
+var (
+	// enum.TransfStrategy must implement graphql.Marshaler.
+	_ graphql.Marshaler = enum.TransfStrategy("")
+	// enum.TransfStrategy must implement graphql.Unmarshaler.
+	_ graphql.Unmarshaler = (*enum.TransfStrategy)(nil)
+)
+
+var (
+	// enum.TransfStrategy must implement graphql.Marshaler.
+	_ graphql.Marshaler = enum.TransfStrategy("")
+	// enum.TransfStrategy must implement graphql.Unmarshaler.
+	_ graphql.Unmarshaler = (*enum.TransfStrategy)(nil)
+)
+
+// MarshalGQL implements graphql.Marshaler interface.
+func (ru RetryUnit) MarshalGQL(w io.Writer) {
+	io.WriteString(w, strconv.Quote(ru.String()))
+}
+
+// UnmarshalGQL implements graphql.Unmarshaler interface.
+func (ru *RetryUnit) UnmarshalGQL(val interface{}) error {
+	str, ok := val.(string)
+	if !ok {
+		return fmt.Errorf("enum %T must be a string", val)
+	}
+	*ru = RetryUnit(str)
+	if err := RetryUnitValidator(*ru); err != nil {
+		return fmt.Errorf("%s is not a valid RetryUnit", str)
+	}
+	return nil
+}
+
+// MarshalGQL implements graphql.Marshaler interface.
+func (tb TimerBehavior) MarshalGQL(w io.Writer) {
+	io.WriteString(w, strconv.Quote(tb.String()))
+}
+
+// UnmarshalGQL implements graphql.Unmarshaler interface.
+func (tb *TimerBehavior) UnmarshalGQL(val interface{}) error {
+	str, ok := val.(string)
+	if !ok {
+		return fmt.Errorf("enum %T must be a string", val)
+	}
+	*tb = TimerBehavior(str)
+	if err := TimerBehaviorValidator(*tb); err != nil {
+		return fmt.Errorf("%s is not a valid TimerBehavior", str)
+	}
+	return nil
+}
+
+// MarshalGQL implements graphql.Marshaler interface.
+func (um URLMethod) MarshalGQL(w io.Writer) {
+	io.WriteString(w, strconv.Quote(um.String()))
+}
+
+// UnmarshalGQL implements graphql.Unmarshaler interface.
+func (um *URLMethod) UnmarshalGQL(val interface{}) error {
+	str, ok := val.(string)
+	if !ok {
+		return fmt.Errorf("enum %T must be a string", val)
+	}
+	*um = URLMethod(str)
+	if err := URLMethodValidator(*um); err != nil {
+		return fmt.Errorf("%s is not a valid URLMethod", str)
+	}
+	return nil
+}
+
+// MarshalGQL implements graphql.Marshaler interface.
+func (st SignalType) MarshalGQL(w io.Writer) {
+	io.WriteString(w, strconv.Quote(st.String()))
+}
+
+// UnmarshalGQL implements graphql.Unmarshaler interface.
+func (st *SignalType) UnmarshalGQL(val interface{}) error {
+	str, ok := val.(string)
+	if !ok {
+		return fmt.Errorf("enum %T must be a string", val)
+	}
+	*st = SignalType(str)
+	if err := SignalTypeValidator(*st); err != nil {
+		return fmt.Errorf("%s is not a valid SignalType", str)
+	}
+	return nil
+}
+
+// MarshalGQL implements graphql.Marshaler interface.
+func (sm SignalModule) MarshalGQL(w io.Writer) {
+	io.WriteString(w, strconv.Quote(sm.String()))
+}
+
+// UnmarshalGQL implements graphql.Unmarshaler interface.
+func (sm *SignalModule) UnmarshalGQL(val interface{}) error {
+	str, ok := val.(string)
+	if !ok {
+		return fmt.Errorf("enum %T must be a string", val)
+	}
+	*sm = SignalModule(str)
+	if err := SignalModuleValidator(*sm); err != nil {
+		return fmt.Errorf("%s is not a valid SignalModule", str)
+	}
+	return nil
+}
+
+var (
+	// enum.KafkaMessageType must implement graphql.Marshaler.
+	_ graphql.Marshaler = enum.KafkaMessageType("")
+	// enum.KafkaMessageType must implement graphql.Unmarshaler.
+	_ graphql.Unmarshaler = (*enum.KafkaMessageType)(nil)
 )

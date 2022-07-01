@@ -5868,6 +5868,20 @@ type TriggerType
   variables: [VariableDefinition!]!
 }
 
+enum TransfStrategy
+@goModel(
+    model: "github.com/facebookincubator/symphony/pkg/ent/schema/enum.TransfStrategy"
+  ){
+  REPLACE
+  MERGE
+}
+
+enum RetryUnit {
+  SECONDS
+  MINUTES
+  HOURS
+}
+
 # Block definitions
 
 type Block implements Node {
@@ -5879,6 +5893,24 @@ type Block implements Node {
   inputParamDefinitions: [VariableDefinition!]!
   outputParamDefinitions: [VariableDefinition!]!
   uiRepresentation: BlockUIRepresentation
+  enableInputTransformation: Boolean!
+  inputTransfStrategy: TransfStrategy
+  inputTransformation: String
+  enableOutputTransformation: Boolean!
+  outputTransfStrategy: TransfStrategy
+  outputTransformation: String
+  enableInputStateTransformation: Boolean!
+  inputStateTransfStrategy: TransfStrategy
+  inputStateTransformation: String
+  enableOutputStateTransformation: Boolean!
+  outputStateTransfStrategy: TransfStrategy
+  outputStateTransformation: String
+  enableErrorHandling: Boolean
+  enableRetryPolicy: Boolean
+  retryInterval: Int
+  units: RetryUnit
+  maxAttemps: Int 
+  backoffRate: Int
 }
 
 type BlockVariable
@@ -6033,6 +6065,87 @@ type ActionBlock {
   workerType: WorkerType
 }
 
+enum GoToType{
+  ORIGIN
+  DESTINATION
+}
+
+type ChoiceBlock {
+  entryPoint: EntryPoint!
+  defaultExitPoint: ExitPoint!
+  rules: [DecisionRoute!]!
+}
+
+enum TimerBehavior{
+  FIXED_INTERVAL
+  SPECIFIC_DATETIME
+}
+
+type TimerBlock {
+  behavior: TimerBehavior!
+  seconds: Int
+  datetime: Time
+  enableExpressionL: Boolean
+  expression: String
+  exitPoint: ExitPoint!
+}
+
+type ExecuteFlowBlock {
+  flow: Flow
+  params: [VariableExpression!]!
+  entryPoint: EntryPoint!
+  exitPoint: ExitPoint!
+}
+
+enum UrlMethod {
+  GET
+  POST
+  PUT
+  DELETE
+  PATCH
+}
+
+type InvokeRestAPIBlock {
+  entryPoint: EntryPoint!
+  method: UrlMethod!
+  url: String!
+  connectionTimeOut: Int!
+  body: String!
+  headers: [VariableValue!]!
+  exitPoint: ExitPoint!
+}
+
+type ForEachBlock {
+  entryPoint: EntryPoint!
+  internalExitPoint: ExitPoint!
+  exitPoint: ExitPoint!
+}
+
+type ParallelBlock {
+  entryPoint: EntryPoint!
+  internalExitPoint: ExitPoint!
+  exitPoint: ExitPoint!
+}
+
+enum SignalType {
+  INVENTORY
+  CONFIGURATION_MANAGEMENT
+}
+
+enum SignalModule {
+  INVENTORY
+  CONFIGURATION_MANAGEMENT
+}
+
+type WaitForSignalBlock {
+  entryPoint: EntryPoint!
+  exitPoint: ExitPoint!
+  type: SignalType
+  signalModule: SignalModule
+  customFilter: String
+  blocked: Boolean!
+}
+
 union BlockDetails =
     StartBlock
   | EndBlock
@@ -6042,6 +6155,15 @@ union BlockDetails =
   | TriggerBlock
   | ActionBlock
   | TrueFalseBlock
+  | ChoiceBlock
+  | TimerBlock
+  | WaitForSignalBlock
+  | InvokeRestAPIBlock
+  | ExecuteFlowBlock
+  | ForEachBlock
+  | ParallelBlock
+
+
 
 input StartBlockInput {
   cid: String!
@@ -6074,6 +6196,7 @@ input TrueFalseBlockInput {
 input GotoBlockInput {
   cid: String!
   targetBlockCid: String
+  type: GoToType!
   uiRepresentation: BlockUIRepresentationInput
 }
 
@@ -6120,6 +6243,86 @@ type Connector {
   target: EntryPoint!
 }
 
+input BaseBlockInput {
+  enableInputTransformation: Boolean!
+  inputTransfStrategy: TransfStrategy
+  inputParamDefinitions: String
+  enableOutputTransformation: Boolean!
+  outputTransfStrategy: TransfStrategy
+  outputParamDefinitions: String
+  enableInputStateTransformation: Boolean!
+  inputStateTransfStrategy: TransfStrategy
+  inputStateParamDefinitions: String
+  enableOutputStateTransformation: Boolean!
+  outputStateTransfStrategy: TransfStrategy
+  outputStateParamDefinitions: String
+  enableErrorHandling: Boolean
+  enableRetryPolicy: Boolean
+  retryInterval: Int
+  units: RetryUnit
+  maxAttemps: Int
+  backoffRate: Int
+}
+
+
+input ChoiceBlockInput {
+  cid: String!
+  entryPoint: EntryPointInput!
+  routes: [DecisionRouteInput!]
+  basicDefinitions: BaseBlockInput!
+  uiRepresentation: BlockUIRepresentationInput
+}
+
+input TimerBlockInput {
+  cid: String!
+  exitPoint: ExitPointInput!
+  entryPoint: EntryPointInput!
+  behavior: TimerBehavior!
+  seconds: Int
+  specificDatetime: Time
+  enableExpressionL: Boolean
+  expression: String
+  params: [VariableExpressionInput!]!
+  uiRepresentation: BlockUIRepresentationInput
+}
+
+input WaitForSignalBlockInput {
+  cid: String!
+  entryPoint: EntryPointInput!
+  exitPoint: ExitPointInput!
+  type: SignalType!
+  signalModule: SignalModule!
+  customFilter: String
+  blocked: Boolean!
+  params: [VariableExpressionInput!]!
+  basicDefinitions: BaseBlockInput!
+  uiRepresentation: BlockUIRepresentationInput
+}
+
+input InvokeRestAPIBlockInput {
+  cid: String!
+  entryPoint: EntryPointInput!
+  exitPoint: ExitPointInput!
+  method: UrlMethod!
+  url: String!
+  connectionTimeOut: Int!
+  body: String!
+  headers: [VariableValueInput]!
+  basicDefinitions: BaseBlockInput!
+  params: [VariableExpressionInput!]!
+  uiRepresentation: BlockUIRepresentationInput
+}
+
+input ExecuteFlowBlockInput {
+  cid: String!
+  entryPoint: EntryPointInput!
+  exitPoint: ExitPointInput!
+  flow: ID!
+  params: [VariableExpressionInput!]!
+  basicDefinitions: BaseBlockInput!
+  uiRepresentation: BlockUIRepresentationInput
+}
+
 input ImportFlowDraftInput {
   id: ID!
   name: String!
@@ -6133,6 +6336,11 @@ input ImportFlowDraftInput {
   triggerBlocks: [TriggerBlockInput!]
   actionBlocks: [ActionBlockInput!]
   trueFalseBlocks: [TrueFalseBlockInput!]
+  choiceBlocks: [ChoiceBlockInput!]
+  executeFlowBlocks: [ExecuteFlowBlockInput!]
+  timerBlocks: [TimerBlockInput!]
+  waitForSignalBlocks: [WaitForSignalBlockInput!]
+  invokeRestAPIBlocks: [InvokeRestAPIBlockInput!]
   connectors: [ConnectorInput!]
 }
 
@@ -8070,6 +8278,11 @@ type Mutation {
   addTriggerBlock(flowDraftId: ID!, input: TriggerBlockInput!): Block!
   addActionBlock(flowDraftId: ID!, input: ActionBlockInput!): Block!
   addTrueFalseBlock(flowDraftId: ID!, input: TrueFalseBlockInput!): Block!
+  addChoiceBlock(flowDraftId: ID!, input: ChoiceBlockInput!): Block!
+  addExecuteFlowBlock(flowDraftId: ID!, input: ExecuteFlowBlockInput!): Block!
+  addTimerBlock(flowDraftId: ID!, input: TimerBlockInput!): Block!
+  addInvokeRestAPIBlock(flowDraftId: ID!, input: InvokeRestAPIBlockInput!): Block!
+  addWaitForSignalBlock(flowDraftId: ID!, input: WaitForSignalBlockInput!): Block!
   editBlock(input: EditBlockInput!): Block!
   deleteBlock(id: ID!): Boolean!
   addConnector(flowDraftId: ID!, input: ConnectorInput!): Connector!
