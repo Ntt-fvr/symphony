@@ -1272,7 +1272,7 @@ type ImportFlowDraftInput struct {
 	TriggerBlocks       []*TriggerBlockInput             `json:"triggerBlocks"`
 	ActionBlocks        []*ActionBlockInput              `json:"actionBlocks"`
 	TrueFalseBlocks     []*TrueFalseBlockInput           `json:"trueFalseBlocks"`
-	ChoiceBlocks        []*DecisionBlockInput            `json:"choiceBlocks"`
+	ChoiceBlocks        []*ChoiceBlockInput              `json:"choiceBlocks"`
 	ExecuteFlowBlocks   []*ExecuteFlowBlockInput         `json:"executeFlowBlocks"`
 	TimerBlocks         []*TimerBlockInput               `json:"timerBlocks"`
 	WaitForSignalBlocks []*WaitForSignalBlockInput       `json:"waitForSignalBlocks"`
@@ -1302,6 +1302,7 @@ type InvokeRestAPIBlockInput struct {
 	Body              string                            `json:"body"`
 	Headers           []*flowschema.VariableValue       `json:"headers"`
 	BasicDefinitions  *BaseBlockInput                   `json:"basicDefinitions"`
+	Params            []*VariableExpressionInput        `json:"params"`
 	UIRepresentation  *flowschema.BlockUIRepresentation `json:"uiRepresentation"`
 }
 
@@ -1843,6 +1844,7 @@ type TimerBlockInput struct {
 	SpecificDatetime  *time.Time                        `json:"specificDatetime"`
 	EnableExpressionL *bool                             `json:"enableExpressionL"`
 	Expression        *string                           `json:"expression"`
+	Params            []*VariableExpressionInput        `json:"params"`
 	UIRepresentation  *flowschema.BlockUIRepresentation `json:"uiRepresentation"`
 }
 
@@ -1956,7 +1958,7 @@ type WaitForSignalBlockInput struct {
 	SignalModule     SignalModule                      `json:"signalModule"`
 	CustomFilter     *string                           `json:"customFilter"`
 	Blocked          bool                              `json:"blocked"`
-	BackoffRate      *int                              `json:"backoffRate"`
+	Params           []*VariableExpressionInput        `json:"params"`
 	BasicDefinitions *BaseBlockInput                   `json:"basicDefinitions"`
 	UIRepresentation *flowschema.BlockUIRepresentation `json:"uiRepresentation"`
 }

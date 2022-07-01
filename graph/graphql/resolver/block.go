@@ -876,3 +876,17 @@ func (r mutationResolver) AddInvokeRestAPIBlock(ctx context.Context, flowDraftID
 		Save(ctx)
 
 }
+
+func (r mutationResolver) AddWaitForSignalBlock(ctx context.Context, flowDraftID int, input models.WaitForSignalBlockInput) (*ent.Block, error) {
+	mutation := addBlockMutation(ctx, input.Cid, block.TypeInvokeRestAPI, flowDraftID, input.UIRepresentation)
+	b, err := mutation.Save(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return b.Update().
+		SetSignalModule((block.SignalModule)(input.SignalModule)).
+		SetSignalType((block.SignalType)(input.Type)).
+		SetCustomFilter(*input.CustomFilter).
+		SetBlockFlow(input.Blocked).
+		Save(ctx)
+}

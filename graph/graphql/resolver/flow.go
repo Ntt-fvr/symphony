@@ -271,7 +271,7 @@ func (r mutationResolver) collectBlockVariables(input models.ImportFlowDraftInpu
 			blockVariableInputs = append(blockVariableInputs, route.Condition.BlockVariables...)
 		}
 	}
-	/*for _, blk := range input.ExecuteFlowBlocks {
+	for _, blk := range input.ExecuteFlowBlocks {
 		for _, variableExpression := range blk.Params {
 			blockVariableInputs = append(blockVariableInputs, variableExpression.BlockVariables...)
 		}
@@ -290,7 +290,7 @@ func (r mutationResolver) collectBlockVariables(input models.ImportFlowDraftInpu
 		for _, variableExpression := range blk.Params {
 			blockVariableInputs = append(blockVariableInputs, variableExpression.BlockVariables...)
 		}
-	}*/
+	}
 
 	return blockVariableInputs
 }
@@ -567,7 +567,35 @@ func (r mutationResolver) importBlocks(ctx context.Context, input models.ImportF
 				} else {
 					newBlockInputs = append(newBlockInputs, blkInput)
 				}
+			case *models.TimerBlockInput:
+				if ok := r.paramsHaveDependencies(blkInput.Params, createdBlockCIDs); ok {
+					if _, err := r.AddTimerBlock(ctx, input.ID, *blkInput); err != nil {
+						return err
+					}
+					createdBlockCIDs[blkInput.Cid] = struct{}{}
+				} else {
+					newBlockInputs = append(newBlockInputs, blkInput)
+				}
+			case *models.InvokeRestAPIBlockInput:
+				if ok := r.paramsHaveDependencies(blkInput.Params, createdBlockCIDs); ok {
+					if _, err := r.AddInvokeRestAPIBlock(ctx, input.ID, *blkInput); err != nil {
+						return err
+					}
+					createdBlockCIDs[blkInput.Cid] = struct{}{}
+				} else {
+					newBlockInputs = append(newBlockInputs, blkInput)
+				}
+			case *models.WaitForSignalBlockInput:
+				if ok := r.paramsHaveDependencies(blkInput.Params, createdBlockCIDs); ok {
+					if _, err := r.AddWaitForSignalBlock(ctx, input.ID, *blkInput); err != nil {
+						return err
+					}
+					createdBlockCIDs[blkInput.Cid] = struct{}{}
+				} else {
+					newBlockInputs = append(newBlockInputs, blkInput)
+				}
 			}
+
 		}
 		if len(blockInputs) == len(newBlockInputs) {
 			return fmt.Errorf("there is circular dependency between blocks or dependency doesn't exist. num=%d", len(blockInputs))

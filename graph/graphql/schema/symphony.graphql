@@ -5918,6 +5918,7 @@ input TimerBlockInput {
   specificDatetime: Time
   enableExpressionL: Boolean
   expression: String
+  params: [VariableExpressionInput!]!
   uiRepresentation: BlockUIRepresentationInput
 }
 
@@ -5929,7 +5930,7 @@ input WaitForSignalBlockInput {
   signalModule: SignalModule!
   customFilter: String
   blocked: Boolean!
-  backoffRate: Int
+  params: [VariableExpressionInput!]!
   basicDefinitions: BaseBlockInput!
   uiRepresentation: BlockUIRepresentationInput
 }
@@ -5944,6 +5945,7 @@ input InvokeRestAPIBlockInput {
   body: String!
   headers: [VariableValueInput]!
   basicDefinitions: BaseBlockInput!
+  params: [VariableExpressionInput!]!
   uiRepresentation: BlockUIRepresentationInput
 }
 
@@ -5970,7 +5972,7 @@ input ImportFlowDraftInput {
   triggerBlocks: [TriggerBlockInput!]
   actionBlocks: [ActionBlockInput!]
   trueFalseBlocks: [TrueFalseBlockInput!]
-  choiceBlocks: [DecisionBlockInput!]
+  choiceBlocks: [ChoiceBlockInput!]
   executeFlowBlocks: [ExecuteFlowBlockInput!]
   timerBlocks: [TimerBlockInput!]
   waitForSignalBlocks: [WaitForSignalBlockInput!]
@@ -7746,6 +7748,7 @@ type Mutation {
   addExecuteFlowBlock(flowDraftId: ID!, input: ExecuteFlowBlockInput!): Block!
   addTimerBlock(flowDraftId: ID!, input: TimerBlockInput!): Block!
   addInvokeRestAPIBlock(flowDraftId: ID!, input: InvokeRestAPIBlockInput!): Block!
+  addWaitForSignalBlock(flowDraftId: ID!, input: WaitForSignalBlockInput!): Block!
   editBlock(input: EditBlockInput!): Block!
   deleteBlock(id: ID!): Boolean!
   addConnector(flowDraftId: ID!, input: ConnectorInput!): Connector!
