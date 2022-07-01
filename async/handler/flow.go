@@ -43,9 +43,9 @@ func (f FlowHandler) Handle(ctx context.Context, _ log.Logger, evt ev.EventObjec
 		ID:                           worker.GetGlobalWorkflowID(ctx, entry.CurrState.ID),
 		TaskList:                     worker.TaskListName,
 		ExecutionStartToCloseTimeout: 365 * 24 * time.Hour,
-	}, worker.RunFlowWorkflowName,
+	}, worker.RunFlowWorkflowName, ctx, worker.TaskListName,
 		worker.RunFlowInput{
 			FlowInstanceID: entry.CurrState.ID,
-		})
+		}, map[string]interface{}{})
 	return err
 }
