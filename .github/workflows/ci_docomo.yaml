@@ -4,7 +4,7 @@ on:
     types:
     - closed
     branches:  
-      - epic_docomo
+      - epic/docomo
     paths-ignore:
       - infra/**
       - skaffold/**
