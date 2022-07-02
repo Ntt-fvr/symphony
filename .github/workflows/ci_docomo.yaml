@@ -1,8 +1,10 @@
 name: Continuous Integration
 on:
-  push:
-    branches:
-      - feature/devops_docomo
+  pull_request:
+    types:
+    - closed
+    branches:  
+      - epic_docomo
     paths-ignore:
       - infra/**
       - skaffold/**
