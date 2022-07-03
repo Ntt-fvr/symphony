@@ -3,12 +3,13 @@ package blocks
 import (
 	"context"
 	"fmt"
+	"time"
+
 	"github.com/facebookincubator/symphony/async/automation/celgo"
 	"github.com/facebookincubator/symphony/async/automation/executors/model"
 	"github.com/facebookincubator/symphony/pkg/ent/block"
 	"github.com/facebookincubator/symphony/pkg/ent/blockinstance"
 	"github.com/facebookincubator/symphony/pkg/flowengine/flowschema"
-	"time"
 )
 
 func GetBlockInstances(
@@ -50,8 +51,8 @@ func GetBlockInstances(
 	case block.TypeForEach:
 		executorBlock = &ForEachBlock{
 			baseBlock:  baseBlock,
-			key:        automationBlock.ForeachKey,
-			startBlock: automationBlock.ForeachStartBlockID,
+			key:        *automationBlock.ForeachKey,
+			startBlock: *automationBlock.ForeachStartBlockID,
 		}
 	case block.TypeInvokeRestAPI:
 		headers := getHeaders(automationBlock.Headers)
