@@ -5,7 +5,7 @@ go 1.14
 require (
 	cloud.google.com/go/storage v1.23.0
 	contrib.go.opencensus.io/exporter/jaeger v0.2.1
-	contrib.go.opencensus.io/exporter/prometheus v0.4.1
+	contrib.go.opencensus.io/exporter/prometheus v0.3.0
 	contrib.go.opencensus.io/integrations/ocsql v0.1.7
 	github.com/360EntSecGroup-Skylar/excelize/v2 v2.3.1
 	github.com/99designs/gqlgen v0.17.10
@@ -15,7 +15,6 @@ require (
 	github.com/HdrHistogram/hdrhistogram-go v1.0.1 // indirect
 	github.com/Masterminds/squirrel v1.5.0
 	github.com/NYTimes/gziphandler v1.1.1
-	github.com/Shopify/sarama v1.34.1 // indirect
 	github.com/VividCortex/mysqlerr v0.0.0-20200629151747-c28746d985dd
 	github.com/alecthomas/kong v0.2.12
 	github.com/alecthomas/units v0.0.0-20201120081800-1786d5ef83d4 // indirect
@@ -23,12 +22,12 @@ require (
 	github.com/aws/aws-sdk-go v1.43.31
 	github.com/badoux/checkmail v1.2.1
 	github.com/cenkalti/backoff/v4 v4.1.0
-	github.com/crossdock/crossdock-go v0.0.0-20160816171116-049aabb0122b // indirect
+	github.com/cespare/xxhash/v2 v2.1.2 // indirect
 	github.com/evanphx/json-patch v0.5.2
 	github.com/facebook/ent v0.5.2-0.20201207120713-86b9d850ee78
 	github.com/facebookincubator/ent-contrib v0.0.0-20201210145028-3c4e794cc516
-	github.com/go-kit/kit v0.10.0 // indirect
 	github.com/go-sql-driver/mysql v1.6.0
+	github.com/golang/snappy v0.0.4 // indirect
 	github.com/google/addlicense v1.0.0
 	github.com/google/cel-go v0.11.4
 	github.com/google/uuid v1.3.0
@@ -36,16 +35,18 @@ require (
 	github.com/gorilla/mux v1.8.0
 	github.com/gorilla/websocket v1.5.0
 	github.com/hashicorp/go-multierror v1.1.1
+	github.com/kr/pretty v0.3.0 // indirect
 	github.com/mattn/go-sqlite3 v2.0.3+incompatible
 	github.com/opentracing/opentracing-go v1.2.0
 	github.com/pborman/uuid v1.2.1 // indirect
 	github.com/pelletier/go-toml v1.8.1
 	github.com/pkg/errors v0.9.1
-	github.com/prometheus/client_golang v1.12.1
-	github.com/prometheus/common v0.35.0
-	github.com/prometheus/statsd_exporter v0.22.5 // indirect
+	github.com/prometheus/client_golang v1.9.0
+	github.com/prometheus/common v0.15.0
+	github.com/prometheus/procfs v0.7.3 // indirect
 	github.com/scylladb/go-set v1.0.2
 	github.com/shurcooL/graphql v0.0.0-20200928012149-18c5c3165e3a
+	github.com/sirupsen/logrus v1.8.1 // indirect
 	github.com/stretchr/testify v1.8.0
 	github.com/uber-go/tally v3.3.17+incompatible // indirect
 	github.com/uber/jaeger-client-go v2.25.0+incompatible
