@@ -50,8 +50,8 @@ func GetBlockInstances(
 	case block.TypeForEach:
 		executorBlock = &ForEachBlock{
 			baseBlock:  baseBlock,
-			key:        automationBlock.ForEachKey,          // TODO Verify
-			startBlock: automationBlock.ForEachStartBlockID, // TODO Verify
+			key:        automationBlock.ForeachKey,
+			startBlock: automationBlock.ForeachStartBlockID,
 		}
 	case block.TypeInvokeRestAPI:
 		headers := getHeaders(automationBlock.Headers)
