@@ -845,7 +845,7 @@ func (b *Block) Node(ctx context.Context) (node *Node, err error) {
 		return nil, err
 	}
 	node.Fields[46] = &Field{
-		Type:  "string",
+		Type:  "int",
 		Name:  "foreach_start_blockID",
 		Value: string(buf),
 	}
