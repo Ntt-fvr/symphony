@@ -437,11 +437,11 @@ type URLMethod string
 
 // URLMethod values.
 const (
-	URLMethodPOST   URLMethod = "post"
-	URLMethodGET    URLMethod = "get"
-	URLMethodPUT    URLMethod = "put"
-	URLMethodDELETE URLMethod = "delete"
-	URLMethodPATCH  URLMethod = "patch"
+	URLMethodPOST   URLMethod = "POST"
+	URLMethodGET    URLMethod = "GET"
+	URLMethodPUT    URLMethod = "PUT"
+	URLMethodDELETE URLMethod = "DELETE"
+	URLMethodPATCH  URLMethod = "PATCH"
 )
 
 func (um URLMethod) String() string {
