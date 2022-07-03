@@ -469,7 +469,7 @@ func (b *Block) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
 		ID:     b.ID,
 		Type:   "Block",
-		Fields: make([]*Field, 45),
+		Fields: make([]*Field, 47),
 		Edges:  make([]*Edge, 9),
 	}
 	var buf []byte
@@ -831,6 +831,22 @@ func (b *Block) Node(ctx context.Context) (node *Node, err error) {
 	node.Fields[44] = &Field{
 		Type:  "enum.KafkaMessageType",
 		Name:  "kafka_message_type",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(b.ForeachKey); err != nil {
+		return nil, err
+	}
+	node.Fields[45] = &Field{
+		Type:  "string",
+		Name:  "foreach_key",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(b.ForeachStartBlockID); err != nil {
+		return nil, err
+	}
+	node.Fields[46] = &Field{
+		Type:  "string",
+		Name:  "foreach_start_blockID",
 		Value: string(buf),
 	}
 	node.Edges[0] = &Edge{

@@ -3657,18 +3657,18 @@ func (e RuleTypeFilterType) MarshalGQL(w io.Writer) {
 type SignalModule string
 
 const (
-	SignalModuleInventory               SignalModule = "INVENTORY"
-	SignalModuleConfigurationManagement SignalModule = "CONFIGURATION_MANAGEMENT"
+	SignalModuleInventory     SignalModule = "INVENTORY"
+	SignalModuleConfiguration SignalModule = "CONFIGURATION"
 )
 
 var AllSignalModule = []SignalModule{
 	SignalModuleInventory,
-	SignalModuleConfigurationManagement,
+	SignalModuleConfiguration,
 }
 
 func (e SignalModule) IsValid() bool {
 	switch e {
-	case SignalModuleInventory, SignalModuleConfigurationManagement:
+	case SignalModuleInventory, SignalModuleConfiguration:
 		return true
 	}
 	return false
@@ -3698,18 +3698,24 @@ func (e SignalModule) MarshalGQL(w io.Writer) {
 type SignalType string
 
 const (
-	SignalTypeInventory               SignalType = "INVENTORY"
-	SignalTypeConfigurationManagement SignalType = "CONFIGURATION_MANAGEMENT"
+	SignalTypeNotification SignalType = "NOTIFICATION"
+	SignalTypeWocreation   SignalType = "WOCREATION"
+	SignalTypeCrcreation   SignalType = "CRCREATION"
+	SignalTypeWoupdate     SignalType = "WOUPDATE"
+	SignalTypeCrupdate     SignalType = "CRUPDATE"
 )
 
 var AllSignalType = []SignalType{
-	SignalTypeInventory,
-	SignalTypeConfigurationManagement,
+	SignalTypeNotification,
+	SignalTypeWocreation,
+	SignalTypeCrcreation,
+	SignalTypeWoupdate,
+	SignalTypeCrupdate,
 }
 
 func (e SignalType) IsValid() bool {
 	switch e {
-	case SignalTypeInventory, SignalTypeConfigurationManagement:
+	case SignalTypeNotification, SignalTypeWocreation, SignalTypeCrcreation, SignalTypeWoupdate, SignalTypeCrupdate:
 		return true
 	}
 	return false
