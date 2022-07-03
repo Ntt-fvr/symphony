@@ -354,7 +354,7 @@ func TriggerTypeValidator(tt flowschema.TriggerTypeID) error {
 // InputTransfStrategyValidator is a validator for the "input_transf_strategy" field enum values. It is called by the builders before save.
 func InputTransfStrategyValidator(its enum.TransfStrategy) error {
 	switch its {
-	case "replace", "merge":
+	case "REPLACE", "MERGE":
 		return nil
 	default:
 		return fmt.Errorf("block: invalid enum value for input_transf_strategy field: %q", its)
@@ -364,7 +364,7 @@ func InputTransfStrategyValidator(its enum.TransfStrategy) error {
 // OutputTransfStrategyValidator is a validator for the "output_transf_strategy" field enum values. It is called by the builders before save.
 func OutputTransfStrategyValidator(ots enum.TransfStrategy) error {
 	switch ots {
-	case "replace", "merge":
+	case "REPLACE", "MERGE":
 		return nil
 	default:
 		return fmt.Errorf("block: invalid enum value for output_transf_strategy field: %q", ots)
@@ -374,7 +374,7 @@ func OutputTransfStrategyValidator(ots enum.TransfStrategy) error {
 // InputStateTransfStrategyValidator is a validator for the "input_state_transf_strategy" field enum values. It is called by the builders before save.
 func InputStateTransfStrategyValidator(ists enum.TransfStrategy) error {
 	switch ists {
-	case "replace", "merge":
+	case "REPLACE", "MERGE":
 		return nil
 	default:
 		return fmt.Errorf("block: invalid enum value for input_state_transf_strategy field: %q", ists)
@@ -384,7 +384,7 @@ func InputStateTransfStrategyValidator(ists enum.TransfStrategy) error {
 // OutputStateTransfStrategyValidator is a validator for the "output_state_transf_strategy" field enum values. It is called by the builders before save.
 func OutputStateTransfStrategyValidator(osts enum.TransfStrategy) error {
 	switch osts {
-	case "replace", "merge":
+	case "REPLACE", "MERGE":
 		return nil
 	default:
 		return fmt.Errorf("block: invalid enum value for output_state_transf_strategy field: %q", osts)
@@ -396,9 +396,9 @@ type RetryUnit string
 
 // RetryUnit values.
 const (
-	RetryUnitSECONDS RetryUnit = "seconds"
-	RetryUnitMINUTES RetryUnit = "minutes"
-	RetryUnitHOURS   RetryUnit = "hours"
+	RetryUnitSECONDS RetryUnit = "SECONDS"
+	RetryUnitMINUTES RetryUnit = "MINUTES"
+	RetryUnitHOURS   RetryUnit = "HOURS"
 )
 
 func (ru RetryUnit) String() string {
@@ -420,8 +420,8 @@ type TimerBehavior string
 
 // TimerBehavior values.
 const (
-	TimerBehaviorFIXED_INTERVAL    TimerBehavior = "fixed_interval"
-	TimerBehaviorSPECIFIC_DATETIME TimerBehavior = "specific_time"
+	TimerBehaviorFIXED_INTERVAL    TimerBehavior = "FIXED_INTERVAL"
+	TimerBehaviorSPECIFIC_DATETIME TimerBehavior = "SPECIFIC_DATETIME"
 )
 
 func (tb TimerBehavior) String() string {
@@ -516,7 +516,7 @@ func SignalModuleValidator(sm SignalModule) error {
 // KafkaMessageTypeValidator is a validator for the "kafka_message_type" field enum values. It is called by the builders before save.
 func KafkaMessageTypeValidator(kmt enum.KafkaMessageType) error {
 	switch kmt {
-	case "expression", "input", "state":
+	case "EXPRESSION", "INPUT", "STATE":
 		return nil
 	default:
 		return fmt.Errorf("block: invalid enum value for kafka_message_type field: %q", kmt)
