@@ -113,6 +113,10 @@ const (
 	FieldKafkaMessage = "kafka_message"
 	// FieldKafkaMessageType holds the string denoting the kafka_message_type field in the database.
 	FieldKafkaMessageType = "kafka_message_type"
+	// FieldForeachKey holds the string denoting the foreach_key field in the database.
+	FieldForeachKey = "foreach_key"
+	// FieldForeachStartBlockID holds the string denoting the foreach_start_blockid field in the database.
+	FieldForeachStartBlockID = "foreach_start_block_id"
 
 	// EdgeFlow holds the string denoting the flow edge name in mutations.
 	EdgeFlow = "flow"
@@ -242,6 +246,8 @@ var Columns = []string{
 	FieldKafkaTopic,
 	FieldKafkaMessage,
 	FieldKafkaMessageType,
+	FieldForeachKey,
+	FieldForeachStartBlockID,
 }
 
 // ForeignKeys holds the SQL foreign-keys that are owned by the Block type.
@@ -463,11 +469,11 @@ type SignalType string
 
 // SignalType values.
 const (
-	SignalTypeNOTIFICATION SignalType = "notification"
-	SignalTypeWOCREATION   SignalType = "wo_creation"
-	SignalTypeCRCREATION   SignalType = "cr_creation"
-	SignalTypeWOUPDATE     SignalType = "wo_update"
-	SignalTypeCRUPDATE     SignalType = "cr_update"
+	SignalTypeNOTIFICATION SignalType = "NOTIFICATION"
+	SignalTypeWOCREATION   SignalType = "WOCREATION"
+	SignalTypeCRCREATION   SignalType = "CRCREATION"
+	SignalTypeWOUPDATE     SignalType = "WOUPDATE"
+	SignalTypeCRUPDATE     SignalType = "CRUPDATE"
 )
 
 func (st SignalType) String() string {
@@ -489,8 +495,8 @@ type SignalModule string
 
 // SignalModule values.
 const (
-	SignalModuleINVENTORY SignalModule = "inventory"
-	SignalModuleCM        SignalModule = "cm"
+	SignalModuleINVENTORY     SignalModule = "INVENTORY"
+	SignalModuleCONFIGURATION SignalModule = "CONFIGURATION"
 )
 
 func (sm SignalModule) String() string {
@@ -500,7 +506,7 @@ func (sm SignalModule) String() string {
 // SignalModuleValidator is a validator for the "signal_module" field enum values. It is called by the builders before save.
 func SignalModuleValidator(sm SignalModule) error {
 	switch sm {
-	case SignalModuleINVENTORY, SignalModuleCM:
+	case SignalModuleINVENTORY, SignalModuleCONFIGURATION:
 		return nil
 	default:
 		return fmt.Errorf("block: invalid enum value for signal_module field: %q", sm)

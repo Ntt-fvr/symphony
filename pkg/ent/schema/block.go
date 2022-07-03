@@ -173,17 +173,17 @@ func (Block) Fields() []ent.Field {
 
 		field.Enum("signal_type").
 			NamedValues(
-				"NOTIFICATION", "notification",
-				"WOCREATION", "wo_creation",
-				"CRCREATION", "cr_creation",
-				"WOUPDATE", "wo_update",
-				"CRUPDATE", "cr_update",
+				"NOTIFICATION", "NOTIFICATION",
+				"WOCREATION", "WOCREATION",
+				"CRCREATION", "CRCREATION",
+				"WOUPDATE", "WOUPDATE",
+				"CRUPDATE", "CRUPDATE",
 			).
 			Optional(),
 		field.Enum("signal_module").
 			NamedValues(
-				"INVENTORY", "inventory",
-				"CM", "cm",
+				"INVENTORY", "INVENTORY",
+				"CONFIGURATION", "CONFIGURATION",
 			).
 			Optional(),
 		field.String("custom_filter").
@@ -199,6 +199,11 @@ func (Block) Fields() []ent.Field {
 			Optional(),
 		field.Enum("kafka_message_type").
 			GoType(enum.KafkaMessageType("")).
+			Optional(),
+
+		field.String("foreach_key").
+			Optional(),
+		field.String("foreach_start_blockID").
 			Optional(),
 	}
 }
