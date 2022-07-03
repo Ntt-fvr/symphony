@@ -203,7 +203,7 @@ func (Block) Fields() []ent.Field {
 
 		field.String("foreach_key").
 			Optional(),
-		field.String("foreach_start_blockID").
+		field.Int("foreach_start_blockID").
 			Optional(),
 	}
 }

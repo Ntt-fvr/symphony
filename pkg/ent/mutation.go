@@ -3237,7 +3237,8 @@ type BlockMutation struct {
 	kafka_message                      *string
 	kafka_message_type                 *enum.KafkaMessageType
 	foreach_key                        *string
-	foreach_start_blockID              *string
+	foreach_start_blockID              *int
+	addforeach_start_blockID           *int
 	clearedFields                      map[string]struct{}
 	flow                               *int
 	clearedflow                        bool
@@ -5698,12 +5699,13 @@ func (m *BlockMutation) ResetForeachKey() {
 }
 
 // SetForeachStartBlockID sets the foreach_start_blockID field.
-func (m *BlockMutation) SetForeachStartBlockID(s string) {
-	m.foreach_start_blockID = &s
+func (m *BlockMutation) SetForeachStartBlockID(i int) {
+	m.foreach_start_blockID = &i
+	m.addforeach_start_blockID = nil
 }
 
 // ForeachStartBlockID returns the foreach_start_blockID value in the mutation.
-func (m *BlockMutation) ForeachStartBlockID() (r string, exists bool) {
+func (m *BlockMutation) ForeachStartBlockID() (r int, exists bool) {
 	v := m.foreach_start_blockID
 	if v == nil {
 		return
@@ -5715,7 +5717,7 @@ func (m *BlockMutation) ForeachStartBlockID() (r string, exists bool) {
 // If the Block object wasn't provided to the builder, the object is fetched
 // from the database.
 // An error is returned if the mutation operation is not UpdateOne, or database query fails.
-func (m *BlockMutation) OldForeachStartBlockID(ctx context.Context) (v string, err error) {
+func (m *BlockMutation) OldForeachStartBlockID(ctx context.Context) (v int, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, fmt.Errorf("OldForeachStartBlockID is allowed only on UpdateOne operations")
 	}
@@ -5729,9 +5731,28 @@ func (m *BlockMutation) OldForeachStartBlockID(ctx context.Context) (v string, e
 	return oldValue.ForeachStartBlockID, nil
 }
 
+// AddForeachStartBlockID adds i to foreach_start_blockID.
+func (m *BlockMutation) AddForeachStartBlockID(i int) {
+	if m.addforeach_start_blockID != nil {
+		*m.addforeach_start_blockID += i
+	} else {
+		m.addforeach_start_blockID = &i
+	}
+}
+
+// AddedForeachStartBlockID returns the value that was added to the foreach_start_blockID field in this mutation.
+func (m *BlockMutation) AddedForeachStartBlockID() (r int, exists bool) {
+	v := m.addforeach_start_blockID
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
 // ClearForeachStartBlockID clears the value of foreach_start_blockID.
 func (m *BlockMutation) ClearForeachStartBlockID() {
 	m.foreach_start_blockID = nil
+	m.addforeach_start_blockID = nil
 	m.clearedFields[block.FieldForeachStartBlockID] = struct{}{}
 }
 
@@ -5744,6 +5765,7 @@ func (m *BlockMutation) ForeachStartBlockIDCleared() bool {
 // ResetForeachStartBlockID reset all changes of the "foreach_start_blockID" field.
 func (m *BlockMutation) ResetForeachStartBlockID() {
 	m.foreach_start_blockID = nil
+	m.addforeach_start_blockID = nil
 	delete(m.clearedFields, block.FieldForeachStartBlockID)
 }
 
@@ -6833,7 +6855,7 @@ func (m *BlockMutation) SetField(name string, value ent.Value) error {
 		m.SetForeachKey(v)
 		return nil
 	case block.FieldForeachStartBlockID:
-		v, ok := value.(string)
+		v, ok := value.(int)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
@@ -6862,6 +6884,9 @@ func (m *BlockMutation) AddedFields() []string {
 	if m.addconnection_timeout != nil {
 		fields = append(fields, block.FieldConnectionTimeout)
 	}
+	if m.addforeach_start_blockID != nil {
+		fields = append(fields, block.FieldForeachStartBlockID)
+	}
 	return fields
 }
 
@@ -6880,6 +6905,8 @@ func (m *BlockMutation) AddedField(name string) (ent.Value, bool) {
 		return m.AddedSeconds()
 	case block.FieldConnectionTimeout:
 		return m.AddedConnectionTimeout()
+	case block.FieldForeachStartBlockID:
+		return m.AddedForeachStartBlockID()
 	}
 	return nil, false
 }
@@ -6923,6 +6950,13 @@ func (m *BlockMutation) AddField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.AddConnectionTimeout(v)
+		return nil
+	case block.FieldForeachStartBlockID:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddForeachStartBlockID(v)
 		return nil
 	}
 	return fmt.Errorf("unknown Block numeric field %s", name)

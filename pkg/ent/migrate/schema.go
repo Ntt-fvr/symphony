@@ -192,7 +192,7 @@ var (
 		{Name: "kafka_message", Type: field.TypeString, Nullable: true},
 		{Name: "kafka_message_type", Type: field.TypeEnum, Nullable: true, Enums: []string{"expression", "input", "state"}},
 		{Name: "foreach_key", Type: field.TypeString, Nullable: true},
-		{Name: "foreach_start_block_id", Type: field.TypeString, Nullable: true},
+		{Name: "foreach_start_block_id", Type: field.TypeInt, Nullable: true},
 		{Name: "block_sub_flow", Type: field.TypeInt, Nullable: true},
 		{Name: "block_goto_block", Type: field.TypeInt, Nullable: true},
 		{Name: "flow_blocks", Type: field.TypeInt, Nullable: true},

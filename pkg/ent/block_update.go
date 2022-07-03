@@ -887,16 +887,23 @@ func (bu *BlockUpdate) ClearForeachKey() *BlockUpdate {
 }
 
 // SetForeachStartBlockID sets the foreach_start_blockID field.
-func (bu *BlockUpdate) SetForeachStartBlockID(s string) *BlockUpdate {
-	bu.mutation.SetForeachStartBlockID(s)
+func (bu *BlockUpdate) SetForeachStartBlockID(i int) *BlockUpdate {
+	bu.mutation.ResetForeachStartBlockID()
+	bu.mutation.SetForeachStartBlockID(i)
 	return bu
 }
 
 // SetNillableForeachStartBlockID sets the foreach_start_blockID field if the given value is not nil.
-func (bu *BlockUpdate) SetNillableForeachStartBlockID(s *string) *BlockUpdate {
-	if s != nil {
-		bu.SetForeachStartBlockID(*s)
+func (bu *BlockUpdate) SetNillableForeachStartBlockID(i *int) *BlockUpdate {
+	if i != nil {
+		bu.SetForeachStartBlockID(*i)
 	}
+	return bu
+}
+
+// AddForeachStartBlockID adds i to foreach_start_blockID.
+func (bu *BlockUpdate) AddForeachStartBlockID(i int) *BlockUpdate {
+	bu.mutation.AddForeachStartBlockID(i)
 	return bu
 }
 
@@ -1932,14 +1939,21 @@ func (bu *BlockUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := bu.mutation.ForeachStartBlockID(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: block.FieldForeachStartBlockID,
+		})
+	}
+	if value, ok := bu.mutation.AddedForeachStartBlockID(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
 			Value:  value,
 			Column: block.FieldForeachStartBlockID,
 		})
 	}
 	if bu.mutation.ForeachStartBlockIDCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
+			Type:   field.TypeInt,
 			Column: block.FieldForeachStartBlockID,
 		})
 	}
@@ -3181,16 +3195,23 @@ func (buo *BlockUpdateOne) ClearForeachKey() *BlockUpdateOne {
 }
 
 // SetForeachStartBlockID sets the foreach_start_blockID field.
-func (buo *BlockUpdateOne) SetForeachStartBlockID(s string) *BlockUpdateOne {
-	buo.mutation.SetForeachStartBlockID(s)
+func (buo *BlockUpdateOne) SetForeachStartBlockID(i int) *BlockUpdateOne {
+	buo.mutation.ResetForeachStartBlockID()
+	buo.mutation.SetForeachStartBlockID(i)
 	return buo
 }
 
 // SetNillableForeachStartBlockID sets the foreach_start_blockID field if the given value is not nil.
-func (buo *BlockUpdateOne) SetNillableForeachStartBlockID(s *string) *BlockUpdateOne {
-	if s != nil {
-		buo.SetForeachStartBlockID(*s)
+func (buo *BlockUpdateOne) SetNillableForeachStartBlockID(i *int) *BlockUpdateOne {
+	if i != nil {
+		buo.SetForeachStartBlockID(*i)
 	}
+	return buo
+}
+
+// AddForeachStartBlockID adds i to foreach_start_blockID.
+func (buo *BlockUpdateOne) AddForeachStartBlockID(i int) *BlockUpdateOne {
+	buo.mutation.AddForeachStartBlockID(i)
 	return buo
 }
 
@@ -4224,14 +4245,21 @@ func (buo *BlockUpdateOne) sqlSave(ctx context.Context) (_node *Block, err error
 	}
 	if value, ok := buo.mutation.ForeachStartBlockID(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: block.FieldForeachStartBlockID,
+		})
+	}
+	if value, ok := buo.mutation.AddedForeachStartBlockID(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
 			Value:  value,
 			Column: block.FieldForeachStartBlockID,
 		})
 	}
 	if buo.mutation.ForeachStartBlockIDCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
+			Type:   field.TypeInt,
 			Column: block.FieldForeachStartBlockID,
 		})
 	}

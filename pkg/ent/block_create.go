@@ -621,15 +621,15 @@ func (bc *BlockCreate) SetNillableForeachKey(s *string) *BlockCreate {
 }
 
 // SetForeachStartBlockID sets the foreach_start_blockID field.
-func (bc *BlockCreate) SetForeachStartBlockID(s string) *BlockCreate {
-	bc.mutation.SetForeachStartBlockID(s)
+func (bc *BlockCreate) SetForeachStartBlockID(i int) *BlockCreate {
+	bc.mutation.SetForeachStartBlockID(i)
 	return bc
 }
 
 // SetNillableForeachStartBlockID sets the foreach_start_blockID field if the given value is not nil.
-func (bc *BlockCreate) SetNillableForeachStartBlockID(s *string) *BlockCreate {
-	if s != nil {
-		bc.SetForeachStartBlockID(*s)
+func (bc *BlockCreate) SetNillableForeachStartBlockID(i *int) *BlockCreate {
+	if i != nil {
+		bc.SetForeachStartBlockID(*i)
 	}
 	return bc
 }
@@ -1336,7 +1336,7 @@ func (bc *BlockCreate) createSpec() (*Block, *sqlgraph.CreateSpec) {
 	}
 	if value, ok := bc.mutation.ForeachStartBlockID(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
+			Type:   field.TypeInt,
 			Value:  value,
 			Column: block.FieldForeachStartBlockID,
 		})

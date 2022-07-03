@@ -296,7 +296,7 @@ func ForeachKey(v string) predicate.Block {
 }
 
 // ForeachStartBlockID applies equality check predicate on the "foreach_start_blockID" field. It's identical to ForeachStartBlockIDEQ.
-func ForeachStartBlockID(v string) predicate.Block {
+func ForeachStartBlockID(v int) predicate.Block {
 	return predicate.Block(func(s *sql.Selector) {
 		s.Where(sql.EQ(s.C(FieldForeachStartBlockID), v))
 	})
@@ -3581,21 +3581,21 @@ func ForeachKeyContainsFold(v string) predicate.Block {
 }
 
 // ForeachStartBlockIDEQ applies the EQ predicate on the "foreach_start_blockID" field.
-func ForeachStartBlockIDEQ(v string) predicate.Block {
+func ForeachStartBlockIDEQ(v int) predicate.Block {
 	return predicate.Block(func(s *sql.Selector) {
 		s.Where(sql.EQ(s.C(FieldForeachStartBlockID), v))
 	})
 }
 
 // ForeachStartBlockIDNEQ applies the NEQ predicate on the "foreach_start_blockID" field.
-func ForeachStartBlockIDNEQ(v string) predicate.Block {
+func ForeachStartBlockIDNEQ(v int) predicate.Block {
 	return predicate.Block(func(s *sql.Selector) {
 		s.Where(sql.NEQ(s.C(FieldForeachStartBlockID), v))
 	})
 }
 
 // ForeachStartBlockIDIn applies the In predicate on the "foreach_start_blockID" field.
-func ForeachStartBlockIDIn(vs ...string) predicate.Block {
+func ForeachStartBlockIDIn(vs ...int) predicate.Block {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
@@ -3612,7 +3612,7 @@ func ForeachStartBlockIDIn(vs ...string) predicate.Block {
 }
 
 // ForeachStartBlockIDNotIn applies the NotIn predicate on the "foreach_start_blockID" field.
-func ForeachStartBlockIDNotIn(vs ...string) predicate.Block {
+func ForeachStartBlockIDNotIn(vs ...int) predicate.Block {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
@@ -3629,51 +3629,30 @@ func ForeachStartBlockIDNotIn(vs ...string) predicate.Block {
 }
 
 // ForeachStartBlockIDGT applies the GT predicate on the "foreach_start_blockID" field.
-func ForeachStartBlockIDGT(v string) predicate.Block {
+func ForeachStartBlockIDGT(v int) predicate.Block {
 	return predicate.Block(func(s *sql.Selector) {
 		s.Where(sql.GT(s.C(FieldForeachStartBlockID), v))
 	})
 }
 
 // ForeachStartBlockIDGTE applies the GTE predicate on the "foreach_start_blockID" field.
-func ForeachStartBlockIDGTE(v string) predicate.Block {
+func ForeachStartBlockIDGTE(v int) predicate.Block {
 	return predicate.Block(func(s *sql.Selector) {
 		s.Where(sql.GTE(s.C(FieldForeachStartBlockID), v))
 	})
 }
 
 // ForeachStartBlockIDLT applies the LT predicate on the "foreach_start_blockID" field.
-func ForeachStartBlockIDLT(v string) predicate.Block {
+func ForeachStartBlockIDLT(v int) predicate.Block {
 	return predicate.Block(func(s *sql.Selector) {
 		s.Where(sql.LT(s.C(FieldForeachStartBlockID), v))
 	})
 }
 
 // ForeachStartBlockIDLTE applies the LTE predicate on the "foreach_start_blockID" field.
-func ForeachStartBlockIDLTE(v string) predicate.Block {
+func ForeachStartBlockIDLTE(v int) predicate.Block {
 	return predicate.Block(func(s *sql.Selector) {
 		s.Where(sql.LTE(s.C(FieldForeachStartBlockID), v))
-	})
-}
-
-// ForeachStartBlockIDContains applies the Contains predicate on the "foreach_start_blockID" field.
-func ForeachStartBlockIDContains(v string) predicate.Block {
-	return predicate.Block(func(s *sql.Selector) {
-		s.Where(sql.Contains(s.C(FieldForeachStartBlockID), v))
-	})
-}
-
-// ForeachStartBlockIDHasPrefix applies the HasPrefix predicate on the "foreach_start_blockID" field.
-func ForeachStartBlockIDHasPrefix(v string) predicate.Block {
-	return predicate.Block(func(s *sql.Selector) {
-		s.Where(sql.HasPrefix(s.C(FieldForeachStartBlockID), v))
-	})
-}
-
-// ForeachStartBlockIDHasSuffix applies the HasSuffix predicate on the "foreach_start_blockID" field.
-func ForeachStartBlockIDHasSuffix(v string) predicate.Block {
-	return predicate.Block(func(s *sql.Selector) {
-		s.Where(sql.HasSuffix(s.C(FieldForeachStartBlockID), v))
 	})
 }
 
@@ -3688,20 +3667,6 @@ func ForeachStartBlockIDIsNil() predicate.Block {
 func ForeachStartBlockIDNotNil() predicate.Block {
 	return predicate.Block(func(s *sql.Selector) {
 		s.Where(sql.NotNull(s.C(FieldForeachStartBlockID)))
-	})
-}
-
-// ForeachStartBlockIDEqualFold applies the EqualFold predicate on the "foreach_start_blockID" field.
-func ForeachStartBlockIDEqualFold(v string) predicate.Block {
-	return predicate.Block(func(s *sql.Selector) {
-		s.Where(sql.EqualFold(s.C(FieldForeachStartBlockID), v))
-	})
-}
-
-// ForeachStartBlockIDContainsFold applies the ContainsFold predicate on the "foreach_start_blockID" field.
-func ForeachStartBlockIDContainsFold(v string) predicate.Block {
-	return predicate.Block(func(s *sql.Selector) {
-		s.Where(sql.ContainsFold(s.C(FieldForeachStartBlockID), v))
 	})
 }
 
