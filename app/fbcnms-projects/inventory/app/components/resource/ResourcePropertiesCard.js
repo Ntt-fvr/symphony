@@ -30,7 +30,6 @@ import {ResourceNetworkCard} from './ResourceNetworkCard';
 import {camelCase, startCase} from 'lodash';
 import {graphql} from 'relay-runtime';
 import {makeStyles} from '@material-ui/styles';
-import {useHistory} from 'react-router';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -138,9 +137,6 @@ const ResourcePropertiesCard = (props: Props) => {
   const classes = useStyles();
   const [selectedTab, setSelectedTab] = useState('details');
   const [openDialog, setOpenDialog] = useState(false);
-  const history = useHistory();
-  const urlParams = new URLSearchParams(history.location.search);
-  const resourceId = urlParams.get('resource');
 
   const validateForm = data => {
     return (
@@ -372,12 +368,12 @@ const ResourcePropertiesCard = (props: Props) => {
                     ) : null}
                     {selectedTab === 'configuration' ? (
                       <Configuration
-                      // resource={item}
-                      // cmVersion={resourceData.queryCMVersion.find(
-                      //   cm =>
-                      //     cm.resource.id === item.id &&
-                      //     cm.status === 'CURRENT',
-                      // )}
+                        resource={item}
+                        cmVersion={resourceData.queryCMVersion.find(
+                          cm =>
+                            cm.resource.id === item.id &&
+                            cm.status === 'CURRENT',
+                        )}
                       />
                     ) : null}
                     {selectedTab === 'services' ? <div>Services</div> : null}

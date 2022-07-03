@@ -44,14 +44,9 @@ export const priorityValues = [
 
 export const statusChangeRequestValues = [
   {
-    key: 'approval',
-    value: 'APPROVAL',
-    label: 'Approval',
-  },
-  {
-    key: 'canceled',
-    value: 'CANCELED',
-    label: 'Canceled',
+    key: 'cancelled',
+    value: 'CANCELLED',
+    label: 'Cancelled',
   },
   {
     key: 'failed',
@@ -84,14 +79,14 @@ export const statusChangeRequestValues = [
     label: 'Submitted',
   },
   {
-    key: 'succesful',
-    value: 'SUCCESFUL',
-    label: 'Succesful',
+    key: 'successful',
+    value: 'SUCCESSFUL',
+    label: 'Successful',
   },
   {
-    key: 'succesful_with_warnings',
+    key: 'successful_with_warnings',
     value: 'SUCCESSFUL_WITH_WARNINGS',
-    label: 'Succesful_with_warnings',
+    label: 'Successful_with_warnings',
   }
 ]
 
