@@ -117,6 +117,10 @@ type Block struct {
 	KafkaMessage string `json:"kafka_message,omitempty"`
 	// KafkaMessageType holds the value of the "kafka_message_type" field.
 	KafkaMessageType enum.KafkaMessageType `json:"kafka_message_type,omitempty"`
+	// ForeachKey holds the value of the "foreach_key" field.
+	ForeachKey string `json:"foreach_key,omitempty"`
+	// ForeachStartBlockID holds the value of the "foreach_start_blockID" field.
+	ForeachStartBlockID int `json:"foreach_start_blockID,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the BlockQuery when eager-loading is set.
 	Edges                          BlockEdges `json:"edges"`
@@ -312,6 +316,8 @@ func (*Block) scanValues() []interface{} {
 		&sql.NullString{}, // kafka_topic
 		&sql.NullString{}, // kafka_message
 		&sql.NullString{}, // kafka_message_type
+		&sql.NullString{}, // foreach_key
+		&sql.NullInt64{},  // foreach_start_blockID
 	}
 }
 
@@ -606,7 +612,17 @@ func (b *Block) assignValues(values ...interface{}) error {
 	} else if value.Valid {
 		b.KafkaMessageType = enum.KafkaMessageType(value.String)
 	}
-	values = values[45:]
+	if value, ok := values[45].(*sql.NullString); !ok {
+		return fmt.Errorf("unexpected type %T for field foreach_key", values[45])
+	} else if value.Valid {
+		b.ForeachKey = value.String
+	}
+	if value, ok := values[46].(*sql.NullInt64); !ok {
+		return fmt.Errorf("unexpected type %T for field foreach_start_blockID", values[46])
+	} else if value.Valid {
+		b.ForeachStartBlockID = int(value.Int64)
+	}
+	values = values[47:]
 	if len(values) == len(block.ForeignKeys) {
 		if value, ok := values[0].(*sql.NullInt64); !ok {
 			return fmt.Errorf("unexpected type %T for edge-field block_sub_flow", value)
@@ -856,6 +872,10 @@ func (b *Block) String() string {
 	builder.WriteString(b.KafkaMessage)
 	builder.WriteString(", kafka_message_type=")
 	builder.WriteString(fmt.Sprintf("%v", b.KafkaMessageType))
+	builder.WriteString(", foreach_key=")
+	builder.WriteString(b.ForeachKey)
+	builder.WriteString(", foreach_start_blockID=")
+	builder.WriteString(fmt.Sprintf("%v", b.ForeachStartBlockID))
 	builder.WriteByte(')')
 	return builder.String()
 }

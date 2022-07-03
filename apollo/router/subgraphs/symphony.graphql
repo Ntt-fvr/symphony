@@ -6128,13 +6128,16 @@ type ParallelBlock {
 }
 
 enum SignalType {
-  INVENTORY
-  CONFIGURATION_MANAGEMENT
+  NOTIFICATION
+  WOCREATION
+  CRCREATION
+  WOUPDATE
+  CRUPDATE
 }
 
 enum SignalModule {
   INVENTORY
-  CONFIGURATION_MANAGEMENT
+  CONFIGURATION
 }
 
 type WaitForSignalBlock {

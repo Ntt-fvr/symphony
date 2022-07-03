@@ -102,15 +102,6 @@ func getAutomationBlocks(
 	return automationBlocks, nil
 }
 
-func executeInActivity(blockType block.Type) bool {
-	switch blockType {
-	case block.TypeChoice, block.TypeEnd, block.TypeGoTo, block.TypeInvokeRestAPI,
-		block.TypeNetworkAction, block.TypeStart:
-		return true
-	}
-	return false
-}
-
 func flowExecutorFunction(flowId uint64, input map[string]interface{}) (map[string]interface{}, error) {
 	if flowId > 0 {
 		return input, nil
@@ -139,7 +130,7 @@ func timerFunction(ctx workflow.Context, duration time.Duration) interface{} {
 func waitForSignalFunction(ctx workflow.Context, input map[string]interface{}) map[string]interface{} {
 	signalChannel := workflow.GetSignalChannel(ctx, "waitForSignal")
 
-	var value string
+	var value interface{}
 
 	s := workflow.NewSelector(ctx)
 	s.AddReceive(signalChannel, func(c workflow.Channel, more bool) {

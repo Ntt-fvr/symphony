@@ -866,6 +866,53 @@ func (bu *BlockUpdate) ClearKafkaMessageType() *BlockUpdate {
 	return bu
 }
 
+// SetForeachKey sets the foreach_key field.
+func (bu *BlockUpdate) SetForeachKey(s string) *BlockUpdate {
+	bu.mutation.SetForeachKey(s)
+	return bu
+}
+
+// SetNillableForeachKey sets the foreach_key field if the given value is not nil.
+func (bu *BlockUpdate) SetNillableForeachKey(s *string) *BlockUpdate {
+	if s != nil {
+		bu.SetForeachKey(*s)
+	}
+	return bu
+}
+
+// ClearForeachKey clears the value of foreach_key.
+func (bu *BlockUpdate) ClearForeachKey() *BlockUpdate {
+	bu.mutation.ClearForeachKey()
+	return bu
+}
+
+// SetForeachStartBlockID sets the foreach_start_blockID field.
+func (bu *BlockUpdate) SetForeachStartBlockID(i int) *BlockUpdate {
+	bu.mutation.ResetForeachStartBlockID()
+	bu.mutation.SetForeachStartBlockID(i)
+	return bu
+}
+
+// SetNillableForeachStartBlockID sets the foreach_start_blockID field if the given value is not nil.
+func (bu *BlockUpdate) SetNillableForeachStartBlockID(i *int) *BlockUpdate {
+	if i != nil {
+		bu.SetForeachStartBlockID(*i)
+	}
+	return bu
+}
+
+// AddForeachStartBlockID adds i to foreach_start_blockID.
+func (bu *BlockUpdate) AddForeachStartBlockID(i int) *BlockUpdate {
+	bu.mutation.AddForeachStartBlockID(i)
+	return bu
+}
+
+// ClearForeachStartBlockID clears the value of foreach_start_blockID.
+func (bu *BlockUpdate) ClearForeachStartBlockID() *BlockUpdate {
+	bu.mutation.ClearForeachStartBlockID()
+	return bu
+}
+
 // SetFlowID sets the flow edge to Flow by id.
 func (bu *BlockUpdate) SetFlowID(id int) *BlockUpdate {
 	bu.mutation.SetFlowID(id)
@@ -1875,6 +1922,39 @@ func (bu *BlockUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeEnum,
 			Column: block.FieldKafkaMessageType,
+		})
+	}
+	if value, ok := bu.mutation.ForeachKey(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: block.FieldForeachKey,
+		})
+	}
+	if bu.mutation.ForeachKeyCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Column: block.FieldForeachKey,
+		})
+	}
+	if value, ok := bu.mutation.ForeachStartBlockID(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: block.FieldForeachStartBlockID,
+		})
+	}
+	if value, ok := bu.mutation.AddedForeachStartBlockID(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: block.FieldForeachStartBlockID,
+		})
+	}
+	if bu.mutation.ForeachStartBlockIDCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Column: block.FieldForeachStartBlockID,
 		})
 	}
 	if bu.mutation.FlowCleared() {
@@ -3094,6 +3174,53 @@ func (buo *BlockUpdateOne) ClearKafkaMessageType() *BlockUpdateOne {
 	return buo
 }
 
+// SetForeachKey sets the foreach_key field.
+func (buo *BlockUpdateOne) SetForeachKey(s string) *BlockUpdateOne {
+	buo.mutation.SetForeachKey(s)
+	return buo
+}
+
+// SetNillableForeachKey sets the foreach_key field if the given value is not nil.
+func (buo *BlockUpdateOne) SetNillableForeachKey(s *string) *BlockUpdateOne {
+	if s != nil {
+		buo.SetForeachKey(*s)
+	}
+	return buo
+}
+
+// ClearForeachKey clears the value of foreach_key.
+func (buo *BlockUpdateOne) ClearForeachKey() *BlockUpdateOne {
+	buo.mutation.ClearForeachKey()
+	return buo
+}
+
+// SetForeachStartBlockID sets the foreach_start_blockID field.
+func (buo *BlockUpdateOne) SetForeachStartBlockID(i int) *BlockUpdateOne {
+	buo.mutation.ResetForeachStartBlockID()
+	buo.mutation.SetForeachStartBlockID(i)
+	return buo
+}
+
+// SetNillableForeachStartBlockID sets the foreach_start_blockID field if the given value is not nil.
+func (buo *BlockUpdateOne) SetNillableForeachStartBlockID(i *int) *BlockUpdateOne {
+	if i != nil {
+		buo.SetForeachStartBlockID(*i)
+	}
+	return buo
+}
+
+// AddForeachStartBlockID adds i to foreach_start_blockID.
+func (buo *BlockUpdateOne) AddForeachStartBlockID(i int) *BlockUpdateOne {
+	buo.mutation.AddForeachStartBlockID(i)
+	return buo
+}
+
+// ClearForeachStartBlockID clears the value of foreach_start_blockID.
+func (buo *BlockUpdateOne) ClearForeachStartBlockID() *BlockUpdateOne {
+	buo.mutation.ClearForeachStartBlockID()
+	return buo
+}
+
 // SetFlowID sets the flow edge to Flow by id.
 func (buo *BlockUpdateOne) SetFlowID(id int) *BlockUpdateOne {
 	buo.mutation.SetFlowID(id)
@@ -4101,6 +4228,39 @@ func (buo *BlockUpdateOne) sqlSave(ctx context.Context) (_node *Block, err error
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeEnum,
 			Column: block.FieldKafkaMessageType,
+		})
+	}
+	if value, ok := buo.mutation.ForeachKey(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: block.FieldForeachKey,
+		})
+	}
+	if buo.mutation.ForeachKeyCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Column: block.FieldForeachKey,
+		})
+	}
+	if value, ok := buo.mutation.ForeachStartBlockID(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: block.FieldForeachStartBlockID,
+		})
+	}
+	if value, ok := buo.mutation.AddedForeachStartBlockID(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: block.FieldForeachStartBlockID,
+		})
+	}
+	if buo.mutation.ForeachStartBlockIDCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Column: block.FieldForeachStartBlockID,
 		})
 	}
 	if buo.mutation.FlowCleared() {

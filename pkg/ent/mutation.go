@@ -3236,6 +3236,9 @@ type BlockMutation struct {
 	kafka_topic                        *string
 	kafka_message                      *string
 	kafka_message_type                 *enum.KafkaMessageType
+	foreach_key                        *string
+	foreach_start_blockID              *int
+	addforeach_start_blockID           *int
 	clearedFields                      map[string]struct{}
 	flow                               *int
 	clearedflow                        bool
@@ -5645,6 +5648,127 @@ func (m *BlockMutation) ResetKafkaMessageType() {
 	delete(m.clearedFields, block.FieldKafkaMessageType)
 }
 
+// SetForeachKey sets the foreach_key field.
+func (m *BlockMutation) SetForeachKey(s string) {
+	m.foreach_key = &s
+}
+
+// ForeachKey returns the foreach_key value in the mutation.
+func (m *BlockMutation) ForeachKey() (r string, exists bool) {
+	v := m.foreach_key
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldForeachKey returns the old foreach_key value of the Block.
+// If the Block object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *BlockMutation) OldForeachKey(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldForeachKey is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldForeachKey requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldForeachKey: %w", err)
+	}
+	return oldValue.ForeachKey, nil
+}
+
+// ClearForeachKey clears the value of foreach_key.
+func (m *BlockMutation) ClearForeachKey() {
+	m.foreach_key = nil
+	m.clearedFields[block.FieldForeachKey] = struct{}{}
+}
+
+// ForeachKeyCleared returns if the field foreach_key was cleared in this mutation.
+func (m *BlockMutation) ForeachKeyCleared() bool {
+	_, ok := m.clearedFields[block.FieldForeachKey]
+	return ok
+}
+
+// ResetForeachKey reset all changes of the "foreach_key" field.
+func (m *BlockMutation) ResetForeachKey() {
+	m.foreach_key = nil
+	delete(m.clearedFields, block.FieldForeachKey)
+}
+
+// SetForeachStartBlockID sets the foreach_start_blockID field.
+func (m *BlockMutation) SetForeachStartBlockID(i int) {
+	m.foreach_start_blockID = &i
+	m.addforeach_start_blockID = nil
+}
+
+// ForeachStartBlockID returns the foreach_start_blockID value in the mutation.
+func (m *BlockMutation) ForeachStartBlockID() (r int, exists bool) {
+	v := m.foreach_start_blockID
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldForeachStartBlockID returns the old foreach_start_blockID value of the Block.
+// If the Block object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *BlockMutation) OldForeachStartBlockID(ctx context.Context) (v int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldForeachStartBlockID is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldForeachStartBlockID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldForeachStartBlockID: %w", err)
+	}
+	return oldValue.ForeachStartBlockID, nil
+}
+
+// AddForeachStartBlockID adds i to foreach_start_blockID.
+func (m *BlockMutation) AddForeachStartBlockID(i int) {
+	if m.addforeach_start_blockID != nil {
+		*m.addforeach_start_blockID += i
+	} else {
+		m.addforeach_start_blockID = &i
+	}
+}
+
+// AddedForeachStartBlockID returns the value that was added to the foreach_start_blockID field in this mutation.
+func (m *BlockMutation) AddedForeachStartBlockID() (r int, exists bool) {
+	v := m.addforeach_start_blockID
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearForeachStartBlockID clears the value of foreach_start_blockID.
+func (m *BlockMutation) ClearForeachStartBlockID() {
+	m.foreach_start_blockID = nil
+	m.addforeach_start_blockID = nil
+	m.clearedFields[block.FieldForeachStartBlockID] = struct{}{}
+}
+
+// ForeachStartBlockIDCleared returns if the field foreach_start_blockID was cleared in this mutation.
+func (m *BlockMutation) ForeachStartBlockIDCleared() bool {
+	_, ok := m.clearedFields[block.FieldForeachStartBlockID]
+	return ok
+}
+
+// ResetForeachStartBlockID reset all changes of the "foreach_start_blockID" field.
+func (m *BlockMutation) ResetForeachStartBlockID() {
+	m.foreach_start_blockID = nil
+	m.addforeach_start_blockID = nil
+	delete(m.clearedFields, block.FieldForeachStartBlockID)
+}
+
 // SetFlowID sets the flow edge to Flow by id.
 func (m *BlockMutation) SetFlowID(id int) {
 	m.flow = &id
@@ -6052,7 +6176,7 @@ func (m *BlockMutation) Type() string {
 // this mutation. Note that, in order to get all numeric
 // fields that were in/decremented, call AddedFields().
 func (m *BlockMutation) Fields() []string {
-	fields := make([]string, 0, 45)
+	fields := make([]string, 0, 47)
 	if m.create_time != nil {
 		fields = append(fields, block.FieldCreateTime)
 	}
@@ -6188,6 +6312,12 @@ func (m *BlockMutation) Fields() []string {
 	if m.kafka_message_type != nil {
 		fields = append(fields, block.FieldKafkaMessageType)
 	}
+	if m.foreach_key != nil {
+		fields = append(fields, block.FieldForeachKey)
+	}
+	if m.foreach_start_blockID != nil {
+		fields = append(fields, block.FieldForeachStartBlockID)
+	}
 	return fields
 }
 
@@ -6286,6 +6416,10 @@ func (m *BlockMutation) Field(name string) (ent.Value, bool) {
 		return m.KafkaMessage()
 	case block.FieldKafkaMessageType:
 		return m.KafkaMessageType()
+	case block.FieldForeachKey:
+		return m.ForeachKey()
+	case block.FieldForeachStartBlockID:
+		return m.ForeachStartBlockID()
 	}
 	return nil, false
 }
@@ -6385,6 +6519,10 @@ func (m *BlockMutation) OldField(ctx context.Context, name string) (ent.Value, e
 		return m.OldKafkaMessage(ctx)
 	case block.FieldKafkaMessageType:
 		return m.OldKafkaMessageType(ctx)
+	case block.FieldForeachKey:
+		return m.OldForeachKey(ctx)
+	case block.FieldForeachStartBlockID:
+		return m.OldForeachStartBlockID(ctx)
 	}
 	return nil, fmt.Errorf("unknown Block field %s", name)
 }
@@ -6709,6 +6847,20 @@ func (m *BlockMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetKafkaMessageType(v)
 		return nil
+	case block.FieldForeachKey:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetForeachKey(v)
+		return nil
+	case block.FieldForeachStartBlockID:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetForeachStartBlockID(v)
+		return nil
 	}
 	return fmt.Errorf("unknown Block field %s", name)
 }
@@ -6732,6 +6884,9 @@ func (m *BlockMutation) AddedFields() []string {
 	if m.addconnection_timeout != nil {
 		fields = append(fields, block.FieldConnectionTimeout)
 	}
+	if m.addforeach_start_blockID != nil {
+		fields = append(fields, block.FieldForeachStartBlockID)
+	}
 	return fields
 }
 
@@ -6750,6 +6905,8 @@ func (m *BlockMutation) AddedField(name string) (ent.Value, bool) {
 		return m.AddedSeconds()
 	case block.FieldConnectionTimeout:
 		return m.AddedConnectionTimeout()
+	case block.FieldForeachStartBlockID:
+		return m.AddedForeachStartBlockID()
 	}
 	return nil, false
 }
@@ -6793,6 +6950,13 @@ func (m *BlockMutation) AddField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.AddConnectionTimeout(v)
+		return nil
+	case block.FieldForeachStartBlockID:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddForeachStartBlockID(v)
 		return nil
 	}
 	return fmt.Errorf("unknown Block numeric field %s", name)
@@ -6924,6 +7088,12 @@ func (m *BlockMutation) ClearedFields() []string {
 	}
 	if m.FieldCleared(block.FieldKafkaMessageType) {
 		fields = append(fields, block.FieldKafkaMessageType)
+	}
+	if m.FieldCleared(block.FieldForeachKey) {
+		fields = append(fields, block.FieldForeachKey)
+	}
+	if m.FieldCleared(block.FieldForeachStartBlockID) {
+		fields = append(fields, block.FieldForeachStartBlockID)
 	}
 	return fields
 }
@@ -7061,6 +7231,12 @@ func (m *BlockMutation) ClearField(name string) error {
 		return nil
 	case block.FieldKafkaMessageType:
 		m.ClearKafkaMessageType()
+		return nil
+	case block.FieldForeachKey:
+		m.ClearForeachKey()
+		return nil
+	case block.FieldForeachStartBlockID:
+		m.ClearForeachStartBlockID()
 		return nil
 	}
 	return fmt.Errorf("unknown Block nullable field %s", name)
@@ -7205,6 +7381,12 @@ func (m *BlockMutation) ResetField(name string) error {
 		return nil
 	case block.FieldKafkaMessageType:
 		m.ResetKafkaMessageType()
+		return nil
+	case block.FieldForeachKey:
+		m.ResetForeachKey()
+		return nil
+	case block.FieldForeachStartBlockID:
+		m.ResetForeachStartBlockID()
 		return nil
 	}
 	return fmt.Errorf("unknown Block field %s", name)

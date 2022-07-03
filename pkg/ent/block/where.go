@@ -288,6 +288,20 @@ func KafkaMessage(v string) predicate.Block {
 	})
 }
 
+// ForeachKey applies equality check predicate on the "foreach_key" field. It's identical to ForeachKeyEQ.
+func ForeachKey(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldForeachKey), v))
+	})
+}
+
+// ForeachStartBlockID applies equality check predicate on the "foreach_start_blockID" field. It's identical to ForeachStartBlockIDEQ.
+func ForeachStartBlockID(v int) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldForeachStartBlockID), v))
+	})
+}
+
 // CreateTimeEQ applies the EQ predicate on the "create_time" field.
 func CreateTimeEQ(v time.Time) predicate.Block {
 	return predicate.Block(func(s *sql.Selector) {
@@ -3438,6 +3452,221 @@ func KafkaMessageTypeIsNil() predicate.Block {
 func KafkaMessageTypeNotNil() predicate.Block {
 	return predicate.Block(func(s *sql.Selector) {
 		s.Where(sql.NotNull(s.C(FieldKafkaMessageType)))
+	})
+}
+
+// ForeachKeyEQ applies the EQ predicate on the "foreach_key" field.
+func ForeachKeyEQ(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldForeachKey), v))
+	})
+}
+
+// ForeachKeyNEQ applies the NEQ predicate on the "foreach_key" field.
+func ForeachKeyNEQ(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldForeachKey), v))
+	})
+}
+
+// ForeachKeyIn applies the In predicate on the "foreach_key" field.
+func ForeachKeyIn(vs ...string) predicate.Block {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Block(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.In(s.C(FieldForeachKey), v...))
+	})
+}
+
+// ForeachKeyNotIn applies the NotIn predicate on the "foreach_key" field.
+func ForeachKeyNotIn(vs ...string) predicate.Block {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Block(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.NotIn(s.C(FieldForeachKey), v...))
+	})
+}
+
+// ForeachKeyGT applies the GT predicate on the "foreach_key" field.
+func ForeachKeyGT(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldForeachKey), v))
+	})
+}
+
+// ForeachKeyGTE applies the GTE predicate on the "foreach_key" field.
+func ForeachKeyGTE(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldForeachKey), v))
+	})
+}
+
+// ForeachKeyLT applies the LT predicate on the "foreach_key" field.
+func ForeachKeyLT(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldForeachKey), v))
+	})
+}
+
+// ForeachKeyLTE applies the LTE predicate on the "foreach_key" field.
+func ForeachKeyLTE(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldForeachKey), v))
+	})
+}
+
+// ForeachKeyContains applies the Contains predicate on the "foreach_key" field.
+func ForeachKeyContains(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.Contains(s.C(FieldForeachKey), v))
+	})
+}
+
+// ForeachKeyHasPrefix applies the HasPrefix predicate on the "foreach_key" field.
+func ForeachKeyHasPrefix(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.HasPrefix(s.C(FieldForeachKey), v))
+	})
+}
+
+// ForeachKeyHasSuffix applies the HasSuffix predicate on the "foreach_key" field.
+func ForeachKeyHasSuffix(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.HasSuffix(s.C(FieldForeachKey), v))
+	})
+}
+
+// ForeachKeyIsNil applies the IsNil predicate on the "foreach_key" field.
+func ForeachKeyIsNil() predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldForeachKey)))
+	})
+}
+
+// ForeachKeyNotNil applies the NotNil predicate on the "foreach_key" field.
+func ForeachKeyNotNil() predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldForeachKey)))
+	})
+}
+
+// ForeachKeyEqualFold applies the EqualFold predicate on the "foreach_key" field.
+func ForeachKeyEqualFold(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.EqualFold(s.C(FieldForeachKey), v))
+	})
+}
+
+// ForeachKeyContainsFold applies the ContainsFold predicate on the "foreach_key" field.
+func ForeachKeyContainsFold(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.ContainsFold(s.C(FieldForeachKey), v))
+	})
+}
+
+// ForeachStartBlockIDEQ applies the EQ predicate on the "foreach_start_blockID" field.
+func ForeachStartBlockIDEQ(v int) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldForeachStartBlockID), v))
+	})
+}
+
+// ForeachStartBlockIDNEQ applies the NEQ predicate on the "foreach_start_blockID" field.
+func ForeachStartBlockIDNEQ(v int) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldForeachStartBlockID), v))
+	})
+}
+
+// ForeachStartBlockIDIn applies the In predicate on the "foreach_start_blockID" field.
+func ForeachStartBlockIDIn(vs ...int) predicate.Block {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Block(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.In(s.C(FieldForeachStartBlockID), v...))
+	})
+}
+
+// ForeachStartBlockIDNotIn applies the NotIn predicate on the "foreach_start_blockID" field.
+func ForeachStartBlockIDNotIn(vs ...int) predicate.Block {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Block(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.NotIn(s.C(FieldForeachStartBlockID), v...))
+	})
+}
+
+// ForeachStartBlockIDGT applies the GT predicate on the "foreach_start_blockID" field.
+func ForeachStartBlockIDGT(v int) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldForeachStartBlockID), v))
+	})
+}
+
+// ForeachStartBlockIDGTE applies the GTE predicate on the "foreach_start_blockID" field.
+func ForeachStartBlockIDGTE(v int) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldForeachStartBlockID), v))
+	})
+}
+
+// ForeachStartBlockIDLT applies the LT predicate on the "foreach_start_blockID" field.
+func ForeachStartBlockIDLT(v int) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldForeachStartBlockID), v))
+	})
+}
+
+// ForeachStartBlockIDLTE applies the LTE predicate on the "foreach_start_blockID" field.
+func ForeachStartBlockIDLTE(v int) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldForeachStartBlockID), v))
+	})
+}
+
+// ForeachStartBlockIDIsNil applies the IsNil predicate on the "foreach_start_blockID" field.
+func ForeachStartBlockIDIsNil() predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldForeachStartBlockID)))
+	})
+}
+
+// ForeachStartBlockIDNotNil applies the NotNil predicate on the "foreach_start_blockID" field.
+func ForeachStartBlockIDNotNil() predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldForeachStartBlockID)))
 	})
 }
 

@@ -606,6 +606,34 @@ func (bc *BlockCreate) SetNillableKafkaMessageType(emt *enum.KafkaMessageType) *
 	return bc
 }
 
+// SetForeachKey sets the foreach_key field.
+func (bc *BlockCreate) SetForeachKey(s string) *BlockCreate {
+	bc.mutation.SetForeachKey(s)
+	return bc
+}
+
+// SetNillableForeachKey sets the foreach_key field if the given value is not nil.
+func (bc *BlockCreate) SetNillableForeachKey(s *string) *BlockCreate {
+	if s != nil {
+		bc.SetForeachKey(*s)
+	}
+	return bc
+}
+
+// SetForeachStartBlockID sets the foreach_start_blockID field.
+func (bc *BlockCreate) SetForeachStartBlockID(i int) *BlockCreate {
+	bc.mutation.SetForeachStartBlockID(i)
+	return bc
+}
+
+// SetNillableForeachStartBlockID sets the foreach_start_blockID field if the given value is not nil.
+func (bc *BlockCreate) SetNillableForeachStartBlockID(i *int) *BlockCreate {
+	if i != nil {
+		bc.SetForeachStartBlockID(*i)
+	}
+	return bc
+}
+
 // SetFlowID sets the flow edge to Flow by id.
 func (bc *BlockCreate) SetFlowID(id int) *BlockCreate {
 	bc.mutation.SetFlowID(id)
@@ -1297,6 +1325,22 @@ func (bc *BlockCreate) createSpec() (*Block, *sqlgraph.CreateSpec) {
 			Column: block.FieldKafkaMessageType,
 		})
 		_node.KafkaMessageType = value
+	}
+	if value, ok := bc.mutation.ForeachKey(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: block.FieldForeachKey,
+		})
+		_node.ForeachKey = value
+	}
+	if value, ok := bc.mutation.ForeachStartBlockID(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: block.FieldForeachStartBlockID,
+		})
+		_node.ForeachStartBlockID = value
 	}
 	if nodes := bc.mutation.FlowIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
