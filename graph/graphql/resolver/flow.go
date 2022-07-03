@@ -629,10 +629,27 @@ func (r mutationResolver) collectBlocksInputs(ctx context.Context, input models.
 	for _, blk := range input.TrueFalseBlocks {
 		blockInputs = append(blockInputs, blk)
 	}
+	for _, blk := range input.ChoiceBlocks {
+		blockInputs = append(blockInputs, blk)
+	}
+	for _, blk := range input.InvokeRestAPIBlocks {
+		blockInputs = append(blockInputs, blk)
+	}
+	for _, blk := range input.TimerBlocks {
+		blockInputs = append(blockInputs, blk)
+	}
+	for _, blk := range input.WaitForSignalBlocks {
+		blockInputs = append(blockInputs, blk)
+	}
+	for _, blk := range input.ExecuteFlowBlocks {
+		blockInputs = append(blockInputs, blk)
+	}
+
 	return blockInputs
 }
 
 func (r mutationResolver) ImportFlowDraft(ctx context.Context, input models.ImportFlowDraftInput) (*ent.FlowDraft, error) {
+	fmt.Printf("import flow draft")
 	client := r.ClientFrom(ctx)
 	blocks, err := client.Block.Query().Where(
 		block.HasFlowDraftWith(flowdraft.ID(input.ID)),

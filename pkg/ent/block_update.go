@@ -153,6 +153,20 @@ func (bu *BlockUpdate) SetInputTransfStrategy(es enum.TransfStrategy) *BlockUpda
 	return bu
 }
 
+// SetNillableInputTransfStrategy sets the input_transf_strategy field if the given value is not nil.
+func (bu *BlockUpdate) SetNillableInputTransfStrategy(es *enum.TransfStrategy) *BlockUpdate {
+	if es != nil {
+		bu.SetInputTransfStrategy(*es)
+	}
+	return bu
+}
+
+// ClearInputTransfStrategy clears the value of input_transf_strategy.
+func (bu *BlockUpdate) ClearInputTransfStrategy() *BlockUpdate {
+	bu.mutation.ClearInputTransfStrategy()
+	return bu
+}
+
 // SetInputTransformation sets the input_transformation field.
 func (bu *BlockUpdate) SetInputTransformation(s string) *BlockUpdate {
 	bu.mutation.SetInputTransformation(s)
@@ -196,6 +210,20 @@ func (bu *BlockUpdate) ClearEnableOutputTransformation() *BlockUpdate {
 // SetOutputTransfStrategy sets the output_transf_strategy field.
 func (bu *BlockUpdate) SetOutputTransfStrategy(es enum.TransfStrategy) *BlockUpdate {
 	bu.mutation.SetOutputTransfStrategy(es)
+	return bu
+}
+
+// SetNillableOutputTransfStrategy sets the output_transf_strategy field if the given value is not nil.
+func (bu *BlockUpdate) SetNillableOutputTransfStrategy(es *enum.TransfStrategy) *BlockUpdate {
+	if es != nil {
+		bu.SetOutputTransfStrategy(*es)
+	}
+	return bu
+}
+
+// ClearOutputTransfStrategy clears the value of output_transf_strategy.
+func (bu *BlockUpdate) ClearOutputTransfStrategy() *BlockUpdate {
+	bu.mutation.ClearOutputTransfStrategy()
 	return bu
 }
 
@@ -245,6 +273,20 @@ func (bu *BlockUpdate) SetInputStateTransfStrategy(es enum.TransfStrategy) *Bloc
 	return bu
 }
 
+// SetNillableInputStateTransfStrategy sets the input_state_transf_strategy field if the given value is not nil.
+func (bu *BlockUpdate) SetNillableInputStateTransfStrategy(es *enum.TransfStrategy) *BlockUpdate {
+	if es != nil {
+		bu.SetInputStateTransfStrategy(*es)
+	}
+	return bu
+}
+
+// ClearInputStateTransfStrategy clears the value of input_state_transf_strategy.
+func (bu *BlockUpdate) ClearInputStateTransfStrategy() *BlockUpdate {
+	bu.mutation.ClearInputStateTransfStrategy()
+	return bu
+}
+
 // SetInputStateTransformation sets the input_state_transformation field.
 func (bu *BlockUpdate) SetInputStateTransformation(s string) *BlockUpdate {
 	bu.mutation.SetInputStateTransformation(s)
@@ -288,6 +330,20 @@ func (bu *BlockUpdate) ClearEnableOutputStateTransformation() *BlockUpdate {
 // SetOutputStateTransfStrategy sets the output_state_transf_strategy field.
 func (bu *BlockUpdate) SetOutputStateTransfStrategy(es enum.TransfStrategy) *BlockUpdate {
 	bu.mutation.SetOutputStateTransfStrategy(es)
+	return bu
+}
+
+// SetNillableOutputStateTransfStrategy sets the output_state_transf_strategy field if the given value is not nil.
+func (bu *BlockUpdate) SetNillableOutputStateTransfStrategy(es *enum.TransfStrategy) *BlockUpdate {
+	if es != nil {
+		bu.SetOutputStateTransfStrategy(*es)
+	}
+	return bu
+}
+
+// ClearOutputStateTransfStrategy clears the value of output_state_transf_strategy.
+func (bu *BlockUpdate) ClearOutputStateTransfStrategy() *BlockUpdate {
+	bu.mutation.ClearOutputStateTransfStrategy()
 	return bu
 }
 
@@ -381,6 +437,20 @@ func (bu *BlockUpdate) ClearRetryInterval() *BlockUpdate {
 // SetRetryUnit sets the retry_unit field.
 func (bu *BlockUpdate) SetRetryUnit(value block.RetryUnit) *BlockUpdate {
 	bu.mutation.SetRetryUnit(value)
+	return bu
+}
+
+// SetNillableRetryUnit sets the retry_unit field if the given value is not nil.
+func (bu *BlockUpdate) SetNillableRetryUnit(value *block.RetryUnit) *BlockUpdate {
+	if value != nil {
+		bu.SetRetryUnit(*value)
+	}
+	return bu
+}
+
+// ClearRetryUnit clears the value of retry_unit.
+func (bu *BlockUpdate) ClearRetryUnit() *BlockUpdate {
+	bu.mutation.ClearRetryUnit()
 	return bu
 }
 
@@ -1324,6 +1394,12 @@ func (bu *BlockUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: block.FieldInputTransfStrategy,
 		})
 	}
+	if bu.mutation.InputTransfStrategyCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeEnum,
+			Column: block.FieldInputTransfStrategy,
+		})
+	}
 	if value, ok := bu.mutation.InputTransformation(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
@@ -1354,6 +1430,12 @@ func (bu *BlockUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeEnum,
 			Value:  value,
+			Column: block.FieldOutputTransfStrategy,
+		})
+	}
+	if bu.mutation.OutputTransfStrategyCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeEnum,
 			Column: block.FieldOutputTransfStrategy,
 		})
 	}
@@ -1390,6 +1472,12 @@ func (bu *BlockUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: block.FieldInputStateTransfStrategy,
 		})
 	}
+	if bu.mutation.InputStateTransfStrategyCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeEnum,
+			Column: block.FieldInputStateTransfStrategy,
+		})
+	}
 	if value, ok := bu.mutation.InputStateTransformation(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
@@ -1420,6 +1508,12 @@ func (bu *BlockUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeEnum,
 			Value:  value,
+			Column: block.FieldOutputStateTransfStrategy,
+		})
+	}
+	if bu.mutation.OutputStateTransfStrategyCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeEnum,
 			Column: block.FieldOutputStateTransfStrategy,
 		})
 	}
@@ -1486,6 +1580,12 @@ func (bu *BlockUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeEnum,
 			Value:  value,
+			Column: block.FieldRetryUnit,
+		})
+	}
+	if bu.mutation.RetryUnitCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeEnum,
 			Column: block.FieldRetryUnit,
 		})
 	}
@@ -2281,6 +2381,20 @@ func (buo *BlockUpdateOne) SetInputTransfStrategy(es enum.TransfStrategy) *Block
 	return buo
 }
 
+// SetNillableInputTransfStrategy sets the input_transf_strategy field if the given value is not nil.
+func (buo *BlockUpdateOne) SetNillableInputTransfStrategy(es *enum.TransfStrategy) *BlockUpdateOne {
+	if es != nil {
+		buo.SetInputTransfStrategy(*es)
+	}
+	return buo
+}
+
+// ClearInputTransfStrategy clears the value of input_transf_strategy.
+func (buo *BlockUpdateOne) ClearInputTransfStrategy() *BlockUpdateOne {
+	buo.mutation.ClearInputTransfStrategy()
+	return buo
+}
+
 // SetInputTransformation sets the input_transformation field.
 func (buo *BlockUpdateOne) SetInputTransformation(s string) *BlockUpdateOne {
 	buo.mutation.SetInputTransformation(s)
@@ -2324,6 +2438,20 @@ func (buo *BlockUpdateOne) ClearEnableOutputTransformation() *BlockUpdateOne {
 // SetOutputTransfStrategy sets the output_transf_strategy field.
 func (buo *BlockUpdateOne) SetOutputTransfStrategy(es enum.TransfStrategy) *BlockUpdateOne {
 	buo.mutation.SetOutputTransfStrategy(es)
+	return buo
+}
+
+// SetNillableOutputTransfStrategy sets the output_transf_strategy field if the given value is not nil.
+func (buo *BlockUpdateOne) SetNillableOutputTransfStrategy(es *enum.TransfStrategy) *BlockUpdateOne {
+	if es != nil {
+		buo.SetOutputTransfStrategy(*es)
+	}
+	return buo
+}
+
+// ClearOutputTransfStrategy clears the value of output_transf_strategy.
+func (buo *BlockUpdateOne) ClearOutputTransfStrategy() *BlockUpdateOne {
+	buo.mutation.ClearOutputTransfStrategy()
 	return buo
 }
 
@@ -2373,6 +2501,20 @@ func (buo *BlockUpdateOne) SetInputStateTransfStrategy(es enum.TransfStrategy) *
 	return buo
 }
 
+// SetNillableInputStateTransfStrategy sets the input_state_transf_strategy field if the given value is not nil.
+func (buo *BlockUpdateOne) SetNillableInputStateTransfStrategy(es *enum.TransfStrategy) *BlockUpdateOne {
+	if es != nil {
+		buo.SetInputStateTransfStrategy(*es)
+	}
+	return buo
+}
+
+// ClearInputStateTransfStrategy clears the value of input_state_transf_strategy.
+func (buo *BlockUpdateOne) ClearInputStateTransfStrategy() *BlockUpdateOne {
+	buo.mutation.ClearInputStateTransfStrategy()
+	return buo
+}
+
 // SetInputStateTransformation sets the input_state_transformation field.
 func (buo *BlockUpdateOne) SetInputStateTransformation(s string) *BlockUpdateOne {
 	buo.mutation.SetInputStateTransformation(s)
@@ -2416,6 +2558,20 @@ func (buo *BlockUpdateOne) ClearEnableOutputStateTransformation() *BlockUpdateOn
 // SetOutputStateTransfStrategy sets the output_state_transf_strategy field.
 func (buo *BlockUpdateOne) SetOutputStateTransfStrategy(es enum.TransfStrategy) *BlockUpdateOne {
 	buo.mutation.SetOutputStateTransfStrategy(es)
+	return buo
+}
+
+// SetNillableOutputStateTransfStrategy sets the output_state_transf_strategy field if the given value is not nil.
+func (buo *BlockUpdateOne) SetNillableOutputStateTransfStrategy(es *enum.TransfStrategy) *BlockUpdateOne {
+	if es != nil {
+		buo.SetOutputStateTransfStrategy(*es)
+	}
+	return buo
+}
+
+// ClearOutputStateTransfStrategy clears the value of output_state_transf_strategy.
+func (buo *BlockUpdateOne) ClearOutputStateTransfStrategy() *BlockUpdateOne {
+	buo.mutation.ClearOutputStateTransfStrategy()
 	return buo
 }
 
@@ -2509,6 +2665,20 @@ func (buo *BlockUpdateOne) ClearRetryInterval() *BlockUpdateOne {
 // SetRetryUnit sets the retry_unit field.
 func (buo *BlockUpdateOne) SetRetryUnit(bu block.RetryUnit) *BlockUpdateOne {
 	buo.mutation.SetRetryUnit(bu)
+	return buo
+}
+
+// SetNillableRetryUnit sets the retry_unit field if the given value is not nil.
+func (buo *BlockUpdateOne) SetNillableRetryUnit(bu *block.RetryUnit) *BlockUpdateOne {
+	if bu != nil {
+		buo.SetRetryUnit(*bu)
+	}
+	return buo
+}
+
+// ClearRetryUnit clears the value of retry_unit.
+func (buo *BlockUpdateOne) ClearRetryUnit() *BlockUpdateOne {
+	buo.mutation.ClearRetryUnit()
 	return buo
 }
 
@@ -3450,6 +3620,12 @@ func (buo *BlockUpdateOne) sqlSave(ctx context.Context) (_node *Block, err error
 			Column: block.FieldInputTransfStrategy,
 		})
 	}
+	if buo.mutation.InputTransfStrategyCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeEnum,
+			Column: block.FieldInputTransfStrategy,
+		})
+	}
 	if value, ok := buo.mutation.InputTransformation(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
@@ -3480,6 +3656,12 @@ func (buo *BlockUpdateOne) sqlSave(ctx context.Context) (_node *Block, err error
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeEnum,
 			Value:  value,
+			Column: block.FieldOutputTransfStrategy,
+		})
+	}
+	if buo.mutation.OutputTransfStrategyCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeEnum,
 			Column: block.FieldOutputTransfStrategy,
 		})
 	}
@@ -3516,6 +3698,12 @@ func (buo *BlockUpdateOne) sqlSave(ctx context.Context) (_node *Block, err error
 			Column: block.FieldInputStateTransfStrategy,
 		})
 	}
+	if buo.mutation.InputStateTransfStrategyCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeEnum,
+			Column: block.FieldInputStateTransfStrategy,
+		})
+	}
 	if value, ok := buo.mutation.InputStateTransformation(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
@@ -3546,6 +3734,12 @@ func (buo *BlockUpdateOne) sqlSave(ctx context.Context) (_node *Block, err error
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeEnum,
 			Value:  value,
+			Column: block.FieldOutputStateTransfStrategy,
+		})
+	}
+	if buo.mutation.OutputStateTransfStrategyCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeEnum,
 			Column: block.FieldOutputStateTransfStrategy,
 		})
 	}
@@ -3612,6 +3806,12 @@ func (buo *BlockUpdateOne) sqlSave(ctx context.Context) (_node *Block, err error
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeEnum,
 			Value:  value,
+			Column: block.FieldRetryUnit,
+		})
+	}
+	if buo.mutation.RetryUnitCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeEnum,
 			Column: block.FieldRetryUnit,
 		})
 	}

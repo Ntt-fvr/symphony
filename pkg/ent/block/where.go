@@ -847,6 +847,20 @@ func InputTransfStrategyNotIn(vs ...enum.TransfStrategy) predicate.Block {
 	})
 }
 
+// InputTransfStrategyIsNil applies the IsNil predicate on the "input_transf_strategy" field.
+func InputTransfStrategyIsNil() predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldInputTransfStrategy)))
+	})
+}
+
+// InputTransfStrategyNotNil applies the NotNil predicate on the "input_transf_strategy" field.
+func InputTransfStrategyNotNil() predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldInputTransfStrategy)))
+	})
+}
+
 // InputTransformationEQ applies the EQ predicate on the "input_transformation" field.
 func InputTransformationEQ(v string) predicate.Block {
 	return predicate.Block(func(s *sql.Selector) {
@@ -1047,6 +1061,20 @@ func OutputTransfStrategyNotIn(vs ...enum.TransfStrategy) predicate.Block {
 			return
 		}
 		s.Where(sql.NotIn(s.C(FieldOutputTransfStrategy), v...))
+	})
+}
+
+// OutputTransfStrategyIsNil applies the IsNil predicate on the "output_transf_strategy" field.
+func OutputTransfStrategyIsNil() predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldOutputTransfStrategy)))
+	})
+}
+
+// OutputTransfStrategyNotNil applies the NotNil predicate on the "output_transf_strategy" field.
+func OutputTransfStrategyNotNil() predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldOutputTransfStrategy)))
 	})
 }
 
@@ -1253,6 +1281,20 @@ func InputStateTransfStrategyNotIn(vs ...enum.TransfStrategy) predicate.Block {
 	})
 }
 
+// InputStateTransfStrategyIsNil applies the IsNil predicate on the "input_state_transf_strategy" field.
+func InputStateTransfStrategyIsNil() predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldInputStateTransfStrategy)))
+	})
+}
+
+// InputStateTransfStrategyNotNil applies the NotNil predicate on the "input_state_transf_strategy" field.
+func InputStateTransfStrategyNotNil() predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldInputStateTransfStrategy)))
+	})
+}
+
 // InputStateTransformationEQ applies the EQ predicate on the "input_state_transformation" field.
 func InputStateTransformationEQ(v string) predicate.Block {
 	return predicate.Block(func(s *sql.Selector) {
@@ -1453,6 +1495,20 @@ func OutputStateTransfStrategyNotIn(vs ...enum.TransfStrategy) predicate.Block {
 			return
 		}
 		s.Where(sql.NotIn(s.C(FieldOutputStateTransfStrategy), v...))
+	})
+}
+
+// OutputStateTransfStrategyIsNil applies the IsNil predicate on the "output_state_transf_strategy" field.
+func OutputStateTransfStrategyIsNil() predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldOutputStateTransfStrategy)))
+	})
+}
+
+// OutputStateTransfStrategyNotNil applies the NotNil predicate on the "output_state_transf_strategy" field.
+func OutputStateTransfStrategyNotNil() predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldOutputStateTransfStrategy)))
 	})
 }
 
@@ -1772,6 +1828,20 @@ func RetryUnitNotIn(vs ...RetryUnit) predicate.Block {
 			return
 		}
 		s.Where(sql.NotIn(s.C(FieldRetryUnit), v...))
+	})
+}
+
+// RetryUnitIsNil applies the IsNil predicate on the "retry_unit" field.
+func RetryUnitIsNil() predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldRetryUnit)))
+	})
+}
+
+// RetryUnitNotNil applies the NotNil predicate on the "retry_unit" field.
+func RetryUnitNotNil() predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldRetryUnit)))
 	})
 }
 

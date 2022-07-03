@@ -67,76 +67,107 @@ func (Block) Fields() []ent.Field {
 		field.JSON("ui_representation", &flowschema.BlockUIRepresentation{}).
 			Optional(),
 		field.Bool("enable_input_transformation").
-			Optional(),
+			Optional().
+			Nillable(),
 		field.Enum("input_transf_strategy").
-			GoType(enum.TransfStrategy("")),
+			GoType(enum.TransfStrategy("")).
+			Optional().
+			Nillable(),
 		field.String("input_transformation").
-			Optional(),
+			Optional().
+			Nillable(),
 		field.Bool("enable_output_transformation").
-			Optional(),
+			Optional().
+			Nillable(),
 		field.Enum("output_transf_strategy").
-			GoType(enum.TransfStrategy("")),
+			GoType(enum.TransfStrategy("")).
+			Optional().
+			Nillable(),
 		field.String("output_transformation").
-			Optional(),
+			Optional().
+			Nillable(),
 		field.Bool("enable_input_state_transformation").
-			Optional(),
+			Optional().
+			Nillable(),
 		field.Enum("input_state_transf_strategy").
-			GoType(enum.TransfStrategy("")),
+			GoType(enum.TransfStrategy("")).
+			Optional().
+			Nillable(),
 		field.String("input_state_transformation").
-			Optional(),
+			Optional().
+			Nillable(),
 		field.Bool("enable_output_state_transformation").
-			Optional(),
+			Optional().
+			Nillable(),
 		field.Enum("output_state_transf_strategy").
-			GoType(enum.TransfStrategy("")),
+			GoType(enum.TransfStrategy("")).
+			Optional().
+			Nillable(),
 		field.String("output_state_transformation").
-			Optional(),
+			Optional().
+			Nillable(),
 		field.Bool("enable_error_handling").
-			Optional(),
+			Optional().
+			Nillable(),
 		field.Bool("enable_retry_policy").
-			Optional(),
+			Optional().
+			Nillable(),
 		field.Int("retryInterval").
-			Optional(),
+			Optional().
+			Nillable(),
 		field.Enum("retry_unit").
 			NamedValues(
 				"SECONDS", "seconds",
 				"MINUTES", "minutes",
 				"HOURS", "hours",
-			),
+			).
+			Optional(),
 		field.Int("maxAttemps").
-			Optional(),
+			Optional().
+			Nillable(),
 		field.Int("backOffRate").
-			Optional(),
+			Optional().
+			Nillable(),
 
 		field.Enum("timer_behavior").
 			NamedValues(
 				"FIXED_INTERVAL", "fixed_interval",
 				"SPECIFIC_DATETIME", "specific_time",
 			).
-			Optional(),
+			Optional().
+			Nillable(),
 		field.Int("seconds").
-			Optional(),
+			Optional().
+			Nillable(),
 		field.Bool("enable_timer_expression").
-			Optional(),
+			Optional().
+			Nillable(),
 		field.String("timer_expression").
-			Optional(),
+			Optional().
+			Nillable(),
 		field.Time("timer_specific_date").
-			Optional(),
+			Optional().
+			Nillable(),
 
 		field.Enum("url_method").
 			NamedValues(
-				"POST", "post",
-				"GET", "get",
-				"PUT", "put",
-				"DELETE", "delete",
-				"PATCH", "patch",
+				"POST", "POST",
+				"GET", "GET",
+				"PUT", "PUT",
+				"DELETE", "DELETE",
+				"PATCH", "PATCH",
 			).
-			Optional(),
+			Optional().
+			Nillable(),
 		field.String("url").
-			Optional(),
+			Optional().
+			Nillable(),
 		field.Int("connection_timeout").
-			Optional(),
-		field.String("body").
-			Optional(),
+			Optional().
+			Nillable(),
+		field.Text("body").
+			Optional().
+			Nillable(),
 		field.JSON("headers", []*flowschema.VariableValue{}).
 			Optional(),
 
@@ -147,7 +178,8 @@ func (Block) Fields() []ent.Field {
 				"CRCREATION", "cr_creation",
 				"WOUPDATE", "wo_update",
 				"CRUPDATE", "cr_update",
-			).Optional(),
+			).
+			Optional(),
 		field.Enum("signal_module").
 			NamedValues(
 				"INVENTORY", "inventory",

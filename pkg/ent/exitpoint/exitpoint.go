@@ -108,7 +108,7 @@ var (
 // RoleValidator is a validator for the "role" field enum values. It is called by the builders before save.
 func RoleValidator(r flowschema.ExitPointRole) error {
 	switch r {
-	case "DEFAULT", "DECISION", "TRUE", "FALSE":
+	case "DEFAULT", "DECISION", "TRUE", "FALSE", "CHOICE":
 		return nil
 	default:
 		return fmt.Errorf("exitpoint: invalid enum value for role field: %q", r)
