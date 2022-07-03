@@ -117,9 +117,9 @@ func (Block) Fields() []ent.Field {
 			Nillable(),
 		field.Enum("retry_unit").
 			NamedValues(
-				"SECONDS", "seconds",
-				"MINUTES", "minutes",
-				"HOURS", "hours",
+				"SECONDS", "SECONDS",
+				"MINUTES", "MINUTES",
+				"HOURS", "HOURS",
 			).
 			Optional(),
 		field.Int("maxAttemps").
@@ -131,8 +131,8 @@ func (Block) Fields() []ent.Field {
 
 		field.Enum("timer_behavior").
 			NamedValues(
-				"FIXED_INTERVAL", "fixed_interval",
-				"SPECIFIC_DATETIME", "specific_time",
+				"FIXED_INTERVAL", "FIXED_INTERVAL",
+				"SPECIFIC_DATETIME", "SPECIFIC_DATETIME",
 			).
 			Optional().
 			Nillable(),
@@ -202,9 +202,11 @@ func (Block) Fields() []ent.Field {
 			Optional(),
 
 		field.String("foreach_key").
-			Optional(),
+			Optional().
+			Nillable(),
 		field.Int("foreach_start_blockID").
-			Optional(),
+			Optional().
+			Nillable(),
 	}
 }
 

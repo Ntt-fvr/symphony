@@ -1332,7 +1332,7 @@ func (bc *BlockCreate) createSpec() (*Block, *sqlgraph.CreateSpec) {
 			Value:  value,
 			Column: block.FieldForeachKey,
 		})
-		_node.ForeachKey = value
+		_node.ForeachKey = &value
 	}
 	if value, ok := bc.mutation.ForeachStartBlockID(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -1340,7 +1340,7 @@ func (bc *BlockCreate) createSpec() (*Block, *sqlgraph.CreateSpec) {
 			Value:  value,
 			Column: block.FieldForeachStartBlockID,
 		})
-		_node.ForeachStartBlockID = value
+		_node.ForeachStartBlockID = &value
 	}
 	if nodes := bc.mutation.FlowIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
