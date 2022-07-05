@@ -14,8 +14,8 @@ import InventorySuspense from '../../common/InventorySuspense';
 import React, {useEffect, useMemo, useState} from 'react';
 import TabsBar from '@symphony/design-system/components/Tabs/TabsBar';
 import fbt from 'fbt';
-import {ChangeRequestTypes} from '../../components/configuration_management/ChangeRequestTypes';
-import {ConfigurationsTypes} from '../../components/configuration_management/ConfigurationsTypes';
+import {ChangeRequestTypes} from './ChangeRequestTypes';
+import {ConfigurationsView} from './ConfigurationsView';
 import {LogEvents, ServerLogger} from '../../common/LoggingUtils';
 import {Redirect, Route, Switch} from 'react-router-dom';
 import {makeStyles} from '@material-ui/styles';
@@ -65,7 +65,7 @@ export default function Configure() {
         tab: {
           label: fbt('CONFIGURATIONS', ''),
         },
-        path: 'configurations_types',
+        path: 'configurations_view',
       },
 
       {
@@ -118,8 +118,8 @@ export default function Configure() {
         <InventorySuspense>
           <Switch>
             <Route
-              path={relativeUrl('/configurations_types')}
-              component={ConfigurationsTypes}
+              path={relativeUrl('/configurations_view')}
+              component={ConfigurationsView}
             />
             <Route
               path={relativeUrl('/change_request_types')}
@@ -127,7 +127,7 @@ export default function Configure() {
             />
             <Redirect
               from={relativeUrl('/')}
-              to={relativeUrl('/configurations_types')}
+              to={relativeUrl('/configurations_view')}
             />
           </Switch>
         </InventorySuspense>

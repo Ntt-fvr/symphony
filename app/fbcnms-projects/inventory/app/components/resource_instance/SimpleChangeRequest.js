@@ -47,7 +47,7 @@ const SimpleChangeRequest = (props: Props) => {
   const [description, setDescription] = useState('');
   const classes = useStyles();
   const [openModalStatus, setOpenModalStatus] = useState(false);
-  const handelModal = () => {
+  const handleModal = () => {
     setOpenModalStatus(prevStateOpenModal => !prevStateOpenModal);
   };
   const handleOnClose = () => {
@@ -75,27 +75,34 @@ const SimpleChangeRequest = (props: Props) => {
         </Grid>
         <Grid>
           <Button
+            data-testid="btn-submit"
             disabled={parameters.filter(p => !isTempId(p.id)).length === 0}
             variant="contained"
             color="primary"
             className={classes.buttons}
-            onClick={() => handelModal()}>
+            onClick={() => handleModal()}>
             Submit
           </Button>
         </Grid>
       </Grid>
       <Grid>
         <CardPlusDnD
+          data-testid="card-plus-dnd"
           onChange={setParameters}
           parameters={parameters}
           cmVersionParams={cmVersion.parameters}
         />
       </Grid>
       <Grid>
-        <CardSuggested onSchedule={setSchedule} schedule={schedule} />
+        <CardSuggested
+          data-testid="card-suggested"
+          onSchedule={setSchedule}
+          schedule={schedule}
+        />
       </Grid>
       {openModalStatus && (
         <DialogStatus
+          data-testid="dialog-status"
           description={description}
           onChangeDescription={setDescription}
           cmVersion={cmVersion}

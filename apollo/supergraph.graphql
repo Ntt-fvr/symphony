@@ -11282,13 +11282,16 @@ input ServiceTypeEditData {
 }
 
 enum SignalModule {
-  CONFIGURATION_MANAGEMENT
+  CONFIGURATION
   INVENTORY
 }
 
 enum SignalType {
-  CONFIGURATION_MANAGEMENT
-  INVENTORY
+  CRCREATION
+  CRUPDATE
+  NOTIFICATION
+  WOCREATION
+  WOUPDATE
 }
 
 input SlotFilterInput {

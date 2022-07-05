@@ -240,6 +240,39 @@ func (r blockResolver) Details(ctx context.Context, obj *ent.Block) (models.Bloc
 			DefaultExitPoint: exitPoint,
 			Rules:            rules,
 		}, nil
+	case block.TypeInvokeRestAPI:
+		return &models.InvokeRestAPIBlock{
+			EntryPoint: entryPoint,
+			URL:        *obj.URL,
+			// Method:     *obj.URLMethod,
+			Headers: obj.Headers,
+			Body:    *obj.Body,
+		}, nil
+	case block.TypeTimer:
+		return &models.TimerBlock{
+			ExitPoint: exitPoint,
+			/*behavior:          *obj.TimerBehavior,
+			expression:        *obj.TimerExpression,
+			enableExpressionL: obj.EnableTimerExpression,
+			seconds:           *obj.Seconds,*/
+		}, nil
+
+	case block.TypeExecuteFlow:
+		return &models.ExecuteFlowBlock{
+			ExitPoint:  exitPoint,
+			EntryPoint: entryPoint,
+			Params:     obj.InputParams,
+			//Flow: obj.Flow(ctx)
+		}, nil
+	case block.TypeWaitForSignal:
+		return &models.WaitForSignalBlock{
+			ExitPoint:  exitPoint,
+			EntryPoint: entryPoint,
+			/*Type:       obj.SignalType,
+			SignalModule: obj.SignalModule,
+			CustomFilter: obj.CustomFilter,
+			Blocked:      obj.BlockFlow,*/
+		}, nil
 	default:
 		return nil, fmt.Errorf("type %q is unknown", obj.Type)
 	}
@@ -678,27 +711,27 @@ func (r mutationResolver) EditBlockInstance(ctx context.Context, input models.Ed
 }
 
 func (r blockResolver) EnableInputTransformation(ctx context.Context, obj *ent.Block) bool {
-	return obj.EnableInputTransformation
+	return *obj.EnableInputTransformation
 }
 
 func (r blockResolver) EnableOutputTransformation(ctx context.Context, obj *ent.Block) bool {
-	return obj.EnableOutputTransformation
+	return *obj.EnableOutputTransformation
 }
 
 func (r blockResolver) EnableInputStateTransformation(ctx context.Context, obj *ent.Block) bool {
-	return obj.EnableInputStateTransformation
+	return *obj.EnableInputStateTransformation
 }
 
 func (r blockResolver) EnableOutputStateTransformation(ctx context.Context, obj *ent.Block) bool {
-	return obj.EnableOutputTransformation
+	return *obj.EnableOutputTransformation
 }
 
 func (r blockResolver) EnableErrorHandling(ctx context.Context, obj *ent.Block) bool {
-	return obj.EnableErrorHandling
+	return *obj.EnableErrorHandling
 }
 
 func (r blockResolver) EnableRetryPolicy(ctx context.Context, obj *ent.Block) bool {
-	return obj.EnableRetryPolicy
+	return *obj.EnableRetryPolicy
 }
 
 func (r blockResolver) InputTransfStrategy(ctx context.Context, obj *ent.Block) (*enum.TransfStrategy, error) {
@@ -708,7 +741,7 @@ func (r blockResolver) InputTransfStrategy(ctx context.Context, obj *ent.Block) 
 	if err != nil {
 		return nil, fmt.Errorf("has occurred error on process: %w", err)
 	}
-	return (*enum.TransfStrategy)(&b.InputTransfStrategy), nil
+	return (*enum.TransfStrategy)(b.InputTransfStrategy), nil
 }
 
 func (r blockResolver) OutputTransfStrategy(ctx context.Context, obj *ent.Block) (*enum.TransfStrategy, error) {
@@ -718,7 +751,7 @@ func (r blockResolver) OutputTransfStrategy(ctx context.Context, obj *ent.Block)
 	if err != nil {
 		return nil, fmt.Errorf("has occurred error on process: %w", err)
 	}
-	return (*enum.TransfStrategy)(&b.OutputTransfStrategy), nil
+	return (*enum.TransfStrategy)(b.OutputTransfStrategy), nil
 }
 
 func (r blockResolver) InputStateTransfStrategy(ctx context.Context, obj *ent.Block) (*enum.TransfStrategy, error) {
@@ -728,7 +761,7 @@ func (r blockResolver) InputStateTransfStrategy(ctx context.Context, obj *ent.Bl
 	if err != nil {
 		return nil, fmt.Errorf("has occurred error on process: %w", err)
 	}
-	return (*enum.TransfStrategy)(&b.InputStateTransfStrategy), nil
+	return (*enum.TransfStrategy)(b.InputStateTransfStrategy), nil
 }
 
 func (r blockResolver) OutputStateTransfStrategy(ctx context.Context, obj *ent.Block) (*enum.TransfStrategy, error) {
@@ -738,7 +771,7 @@ func (r blockResolver) OutputStateTransfStrategy(ctx context.Context, obj *ent.B
 	if err != nil {
 		return nil, fmt.Errorf("has occurred error on process: %w", err)
 	}
-	return (*enum.TransfStrategy)(&b.OutputStateTransfStrategy), nil
+	return (*enum.TransfStrategy)(b.OutputStateTransfStrategy), nil
 }
 
 func (r blockResolver) BackoffRate(ctx context.Context, obj *ent.Block) (int, error) {
@@ -748,7 +781,7 @@ func (r blockResolver) BackoffRate(ctx context.Context, obj *ent.Block) (int, er
 	if err != nil {
 		return b.ID, fmt.Errorf("has occurred error on process: %w", err)
 	}
-	return b.BackOffRate, nil
+	return *b.BackOffRate, nil
 }
 
 func (r blockResolver) MaxAttemps(ctx context.Context, obj *ent.Block) (int, error) {
@@ -758,7 +791,7 @@ func (r blockResolver) MaxAttemps(ctx context.Context, obj *ent.Block) (int, err
 	if err != nil {
 		return b.ID, fmt.Errorf("has occurred error on process: %w", err)
 	}
-	return b.MaxAttemps, nil
+	return *b.MaxAttemps, nil
 }
 
 func (r blockResolver) RetryInterval(ctx context.Context, obj *ent.Block) (int, error) {
@@ -768,7 +801,7 @@ func (r blockResolver) RetryInterval(ctx context.Context, obj *ent.Block) (int, 
 	if err != nil {
 		return b.ID, fmt.Errorf("has occurred error on process: %w", err)
 	}
-	return b.RetryInterval, nil
+	return *b.RetryInterval, nil
 }
 
 func (r blockResolver) Units(ctx context.Context, obj *ent.Block) (*models.RetryUnit, error) {
@@ -782,23 +815,24 @@ func (r blockResolver) Units(ctx context.Context, obj *ent.Block) (*models.Retry
 }
 
 func (r blockResolver) InputStateTransformation(ctx context.Context, obj *ent.Block) (string, error) {
-	return obj.InputStateTransformation, nil
+	return *obj.InputStateTransformation, nil
 }
 
 func (r blockResolver) OutputStateTransformation(ctx context.Context, obj *ent.Block) (string, error) {
-	return obj.OutputStateTransformation, nil
+	return *obj.OutputStateTransformation, nil
 }
 
 func (r blockResolver) InputTransformation(ctx context.Context, obj *ent.Block) (string, error) {
-	return obj.InputTransformation, nil
+	return *obj.InputTransformation, nil
 }
 
 func (r blockResolver) OutputTransformation(ctx context.Context, obj *ent.Block) (string, error) {
-	return obj.OutputTransformation, nil
+	return *obj.OutputTransformation, nil
 }
 
 func (r mutationResolver) AddChoiceBlock(ctx context.Context, flowDraftID int, input models.ChoiceBlockInput) (*ent.Block, error) {
 	mutation := addBlockMutation(ctx, input.Cid, block.TypeChoice, flowDraftID, input.UIRepresentation)
+	addBlockBasicDefinitions(ctx, mutation, *input.BasicDefinitions)
 	b, err := mutation.Save(ctx)
 	if err != nil {
 		return nil, err
@@ -856,12 +890,13 @@ func (r mutationResolver) AddTimerBlock(ctx context.Context, flowDraftID int, in
 		SetTimerExpression(*input.Expression).
 		SetTimerBehavior((block.TimerBehavior)(input.Behavior)).
 		SetNillableSeconds(input.Seconds).
-		//SetTimerSpecificDate(input.SpecificDatetime).
+		SetTimerSpecificDate(*input.SpecificDatetime).
 		Save(ctx)
 }
 
 func (r mutationResolver) AddInvokeRestAPIBlock(ctx context.Context, flowDraftID int, input models.InvokeRestAPIBlockInput) (*ent.Block, error) {
 	mutation := addBlockMutation(ctx, input.Cid, block.TypeInvokeRestAPI, flowDraftID, input.UIRepresentation)
+	addBlockBasicDefinitions(ctx, mutation, *input.BasicDefinitions)
 	b, err := mutation.Save(ctx)
 	if err != nil {
 		return nil, err
@@ -879,6 +914,7 @@ func (r mutationResolver) AddInvokeRestAPIBlock(ctx context.Context, flowDraftID
 
 func (r mutationResolver) AddWaitForSignalBlock(ctx context.Context, flowDraftID int, input models.WaitForSignalBlockInput) (*ent.Block, error) {
 	mutation := addBlockMutation(ctx, input.Cid, block.TypeInvokeRestAPI, flowDraftID, input.UIRepresentation)
+	addBlockBasicDefinitions(ctx, mutation, *input.BasicDefinitions)
 	b, err := mutation.Save(ctx)
 	if err != nil {
 		return nil, err
@@ -889,4 +925,22 @@ func (r mutationResolver) AddWaitForSignalBlock(ctx context.Context, flowDraftID
 		SetCustomFilter(*input.CustomFilter).
 		SetBlockFlow(input.Blocked).
 		Save(ctx)
+}
+
+func addBlockBasicDefinitions(ctx context.Context, mutation *ent.BlockCreate, input models.BaseBlockInput) *ent.BlockCreate {
+	return mutation.SetNillableEnableErrorHandling(input.EnableErrorHandling).
+		SetNillableEnableInputStateTransformation(&input.EnableInputStateTransformation).
+		SetNillableEnableOutputStateTransformation(&input.EnableOutputStateTransformation).
+		SetNillableEnableInputTransformation(&input.EnableInputTransformation).
+		SetNillableEnableOutputTransformation(&input.EnableOutputTransformation).
+		SetNillableInputStateTransfStrategy(input.InputStateTransfStrategy).
+		SetNillableOutputStateTransfStrategy(input.OutputStateTransfStrategy).
+		SetNillableInputTransfStrategy(input.InputTransfStrategy).
+		SetNillableOutputTransfStrategy(input.OutputTransfStrategy).
+		SetNillableEnableErrorHandling(input.EnableErrorHandling).
+		SetNillableEnableRetryPolicy(input.EnableRetryPolicy).
+		SetNillableRetryInterval(input.RetryInterval).
+		SetNillableRetryUnit((*block.RetryUnit)(input.Units)).
+		SetNillableMaxAttemps(input.MaxAttemps).
+		SetNillableBackOffRate(input.BackoffRate)
 }

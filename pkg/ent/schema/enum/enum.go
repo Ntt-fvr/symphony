@@ -599,8 +599,8 @@ type TransfStrategy string
 
 // Possible tranformation strategy type values.
 const (
-	TransfStrategyReplace TransfStrategy = "replace"
-	TransfStrategyMerge   TransfStrategy = "merge"
+	TransfStrategyReplace TransfStrategy = "REPLACE"
+	TransfStrategyMerge   TransfStrategy = "MERGE"
 )
 
 // Values returns strategy item type possible values.
@@ -636,9 +636,9 @@ type KafkaMessageType string
 
 // Possible tranformation strategy type values.
 const (
-	KafkaMessageTypeExpression KafkaMessageType = "expression"
-	KafkaMessageTypeInput      KafkaMessageType = "input"
-	KafkaMessageTypeState      KafkaMessageType = "state"
+	KafkaMessageTypeExpression KafkaMessageType = "EXPRESSION"
+	KafkaMessageTypeInput      KafkaMessageType = "INPUT"
+	KafkaMessageTypeState      KafkaMessageType = "STATE"
 )
 
 // Values returns kafka message type possible values.

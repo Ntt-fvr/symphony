@@ -46,59 +46,59 @@ type Block struct {
 	// UIRepresentation holds the value of the "ui_representation" field.
 	UIRepresentation *flowschema.BlockUIRepresentation `json:"ui_representation,omitempty"`
 	// EnableInputTransformation holds the value of the "enable_input_transformation" field.
-	EnableInputTransformation bool `json:"enable_input_transformation,omitempty"`
+	EnableInputTransformation *bool `json:"enable_input_transformation,omitempty"`
 	// InputTransfStrategy holds the value of the "input_transf_strategy" field.
-	InputTransfStrategy enum.TransfStrategy `json:"input_transf_strategy,omitempty"`
+	InputTransfStrategy *enum.TransfStrategy `json:"input_transf_strategy,omitempty"`
 	// InputTransformation holds the value of the "input_transformation" field.
-	InputTransformation string `json:"input_transformation,omitempty"`
+	InputTransformation *string `json:"input_transformation,omitempty"`
 	// EnableOutputTransformation holds the value of the "enable_output_transformation" field.
-	EnableOutputTransformation bool `json:"enable_output_transformation,omitempty"`
+	EnableOutputTransformation *bool `json:"enable_output_transformation,omitempty"`
 	// OutputTransfStrategy holds the value of the "output_transf_strategy" field.
-	OutputTransfStrategy enum.TransfStrategy `json:"output_transf_strategy,omitempty"`
+	OutputTransfStrategy *enum.TransfStrategy `json:"output_transf_strategy,omitempty"`
 	// OutputTransformation holds the value of the "output_transformation" field.
-	OutputTransformation string `json:"output_transformation,omitempty"`
+	OutputTransformation *string `json:"output_transformation,omitempty"`
 	// EnableInputStateTransformation holds the value of the "enable_input_state_transformation" field.
-	EnableInputStateTransformation bool `json:"enable_input_state_transformation,omitempty"`
+	EnableInputStateTransformation *bool `json:"enable_input_state_transformation,omitempty"`
 	// InputStateTransfStrategy holds the value of the "input_state_transf_strategy" field.
-	InputStateTransfStrategy enum.TransfStrategy `json:"input_state_transf_strategy,omitempty"`
+	InputStateTransfStrategy *enum.TransfStrategy `json:"input_state_transf_strategy,omitempty"`
 	// InputStateTransformation holds the value of the "input_state_transformation" field.
-	InputStateTransformation string `json:"input_state_transformation,omitempty"`
+	InputStateTransformation *string `json:"input_state_transformation,omitempty"`
 	// EnableOutputStateTransformation holds the value of the "enable_output_state_transformation" field.
-	EnableOutputStateTransformation bool `json:"enable_output_state_transformation,omitempty"`
+	EnableOutputStateTransformation *bool `json:"enable_output_state_transformation,omitempty"`
 	// OutputStateTransfStrategy holds the value of the "output_state_transf_strategy" field.
-	OutputStateTransfStrategy enum.TransfStrategy `json:"output_state_transf_strategy,omitempty"`
+	OutputStateTransfStrategy *enum.TransfStrategy `json:"output_state_transf_strategy,omitempty"`
 	// OutputStateTransformation holds the value of the "output_state_transformation" field.
-	OutputStateTransformation string `json:"output_state_transformation,omitempty"`
+	OutputStateTransformation *string `json:"output_state_transformation,omitempty"`
 	// EnableErrorHandling holds the value of the "enable_error_handling" field.
-	EnableErrorHandling bool `json:"enable_error_handling,omitempty"`
+	EnableErrorHandling *bool `json:"enable_error_handling,omitempty"`
 	// EnableRetryPolicy holds the value of the "enable_retry_policy" field.
-	EnableRetryPolicy bool `json:"enable_retry_policy,omitempty"`
+	EnableRetryPolicy *bool `json:"enable_retry_policy,omitempty"`
 	// RetryInterval holds the value of the "retryInterval" field.
-	RetryInterval int `json:"retryInterval,omitempty"`
+	RetryInterval *int `json:"retryInterval,omitempty"`
 	// RetryUnit holds the value of the "retry_unit" field.
 	RetryUnit block.RetryUnit `json:"retry_unit,omitempty"`
 	// MaxAttemps holds the value of the "maxAttemps" field.
-	MaxAttemps int `json:"maxAttemps,omitempty"`
+	MaxAttemps *int `json:"maxAttemps,omitempty"`
 	// BackOffRate holds the value of the "backOffRate" field.
-	BackOffRate int `json:"backOffRate,omitempty"`
+	BackOffRate *int `json:"backOffRate,omitempty"`
 	// TimerBehavior holds the value of the "timer_behavior" field.
-	TimerBehavior block.TimerBehavior `json:"timer_behavior,omitempty"`
+	TimerBehavior *block.TimerBehavior `json:"timer_behavior,omitempty"`
 	// Seconds holds the value of the "seconds" field.
-	Seconds int `json:"seconds,omitempty"`
+	Seconds *int `json:"seconds,omitempty"`
 	// EnableTimerExpression holds the value of the "enable_timer_expression" field.
-	EnableTimerExpression bool `json:"enable_timer_expression,omitempty"`
+	EnableTimerExpression *bool `json:"enable_timer_expression,omitempty"`
 	// TimerExpression holds the value of the "timer_expression" field.
-	TimerExpression string `json:"timer_expression,omitempty"`
+	TimerExpression *string `json:"timer_expression,omitempty"`
 	// TimerSpecificDate holds the value of the "timer_specific_date" field.
-	TimerSpecificDate time.Time `json:"timer_specific_date,omitempty"`
+	TimerSpecificDate *time.Time `json:"timer_specific_date,omitempty"`
 	// URLMethod holds the value of the "url_method" field.
-	URLMethod block.URLMethod `json:"url_method,omitempty"`
+	URLMethod *block.URLMethod `json:"url_method,omitempty"`
 	// URL holds the value of the "url" field.
-	URL string `json:"url,omitempty"`
+	URL *string `json:"url,omitempty"`
 	// ConnectionTimeout holds the value of the "connection_timeout" field.
-	ConnectionTimeout int `json:"connection_timeout,omitempty"`
+	ConnectionTimeout *int `json:"connection_timeout,omitempty"`
 	// Body holds the value of the "body" field.
-	Body string `json:"body,omitempty"`
+	Body *string `json:"body,omitempty"`
 	// Headers holds the value of the "headers" field.
 	Headers []*flowschema.VariableValue `json:"headers,omitempty"`
 	// SignalType holds the value of the "signal_type" field.
@@ -117,6 +117,10 @@ type Block struct {
 	KafkaMessage string `json:"kafka_message,omitempty"`
 	// KafkaMessageType holds the value of the "kafka_message_type" field.
 	KafkaMessageType enum.KafkaMessageType `json:"kafka_message_type,omitempty"`
+	// ForeachKey holds the value of the "foreach_key" field.
+	ForeachKey *string `json:"foreach_key,omitempty"`
+	// ForeachStartBlockID holds the value of the "foreach_start_blockID" field.
+	ForeachStartBlockID *int `json:"foreach_start_blockID,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the BlockQuery when eager-loading is set.
 	Edges                          BlockEdges `json:"edges"`
@@ -312,6 +316,8 @@ func (*Block) scanValues() []interface{} {
 		&sql.NullString{}, // kafka_topic
 		&sql.NullString{}, // kafka_message
 		&sql.NullString{}, // kafka_message_type
+		&sql.NullString{}, // foreach_key
+		&sql.NullInt64{},  // foreach_start_blockID
 	}
 }
 
@@ -397,77 +403,92 @@ func (b *Block) assignValues(values ...interface{}) error {
 	if value, ok := values[9].(*sql.NullBool); !ok {
 		return fmt.Errorf("unexpected type %T for field enable_input_transformation", values[9])
 	} else if value.Valid {
-		b.EnableInputTransformation = value.Bool
+		b.EnableInputTransformation = new(bool)
+		*b.EnableInputTransformation = value.Bool
 	}
 	if value, ok := values[10].(*sql.NullString); !ok {
 		return fmt.Errorf("unexpected type %T for field input_transf_strategy", values[10])
 	} else if value.Valid {
-		b.InputTransfStrategy = enum.TransfStrategy(value.String)
+		b.InputTransfStrategy = new(enum.TransfStrategy)
+		*b.InputTransfStrategy = enum.TransfStrategy(value.String)
 	}
 	if value, ok := values[11].(*sql.NullString); !ok {
 		return fmt.Errorf("unexpected type %T for field input_transformation", values[11])
 	} else if value.Valid {
-		b.InputTransformation = value.String
+		b.InputTransformation = new(string)
+		*b.InputTransformation = value.String
 	}
 	if value, ok := values[12].(*sql.NullBool); !ok {
 		return fmt.Errorf("unexpected type %T for field enable_output_transformation", values[12])
 	} else if value.Valid {
-		b.EnableOutputTransformation = value.Bool
+		b.EnableOutputTransformation = new(bool)
+		*b.EnableOutputTransformation = value.Bool
 	}
 	if value, ok := values[13].(*sql.NullString); !ok {
 		return fmt.Errorf("unexpected type %T for field output_transf_strategy", values[13])
 	} else if value.Valid {
-		b.OutputTransfStrategy = enum.TransfStrategy(value.String)
+		b.OutputTransfStrategy = new(enum.TransfStrategy)
+		*b.OutputTransfStrategy = enum.TransfStrategy(value.String)
 	}
 	if value, ok := values[14].(*sql.NullString); !ok {
 		return fmt.Errorf("unexpected type %T for field output_transformation", values[14])
 	} else if value.Valid {
-		b.OutputTransformation = value.String
+		b.OutputTransformation = new(string)
+		*b.OutputTransformation = value.String
 	}
 	if value, ok := values[15].(*sql.NullBool); !ok {
 		return fmt.Errorf("unexpected type %T for field enable_input_state_transformation", values[15])
 	} else if value.Valid {
-		b.EnableInputStateTransformation = value.Bool
+		b.EnableInputStateTransformation = new(bool)
+		*b.EnableInputStateTransformation = value.Bool
 	}
 	if value, ok := values[16].(*sql.NullString); !ok {
 		return fmt.Errorf("unexpected type %T for field input_state_transf_strategy", values[16])
 	} else if value.Valid {
-		b.InputStateTransfStrategy = enum.TransfStrategy(value.String)
+		b.InputStateTransfStrategy = new(enum.TransfStrategy)
+		*b.InputStateTransfStrategy = enum.TransfStrategy(value.String)
 	}
 	if value, ok := values[17].(*sql.NullString); !ok {
 		return fmt.Errorf("unexpected type %T for field input_state_transformation", values[17])
 	} else if value.Valid {
-		b.InputStateTransformation = value.String
+		b.InputStateTransformation = new(string)
+		*b.InputStateTransformation = value.String
 	}
 	if value, ok := values[18].(*sql.NullBool); !ok {
 		return fmt.Errorf("unexpected type %T for field enable_output_state_transformation", values[18])
 	} else if value.Valid {
-		b.EnableOutputStateTransformation = value.Bool
+		b.EnableOutputStateTransformation = new(bool)
+		*b.EnableOutputStateTransformation = value.Bool
 	}
 	if value, ok := values[19].(*sql.NullString); !ok {
 		return fmt.Errorf("unexpected type %T for field output_state_transf_strategy", values[19])
 	} else if value.Valid {
-		b.OutputStateTransfStrategy = enum.TransfStrategy(value.String)
+		b.OutputStateTransfStrategy = new(enum.TransfStrategy)
+		*b.OutputStateTransfStrategy = enum.TransfStrategy(value.String)
 	}
 	if value, ok := values[20].(*sql.NullString); !ok {
 		return fmt.Errorf("unexpected type %T for field output_state_transformation", values[20])
 	} else if value.Valid {
-		b.OutputStateTransformation = value.String
+		b.OutputStateTransformation = new(string)
+		*b.OutputStateTransformation = value.String
 	}
 	if value, ok := values[21].(*sql.NullBool); !ok {
 		return fmt.Errorf("unexpected type %T for field enable_error_handling", values[21])
 	} else if value.Valid {
-		b.EnableErrorHandling = value.Bool
+		b.EnableErrorHandling = new(bool)
+		*b.EnableErrorHandling = value.Bool
 	}
 	if value, ok := values[22].(*sql.NullBool); !ok {
 		return fmt.Errorf("unexpected type %T for field enable_retry_policy", values[22])
 	} else if value.Valid {
-		b.EnableRetryPolicy = value.Bool
+		b.EnableRetryPolicy = new(bool)
+		*b.EnableRetryPolicy = value.Bool
 	}
 	if value, ok := values[23].(*sql.NullInt64); !ok {
 		return fmt.Errorf("unexpected type %T for field retryInterval", values[23])
 	} else if value.Valid {
-		b.RetryInterval = int(value.Int64)
+		b.RetryInterval = new(int)
+		*b.RetryInterval = int(value.Int64)
 	}
 	if value, ok := values[24].(*sql.NullString); !ok {
 		return fmt.Errorf("unexpected type %T for field retry_unit", values[24])
@@ -477,57 +498,68 @@ func (b *Block) assignValues(values ...interface{}) error {
 	if value, ok := values[25].(*sql.NullInt64); !ok {
 		return fmt.Errorf("unexpected type %T for field maxAttemps", values[25])
 	} else if value.Valid {
-		b.MaxAttemps = int(value.Int64)
+		b.MaxAttemps = new(int)
+		*b.MaxAttemps = int(value.Int64)
 	}
 	if value, ok := values[26].(*sql.NullInt64); !ok {
 		return fmt.Errorf("unexpected type %T for field backOffRate", values[26])
 	} else if value.Valid {
-		b.BackOffRate = int(value.Int64)
+		b.BackOffRate = new(int)
+		*b.BackOffRate = int(value.Int64)
 	}
 	if value, ok := values[27].(*sql.NullString); !ok {
 		return fmt.Errorf("unexpected type %T for field timer_behavior", values[27])
 	} else if value.Valid {
-		b.TimerBehavior = block.TimerBehavior(value.String)
+		b.TimerBehavior = new(block.TimerBehavior)
+		*b.TimerBehavior = block.TimerBehavior(value.String)
 	}
 	if value, ok := values[28].(*sql.NullInt64); !ok {
 		return fmt.Errorf("unexpected type %T for field seconds", values[28])
 	} else if value.Valid {
-		b.Seconds = int(value.Int64)
+		b.Seconds = new(int)
+		*b.Seconds = int(value.Int64)
 	}
 	if value, ok := values[29].(*sql.NullBool); !ok {
 		return fmt.Errorf("unexpected type %T for field enable_timer_expression", values[29])
 	} else if value.Valid {
-		b.EnableTimerExpression = value.Bool
+		b.EnableTimerExpression = new(bool)
+		*b.EnableTimerExpression = value.Bool
 	}
 	if value, ok := values[30].(*sql.NullString); !ok {
 		return fmt.Errorf("unexpected type %T for field timer_expression", values[30])
 	} else if value.Valid {
-		b.TimerExpression = value.String
+		b.TimerExpression = new(string)
+		*b.TimerExpression = value.String
 	}
 	if value, ok := values[31].(*sql.NullTime); !ok {
 		return fmt.Errorf("unexpected type %T for field timer_specific_date", values[31])
 	} else if value.Valid {
-		b.TimerSpecificDate = value.Time
+		b.TimerSpecificDate = new(time.Time)
+		*b.TimerSpecificDate = value.Time
 	}
 	if value, ok := values[32].(*sql.NullString); !ok {
 		return fmt.Errorf("unexpected type %T for field url_method", values[32])
 	} else if value.Valid {
-		b.URLMethod = block.URLMethod(value.String)
+		b.URLMethod = new(block.URLMethod)
+		*b.URLMethod = block.URLMethod(value.String)
 	}
 	if value, ok := values[33].(*sql.NullString); !ok {
 		return fmt.Errorf("unexpected type %T for field url", values[33])
 	} else if value.Valid {
-		b.URL = value.String
+		b.URL = new(string)
+		*b.URL = value.String
 	}
 	if value, ok := values[34].(*sql.NullInt64); !ok {
 		return fmt.Errorf("unexpected type %T for field connection_timeout", values[34])
 	} else if value.Valid {
-		b.ConnectionTimeout = int(value.Int64)
+		b.ConnectionTimeout = new(int)
+		*b.ConnectionTimeout = int(value.Int64)
 	}
 	if value, ok := values[35].(*sql.NullString); !ok {
 		return fmt.Errorf("unexpected type %T for field body", values[35])
 	} else if value.Valid {
-		b.Body = value.String
+		b.Body = new(string)
+		*b.Body = value.String
 	}
 
 	if value, ok := values[36].(*[]byte); !ok {
@@ -580,7 +612,19 @@ func (b *Block) assignValues(values ...interface{}) error {
 	} else if value.Valid {
 		b.KafkaMessageType = enum.KafkaMessageType(value.String)
 	}
-	values = values[45:]
+	if value, ok := values[45].(*sql.NullString); !ok {
+		return fmt.Errorf("unexpected type %T for field foreach_key", values[45])
+	} else if value.Valid {
+		b.ForeachKey = new(string)
+		*b.ForeachKey = value.String
+	}
+	if value, ok := values[46].(*sql.NullInt64); !ok {
+		return fmt.Errorf("unexpected type %T for field foreach_start_blockID", values[46])
+	} else if value.Valid {
+		b.ForeachStartBlockID = new(int)
+		*b.ForeachStartBlockID = int(value.Int64)
+	}
+	values = values[47:]
 	if len(values) == len(block.ForeignKeys) {
 		if value, ok := values[0].(*sql.NullInt64); !ok {
 			return fmt.Errorf("unexpected type %T for edge-field block_sub_flow", value)
@@ -706,60 +750,112 @@ func (b *Block) String() string {
 	builder.WriteString(fmt.Sprintf("%v", b.InputParams))
 	builder.WriteString(", ui_representation=")
 	builder.WriteString(fmt.Sprintf("%v", b.UIRepresentation))
-	builder.WriteString(", enable_input_transformation=")
-	builder.WriteString(fmt.Sprintf("%v", b.EnableInputTransformation))
-	builder.WriteString(", input_transf_strategy=")
-	builder.WriteString(fmt.Sprintf("%v", b.InputTransfStrategy))
-	builder.WriteString(", input_transformation=")
-	builder.WriteString(b.InputTransformation)
-	builder.WriteString(", enable_output_transformation=")
-	builder.WriteString(fmt.Sprintf("%v", b.EnableOutputTransformation))
-	builder.WriteString(", output_transf_strategy=")
-	builder.WriteString(fmt.Sprintf("%v", b.OutputTransfStrategy))
-	builder.WriteString(", output_transformation=")
-	builder.WriteString(b.OutputTransformation)
-	builder.WriteString(", enable_input_state_transformation=")
-	builder.WriteString(fmt.Sprintf("%v", b.EnableInputStateTransformation))
-	builder.WriteString(", input_state_transf_strategy=")
-	builder.WriteString(fmt.Sprintf("%v", b.InputStateTransfStrategy))
-	builder.WriteString(", input_state_transformation=")
-	builder.WriteString(b.InputStateTransformation)
-	builder.WriteString(", enable_output_state_transformation=")
-	builder.WriteString(fmt.Sprintf("%v", b.EnableOutputStateTransformation))
-	builder.WriteString(", output_state_transf_strategy=")
-	builder.WriteString(fmt.Sprintf("%v", b.OutputStateTransfStrategy))
-	builder.WriteString(", output_state_transformation=")
-	builder.WriteString(b.OutputStateTransformation)
-	builder.WriteString(", enable_error_handling=")
-	builder.WriteString(fmt.Sprintf("%v", b.EnableErrorHandling))
-	builder.WriteString(", enable_retry_policy=")
-	builder.WriteString(fmt.Sprintf("%v", b.EnableRetryPolicy))
-	builder.WriteString(", retryInterval=")
-	builder.WriteString(fmt.Sprintf("%v", b.RetryInterval))
+	if v := b.EnableInputTransformation; v != nil {
+		builder.WriteString(", enable_input_transformation=")
+		builder.WriteString(fmt.Sprintf("%v", *v))
+	}
+	if v := b.InputTransfStrategy; v != nil {
+		builder.WriteString(", input_transf_strategy=")
+		builder.WriteString(fmt.Sprintf("%v", *v))
+	}
+	if v := b.InputTransformation; v != nil {
+		builder.WriteString(", input_transformation=")
+		builder.WriteString(*v)
+	}
+	if v := b.EnableOutputTransformation; v != nil {
+		builder.WriteString(", enable_output_transformation=")
+		builder.WriteString(fmt.Sprintf("%v", *v))
+	}
+	if v := b.OutputTransfStrategy; v != nil {
+		builder.WriteString(", output_transf_strategy=")
+		builder.WriteString(fmt.Sprintf("%v", *v))
+	}
+	if v := b.OutputTransformation; v != nil {
+		builder.WriteString(", output_transformation=")
+		builder.WriteString(*v)
+	}
+	if v := b.EnableInputStateTransformation; v != nil {
+		builder.WriteString(", enable_input_state_transformation=")
+		builder.WriteString(fmt.Sprintf("%v", *v))
+	}
+	if v := b.InputStateTransfStrategy; v != nil {
+		builder.WriteString(", input_state_transf_strategy=")
+		builder.WriteString(fmt.Sprintf("%v", *v))
+	}
+	if v := b.InputStateTransformation; v != nil {
+		builder.WriteString(", input_state_transformation=")
+		builder.WriteString(*v)
+	}
+	if v := b.EnableOutputStateTransformation; v != nil {
+		builder.WriteString(", enable_output_state_transformation=")
+		builder.WriteString(fmt.Sprintf("%v", *v))
+	}
+	if v := b.OutputStateTransfStrategy; v != nil {
+		builder.WriteString(", output_state_transf_strategy=")
+		builder.WriteString(fmt.Sprintf("%v", *v))
+	}
+	if v := b.OutputStateTransformation; v != nil {
+		builder.WriteString(", output_state_transformation=")
+		builder.WriteString(*v)
+	}
+	if v := b.EnableErrorHandling; v != nil {
+		builder.WriteString(", enable_error_handling=")
+		builder.WriteString(fmt.Sprintf("%v", *v))
+	}
+	if v := b.EnableRetryPolicy; v != nil {
+		builder.WriteString(", enable_retry_policy=")
+		builder.WriteString(fmt.Sprintf("%v", *v))
+	}
+	if v := b.RetryInterval; v != nil {
+		builder.WriteString(", retryInterval=")
+		builder.WriteString(fmt.Sprintf("%v", *v))
+	}
 	builder.WriteString(", retry_unit=")
 	builder.WriteString(fmt.Sprintf("%v", b.RetryUnit))
-	builder.WriteString(", maxAttemps=")
-	builder.WriteString(fmt.Sprintf("%v", b.MaxAttemps))
-	builder.WriteString(", backOffRate=")
-	builder.WriteString(fmt.Sprintf("%v", b.BackOffRate))
-	builder.WriteString(", timer_behavior=")
-	builder.WriteString(fmt.Sprintf("%v", b.TimerBehavior))
-	builder.WriteString(", seconds=")
-	builder.WriteString(fmt.Sprintf("%v", b.Seconds))
-	builder.WriteString(", enable_timer_expression=")
-	builder.WriteString(fmt.Sprintf("%v", b.EnableTimerExpression))
-	builder.WriteString(", timer_expression=")
-	builder.WriteString(b.TimerExpression)
-	builder.WriteString(", timer_specific_date=")
-	builder.WriteString(b.TimerSpecificDate.Format(time.ANSIC))
-	builder.WriteString(", url_method=")
-	builder.WriteString(fmt.Sprintf("%v", b.URLMethod))
-	builder.WriteString(", url=")
-	builder.WriteString(b.URL)
-	builder.WriteString(", connection_timeout=")
-	builder.WriteString(fmt.Sprintf("%v", b.ConnectionTimeout))
-	builder.WriteString(", body=")
-	builder.WriteString(b.Body)
+	if v := b.MaxAttemps; v != nil {
+		builder.WriteString(", maxAttemps=")
+		builder.WriteString(fmt.Sprintf("%v", *v))
+	}
+	if v := b.BackOffRate; v != nil {
+		builder.WriteString(", backOffRate=")
+		builder.WriteString(fmt.Sprintf("%v", *v))
+	}
+	if v := b.TimerBehavior; v != nil {
+		builder.WriteString(", timer_behavior=")
+		builder.WriteString(fmt.Sprintf("%v", *v))
+	}
+	if v := b.Seconds; v != nil {
+		builder.WriteString(", seconds=")
+		builder.WriteString(fmt.Sprintf("%v", *v))
+	}
+	if v := b.EnableTimerExpression; v != nil {
+		builder.WriteString(", enable_timer_expression=")
+		builder.WriteString(fmt.Sprintf("%v", *v))
+	}
+	if v := b.TimerExpression; v != nil {
+		builder.WriteString(", timer_expression=")
+		builder.WriteString(*v)
+	}
+	if v := b.TimerSpecificDate; v != nil {
+		builder.WriteString(", timer_specific_date=")
+		builder.WriteString(v.Format(time.ANSIC))
+	}
+	if v := b.URLMethod; v != nil {
+		builder.WriteString(", url_method=")
+		builder.WriteString(fmt.Sprintf("%v", *v))
+	}
+	if v := b.URL; v != nil {
+		builder.WriteString(", url=")
+		builder.WriteString(*v)
+	}
+	if v := b.ConnectionTimeout; v != nil {
+		builder.WriteString(", connection_timeout=")
+		builder.WriteString(fmt.Sprintf("%v", *v))
+	}
+	if v := b.Body; v != nil {
+		builder.WriteString(", body=")
+		builder.WriteString(*v)
+	}
 	builder.WriteString(", headers=")
 	builder.WriteString(fmt.Sprintf("%v", b.Headers))
 	builder.WriteString(", signal_type=")
@@ -778,6 +874,14 @@ func (b *Block) String() string {
 	builder.WriteString(b.KafkaMessage)
 	builder.WriteString(", kafka_message_type=")
 	builder.WriteString(fmt.Sprintf("%v", b.KafkaMessageType))
+	if v := b.ForeachKey; v != nil {
+		builder.WriteString(", foreach_key=")
+		builder.WriteString(*v)
+	}
+	if v := b.ForeachStartBlockID; v != nil {
+		builder.WriteString(", foreach_start_blockID=")
+		builder.WriteString(fmt.Sprintf("%v", *v))
+	}
 	builder.WriteByte(')')
 	return builder.String()
 }

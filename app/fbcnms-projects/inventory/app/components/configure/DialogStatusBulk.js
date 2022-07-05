@@ -27,12 +27,11 @@ import SnackbarItem from '@fbcnms/ui/components/SnackbarItem';
 import Text from '@symphony/design-system/components/Text';
 import TextField from '@material-ui/core/TextField';
 import moment from 'moment';
-import {getGraphError} from '../../common/EntUtils';
 import {makeStyles} from '@material-ui/styles';
 import {useEnqueueSnackbar} from '@fbcnms/ui/hooks/useSnackbar';
 import {useMainContext} from '../MainContext';
-import {fetchQuery, graphql} from 'relay-runtime';
-import RelayEnvironment from '../../common/RelayEnvironment';
+import {useLazyLoadQuery} from 'react-relay/hooks';
+import {graphql} from 'relay-runtime';
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -71,8 +70,12 @@ const useStyles = makeStyles(() => ({
 }));
 
 const DialogStatusBulkQuery = graphql`
-  query DialogStatusBulkQuery($filter: ResourceFilter) {
-    queryResource(filter: $filter) {
+  query DialogStatusBulkQuery {
+    queryResource {
+      id
+      name
+    }
+    queryConfigurationParameterType {
       id
       name
     }
@@ -98,8 +101,10 @@ const DATE_FORMAT = 'YYYY-MM-DD[T]HH:mm:ss';
 const DialogStatus = (props: Props) => {
   const {onClose, name, onClick, schedule, infoCSV} = props;
   const enqueueSnackbar = useEnqueueSnackbar();
+  const [filter, setFilters] = useState({});
   const {me} = useMainContext();
   const [description, setDescription] = useState('');
+  const queryResourceParameter = useLazyLoadQuery(DialogStatusBulkQuery, {});
 
   const _enqueueError = useCallback(
     (message: string) => {
@@ -119,35 +124,31 @@ const DialogStatus = (props: Props) => {
 
   const handleOnSave = () => {
     const createdTime = moment(new Date()).format(DATE_FORMAT);
-    let itemsChangeRequest = [];
-    
+    const itemsChangeRequest = [];
+
     infoCSV.pop();
-    infoCSV.map((item, index) => {
-      fetchQuery(RelayEnvironment, DialogStatusBulkQuery, {
-        filter: {
-          name: {
-            eq: item.resources,
-          },
+    infoCSV.map(item => {
+      const idResource = queryResourceParameter.queryResource.filter(
+        query => query.name === item.resources,
+      );
+      const idParameterType = queryResourceParameter.queryConfigurationParameterType.filter(
+        query => query.name === item.parameter,
+      );
+
+      const newValue = item.newValue;
+
+      const itemChange = {
+        resource: {
+          id: idResource[0].id,
         },
-      }).then(data => {
-        const dataModify = data.queryResource.map(item => {
-          delete item.writable;
-          return {
-            ...item,
-          };
-          
-        });
-        let obj = {}
-        Object.defineProperties({}, {
-          resource: {
-            id:dataModify[0].id
-          },
-        });
-        itemsChangeRequest.push(obj);
-      });
+        parameterType: {
+          id: idParameterType[0].id,
+        },
+        stringValue: newValue.toString(),
+      };
+
+      itemsChangeRequest.push(itemChange);
     });
-
-
 
     const variables: AddRequestChangeMutationVariables = {
       input: [

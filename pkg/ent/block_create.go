@@ -138,6 +138,14 @@ func (bc *BlockCreate) SetInputTransfStrategy(es enum.TransfStrategy) *BlockCrea
 	return bc
 }
 
+// SetNillableInputTransfStrategy sets the input_transf_strategy field if the given value is not nil.
+func (bc *BlockCreate) SetNillableInputTransfStrategy(es *enum.TransfStrategy) *BlockCreate {
+	if es != nil {
+		bc.SetInputTransfStrategy(*es)
+	}
+	return bc
+}
+
 // SetInputTransformation sets the input_transformation field.
 func (bc *BlockCreate) SetInputTransformation(s string) *BlockCreate {
 	bc.mutation.SetInputTransformation(s)
@@ -169,6 +177,14 @@ func (bc *BlockCreate) SetNillableEnableOutputTransformation(b *bool) *BlockCrea
 // SetOutputTransfStrategy sets the output_transf_strategy field.
 func (bc *BlockCreate) SetOutputTransfStrategy(es enum.TransfStrategy) *BlockCreate {
 	bc.mutation.SetOutputTransfStrategy(es)
+	return bc
+}
+
+// SetNillableOutputTransfStrategy sets the output_transf_strategy field if the given value is not nil.
+func (bc *BlockCreate) SetNillableOutputTransfStrategy(es *enum.TransfStrategy) *BlockCreate {
+	if es != nil {
+		bc.SetOutputTransfStrategy(*es)
+	}
 	return bc
 }
 
@@ -206,6 +222,14 @@ func (bc *BlockCreate) SetInputStateTransfStrategy(es enum.TransfStrategy) *Bloc
 	return bc
 }
 
+// SetNillableInputStateTransfStrategy sets the input_state_transf_strategy field if the given value is not nil.
+func (bc *BlockCreate) SetNillableInputStateTransfStrategy(es *enum.TransfStrategy) *BlockCreate {
+	if es != nil {
+		bc.SetInputStateTransfStrategy(*es)
+	}
+	return bc
+}
+
 // SetInputStateTransformation sets the input_state_transformation field.
 func (bc *BlockCreate) SetInputStateTransformation(s string) *BlockCreate {
 	bc.mutation.SetInputStateTransformation(s)
@@ -237,6 +261,14 @@ func (bc *BlockCreate) SetNillableEnableOutputStateTransformation(b *bool) *Bloc
 // SetOutputStateTransfStrategy sets the output_state_transf_strategy field.
 func (bc *BlockCreate) SetOutputStateTransfStrategy(es enum.TransfStrategy) *BlockCreate {
 	bc.mutation.SetOutputStateTransfStrategy(es)
+	return bc
+}
+
+// SetNillableOutputStateTransfStrategy sets the output_state_transf_strategy field if the given value is not nil.
+func (bc *BlockCreate) SetNillableOutputStateTransfStrategy(es *enum.TransfStrategy) *BlockCreate {
+	if es != nil {
+		bc.SetOutputStateTransfStrategy(*es)
+	}
 	return bc
 }
 
@@ -299,6 +331,14 @@ func (bc *BlockCreate) SetNillableRetryInterval(i *int) *BlockCreate {
 // SetRetryUnit sets the retry_unit field.
 func (bc *BlockCreate) SetRetryUnit(bu block.RetryUnit) *BlockCreate {
 	bc.mutation.SetRetryUnit(bu)
+	return bc
+}
+
+// SetNillableRetryUnit sets the retry_unit field if the given value is not nil.
+func (bc *BlockCreate) SetNillableRetryUnit(bu *block.RetryUnit) *BlockCreate {
+	if bu != nil {
+		bc.SetRetryUnit(*bu)
+	}
 	return bc
 }
 
@@ -566,6 +606,34 @@ func (bc *BlockCreate) SetNillableKafkaMessageType(emt *enum.KafkaMessageType) *
 	return bc
 }
 
+// SetForeachKey sets the foreach_key field.
+func (bc *BlockCreate) SetForeachKey(s string) *BlockCreate {
+	bc.mutation.SetForeachKey(s)
+	return bc
+}
+
+// SetNillableForeachKey sets the foreach_key field if the given value is not nil.
+func (bc *BlockCreate) SetNillableForeachKey(s *string) *BlockCreate {
+	if s != nil {
+		bc.SetForeachKey(*s)
+	}
+	return bc
+}
+
+// SetForeachStartBlockID sets the foreach_start_blockID field.
+func (bc *BlockCreate) SetForeachStartBlockID(i int) *BlockCreate {
+	bc.mutation.SetForeachStartBlockID(i)
+	return bc
+}
+
+// SetNillableForeachStartBlockID sets the foreach_start_blockID field if the given value is not nil.
+func (bc *BlockCreate) SetNillableForeachStartBlockID(i *int) *BlockCreate {
+	if i != nil {
+		bc.SetForeachStartBlockID(*i)
+	}
+	return bc
+}
+
 // SetFlowID sets the flow edge to Flow by id.
 func (bc *BlockCreate) SetFlowID(id int) *BlockCreate {
 	bc.mutation.SetFlowID(id)
@@ -821,40 +889,25 @@ func (bc *BlockCreate) check() error {
 			return &ValidationError{Name: "trigger_type", err: fmt.Errorf("ent: validator failed for field \"trigger_type\": %w", err)}
 		}
 	}
-	if _, ok := bc.mutation.InputTransfStrategy(); !ok {
-		return &ValidationError{Name: "input_transf_strategy", err: errors.New("ent: missing required field \"input_transf_strategy\"")}
-	}
 	if v, ok := bc.mutation.InputTransfStrategy(); ok {
 		if err := block.InputTransfStrategyValidator(v); err != nil {
 			return &ValidationError{Name: "input_transf_strategy", err: fmt.Errorf("ent: validator failed for field \"input_transf_strategy\": %w", err)}
 		}
-	}
-	if _, ok := bc.mutation.OutputTransfStrategy(); !ok {
-		return &ValidationError{Name: "output_transf_strategy", err: errors.New("ent: missing required field \"output_transf_strategy\"")}
 	}
 	if v, ok := bc.mutation.OutputTransfStrategy(); ok {
 		if err := block.OutputTransfStrategyValidator(v); err != nil {
 			return &ValidationError{Name: "output_transf_strategy", err: fmt.Errorf("ent: validator failed for field \"output_transf_strategy\": %w", err)}
 		}
 	}
-	if _, ok := bc.mutation.InputStateTransfStrategy(); !ok {
-		return &ValidationError{Name: "input_state_transf_strategy", err: errors.New("ent: missing required field \"input_state_transf_strategy\"")}
-	}
 	if v, ok := bc.mutation.InputStateTransfStrategy(); ok {
 		if err := block.InputStateTransfStrategyValidator(v); err != nil {
 			return &ValidationError{Name: "input_state_transf_strategy", err: fmt.Errorf("ent: validator failed for field \"input_state_transf_strategy\": %w", err)}
 		}
 	}
-	if _, ok := bc.mutation.OutputStateTransfStrategy(); !ok {
-		return &ValidationError{Name: "output_state_transf_strategy", err: errors.New("ent: missing required field \"output_state_transf_strategy\"")}
-	}
 	if v, ok := bc.mutation.OutputStateTransfStrategy(); ok {
 		if err := block.OutputStateTransfStrategyValidator(v); err != nil {
 			return &ValidationError{Name: "output_state_transf_strategy", err: fmt.Errorf("ent: validator failed for field \"output_state_transf_strategy\": %w", err)}
 		}
-	}
-	if _, ok := bc.mutation.RetryUnit(); !ok {
-		return &ValidationError{Name: "retry_unit", err: errors.New("ent: missing required field \"retry_unit\"")}
 	}
 	if v, ok := bc.mutation.RetryUnit(); ok {
 		if err := block.RetryUnitValidator(v); err != nil {
@@ -991,7 +1044,7 @@ func (bc *BlockCreate) createSpec() (*Block, *sqlgraph.CreateSpec) {
 			Value:  value,
 			Column: block.FieldEnableInputTransformation,
 		})
-		_node.EnableInputTransformation = value
+		_node.EnableInputTransformation = &value
 	}
 	if value, ok := bc.mutation.InputTransfStrategy(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -999,7 +1052,7 @@ func (bc *BlockCreate) createSpec() (*Block, *sqlgraph.CreateSpec) {
 			Value:  value,
 			Column: block.FieldInputTransfStrategy,
 		})
-		_node.InputTransfStrategy = value
+		_node.InputTransfStrategy = &value
 	}
 	if value, ok := bc.mutation.InputTransformation(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -1007,7 +1060,7 @@ func (bc *BlockCreate) createSpec() (*Block, *sqlgraph.CreateSpec) {
 			Value:  value,
 			Column: block.FieldInputTransformation,
 		})
-		_node.InputTransformation = value
+		_node.InputTransformation = &value
 	}
 	if value, ok := bc.mutation.EnableOutputTransformation(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -1015,7 +1068,7 @@ func (bc *BlockCreate) createSpec() (*Block, *sqlgraph.CreateSpec) {
 			Value:  value,
 			Column: block.FieldEnableOutputTransformation,
 		})
-		_node.EnableOutputTransformation = value
+		_node.EnableOutputTransformation = &value
 	}
 	if value, ok := bc.mutation.OutputTransfStrategy(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -1023,7 +1076,7 @@ func (bc *BlockCreate) createSpec() (*Block, *sqlgraph.CreateSpec) {
 			Value:  value,
 			Column: block.FieldOutputTransfStrategy,
 		})
-		_node.OutputTransfStrategy = value
+		_node.OutputTransfStrategy = &value
 	}
 	if value, ok := bc.mutation.OutputTransformation(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -1031,7 +1084,7 @@ func (bc *BlockCreate) createSpec() (*Block, *sqlgraph.CreateSpec) {
 			Value:  value,
 			Column: block.FieldOutputTransformation,
 		})
-		_node.OutputTransformation = value
+		_node.OutputTransformation = &value
 	}
 	if value, ok := bc.mutation.EnableInputStateTransformation(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -1039,7 +1092,7 @@ func (bc *BlockCreate) createSpec() (*Block, *sqlgraph.CreateSpec) {
 			Value:  value,
 			Column: block.FieldEnableInputStateTransformation,
 		})
-		_node.EnableInputStateTransformation = value
+		_node.EnableInputStateTransformation = &value
 	}
 	if value, ok := bc.mutation.InputStateTransfStrategy(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -1047,7 +1100,7 @@ func (bc *BlockCreate) createSpec() (*Block, *sqlgraph.CreateSpec) {
 			Value:  value,
 			Column: block.FieldInputStateTransfStrategy,
 		})
-		_node.InputStateTransfStrategy = value
+		_node.InputStateTransfStrategy = &value
 	}
 	if value, ok := bc.mutation.InputStateTransformation(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -1055,7 +1108,7 @@ func (bc *BlockCreate) createSpec() (*Block, *sqlgraph.CreateSpec) {
 			Value:  value,
 			Column: block.FieldInputStateTransformation,
 		})
-		_node.InputStateTransformation = value
+		_node.InputStateTransformation = &value
 	}
 	if value, ok := bc.mutation.EnableOutputStateTransformation(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -1063,7 +1116,7 @@ func (bc *BlockCreate) createSpec() (*Block, *sqlgraph.CreateSpec) {
 			Value:  value,
 			Column: block.FieldEnableOutputStateTransformation,
 		})
-		_node.EnableOutputStateTransformation = value
+		_node.EnableOutputStateTransformation = &value
 	}
 	if value, ok := bc.mutation.OutputStateTransfStrategy(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -1071,7 +1124,7 @@ func (bc *BlockCreate) createSpec() (*Block, *sqlgraph.CreateSpec) {
 			Value:  value,
 			Column: block.FieldOutputStateTransfStrategy,
 		})
-		_node.OutputStateTransfStrategy = value
+		_node.OutputStateTransfStrategy = &value
 	}
 	if value, ok := bc.mutation.OutputStateTransformation(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -1079,7 +1132,7 @@ func (bc *BlockCreate) createSpec() (*Block, *sqlgraph.CreateSpec) {
 			Value:  value,
 			Column: block.FieldOutputStateTransformation,
 		})
-		_node.OutputStateTransformation = value
+		_node.OutputStateTransformation = &value
 	}
 	if value, ok := bc.mutation.EnableErrorHandling(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -1087,7 +1140,7 @@ func (bc *BlockCreate) createSpec() (*Block, *sqlgraph.CreateSpec) {
 			Value:  value,
 			Column: block.FieldEnableErrorHandling,
 		})
-		_node.EnableErrorHandling = value
+		_node.EnableErrorHandling = &value
 	}
 	if value, ok := bc.mutation.EnableRetryPolicy(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -1095,7 +1148,7 @@ func (bc *BlockCreate) createSpec() (*Block, *sqlgraph.CreateSpec) {
 			Value:  value,
 			Column: block.FieldEnableRetryPolicy,
 		})
-		_node.EnableRetryPolicy = value
+		_node.EnableRetryPolicy = &value
 	}
 	if value, ok := bc.mutation.RetryInterval(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -1103,7 +1156,7 @@ func (bc *BlockCreate) createSpec() (*Block, *sqlgraph.CreateSpec) {
 			Value:  value,
 			Column: block.FieldRetryInterval,
 		})
-		_node.RetryInterval = value
+		_node.RetryInterval = &value
 	}
 	if value, ok := bc.mutation.RetryUnit(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -1119,7 +1172,7 @@ func (bc *BlockCreate) createSpec() (*Block, *sqlgraph.CreateSpec) {
 			Value:  value,
 			Column: block.FieldMaxAttemps,
 		})
-		_node.MaxAttemps = value
+		_node.MaxAttemps = &value
 	}
 	if value, ok := bc.mutation.BackOffRate(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -1127,7 +1180,7 @@ func (bc *BlockCreate) createSpec() (*Block, *sqlgraph.CreateSpec) {
 			Value:  value,
 			Column: block.FieldBackOffRate,
 		})
-		_node.BackOffRate = value
+		_node.BackOffRate = &value
 	}
 	if value, ok := bc.mutation.TimerBehavior(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -1135,7 +1188,7 @@ func (bc *BlockCreate) createSpec() (*Block, *sqlgraph.CreateSpec) {
 			Value:  value,
 			Column: block.FieldTimerBehavior,
 		})
-		_node.TimerBehavior = value
+		_node.TimerBehavior = &value
 	}
 	if value, ok := bc.mutation.Seconds(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -1143,7 +1196,7 @@ func (bc *BlockCreate) createSpec() (*Block, *sqlgraph.CreateSpec) {
 			Value:  value,
 			Column: block.FieldSeconds,
 		})
-		_node.Seconds = value
+		_node.Seconds = &value
 	}
 	if value, ok := bc.mutation.EnableTimerExpression(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -1151,7 +1204,7 @@ func (bc *BlockCreate) createSpec() (*Block, *sqlgraph.CreateSpec) {
 			Value:  value,
 			Column: block.FieldEnableTimerExpression,
 		})
-		_node.EnableTimerExpression = value
+		_node.EnableTimerExpression = &value
 	}
 	if value, ok := bc.mutation.TimerExpression(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -1159,7 +1212,7 @@ func (bc *BlockCreate) createSpec() (*Block, *sqlgraph.CreateSpec) {
 			Value:  value,
 			Column: block.FieldTimerExpression,
 		})
-		_node.TimerExpression = value
+		_node.TimerExpression = &value
 	}
 	if value, ok := bc.mutation.TimerSpecificDate(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -1167,7 +1220,7 @@ func (bc *BlockCreate) createSpec() (*Block, *sqlgraph.CreateSpec) {
 			Value:  value,
 			Column: block.FieldTimerSpecificDate,
 		})
-		_node.TimerSpecificDate = value
+		_node.TimerSpecificDate = &value
 	}
 	if value, ok := bc.mutation.URLMethod(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -1175,7 +1228,7 @@ func (bc *BlockCreate) createSpec() (*Block, *sqlgraph.CreateSpec) {
 			Value:  value,
 			Column: block.FieldURLMethod,
 		})
-		_node.URLMethod = value
+		_node.URLMethod = &value
 	}
 	if value, ok := bc.mutation.URL(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -1183,7 +1236,7 @@ func (bc *BlockCreate) createSpec() (*Block, *sqlgraph.CreateSpec) {
 			Value:  value,
 			Column: block.FieldURL,
 		})
-		_node.URL = value
+		_node.URL = &value
 	}
 	if value, ok := bc.mutation.ConnectionTimeout(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -1191,7 +1244,7 @@ func (bc *BlockCreate) createSpec() (*Block, *sqlgraph.CreateSpec) {
 			Value:  value,
 			Column: block.FieldConnectionTimeout,
 		})
-		_node.ConnectionTimeout = value
+		_node.ConnectionTimeout = &value
 	}
 	if value, ok := bc.mutation.Body(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -1199,7 +1252,7 @@ func (bc *BlockCreate) createSpec() (*Block, *sqlgraph.CreateSpec) {
 			Value:  value,
 			Column: block.FieldBody,
 		})
-		_node.Body = value
+		_node.Body = &value
 	}
 	if value, ok := bc.mutation.Headers(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -1272,6 +1325,22 @@ func (bc *BlockCreate) createSpec() (*Block, *sqlgraph.CreateSpec) {
 			Column: block.FieldKafkaMessageType,
 		})
 		_node.KafkaMessageType = value
+	}
+	if value, ok := bc.mutation.ForeachKey(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: block.FieldForeachKey,
+		})
+		_node.ForeachKey = &value
+	}
+	if value, ok := bc.mutation.ForeachStartBlockID(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: block.FieldForeachStartBlockID,
+		})
+		_node.ForeachStartBlockID = &value
 	}
 	if nodes := bc.mutation.FlowIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

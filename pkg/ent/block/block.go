@@ -113,6 +113,10 @@ const (
 	FieldKafkaMessage = "kafka_message"
 	// FieldKafkaMessageType holds the string denoting the kafka_message_type field in the database.
 	FieldKafkaMessageType = "kafka_message_type"
+	// FieldForeachKey holds the string denoting the foreach_key field in the database.
+	FieldForeachKey = "foreach_key"
+	// FieldForeachStartBlockID holds the string denoting the foreach_start_blockid field in the database.
+	FieldForeachStartBlockID = "foreach_start_block_id"
 
 	// EdgeFlow holds the string denoting the flow edge name in mutations.
 	EdgeFlow = "flow"
@@ -242,6 +246,8 @@ var Columns = []string{
 	FieldKafkaTopic,
 	FieldKafkaMessage,
 	FieldKafkaMessageType,
+	FieldForeachKey,
+	FieldForeachStartBlockID,
 }
 
 // ForeignKeys holds the SQL foreign-keys that are owned by the Block type.
@@ -348,7 +354,7 @@ func TriggerTypeValidator(tt flowschema.TriggerTypeID) error {
 // InputTransfStrategyValidator is a validator for the "input_transf_strategy" field enum values. It is called by the builders before save.
 func InputTransfStrategyValidator(its enum.TransfStrategy) error {
 	switch its {
-	case "replace", "merge":
+	case "REPLACE", "MERGE":
 		return nil
 	default:
 		return fmt.Errorf("block: invalid enum value for input_transf_strategy field: %q", its)
@@ -358,7 +364,7 @@ func InputTransfStrategyValidator(its enum.TransfStrategy) error {
 // OutputTransfStrategyValidator is a validator for the "output_transf_strategy" field enum values. It is called by the builders before save.
 func OutputTransfStrategyValidator(ots enum.TransfStrategy) error {
 	switch ots {
-	case "replace", "merge":
+	case "REPLACE", "MERGE":
 		return nil
 	default:
 		return fmt.Errorf("block: invalid enum value for output_transf_strategy field: %q", ots)
@@ -368,7 +374,7 @@ func OutputTransfStrategyValidator(ots enum.TransfStrategy) error {
 // InputStateTransfStrategyValidator is a validator for the "input_state_transf_strategy" field enum values. It is called by the builders before save.
 func InputStateTransfStrategyValidator(ists enum.TransfStrategy) error {
 	switch ists {
-	case "replace", "merge":
+	case "REPLACE", "MERGE":
 		return nil
 	default:
 		return fmt.Errorf("block: invalid enum value for input_state_transf_strategy field: %q", ists)
@@ -378,7 +384,7 @@ func InputStateTransfStrategyValidator(ists enum.TransfStrategy) error {
 // OutputStateTransfStrategyValidator is a validator for the "output_state_transf_strategy" field enum values. It is called by the builders before save.
 func OutputStateTransfStrategyValidator(osts enum.TransfStrategy) error {
 	switch osts {
-	case "replace", "merge":
+	case "REPLACE", "MERGE":
 		return nil
 	default:
 		return fmt.Errorf("block: invalid enum value for output_state_transf_strategy field: %q", osts)
@@ -390,9 +396,9 @@ type RetryUnit string
 
 // RetryUnit values.
 const (
-	RetryUnitSECONDS RetryUnit = "seconds"
-	RetryUnitMINUTES RetryUnit = "minutes"
-	RetryUnitHOURS   RetryUnit = "hours"
+	RetryUnitSECONDS RetryUnit = "SECONDS"
+	RetryUnitMINUTES RetryUnit = "MINUTES"
+	RetryUnitHOURS   RetryUnit = "HOURS"
 )
 
 func (ru RetryUnit) String() string {
@@ -414,8 +420,8 @@ type TimerBehavior string
 
 // TimerBehavior values.
 const (
-	TimerBehaviorFIXED_INTERVAL    TimerBehavior = "fixed_interval"
-	TimerBehaviorSPECIFIC_DATETIME TimerBehavior = "specific_time"
+	TimerBehaviorFIXED_INTERVAL    TimerBehavior = "FIXED_INTERVAL"
+	TimerBehaviorSPECIFIC_DATETIME TimerBehavior = "SPECIFIC_DATETIME"
 )
 
 func (tb TimerBehavior) String() string {
@@ -437,11 +443,11 @@ type URLMethod string
 
 // URLMethod values.
 const (
-	URLMethodPOST   URLMethod = "post"
-	URLMethodGET    URLMethod = "get"
-	URLMethodPUT    URLMethod = "put"
-	URLMethodDELETE URLMethod = "delete"
-	URLMethodPATCH  URLMethod = "patch"
+	URLMethodPOST   URLMethod = "POST"
+	URLMethodGET    URLMethod = "GET"
+	URLMethodPUT    URLMethod = "PUT"
+	URLMethodDELETE URLMethod = "DELETE"
+	URLMethodPATCH  URLMethod = "PATCH"
 )
 
 func (um URLMethod) String() string {
@@ -463,11 +469,11 @@ type SignalType string
 
 // SignalType values.
 const (
-	SignalTypeNOTIFICATION SignalType = "notification"
-	SignalTypeWOCREATION   SignalType = "wo_creation"
-	SignalTypeCRCREATION   SignalType = "cr_creation"
-	SignalTypeWOUPDATE     SignalType = "wo_update"
-	SignalTypeCRUPDATE     SignalType = "cr_update"
+	SignalTypeNOTIFICATION SignalType = "NOTIFICATION"
+	SignalTypeWOCREATION   SignalType = "WOCREATION"
+	SignalTypeCRCREATION   SignalType = "CRCREATION"
+	SignalTypeWOUPDATE     SignalType = "WOUPDATE"
+	SignalTypeCRUPDATE     SignalType = "CRUPDATE"
 )
 
 func (st SignalType) String() string {
@@ -489,8 +495,8 @@ type SignalModule string
 
 // SignalModule values.
 const (
-	SignalModuleINVENTORY SignalModule = "inventory"
-	SignalModuleCM        SignalModule = "cm"
+	SignalModuleINVENTORY     SignalModule = "INVENTORY"
+	SignalModuleCONFIGURATION SignalModule = "CONFIGURATION"
 )
 
 func (sm SignalModule) String() string {
@@ -500,7 +506,7 @@ func (sm SignalModule) String() string {
 // SignalModuleValidator is a validator for the "signal_module" field enum values. It is called by the builders before save.
 func SignalModuleValidator(sm SignalModule) error {
 	switch sm {
-	case SignalModuleINVENTORY, SignalModuleCM:
+	case SignalModuleINVENTORY, SignalModuleCONFIGURATION:
 		return nil
 	default:
 		return fmt.Errorf("block: invalid enum value for signal_module field: %q", sm)
@@ -510,7 +516,7 @@ func SignalModuleValidator(sm SignalModule) error {
 // KafkaMessageTypeValidator is a validator for the "kafka_message_type" field enum values. It is called by the builders before save.
 func KafkaMessageTypeValidator(kmt enum.KafkaMessageType) error {
 	switch kmt {
-	case "expression", "input", "state":
+	case "EXPRESSION", "INPUT", "STATE":
 		return nil
 	default:
 		return fmt.Errorf("block: invalid enum value for kafka_message_type field: %q", kmt)

@@ -2,6 +2,7 @@ package blocks
 
 import (
 	"errors"
+	"github.com/facebookincubator/symphony/async/automation/celgo"
 	"github.com/facebookincubator/symphony/async/automation/executors/model"
 )
 
@@ -46,14 +47,20 @@ func (b *ForEachBlock) Execute() (*ExecutorResult, error) {
 }
 
 func (b *ForEachBlock) runLogic() error {
-	// TODO Key structure
+	inputVariable := celgo.ConvertToValue(b.input)
+	stateVariable := celgo.ConvertToValue(b.state)
 
-	keys, exists := b.input[b.key]
-	if !exists {
-		return errors.New("key not found")
+	variables := map[string]interface{}{
+		celgo.InputVariable: inputVariable,
+		celgo.StateVariable: stateVariable,
 	}
 
-	values, ok := keys.([]interface{})
+	result, err := celgo.CompileAndEvaluate(b.key, variables)
+	if err != nil {
+		return err
+	}
+
+	values, ok := result.Value().([]interface{})
 	if !ok {
 		return errors.New("key values is not an array")
 	}
