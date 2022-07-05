@@ -167,6 +167,7 @@ const ModalSteper = (props: Props) => {
   const [searchData, setSearchData] = useState('');
   const [resourceLogicLinks, setResourceLogicLinks] = useState({});
   const [selectedId, setSelectedId] = useState({});
+  const [selectedRS, setSelectedRS] = useState({});
 
   const isResourceLogicLinks = useCallback(() => {
     fetchQuery(RelayEnvironment, ModalSteperListLogicLinkQuery, {
@@ -195,28 +196,34 @@ const ModalSteper = (props: Props) => {
   };
 
   const handleListItemClick = (event, index, item) => {
+    activeStep === 1 && setSelectedRS(item);
     if (activeStep === 2) {
-      setSelectedId({eq: item.node.id});
+      setSelectedId({eq: item.id});
     }
     setSelectedIndex(index);
-    setGetDataList(item.node);
+    setGetDataList(item);
   };
 
-  const searchResourceType = dataListStepper?.resourceTypes?.edges.filter(
-    item =>
-      item.node?.name
+  const searchResourceType = dataListStepper?.resourceTypes?.edges
+    .flatMap(item => item.node)
+    .filter(item =>
+      item.name
         .toString()
         .toLowerCase()
         .includes(searchData.toLocaleLowerCase()),
-  );
+    );
 
-  const searchRSpecifications = dataListStepper?.resourceSpecifications?.edges.filter(
-    item =>
-      item.node?.name
-        .toString()
-        .toLowerCase()
-        .includes(searchData.toLocaleLowerCase()),
-  );
+  const searchRSpecifications =
+    dataListStepper?.resourceTypes?.edges
+      .flatMap(item => item.node)
+      .filter(item => item.id === selectedRS.id)
+      .flatMap(item => item.resourceSpecification)
+      .filter(item =>
+        item?.name
+          .toString()
+          .toLowerCase()
+          .includes(searchData.toLocaleLowerCase()),
+      ) || [];
 
   const searchRInstance =
     resourceLogicLinks?.queryResource
@@ -280,7 +287,7 @@ const ModalSteper = (props: Props) => {
                   <List component="nav">
                     <ListItem
                       button
-                      key={item.node?.id}
+                      key={item.id}
                       selected={selectedIndex === index}
                       onClick={event =>
                         handleListItemClick(event, index, item)
@@ -290,7 +297,7 @@ const ModalSteper = (props: Props) => {
                           <RouterIcon fontSize="medium" color="primary" />
                         </Avatar>
                       </ListItemAvatar>
-                      <ListItemText primary={item.node?.name} />
+                      <ListItemText primary={item.name} />
                     </ListItem>
                   </List>
                 ))}
@@ -299,7 +306,7 @@ const ModalSteper = (props: Props) => {
                   <List component="nav">
                     <ListItem
                       button
-                      key={item.node.id}
+                      key={item.id}
                       selected={selectedIndex === index}
                       onClick={event =>
                         handleListItemClick(event, index, item)
@@ -309,7 +316,7 @@ const ModalSteper = (props: Props) => {
                           <RouterIcon fontSize="medium" color="primary" />
                         </Avatar>
                       </ListItemAvatar>
-                      <ListItemText primary={item.node.name} />
+                      <ListItemText primary={item.name} />
                     </ListItem>
                   </List>
                 ))}
@@ -338,7 +345,7 @@ const ModalSteper = (props: Props) => {
               <List component="nav">
                 <ListItem
                   button
-                  key={item.node.id}
+                  key={item.id}
                   selected={selectedIndex === index}
                   onClick={event => handleListItemClick(event, index, item)}>
                   <ListItemAvatar>
@@ -346,7 +353,7 @@ const ModalSteper = (props: Props) => {
                       <RouterIcon fontSize="medium" color="primary" />
                     </Avatar>
                   </ListItemAvatar>
-                  <ListItemText primary={item.node.name} />
+                  <ListItemText primary={item.name} />
                 </ListItem>
               </List>
             ))
