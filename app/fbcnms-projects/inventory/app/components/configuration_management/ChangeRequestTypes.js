@@ -145,7 +145,6 @@ const ChangeRequestTypes = () => {
         },
       ],
     }).then(data => {
-      console.log(data)
       const dataModify = data.queryChangeRequest.map(item => {
         delete item.writable;
         return {
@@ -288,7 +287,6 @@ const ChangeRequestTypes = () => {
           <div className={classes.searchBar}>
             <PowerSearchBar
               placeholder="Filter"
-              getSelectedFilter={filters => setFilters(filters)}
               filterConfigs={filterConfigs}
               filterValues={filters}
               searchConfig={ChangeRequestSearchConfig}
