@@ -240,15 +240,16 @@ export type AddCMVersionMutationResponse = {|
         +name: string,
       |},
       +parameters: $ReadOnlyArray<{|
-        +id: string,
-        +intValue: ?number,
-        +stringValue: ?string,
-        +booleanValue: ?boolean,
-        +floatValue: ?number,
-        +latitudeValue: ?number,
-        +longitudeValue: ?number,
-        +rangeFromValue: ?number,
-        +rangeToValue: ?number,
+        +parameterType: {|
+          +id: string,
+          +name: string,
+          +type: ParameterKind,
+          +intValue: ?number,
+          +floatValue: ?number,
+          +stringValue: ?string,
+          +booleanValue: ?boolean,
+          +resourceSpecification: string,
+        |}
       |}>,
     |}>
   |}
@@ -273,15 +274,17 @@ mutation AddCMVersionMutation(
         name
       }
       parameters {
+        parameterType {
+          id
+          name
+          type
+          intValue
+          floatValue
+          stringValue
+          booleanValue
+          resourceSpecification
+        }
         id
-        intValue
-        stringValue
-        booleanValue
-        floatValue
-        latitudeValue
-        longitudeValue
-        rangeFromValue
-        rangeToValue
       }
     }
   }
@@ -296,126 +299,138 @@ var v0 = [
     "name": "input"
   }
 ],
-v1 = {
+v1 = [
+  {
+    "kind": "Variable",
+    "name": "input",
+    "variableName": "input"
+  }
+],
+v2 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "id",
   "storageKey": null
 },
-v2 = [
-  {
-    "alias": null,
-    "args": [
-      {
-        "kind": "Variable",
-        "name": "input",
-        "variableName": "input"
-      }
-    ],
-    "concreteType": "AddCMVersionPayload",
-    "kind": "LinkedField",
-    "name": "addCMVersion",
-    "plural": false,
+v3 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "status",
+  "storageKey": null
+},
+v4 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "name",
+  "storageKey": null
+},
+v5 = {
+  "alias": null,
+  "args": null,
+  "concreteType": "Resource",
+  "kind": "LinkedField",
+  "name": "resource",
+  "plural": false,
+  "selections": [
+    (v2/*: any*/),
+    (v4/*: any*/)
+  ],
+  "storageKey": null
+},
+v6 = {
+  "alias": null,
+  "args": null,
+  "concreteType": "ConfigurationParameterType",
+  "kind": "LinkedField",
+  "name": "parameterType",
+  "plural": false,
+  "selections": [
+    (v2/*: any*/),
+    (v4/*: any*/),
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "type",
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "intValue",
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "floatValue",
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "stringValue",
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "booleanValue",
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "resourceSpecification",
+      "storageKey": null
+    }
+  ],
+  "storageKey": null
+};
+return {
+  "fragment": {
+    "argumentDefinitions": (v0/*: any*/),
+    "kind": "Fragment",
+    "metadata": null,
+    "name": "AddCMVersionMutation",
     "selections": [
       {
         "alias": null,
-        "args": null,
-        "concreteType": "CMVersion",
+        "args": (v1/*: any*/),
+        "concreteType": "AddCMVersionPayload",
         "kind": "LinkedField",
-        "name": "cMVersion",
-        "plural": true,
+        "name": "addCMVersion",
+        "plural": false,
         "selections": [
-          (v1/*: any*/),
           {
             "alias": null,
             "args": null,
-            "kind": "ScalarField",
-            "name": "status",
-            "storageKey": null
-          },
-          {
-            "alias": null,
-            "args": null,
-            "concreteType": "Resource",
+            "concreteType": "CMVersion",
             "kind": "LinkedField",
-            "name": "resource",
-            "plural": false,
-            "selections": [
-              (v1/*: any*/),
-              {
-                "alias": null,
-                "args": null,
-                "kind": "ScalarField",
-                "name": "name",
-                "storageKey": null
-              }
-            ],
-            "storageKey": null
-          },
-          {
-            "alias": null,
-            "args": null,
-            "concreteType": "Parameter",
-            "kind": "LinkedField",
-            "name": "parameters",
+            "name": "cMVersion",
             "plural": true,
             "selections": [
-              (v1/*: any*/),
+              (v2/*: any*/),
+              (v3/*: any*/),
+              (v5/*: any*/),
               {
                 "alias": null,
                 "args": null,
-                "kind": "ScalarField",
-                "name": "intValue",
-                "storageKey": null
-              },
-              {
-                "alias": null,
-                "args": null,
-                "kind": "ScalarField",
-                "name": "stringValue",
-                "storageKey": null
-              },
-              {
-                "alias": null,
-                "args": null,
-                "kind": "ScalarField",
-                "name": "booleanValue",
-                "storageKey": null
-              },
-              {
-                "alias": null,
-                "args": null,
-                "kind": "ScalarField",
-                "name": "floatValue",
-                "storageKey": null
-              },
-              {
-                "alias": null,
-                "args": null,
-                "kind": "ScalarField",
-                "name": "latitudeValue",
-                "storageKey": null
-              },
-              {
-                "alias": null,
-                "args": null,
-                "kind": "ScalarField",
-                "name": "longitudeValue",
-                "storageKey": null
-              },
-              {
-                "alias": null,
-                "args": null,
-                "kind": "ScalarField",
-                "name": "rangeFromValue",
-                "storageKey": null
-              },
-              {
-                "alias": null,
-                "args": null,
-                "kind": "ScalarField",
-                "name": "rangeToValue",
+                "concreteType": "Parameter",
+                "kind": "LinkedField",
+                "name": "parameters",
+                "plural": true,
+                "selections": [
+                  (v6/*: any*/)
+                ],
                 "storageKey": null
               }
             ],
@@ -425,16 +440,6 @@ v2 = [
         "storageKey": null
       }
     ],
-    "storageKey": null
-  }
-];
-return {
-  "fragment": {
-    "argumentDefinitions": (v0/*: any*/),
-    "kind": "Fragment",
-    "metadata": null,
-    "name": "AddCMVersionMutation",
-    "selections": (v2/*: any*/),
     "type": "Mutation",
     "abstractKey": null
   },
@@ -443,19 +448,58 @@ return {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
     "name": "AddCMVersionMutation",
-    "selections": (v2/*: any*/)
+    "selections": [
+      {
+        "alias": null,
+        "args": (v1/*: any*/),
+        "concreteType": "AddCMVersionPayload",
+        "kind": "LinkedField",
+        "name": "addCMVersion",
+        "plural": false,
+        "selections": [
+          {
+            "alias": null,
+            "args": null,
+            "concreteType": "CMVersion",
+            "kind": "LinkedField",
+            "name": "cMVersion",
+            "plural": true,
+            "selections": [
+              (v2/*: any*/),
+              (v3/*: any*/),
+              (v5/*: any*/),
+              {
+                "alias": null,
+                "args": null,
+                "concreteType": "Parameter",
+                "kind": "LinkedField",
+                "name": "parameters",
+                "plural": true,
+                "selections": [
+                  (v6/*: any*/),
+                  (v2/*: any*/)
+                ],
+                "storageKey": null
+              }
+            ],
+            "storageKey": null
+          }
+        ],
+        "storageKey": null
+      }
+    ]
   },
   "params": {
-    "cacheID": "1ad5d4e3188949ebd0b6d5ce6cc2ae96",
+    "cacheID": "1c78007646bcce0e759d558d605d2549",
     "id": null,
     "metadata": {},
     "name": "AddCMVersionMutation",
     "operationKind": "mutation",
-    "text": "mutation AddCMVersionMutation(\n  $input: [AddCMVersionInput!]!\n) {\n  addCMVersion(input: $input) {\n    cMVersion {\n      id\n      status\n      resource {\n        id\n        name\n      }\n      parameters {\n        id\n        intValue\n        stringValue\n        booleanValue\n        floatValue\n        latitudeValue\n        longitudeValue\n        rangeFromValue\n        rangeToValue\n      }\n    }\n  }\n}\n"
+    "text": "mutation AddCMVersionMutation(\n  $input: [AddCMVersionInput!]!\n) {\n  addCMVersion(input: $input) {\n    cMVersion {\n      id\n      status\n      resource {\n        id\n        name\n      }\n      parameters {\n        parameterType {\n          id\n          name\n          type\n          intValue\n          floatValue\n          stringValue\n          booleanValue\n          resourceSpecification\n        }\n        id\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = '3aaf9d1eed54568a1ff1c08f8a1329e4';
+(node/*: any*/).hash = 'ce660b2b9c00291e74c14658cdc329ee';
 
 module.exports = node;

@@ -47,7 +47,7 @@ const SimpleChangeRequest = (props: Props) => {
   const [description, setDescription] = useState('');
   const classes = useStyles();
   const [openModalStatus, setOpenModalStatus] = useState(false);
-  const handelModal = () => {
+  const handleModal = () => {
     setOpenModalStatus(prevStateOpenModal => !prevStateOpenModal);
   };
   const handleOnClose = () => {
@@ -80,7 +80,7 @@ const SimpleChangeRequest = (props: Props) => {
             variant="contained"
             color="primary"
             className={classes.buttons}
-            onClick={() => handelModal()}>
+            onClick={() => handleModal()}>
             Submit
           </Button>
         </Grid>
