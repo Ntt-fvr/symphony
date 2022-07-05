@@ -176,6 +176,7 @@ func (r mutationResolver) StartFlow(ctx context.Context, input models.StartFlowI
 		SetFlowID(input.FlowID).
 		SetBssCode(input.BssCode).
 		SetStartDate(input.StartDate).
+		SetStartParams(input.Params).
 		Save(ctx)
 	if err != nil {
 		return nil, err
@@ -606,7 +607,7 @@ func (r mutationResolver) importBlocks(ctx context.Context, input models.ImportF
 	return nil
 }
 
-func (r mutationResolver) collectBlocksInputs(ctx context.Context, input models.ImportFlowDraftInput) []interface{} {
+func (r mutationResolver) collectBlocksInputs(_ context.Context, input models.ImportFlowDraftInput) []interface{} {
 	var blockInputs []interface{}
 	for _, blk := range input.EndBlocks {
 		blockInputs = append(blockInputs, blk)

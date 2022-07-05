@@ -7,6 +7,7 @@ package worker
 import (
 	"context"
 	"fmt"
+	"github.com/facebookincubator/symphony/async/automation/executors/util"
 	"time"
 
 	"github.com/facebookincubator/symphony/async/automation/executors/blocks"
@@ -35,13 +36,9 @@ var (
 	defaultLocalActivityOptions = workflow.LocalActivityOptions{
 		ScheduleToCloseTimeout: 5 * time.Second,
 	}
-	defaultActivityOptions = workflow.ActivityOptions{
-		ScheduleToStartTimeout: 5 * time.Second,
-		StartToCloseTimeout:    5 * time.Second,
-	}
 
 	state            = make(map[string]interface{})
-	automationBlocks = make(map[int]model.Block)
+	automationBlocks = make(map[int]model.AutomationBlock)
 )
 
 // RunFlowInput is the input for the RunFlow workflow
@@ -69,13 +66,10 @@ func NewFlowFactory(logger log.Logger) *FlowFactory {
 
 // RunFlowWorkflow is the workflow that runs the main flow. It is tied to flow instance ent and reads the ent graph
 // database to find the next block that needs to be executed as activity
-func (ff *FlowFactory) RunFlowWorkflow(workflowCtx workflow.Context, appCtx context.Context,
-	taskList string, runFlowInput RunFlowInput, input map[string]interface{}) (map[string]interface{}, error) {
-
-	automationFlow, err := getAutomationFlow(workflowCtx, appCtx, runFlowInput.FlowInstanceID)
-	if err != nil {
-		return nil, err
-	}
+func (ff *FlowFactory) RunFlowWorkflow(
+	workflowCtx workflow.Context, appCtx context.Context,
+	taskList string, runFlowInput RunFlowInput,
+) (map[string]interface{}, error) {
 
 	activityOptions := workflow.ActivityOptions{
 		TaskList:               taskList,
@@ -88,11 +82,24 @@ func (ff *FlowFactory) RunFlowWorkflow(workflowCtx workflow.Context, appCtx cont
 
 	workflowCtx = workflow.WithActivityOptions(workflowCtx, activityOptions)
 
+	flowInstanceID := runFlowInput.FlowInstanceID
+
+	flowBlocks, input, err := getFlowInstanceBlocksAndInput(appCtx, flowInstanceID)
+	if err != nil {
+		return nil, err
+	}
+
+	automationFlowBlocks, err := getAutomationBlocks(workflowCtx, appCtx, flowInstanceID, flowBlocks)
+
+	if err != nil {
+		return nil, err
+	}
+
 	inputValue := input
 
-	var startBlock model.Block
+	var startBlock model.AutomationBlock
 
-	for _, automationBlock := range automationFlow.Blocks {
+	for _, automationBlock := range automationFlowBlocks {
 		automationBlocks[automationBlock.ID] = automationBlock
 		if automationBlock.Type == block.TypeStart {
 			startBlock = automationBlock
@@ -100,14 +107,32 @@ func (ff *FlowFactory) RunFlowWorkflow(workflowCtx workflow.Context, appCtx cont
 	}
 
 	var output map[string]interface{}
+
 	automationBlock := &startBlock
 
 	for automationBlock != nil {
+		automationBlock.Attempts++
+
 		blockExecutor := *automationBlock
 
 		executorResult, err := ff.executeBlock(blockExecutor, inputValue, state)
 
 		if err != nil {
+			var maxAttempts int
+			if automationBlock.MaxAttemps != nil {
+				maxAttempts = *automationBlock.MaxAttemps
+			}
+			if automationBlock.Attempts < maxAttempts {
+				err = ff.updateFlowInstanceStatus(
+					automationBlock.AppCtx, automationBlock.FlowID,
+					flowinstance.StatusFailed, nil, err,
+				)
+				if err != nil {
+					return nil, err
+				}
+			}
+			// TODO Change flow status (failing / failed)
+			// TODO Retry block execution
 			return nil, err
 		}
 
@@ -132,14 +157,16 @@ func (ff *FlowFactory) RunFlowWorkflow(workflowCtx workflow.Context, appCtx cont
 		}
 	}
 
+	// TODO Change flow status
+
 	return output, nil
 }
 
 func (ff *FlowFactory) executeBlock(
-	automationBlock model.Block, input, state map[string]interface{},
+	automationBlock model.AutomationBlock, input, state map[string]interface{},
 ) (*blocks.ExecutorResult, error) {
 
-	blockInstanceID, err := ff.createBlockInstance(automationBlock)
+	blockInstanceID, err := ff.createBlockInstance(automationBlock, input)
 	if err != nil {
 		return nil, err
 	}
@@ -167,7 +194,7 @@ func (ff *FlowFactory) executeBlock(
 	case block.TypeForEach:
 		foreachFlow, ok := blockInstance.(*blocks.ForEachBlock)
 		if ok {
-			foreachFlow.SearchBlock = func(blockID int) *model.Block {
+			foreachFlow.SearchBlock = func(blockID int) *model.AutomationBlock {
 				entBlock, exists := automationBlocks[blockID]
 				if exists {
 					return &entBlock
@@ -239,14 +266,21 @@ func (ff *FlowFactory) executeBlock(
 	return executorResult, nil
 }
 
-func (ff *FlowFactory) ExecutorActivity(_ context.Context, block model.Block,
+func (ff *FlowFactory) ExecutorActivity(_ context.Context, block model.AutomationBlock,
 	input, state map[string]interface{}) (*blocks.ExecutorResult, error) {
 
 	blockInstance := blocks.GetBlockInstances(block, input, state, ff.updateBlockInstanceStatus)
 	return blockInstance.Execute()
 }
 
-func (ff *FlowFactory) createBlockInstance(automationBlock model.Block) (int, error) {
+func (ff *FlowFactory) createBlockInstance(
+	automationBlock model.AutomationBlock, input map[string]interface{},
+) (int, error) {
+
+	inputJson, err := util.ToJson(input)
+	if err != nil {
+		return 0, err
+	}
 
 	ctx := automationBlock.AppCtx
 
@@ -262,6 +296,7 @@ func (ff *FlowFactory) createBlockInstance(automationBlock model.Block) (int, er
 		SetFlowInstance(flowInstance).
 		SetStatus(blockinstance.StatusPending).
 		SetStartDate(time.Now()).
+		SetInputJSON(inputJson).
 		Save(ctx)
 
 	if err != nil {
@@ -271,7 +306,8 @@ func (ff *FlowFactory) createBlockInstance(automationBlock model.Block) (int, er
 }
 
 func (ff *FlowFactory) updateBlockInstanceStatus(
-	ctx context.Context, blockID int, status blockinstance.Status, endDate *time.Time,
+	ctx context.Context, blockID int, status blockinstance.Status,
+	endDate *time.Time, output map[string]interface{},
 ) error {
 
 	query := ent.FromContext(ctx).BlockInstance.UpdateOneID(blockID).
@@ -281,7 +317,38 @@ func (ff *FlowFactory) updateBlockInstanceStatus(
 		query = query.SetEndDate(*endDate)
 	}
 
+	if output != nil && len(output) > 0 {
+		outputJson, err := util.ToJson(output)
+		if err != nil {
+			return err
+		}
+
+		query = query.SetOutputJSON(outputJson)
+	}
+
 	_, err := query.Save(ctx)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (ff *FlowFactory) updateFlowInstanceStatus(
+	ctx context.Context, flowID int, status flowinstance.Status, endDate *time.Time, err error,
+) error {
+
+	query := ent.FromContext(ctx).FlowInstance.UpdateOneID(flowID).
+		SetStatus(status)
+
+	if endDate != nil {
+		query = query.SetEndDate(*endDate)
+	}
+
+	if err != nil {
+		query = query.SetIncompletionReason(err.Error())
+	}
+
+	_, err = query.Save(ctx)
 	if err != nil {
 		return err
 	}

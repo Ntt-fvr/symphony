@@ -14,6 +14,7 @@ import (
 
 	"github.com/facebook/ent/dialect/sql/sqlgraph"
 	"github.com/facebook/ent/schema/field"
+	"github.com/facebookincubator/symphony/pkg/ent/automationactivity"
 	"github.com/facebookincubator/symphony/pkg/ent/block"
 	"github.com/facebookincubator/symphony/pkg/ent/blockinstance"
 	"github.com/facebookincubator/symphony/pkg/ent/flowinstance"
@@ -78,6 +79,34 @@ func (bic *BlockInstanceCreate) SetInputs(fv []*flowschema.VariableValue) *Block
 // SetOutputs sets the outputs field.
 func (bic *BlockInstanceCreate) SetOutputs(fv []*flowschema.VariableValue) *BlockInstanceCreate {
 	bic.mutation.SetOutputs(fv)
+	return bic
+}
+
+// SetInputJSON sets the input_json field.
+func (bic *BlockInstanceCreate) SetInputJSON(s string) *BlockInstanceCreate {
+	bic.mutation.SetInputJSON(s)
+	return bic
+}
+
+// SetNillableInputJSON sets the input_json field if the given value is not nil.
+func (bic *BlockInstanceCreate) SetNillableInputJSON(s *string) *BlockInstanceCreate {
+	if s != nil {
+		bic.SetInputJSON(*s)
+	}
+	return bic
+}
+
+// SetOutputJSON sets the output_json field.
+func (bic *BlockInstanceCreate) SetOutputJSON(s string) *BlockInstanceCreate {
+	bic.mutation.SetOutputJSON(s)
+	return bic
+}
+
+// SetNillableOutputJSON sets the output_json field if the given value is not nil.
+func (bic *BlockInstanceCreate) SetNillableOutputJSON(s *string) *BlockInstanceCreate {
+	if s != nil {
+		bic.SetOutputJSON(*s)
+	}
 	return bic
 }
 
@@ -168,6 +197,21 @@ func (bic *BlockInstanceCreate) SetNillableSubflowInstanceID(id *int) *BlockInst
 // SetSubflowInstance sets the subflow_instance edge to FlowInstance.
 func (bic *BlockInstanceCreate) SetSubflowInstance(f *FlowInstance) *BlockInstanceCreate {
 	return bic.SetSubflowInstanceID(f.ID)
+}
+
+// AddBlockActivityIDs adds the block_activities edge to AutomationActivity by ids.
+func (bic *BlockInstanceCreate) AddBlockActivityIDs(ids ...int) *BlockInstanceCreate {
+	bic.mutation.AddBlockActivityIDs(ids...)
+	return bic
+}
+
+// AddBlockActivities adds the block_activities edges to AutomationActivity.
+func (bic *BlockInstanceCreate) AddBlockActivities(a ...*AutomationActivity) *BlockInstanceCreate {
+	ids := make([]int, len(a))
+	for i := range a {
+		ids[i] = a[i].ID
+	}
+	return bic.AddBlockActivityIDs(ids...)
 }
 
 // Mutation returns the BlockInstanceMutation object of the builder.
@@ -328,6 +372,22 @@ func (bic *BlockInstanceCreate) createSpec() (*BlockInstance, *sqlgraph.CreateSp
 		})
 		_node.Outputs = value
 	}
+	if value, ok := bic.mutation.InputJSON(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: blockinstance.FieldInputJSON,
+		})
+		_node.InputJSON = value
+	}
+	if value, ok := bic.mutation.OutputJSON(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: blockinstance.FieldOutputJSON,
+		})
+		_node.OutputJSON = value
+	}
 	if value, ok := bic.mutation.FailureReason(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
@@ -409,6 +469,25 @@ func (bic *BlockInstanceCreate) createSpec() (*BlockInstance, *sqlgraph.CreateSp
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: flowinstance.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := bic.mutation.BlockActivitiesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   blockinstance.BlockActivitiesTable,
+			Columns: []string{blockinstance.BlockActivitiesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: automationactivity.FieldID,
 				},
 			},
 		}

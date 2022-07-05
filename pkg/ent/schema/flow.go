@@ -180,6 +180,8 @@ func (FlowInstance) Fields() []ent.Field {
 				"Completed", "COMPLETED",
 				"Cancelled", "CANCELED",
 			).Default("IN_PROGRESS"),
+		field.JSON("start_params", []*flowschema.VariableValue{}).
+			Optional(),
 		field.JSON("output_params", []*flowschema.VariableValue{}).
 			Optional(),
 		field.String("incompletion_reason").
@@ -223,6 +225,7 @@ func (FlowInstance) Edges() []ent.Edge {
 		edge.From("parent_subflow_block", BlockInstance.Type).
 			Unique().
 			Ref("subflow_instance"),
+		edge.To("flow_activities", AutomationActivity.Type),
 	}
 }
 
@@ -231,6 +234,7 @@ func (FlowInstance) Hooks() []ent.Hook {
 	return []ent.Hook{
 		hooks.DenyCreationOfInstanceOfDisabledFlowHook(),
 		hooks.CopyFlowToFlowExecutionTemplateHook(),
+		hooks.FlowInstanceAutomationActivity(),
 	}
 }
 

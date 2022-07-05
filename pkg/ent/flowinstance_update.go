@@ -15,6 +15,7 @@ import (
 	"github.com/facebook/ent/dialect/sql"
 	"github.com/facebook/ent/dialect/sql/sqlgraph"
 	"github.com/facebook/ent/schema/field"
+	"github.com/facebookincubator/symphony/pkg/ent/automationactivity"
 	"github.com/facebookincubator/symphony/pkg/ent/blockinstance"
 	"github.com/facebookincubator/symphony/pkg/ent/flow"
 	"github.com/facebookincubator/symphony/pkg/ent/flowexecutiontemplate"
@@ -47,6 +48,18 @@ func (fiu *FlowInstanceUpdate) SetNillableStatus(f *flowinstance.Status) *FlowIn
 	if f != nil {
 		fiu.SetStatus(*f)
 	}
+	return fiu
+}
+
+// SetStartParams sets the start_params field.
+func (fiu *FlowInstanceUpdate) SetStartParams(fv []*flowschema.VariableValue) *FlowInstanceUpdate {
+	fiu.mutation.SetStartParams(fv)
+	return fiu
+}
+
+// ClearStartParams clears the value of start_params.
+func (fiu *FlowInstanceUpdate) ClearStartParams() *FlowInstanceUpdate {
+	fiu.mutation.ClearStartParams()
 	return fiu
 }
 
@@ -198,6 +211,21 @@ func (fiu *FlowInstanceUpdate) SetParentSubflowBlock(b *BlockInstance) *FlowInst
 	return fiu.SetParentSubflowBlockID(b.ID)
 }
 
+// AddFlowActivityIDs adds the flow_activities edge to AutomationActivity by ids.
+func (fiu *FlowInstanceUpdate) AddFlowActivityIDs(ids ...int) *FlowInstanceUpdate {
+	fiu.mutation.AddFlowActivityIDs(ids...)
+	return fiu
+}
+
+// AddFlowActivities adds the flow_activities edges to AutomationActivity.
+func (fiu *FlowInstanceUpdate) AddFlowActivities(a ...*AutomationActivity) *FlowInstanceUpdate {
+	ids := make([]int, len(a))
+	for i := range a {
+		ids[i] = a[i].ID
+	}
+	return fiu.AddFlowActivityIDs(ids...)
+}
+
 // Mutation returns the FlowInstanceMutation object of the builder.
 func (fiu *FlowInstanceUpdate) Mutation() *FlowInstanceMutation {
 	return fiu.mutation
@@ -240,6 +268,27 @@ func (fiu *FlowInstanceUpdate) RemoveBlocks(b ...*BlockInstance) *FlowInstanceUp
 func (fiu *FlowInstanceUpdate) ClearParentSubflowBlock() *FlowInstanceUpdate {
 	fiu.mutation.ClearParentSubflowBlock()
 	return fiu
+}
+
+// ClearFlowActivities clears all "flow_activities" edges to type AutomationActivity.
+func (fiu *FlowInstanceUpdate) ClearFlowActivities() *FlowInstanceUpdate {
+	fiu.mutation.ClearFlowActivities()
+	return fiu
+}
+
+// RemoveFlowActivityIDs removes the flow_activities edge to AutomationActivity by ids.
+func (fiu *FlowInstanceUpdate) RemoveFlowActivityIDs(ids ...int) *FlowInstanceUpdate {
+	fiu.mutation.RemoveFlowActivityIDs(ids...)
+	return fiu
+}
+
+// RemoveFlowActivities removes flow_activities edges to AutomationActivity.
+func (fiu *FlowInstanceUpdate) RemoveFlowActivities(a ...*AutomationActivity) *FlowInstanceUpdate {
+	ids := make([]int, len(a))
+	for i := range a {
+		ids[i] = a[i].ID
+	}
+	return fiu.RemoveFlowActivityIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -351,6 +400,19 @@ func (fiu *FlowInstanceUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Type:   field.TypeEnum,
 			Value:  value,
 			Column: flowinstance.FieldStatus,
+		})
+	}
+	if value, ok := fiu.mutation.StartParams(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeJSON,
+			Value:  value,
+			Column: flowinstance.FieldStartParams,
+		})
+	}
+	if fiu.mutation.StartParamsCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeJSON,
+			Column: flowinstance.FieldStartParams,
 		})
 	}
 	if value, ok := fiu.mutation.OutputParams(); ok {
@@ -578,6 +640,60 @@ func (fiu *FlowInstanceUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if fiu.mutation.FlowActivitiesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   flowinstance.FlowActivitiesTable,
+			Columns: []string{flowinstance.FlowActivitiesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: automationactivity.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := fiu.mutation.RemovedFlowActivitiesIDs(); len(nodes) > 0 && !fiu.mutation.FlowActivitiesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   flowinstance.FlowActivitiesTable,
+			Columns: []string{flowinstance.FlowActivitiesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: automationactivity.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := fiu.mutation.FlowActivitiesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   flowinstance.FlowActivitiesTable,
+			Columns: []string{flowinstance.FlowActivitiesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: automationactivity.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	if n, err = sqlgraph.UpdateNodes(ctx, fiu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{flowinstance.Label}
@@ -607,6 +723,18 @@ func (fiuo *FlowInstanceUpdateOne) SetNillableStatus(f *flowinstance.Status) *Fl
 	if f != nil {
 		fiuo.SetStatus(*f)
 	}
+	return fiuo
+}
+
+// SetStartParams sets the start_params field.
+func (fiuo *FlowInstanceUpdateOne) SetStartParams(fv []*flowschema.VariableValue) *FlowInstanceUpdateOne {
+	fiuo.mutation.SetStartParams(fv)
+	return fiuo
+}
+
+// ClearStartParams clears the value of start_params.
+func (fiuo *FlowInstanceUpdateOne) ClearStartParams() *FlowInstanceUpdateOne {
+	fiuo.mutation.ClearStartParams()
 	return fiuo
 }
 
@@ -758,6 +886,21 @@ func (fiuo *FlowInstanceUpdateOne) SetParentSubflowBlock(b *BlockInstance) *Flow
 	return fiuo.SetParentSubflowBlockID(b.ID)
 }
 
+// AddFlowActivityIDs adds the flow_activities edge to AutomationActivity by ids.
+func (fiuo *FlowInstanceUpdateOne) AddFlowActivityIDs(ids ...int) *FlowInstanceUpdateOne {
+	fiuo.mutation.AddFlowActivityIDs(ids...)
+	return fiuo
+}
+
+// AddFlowActivities adds the flow_activities edges to AutomationActivity.
+func (fiuo *FlowInstanceUpdateOne) AddFlowActivities(a ...*AutomationActivity) *FlowInstanceUpdateOne {
+	ids := make([]int, len(a))
+	for i := range a {
+		ids[i] = a[i].ID
+	}
+	return fiuo.AddFlowActivityIDs(ids...)
+}
+
 // Mutation returns the FlowInstanceMutation object of the builder.
 func (fiuo *FlowInstanceUpdateOne) Mutation() *FlowInstanceMutation {
 	return fiuo.mutation
@@ -800,6 +943,27 @@ func (fiuo *FlowInstanceUpdateOne) RemoveBlocks(b ...*BlockInstance) *FlowInstan
 func (fiuo *FlowInstanceUpdateOne) ClearParentSubflowBlock() *FlowInstanceUpdateOne {
 	fiuo.mutation.ClearParentSubflowBlock()
 	return fiuo
+}
+
+// ClearFlowActivities clears all "flow_activities" edges to type AutomationActivity.
+func (fiuo *FlowInstanceUpdateOne) ClearFlowActivities() *FlowInstanceUpdateOne {
+	fiuo.mutation.ClearFlowActivities()
+	return fiuo
+}
+
+// RemoveFlowActivityIDs removes the flow_activities edge to AutomationActivity by ids.
+func (fiuo *FlowInstanceUpdateOne) RemoveFlowActivityIDs(ids ...int) *FlowInstanceUpdateOne {
+	fiuo.mutation.RemoveFlowActivityIDs(ids...)
+	return fiuo
+}
+
+// RemoveFlowActivities removes flow_activities edges to AutomationActivity.
+func (fiuo *FlowInstanceUpdateOne) RemoveFlowActivities(a ...*AutomationActivity) *FlowInstanceUpdateOne {
+	ids := make([]int, len(a))
+	for i := range a {
+		ids[i] = a[i].ID
+	}
+	return fiuo.RemoveFlowActivityIDs(ids...)
 }
 
 // Save executes the query and returns the updated entity.
@@ -909,6 +1073,19 @@ func (fiuo *FlowInstanceUpdateOne) sqlSave(ctx context.Context) (_node *FlowInst
 			Type:   field.TypeEnum,
 			Value:  value,
 			Column: flowinstance.FieldStatus,
+		})
+	}
+	if value, ok := fiuo.mutation.StartParams(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeJSON,
+			Value:  value,
+			Column: flowinstance.FieldStartParams,
+		})
+	}
+	if fiuo.mutation.StartParamsCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeJSON,
+			Column: flowinstance.FieldStartParams,
 		})
 	}
 	if value, ok := fiuo.mutation.OutputParams(); ok {
@@ -1128,6 +1305,60 @@ func (fiuo *FlowInstanceUpdateOne) sqlSave(ctx context.Context) (_node *FlowInst
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: blockinstance.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if fiuo.mutation.FlowActivitiesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   flowinstance.FlowActivitiesTable,
+			Columns: []string{flowinstance.FlowActivitiesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: automationactivity.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := fiuo.mutation.RemovedFlowActivitiesIDs(); len(nodes) > 0 && !fiuo.mutation.FlowActivitiesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   flowinstance.FlowActivitiesTable,
+			Columns: []string{flowinstance.FlowActivitiesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: automationactivity.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := fiuo.mutation.FlowActivitiesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   flowinstance.FlowActivitiesTable,
+			Columns: []string{flowinstance.FlowActivitiesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: automationactivity.FieldID,
 				},
 			},
 		}
