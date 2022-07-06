@@ -19,6 +19,8 @@ import Tooltip from '@material-ui/core/Tooltip';
 import symphony from '@symphony/design-system/theme/symphony';
 import {makeStyles} from '@material-ui/styles';
 import {withStyles} from '@material-ui/core/styles';
+import {graphql} from 'relay-runtime';
+import {useLazyLoadQuery} from 'react-relay/hooks';
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -62,6 +64,26 @@ const QontoConnector = withStyles({
   },
 })(StepConnector);
 
+const StepperTimeLineQuery = graphql`
+query StepperTimeLineQuery($filter: ResourceFilter) {
+  queryResource(filter: $filter) {
+    id
+    name
+    cmVersions{
+        id
+        status
+        validFrom
+        validTo
+        parameters {
+            id
+            stringValue
+        }
+        createTime
+      }
+  }
+}
+`;
+
 const TooltipTime = withStyles(() => ({
   tooltip: {
     backgroundColor: symphony.palette.B600,
@@ -88,29 +110,6 @@ const TooltipTime = withStyles(() => ({
   },
 }))(Tooltip);
 
-const steps = [
-  {date: '1 JUN 2022', id: '1'},
-  {date: '2 JUN 2022', id: '2'},
-  {date: '3 JUN 2022', id: '3'},
-  {date: '4 JUN 2022', id: '4'},
-  {date: '5 JUN 2022', id: '5'},
-  {date: '6 JUN 2022', id: '6'},
-  {date: '7 JUN 2022', id: '7'},
-  {date: '8 JUN 2022', id: '8'},
-  {date: '9 JUN 2022', id: '9'},
-  {date: '10 JUN 2022', id: '10'},
-  {date: '11 JUN 2022', id: '11'},
-  {date: '12 JUN 2022', id: '12'},
-  {date: '13 JUN 2022', id: '13'},
-  {date: '14 JUN 2022', id: '14'},
-  {date: '15 JUN 2022', id: '15'},
-  {date: '16 JUN 2022', id: '16'},
-  {date: '17 JUN 2022', id: '17'},
-  {date: '18 JUN 2022', id: '18'},
-  {date: '19 JUN 2022', id: '19'},
-  {date: '20 JUN 2022', id: '20'},
-];
-
 type Props = $ReadOnly<{||}>;
 
 const StepperTimeLine = (props: Props) => {
@@ -122,23 +121,43 @@ const StepperTimeLine = (props: Props) => {
     return data;
   };
 
+  const queryString = window.location.search;
+  const urlParams = new URLSearchParams(queryString);
+  const resourceId = urlParams.get('resource');
+
+
+  const queryCMVersion = useLazyLoadQuery(StepperTimeLineQuery, {
+    filter: {
+      and: [
+        {
+          id: resourceId
+        }
+      ]
+    }
+  });
+
+  const formatDate = date => {
+    const dateConvert = new Date(date);
+    return dateConvert.toLocaleDateString();
+  };
+
   return (
     <Stepper
       style={{direction: 'ltr'}}
       alternativeLabel
       connector={<QontoConnector />}>
-      {steps.map(label => (
+      {queryCMVersion.queryResource[0].cmVersions.map(label => (
         <Step className={classes.stepItem} key={label.id}>
           <StepLabel
             onClick={() => handleInfo(label)}
             className={classes.stepLabelRoot}
             icon={
-              <TooltipTime arrow={false} placement="top" title={label.date}>
+              <TooltipTime arrow={false} placement="top" title={formatDate(label.createTime)}>
                 <FiberManualRecordIcon className={classes.stepLabelRoot} />
               </TooltipTime>
             }>
             <Text variant={'body1'} color={'gray'} weight={'bold'}>
-              {label.date}
+              {formatDate(label.createTime)}
             </Text>
           </StepLabel>
         </Step>
