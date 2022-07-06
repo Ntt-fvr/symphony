@@ -1,6 +1,7 @@
+
 schema
-  @core(feature: "https://specs.apollo.dev/core/v0.2"),
-  @core(feature: "https://specs.apollo.dev/join/v0.1", for: EXECUTION)
+@core(feature: "https://specs.apollo.dev/core/v0.2"),
+@core(feature: "https://specs.apollo.dev/join/v0.1", for: EXECUTION)
 {
   query: Query
   mutation: Mutation
@@ -32,22 +33,28 @@ input ActionBlockInput {
   uiRepresentation: BlockUIRepresentationInput
 }
 
-type ActionExecution {
+type ActionExecution implements DefaultConfig {
+  createTime: DateTime
   endTime: DateTime
   id: ID!
-  items(filter: ActionExecutionItemFilter, first: Int, offset: Int): [ActionExecutionItem]
+  items(filter: ActionExecutionItemFilter, first: Int, offset: Int, order: ActionExecutionItemOrder): [ActionExecutionItem]
   itemsAggregate(filter: ActionExecutionItemFilter): ActionExecutionItemAggregateResult
   scheduler(filter: ActionSchedulerFilter): ActionScheduler
   starTime: DateTime!
   template(filter: ActionTemplateFilter): ActionTemplate!
+  updateTime: DateTime
 }
 
 type ActionExecutionAggregateResult {
   count: Int
+  createTimeMax: DateTime
+  createTimeMin: DateTime
   endTimeMax: DateTime
   endTimeMin: DateTime
   starTimeMax: DateTime
   starTimeMin: DateTime
+  updateTimeMax: DateTime
+  updateTimeMin: DateTime
 }
 
 input ActionExecutionFilter {
@@ -59,23 +66,31 @@ input ActionExecutionFilter {
 }
 
 enum ActionExecutionHasFilter {
+  createTime
   endTime
   items
   scheduler
   starTime
   template
+  updateTime
 }
 
-type ActionExecutionItem {
+type ActionExecutionItem implements DefaultConfig {
   action(filter: ActionExecutionFilter): ActionExecution!
+  createTime: DateTime
   id: ID!
   resources(filter: ResourceFilter, first: Int, offset: Int, order: ResourceOrder): [Resource]!
   resourcesAggregate(filter: ResourceFilter): ResourceAggregateResult
   status: ActionExecutionItemStatus
+  updateTime: DateTime
 }
 
 type ActionExecutionItemAggregateResult {
   count: Int
+  createTimeMax: DateTime
+  createTimeMin: DateTime
+  updateTimeMax: DateTime
+  updateTimeMin: DateTime
 }
 
 input ActionExecutionItemFilter {
@@ -88,21 +103,38 @@ input ActionExecutionItemFilter {
 
 enum ActionExecutionItemHasFilter {
   action
+  createTime
   resources
   status
+  updateTime
+}
+
+input ActionExecutionItemOrder {
+  asc: ActionExecutionItemOrderable
+  desc: ActionExecutionItemOrderable
+  then: ActionExecutionItemOrder
+}
+
+enum ActionExecutionItemOrderable {
+  createTime
+  updateTime
 }
 
 input ActionExecutionItemPatch {
   action: ActionExecutionRef
+  createTime: DateTime
   resources: [ResourceRef]
   status: ActionExecutionItemStatus
+  updateTime: DateTime
 }
 
 input ActionExecutionItemRef {
   action: ActionExecutionRef
+  createTime: DateTime
   id: ID
   resources: [ResourceRef]
   status: ActionExecutionItemStatus
+  updateTime: DateTime
 }
 
 enum ActionExecutionItemStatus {
@@ -118,46 +150,56 @@ input ActionExecutionOrder {
 }
 
 enum ActionExecutionOrderable {
+  createTime
   endTime
   starTime
+  updateTime
 }
 
 input ActionExecutionPatch {
+  createTime: DateTime
   endTime: DateTime
   items: [ActionExecutionItemRef]
   scheduler: ActionSchedulerRef
   starTime: DateTime
   template: ActionTemplateRef
+  updateTime: DateTime
 }
 
 input ActionExecutionRef {
+  createTime: DateTime
   endTime: DateTime
   id: ID
   items: [ActionExecutionItemRef]
   scheduler: ActionSchedulerRef
   starTime: DateTime
   template: ActionTemplateRef
+  updateTime: DateTime
 }
 
-type ActionScheduler {
+type ActionScheduler implements DefaultConfig {
   actionTemplate(filter: ActionTemplateFilter): ActionTemplate!
   actions(filter: ActionExecutionFilter, first: Int, offset: Int, order: ActionExecutionOrder): [ActionExecution!]
   actionsAggregate(filter: ActionExecutionFilter): ActionExecutionAggregateResult
+  createTime: DateTime
   cron: String
   date: DateTime
   description: String!
   id: ID!
   name: String!
-  resourceTypeName:String
-  resourceSpecificationName:String
+  resourceSpecificationName: String
+  resourceTypeName: String
   resources(filter: ResourceFilter, first: Int, offset: Int, order: ResourceOrder): [Resource!]!
   resourcesAggregate(filter: ResourceFilter): ResourceAggregateResult
   status: ActionSchedulerStatus!
   type: ActionSchedulerType!
+  updateTime: DateTime
 }
 
 type ActionSchedulerAggregateResult {
   count: Int
+  createTimeMax: DateTime
+  createTimeMin: DateTime
   cronMax: String
   cronMin: String
   dateMax: DateTime
@@ -166,6 +208,12 @@ type ActionSchedulerAggregateResult {
   descriptionMin: String
   nameMax: String
   nameMin: String
+  resourceSpecificationNameMax: String
+  resourceSpecificationNameMin: String
+  resourceTypeNameMax: String
+  resourceTypeNameMin: String
+  updateTimeMax: DateTime
+  updateTimeMin: DateTime
 }
 
 input ActionSchedulerFilter {
@@ -179,13 +227,17 @@ input ActionSchedulerFilter {
 enum ActionSchedulerHasFilter {
   actionTemplate
   actions
+  createTime
   cron
   date
   description
   name
+  resourceSpecificationName
+  resourceTypeName
   resources
   status
   type
+  updateTime
 }
 
 input ActionSchedulerOrder {
@@ -195,39 +247,47 @@ input ActionSchedulerOrder {
 }
 
 enum ActionSchedulerOrderable {
+  createTime
   cron
   date
   description
   name
+  resourceSpecificationName
+  resourceTypeName
+  updateTime
 }
 
 input ActionSchedulerPatch {
   actionTemplate: ActionTemplateRef
   actions: [ActionExecutionRef!]
+  createTime: DateTime
   cron: String
   date: DateTime
   description: String
   name: String
-  resourceTypeName:String
-  resourceSpecificationName:String
+  resourceSpecificationName: String
+  resourceTypeName: String
   resources: [ResourceRef!]
   status: ActionSchedulerStatus
   type: ActionSchedulerType
+  updateTime: DateTime
 }
 
 input ActionSchedulerRef {
   actionTemplate: ActionTemplateRef
   actions: [ActionExecutionRef!]
+  createTime: DateTime
   cron: String
   date: DateTime
   description: String
   id: ID
   name: String
-  resourceTypeName:String
-  resourceSpecificationName:String
+  resourceSpecificationName: String
+  resourceTypeName: String
   resources: [ResourceRef!]
   status: ActionSchedulerStatus
   type: ActionSchedulerType
+  updateTime: DateTime
 }
 
 enum ActionSchedulerStatus {
@@ -241,24 +301,30 @@ enum ActionSchedulerType {
   PERIODICAL_EXECUTION
 }
 
-type ActionTemplate {
+type ActionTemplate implements DefaultConfig {
   actionExecutions(filter: ActionExecutionFilter, first: Int, offset: Int, order: ActionExecutionOrder): [ActionExecution!]
   actionExecutionsAggregate(filter: ActionExecutionFilter): ActionExecutionAggregateResult
-  actionTemplateItems(filter: ActionTemplateItemFilter, first: Int, offset: Int): [ActionTemplateItem!]!
+  actionTemplateItems(filter: ActionTemplateItemFilter, first: Int, offset: Int, order: ActionTemplateItemOrder): [ActionTemplateItem!]!
   actionTemplateItemsAggregate(filter: ActionTemplateItemFilter): ActionTemplateItemAggregateResult
+  createTime: DateTime
   id: ID!
-  isDeleted:Boolean
+  isDeleted: Boolean
   name: String!
   resourceSpecifications: String!
   type: ActionTemplateType!
+  updateTime: DateTime
 }
 
 type ActionTemplateAggregateResult {
   count: Int
+  createTimeMax: DateTime
+  createTimeMin: DateTime
   nameMax: String
   nameMin: String
   resourceSpecificationsMax: String
   resourceSpecificationsMin: String
+  updateTimeMax: DateTime
+  updateTimeMin: DateTime
 }
 
 input ActionTemplateFilter {
@@ -273,21 +339,30 @@ input ActionTemplateFilter {
 enum ActionTemplateHasFilter {
   actionExecutions
   actionTemplateItems
+  createTime
+  isDeleted
   name
   resourceSpecifications
   type
+  updateTime
 }
 
-type ActionTemplateItem {
-  actionTemplate(filter: ActionTemplateFilter): ActionTemplate
+type ActionTemplateItem implements DefaultConfig {
+  actionTemplate(filter: ActionTemplateFilter): ActionTemplate!
+  createTime: DateTime
   id: ID!
+  isDeleted: Boolean
   parameters(filter: ConfigurationParameterTypeFilter): ConfigurationParameterType!
+  updateTime: DateTime
   value(filter: ParameterFilter): Parameter!
-  isDeleted:Boolean
 }
 
 type ActionTemplateItemAggregateResult {
   count: Int
+  createTimeMax: DateTime
+  createTimeMin: DateTime
+  updateTimeMax: DateTime
+  updateTimeMin: DateTime
 }
 
 input ActionTemplateItemFilter {
@@ -300,23 +375,41 @@ input ActionTemplateItemFilter {
 
 enum ActionTemplateItemHasFilter {
   actionTemplate
+  createTime
+  isDeleted
   parameters
+  updateTime
   value
+}
+
+input ActionTemplateItemOrder {
+  asc: ActionTemplateItemOrderable
+  desc: ActionTemplateItemOrderable
+  then: ActionTemplateItemOrder
+}
+
+enum ActionTemplateItemOrderable {
+  createTime
+  updateTime
 }
 
 input ActionTemplateItemPatch {
   actionTemplate: ActionTemplateRef
+  createTime: DateTime
+  isDeleted: Boolean
   parameters: ConfigurationParameterTypeRef
+  updateTime: DateTime
   value: ParameterRef
-  isDeleted:Boolean
 }
 
 input ActionTemplateItemRef {
   actionTemplate: ActionTemplateRef
+  createTime: DateTime
   id: ID
+  isDeleted: Boolean
   parameters: ConfigurationParameterTypeRef
+  updateTime: DateTime
   value: ParameterRef
-  isDeleted:Boolean
 }
 
 input ActionTemplateOrder {
@@ -326,27 +419,33 @@ input ActionTemplateOrder {
 }
 
 enum ActionTemplateOrderable {
+  createTime
   name
   resourceSpecifications
+  updateTime
 }
 
 input ActionTemplatePatch {
   actionExecutions: [ActionExecutionRef!]
   actionTemplateItems: [ActionTemplateItemRef!]
+  createTime: DateTime
+  isDeleted: Boolean
   name: String
-  isDeleted:Boolean
   resourceSpecifications: String
   type: ActionTemplateType
+  updateTime: DateTime
 }
 
 input ActionTemplateRef {
   actionExecutions: [ActionExecutionRef!]
   actionTemplateItems: [ActionTemplateItemRef!]
+  createTime: DateTime
   id: ID
+  isDeleted: Boolean
   name: String
-  isDeleted:Boolean
   resourceSpecifications: String
   type: ActionTemplateType
+  updateTime: DateTime
 }
 
 enum ActionTemplateType {
@@ -400,21 +499,25 @@ input ActivityFilterInput {
 }
 
 input AddActionExecutionInput {
+  createTime: DateTime
   endTime: DateTime
   items: [ActionExecutionItemRef]
   scheduler: ActionSchedulerRef
   starTime: DateTime!
   template: ActionTemplateRef!
+  updateTime: DateTime
 }
 
 input AddActionExecutionItemInput {
   action: ActionExecutionRef!
+  createTime: DateTime
   resources: [ResourceRef]!
   status: ActionExecutionItemStatus
+  updateTime: DateTime
 }
 
 type AddActionExecutionItemPayload {
-  actionExecutionItem(filter: ActionExecutionItemFilter, first: Int, offset: Int): [ActionExecutionItem]
+  actionExecutionItem(filter: ActionExecutionItemFilter, first: Int, offset: Int, order: ActionExecutionItemOrder): [ActionExecutionItem]
   numUids: Int
 }
 
@@ -426,15 +529,17 @@ type AddActionExecutionPayload {
 input AddActionSchedulerInput {
   actionTemplate: ActionTemplateRef!
   actions: [ActionExecutionRef!]
+  createTime: DateTime
   cron: String
   date: DateTime
   description: String!
   name: String!
+  resourceSpecificationName: String
+  resourceTypeName: String
   resources: [ResourceRef!]!
-  resourceTypeName:String
-  resourceSpecificationName:String
   status: ActionSchedulerStatus!
   type: ActionSchedulerType!
+  updateTime: DateTime
 }
 
 type AddActionSchedulerPayload {
@@ -445,21 +550,25 @@ type AddActionSchedulerPayload {
 input AddActionTemplateInput {
   actionExecutions: [ActionExecutionRef!]
   actionTemplateItems: [ActionTemplateItemRef!]!
+  createTime: DateTime
+  isDeleted: Boolean
   name: String!
-  isDeleted:Boolean
   resourceSpecifications: String!
   type: ActionTemplateType!
+  updateTime: DateTime
 }
 
 input AddActionTemplateItemInput {
-  actionTemplate: ActionTemplateRef
+  actionTemplate: ActionTemplateRef!
+  createTime: DateTime
+  isDeleted: Boolean
   parameters: ConfigurationParameterTypeRef!
+  updateTime: DateTime
   value: ParameterRef!
-  isDeleted:Boolean
 }
 
 type AddActionTemplateItemPayload {
-  actionTemplateItem(filter: ActionTemplateItemFilter, first: Int, offset: Int): [ActionTemplateItem]
+  actionTemplateItem(filter: ActionTemplateItemFilter, first: Int, offset: Int, order: ActionTemplateItemOrder): [ActionTemplateItem]
   numUids: Int
 }
 
@@ -517,10 +626,12 @@ input AddBulkServiceLinksAndPortsInput {
 }
 
 input AddCMVersionInput {
+  createTime: DateTime
   parameters: [ParameterRef!]!
   previous: CMVersionRef
   resource: ResourceRef!
   status: VersionStatus!
+  updateTime: DateTime
   validFrom: DateTime
   validTo: DateTime
 }
@@ -547,6 +658,7 @@ type AddCancellationRequestPayload {
 
 input AddChangeItemInput {
   booleanValue: Boolean
+  createTime: DateTime
   floatValue: Float
   intValue: Int
   latitudeValue: Float
@@ -557,6 +669,7 @@ input AddChangeItemInput {
   resource: ResourceRef
   status: ChangeItemStatus!
   stringValue: String
+  updateTime: DateTime
 }
 
 type AddChangeItemPayload {
@@ -568,10 +681,11 @@ input AddChangeRequestActivityInput {
   activityType: ChangeRequestActivityField!
   author: String!
   changeRequest: ChangeRequestRef!
-  createTime: DateTime!
+  createTime: DateTime
   isCreate: Boolean!
   newValue: String
   oldValue: String
+  updateTime: DateTime
 }
 
 type AddChangeRequestActivityPayload {
@@ -582,6 +696,7 @@ type AddChangeRequestActivityPayload {
 input AddChangeRequestInput {
   activities: [ChangeRequestActivityRef]
   aprobator: String
+  createTime: DateTime
   description: String!
   items: [ChangeItemRef!]!
   requester: String!
@@ -589,6 +704,7 @@ input AddChangeRequestInput {
   source: ChangeRequestSource
   status: ChangeRequestStatus!
   type: ChangeRequestType
+  updateTime: DateTime
 }
 
 type AddChangeRequestPayload {
@@ -627,8 +743,10 @@ input AddComparatorInput {
 }
 
 input AddConfigParamTagInput {
+  createTime: DateTime
   name: String!
   parameters: [ConfigurationParameterTypeRef]
+  updateTime: DateTime
 }
 
 type AddConfigParamTagPayload {
@@ -639,6 +757,7 @@ type AddConfigParamTagPayload {
 input AddConfigurationParameterTypeInput {
   booleanValue: Boolean
   category: String
+  createTime: DateTime
   externalId: String
   floatValue: Float
   index: Int
@@ -662,6 +781,7 @@ input AddConfigurationParameterTypeInput {
   stringValue: String
   tags: [ConfigParamTagRef!]
   type: ParameterKind!
+  updateTime: DateTime
 }
 
 type AddConfigurationParameterTypePayload {
@@ -751,6 +871,17 @@ input AddFeatureInput {
 type AddFeaturePayload {
   feature(filter: FeatureFilter, first: Int, offset: Int, order: FeatureOrder): [Feature]
   numUids: Int
+}
+
+input AddFilesInput {
+  annotation: String
+  category: String
+  contentType: String!
+  documentCategoryId: ID
+  fileName: String!
+  fileSize: Int!
+  imgKey: String!
+  modified: Time!
 }
 
 input AddFloorPlanInput {
@@ -968,6 +1099,7 @@ input AddOrganizationInput {
 
 input AddParameterInput {
   booleanValue: Boolean
+  createTime: DateTime
   floatValue: Float
   intValue: Int
   latitudeValue: Float
@@ -977,6 +1109,7 @@ input AddParameterInput {
   rangeFromValue: Float
   rangeToValue: Float
   stringValue: String
+  updateTime: DateTime
   versionCMs: [CMVersionRef]!
 }
 
@@ -1105,7 +1238,9 @@ input AddResourceInput {
   available: Boolean
   belongsTo: ResourceRef
   changeItems: [ChangeItemRef]
+  cmVersions: [CMVersionRef]
   composedOf: [ResourceRef]
+  createTime: DateTime
   crossConnection: ResourceRef
   crossconnectionInv: ResourceRef
   externalId: String
@@ -1124,6 +1259,7 @@ input AddResourceInput {
   resourceProperties: [ResourcePropertyRef]
   resourceSpecification: String!
   typePlanningSubStatus: TypePlanningSubStatus
+  updateTime: DateTime
   usageSubStatus: UsageSubStatus
 }
 
@@ -1131,7 +1267,6 @@ input AddResourceOrderIMInput {
   category: String
   description: String
   externalId: String
-  id: String
   lineId: String
   reservationId: String
   resourceOrderItem: [ResourceOrderItemRef]
@@ -1160,6 +1295,7 @@ type AddResourcePayload {
 
 input AddResourcePropertyInput {
   booleanValue: Boolean
+  createTime: DateTime
   floatValue: Float
   intValue: Int
   latitudeValue: Float
@@ -1170,6 +1306,7 @@ input AddResourcePropertyInput {
   resource: ResourceRef
   resourcePropertyType: String!
   stringValue: String
+  updateTime: DateTime
 }
 
 type AddResourcePropertyPayload {
@@ -1204,8 +1341,8 @@ input AddResourcePropertyTypeInput {
 }
 
 input AddResourceReferenceInput {
+  externalId: String
   href: String
-  id: String!
   name: String
 }
 
@@ -1274,12 +1411,13 @@ input AddRuleTypeInput {
 
 input AddSchedulerConfigInput {
   changeRequest: ChangeRequestRef!
-  createTime: DateTime!
+  createTime: DateTime
   name: String
   rollbackPolicy: RollbackPolicyConfig
-  status: SchedulerConfigStatus!
   time: DateTime
-  weekDay: WeekDay!
+  type: TypeSchedulerConfig!
+  updateTime: DateTime
+  weekDay: WeekDay
 }
 
 type AddSchedulerConfigPayload {
@@ -1785,6 +1923,27 @@ input AutomationPolicyInput {
   templates: BasicCUDInput
 }
 
+input BaseBlockInput {
+  backoffRate: Int
+  enableErrorHandling: Boolean
+  enableInputStateTransformation: Boolean!
+  enableInputTransformation: Boolean!
+  enableOutputStateTransformation: Boolean!
+  enableOutputTransformation: Boolean!
+  enableRetryPolicy: Boolean
+  inputParamDefinitions: String
+  inputStateParamDefinitions: String
+  inputStateTransfStrategy: TransfStrategy
+  inputTransfStrategy: TransfStrategy
+  maxAttemps: Int
+  outputParamDefinitions: String
+  outputStateParamDefinitions: String
+  outputStateTransfStrategy: TransfStrategy
+  outputTransfStrategy: TransfStrategy
+  retryInterval: Int
+  units: RetryUnit
+}
+
 input BasicCUDInput {
   create: BasicPermissionRuleInput
   delete: BasicPermissionRuleInput
@@ -1800,17 +1959,35 @@ input BasicPermissionRuleInput {
 }
 
 type Block implements Node {
+  backoffRate: Int
   cid: String!
   details: BlockDetails!
+  enableErrorHandling: Boolean
+  enableInputStateTransformation: Boolean!
+  enableInputTransformation: Boolean!
+  enableOutputStateTransformation: Boolean!
+  enableOutputTransformation: Boolean!
+  enableRetryPolicy: Boolean
   id: ID!
   inputParamDefinitions: [VariableDefinition!]!
+  inputStateTransfStrategy: TransfStrategy
+  inputStateTransformation: String
+  inputTransfStrategy: TransfStrategy
+  inputTransformation: String
+  maxAttemps: Int
   nextBlocks: [Block!]!
   outputParamDefinitions: [VariableDefinition!]!
+  outputStateTransfStrategy: TransfStrategy
+  outputStateTransformation: String
+  outputTransfStrategy: TransfStrategy
+  outputTransformation: String
   prevBlocks: [Block!]!
+  retryInterval: Int
   uiRepresentation: BlockUIRepresentation
+  units: RetryUnit
 }
 
-union BlockDetails = ActionBlock | DecisionBlock | EndBlock | GotoBlock | StartBlock | SubflowBlock | TriggerBlock | TrueFalseBlock
+union BlockDetails = ActionBlock | ChoiceBlock | DecisionBlock | EndBlock | ExecuteFlowBlock | ForEachBlock | GotoBlock | InvokeRestAPIBlock | ParallelBlock | StartBlock | SubflowBlock | TimerBlock | TriggerBlock | TrueFalseBlock | WaitForSignalBlock
 
 type BlockInstance implements Node {
   block: Block!
@@ -1859,19 +2036,25 @@ input BlockVariableInput {
   variableDefinitionKey: String
 }
 
-type CMVersion {
+type CMVersion implements DefaultConfig {
+  createTime: DateTime
   id: ID!
   parameters(filter: ParameterFilter, first: Int, offset: Int, order: ParameterOrder): [Parameter!]!
   parametersAggregate(filter: ParameterFilter): ParameterAggregateResult
   previous(filter: CMVersionFilter): CMVersion
   resource(filter: ResourceFilter): Resource!
   status: VersionStatus!
+  updateTime: DateTime
   validFrom: DateTime
   validTo: DateTime
 }
 
 type CMVersionAggregateResult {
   count: Int
+  createTimeMax: DateTime
+  createTimeMin: DateTime
+  updateTimeMax: DateTime
+  updateTimeMin: DateTime
   validFromMax: DateTime
   validFromMin: DateTime
   validToMax: DateTime
@@ -1888,10 +2071,12 @@ input CMVersionFilter {
 }
 
 enum CMVersionHasFilter {
+  createTime
   parameters
   previous
   resource
   status
+  updateTime
   validFrom
   validTo
 }
@@ -1903,25 +2088,31 @@ input CMVersionOrder {
 }
 
 enum CMVersionOrderable {
+  createTime
+  updateTime
   validFrom
   validTo
 }
 
 input CMVersionPatch {
+  createTime: DateTime
   parameters: [ParameterRef!]
   previous: CMVersionRef
   resource: ResourceRef
   status: VersionStatus
+  updateTime: DateTime
   validFrom: DateTime
   validTo: DateTime
 }
 
 input CMVersionRef {
+  createTime: DateTime
   id: ID
   parameters: [ParameterRef!]
   previous: CMVersionRef
   resource: ResourceRef
   status: VersionStatus
+  updateTime: DateTime
   validFrom: DateTime
   validTo: DateTime
 }
@@ -2022,8 +2213,9 @@ enum CellularNetworkType {
   WCDMA
 }
 
-type ChangeItem {
+type ChangeItem implements DefaultConfig {
   booleanValue: Boolean
+  createTime: DateTime
   floatValue: Float
   id: ID!
   intValue: Int
@@ -2035,10 +2227,13 @@ type ChangeItem {
   resource(filter: ResourceFilter): Resource
   status: ChangeItemStatus!
   stringValue: String
+  updateTime: DateTime
 }
 
 type ChangeItemAggregateResult {
   count: Int
+  createTimeMax: DateTime
+  createTimeMin: DateTime
   floatValueAvg: Float
   floatValueMax: Float
   floatValueMin: Float
@@ -2065,6 +2260,8 @@ type ChangeItemAggregateResult {
   rangeToValueSum: Float
   stringValueMax: String
   stringValueMin: String
+  updateTimeMax: DateTime
+  updateTimeMin: DateTime
 }
 
 input ChangeItemFilter {
@@ -2077,6 +2274,7 @@ input ChangeItemFilter {
 
 enum ChangeItemHasFilter {
   booleanValue
+  createTime
   floatValue
   intValue
   latitudeValue
@@ -2087,6 +2285,7 @@ enum ChangeItemHasFilter {
   resource
   status
   stringValue
+  updateTime
 }
 
 input ChangeItemOrder {
@@ -2096,6 +2295,7 @@ input ChangeItemOrder {
 }
 
 enum ChangeItemOrderable {
+  createTime
   floatValue
   intValue
   latitudeValue
@@ -2103,10 +2303,12 @@ enum ChangeItemOrderable {
   rangeFromValue
   rangeToValue
   stringValue
+  updateTime
 }
 
 input ChangeItemPatch {
   booleanValue: Boolean
+  createTime: DateTime
   floatValue: Float
   intValue: Int
   latitudeValue: Float
@@ -2117,10 +2319,12 @@ input ChangeItemPatch {
   resource: ResourceRef
   status: ChangeItemStatus
   stringValue: String
+  updateTime: DateTime
 }
 
 input ChangeItemRef {
   booleanValue: Boolean
+  createTime: DateTime
   floatValue: Float
   id: ID
   intValue: Int
@@ -2132,6 +2336,7 @@ input ChangeItemRef {
   resource: ResourceRef
   status: ChangeItemStatus
   stringValue: String
+  updateTime: DateTime
 }
 
 enum ChangeItemStatus {
@@ -2142,10 +2347,11 @@ enum ChangeItemStatus {
   SUCCESSFUL
 }
 
-type ChangeRequest {
+type ChangeRequest implements DefaultConfig {
   activities(filter: ChangeRequestActivityFilter, first: Int, offset: Int, order: ChangeRequestActivityOrder): [ChangeRequestActivity]
   activitiesAggregate(filter: ChangeRequestActivityFilter): ChangeRequestActivityAggregateResult
   aprobator: String
+  createTime: DateTime
   description: String!
   id: ID!
   items(filter: ChangeItemFilter, first: Int, offset: Int, order: ChangeItemOrder): [ChangeItem!]!
@@ -2155,17 +2361,19 @@ type ChangeRequest {
   source: ChangeRequestSource
   status: ChangeRequestStatus!
   type: ChangeRequestType
+  updateTime: DateTime
 }
 
-type ChangeRequestActivity {
+type ChangeRequestActivity implements DefaultConfig {
   activityType: ChangeRequestActivityField!
   author: String!
   changeRequest(filter: ChangeRequestFilter): ChangeRequest!
-  createTime: DateTime!
+  createTime: DateTime
   id: ID!
   isCreate: Boolean!
   newValue: String
   oldValue: String
+  updateTime: DateTime
 }
 
 type ChangeRequestActivityAggregateResult {
@@ -2178,6 +2386,8 @@ type ChangeRequestActivityAggregateResult {
   newValueMin: String
   oldValueMax: String
   oldValueMin: String
+  updateTimeMax: DateTime
+  updateTimeMin: DateTime
 }
 
 enum ChangeRequestActivityField {
@@ -2206,6 +2416,7 @@ enum ChangeRequestActivityHasFilter {
   isCreate
   newValue
   oldValue
+  updateTime
 }
 
 input ChangeRequestActivityOrder {
@@ -2219,6 +2430,7 @@ enum ChangeRequestActivityOrderable {
   createTime
   newValue
   oldValue
+  updateTime
 }
 
 input ChangeRequestActivityPatch {
@@ -2229,6 +2441,7 @@ input ChangeRequestActivityPatch {
   isCreate: Boolean
   newValue: String
   oldValue: String
+  updateTime: DateTime
 }
 
 input ChangeRequestActivityRef {
@@ -2240,16 +2453,21 @@ input ChangeRequestActivityRef {
   isCreate: Boolean
   newValue: String
   oldValue: String
+  updateTime: DateTime
 }
 
 type ChangeRequestAggregateResult {
   aprobatorMax: String
   aprobatorMin: String
   count: Int
+  createTimeMax: DateTime
+  createTimeMin: DateTime
   descriptionMax: String
   descriptionMin: String
   requesterMax: String
   requesterMin: String
+  updateTimeMax: DateTime
+  updateTimeMin: DateTime
 }
 
 input ChangeRequestFilter {
@@ -2265,6 +2483,7 @@ input ChangeRequestFilter {
 enum ChangeRequestHasFilter {
   activities
   aprobator
+  createTime
   description
   items
   requester
@@ -2272,6 +2491,7 @@ enum ChangeRequestHasFilter {
   source
   status
   type
+  updateTime
 }
 
 input ChangeRequestOrder {
@@ -2282,13 +2502,16 @@ input ChangeRequestOrder {
 
 enum ChangeRequestOrderable {
   aprobator
+  createTime
   description
   requester
+  updateTime
 }
 
 input ChangeRequestPatch {
   activities: [ChangeRequestActivityRef]
   aprobator: String
+  createTime: DateTime
   description: String
   items: [ChangeItemRef!]
   requester: String
@@ -2296,11 +2519,13 @@ input ChangeRequestPatch {
   source: ChangeRequestSource
   status: ChangeRequestStatus
   type: ChangeRequestType
+  updateTime: DateTime
 }
 
 input ChangeRequestRef {
   activities: [ChangeRequestActivityRef]
   aprobator: String
+  createTime: DateTime
   description: String
   id: ID
   items: [ChangeItemRef!]
@@ -2309,6 +2534,7 @@ input ChangeRequestRef {
   source: ChangeRequestSource
   status: ChangeRequestStatus
   type: ChangeRequestType
+  updateTime: DateTime
 }
 
 enum ChangeRequestSource {
@@ -2573,6 +2799,20 @@ enum CheckListItemType {
   yes_no
 }
 
+type ChoiceBlock {
+  defaultExitPoint: ExitPoint!
+  entryPoint: EntryPoint!
+  rules: [DecisionRoute!]!
+}
+
+input ChoiceBlockInput {
+  basicDefinitions: BaseBlockInput!
+  cid: String!
+  entryPoint: EntryPointInput!
+  routes: [DecisionRouteInput!]
+  uiRepresentation: BlockUIRepresentationInput
+}
+
 type ClockActivity {
   author: User!
   details: ClockDetails!
@@ -2671,17 +2911,23 @@ enum ComparatorOrderField {
   UPDATED_AT
 }
 
-type ConfigParamTag {
+type ConfigParamTag implements DefaultConfig {
+  createTime: DateTime
   id: ID!
   name: String!
   parameters(filter: ConfigurationParameterTypeFilter, first: Int, offset: Int, order: ConfigurationParameterTypeOrder): [ConfigurationParameterType]
   parametersAggregate(filter: ConfigurationParameterTypeFilter): ConfigurationParameterTypeAggregateResult
+  updateTime: DateTime
 }
 
 type ConfigParamTagAggregateResult {
   count: Int
+  createTimeMax: DateTime
+  createTimeMin: DateTime
   nameMax: String
   nameMin: String
+  updateTimeMax: DateTime
+  updateTimeMin: DateTime
 }
 
 input ConfigParamTagFilter {
@@ -2693,8 +2939,10 @@ input ConfigParamTagFilter {
 }
 
 enum ConfigParamTagHasFilter {
+  createTime
   name
   parameters
+  updateTime
 }
 
 input ConfigParamTagOrder {
@@ -2704,23 +2952,30 @@ input ConfigParamTagOrder {
 }
 
 enum ConfigParamTagOrderable {
+  createTime
   name
+  updateTime
 }
 
 input ConfigParamTagPatch {
+  createTime: DateTime
   name: String
   parameters: [ConfigurationParameterTypeRef]
+  updateTime: DateTime
 }
 
 input ConfigParamTagRef {
+  createTime: DateTime
   id: ID
   name: String
   parameters: [ConfigurationParameterTypeRef]
+  updateTime: DateTime
 }
 
-type ConfigurationParameterType {
+type ConfigurationParameterType implements DefaultConfig {
   booleanValue: Boolean
   category: String
+  createTime: DateTime
   externalId: String
   floatValue: Float
   id: ID!
@@ -2747,12 +3002,15 @@ type ConfigurationParameterType {
   tags(filter: ConfigParamTagFilter, first: Int, offset: Int, order: ConfigParamTagOrder): [ConfigParamTag!]
   tagsAggregate(filter: ConfigParamTagFilter): ConfigParamTagAggregateResult
   type: ParameterKind!
+  updateTime: DateTime
 }
 
 type ConfigurationParameterTypeAggregateResult {
   categoryMax: String
   categoryMin: String
   count: Int
+  createTimeMax: DateTime
+  createTimeMin: DateTime
   externalIdMax: String
   externalIdMin: String
   floatValueAvg: Float
@@ -2797,6 +3055,8 @@ type ConfigurationParameterTypeAggregateResult {
   resourceSpecificationMin: String
   stringValueMax: String
   stringValueMin: String
+  updateTimeMax: DateTime
+  updateTimeMin: DateTime
 }
 
 input ConfigurationParameterTypeFilter {
@@ -2812,6 +3072,7 @@ input ConfigurationParameterTypeFilter {
 enum ConfigurationParameterTypeHasFilter {
   booleanValue
   category
+  createTime
   externalId
   floatValue
   index
@@ -2835,6 +3096,7 @@ enum ConfigurationParameterTypeHasFilter {
   stringValue
   tags
   type
+  updateTime
 }
 
 input ConfigurationParameterTypeOrder {
@@ -2845,6 +3107,7 @@ input ConfigurationParameterTypeOrder {
 
 enum ConfigurationParameterTypeOrderable {
   category
+  createTime
   externalId
   floatValue
   index
@@ -2860,11 +3123,13 @@ enum ConfigurationParameterTypeOrderable {
   rawValue
   resourceSpecification
   stringValue
+  updateTime
 }
 
 input ConfigurationParameterTypePatch {
   booleanValue: Boolean
   category: String
+  createTime: DateTime
   externalId: String
   floatValue: Float
   index: Int
@@ -2888,11 +3153,13 @@ input ConfigurationParameterTypePatch {
   stringValue: String
   tags: [ConfigParamTagRef!]
   type: ParameterKind
+  updateTime: DateTime
 }
 
 input ConfigurationParameterTypeRef {
   booleanValue: Boolean
   category: String
+  createTime: DateTime
   externalId: String
   floatValue: Float
   id: ID
@@ -2917,6 +3184,7 @@ input ConfigurationParameterTypeRef {
   stringValue: String
   tags: [ConfigParamTagRef!]
   type: ParameterKind
+  updateTime: DateTime
 }
 
 type Connector {
@@ -3167,8 +3435,55 @@ input DecisionRouteInput {
   condition: VariableExpressionInput!
 }
 
+interface DefaultConfig {
+  createTime: DateTime
+  id: ID!
+  updateTime: DateTime
+}
+
+type DefaultConfigAggregateResult {
+  count: Int
+  createTimeMax: DateTime
+  createTimeMin: DateTime
+  updateTimeMax: DateTime
+  updateTimeMin: DateTime
+}
+
+input DefaultConfigFilter {
+  and: [DefaultConfigFilter]
+  has: [DefaultConfigHasFilter]
+  id: [ID!]
+  not: DefaultConfigFilter
+  or: [DefaultConfigFilter]
+}
+
+enum DefaultConfigHasFilter {
+  createTime
+  updateTime
+}
+
+input DefaultConfigOrder {
+  asc: DefaultConfigOrderable
+  desc: DefaultConfigOrderable
+  then: DefaultConfigOrder
+}
+
+enum DefaultConfigOrderable {
+  createTime
+  updateTime
+}
+
+input DefaultConfigPatch {
+  createTime: DateTime
+  updateTime: DateTime
+}
+
+input DefaultConfigRef {
+  id: ID!
+}
+
 type DeleteActionExecutionItemPayload {
-  actionExecutionItem(filter: ActionExecutionItemFilter, first: Int, offset: Int): [ActionExecutionItem]
+  actionExecutionItem(filter: ActionExecutionItemFilter, first: Int, offset: Int, order: ActionExecutionItemOrder): [ActionExecutionItem]
   msg: String
   numUids: Int
 }
@@ -3186,7 +3501,7 @@ type DeleteActionSchedulerPayload {
 }
 
 type DeleteActionTemplateItemPayload {
-  actionTemplateItem(filter: ActionTemplateItemFilter, first: Int, offset: Int): [ActionTemplateItem]
+  actionTemplateItem(filter: ActionTemplateItemFilter, first: Int, offset: Int, order: ActionTemplateItemOrder): [ActionTemplateItem]
   msg: String
   numUids: Int
 }
@@ -3253,6 +3568,12 @@ type DeleteConfigParamTagPayload {
 
 type DeleteConfigurationParameterTypePayload {
   configurationParameterType(filter: ConfigurationParameterTypeFilter, first: Int, offset: Int, order: ConfigurationParameterTypeOrder): [ConfigurationParameterType]
+  msg: String
+  numUids: Int
+}
+
+type DeleteDefaultConfigPayload {
+  defaultConfig(filter: DefaultConfigFilter, first: Int, offset: Int, order: DefaultConfigOrder): [DefaultConfig]
   msg: String
   numUids: Int
 }
@@ -4365,6 +4686,23 @@ enum EventSeverityOrderField {
   UPDATED_AT
 }
 
+type ExecuteFlowBlock {
+  entryPoint: EntryPoint!
+  exitPoint: ExitPoint!
+  flow: Flow
+  params: [VariableExpression!]!
+}
+
+input ExecuteFlowBlockInput {
+  basicDefinitions: BaseBlockInput!
+  cid: String!
+  entryPoint: EntryPointInput!
+  exitPoint: ExitPointInput!
+  flow: ID!
+  params: [VariableExpressionInput!]!
+  uiRepresentation: BlockUIRepresentationInput
+}
+
 type ExitPoint implements Node {
   cid: String
   condition: VariableExpression
@@ -4876,6 +5214,12 @@ enum FlowStatus {
   UNPUBLISHED
 }
 
+type ForEachBlock {
+  entryPoint: EntryPoint!
+  exitPoint: ExitPoint!
+  internalExitPoint: ExitPoint!
+}
+
 type Formula implements Node {
   counterformulaFk: [CounterFormula]
   id: ID!
@@ -5032,6 +5376,11 @@ input GeometryRef {
   y: String
 }
 
+enum GoToType {
+  DESTINATION
+  ORIGIN
+}
+
 type GotoBlock {
   entryPoint: EntryPoint!
   target: Block
@@ -5040,6 +5389,7 @@ type GotoBlock {
 input GotoBlockInput {
   cid: String!
   targetBlockCid: String
+  type: GoToType!
   uiRepresentation: BlockUIRepresentationInput
 }
 
@@ -5071,18 +5421,23 @@ enum ImageEntity {
 
 input ImportFlowDraftInput {
   actionBlocks: [ActionBlockInput!]
+  choiceBlocks: [ChoiceBlockInput!]
   connectors: [ConnectorInput!]
   decisionBlocks: [DecisionBlockInput!]
   description: String
   endBlocks: [EndBlockInput!]
   endParamDefinitions: [VariableDefinitionInput!]!
+  executeFlowBlocks: [ExecuteFlowBlockInput!]
   gotoBlocks: [GotoBlockInput!]
   id: ID!
+  invokeRestAPIBlocks: [InvokeRestAPIBlockInput!]
   name: String!
   startBlock: StartBlockInput
   subflowBlocks: [SubflowBlockInput!]
+  timerBlocks: [TimerBlockInput!]
   triggerBlocks: [TriggerBlockInput!]
   trueFalseBlocks: [TrueFalseBlockInput!]
+  waitForSignalBlocks: [WaitForSignalBlockInput!]
 }
 
 scalar Int64
@@ -5144,6 +5499,30 @@ input InventoryPolicyInput {
   propertyCategory: PropertyCategoryCUDInput
   read: BasicPermissionRuleInput
   serviceType: BasicCUDInput
+}
+
+type InvokeRestAPIBlock {
+  body: String!
+  connectionTimeOut: Int!
+  entryPoint: EntryPoint!
+  exitPoint: ExitPoint!
+  headers: [VariableValue!]!
+  method: UrlMethod!
+  url: String!
+}
+
+input InvokeRestAPIBlockInput {
+  basicDefinitions: BaseBlockInput!
+  body: String!
+  cid: String!
+  connectionTimeOut: Int!
+  entryPoint: EntryPointInput!
+  exitPoint: ExitPointInput!
+  headers: [VariableValueInput]!
+  method: UrlMethod!
+  params: [VariableExpressionInput!]!
+  uiRepresentation: BlockUIRepresentationInput
+  url: String!
 }
 
 type Kpi implements Node {
@@ -5993,10 +6372,11 @@ type Mutation {
   addChangeRequestActivity(input: [AddChangeRequestActivityInput!]!): AddChangeRequestActivityPayload @join__field(graph: DGRAPHSERVICE)
   addCharacteristic(input: [AddCharacteristicInput!]!): AddCharacteristicPayload @join__field(graph: DGRAPHSERVICE)
   addCharacteristicRelationship(input: [AddCharacteristicRelationshipInput!]!): AddCharacteristicRelationshipPayload @join__field(graph: DGRAPHSERVICE)
+  addChoiceBlock(flowDraftId: ID!, input: ChoiceBlockInput!): Block! @join__field(graph: SYMPHONY)
   addComment(input: CommentInput!): Comment! @join__field(graph: SYMPHONY)
   addComparator(input: AddComparatorInput!): Comparator! @join__field(graph: SYMPHONY)
   addConfigParamTag(input: [AddConfigParamTagInput!]!): AddConfigParamTagPayload @join__field(graph: DGRAPHSERVICE)
-  addConfigurationParameterType(input: [AddConfigurationParameterTypeInput!]!, upsert: Boolean): AddConfigurationParameterTypePayload @join__field(graph: DGRAPHSERVICE)
+  addConfigurationParameterType(input: [AddConfigurationParameterTypeInput!]!): AddConfigurationParameterTypePayload @join__field(graph: DGRAPHSERVICE)
   addConnector(flowDraftId: ID!, input: ConnectorInput!): Connector! @join__field(graph: SYMPHONY)
   addCounter(input: AddCounterInput!): Counter! @join__field(graph: SYMPHONY)
   addCounterFamily(input: AddCounterFamilyInput!): CounterFamily! @join__field(graph: SYMPHONY)
@@ -6010,8 +6390,10 @@ type Mutation {
   addEquipmentPortType(input: AddEquipmentPortTypeInput!): EquipmentPortType! @join__field(graph: SYMPHONY)
   addEquipmentType(input: AddEquipmentTypeInput!): EquipmentType! @join__field(graph: SYMPHONY)
   addEventSeverity(input: AddEventSeverityInput!): EventSeverity! @join__field(graph: SYMPHONY)
+  addExecuteFlowBlock(flowDraftId: ID!, input: ExecuteFlowBlockInput!): Block! @join__field(graph: SYMPHONY)
   addExternalReference(input: [AddExternalReferenceInput!]!, upsert: Boolean): AddExternalReferencePayload @join__field(graph: DGRAPHSERVICE)
   addFeature(input: [AddFeatureInput!]!): AddFeaturePayload @join__field(graph: DGRAPHSERVICE)
+  addFiles(input: AddFilesInput!): File! @join__field(graph: SYMPHONY)
   addFloorPlan(input: AddFloorPlanInput!): FloorPlan! @join__field(graph: SYMPHONY)
   addFlowDraft(input: AddFlowDraftInput!): FlowDraft! @join__field(graph: SYMPHONY)
   addFlowExecutionReference(input: [AddFlowExecutionReferenceInput!]!): AddFlowExecutionReferencePayload @join__field(graph: DGRAPHSERVICE)
@@ -6020,6 +6402,7 @@ type Mutation {
   addGotoBlock(flowDraftId: ID!, input: GotoBlockInput!): Block! @join__field(graph: SYMPHONY)
   addHyperlink(input: AddHyperlinkInput!): Hyperlink! @join__field(graph: SYMPHONY)
   addImage(input: AddImageInput!): File! @join__field(graph: SYMPHONY)
+  addInvokeRestAPIBlock(flowDraftId: ID!, input: InvokeRestAPIBlockInput!): Block! @join__field(graph: SYMPHONY)
   addKpi(input: AddKpiInput!): Kpi! @join__field(graph: SYMPHONY)
   addKpiCategory(input: AddKpiCategoryInput!): KpiCategory! @join__field(graph: SYMPHONY)
   addKqi(input: AddKqiInput!): Kqi! @join__field(graph: SYMPHONY)
@@ -6052,7 +6435,7 @@ type Mutation {
   addResourceOrderIM(input: [AddResourceOrderIMInput!]!): AddResourceOrderIMPayload @join__field(graph: DGRAPHSERVICE)
   addResourceOrderItem(input: [AddResourceOrderItemInput!]!, upsert: Boolean): AddResourceOrderItemPayload @join__field(graph: DGRAPHSERVICE)
   addResourceProperty(input: [AddResourcePropertyInput!]!): AddResourcePropertyPayload @join__field(graph: DGRAPHSERVICE)
-  addResourceReference(input: [AddResourceReferenceInput!]!, upsert: Boolean): AddResourceReferencePayload @join__field(graph: DGRAPHSERVICE)
+  addResourceReference(input: [AddResourceReferenceInput!]!): AddResourceReferencePayload @join__field(graph: DGRAPHSERVICE)
   addResourceSpecification(input: AddResourceSpecificationInput!): ResourceSpecification! @join__field(graph: SYMPHONY)
   addResourceSpecificationItems(input: AddResourceSpecificationItemsInput!): ResourceSpecificationItems! @join__field(graph: SYMPHONY)
   addResourceSpecificationRelationship(input: AddResourceSpecificationRelationshipInput!): ResourceSpecificationRelationship! @join__field(graph: SYMPHONY)
@@ -6090,10 +6473,12 @@ type Mutation {
   addSubscriber(input: [AddSubscriberInput!]!): AddSubscriberPayload @join__field(graph: DGRAPHSERVICE)
   addTech(input: AddTechInput!): Tech! @join__field(graph: SYMPHONY)
   addThreshold(input: AddThresholdInput!): Threshold! @join__field(graph: SYMPHONY)
+  addTimerBlock(flowDraftId: ID!, input: TimerBlockInput!): Block! @join__field(graph: SYMPHONY)
   addTriggerBlock(flowDraftId: ID!, input: TriggerBlockInput!): Block! @join__field(graph: SYMPHONY)
   addTrueFalseBlock(flowDraftId: ID!, input: TrueFalseBlockInput!): Block! @join__field(graph: SYMPHONY)
   addUsersGroup(input: AddUsersGroupInput!): UsersGroup! @join__field(graph: SYMPHONY)
   addVendor(input: AddVendorInput!): Vendor! @join__field(graph: SYMPHONY)
+  addWaitForSignalBlock(flowDraftId: ID!, input: WaitForSignalBlockInput!): Block! @join__field(graph: SYMPHONY)
   addWiFiScans(
     """wifi scan data"""
     data: [SurveyWiFiScanData]!
@@ -6124,6 +6509,7 @@ type Mutation {
   deleteConfigParamTag(filter: ConfigParamTagFilter!): DeleteConfigParamTagPayload @join__field(graph: DGRAPHSERVICE)
   deleteConfigurationParameterType(filter: ConfigurationParameterTypeFilter!): DeleteConfigurationParameterTypePayload @join__field(graph: DGRAPHSERVICE)
   deleteConnector(flowDraftId: ID!, input: ConnectorInput!): Boolean! @join__field(graph: SYMPHONY)
+  deleteDefaultConfig(filter: DefaultConfigFilter!): DeleteDefaultConfigPayload @join__field(graph: DGRAPHSERVICE)
   deleteExternalReference(filter: ExternalReferenceFilter!): DeleteExternalReferencePayload @join__field(graph: DGRAPHSERVICE)
   deleteFeature(filter: FeatureFilter!): DeleteFeaturePayload @join__field(graph: DGRAPHSERVICE)
   deleteFloorPlan(id: ID!): Boolean! @join__field(graph: SYMPHONY)
@@ -6348,6 +6734,7 @@ type Mutation {
   updateCharacteristicRelationship(input: UpdateCharacteristicRelationshipInput!): UpdateCharacteristicRelationshipPayload @join__field(graph: DGRAPHSERVICE)
   updateConfigParamTag(input: UpdateConfigParamTagInput!): UpdateConfigParamTagPayload @join__field(graph: DGRAPHSERVICE)
   updateConfigurationParameterType(input: UpdateConfigurationParameterTypeInput!): UpdateConfigurationParameterTypePayload @join__field(graph: DGRAPHSERVICE)
+  updateDefaultConfig(input: UpdateDefaultConfigInput!): UpdateDefaultConfigPayload @join__field(graph: DGRAPHSERVICE)
   updateExternalReference(input: UpdateExternalReferenceInput!): UpdateExternalReferencePayload @join__field(graph: DGRAPHSERVICE)
   updateFeature(input: UpdateFeatureInput!): UpdateFeaturePayload @join__field(graph: DGRAPHSERVICE)
   updateFlowExecutionReference(input: UpdateFlowExecutionReferenceInput!): UpdateFlowExecutionReferencePayload @join__field(graph: DGRAPHSERVICE)
@@ -6690,8 +7077,15 @@ type PageInfo {
   startCursor: Cursor
 }
 
-type Parameter {
+type ParallelBlock {
+  entryPoint: EntryPoint!
+  exitPoint: ExitPoint!
+  internalExitPoint: ExitPoint!
+}
+
+type Parameter implements DefaultConfig {
   booleanValue: Boolean
+  createTime: DateTime
   floatValue: Float
   id: ID!
   intValue: Int
@@ -6702,12 +7096,15 @@ type Parameter {
   rangeFromValue: Float
   rangeToValue: Float
   stringValue: String
+  updateTime: DateTime
   versionCMs(filter: CMVersionFilter, first: Int, offset: Int, order: CMVersionOrder): [CMVersion]!
   versionCMsAggregate(filter: CMVersionFilter): CMVersionAggregateResult
 }
 
 type ParameterAggregateResult {
   count: Int
+  createTimeMax: DateTime
+  createTimeMin: DateTime
   floatValueAvg: Float
   floatValueMax: Float
   floatValueMin: Float
@@ -6734,6 +7131,8 @@ type ParameterAggregateResult {
   rangeToValueSum: Float
   stringValueMax: String
   stringValueMin: String
+  updateTimeMax: DateTime
+  updateTimeMin: DateTime
 }
 
 type ParameterCatalog implements Node {
@@ -6779,6 +7178,7 @@ input ParameterFilter {
 
 enum ParameterHasFilter {
   booleanValue
+  createTime
   floatValue
   intValue
   latitudeValue
@@ -6788,6 +7188,7 @@ enum ParameterHasFilter {
   rangeFromValue
   rangeToValue
   stringValue
+  updateTime
   versionCMs
 }
 
@@ -6811,6 +7212,7 @@ input ParameterOrder {
 }
 
 enum ParameterOrderable {
+  createTime
   floatValue
   intValue
   latitudeValue
@@ -6818,10 +7220,12 @@ enum ParameterOrderable {
   rangeFromValue
   rangeToValue
   stringValue
+  updateTime
 }
 
 input ParameterPatch {
   booleanValue: Boolean
+  createTime: DateTime
   floatValue: Float
   intValue: Int
   latitudeValue: Float
@@ -6831,11 +7235,13 @@ input ParameterPatch {
   rangeFromValue: Float
   rangeToValue: Float
   stringValue: String
+  updateTime: DateTime
   versionCMs: [CMVersionRef]
 }
 
 input ParameterRef {
   booleanValue: Boolean
+  createTime: DateTime
   floatValue: Float
   id: ID
   intValue: Int
@@ -6846,6 +7252,7 @@ input ParameterRef {
   rangeFromValue: Float
   rangeToValue: Float
   stringValue: String
+  updateTime: DateTime
   versionCMs: [CMVersionRef]
 }
 
@@ -7681,6 +8088,7 @@ type Query {
   aggregateCharacteristicRelationship(filter: CharacteristicRelationshipFilter): CharacteristicRelationshipAggregateResult @join__field(graph: DGRAPHSERVICE)
   aggregateConfigParamTag(filter: ConfigParamTagFilter): ConfigParamTagAggregateResult @join__field(graph: DGRAPHSERVICE)
   aggregateConfigurationParameterType(filter: ConfigurationParameterTypeFilter): ConfigurationParameterTypeAggregateResult @join__field(graph: DGRAPHSERVICE)
+  aggregateDefaultConfig(filter: DefaultConfigFilter): DefaultConfigAggregateResult @join__field(graph: DGRAPHSERVICE)
   aggregateExternalReference(filter: ExternalReferenceFilter): ExternalReferenceAggregateResult @join__field(graph: DGRAPHSERVICE)
   aggregateFeature(filter: FeatureFilter): FeatureAggregateResult @join__field(graph: DGRAPHSERVICE)
   aggregateFlowExecutionReference(filter: FlowExecutionReferenceFilter): FlowExecutionReferenceAggregateResult @join__field(graph: DGRAPHSERVICE)
@@ -7971,7 +8379,8 @@ type Query {
   getCharacteristic(characteristicId: ID!): Characteristic @join__field(graph: DGRAPHSERVICE)
   getCharacteristicRelationship(id: ID!): CharacteristicRelationship @join__field(graph: DGRAPHSERVICE)
   getConfigParamTag(id: ID!): ConfigParamTag @join__field(graph: DGRAPHSERVICE)
-  getConfigurationParameterType(id: ID, name: String): ConfigurationParameterType @join__field(graph: DGRAPHSERVICE)
+  getConfigurationParameterType(id: ID!): ConfigurationParameterType @join__field(graph: DGRAPHSERVICE)
+  getDefaultConfig(id: ID!): DefaultConfig @join__field(graph: DGRAPHSERVICE)
   getExternalReference(id: String!): ExternalReference @join__field(graph: DGRAPHSERVICE)
   getFeature(id: ID!): Feature @join__field(graph: DGRAPHSERVICE)
   getFlowExecutionReference(id: ID!): FlowExecutionReference @join__field(graph: DGRAPHSERVICE)
@@ -7984,9 +8393,10 @@ type Query {
   getPlace(placeId: ID!): Place @join__field(graph: DGRAPHSERVICE)
   getRelatedEntity(id: String!): RelatedEntity @join__field(graph: DGRAPHSERVICE)
   getResource(id: ID, name: String): Resource @join__field(graph: DGRAPHSERVICE)
+  getResourceOrderIM(id: ID!): ResourceOrderIM @join__field(graph: DGRAPHSERVICE)
   getResourceOrderItem(id: String!): ResourceOrderItem @join__field(graph: DGRAPHSERVICE)
   getResourceProperty(id: ID!): ResourceProperty @join__field(graph: DGRAPHSERVICE)
-  getResourceReference(id: String!): ResourceReference @join__field(graph: DGRAPHSERVICE)
+  getResourceReference(id: ID!): ResourceReference @join__field(graph: DGRAPHSERVICE)
   getSchedulerConfig(id: ID!): SchedulerConfig @join__field(graph: DGRAPHSERVICE)
   getServiceOrder(id: ID!): ServiceOrder @join__field(graph: DGRAPHSERVICE)
   getServiceOrderItem(serviceOrderItemId: ID!): ServiceOrderItem @join__field(graph: DGRAPHSERVICE)
@@ -8364,10 +8774,10 @@ type Query {
   ): PropertyTypeValueConnection! @join__field(graph: SYMPHONY)
   pythonPackages: [PythonPackage!]! @join__field(graph: SYMPHONY)
   queryActionExecution(filter: ActionExecutionFilter, first: Int, offset: Int, order: ActionExecutionOrder): [ActionExecution] @join__field(graph: DGRAPHSERVICE)
-  queryActionExecutionItem(filter: ActionExecutionItemFilter, first: Int, offset: Int): [ActionExecutionItem] @join__field(graph: DGRAPHSERVICE)
+  queryActionExecutionItem(filter: ActionExecutionItemFilter, first: Int, offset: Int, order: ActionExecutionItemOrder): [ActionExecutionItem] @join__field(graph: DGRAPHSERVICE)
   queryActionScheduler(filter: ActionSchedulerFilter, first: Int, offset: Int, order: ActionSchedulerOrder): [ActionScheduler] @join__field(graph: DGRAPHSERVICE)
   queryActionTemplate(filter: ActionTemplateFilter, first: Int, offset: Int, order: ActionTemplateOrder): [ActionTemplate] @join__field(graph: DGRAPHSERVICE)
-  queryActionTemplateItem(filter: ActionTemplateItemFilter, first: Int, offset: Int): [ActionTemplateItem] @join__field(graph: DGRAPHSERVICE)
+  queryActionTemplateItem(filter: ActionTemplateItemFilter, first: Int, offset: Int, order: ActionTemplateItemOrder): [ActionTemplateItem] @join__field(graph: DGRAPHSERVICE)
   queryAppointmentRef(filter: AppointmentRefFilter, first: Int, offset: Int, order: AppointmentRefOrder): [AppointmentRef] @join__field(graph: DGRAPHSERVICE)
   queryCMVersion(filter: CMVersionFilter, first: Int, offset: Int, order: CMVersionOrder): [CMVersion] @join__field(graph: DGRAPHSERVICE)
   queryCancellationRequest(filter: CancellationRequestFilter, first: Int, offset: Int, order: CancellationRequestOrder): [CancellationRequest] @join__field(graph: DGRAPHSERVICE)
@@ -8378,6 +8788,7 @@ type Query {
   queryCharacteristicRelationship(filter: CharacteristicRelationshipFilter, first: Int, offset: Int, order: CharacteristicRelationshipOrder): [CharacteristicRelationship] @join__field(graph: DGRAPHSERVICE)
   queryConfigParamTag(filter: ConfigParamTagFilter, first: Int, offset: Int, order: ConfigParamTagOrder): [ConfigParamTag] @join__field(graph: DGRAPHSERVICE)
   queryConfigurationParameterType(filter: ConfigurationParameterTypeFilter, first: Int, offset: Int, order: ConfigurationParameterTypeOrder): [ConfigurationParameterType] @join__field(graph: DGRAPHSERVICE)
+  queryDefaultConfig(filter: DefaultConfigFilter, first: Int, offset: Int, order: DefaultConfigOrder): [DefaultConfig] @join__field(graph: DGRAPHSERVICE)
   queryExternalReference(filter: ExternalReferenceFilter, first: Int, offset: Int, order: ExternalReferenceOrder): [ExternalReference] @join__field(graph: DGRAPHSERVICE)
   queryFeature(filter: FeatureFilter, first: Int, offset: Int, order: FeatureOrder): [Feature] @join__field(graph: DGRAPHSERVICE)
   queryFlowExecutionReference(filter: FlowExecutionReferenceFilter, first: Int, offset: Int, order: FlowExecutionReferenceOrder): [FlowExecutionReference] @join__field(graph: DGRAPHSERVICE)
@@ -8932,14 +9343,17 @@ input ReportFilterInput {
   name: String!
 }
 
-type Resource {
+type Resource implements DefaultConfig {
   actionScheduler(filter: ActionSchedulerFilter): ActionScheduler
   available: Boolean
   belongsTo(filter: ResourceFilter): Resource
   changeItems(filter: ChangeItemFilter, first: Int, offset: Int, order: ChangeItemOrder): [ChangeItem]
   changeItemsAggregate(filter: ChangeItemFilter): ChangeItemAggregateResult
+  cmVersions(filter: CMVersionFilter, first: Int, offset: Int, order: CMVersionOrder): [CMVersion]
+  cmVersionsAggregate(filter: CMVersionFilter): CMVersionAggregateResult
   composedOf(filter: ResourceFilter, first: Int, offset: Int, order: ResourceOrder): [Resource]
   composedOfAggregate(filter: ResourceFilter): ResourceAggregateResult
+  createTime: DateTime
   crossConnection(filter: ResourceFilter): Resource
   crossconnectionInv(filter: ResourceFilter): Resource
   externalId: String
@@ -8963,11 +9377,14 @@ type Resource {
   resourcePropertiesAggregate(filter: ResourcePropertyFilter): ResourcePropertyAggregateResult
   resourceSpecification: String!
   typePlanningSubStatus: TypePlanningSubStatus
+  updateTime: DateTime
   usageSubStatus: UsageSubStatus
 }
 
 type ResourceAggregateResult {
   count: Int
+  createTimeMax: DateTime
+  createTimeMin: DateTime
   externalIdMax: String
   externalIdMin: String
   locatedInMax: String
@@ -8976,10 +9393,13 @@ type ResourceAggregateResult {
   nameMin: String
   resourceSpecificationMax: String
   resourceSpecificationMin: String
+  updateTimeMax: DateTime
+  updateTimeMin: DateTime
 }
 
 input ResourceFilter {
   and: [ResourceFilter]
+  externalId: StringHashFilter
   has: [ResourceHasFilter]
   id: [ID!]
   locatedIn: StringHashFilter
@@ -8994,7 +9414,9 @@ enum ResourceHasFilter {
   available
   belongsTo
   changeItems
+  cmVersions
   composedOf
+  createTime
   crossConnection
   crossconnectionInv
   externalId
@@ -9013,6 +9435,7 @@ enum ResourceHasFilter {
   resourceProperties
   resourceSpecification
   typePlanningSubStatus
+  updateTime
   usageSubStatus
 }
 
@@ -9026,7 +9449,7 @@ type ResourceOrderIM {
   category: String
   description: String
   externalId: String
-  id: String
+  id: ID!
   lineId: String
   reservationId: String
   resourceOrderItem(filter: ResourceOrderItemFilter, first: Int, offset: Int, order: ResourceOrderItemOrder): [ResourceOrderItem]
@@ -9041,8 +9464,6 @@ type ResourceOrderIMAggregateResult {
   descriptionMin: String
   externalIdMax: String
   externalIdMin: String
-  idMax: String
-  idMin: String
   lineIdMax: String
   lineIdMin: String
   reservationIdMax: String
@@ -9052,15 +9473,16 @@ type ResourceOrderIMAggregateResult {
 input ResourceOrderIMFilter {
   and: [ResourceOrderIMFilter]
   has: [ResourceOrderIMHasFilter]
+  id: [ID!]
   not: ResourceOrderIMFilter
   or: [ResourceOrderIMFilter]
+  reservationId: StringHashFilter
 }
 
 enum ResourceOrderIMHasFilter {
   category
   description
   externalId
-  id
   lineId
   reservationId
   resourceOrderItem
@@ -9076,7 +9498,6 @@ enum ResourceOrderIMOrderable {
   category
   description
   externalId
-  id
   lineId
   reservationId
 }
@@ -9085,7 +9506,6 @@ input ResourceOrderIMPatch {
   category: String
   description: String
   externalId: String
-  id: String
   lineId: String
   reservationId: String
   resourceOrderItem: [ResourceOrderItemRef]
@@ -9095,7 +9515,7 @@ input ResourceOrderIMRef {
   category: String
   description: String
   externalId: String
-  id: String
+  id: ID
   lineId: String
   reservationId: String
   resourceOrderItem: [ResourceOrderItemRef]
@@ -9153,10 +9573,12 @@ input ResourceOrderItemRef {
 }
 
 enum ResourceOrderable {
+  createTime
   externalId
   locatedIn
   name
   resourceSpecification
+  updateTime
 }
 
 input ResourcePatch {
@@ -9164,7 +9586,9 @@ input ResourcePatch {
   available: Boolean
   belongsTo: ResourceRef
   changeItems: [ChangeItemRef]
+  cmVersions: [CMVersionRef]
   composedOf: [ResourceRef]
+  createTime: DateTime
   crossConnection: ResourceRef
   crossconnectionInv: ResourceRef
   externalId: String
@@ -9183,11 +9607,13 @@ input ResourcePatch {
   resourceProperties: [ResourcePropertyRef]
   resourceSpecification: String
   typePlanningSubStatus: TypePlanningSubStatus
+  updateTime: DateTime
   usageSubStatus: UsageSubStatus
 }
 
-type ResourceProperty {
+type ResourceProperty implements DefaultConfig {
   booleanValue: Boolean
+  createTime: DateTime
   floatValue: Float
   id: ID!
   intValue: Int
@@ -9199,10 +9625,13 @@ type ResourceProperty {
   resource(filter: ResourceFilter): Resource
   resourcePropertyType: String!
   stringValue: String
+  updateTime: DateTime
 }
 
 type ResourcePropertyAggregateResult {
   count: Int
+  createTimeMax: DateTime
+  createTimeMin: DateTime
   floatValueAvg: Float
   floatValueMax: Float
   floatValueMin: Float
@@ -9233,6 +9662,8 @@ type ResourcePropertyAggregateResult {
   resourcePropertyTypeMin: String
   stringValueMax: String
   stringValueMin: String
+  updateTimeMax: DateTime
+  updateTimeMin: DateTime
 }
 
 input ResourcePropertyFilter {
@@ -9247,6 +9678,7 @@ input ResourcePropertyFilter {
 
 enum ResourcePropertyHasFilter {
   booleanValue
+  createTime
   floatValue
   intValue
   latitudeValue
@@ -9257,6 +9689,7 @@ enum ResourcePropertyHasFilter {
   resource
   resourcePropertyType
   stringValue
+  updateTime
 }
 
 enum ResourcePropertyKind {
@@ -9280,6 +9713,7 @@ input ResourcePropertyOrder {
 }
 
 enum ResourcePropertyOrderable {
+  createTime
   floatValue
   intValue
   latitudeValue
@@ -9289,10 +9723,12 @@ enum ResourcePropertyOrderable {
   rawValue
   resourcePropertyType
   stringValue
+  updateTime
 }
 
 input ResourcePropertyPatch {
   booleanValue: Boolean
+  createTime: DateTime
   floatValue: Float
   intValue: Int
   latitudeValue: Float
@@ -9303,10 +9739,12 @@ input ResourcePropertyPatch {
   resource: ResourceRef
   resourcePropertyType: String
   stringValue: String
+  updateTime: DateTime
 }
 
 input ResourcePropertyRef {
   booleanValue: Boolean
+  createTime: DateTime
   floatValue: Float
   id: ID
   intValue: Int
@@ -9318,6 +9756,7 @@ input ResourcePropertyRef {
   resource: ResourceRef
   resourcePropertyType: String
   stringValue: String
+  updateTime: DateTime
 }
 
 type ResourcePropertyType implements Node {
@@ -9351,7 +9790,9 @@ input ResourceRef {
   available: Boolean
   belongsTo: ResourceRef
   changeItems: [ChangeItemRef]
+  cmVersions: [CMVersionRef]
   composedOf: [ResourceRef]
+  createTime: DateTime
   crossConnection: ResourceRef
   crossconnectionInv: ResourceRef
   externalId: String
@@ -9371,36 +9812,39 @@ input ResourceRef {
   resourceProperties: [ResourcePropertyRef]
   resourceSpecification: String
   typePlanningSubStatus: TypePlanningSubStatus
+  updateTime: DateTime
   usageSubStatus: UsageSubStatus
 }
 
 type ResourceReference {
+  externalId: String
   href: String
-  id: String!
+  id: ID!
   name: String
 }
 
 type ResourceReferenceAggregateResult {
   count: Int
+  externalIdMax: String
+  externalIdMin: String
   hrefMax: String
   hrefMin: String
-  idMax: String
-  idMin: String
   nameMax: String
   nameMin: String
 }
 
 input ResourceReferenceFilter {
   and: [ResourceReferenceFilter]
+  externalId: StringHashFilter
   has: [ResourceReferenceHasFilter]
-  id: StringHashFilter
+  id: [ID!]
   not: ResourceReferenceFilter
   or: [ResourceReferenceFilter]
 }
 
 enum ResourceReferenceHasFilter {
+  externalId
   href
-  id
   name
 }
 
@@ -9411,20 +9855,21 @@ input ResourceReferenceOrder {
 }
 
 enum ResourceReferenceOrderable {
+  externalId
   href
-  id
   name
 }
 
 input ResourceReferencePatch {
+  externalId: String
   href: String
-  id: String
   name: String
 }
 
 input ResourceReferenceRef {
+  externalId: String
   href: String
-  id: String
+  id: ID
   name: String
 }
 
@@ -9635,6 +10080,7 @@ enum ResourceTypeBaseTypeKind {
 enum ResourceTypeClassKind {
   CARD
   EQUIPMENT
+  NETWORK_FUNCTION
   PORT
   RACK
   SLOT
@@ -9791,6 +10237,12 @@ enum ResourceTypeRelationshipOrderField {
   UPDATED_AT
 }
 
+enum RetryUnit {
+  HOURS
+  MINUTES
+  SECONDS
+}
+
 enum RollbackPolicyConfig {
   APPROVED
   REJECTED
@@ -9900,15 +10352,16 @@ enum RuleTypeOrderField {
   UPDATED_AT
 }
 
-type SchedulerConfig {
+type SchedulerConfig implements DefaultConfig {
   changeRequest(filter: ChangeRequestFilter): ChangeRequest!
-  createTime: DateTime!
+  createTime: DateTime
   id: ID!
   name: String
   rollbackPolicy: RollbackPolicyConfig
-  status: SchedulerConfigStatus!
   time: DateTime
-  weekDay: WeekDay!
+  type: TypeSchedulerConfig!
+  updateTime: DateTime
+  weekDay: WeekDay
 }
 
 type SchedulerConfigAggregateResult {
@@ -9919,6 +10372,8 @@ type SchedulerConfigAggregateResult {
   nameMin: String
   timeMax: DateTime
   timeMin: DateTime
+  updateTimeMax: DateTime
+  updateTimeMin: DateTime
 }
 
 input SchedulerConfigFilter {
@@ -9934,8 +10389,9 @@ enum SchedulerConfigHasFilter {
   createTime
   name
   rollbackPolicy
-  status
   time
+  type
+  updateTime
   weekDay
 }
 
@@ -9949,6 +10405,7 @@ enum SchedulerConfigOrderable {
   createTime
   name
   time
+  updateTime
 }
 
 input SchedulerConfigPatch {
@@ -9956,8 +10413,9 @@ input SchedulerConfigPatch {
   createTime: DateTime
   name: String
   rollbackPolicy: RollbackPolicyConfig
-  status: SchedulerConfigStatus
   time: DateTime
+  type: TypeSchedulerConfig
+  updateTime: DateTime
   weekDay: WeekDay
 }
 
@@ -9967,14 +10425,10 @@ input SchedulerConfigRef {
   id: ID
   name: String
   rollbackPolicy: RollbackPolicyConfig
-  status: SchedulerConfigStatus
   time: DateTime
+  type: TypeSchedulerConfig
+  updateTime: DateTime
   weekDay: WeekDay
-}
-
-enum SchedulerConfigStatus {
-  APPROVED
-  REJECTED
 }
 
 type SearchEntry {
@@ -10854,6 +11308,19 @@ input ServiceTypeEditData {
   properties: [PropertyTypeInput]
 }
 
+enum SignalModule {
+  CONFIGURATION
+  INVENTORY
+}
+
+enum SignalType {
+  CRCREATION
+  CRUPDATE
+  NOTIFICATION
+  WOCREATION
+  WOUPDATE
+}
+
 input SlotFilterInput {
   slotEndDate: Time!
   slotStartDate: Time!
@@ -11425,6 +11892,33 @@ enum ThresholdOrderField {
 
 scalar Time
 
+enum TimerBehavior {
+  FIXED_INTERVAL
+  SPECIFIC_DATETIME
+}
+
+type TimerBlock {
+  behavior: TimerBehavior!
+  datetime: Time
+  enableExpressionL: Boolean
+  exitPoint: ExitPoint!
+  expression: String
+  seconds: Int
+}
+
+input TimerBlockInput {
+  behavior: TimerBehavior!
+  cid: String!
+  enableExpressionL: Boolean
+  entryPoint: EntryPointInput!
+  exitPoint: ExitPointInput!
+  expression: String
+  params: [VariableExpressionInput!]!
+  seconds: Int
+  specificDatetime: Time
+  uiRepresentation: BlockUIRepresentationInput
+}
+
 type TopologyLink {
   source: Node!
   target: Node!
@@ -11433,6 +11927,11 @@ type TopologyLink {
 
 enum TopologyLinkType {
   PHYSICAL
+}
+
+enum TransfStrategy {
+  MERGE
+  REPLACE
 }
 
 type TriggerBlock {
@@ -11476,6 +11975,11 @@ enum TypePlanningSubStatus {
   PROPOSED
 }
 
+enum TypeSchedulerConfig {
+  AS_SOON_AS_APPROVED
+  SCHEDULED_CHANGE
+}
+
 input UpdateActionExecutionInput {
   filter: ActionExecutionFilter!
   remove: ActionExecutionPatch
@@ -11489,7 +11993,7 @@ input UpdateActionExecutionItemInput {
 }
 
 type UpdateActionExecutionItemPayload {
-  actionExecutionItem(filter: ActionExecutionItemFilter, first: Int, offset: Int): [ActionExecutionItem]
+  actionExecutionItem(filter: ActionExecutionItemFilter, first: Int, offset: Int, order: ActionExecutionItemOrder): [ActionExecutionItem]
   numUids: Int
 }
 
@@ -11522,7 +12026,7 @@ input UpdateActionTemplateItemInput {
 }
 
 type UpdateActionTemplateItemPayload {
-  actionTemplateItem(filter: ActionTemplateItemFilter, first: Int, offset: Int): [ActionTemplateItem]
+  actionTemplateItem(filter: ActionTemplateItemFilter, first: Int, offset: Int, order: ActionTemplateItemOrder): [ActionTemplateItem]
   numUids: Int
 }
 
@@ -11638,6 +12142,17 @@ input UpdateConfigurationParameterTypeInput {
 
 type UpdateConfigurationParameterTypePayload {
   configurationParameterType(filter: ConfigurationParameterTypeFilter, first: Int, offset: Int, order: ConfigurationParameterTypeOrder): [ConfigurationParameterType]
+  numUids: Int
+}
+
+input UpdateDefaultConfigInput {
+  filter: DefaultConfigFilter!
+  remove: DefaultConfigPatch
+  set: DefaultConfigPatch
+}
+
+type UpdateDefaultConfigPayload {
+  defaultConfig(filter: DefaultConfigFilter, first: Int, offset: Int, order: DefaultConfigOrder): [DefaultConfig]
   numUids: Int
 }
 
@@ -11933,6 +12448,14 @@ input UpdateUserGroupsInput {
   removeGroupIds: [ID!]!
 }
 
+enum UrlMethod {
+  DELETE
+  GET
+  PATCH
+  POST
+  PUT
+}
+
 enum UsageSubStatus {
   ASSIGNED
   AVAILABLE
@@ -12224,6 +12747,28 @@ type Viewer {
   permissions: PermissionSettings!
   tenant: String!
   user: User
+}
+
+type WaitForSignalBlock {
+  blocked: Boolean!
+  customFilter: String
+  entryPoint: EntryPoint!
+  exitPoint: ExitPoint!
+  signalModule: SignalModule
+  type: SignalType
+}
+
+input WaitForSignalBlockInput {
+  basicDefinitions: BaseBlockInput!
+  blocked: Boolean!
+  cid: String!
+  customFilter: String
+  entryPoint: EntryPointInput!
+  exitPoint: ExitPointInput!
+  params: [VariableExpressionInput!]!
+  signalModule: SignalModule!
+  type: SignalType!
+  uiRepresentation: BlockUIRepresentationInput
 }
 
 enum WeekDay {
@@ -12724,6 +13269,6 @@ enum core__Purpose {
 scalar join__FieldSet
 
 enum join__Graph {
-  DGRAPHSERVICE @join__graph(name: "dgraphservice" url: "http://alpha:8080/graphql")
+  DGRAPHSERVICE @join__graph(name: "dgraphservice" url: "http://dgraph-dgraph-alpha.dgraph.svc.cluster.local:8080/graphql")
   SYMPHONY @join__graph(name: "symphony" url: "http://graph/query")
 }
