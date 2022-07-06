@@ -161,8 +161,6 @@ const ResourcePropertiesCard = (props: Props) => {
                   <Tab label="Details" value="details" />
                   <Tab label="Ports" value="ports" />
                   <Tab label="Network" value="network" />
-                  <Tab label="Configuration" value="configuration" />
-                  <Tab label="Services" value="services" />
                 </Tabs>
                 <>
                   <PerfectScrollbar>
@@ -331,9 +329,6 @@ const ResourcePropertiesCard = (props: Props) => {
                         onAddResourceSlot={onAddResourceSlot}
                         dataListStepper={dataListStepper}
                       />
-                    ) : null}
-                    {selectedTab === 'configuration' ? (
-                      <div>soy configuration</div>
                     ) : null}
                     {selectedTab === 'services' ? (
                       <div>soy services</div>
