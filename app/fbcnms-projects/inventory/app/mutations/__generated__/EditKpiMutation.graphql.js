@@ -15,11 +15,11 @@
 /*::
 import type { ConcreteRequest } from 'relay-runtime';
 export type EditKpiInput = {|
-  id: string,
-  name: string,
   description: string,
   domainFk: string,
+  id: string,
   kpiCategoryFK: string,
+  name: string,
   status: boolean,
 |};
 export type EditKpiMutationVariables = {|

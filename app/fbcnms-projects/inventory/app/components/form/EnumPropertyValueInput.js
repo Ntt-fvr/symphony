@@ -27,12 +27,16 @@ import {isTempId} from '../../common/EntUtils';
 import {makeStyles} from '@material-ui/styles';
 
 const useStyles = makeStyles(() => ({
-  container: {
-    display: 'flex',
+  root: {
     width: '100%',
-  },
-  input: {
-    marginRight: '10px',
+    minHeight: '36px',
+    padding: '0 10px',
+    border: '1px solid #D2DAE7',
+    alignItems: 'baseline',
+    '& div': {
+      alignItems: 'baseline',
+      margin: '7px 5px 7px 0',
+    },
   },
 }));
 
@@ -86,6 +90,7 @@ function EnumPropertyValueInput<T: Property | PropertyType>(props: Props<T>) {
 
   const options = isJSON(jsonStr) ? JSON.parse(jsonStr) : [];
   const optionsArr = Array.isArray(options) ? options : [];
+  const classes = useStyles();
   const [tokens, setTokens] = useState(
     optionsArr.map(option => ({
       id: option,
@@ -95,11 +100,11 @@ function EnumPropertyValueInput<T: Property | PropertyType>(props: Props<T>) {
   const [viewDialogProperty, setViewDialogProperty] = useState(false);
   const showDialog = () => setViewDialogProperty(true);
   const hideDialog = () => setViewDialogProperty(false);
-  const classes = useStyles();
 
   return (
-    <div className={classes.container}>
+    <>
       <Tokenizer
+        className={classes.root}
         searchSource="UserInput"
         tokens={tokens}
         disabled={
@@ -130,10 +135,9 @@ function EnumPropertyValueInput<T: Property | PropertyType>(props: Props<T>) {
         onBlur={() => {
           onBlur && onBlur();
         }}
-        className={classes.input}
       />
       {allowPropertyCombo && (
-        <div>
+        <>
           <IconButton
             skin="primary"
             onClick={showDialog}
@@ -164,9 +168,9 @@ function EnumPropertyValueInput<T: Property | PropertyType>(props: Props<T>) {
               );
             }}
           />
-        </div>
+        </>
       )}
-    </div>
+    </>
   );
 }
 

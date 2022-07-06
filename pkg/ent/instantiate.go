@@ -31,6 +31,12 @@ func (c *AppointmentClient) Instantiate(a *Appointment) *Appointment {
 }
 
 // Instantiate entity configuration.
+func (c *AutomationActivityClient) Instantiate(aa *AutomationActivity) *AutomationActivity {
+	aa.config = c.config
+	return aa
+}
+
+// Instantiate entity configuration.
 func (c *BlockClient) Instantiate(b *Block) *Block {
 	b.config = c.config
 	return b
@@ -412,6 +418,42 @@ func (c *RecommendationsSourcesClient) Instantiate(rs *RecommendationsSources) *
 func (c *ReportFilterClient) Instantiate(rf *ReportFilter) *ReportFilter {
 	rf.config = c.config
 	return rf
+}
+
+// Instantiate entity configuration.
+func (c *ResourcePropertyTypeClient) Instantiate(rpt *ResourcePropertyType) *ResourcePropertyType {
+	rpt.config = c.config
+	return rpt
+}
+
+// Instantiate entity configuration.
+func (c *ResourceSpecificationClient) Instantiate(rs *ResourceSpecification) *ResourceSpecification {
+	rs.config = c.config
+	return rs
+}
+
+// Instantiate entity configuration.
+func (c *ResourceSpecificationItemsClient) Instantiate(rsi *ResourceSpecificationItems) *ResourceSpecificationItems {
+	rsi.config = c.config
+	return rsi
+}
+
+// Instantiate entity configuration.
+func (c *ResourceSpecificationRelationshipClient) Instantiate(rsr *ResourceSpecificationRelationship) *ResourceSpecificationRelationship {
+	rsr.config = c.config
+	return rsr
+}
+
+// Instantiate entity configuration.
+func (c *ResourceTypeClient) Instantiate(rt *ResourceType) *ResourceType {
+	rt.config = c.config
+	return rt
+}
+
+// Instantiate entity configuration.
+func (c *ResourceTypeRelationshipClient) Instantiate(rtr *ResourceTypeRelationship) *ResourceTypeRelationship {
+	rtr.config = c.config
+	return rtr
 }
 
 // Instantiate entity configuration.

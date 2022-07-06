@@ -42,10 +42,13 @@ export const LogEvents = {
   CONFIGURE_NAV_CLICKED: 'configure_nav_clicked',
   SERVICES_NAV_CLICKED: 'services_nav_clicked',
   INVENTORY_NAV_CLICKED: 'inventory_nav_clicked',
+  CHANGE_NAV_CLICKED: 'change_nav_clicked',
   MAP_NAV_CLICKED: 'map_nav_clicked',
   SEARCH_NAV_CLICKED: 'search_nav_clicked',
   WORK_ORDERS_NAV_CLICKED: 'work_orders_nav_clicked',
   CONFIGURE_TAB_NAVIGATION_CLICKED: 'configure_tab_navigation_clicked',
+  CHANGE_REQUEST_TAB_NAVIGATION_CLICKED:
+    'change_request_tab_navigation_clicked',
   EQUIPMENT_CARD_LOCATION_BREADCRUMB_CLICKED:
     'equipment_card_location_breadcrumb_clicked',
   EQUIPMENT_CARD_EQUIPMENT_BREADCRUMB_CLICKED:
@@ -134,6 +137,11 @@ export const LogEvents = {
     'service_quality_monitoring_tab_navigation_clicked',
   FAULT_MANAGEMENT_TAB_NAVIGATION_CLICKED:
     'fault_management_tab_navigation_clicked',
+
+  //Action Execution
+  ACTION_EXECUTION_NAV_CLICKED: 'action_execution_nav_clicked ',
+  ACTION_EXECUTION_TAB_NAVIGATION_CLICKED:
+    'action_execution_tab_navigation_cliked',
 };
 
 export const ServerLogger = ServerLog('inventory');

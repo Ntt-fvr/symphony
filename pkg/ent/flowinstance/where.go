@@ -346,6 +346,20 @@ func StatusNotIn(vs ...Status) predicate.FlowInstance {
 	})
 }
 
+// StartParamsIsNil applies the IsNil predicate on the "start_params" field.
+func StartParamsIsNil() predicate.FlowInstance {
+	return predicate.FlowInstance(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldStartParams)))
+	})
+}
+
+// StartParamsNotNil applies the NotNil predicate on the "start_params" field.
+func StartParamsNotNil() predicate.FlowInstance {
+	return predicate.FlowInstance(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldStartParams)))
+	})
+}
+
 // OutputParamsIsNil applies the IsNil predicate on the "output_params" field.
 func OutputParamsIsNil() predicate.FlowInstance {
 	return predicate.FlowInstance(func(s *sql.Selector) {
@@ -579,6 +593,20 @@ func BssCodeHasPrefix(v string) predicate.FlowInstance {
 func BssCodeHasSuffix(v string) predicate.FlowInstance {
 	return predicate.FlowInstance(func(s *sql.Selector) {
 		s.Where(sql.HasSuffix(s.C(FieldBssCode), v))
+	})
+}
+
+// BssCodeIsNil applies the IsNil predicate on the "bss_code" field.
+func BssCodeIsNil() predicate.FlowInstance {
+	return predicate.FlowInstance(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldBssCode)))
+	})
+}
+
+// BssCodeNotNil applies the NotNil predicate on the "bss_code" field.
+func BssCodeNotNil() predicate.FlowInstance {
+	return predicate.FlowInstance(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldBssCode)))
 	})
 }
 
@@ -990,6 +1018,34 @@ func HasParentSubflowBlockWith(preds ...predicate.BlockInstance) predicate.FlowI
 			sqlgraph.From(Table, FieldID),
 			sqlgraph.To(ParentSubflowBlockInverseTable, FieldID),
 			sqlgraph.Edge(sqlgraph.O2O, true, ParentSubflowBlockTable, ParentSubflowBlockColumn),
+		)
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasFlowActivities applies the HasEdge predicate on the "flow_activities" edge.
+func HasFlowActivities() predicate.FlowInstance {
+	return predicate.FlowInstance(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(FlowActivitiesTable, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, FlowActivitiesTable, FlowActivitiesColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasFlowActivitiesWith applies the HasEdge predicate on the "flow_activities" edge with a given conditions (other predicates).
+func HasFlowActivitiesWith(preds ...predicate.AutomationActivity) predicate.FlowInstance {
+	return predicate.FlowInstance(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(FlowActivitiesInverseTable, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, FlowActivitiesTable, FlowActivitiesColumn),
 		)
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {

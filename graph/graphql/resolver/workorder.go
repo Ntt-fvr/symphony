@@ -163,8 +163,7 @@ func (r mutationResolver) internalAddWorkOrder(
 		SetNillableOrganizationID(input.OrganizationFk).
 		SetNillableDuration(input.Duration).
 		SetNillableDueDate(input.DueDate).
-		SetNillableScheduledAt(input.ScheduledAt).
-		SetNillableIsNameEditable(input.IsNameEditable)
+		SetNillableScheduledAt(input.ScheduledAt)
 	if input.OwnerID != nil {
 		mutation = mutation.SetOwnerID(*input.OwnerID)
 	} else {

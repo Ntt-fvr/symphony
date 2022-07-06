@@ -67,3 +67,20 @@ __pycache__
 
 # End of https://www.gitignore.io/api/git,terraform,mercurial
 /.metadata/
+integration/dgraph/p/00001.mem
+integration/dgraph/p/000001.vlog
+integration/dgraph/p/DISCARD
+integration/dgraph/p/KEYREGISTRY
+integration/dgraph/p/LOCK
+integration/dgraph/p/MANIFEST
+integration/dgraph/t/5a7979942089f3717b2a3bb91ebbd9dc.node
+integration/dgraph/t/238e74e906bbea8f81bc0ffc69ff2e86.node
+integration/dgraph/t/index.js.LICENSE.txt
+.gitignore
+integration/dgraph/t/tasks.buf
+integration/dgraph/t/index.js
+integration/dgraph/w/00001.wal
+integration/dgraph/w/wal.meta
+integration/dgraph/zw/00001.wal
+integration/dgraph/zw/wal.meta
+.DS_Store

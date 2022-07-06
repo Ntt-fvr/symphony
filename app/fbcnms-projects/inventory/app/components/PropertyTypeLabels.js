@@ -8,6 +8,7 @@
  * @format
  */
 
+import type {ParameterTypeInfo} from '../common/ParameterType';
 import type {PropertyTypeInfo} from './form/PropertyTypeTable';
 
 import fbt from 'fbt';
@@ -77,5 +78,23 @@ export const PropertyTypeLabels: {[string]: PropertyTypeInfo} = {
   project: {
     label: fbt('Project', ''),
     kind: 'node',
+  },
+};
+export const ParameterTypeLabels: {[string]: ParameterTypeInfo} = {
+  int: {
+    label: fbt('Number', ''),
+    kind: 'int',
+  },
+  float: {
+    label: fbt('Float', ''),
+    kind: 'float',
+  },
+  string: {
+    label: fbt('Text', ''),
+    kind: 'string',
+  },
+  enum: {
+    label: fbt('Multiple choice', ''),
+    kind: 'enum',
   },
 };

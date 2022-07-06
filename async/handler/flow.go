@@ -35,17 +35,26 @@ func (f FlowHandler) Handle(ctx context.Context, _ log.Logger, evt ev.EventObjec
 	if !ok || entry.Type != ent.TypeFlowInstance || !entry.Operation.Is(ent.OpCreate) {
 		return nil
 	}
+
 	v := viewer.FromContext(ctx)
 	if !v.Features().Enabled(viewer.FeatureExecuteAutomationFlows) {
 		return nil
 	}
-	_, err := f.client.StartWorkflow(ctx, client.StartWorkflowOptions{
+
+	workflowOptions := client.StartWorkflowOptions{
 		ID:                           worker.GetGlobalWorkflowID(ctx, entry.CurrState.ID),
 		TaskList:                     worker.TaskListName,
 		ExecutionStartToCloseTimeout: 365 * 24 * time.Hour,
-	}, worker.RunFlowWorkflowName,
-		worker.RunFlowInput{
-			FlowInstanceID: entry.CurrState.ID,
-		})
+	}
+
+	runFlowInput := worker.RunFlowInput{
+		FlowInstanceID: entry.CurrState.ID,
+	}
+
+	_, err := f.client.StartWorkflow(
+		ctx, workflowOptions, worker.RunFlowWorkflowName,
+		ctx, worker.TaskListName, runFlowInput,
+	)
+
 	return err
 }

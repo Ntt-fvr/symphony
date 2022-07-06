@@ -9,16 +9,18 @@
  */
 
 import type {FeatureID} from '@fbcnms/types/features';
+
 import type {PropertyType} from '../../common/PropertyType';
 
 import * as React from 'react';
 import Button from '@symphony/design-system/components/Button';
 import Checkbox from '@symphony/design-system/components/Checkbox/Checkbox';
+import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutline';
 import DraggableTableRow from '../draggable/DraggableTableRow';
 import DroppableTableBody from '../draggable/DroppableTableBody';
 import FormAction from '@symphony/design-system/components/Form/FormAction';
 import FormField from '@symphony/design-system/components/FormField/FormField';
-import IconButton from '@symphony/design-system/components/IconButton';
+import IconButton from '@material-ui/core/IconButton';
 import PropertyComboTableItem from '../../common/property_combo/PropertyComboTableItem';
 import PropertyTypeSelect from './PropertyTypeSelect';
 import PropertyTypesTableDispatcher from './context/property_types/PropertyTypesTableDispatcher';
@@ -30,16 +32,14 @@ import TableRow from '@material-ui/core/TableRow';
 import TextInput from '@symphony/design-system/components/Input/TextInput';
 import fbt from 'fbt';
 import inventoryTheme from '../../common/theme';
-import {DeleteIcon, PlusIcon} from '@symphony/design-system/icons';
+import {PlusIcon} from '@symphony/design-system/icons';
 import {isPropertyTypeWithDependenceRelation} from '../../common/property_combo/PropertyComboHelpers';
 import {isTempId} from '../../common/EntUtils';
 import {makeStyles} from '@material-ui/styles';
 import {sortByIndex} from '../draggable/DraggableUtils';
 import {useContext} from 'react';
-
 const useStyles = makeStyles(() => ({
   container: {
-    maxWidth: '1366px',
     overflowX: 'auto',
   },
   root: {
@@ -52,9 +52,16 @@ const useStyles = makeStyles(() => ({
     marginBottom: '0px',
     width: '100%',
   },
-  cell: {
-    paddingLeft: '0px',
-    width: 'unset',
+  gridRight: {
+    '& div': {
+      padding: '0',
+    },
+  },
+  checkbox: {
+    textAlign: 'center',
+    '& div': {
+      justifyContent: 'center',
+    },
   },
   selectMenu: {
     height: '14px',
@@ -91,31 +98,27 @@ const ExperimentalPropertyTypesTable = ({
       <Table component="div" className={classes.root}>
         <TableHead component="div">
           <TableRow component="div">
-            <TableCell size="small" padding="none" component="div" />
-            <TableCell component="div" className={classes.cell}>
+            <TableCell component="div" />
+            <TableCell component="div">
               <fbt desc="">Name</fbt>
             </TableCell>
-            <TableCell component="div" className={classes.cell}>
+            <TableCell component="div">
               <fbt desc="">Property Type</fbt>
             </TableCell>
-            <TableCell component="div" className={classes.cell}>
+            <TableCell component="div">
               <fbt desc="">Default Value</fbt>
             </TableCell>
-            <TableCell
-              padding="checkbox"
-              component="div"
-              className={classes.cell}>
+            <TableCell className={classes.checkbox} component="div">
               <fbt desc="">Fixed Value</fbt>
             </TableCell>
             {supportMandatory && (
-              <TableCell
-                padding="checkbox"
-                component="div"
-                className={classes.cell}>
+              <TableCell className={classes.checkbox} component="div">
                 <fbt desc="">Mandatory</fbt>
               </TableCell>
             )}
-            <TableCell component="div" />
+            <TableCell className={classes.checkbox} component="div">
+              <fbt desc="">Delete</fbt>
+            </TableCell>
           </TableRow>
         </TableHead>
         <DroppableTableBody
@@ -139,13 +142,14 @@ const ExperimentalPropertyTypesTable = ({
                     index={i}
                     key={`${i}.${property.id}`}>
                     <TableCell
-                      className={classes.cell}
+                      style={{width: '20%'}}
                       component="div"
                       scope="row">
                       <FormField>
                         <TextInput
                           autoFocus={true}
                           placeholder="Name"
+                          autoComplete="off"
                           className={classes.input}
                           value={property.name}
                           onChange={({target}) =>
@@ -166,10 +170,10 @@ const ExperimentalPropertyTypesTable = ({
                       </FormField>
                     </TableCell>
                     <TableCell
-                      className={classes.cell}
+                      style={{width: '20%'}}
                       component="div"
                       scope="row">
-                      <FormField>
+                      <FormField className={classes.input}>
                         <PropertyTypeSelect
                           propertyType={property}
                           disabled={
@@ -180,7 +184,7 @@ const ExperimentalPropertyTypesTable = ({
                       </FormField>
                     </TableCell>
                     <TableCell
-                      className={classes.cell}
+                      style={{width: '40%'}}
                       component="div"
                       scope="row">
                       <PropertyValueInput
@@ -197,7 +201,7 @@ const ExperimentalPropertyTypesTable = ({
                         showPropertyCombo={showPropertyCombo}
                       />
                     </TableCell>
-                    <TableCell padding="checkbox" component="div">
+                    <TableCell className={classes.checkbox} component="div">
                       <FormField>
                         <Checkbox
                           checked={!property.isInstanceProperty}
@@ -216,7 +220,7 @@ const ExperimentalPropertyTypesTable = ({
                       </FormField>
                     </TableCell>
                     {supportMandatory && (
-                      <TableCell padding="checkbox" component="div">
+                      <TableCell className={classes.checkbox} component="div">
                         <FormField>
                           <Checkbox
                             checked={!!property.isMandatory}
@@ -234,22 +238,20 @@ const ExperimentalPropertyTypesTable = ({
                         </FormField>
                       </TableCell>
                     )}
-                    <TableCell
-                      className={classes.actionsBar}
-                      align="right"
-                      component="div">
+                    <TableCell className={classes.checkbox} component="div">
                       <FormAction>
-                        <IconButton
-                          skin="primary"
-                          onClick={() =>
-                            dispatch({
-                              type: 'DELETE_PROPERTY_TYPE',
-                              id: property.id,
-                            })
-                          }
-                          disabled={!supportDelete && !isTempId(property.id)}
-                          icon={DeleteIcon}
-                        />
+                        <IconButton>
+                          <DeleteOutlinedIcon
+                            color="primary"
+                            onClick={() =>
+                              dispatch({
+                                type: 'DELETE_PROPERTY_TYPE',
+                                id: property.id,
+                              })
+                            }
+                            disabled={!supportDelete && !isTempId(property.id)}
+                          />
+                        </IconButton>
                       </FormAction>
                     </TableCell>
                   </DraggableTableRow>

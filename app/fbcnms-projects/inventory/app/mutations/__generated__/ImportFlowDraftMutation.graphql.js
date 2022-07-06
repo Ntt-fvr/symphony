@@ -17,96 +17,95 @@ import type { ConcreteRequest } from 'relay-runtime';
 export type ActionTypeId = "update_inventory" | "update_workforce" | "work_order" | "worker" | "%future added value";
 export type EntryPointRole = "DEFAULT" | "%future added value";
 export type ExitPointRole = "DECISION" | "DEFAULT" | "%future added value";
+export type GoToType = "DESTINATION" | "ORIGIN" | "%future added value";
+export type RetryUnit = "HOURS" | "MINUTES" | "SECONDS" | "%future added value";
+export type SignalModule = "CONFIGURATION" | "INVENTORY" | "%future added value";
+export type SignalType = "CRCREATION" | "CRUPDATE" | "NOTIFICATION" | "WOCREATION" | "WOUPDATE" | "%future added value";
+export type TimerBehavior = "FIXED_INTERVAL" | "SPECIFIC_DATETIME" | "%future added value";
+export type TransfStrategy = "MERGE" | "REPLACE" | "%future added value";
 export type TriggerTypeId = "work_order" | "%future added value";
+export type UrlMethod = "DELETE" | "GET" | "PATCH" | "POST" | "PUT" | "%future added value";
 export type VariableExpressionType = "ChekListItemDefinition" | "DecisionDefinition" | "PropertyTypeDefinition" | "VariableDefinition" | "%future added value";
 export type VariableType = "DATE" | "INT" | "LOCATION" | "PROJECT" | "STRING" | "USER" | "WORK_ORDER" | "WORK_ORDER_TYPE" | "%future added value";
 export type ImportFlowDraftInput = {|
-  id: string,
-  name: string,
-  description?: ?string,
-  endParamDefinitions: $ReadOnlyArray<VariableDefinitionInput>,
-  startBlock?: ?StartBlockInput,
-  endBlocks?: ?$ReadOnlyArray<EndBlockInput>,
-  decisionBlocks?: ?$ReadOnlyArray<DecisionBlockInput>,
-  gotoBlocks?: ?$ReadOnlyArray<GotoBlockInput>,
-  subflowBlocks?: ?$ReadOnlyArray<SubflowBlockInput>,
-  triggerBlocks?: ?$ReadOnlyArray<TriggerBlockInput>,
   actionBlocks?: ?$ReadOnlyArray<ActionBlockInput>,
-  trueFalseBlocks?: ?$ReadOnlyArray<TrueFalseBlockInput>,
+  choiceBlocks?: ?$ReadOnlyArray<ChoiceBlockInput>,
   connectors?: ?$ReadOnlyArray<ConnectorInput>,
+  decisionBlocks?: ?$ReadOnlyArray<DecisionBlockInput>,
+  description?: ?string,
+  endBlocks?: ?$ReadOnlyArray<EndBlockInput>,
+  endParamDefinitions: $ReadOnlyArray<VariableDefinitionInput>,
+  executeFlowBlocks?: ?$ReadOnlyArray<ExecuteFlowBlockInput>,
+  gotoBlocks?: ?$ReadOnlyArray<GotoBlockInput>,
+  id: string,
+  invokeRestAPIBlocks?: ?$ReadOnlyArray<InvokeRestAPIBlockInput>,
+  name: string,
+  startBlock?: ?StartBlockInput,
+  subflowBlocks?: ?$ReadOnlyArray<SubflowBlockInput>,
+  timerBlocks?: ?$ReadOnlyArray<TimerBlockInput>,
+  triggerBlocks?: ?$ReadOnlyArray<TriggerBlockInput>,
+  trueFalseBlocks?: ?$ReadOnlyArray<TrueFalseBlockInput>,
+  waitForSignalBlocks?: ?$ReadOnlyArray<WaitForSignalBlockInput>,
 |};
-export type VariableDefinitionInput = {|
-  key: string,
-  type: VariableType,
-  mandatory?: ?boolean,
-  multipleValues?: ?boolean,
-  choices?: ?$ReadOnlyArray<string>,
-  defaultValue?: ?string,
-|};
-export type StartBlockInput = {|
+export type ActionBlockInput = {|
+  actionType: ActionTypeId,
   cid: string,
-  paramDefinitions: $ReadOnlyArray<VariableDefinitionInput>,
+  params: $ReadOnlyArray<VariableExpressionInput>,
   uiRepresentation?: ?BlockUIRepresentationInput,
+|};
+export type VariableExpressionInput = {|
+  blockVariables?: ?$ReadOnlyArray<BlockVariableInput>,
+  expression: string,
+  propertyTypeId?: ?number,
+  type: VariableExpressionType,
+  variableDefinitionKey?: ?string,
+|};
+export type BlockVariableInput = {|
+  blockCid: string,
+  checkListItemDefinitionId?: ?number,
+  propertyTypeId?: ?number,
+  type: VariableExpressionType,
+  variableDefinitionKey?: ?string,
 |};
 export type BlockUIRepresentationInput = {|
   name: string,
   xPosition: number,
   yPosition: number,
 |};
-export type EndBlockInput = {|
+export type ChoiceBlockInput = {|
+  basicDefinitions: BaseBlockInput,
   cid: string,
-  params: $ReadOnlyArray<VariableExpressionInput>,
-  uiRepresentation?: ?BlockUIRepresentationInput,
-|};
-export type VariableExpressionInput = {|
-  type: VariableExpressionType,
-  variableDefinitionKey?: ?string,
-  propertyTypeId?: ?number,
-  expression: string,
-  blockVariables?: ?$ReadOnlyArray<BlockVariableInput>,
-|};
-export type BlockVariableInput = {|
-  blockCid: string,
-  type: VariableExpressionType,
-  variableDefinitionKey?: ?string,
-  propertyTypeId?: ?number,
-  checkListItemDefinitionId?: ?number,
-|};
-export type DecisionBlockInput = {|
-  cid: string,
+  entryPoint: EntryPointInput,
   routes?: ?$ReadOnlyArray<DecisionRouteInput>,
   uiRepresentation?: ?BlockUIRepresentationInput,
+|};
+export type BaseBlockInput = {|
+  backoffRate?: ?number,
+  enableErrorHandling?: ?boolean,
+  enableInputStateTransformation: boolean,
+  enableInputTransformation: boolean,
+  enableOutputStateTransformation: boolean,
+  enableOutputTransformation: boolean,
+  enableRetryPolicy?: ?boolean,
+  inputParamDefinitions?: ?string,
+  inputStateParamDefinitions?: ?string,
+  inputStateTransfStrategy?: ?TransfStrategy,
+  inputTransfStrategy?: ?TransfStrategy,
+  maxAttemps?: ?number,
+  outputParamDefinitions?: ?string,
+  outputStateParamDefinitions?: ?string,
+  outputStateTransfStrategy?: ?TransfStrategy,
+  outputTransfStrategy?: ?TransfStrategy,
+  retryInterval?: ?number,
+  units?: ?RetryUnit,
+|};
+export type EntryPointInput = {|
+  cid?: ?string,
+  role?: ?EntryPointRole,
 |};
 export type DecisionRouteInput = {|
   cid?: ?string,
   condition: VariableExpressionInput,
-|};
-export type GotoBlockInput = {|
-  cid: string,
-  targetBlockCid?: ?string,
-  uiRepresentation?: ?BlockUIRepresentationInput,
-|};
-export type SubflowBlockInput = {|
-  cid: string,
-  flowId: string,
-  params: $ReadOnlyArray<VariableExpressionInput>,
-  uiRepresentation?: ?BlockUIRepresentationInput,
-|};
-export type TriggerBlockInput = {|
-  cid: string,
-  triggerType: TriggerTypeId,
-  params: $ReadOnlyArray<VariableExpressionInput>,
-  uiRepresentation?: ?BlockUIRepresentationInput,
-|};
-export type ActionBlockInput = {|
-  cid: string,
-  actionType: ActionTypeId,
-  params: $ReadOnlyArray<VariableExpressionInput>,
-  uiRepresentation?: ?BlockUIRepresentationInput,
-|};
-export type TrueFalseBlockInput = {|
-  cid: string,
-  uiRepresentation?: ?BlockUIRepresentationInput,
 |};
 export type ConnectorInput = {|
   sourceBlockCid: string,
@@ -115,12 +114,103 @@ export type ConnectorInput = {|
   targetPoint?: ?EntryPointInput,
 |};
 export type ExitPointInput = {|
+  cid?: ?string,
   role?: ?ExitPointRole,
-  cid?: ?string,
 |};
-export type EntryPointInput = {|
-  role?: ?EntryPointRole,
-  cid?: ?string,
+export type DecisionBlockInput = {|
+  cid: string,
+  routes?: ?$ReadOnlyArray<DecisionRouteInput>,
+  uiRepresentation?: ?BlockUIRepresentationInput,
+|};
+export type EndBlockInput = {|
+  cid: string,
+  params: $ReadOnlyArray<VariableExpressionInput>,
+  uiRepresentation?: ?BlockUIRepresentationInput,
+|};
+export type VariableDefinitionInput = {|
+  choices?: ?$ReadOnlyArray<string>,
+  defaultValue?: ?string,
+  key: string,
+  mandatory?: ?boolean,
+  multipleValues?: ?boolean,
+  type: VariableType,
+|};
+export type ExecuteFlowBlockInput = {|
+  basicDefinitions: BaseBlockInput,
+  cid: string,
+  entryPoint: EntryPointInput,
+  exitPoint: ExitPointInput,
+  flow: string,
+  params: $ReadOnlyArray<VariableExpressionInput>,
+  uiRepresentation?: ?BlockUIRepresentationInput,
+|};
+export type GotoBlockInput = {|
+  cid: string,
+  targetBlockCid?: ?string,
+  type: GoToType,
+  uiRepresentation?: ?BlockUIRepresentationInput,
+|};
+export type InvokeRestAPIBlockInput = {|
+  basicDefinitions: BaseBlockInput,
+  body: string,
+  cid: string,
+  connectionTimeOut: number,
+  entryPoint: EntryPointInput,
+  exitPoint: ExitPointInput,
+  headers: $ReadOnlyArray<?VariableValueInput>,
+  method: UrlMethod,
+  params: $ReadOnlyArray<VariableExpressionInput>,
+  uiRepresentation?: ?BlockUIRepresentationInput,
+  url: string,
+|};
+export type VariableValueInput = {|
+  value: string,
+  variableDefinitionKey: string,
+|};
+export type StartBlockInput = {|
+  cid: string,
+  paramDefinitions: $ReadOnlyArray<VariableDefinitionInput>,
+  uiRepresentation?: ?BlockUIRepresentationInput,
+|};
+export type SubflowBlockInput = {|
+  cid: string,
+  flowId: string,
+  params: $ReadOnlyArray<VariableExpressionInput>,
+  uiRepresentation?: ?BlockUIRepresentationInput,
+|};
+export type TimerBlockInput = {|
+  behavior: TimerBehavior,
+  cid: string,
+  enableExpressionL?: ?boolean,
+  entryPoint: EntryPointInput,
+  exitPoint: ExitPointInput,
+  expression?: ?string,
+  params: $ReadOnlyArray<VariableExpressionInput>,
+  seconds?: ?number,
+  specificDatetime?: ?any,
+  uiRepresentation?: ?BlockUIRepresentationInput,
+|};
+export type TriggerBlockInput = {|
+  cid: string,
+  params: $ReadOnlyArray<VariableExpressionInput>,
+  triggerType: TriggerTypeId,
+  uiRepresentation?: ?BlockUIRepresentationInput,
+|};
+export type TrueFalseBlockInput = {|
+  cid: string,
+  uiRepresentation?: ?BlockUIRepresentationInput,
+|};
+export type WaitForSignalBlockInput = {|
+  basicDefinitions: BaseBlockInput,
+  blocked: boolean,
+  cid: string,
+  customFilter?: ?string,
+  entryPoint: EntryPointInput,
+  exitPoint: ExitPointInput,
+  params: $ReadOnlyArray<VariableExpressionInput>,
+  signalModule: SignalModule,
+  type: SignalType,
+  uiRepresentation?: ?BlockUIRepresentationInput,
 |};
 export type ImportFlowDraftMutationVariables = {|
   input: ImportFlowDraftInput

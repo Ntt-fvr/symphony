@@ -19,11 +19,11 @@ export type PropertiesByCategoryFilterType = "LOCATION_ID" | "PROPERTY_CATEGORY_
 export type PropertyKind = "bool" | "date" | "datetime_local" | "email" | "enum" | "float" | "gps_location" | "int" | "node" | "range" | "string" | "%future added value";
 export type PropertiesByCategoryFilterInput = {|
   filterType: PropertiesByCategoryFilterType,
-  operator: FilterOperator,
-  stringValue?: ?string,
-  intValue?: ?number,
   idSet?: ?$ReadOnlyArray<string>,
+  intValue?: ?number,
+  operator: FilterOperator,
   stringSet?: ?$ReadOnlyArray<string>,
+  stringValue?: ?string,
 |};
 export type PropertyByCategoriesQueryVariables = {|
   filters: $ReadOnlyArray<PropertiesByCategoryFilterInput>

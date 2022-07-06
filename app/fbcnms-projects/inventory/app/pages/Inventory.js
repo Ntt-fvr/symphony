@@ -19,12 +19,15 @@ import type {WithSnackbarProps} from 'notistack';
 import type {WithStyles} from '@material-ui/core';
 
 import AddToLocationDialog from '../components/AddToLocationDialog';
+import DialogStatus from '../components/configure/DialogStatus';
 import EquipmentCard from '../components/EquipmentCard';
 import InventoryErrorBoundary from '../common/InventoryErrorBoundary';
 import InventoryTopBar from '../components/InventoryTopBar';
 import LocationCard from '../components/LocationCard';
 import LocationsTree from '../components/LocationsTree';
+import NavbarResourceInstance from '../components/resource_instance/NavbarResourceInstance';
 import React from 'react';
+import ResourceCard from '../components/resource/ResourceCard';
 import SnackbarItem from '@fbcnms/ui/components/SnackbarItem';
 import fbt from 'fbt';
 import withAlert from '@fbcnms/ui/components/Alert/withAlert';
@@ -62,6 +65,13 @@ const styles = {
   tabsContainer: {
     padding: '20px',
   },
+  header: {
+    marginBottom: '1rem',
+  },
+  buttons: {
+    height: '36px',
+    width: '111px',
+  },
 };
 
 const ADD_LOCATION_CARD: Card = {mode: 'add', type: 'location'};
@@ -70,10 +80,13 @@ const EDIT_LOCATION_CARD: Card = {mode: 'edit', type: 'location'};
 const EDIT_EQUIPMENT_CARD: Card = {mode: 'edit', type: 'equipment'};
 const SHOW_LOCATION_CARD: Card = {mode: 'show', type: 'location'};
 const SHOW_EQUIPMENT_CARD: Card = {mode: 'show', type: 'equipment'};
+const SHOW_RESOURCE_CARD: Card = {mode: 'show', type: 'resource'};
+const ADD_RESOURCE_CARD: Card = {mode: 'add', type: 'resource'};
+const EDIT_RESOURCE_CARD: Card = {mode: 'edit', type: 'resource'};
 
 type Card = {
   mode: 'add' | 'edit' | 'show',
-  type: 'location' | 'equipment',
+  type: 'location' | 'equipment' | 'resource',
 };
 
 type Props = ContextRouter &
@@ -93,6 +106,8 @@ type State = {
   selectedLocationType: ?LocationType,
   selectedWorkOrderId: ?string,
   openLocationHierarchy: Array<string>,
+  selectedResourceId: ?string,
+  selectedResourceType: {},
 };
 
 class Inventory extends React.Component<Props, State> {
@@ -111,9 +126,10 @@ class Inventory extends React.Component<Props, State> {
       selectedLocationType: null,
       selectedWorkOrderId: null,
       openLocationHierarchy: [],
+      selectedResourceId: null,
+      selectedResourceType: {},
     };
   }
-
   navigateToLocation(selectedLocationId: ?string, source: ?string) {
     ServerLogger.info(LogEvents.NAVIGATE_TO_LOCATION, {
       locationId: selectedLocationId,
@@ -143,6 +159,12 @@ class Inventory extends React.Component<Props, State> {
     const {history} = this.props;
     if (selectedWorkOrderCardId) {
       history.push(`/workorders/search?workorder=${selectedWorkOrderCardId}`);
+    }
+  }
+  navigateToResource(selectedResourceId: ?string) {
+    const {history} = this.props;
+    if (selectedResourceId != null) {
+      history.push(`/inventory/inventory?resource=${selectedResourceId}`);
     }
   }
 
@@ -176,17 +198,26 @@ class Inventory extends React.Component<Props, State> {
     const {classes} = this.props;
     const {card} = this.state;
 
+    const handelModal = () => {
+      this.setState({dialogOpen: true});
+    };
+
     const queryLocationId = extractEntityIdFromUrl(
       'location',
       this.props.location.search,
     );
+    const queryEquipmentId = extractEntityIdFromUrl(
+      'equipment',
+      this.props.location.search,
+    );
+    const queryResourcetId = extractEntityIdFromUrl(
+      'resource',
+      this.props.location.search,
+    );
+
     if (queryLocationId !== this.state.selectedLocationId) {
       this.setLocationCardState(queryLocationId);
     } else if (queryLocationId === null) {
-      const queryEquipmentId = extractEntityIdFromUrl(
-        'equipment',
-        this.props.location.search,
-      );
       if (queryEquipmentId !== this.state.selectedEquipmentId) {
         this.setState({
           card: SHOW_EQUIPMENT_CARD,
@@ -194,20 +225,21 @@ class Inventory extends React.Component<Props, State> {
           selectedLocationId: null,
           selectedEquipmentPosition: null,
         });
-      } else if (
-        (queryEquipmentId === null &&
-          this.state.selectedLocationType === null) ||
-        this.state.card === null
-      ) {
-        this.setLocationCardState(null);
       }
     }
-
+    if (queryResourcetId !== this.state.selectedResourceId) {
+      this.setState({
+        card: SHOW_RESOURCE_CARD,
+        selectedResourceId: queryResourcetId,
+        selectedLocationId: null,
+        selectedEquipmentId: null,
+        selectedEquipmentPosition: null,
+      });
+    }
     return (
       <>
         <InventoryTopBar
           onWorkOrderSelected={selectedWorkOrderId => {
-            console.log('Selected work order id', selectedWorkOrderId);
             this.setState({selectedWorkOrderId});
           }}
           onSearchEntitySelected={(entityId, entityType) => {
@@ -254,9 +286,44 @@ class Inventory extends React.Component<Props, State> {
                   onWorkOrderSelected={selectedWorkOrderCardId =>
                     this.navigateToWorkOrder(selectedWorkOrderCardId)
                   }
+                  onResourceSelected={selectedResourceId =>
+                    this.navigateToResource(selectedResourceId)
+                  }
+                  onAddResource={selectedResourceType => {
+                    this.setState({
+                      selectedResourceType,
+                      card: ADD_RESOURCE_CARD,
+                    });
+                  }}
                   onAddEquipment={() => this.showDialog('equipment')}
                   onLocationMoved={this.onMoveLocation}
                   onLocationRemoved={this.onDeleteLocation}
+                />
+              )}
+              {card.type == 'resource' && (
+                <ResourceCard
+                  mode={card.mode}
+                  selectedResourceType={this.state.selectedResourceType}
+                  selectedResourceId={this.state.selectedResourceId}
+                  selectedLocationId={this.state.selectedLocationId}
+                  onAddResource={selectedResourceType => {
+                    this.setState({
+                      selectedResourceType,
+                      card: ADD_RESOURCE_CARD,
+                    });
+                  }}
+                  onEditResource={() =>
+                    this.setState({
+                      card: EDIT_RESOURCE_CARD,
+                    })
+                  }
+                  onCancel={() =>
+                    this.setState(state => ({
+                      card: state.selectedResourceId
+                        ? SHOW_RESOURCE_CARD
+                        : SHOW_LOCATION_CARD,
+                    }))
+                  }
                 />
               )}
               {card.type == 'equipment' && (
@@ -337,6 +404,12 @@ class Inventory extends React.Component<Props, State> {
     this.setState({dialogMode});
   };
   hideDialog = () => this.setState({dialogMode: 'hidden'});
+
+  onResourceCancel = () => {
+    this.setState(state => ({
+      card: state.selectedResourceId ? SHOW_RESOURCE_CARD : SHOW_LOCATION_CARD,
+    }));
+  };
 
   onEquipmentCancel = () => {
     this.setState(state => ({

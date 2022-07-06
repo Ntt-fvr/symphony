@@ -343,7 +343,7 @@ const WorkOrderDetails = ({
         contentType: file.type,
       },
     };
-
+     
     const updater = store => {
       const newNode = store.getRootField('addImage');
       const workOrderProxy = store.get(workOrderId);

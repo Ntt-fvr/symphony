@@ -250,6 +250,11 @@ export const arrayConfigs = [
     enabledByDefault: false,
   },
   {
+    id: 'enable_resource_catalog_&_relationships',
+    title: 'Resource Catalog & Relationships',
+    enabledByDefault: true,
+  },
+  {
     id: 'scheduling_filter_dates',
     title: 'Scheduling',
     enabledByDefault: false,
@@ -273,6 +278,16 @@ export const arrayConfigs = [
     id: 'property_combo',
     title: 'Property Combo',
     enabledByDefault: false,
+  },
+  {
+    id: 'resource_inventory',
+    title: 'Resource Inventory',
+    enabledByDefault: true,
+  },
+  {
+    id: 'resource_port_management',
+    title: 'Port management',
+    enabledByDefault: true,
   },
 ];
 
