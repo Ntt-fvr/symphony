@@ -16,54 +16,81 @@ import {Grid} from '@material-ui/core';
 
 export const PROJECTS_PAGE_SIZE = 15;
 
-const dataMock = [];
-
-const tableColumns = [
+const dataMock = [
   {
-    key: 'creation date',
-    title: 'Creation date',
-    render: row => row.creationDate ?? '01/03/22',
-    tooltip: row => row.creationDate ?? '01/03/22',
+    creationDate: '01/03/22',
+    lastModificationDate: '01/05/22',
+    resourceType: 'resource1',
+    source: 'source1',
+    affectedResources: 'affectedResources1',
   },
   {
-    key: 'last modification date',
-    title: `${fbt('Last modification date', '')}`,
-    render: row => row.lastModificationDate ?? '01/05/22',
-    tooltip: row => row.lastModificationDate ?? '01/03/05',
-  },
-  {
-    key: 'resource type',
-    title: `${fbt('Resource type', '')}`,
-    render: row => row.resourceType ?? '',
-    tooltip: row => row.resourceType ?? '',
-  },
-  {
-    key: 'change source',
-    title: `${fbt('Change source', '')}`,
-    render: row => row.source ?? '',
-    tooltip: row => row.source ?? '',
-  },
-  {
-    key: 'affected resources',
-    title: `${fbt('Affected resources', '')}`,
-    render: row => <CircleIndicator>{row.affectedResources}</CircleIndicator>,
-    tooltip: row => row.affectedResources ?? '',
+    creationDate: '01/03/30',
+    lastModificationDate: '01/05/30',
+    resourceType: 'resource2',
+    source: 'source2',
+    affectedResources: 'affectedResources2',
   },
 ];
 
-const ConfigurationViewQueryRenderer = () => {
+export type Props = $ReadOnly<{|
+  dataConfig?: any,
+|}>;
+
+const ConfigurationViewQueryRenderer = (props: Props) => {
+  const {dataConfig} = props;
+
+  console.log('tabla-> ', dataConfig);
+
+  const {queryCMVersion, queryResource, resourceSpecification} = dataConfig;
+
+  console.log('CMV', queryCMVersion, dataMock);
+
+  const tableColumns = [
+    {
+      key: 'location',
+      title: 'Location',
+      render: row => row.resource.locatedIn ?? '',
+      tooltip: row => row.resource.locatedIn ?? '',
+    },
+    {
+      key: 'parameter',
+      title: `${fbt('parameter', '')}`,
+      render: row => row.lastModificationDate ?? '',
+      tooltip: row => row.lastModificationDate ?? '',
+    },
+    {
+      key: 'parameter1',
+      title: `${fbt('parameter', '')}`,
+      render: row => row.resourceType ?? '',
+      tooltip: row => row.resourceType ?? '',
+    },
+    {
+      key: 'parameter2',
+      title: `${fbt('parameter', '')}`,
+      render: row => row.source ?? '',
+      tooltip: row => row.source ?? '',
+    },
+    {
+      key: 'parameter3',
+      title: `${fbt('parameter', '')}`,
+      render: row => row.affectedResources,
+      tooltip: row => row.affectedResources ?? '',
+    },
+  ];
+
   return (
     <Grid>
       <Table
-        data={dataMock}
+        data={queryCMVersion}
         columns={[
           {
-            key: 'changeId',
-            title: 'Change ID',
+            key: 'resource',
+            title: 'Resource',
             getSortingValue: row => row.id,
             render: row => (
-              <Button variant="text" tooltip={row.id ?? ''}>
-                {row.id}
+              <Button variant="text" tooltip={row.resource.name ?? ''}>
+                {row.resource.name}
               </Button>
             ),
           },

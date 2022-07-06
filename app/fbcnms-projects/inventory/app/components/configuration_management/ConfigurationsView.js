@@ -19,8 +19,9 @@ import {ConfigurationViewQueryRenderer} from './ConfigurationViewQueryRenderer';
 import {Grid} from '@material-ui/core';
 import {ResourcesSearchConfig} from './ResourcesSearchConfig';
 import {getInitialFilterValue} from '../comparison_view/FilterUtils';
+import {graphql} from 'relay-runtime';
 import {makeStyles} from '@material-ui/styles';
-
+import {useLazyLoadQuery} from 'react-relay/hooks';
 const useStyles = makeStyles(() => ({
   root: {
     flexGrow: '0',
@@ -40,9 +41,76 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
+const Configurations = graphql`
+  query ConfigurationsViewQuery {
+    queryResource {
+      id
+      name
+      locatedIn
+      resourceSpecification
+      isDeleted
+      lifecycleStatus
+      typePlanningSubStatus
+      planningSubStatus
+      usageSubStatus
+      operationalSubStatus
+      createTime
+      updateTime
+    }
+    resourceSpecifications {
+      edges {
+        node {
+          id
+          name
+          resourceType {
+            id
+            name
+          }
+        }
+      }
+    }
+    queryCMVersion {
+      id
+      parameters {
+        id
+        stringValue
+        rangeToValue
+        rangeFromValue
+        floatValue
+        intValue
+        booleanValue
+        latitudeValue
+        longitudeValue
+        parameterType {
+          id
+          name
+          resourceSpecification
+          stringValue
+          floatValue
+          intValue
+          type
+        }
+      }
+      status
+      resource {
+        id
+        name
+        resourceProperties {
+          id
+          resourcePropertyType
+        }
+        locatedIn
+      }
+    }
+  }
+`;
+
 const ConfigurationsView = () => {
   const [filters, setFilters] = useState([]);
   const classes = useStyles();
+  const dataConfig = useLazyLoadQuery<ConfigurationsViewQuery>(Configurations);
+
+  // console.log('>>>>', dataConfig);
 
   const filterConfigs = useMemo(() =>
     ResourcesSearchConfig.map(ent => ent.filters).reduce(
@@ -50,8 +118,8 @@ const ConfigurationsView = () => {
       [],
     ),
   );
-
-  console.log(filters);
+  // console.log('-> ', filterConfigs, ResourcesSearchConfig);
+  // console.log(filters);
 
   return (
     <Grid className={classes.root} container spacing={0}>
@@ -88,7 +156,7 @@ const ConfigurationsView = () => {
         </div>
       </Grid>
       <Grid item xs={12} style={{margin: '20px 0 0 0'}}>
-        <ConfigurationViewQueryRenderer />
+        <ConfigurationViewQueryRenderer dataConfig={dataConfig} />
       </Grid>
     </Grid>
   );
