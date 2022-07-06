@@ -18,6 +18,7 @@ import type {
   TypePlanningSubStatus,
   UsageSubStatus,
 } from '../../mutations/__generated__/AddResourceMutation.graphql';
+import type {UpdateResourceMutationVariables} from '../../mutations/__generated__/UpdateResourceMutation.graphql';
 
 import AddResourceMutation from '../../mutations/AddResourceMutation';
 import Button from '@material-ui/core/Button';
@@ -30,6 +31,7 @@ import InputAdornment from '@material-ui/core/InputAdornment';
 import MomentUtils from '@date-io/moment';
 import SaveDialogConfirm from '../configure/SaveDialogConfirm';
 import TextField from '@material-ui/core/TextField';
+import UpdateResourceMutation from '../../mutations/UpdateResourceMutation';
 import inventoryTheme from '../../common/theme';
 import moment from 'moment';
 import symphony from '@symphony/design-system/theme/symphony';
@@ -167,6 +169,31 @@ const AddEditResourceInLocation = (props: Props) => {
       },
     });
   }
+
+  function handleEditForm() {
+    const variables: UpdateResourceMutationVariables = {
+      input: {
+        filter: {
+          id: Array<string>(dataformModal.id),
+        },
+        set: {
+          name: nameEdit.value,
+          externalId: externalID.value,
+          lifecycleStatus: lifecycleStatus.value,
+          typePlanningSubStatus: typePlanningSubStatus.value,
+          planningSubStatus: planningSubStatus.value,
+          usageSubStatus: usageSubStatus.value,
+          operationalSubStatus: operationalSubStatus.value,
+        },
+      },
+    };
+    UpdateResourceMutation(variables, {
+      onCompleted: () => {
+        isCompleted();
+        closeFormAddEdit();
+      },
+    });
+  }
   const renderForm = (label, nameCreate, nameEdit) => {
     return mode === 'edit' ? (
       <Grid item xs={6}>
@@ -292,7 +319,7 @@ const AddEditResourceInLocation = (props: Props) => {
       </Grid>
     );
   };
-
+  console.log('hola soy lifecycleStatus', lifecycleStatus.value);
   return (
     <>
       <Grid item xs={12} sm={12} lg={12} xl={12}>
@@ -310,7 +337,8 @@ const AddEditResourceInLocation = (props: Props) => {
               selectListData.lifecycleStatus,
             )}
 
-            {resourceType.data.lifecycleStatus === 'PLANNING'
+            {resourceType.data.lifecycleStatus === 'PLANNING' ||
+            lifecycleStatus.value === 'PLANNING'
               ? renderFormSelect(
                   'Planning Status',
                   'typePlanningSubStatus',
@@ -319,7 +347,8 @@ const AddEditResourceInLocation = (props: Props) => {
                 )
               : null}
 
-            {resourceType.data.lifecycleStatus === 'OPERATING' ? (
+            {resourceType.data.lifecycleStatus === 'OPERATING' ||
+            lifecycleStatus.value === 'OPERATING' ? (
               <>
                 {renderFormSelect(
                   'Administrative Status',
@@ -402,7 +431,7 @@ const AddEditResourceInLocation = (props: Props) => {
         <SaveDialogConfirm
           open={dialogOpen}
           onClose={() => setDialogOpen(false)}
-          saveItem={handleCreateForm}
+          saveItem={mode === 'edit' ? handleEditForm : handleCreateForm}
           resource={''}
           typeAlert={'information'}
           customMessage="The information will be saved and you can find it in the list of resources."
