@@ -1815,7 +1815,6 @@ type StartBlockInput struct {
 
 type StartFlowInput struct {
 	FlowID    int                         `json:"flowID"`
-	BssCode   string                      `json:"bssCode"`
 	StartDate time.Time                   `json:"startDate"`
 	Params    []*flowschema.VariableValue `json:"params"`
 }

@@ -31,6 +31,12 @@ func (c *AppointmentClient) Instantiate(a *Appointment) *Appointment {
 }
 
 // Instantiate entity configuration.
+func (c *AutomationActivityClient) Instantiate(aa *AutomationActivity) *AutomationActivity {
+	aa.config = c.config
+	return aa
+}
+
+// Instantiate entity configuration.
 func (c *BlockClient) Instantiate(b *Block) *Block {
 	b.config = c.config
 	return b

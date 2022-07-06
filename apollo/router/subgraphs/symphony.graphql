@@ -6479,7 +6479,7 @@ input EditBlockInstanceInput {
 
 type FlowInstance implements Node {
   id: ID!
-  bssCode: String!
+  #bssCode: String
   serviceInstanceCode: String
   status: FlowInstanceStatus!
   template: FlowExecutionTemplate!
@@ -6517,7 +6517,7 @@ input VariableValueInput
 
 input StartFlowInput {
   flowID: ID!
-  bssCode: String!
+  #bssCode: String
   startDate: Time!
   params: [VariableValueInput]!
 }

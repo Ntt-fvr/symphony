@@ -6,15 +6,11 @@ import (
 	"go.uber.org/cadence/workflow"
 )
 
-type Flow struct {
-	Id     int
-	Blocks []Block
-}
-
-type Block struct {
+type AutomationBlock struct {
 	ent.Block
 	FlowID          int
 	BlockInstanceID int
+	Attempts        int
 	NextBlock       int
 	ChoiceRoutes    []ChoiceRoute
 	WorkflowCtx     workflow.Context

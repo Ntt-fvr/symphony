@@ -69,6 +69,18 @@ func (a *AppointmentQuery) collectField(ctx *graphql.OperationContext, field gra
 }
 
 // CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
+func (aa *AutomationActivityQuery) CollectFields(ctx context.Context, satisfies ...string) *AutomationActivityQuery {
+	if fc := graphql.GetFieldContext(ctx); fc != nil {
+		aa = aa.collectField(graphql.GetOperationContext(ctx), fc.Field, satisfies...)
+	}
+	return aa
+}
+
+func (aa *AutomationActivityQuery) collectField(ctx *graphql.OperationContext, field graphql.CollectedField, satisfies ...string) *AutomationActivityQuery {
+	return aa
+}
+
+// CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
 func (b *BlockQuery) CollectFields(ctx context.Context, satisfies ...string) *BlockQuery {
 	if fc := graphql.GetFieldContext(ctx); fc != nil {
 		b = b.collectField(graphql.GetOperationContext(ctx), fc.Field, satisfies...)

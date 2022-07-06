@@ -83,3 +83,4 @@ integration/dgraph/w/00001.wal
 integration/dgraph/w/wal.meta
 integration/dgraph/zw/00001.wal
 integration/dgraph/zw/wal.meta
+.DS_Store
