@@ -90,10 +90,6 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-type Resource = {
-  name: string,
-};
-
 export type ResourceSpecifications = {
   id: string,
   name: string,
@@ -118,8 +114,7 @@ type Props = $ReadOnly<{|
   },
   hideEditResourceTypeForm: void => void,
   isCompleted: void => void,
-  resources: Array<Resource>,
-  resourceSpecifications: ResourceSpecifications,
+  dataFormQuery: any,
   dataSelectorsForm: DataSelectorsForm,
 |}>;
 
@@ -127,9 +122,8 @@ export const EditResourceTypeItem = (props: Props) => {
   const {
     formValues,
     hideEditResourceTypeForm,
-    resources,
+    dataFormQuery,
     isCompleted,
-    resourceSpecifications,
     dataSelectorsForm,
   } = props;
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -142,7 +136,9 @@ export const EditResourceTypeItem = (props: Props) => {
   const resourceTypeBaseType = useFormInput(formValues.resourceTypeBaseType);
   const resourceTypeClass = useFormInput(formValues.resourceTypeClass);
 
-  const resourcesNames = resources?.map(item => item.name);
+  const resourcesNames = dataFormQuery?.resourceTypes?.edges.map(
+    item => item.node.name,
+  );
 
   const dataInputsObject = [
     name.value.trim(),
@@ -158,7 +154,10 @@ export const EditResourceTypeItem = (props: Props) => {
     );
   };
 
-  const filterDataById = resourceSpecifications.filter(
+  const dataResourceSpecifications = dataFormQuery.resourceSpecifications?.edges.map(
+    item => item.node,
+  );
+  const filterDataById = dataResourceSpecifications.filter(
     rsData => rsData?.resourceType?.id === formValues.id,
   );
 
@@ -192,9 +191,10 @@ export const EditResourceTypeItem = (props: Props) => {
     return (
       <AddEditResourceSpecification
         isCompleted={isCompleted}
-        dataForm={resourceSpecifications}
+        dataForm={''}
         formValues={formValues}
         filterData={filterDataById}
+        vendorData={dataFormQuery.vendors?.edges.map(item => item.node)}
         editMode={false}
         closeForm={() => setOpenForm(false)}
       />
@@ -208,6 +208,7 @@ export const EditResourceTypeItem = (props: Props) => {
         dataForm={dataEdit}
         formValues={dataEdit}
         filterData={filterDataById}
+        vendorData={dataFormQuery.vendors?.edges.map(item => item.node)}
         editMode={true}
         closeForm={() => setOpenFormEdit(false)}
       />

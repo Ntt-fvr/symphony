@@ -168,6 +168,7 @@ const ModalSteper = (props: Props) => {
   const [searchData, setSearchData] = useState('');
   const [resourceInstance, setResourceInstance] = useState({});
   const [selectedId, setSelectedId] = useState({});
+  const [selectedRS, setSelectedRS] = useState({});
   const [logicalLinkInput, setLogicalLinkInput] = useState({});
 
   const listResourceInstance = useCallback(() => {
@@ -205,10 +206,10 @@ const ModalSteper = (props: Props) => {
   };
 
   const handleListItemClick = (event, index, item) => {
+    activeStep === 1 && setSelectedRS(item);
     if (activeStep === 2) {
-      setSelectedId({eq: item.node.id});
+      setSelectedId({eq: item.id});
     }
-    setSelectedIndex(index);
     if (activeStep !== 3) {
       setGetDataList(item.node);
     } else {
@@ -220,23 +221,30 @@ const ModalSteper = (props: Props) => {
         },
       });
     }
+    setSelectedIndex(index);
+    setGetDataList(item);
   };
 
-  const searchResourceType = dataListStepper?.resourceTypes?.edges.filter(
-    item =>
-      item.node?.name
+  const searchResourceType = dataListStepper?.resourceTypes?.edges
+    .flatMap(item => item.node)
+    .filter(item =>
+      item.name
         .toString()
         .toLowerCase()
         .includes(searchData.toLocaleLowerCase()),
-  );
+    );
 
-  const searchRSpecifications = dataListStepper?.resourceSpecifications?.edges.filter(
-    item =>
-      item.node?.name
-        .toString()
-        .toLowerCase()
-        .includes(searchData.toLocaleLowerCase()),
-  );
+  const searchRSpecifications =
+    dataListStepper?.resourceTypes?.edges
+      .flatMap(item => item.node)
+      .filter(item => item.id === selectedRS.id)
+      .flatMap(item => item.resourceSpecification)
+      .filter(item =>
+        item?.name
+          .toString()
+          .toLowerCase()
+          .includes(searchData.toLocaleLowerCase()),
+      ) || [];
 
   const searchRInstance =
     resourceInstance?.queryResource?.filter(item =>
@@ -298,7 +306,7 @@ const ModalSteper = (props: Props) => {
                   <List component="nav">
                     <ListItem
                       button
-                      key={item.node?.id}
+                      key={item.id}
                       selected={selectedIndex === index}
                       onClick={event =>
                         handleListItemClick(event, index, item)
@@ -308,7 +316,7 @@ const ModalSteper = (props: Props) => {
                           <RouterIcon fontSize="medium" color="primary" />
                         </Avatar>
                       </ListItemAvatar>
-                      <ListItemText primary={item.node?.name} />
+                      <ListItemText primary={item.name} />
                     </ListItem>
                   </List>
                 ))}
@@ -317,7 +325,7 @@ const ModalSteper = (props: Props) => {
                   <List component="nav">
                     <ListItem
                       button
-                      key={item.node.id}
+                      key={item.id}
                       selected={selectedIndex === index}
                       onClick={event =>
                         handleListItemClick(event, index, item)
@@ -327,7 +335,7 @@ const ModalSteper = (props: Props) => {
                           <RouterIcon fontSize="medium" color="primary" />
                         </Avatar>
                       </ListItemAvatar>
-                      <ListItemText primary={item.node.name} />
+                      <ListItemText primary={item.name} />
                     </ListItem>
                   </List>
                 ))}
@@ -356,7 +364,7 @@ const ModalSteper = (props: Props) => {
               <List component="nav">
                 <ListItem
                   button
-                  key={item.node.id}
+                  key={item.id}
                   selected={selectedIndex === index}
                   onClick={event => handleListItemClick(event, index, item)}>
                   <ListItemAvatar>
@@ -364,7 +372,7 @@ const ModalSteper = (props: Props) => {
                       <RouterIcon fontSize="medium" color="primary" />
                     </Avatar>
                   </ListItemAvatar>
-                  <ListItemText primary={item.node.name} />
+                  <ListItemText primary={item.name} />
                 </ListItem>
               </List>
             ))
@@ -375,7 +383,7 @@ const ModalSteper = (props: Props) => {
             <Grid item xs>
               {activeStep === 3 && (
                 <AddButton
-                  disabled={selectedIndex !== null ? true : false}
+                  disabled={selectedIndex !== null}
                   textButton="New Resource"
                   onClick={() =>
                     !addButtonLink
@@ -395,7 +403,7 @@ const ModalSteper = (props: Props) => {
             <Button
               variant="contained"
               color="primary"
-              disabled={selectedIndex !== null ? false : true}
+              disabled={selectedIndex === null}
               onClick={handleSaveNextModal}>
               {titleSteps.length >= 2 && activeStep === 3 ? 'Add Link' : 'Next'}
             </Button>

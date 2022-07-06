@@ -292,6 +292,7 @@ class Inventory extends React.Component<Props, State> {
                 <ResourceCard
                   mode={card.mode}
                   selectedResourceType={this.state.selectedResourceType}
+                  selectedResourceId={this.state.selectedResourceId}
                   selectedLocationId={this.state.selectedLocationId}
                   onAddResource={selectedResourceType => {
                     this.setState({

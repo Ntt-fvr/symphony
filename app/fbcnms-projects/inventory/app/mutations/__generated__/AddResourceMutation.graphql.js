@@ -32,6 +32,7 @@ export type AddResourceInput = {|
   belongsTo?: ?ResourceRef,
   changeItems?: ?$ReadOnlyArray<?ChangeItemRef>,
   composedOf?: ?$ReadOnlyArray<?ResourceRef>,
+  createTime?: ?any,
   crossConnection?: ?ResourceRef,
   crossconnectionInv?: ?ResourceRef,
   externalId?: ?string,
@@ -50,11 +51,13 @@ export type AddResourceInput = {|
   resourceProperties?: ?$ReadOnlyArray<?ResourcePropertyRef>,
   resourceSpecification: string,
   typePlanningSubStatus?: ?TypePlanningSubStatus,
+  updateTime?: ?any,
   usageSubStatus?: ?UsageSubStatus,
 |};
 export type ActionSchedulerRef = {|
   actionTemplate?: ?ActionTemplateRef,
   actions?: ?$ReadOnlyArray<ActionExecutionRef>,
+  createTime?: ?any,
   cron?: ?string,
   date?: ?any,
   description?: ?string,
@@ -63,28 +66,35 @@ export type ActionSchedulerRef = {|
   resources?: ?$ReadOnlyArray<ResourceRef>,
   status?: ?ActionSchedulerStatus,
   type?: ?ActionSchedulerType,
+  updateTime?: ?any,
 |};
 export type ActionTemplateRef = {|
   actionExecutions?: ?$ReadOnlyArray<ActionExecutionRef>,
   actionTemplateItems?: ?$ReadOnlyArray<ActionTemplateItemRef>,
+  createTime?: ?any,
   id?: ?string,
   name?: ?string,
   resourceSpecifications?: ?string,
   type?: ?ActionTemplateType,
+  updateTime?: ?any,
 |};
 export type ActionExecutionRef = {|
+  createTime?: ?any,
   endTime?: ?any,
   id?: ?string,
   items?: ?$ReadOnlyArray<?ActionExecutionItemRef>,
   scheduler?: ?ActionSchedulerRef,
   starTime?: ?any,
   template?: ?ActionTemplateRef,
+  updateTime?: ?any,
 |};
 export type ActionExecutionItemRef = {|
   action?: ?ActionExecutionRef,
+  createTime?: ?any,
   id?: ?string,
   resources?: ?$ReadOnlyArray<?ResourceRef>,
   status?: ?ActionExecutionItemStatus,
+  updateTime?: ?any,
 |};
 export type ResourceRef = {|
   actionScheduler?: ?ActionSchedulerRef,
@@ -92,6 +102,7 @@ export type ResourceRef = {|
   belongsTo?: ?ResourceRef,
   changeItems?: ?$ReadOnlyArray<?ChangeItemRef>,
   composedOf?: ?$ReadOnlyArray<?ResourceRef>,
+  createTime?: ?any,
   crossConnection?: ?ResourceRef,
   crossconnectionInv?: ?ResourceRef,
   externalId?: ?string,
@@ -111,10 +122,12 @@ export type ResourceRef = {|
   resourceProperties?: ?$ReadOnlyArray<?ResourcePropertyRef>,
   resourceSpecification?: ?string,
   typePlanningSubStatus?: ?TypePlanningSubStatus,
+  updateTime?: ?any,
   usageSubStatus?: ?UsageSubStatus,
 |};
 export type ChangeItemRef = {|
   booleanValue?: ?boolean,
+  createTime?: ?any,
   floatValue?: ?number,
   id?: ?string,
   intValue?: ?number,
@@ -126,10 +139,12 @@ export type ChangeItemRef = {|
   resource?: ?ResourceRef,
   status?: ?ChangeItemStatus,
   stringValue?: ?string,
+  updateTime?: ?any,
 |};
 export type ConfigurationParameterTypeRef = {|
   booleanValue?: ?boolean,
   category?: ?string,
+  createTime?: ?any,
   externalId?: ?string,
   floatValue?: ?number,
   id?: ?string,
@@ -154,9 +169,11 @@ export type ConfigurationParameterTypeRef = {|
   stringValue?: ?string,
   tags?: ?$ReadOnlyArray<ConfigParamTagRef>,
   type?: ?ParameterKind,
+  updateTime?: ?any,
 |};
 export type ParameterRef = {|
   booleanValue?: ?boolean,
+  createTime?: ?any,
   floatValue?: ?number,
   id?: ?string,
   intValue?: ?number,
@@ -167,21 +184,26 @@ export type ParameterRef = {|
   rangeFromValue?: ?number,
   rangeToValue?: ?number,
   stringValue?: ?string,
+  updateTime?: ?any,
   versionCMs?: ?$ReadOnlyArray<?CMVersionRef>,
 |};
 export type CMVersionRef = {|
+  createTime?: ?any,
   id?: ?string,
   parameters?: ?$ReadOnlyArray<ParameterRef>,
   previous?: ?CMVersionRef,
   resource?: ?ResourceRef,
   status?: ?VersionStatus,
+  updateTime?: ?any,
   validFrom?: ?any,
   validTo?: ?any,
 |};
 export type ConfigParamTagRef = {|
+  createTime?: ?any,
   id?: ?string,
   name?: ?string,
   parameters?: ?$ReadOnlyArray<?ConfigurationParameterTypeRef>,
+  updateTime?: ?any,
 |};
 export type NumericPoolRef = {|
   customLimit?: ?number,
@@ -200,6 +222,7 @@ export type StatusNumericPoolRef = {|
 |};
 export type ResourcePropertyRef = {|
   booleanValue?: ?boolean,
+  createTime?: ?any,
   floatValue?: ?number,
   id?: ?string,
   intValue?: ?number,
@@ -211,11 +234,14 @@ export type ResourcePropertyRef = {|
   resource?: ?ResourceRef,
   resourcePropertyType?: ?string,
   stringValue?: ?string,
+  updateTime?: ?any,
 |};
 export type ActionTemplateItemRef = {|
   actionTemplate?: ?ActionTemplateRef,
+  createTime?: ?any,
   id?: ?string,
   parameters?: ?ConfigurationParameterTypeRef,
+  updateTime?: ?any,
   value?: ?ParameterRef,
 |};
 export type AddResourceMutationVariables = {|
@@ -225,10 +251,16 @@ export type AddResourceMutationResponse = {|
   +addResource: ?{|
     +numUids: ?number,
     +resource: ?$ReadOnlyArray<?{|
-      +locatedIn: ?string,
       +name: string,
+      +externalId: ?string,
+      +locatedIn: ?string,
       +resourceSpecification: string,
       +isDeleted: boolean,
+      +lifecycleStatus: ?LifecycleStatus,
+      +planningSubStatus: ?PlanningSubStatus,
+      +typePlanningSubStatus: ?TypePlanningSubStatus,
+      +usageSubStatus: ?UsageSubStatus,
+      +operationalSubStatus: ?OperationalSubStatus,
     |}>,
   |}
 |};
@@ -246,10 +278,16 @@ mutation AddResourceMutation(
   addResource(input: $input) {
     numUids
     resource {
-      locatedIn
       name
+      externalId
+      locatedIn
       resourceSpecification
       isDeleted
+      lifecycleStatus
+      planningSubStatus
+      typePlanningSubStatus
+      usageSubStatus
+      operationalSubStatus
       id
     }
   }
@@ -282,28 +320,70 @@ v3 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "locatedIn",
+  "name": "name",
   "storageKey": null
 },
 v4 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "name",
+  "name": "externalId",
   "storageKey": null
 },
 v5 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "resourceSpecification",
+  "name": "locatedIn",
   "storageKey": null
 },
 v6 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
+  "name": "resourceSpecification",
+  "storageKey": null
+},
+v7 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
   "name": "isDeleted",
+  "storageKey": null
+},
+v8 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "lifecycleStatus",
+  "storageKey": null
+},
+v9 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "planningSubStatus",
+  "storageKey": null
+},
+v10 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "typePlanningSubStatus",
+  "storageKey": null
+},
+v11 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "usageSubStatus",
+  "storageKey": null
+},
+v12 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "operationalSubStatus",
   "storageKey": null
 };
 return {
@@ -333,7 +413,13 @@ return {
               (v3/*: any*/),
               (v4/*: any*/),
               (v5/*: any*/),
-              (v6/*: any*/)
+              (v6/*: any*/),
+              (v7/*: any*/),
+              (v8/*: any*/),
+              (v9/*: any*/),
+              (v10/*: any*/),
+              (v11/*: any*/),
+              (v12/*: any*/)
             ],
             "storageKey": null
           }
@@ -371,6 +457,12 @@ return {
               (v4/*: any*/),
               (v5/*: any*/),
               (v6/*: any*/),
+              (v7/*: any*/),
+              (v8/*: any*/),
+              (v9/*: any*/),
+              (v10/*: any*/),
+              (v11/*: any*/),
+              (v12/*: any*/),
               {
                 "alias": null,
                 "args": null,
@@ -387,16 +479,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "ad44a35aecd9d0bc019d4aa5aa5ae2c9",
+    "cacheID": "f97c2b555a62afe1691b2c8ad4bcef0b",
     "id": null,
     "metadata": {},
     "name": "AddResourceMutation",
     "operationKind": "mutation",
-    "text": "mutation AddResourceMutation(\n  $input: [AddResourceInput!]!\n) {\n  addResource(input: $input) {\n    numUids\n    resource {\n      locatedIn\n      name\n      resourceSpecification\n      isDeleted\n      id\n    }\n  }\n}\n"
+    "text": "mutation AddResourceMutation(\n  $input: [AddResourceInput!]!\n) {\n  addResource(input: $input) {\n    numUids\n    resource {\n      name\n      externalId\n      locatedIn\n      resourceSpecification\n      isDeleted\n      lifecycleStatus\n      planningSubStatus\n      typePlanningSubStatus\n      usageSubStatus\n      operationalSubStatus\n      id\n    }\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = 'dc3617dde21af13d4d55fa51c7a11a3b';
+(node/*: any*/).hash = 'eb09b1c2c8c883b2d95c152a01cb2566';
 
 module.exports = node;
