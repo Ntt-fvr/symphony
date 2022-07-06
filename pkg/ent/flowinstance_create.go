@@ -103,6 +103,14 @@ func (fic *FlowInstanceCreate) SetBssCode(s string) *FlowInstanceCreate {
 	return fic
 }
 
+// SetNillableBssCode sets the bss_code field if the given value is not nil.
+func (fic *FlowInstanceCreate) SetNillableBssCode(s *string) *FlowInstanceCreate {
+	if s != nil {
+		fic.SetBssCode(*s)
+	}
+	return fic
+}
+
 // SetServiceInstanceCode sets the service_instance_code field.
 func (fic *FlowInstanceCreate) SetServiceInstanceCode(s string) *FlowInstanceCreate {
 	fic.mutation.SetServiceInstanceCode(s)
@@ -297,9 +305,6 @@ func (fic *FlowInstanceCreate) check() error {
 		if err := flowinstance.StatusValidator(v); err != nil {
 			return &ValidationError{Name: "status", err: fmt.Errorf("ent: validator failed for field \"status\": %w", err)}
 		}
-	}
-	if _, ok := fic.mutation.BssCode(); !ok {
-		return &ValidationError{Name: "bss_code", err: errors.New("ent: missing required field \"bss_code\"")}
 	}
 	if _, ok := fic.mutation.StartDate(); !ok {
 		return &ValidationError{Name: "start_date", err: errors.New("ent: missing required field \"start_date\"")}

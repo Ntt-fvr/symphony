@@ -174,7 +174,7 @@ func (r mutationResolver) StartFlow(ctx context.Context, input models.StartFlowI
 	client := r.ClientFrom(ctx)
 	flowInstance, err := client.FlowInstance.Create().
 		SetFlowID(input.FlowID).
-		SetBssCode(input.BssCode).
+		// SetNillableBssCode(&input.BssCode).
 		SetStartDate(input.StartDate).
 		SetStartParams(input.Params).
 		Save(ctx)

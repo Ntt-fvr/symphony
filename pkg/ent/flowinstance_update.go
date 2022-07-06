@@ -101,6 +101,20 @@ func (fiu *FlowInstanceUpdate) SetBssCode(s string) *FlowInstanceUpdate {
 	return fiu
 }
 
+// SetNillableBssCode sets the bss_code field if the given value is not nil.
+func (fiu *FlowInstanceUpdate) SetNillableBssCode(s *string) *FlowInstanceUpdate {
+	if s != nil {
+		fiu.SetBssCode(*s)
+	}
+	return fiu
+}
+
+// ClearBssCode clears the value of bss_code.
+func (fiu *FlowInstanceUpdate) ClearBssCode() *FlowInstanceUpdate {
+	fiu.mutation.ClearBssCode()
+	return fiu
+}
+
 // SetServiceInstanceCode sets the service_instance_code field.
 func (fiu *FlowInstanceUpdate) SetServiceInstanceCode(s string) *FlowInstanceUpdate {
 	fiu.mutation.SetServiceInstanceCode(s)
@@ -448,6 +462,12 @@ func (fiu *FlowInstanceUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: flowinstance.FieldBssCode,
 		})
 	}
+	if fiu.mutation.BssCodeCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Column: flowinstance.FieldBssCode,
+		})
+	}
 	if value, ok := fiu.mutation.ServiceInstanceCode(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
@@ -773,6 +793,20 @@ func (fiuo *FlowInstanceUpdateOne) ClearIncompletionReason() *FlowInstanceUpdate
 // SetBssCode sets the bss_code field.
 func (fiuo *FlowInstanceUpdateOne) SetBssCode(s string) *FlowInstanceUpdateOne {
 	fiuo.mutation.SetBssCode(s)
+	return fiuo
+}
+
+// SetNillableBssCode sets the bss_code field if the given value is not nil.
+func (fiuo *FlowInstanceUpdateOne) SetNillableBssCode(s *string) *FlowInstanceUpdateOne {
+	if s != nil {
+		fiuo.SetBssCode(*s)
+	}
+	return fiuo
+}
+
+// ClearBssCode clears the value of bss_code.
+func (fiuo *FlowInstanceUpdateOne) ClearBssCode() *FlowInstanceUpdateOne {
+	fiuo.mutation.ClearBssCode()
 	return fiuo
 }
 
@@ -1118,6 +1152,12 @@ func (fiuo *FlowInstanceUpdateOne) sqlSave(ctx context.Context) (_node *FlowInst
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Value:  value,
+			Column: flowinstance.FieldBssCode,
+		})
+	}
+	if fiuo.mutation.BssCodeCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
 			Column: flowinstance.FieldBssCode,
 		})
 	}

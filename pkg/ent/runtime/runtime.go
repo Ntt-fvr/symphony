@@ -1147,6 +1147,8 @@ func init() {
 	flowinstance.Hooks[1] = flowinstanceHooks[0]
 
 	flowinstance.Hooks[2] = flowinstanceHooks[1]
+
+	flowinstance.Hooks[3] = flowinstanceHooks[2]
 	flowinstanceMixinFields0 := flowinstanceMixin[0].Fields()
 	flowinstanceMixinFields1 := flowinstanceMixin[1].Fields()
 	flowinstanceFields := schema.FlowInstance{}.Fields()

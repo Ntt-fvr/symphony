@@ -1253,7 +1253,7 @@ var (
 		{Name: "start_params", Type: field.TypeJSON, Nullable: true},
 		{Name: "output_params", Type: field.TypeJSON, Nullable: true},
 		{Name: "incompletion_reason", Type: field.TypeString, Nullable: true},
-		{Name: "bss_code", Type: field.TypeString},
+		{Name: "bss_code", Type: field.TypeString, Nullable: true},
 		{Name: "service_instance_code", Type: field.TypeString, Nullable: true},
 		{Name: "start_date", Type: field.TypeTime},
 		{Name: "end_date", Type: field.TypeTime, Nullable: true},

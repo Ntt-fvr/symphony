@@ -596,6 +596,20 @@ func BssCodeHasSuffix(v string) predicate.FlowInstance {
 	})
 }
 
+// BssCodeIsNil applies the IsNil predicate on the "bss_code" field.
+func BssCodeIsNil() predicate.FlowInstance {
+	return predicate.FlowInstance(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldBssCode)))
+	})
+}
+
+// BssCodeNotNil applies the NotNil predicate on the "bss_code" field.
+func BssCodeNotNil() predicate.FlowInstance {
+	return predicate.FlowInstance(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldBssCode)))
+	})
+}
+
 // BssCodeEqualFold applies the EqualFold predicate on the "bss_code" field.
 func BssCodeEqualFold(v string) predicate.FlowInstance {
 	return predicate.FlowInstance(func(s *sql.Selector) {

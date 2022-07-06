@@ -186,7 +186,8 @@ func (FlowInstance) Fields() []ent.Field {
 			Optional(),
 		field.String("incompletion_reason").
 			Optional(),
-		field.String("bss_code"),
+		field.String("bss_code").
+			Optional(),
 		field.String("service_instance_code").
 			Optional(),
 		field.Time("start_date").

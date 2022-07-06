@@ -34216,9 +34216,22 @@ func (m *FlowInstanceMutation) OldBssCode(ctx context.Context) (v string, err er
 	return oldValue.BssCode, nil
 }
 
+// ClearBssCode clears the value of bss_code.
+func (m *FlowInstanceMutation) ClearBssCode() {
+	m.bss_code = nil
+	m.clearedFields[flowinstance.FieldBssCode] = struct{}{}
+}
+
+// BssCodeCleared returns if the field bss_code was cleared in this mutation.
+func (m *FlowInstanceMutation) BssCodeCleared() bool {
+	_, ok := m.clearedFields[flowinstance.FieldBssCode]
+	return ok
+}
+
 // ResetBssCode reset all changes of the "bss_code" field.
 func (m *FlowInstanceMutation) ResetBssCode() {
 	m.bss_code = nil
+	delete(m.clearedFields, flowinstance.FieldBssCode)
 }
 
 // SetServiceInstanceCode sets the service_instance_code field.
@@ -34801,6 +34814,9 @@ func (m *FlowInstanceMutation) ClearedFields() []string {
 	if m.FieldCleared(flowinstance.FieldIncompletionReason) {
 		fields = append(fields, flowinstance.FieldIncompletionReason)
 	}
+	if m.FieldCleared(flowinstance.FieldBssCode) {
+		fields = append(fields, flowinstance.FieldBssCode)
+	}
 	if m.FieldCleared(flowinstance.FieldServiceInstanceCode) {
 		fields = append(fields, flowinstance.FieldServiceInstanceCode)
 	}
@@ -34829,6 +34845,9 @@ func (m *FlowInstanceMutation) ClearField(name string) error {
 		return nil
 	case flowinstance.FieldIncompletionReason:
 		m.ClearIncompletionReason()
+		return nil
+	case flowinstance.FieldBssCode:
+		m.ClearBssCode()
 		return nil
 	case flowinstance.FieldServiceInstanceCode:
 		m.ClearServiceInstanceCode()
