@@ -37,14 +37,14 @@ export type Props = $ReadOnly<{|
   dataConfig?: any,
 |}>;
 
-const ConfigurationViewQueryRenderer = (props: Props) => {
+const ConfigurationTable = (props: Props) => {
   const {dataConfig} = props;
 
-  console.log('tabla-> ', dataConfig);
+  // console.log('tabla-> ', dataConfig);
 
-  const {queryCMVersion, queryResource, resourceSpecification} = dataConfig;
+  // const {queryCMVersion, queryResource, resourceSpecification} = dataConfig;
 
-  console.log('CMV', queryCMVersion, dataMock);
+  console.log('CMV', dataMock);
 
   const tableColumns = [
     {
@@ -82,7 +82,7 @@ const ConfigurationViewQueryRenderer = (props: Props) => {
   return (
     <Grid>
       <Table
-        data={queryCMVersion}
+        data={dataConfig}
         columns={[
           {
             key: 'resource',
@@ -110,4 +110,4 @@ const ConfigurationViewQueryRenderer = (props: Props) => {
   );
 };
 
-export {ConfigurationViewQueryRenderer};
+export {ConfigurationTable};

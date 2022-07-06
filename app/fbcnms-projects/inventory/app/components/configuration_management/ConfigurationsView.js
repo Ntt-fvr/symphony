@@ -15,7 +15,7 @@ import PowerSearchBar from '../power_search/PowerSearchBar';
 import React, {useMemo, useState} from 'react';
 import Table from '@symphony/design-system/components/Table/Table';
 import fbt from 'fbt';
-import {ConfigurationViewQueryRenderer} from './ConfigurationViewQueryRenderer';
+import {ConfigurationTable} from './ConfigurationTable';
 import {Grid} from '@material-ui/core';
 import {ResourcesSearchConfig} from './ResourcesSearchConfig';
 import {getInitialFilterValue} from '../comparison_view/FilterUtils';
@@ -106,20 +106,37 @@ const Configurations = graphql`
 `;
 
 const ConfigurationsView = () => {
+  const dataQuery = useLazyLoadQuery<ConfigurationsViewQuery>(Configurations);
+
+  const {queryCMVersion} = dataQuery;
+
   const [filters, setFilters] = useState([]);
+  const [dataTable, setDataTable] = useState(queryCMVersion);
+
   const classes = useStyles();
-  const dataConfig = useLazyLoadQuery<ConfigurationsViewQuery>(Configurations);
+  // const dataConfig = useLazyLoadQuery<ConfigurationsViewQuery>(Configurations);
 
-  // console.log('>>>>', dataConfig);
-
-  const filterConfigs = useMemo(() =>
-    ResourcesSearchConfig.map(ent => ent.filters).reduce(
-      (allFilters, currentFilter) => allFilters.concat(currentFilter),
-      [],
-    ),
+  const filterConfigs = useMemo(
+    () =>
+      ResourcesSearchConfig.map(ent => ent.filters).reduce(
+        (allFilters, currentFilter) => allFilters.concat(currentFilter),
+        [],
+      ),
+    [],
   );
-  // console.log('-> ', filterConfigs, ResourcesSearchConfig);
-  // console.log(filters);
+
+  const filterData = filterChange => {
+    console.log('filtro-cambio ->', filterChange);
+
+    const filterName = queryCMVersion.filter(
+      item => item.resource.name === filterChange[0].stringValue,
+    );
+    console.log('FILTRO-NAME -> ', filterName);
+    setDataTable(filterName);
+    // setPato(filterName);
+  };
+
+  console.log('View-> ', ResourcesSearchConfig, dataTable, queryCMVersion);
 
   return (
     <Grid className={classes.root} container spacing={0}>
@@ -137,8 +154,8 @@ const ConfigurationsView = () => {
           <div className={classes.searchBar}>
             <PowerSearchBar
               placeholder="Configuration"
-              filterConfigs={filterConfigs}
-              searchConfig={ResourcesSearchConfig}
+              filterConfigs={filterConfigs} //opciones de filtrado
+              searchConfig={ResourcesSearchConfig} //opciones de filtrado unificadas
               filterValues={filters}
               getSelectedFilter={(filterConfig: FilterConfig) =>
                 getInitialFilterValue(
@@ -148,7 +165,7 @@ const ConfigurationsView = () => {
                   null,
                 )
               }
-              onFiltersChanged={filters => setFilters(filters)}
+              onFiltersChanged={filterChange => filterData(filterChange)}
               exportPath={'/configurations_views'}
               //entity={'RESOURCE'}
             />
@@ -156,7 +173,7 @@ const ConfigurationsView = () => {
         </div>
       </Grid>
       <Grid item xs={12} style={{margin: '20px 0 0 0'}}>
-        <ConfigurationViewQueryRenderer dataConfig={dataConfig} />
+        <ConfigurationTable dataConfig={dataTable} />
       </Grid>
     </Grid>
   );

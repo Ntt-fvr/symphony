@@ -121,16 +121,15 @@ const ChangeRequestTypes = () => {
 
   const filterConfigs = useMemo(
     () =>
-      ChangeRequestSearchConfig.map(ent => ent.filters)
-        .reduce(
-          (allFilters, currentFilter) => allFilters.concat(currentFilter),
-          [],
-        )
-        .concat(locationTypesFilterConfigs ?? [])
-        .concat(projectPropertiesFilterConfigs ?? []),
+      ChangeRequestSearchConfig.map(ent => ent.filters).reduce(
+        (allFilters, currentFilter) => allFilters.concat(currentFilter),
+        [],
+      ),
+    // .concat(locationTypesFilterConfigs ?? [])
+    // .concat(projectPropertiesFilterConfigs ?? []),
     [locationTypesFilterConfigs, projectPropertiesFilterConfigs],
   );
-
+  console.log('opt', filterConfigs);
   useEffect(() => {
     dataListInitial();
   }, []);
@@ -254,6 +253,7 @@ const ChangeRequestTypes = () => {
   }
 
   const filterData = filters => {
+    console.log(filters, '****');
     const arrayFilters = [];
     const data = {};
 
