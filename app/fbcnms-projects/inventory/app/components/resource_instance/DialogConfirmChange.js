@@ -53,12 +53,18 @@ type Props = $ReadOnly<{|
 |}>;
 
 const DialogConfirmChange = (props: Props) => {
-  const {onClose, setIsDialogConfirmChange, activeStep, handleBackStep} = props;
-
+  const {
+    onClose,
+    setIsDialogConfirmChange,
+    activeStep,
+    handleBackStep,
+    createChangeRequest,
+  } = props;
   const classes = useStyles();
   const handleBack = () => {
     setIsDialogConfirmChange(prev => !prev);
   };
+
   return (
     <div>
       <Grid container justify={'center'} style={{background: '#F5F7FC'}}>
@@ -107,6 +113,7 @@ const DialogConfirmChange = (props: Props) => {
         </Button>
         <Button
           onClick={() => {
+            createChangeRequest();
             onClose();
           }}
           style={{height: '36px'}}
