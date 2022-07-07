@@ -10,6 +10,8 @@
 
 import AppContext from '@fbcnms/ui/context/AppContext';
 import AssignmentIcon from '@material-ui/icons/Assignment';
+import DashboardIcon from '@material-ui/icons/Dashboard';
+import EngineeringIcon from '@material-ui/icons/Engineering';
 import LinearScaleIcon from '@material-ui/icons/LinearScale';
 import MapIcon from '@material-ui/icons/Map';
 import NavListItem from '@fbcnms/ui/components/NavListItem';
@@ -68,6 +70,25 @@ export default function MainNavListItems() {
         ServerLogger.info(LogEvents.SERVICES_NAV_CLICKED);
       }}
       hidden={!servicesEnabled}
+    />,
+    <NavListItem
+      key={6}
+      label="Configuration management"
+      path={relativeUrl('/configuration_management')}
+      icon={<DashboardIcon />}
+      onClick={() => {
+        ServerLogger.info(LogEvents.CHANGE_NAV_CLICKED);
+      }}
+    />,
+
+    <NavListItem
+      key={7}
+      label="Action Execution"
+      path={relativeUrl('/action_execution')}
+      icon={<EngineeringIcon />}
+      onClick={() => {
+        ServerLogger.info(LogEvents.ACTION_EXECUTION_NAV_CLICKED);
+      }}
     />,
   ];
 }

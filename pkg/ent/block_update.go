@@ -9,6 +9,7 @@ package ent
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"github.com/facebook/ent/dialect/sql"
 	"github.com/facebook/ent/dialect/sql/sqlgraph"
@@ -21,6 +22,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/flowdraft"
 	"github.com/facebookincubator/symphony/pkg/ent/flowexecutiontemplate"
 	"github.com/facebookincubator/symphony/pkg/ent/predicate"
+	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
 	"github.com/facebookincubator/symphony/pkg/flowengine/flowschema"
 )
 
@@ -122,6 +124,792 @@ func (bu *BlockUpdate) SetUIRepresentation(fur *flowschema.BlockUIRepresentation
 // ClearUIRepresentation clears the value of ui_representation.
 func (bu *BlockUpdate) ClearUIRepresentation() *BlockUpdate {
 	bu.mutation.ClearUIRepresentation()
+	return bu
+}
+
+// SetEnableInputTransformation sets the enable_input_transformation field.
+func (bu *BlockUpdate) SetEnableInputTransformation(b bool) *BlockUpdate {
+	bu.mutation.SetEnableInputTransformation(b)
+	return bu
+}
+
+// SetNillableEnableInputTransformation sets the enable_input_transformation field if the given value is not nil.
+func (bu *BlockUpdate) SetNillableEnableInputTransformation(b *bool) *BlockUpdate {
+	if b != nil {
+		bu.SetEnableInputTransformation(*b)
+	}
+	return bu
+}
+
+// ClearEnableInputTransformation clears the value of enable_input_transformation.
+func (bu *BlockUpdate) ClearEnableInputTransformation() *BlockUpdate {
+	bu.mutation.ClearEnableInputTransformation()
+	return bu
+}
+
+// SetInputTransfStrategy sets the input_transf_strategy field.
+func (bu *BlockUpdate) SetInputTransfStrategy(es enum.TransfStrategy) *BlockUpdate {
+	bu.mutation.SetInputTransfStrategy(es)
+	return bu
+}
+
+// SetNillableInputTransfStrategy sets the input_transf_strategy field if the given value is not nil.
+func (bu *BlockUpdate) SetNillableInputTransfStrategy(es *enum.TransfStrategy) *BlockUpdate {
+	if es != nil {
+		bu.SetInputTransfStrategy(*es)
+	}
+	return bu
+}
+
+// ClearInputTransfStrategy clears the value of input_transf_strategy.
+func (bu *BlockUpdate) ClearInputTransfStrategy() *BlockUpdate {
+	bu.mutation.ClearInputTransfStrategy()
+	return bu
+}
+
+// SetInputTransformation sets the input_transformation field.
+func (bu *BlockUpdate) SetInputTransformation(s string) *BlockUpdate {
+	bu.mutation.SetInputTransformation(s)
+	return bu
+}
+
+// SetNillableInputTransformation sets the input_transformation field if the given value is not nil.
+func (bu *BlockUpdate) SetNillableInputTransformation(s *string) *BlockUpdate {
+	if s != nil {
+		bu.SetInputTransformation(*s)
+	}
+	return bu
+}
+
+// ClearInputTransformation clears the value of input_transformation.
+func (bu *BlockUpdate) ClearInputTransformation() *BlockUpdate {
+	bu.mutation.ClearInputTransformation()
+	return bu
+}
+
+// SetEnableOutputTransformation sets the enable_output_transformation field.
+func (bu *BlockUpdate) SetEnableOutputTransformation(b bool) *BlockUpdate {
+	bu.mutation.SetEnableOutputTransformation(b)
+	return bu
+}
+
+// SetNillableEnableOutputTransformation sets the enable_output_transformation field if the given value is not nil.
+func (bu *BlockUpdate) SetNillableEnableOutputTransformation(b *bool) *BlockUpdate {
+	if b != nil {
+		bu.SetEnableOutputTransformation(*b)
+	}
+	return bu
+}
+
+// ClearEnableOutputTransformation clears the value of enable_output_transformation.
+func (bu *BlockUpdate) ClearEnableOutputTransformation() *BlockUpdate {
+	bu.mutation.ClearEnableOutputTransformation()
+	return bu
+}
+
+// SetOutputTransfStrategy sets the output_transf_strategy field.
+func (bu *BlockUpdate) SetOutputTransfStrategy(es enum.TransfStrategy) *BlockUpdate {
+	bu.mutation.SetOutputTransfStrategy(es)
+	return bu
+}
+
+// SetNillableOutputTransfStrategy sets the output_transf_strategy field if the given value is not nil.
+func (bu *BlockUpdate) SetNillableOutputTransfStrategy(es *enum.TransfStrategy) *BlockUpdate {
+	if es != nil {
+		bu.SetOutputTransfStrategy(*es)
+	}
+	return bu
+}
+
+// ClearOutputTransfStrategy clears the value of output_transf_strategy.
+func (bu *BlockUpdate) ClearOutputTransfStrategy() *BlockUpdate {
+	bu.mutation.ClearOutputTransfStrategy()
+	return bu
+}
+
+// SetOutputTransformation sets the output_transformation field.
+func (bu *BlockUpdate) SetOutputTransformation(s string) *BlockUpdate {
+	bu.mutation.SetOutputTransformation(s)
+	return bu
+}
+
+// SetNillableOutputTransformation sets the output_transformation field if the given value is not nil.
+func (bu *BlockUpdate) SetNillableOutputTransformation(s *string) *BlockUpdate {
+	if s != nil {
+		bu.SetOutputTransformation(*s)
+	}
+	return bu
+}
+
+// ClearOutputTransformation clears the value of output_transformation.
+func (bu *BlockUpdate) ClearOutputTransformation() *BlockUpdate {
+	bu.mutation.ClearOutputTransformation()
+	return bu
+}
+
+// SetEnableInputStateTransformation sets the enable_input_state_transformation field.
+func (bu *BlockUpdate) SetEnableInputStateTransformation(b bool) *BlockUpdate {
+	bu.mutation.SetEnableInputStateTransformation(b)
+	return bu
+}
+
+// SetNillableEnableInputStateTransformation sets the enable_input_state_transformation field if the given value is not nil.
+func (bu *BlockUpdate) SetNillableEnableInputStateTransformation(b *bool) *BlockUpdate {
+	if b != nil {
+		bu.SetEnableInputStateTransformation(*b)
+	}
+	return bu
+}
+
+// ClearEnableInputStateTransformation clears the value of enable_input_state_transformation.
+func (bu *BlockUpdate) ClearEnableInputStateTransformation() *BlockUpdate {
+	bu.mutation.ClearEnableInputStateTransformation()
+	return bu
+}
+
+// SetInputStateTransfStrategy sets the input_state_transf_strategy field.
+func (bu *BlockUpdate) SetInputStateTransfStrategy(es enum.TransfStrategy) *BlockUpdate {
+	bu.mutation.SetInputStateTransfStrategy(es)
+	return bu
+}
+
+// SetNillableInputStateTransfStrategy sets the input_state_transf_strategy field if the given value is not nil.
+func (bu *BlockUpdate) SetNillableInputStateTransfStrategy(es *enum.TransfStrategy) *BlockUpdate {
+	if es != nil {
+		bu.SetInputStateTransfStrategy(*es)
+	}
+	return bu
+}
+
+// ClearInputStateTransfStrategy clears the value of input_state_transf_strategy.
+func (bu *BlockUpdate) ClearInputStateTransfStrategy() *BlockUpdate {
+	bu.mutation.ClearInputStateTransfStrategy()
+	return bu
+}
+
+// SetInputStateTransformation sets the input_state_transformation field.
+func (bu *BlockUpdate) SetInputStateTransformation(s string) *BlockUpdate {
+	bu.mutation.SetInputStateTransformation(s)
+	return bu
+}
+
+// SetNillableInputStateTransformation sets the input_state_transformation field if the given value is not nil.
+func (bu *BlockUpdate) SetNillableInputStateTransformation(s *string) *BlockUpdate {
+	if s != nil {
+		bu.SetInputStateTransformation(*s)
+	}
+	return bu
+}
+
+// ClearInputStateTransformation clears the value of input_state_transformation.
+func (bu *BlockUpdate) ClearInputStateTransformation() *BlockUpdate {
+	bu.mutation.ClearInputStateTransformation()
+	return bu
+}
+
+// SetEnableOutputStateTransformation sets the enable_output_state_transformation field.
+func (bu *BlockUpdate) SetEnableOutputStateTransformation(b bool) *BlockUpdate {
+	bu.mutation.SetEnableOutputStateTransformation(b)
+	return bu
+}
+
+// SetNillableEnableOutputStateTransformation sets the enable_output_state_transformation field if the given value is not nil.
+func (bu *BlockUpdate) SetNillableEnableOutputStateTransformation(b *bool) *BlockUpdate {
+	if b != nil {
+		bu.SetEnableOutputStateTransformation(*b)
+	}
+	return bu
+}
+
+// ClearEnableOutputStateTransformation clears the value of enable_output_state_transformation.
+func (bu *BlockUpdate) ClearEnableOutputStateTransformation() *BlockUpdate {
+	bu.mutation.ClearEnableOutputStateTransformation()
+	return bu
+}
+
+// SetOutputStateTransfStrategy sets the output_state_transf_strategy field.
+func (bu *BlockUpdate) SetOutputStateTransfStrategy(es enum.TransfStrategy) *BlockUpdate {
+	bu.mutation.SetOutputStateTransfStrategy(es)
+	return bu
+}
+
+// SetNillableOutputStateTransfStrategy sets the output_state_transf_strategy field if the given value is not nil.
+func (bu *BlockUpdate) SetNillableOutputStateTransfStrategy(es *enum.TransfStrategy) *BlockUpdate {
+	if es != nil {
+		bu.SetOutputStateTransfStrategy(*es)
+	}
+	return bu
+}
+
+// ClearOutputStateTransfStrategy clears the value of output_state_transf_strategy.
+func (bu *BlockUpdate) ClearOutputStateTransfStrategy() *BlockUpdate {
+	bu.mutation.ClearOutputStateTransfStrategy()
+	return bu
+}
+
+// SetOutputStateTransformation sets the output_state_transformation field.
+func (bu *BlockUpdate) SetOutputStateTransformation(s string) *BlockUpdate {
+	bu.mutation.SetOutputStateTransformation(s)
+	return bu
+}
+
+// SetNillableOutputStateTransformation sets the output_state_transformation field if the given value is not nil.
+func (bu *BlockUpdate) SetNillableOutputStateTransformation(s *string) *BlockUpdate {
+	if s != nil {
+		bu.SetOutputStateTransformation(*s)
+	}
+	return bu
+}
+
+// ClearOutputStateTransformation clears the value of output_state_transformation.
+func (bu *BlockUpdate) ClearOutputStateTransformation() *BlockUpdate {
+	bu.mutation.ClearOutputStateTransformation()
+	return bu
+}
+
+// SetEnableErrorHandling sets the enable_error_handling field.
+func (bu *BlockUpdate) SetEnableErrorHandling(b bool) *BlockUpdate {
+	bu.mutation.SetEnableErrorHandling(b)
+	return bu
+}
+
+// SetNillableEnableErrorHandling sets the enable_error_handling field if the given value is not nil.
+func (bu *BlockUpdate) SetNillableEnableErrorHandling(b *bool) *BlockUpdate {
+	if b != nil {
+		bu.SetEnableErrorHandling(*b)
+	}
+	return bu
+}
+
+// ClearEnableErrorHandling clears the value of enable_error_handling.
+func (bu *BlockUpdate) ClearEnableErrorHandling() *BlockUpdate {
+	bu.mutation.ClearEnableErrorHandling()
+	return bu
+}
+
+// SetEnableRetryPolicy sets the enable_retry_policy field.
+func (bu *BlockUpdate) SetEnableRetryPolicy(b bool) *BlockUpdate {
+	bu.mutation.SetEnableRetryPolicy(b)
+	return bu
+}
+
+// SetNillableEnableRetryPolicy sets the enable_retry_policy field if the given value is not nil.
+func (bu *BlockUpdate) SetNillableEnableRetryPolicy(b *bool) *BlockUpdate {
+	if b != nil {
+		bu.SetEnableRetryPolicy(*b)
+	}
+	return bu
+}
+
+// ClearEnableRetryPolicy clears the value of enable_retry_policy.
+func (bu *BlockUpdate) ClearEnableRetryPolicy() *BlockUpdate {
+	bu.mutation.ClearEnableRetryPolicy()
+	return bu
+}
+
+// SetRetryInterval sets the retryInterval field.
+func (bu *BlockUpdate) SetRetryInterval(i int) *BlockUpdate {
+	bu.mutation.ResetRetryInterval()
+	bu.mutation.SetRetryInterval(i)
+	return bu
+}
+
+// SetNillableRetryInterval sets the retryInterval field if the given value is not nil.
+func (bu *BlockUpdate) SetNillableRetryInterval(i *int) *BlockUpdate {
+	if i != nil {
+		bu.SetRetryInterval(*i)
+	}
+	return bu
+}
+
+// AddRetryInterval adds i to retryInterval.
+func (bu *BlockUpdate) AddRetryInterval(i int) *BlockUpdate {
+	bu.mutation.AddRetryInterval(i)
+	return bu
+}
+
+// ClearRetryInterval clears the value of retryInterval.
+func (bu *BlockUpdate) ClearRetryInterval() *BlockUpdate {
+	bu.mutation.ClearRetryInterval()
+	return bu
+}
+
+// SetRetryUnit sets the retry_unit field.
+func (bu *BlockUpdate) SetRetryUnit(value block.RetryUnit) *BlockUpdate {
+	bu.mutation.SetRetryUnit(value)
+	return bu
+}
+
+// SetNillableRetryUnit sets the retry_unit field if the given value is not nil.
+func (bu *BlockUpdate) SetNillableRetryUnit(value *block.RetryUnit) *BlockUpdate {
+	if value != nil {
+		bu.SetRetryUnit(*value)
+	}
+	return bu
+}
+
+// ClearRetryUnit clears the value of retry_unit.
+func (bu *BlockUpdate) ClearRetryUnit() *BlockUpdate {
+	bu.mutation.ClearRetryUnit()
+	return bu
+}
+
+// SetMaxAttemps sets the maxAttemps field.
+func (bu *BlockUpdate) SetMaxAttemps(i int) *BlockUpdate {
+	bu.mutation.ResetMaxAttemps()
+	bu.mutation.SetMaxAttemps(i)
+	return bu
+}
+
+// SetNillableMaxAttemps sets the maxAttemps field if the given value is not nil.
+func (bu *BlockUpdate) SetNillableMaxAttemps(i *int) *BlockUpdate {
+	if i != nil {
+		bu.SetMaxAttemps(*i)
+	}
+	return bu
+}
+
+// AddMaxAttemps adds i to maxAttemps.
+func (bu *BlockUpdate) AddMaxAttemps(i int) *BlockUpdate {
+	bu.mutation.AddMaxAttemps(i)
+	return bu
+}
+
+// ClearMaxAttemps clears the value of maxAttemps.
+func (bu *BlockUpdate) ClearMaxAttemps() *BlockUpdate {
+	bu.mutation.ClearMaxAttemps()
+	return bu
+}
+
+// SetBackOffRate sets the backOffRate field.
+func (bu *BlockUpdate) SetBackOffRate(i int) *BlockUpdate {
+	bu.mutation.ResetBackOffRate()
+	bu.mutation.SetBackOffRate(i)
+	return bu
+}
+
+// SetNillableBackOffRate sets the backOffRate field if the given value is not nil.
+func (bu *BlockUpdate) SetNillableBackOffRate(i *int) *BlockUpdate {
+	if i != nil {
+		bu.SetBackOffRate(*i)
+	}
+	return bu
+}
+
+// AddBackOffRate adds i to backOffRate.
+func (bu *BlockUpdate) AddBackOffRate(i int) *BlockUpdate {
+	bu.mutation.AddBackOffRate(i)
+	return bu
+}
+
+// ClearBackOffRate clears the value of backOffRate.
+func (bu *BlockUpdate) ClearBackOffRate() *BlockUpdate {
+	bu.mutation.ClearBackOffRate()
+	return bu
+}
+
+// SetTimerBehavior sets the timer_behavior field.
+func (bu *BlockUpdate) SetTimerBehavior(bb block.TimerBehavior) *BlockUpdate {
+	bu.mutation.SetTimerBehavior(bb)
+	return bu
+}
+
+// SetNillableTimerBehavior sets the timer_behavior field if the given value is not nil.
+func (bu *BlockUpdate) SetNillableTimerBehavior(bb *block.TimerBehavior) *BlockUpdate {
+	if bb != nil {
+		bu.SetTimerBehavior(*bb)
+	}
+	return bu
+}
+
+// ClearTimerBehavior clears the value of timer_behavior.
+func (bu *BlockUpdate) ClearTimerBehavior() *BlockUpdate {
+	bu.mutation.ClearTimerBehavior()
+	return bu
+}
+
+// SetSeconds sets the seconds field.
+func (bu *BlockUpdate) SetSeconds(i int) *BlockUpdate {
+	bu.mutation.ResetSeconds()
+	bu.mutation.SetSeconds(i)
+	return bu
+}
+
+// SetNillableSeconds sets the seconds field if the given value is not nil.
+func (bu *BlockUpdate) SetNillableSeconds(i *int) *BlockUpdate {
+	if i != nil {
+		bu.SetSeconds(*i)
+	}
+	return bu
+}
+
+// AddSeconds adds i to seconds.
+func (bu *BlockUpdate) AddSeconds(i int) *BlockUpdate {
+	bu.mutation.AddSeconds(i)
+	return bu
+}
+
+// ClearSeconds clears the value of seconds.
+func (bu *BlockUpdate) ClearSeconds() *BlockUpdate {
+	bu.mutation.ClearSeconds()
+	return bu
+}
+
+// SetEnableTimerExpression sets the enable_timer_expression field.
+func (bu *BlockUpdate) SetEnableTimerExpression(b bool) *BlockUpdate {
+	bu.mutation.SetEnableTimerExpression(b)
+	return bu
+}
+
+// SetNillableEnableTimerExpression sets the enable_timer_expression field if the given value is not nil.
+func (bu *BlockUpdate) SetNillableEnableTimerExpression(b *bool) *BlockUpdate {
+	if b != nil {
+		bu.SetEnableTimerExpression(*b)
+	}
+	return bu
+}
+
+// ClearEnableTimerExpression clears the value of enable_timer_expression.
+func (bu *BlockUpdate) ClearEnableTimerExpression() *BlockUpdate {
+	bu.mutation.ClearEnableTimerExpression()
+	return bu
+}
+
+// SetTimerExpression sets the timer_expression field.
+func (bu *BlockUpdate) SetTimerExpression(s string) *BlockUpdate {
+	bu.mutation.SetTimerExpression(s)
+	return bu
+}
+
+// SetNillableTimerExpression sets the timer_expression field if the given value is not nil.
+func (bu *BlockUpdate) SetNillableTimerExpression(s *string) *BlockUpdate {
+	if s != nil {
+		bu.SetTimerExpression(*s)
+	}
+	return bu
+}
+
+// ClearTimerExpression clears the value of timer_expression.
+func (bu *BlockUpdate) ClearTimerExpression() *BlockUpdate {
+	bu.mutation.ClearTimerExpression()
+	return bu
+}
+
+// SetTimerSpecificDate sets the timer_specific_date field.
+func (bu *BlockUpdate) SetTimerSpecificDate(t time.Time) *BlockUpdate {
+	bu.mutation.SetTimerSpecificDate(t)
+	return bu
+}
+
+// SetNillableTimerSpecificDate sets the timer_specific_date field if the given value is not nil.
+func (bu *BlockUpdate) SetNillableTimerSpecificDate(t *time.Time) *BlockUpdate {
+	if t != nil {
+		bu.SetTimerSpecificDate(*t)
+	}
+	return bu
+}
+
+// ClearTimerSpecificDate clears the value of timer_specific_date.
+func (bu *BlockUpdate) ClearTimerSpecificDate() *BlockUpdate {
+	bu.mutation.ClearTimerSpecificDate()
+	return bu
+}
+
+// SetURLMethod sets the url_method field.
+func (bu *BlockUpdate) SetURLMethod(bm block.URLMethod) *BlockUpdate {
+	bu.mutation.SetURLMethod(bm)
+	return bu
+}
+
+// SetNillableURLMethod sets the url_method field if the given value is not nil.
+func (bu *BlockUpdate) SetNillableURLMethod(bm *block.URLMethod) *BlockUpdate {
+	if bm != nil {
+		bu.SetURLMethod(*bm)
+	}
+	return bu
+}
+
+// ClearURLMethod clears the value of url_method.
+func (bu *BlockUpdate) ClearURLMethod() *BlockUpdate {
+	bu.mutation.ClearURLMethod()
+	return bu
+}
+
+// SetURL sets the url field.
+func (bu *BlockUpdate) SetURL(s string) *BlockUpdate {
+	bu.mutation.SetURL(s)
+	return bu
+}
+
+// SetNillableURL sets the url field if the given value is not nil.
+func (bu *BlockUpdate) SetNillableURL(s *string) *BlockUpdate {
+	if s != nil {
+		bu.SetURL(*s)
+	}
+	return bu
+}
+
+// ClearURL clears the value of url.
+func (bu *BlockUpdate) ClearURL() *BlockUpdate {
+	bu.mutation.ClearURL()
+	return bu
+}
+
+// SetConnectionTimeout sets the connection_timeout field.
+func (bu *BlockUpdate) SetConnectionTimeout(i int) *BlockUpdate {
+	bu.mutation.ResetConnectionTimeout()
+	bu.mutation.SetConnectionTimeout(i)
+	return bu
+}
+
+// SetNillableConnectionTimeout sets the connection_timeout field if the given value is not nil.
+func (bu *BlockUpdate) SetNillableConnectionTimeout(i *int) *BlockUpdate {
+	if i != nil {
+		bu.SetConnectionTimeout(*i)
+	}
+	return bu
+}
+
+// AddConnectionTimeout adds i to connection_timeout.
+func (bu *BlockUpdate) AddConnectionTimeout(i int) *BlockUpdate {
+	bu.mutation.AddConnectionTimeout(i)
+	return bu
+}
+
+// ClearConnectionTimeout clears the value of connection_timeout.
+func (bu *BlockUpdate) ClearConnectionTimeout() *BlockUpdate {
+	bu.mutation.ClearConnectionTimeout()
+	return bu
+}
+
+// SetBody sets the body field.
+func (bu *BlockUpdate) SetBody(s string) *BlockUpdate {
+	bu.mutation.SetBody(s)
+	return bu
+}
+
+// SetNillableBody sets the body field if the given value is not nil.
+func (bu *BlockUpdate) SetNillableBody(s *string) *BlockUpdate {
+	if s != nil {
+		bu.SetBody(*s)
+	}
+	return bu
+}
+
+// ClearBody clears the value of body.
+func (bu *BlockUpdate) ClearBody() *BlockUpdate {
+	bu.mutation.ClearBody()
+	return bu
+}
+
+// SetHeaders sets the headers field.
+func (bu *BlockUpdate) SetHeaders(fv []*flowschema.VariableValue) *BlockUpdate {
+	bu.mutation.SetHeaders(fv)
+	return bu
+}
+
+// ClearHeaders clears the value of headers.
+func (bu *BlockUpdate) ClearHeaders() *BlockUpdate {
+	bu.mutation.ClearHeaders()
+	return bu
+}
+
+// SetSignalType sets the signal_type field.
+func (bu *BlockUpdate) SetSignalType(bt block.SignalType) *BlockUpdate {
+	bu.mutation.SetSignalType(bt)
+	return bu
+}
+
+// SetNillableSignalType sets the signal_type field if the given value is not nil.
+func (bu *BlockUpdate) SetNillableSignalType(bt *block.SignalType) *BlockUpdate {
+	if bt != nil {
+		bu.SetSignalType(*bt)
+	}
+	return bu
+}
+
+// ClearSignalType clears the value of signal_type.
+func (bu *BlockUpdate) ClearSignalType() *BlockUpdate {
+	bu.mutation.ClearSignalType()
+	return bu
+}
+
+// SetSignalModule sets the signal_module field.
+func (bu *BlockUpdate) SetSignalModule(bm block.SignalModule) *BlockUpdate {
+	bu.mutation.SetSignalModule(bm)
+	return bu
+}
+
+// SetNillableSignalModule sets the signal_module field if the given value is not nil.
+func (bu *BlockUpdate) SetNillableSignalModule(bm *block.SignalModule) *BlockUpdate {
+	if bm != nil {
+		bu.SetSignalModule(*bm)
+	}
+	return bu
+}
+
+// ClearSignalModule clears the value of signal_module.
+func (bu *BlockUpdate) ClearSignalModule() *BlockUpdate {
+	bu.mutation.ClearSignalModule()
+	return bu
+}
+
+// SetCustomFilter sets the custom_filter field.
+func (bu *BlockUpdate) SetCustomFilter(s string) *BlockUpdate {
+	bu.mutation.SetCustomFilter(s)
+	return bu
+}
+
+// SetNillableCustomFilter sets the custom_filter field if the given value is not nil.
+func (bu *BlockUpdate) SetNillableCustomFilter(s *string) *BlockUpdate {
+	if s != nil {
+		bu.SetCustomFilter(*s)
+	}
+	return bu
+}
+
+// ClearCustomFilter clears the value of custom_filter.
+func (bu *BlockUpdate) ClearCustomFilter() *BlockUpdate {
+	bu.mutation.ClearCustomFilter()
+	return bu
+}
+
+// SetBlockFlow sets the block_flow field.
+func (bu *BlockUpdate) SetBlockFlow(b bool) *BlockUpdate {
+	bu.mutation.SetBlockFlow(b)
+	return bu
+}
+
+// SetNillableBlockFlow sets the block_flow field if the given value is not nil.
+func (bu *BlockUpdate) SetNillableBlockFlow(b *bool) *BlockUpdate {
+	if b != nil {
+		bu.SetBlockFlow(*b)
+	}
+	return bu
+}
+
+// ClearBlockFlow clears the value of block_flow.
+func (bu *BlockUpdate) ClearBlockFlow() *BlockUpdate {
+	bu.mutation.ClearBlockFlow()
+	return bu
+}
+
+// SetKafkaBrokers sets the kafka_brokers field.
+func (bu *BlockUpdate) SetKafkaBrokers(s []string) *BlockUpdate {
+	bu.mutation.SetKafkaBrokers(s)
+	return bu
+}
+
+// ClearKafkaBrokers clears the value of kafka_brokers.
+func (bu *BlockUpdate) ClearKafkaBrokers() *BlockUpdate {
+	bu.mutation.ClearKafkaBrokers()
+	return bu
+}
+
+// SetKafkaTopic sets the kafka_topic field.
+func (bu *BlockUpdate) SetKafkaTopic(s string) *BlockUpdate {
+	bu.mutation.SetKafkaTopic(s)
+	return bu
+}
+
+// SetNillableKafkaTopic sets the kafka_topic field if the given value is not nil.
+func (bu *BlockUpdate) SetNillableKafkaTopic(s *string) *BlockUpdate {
+	if s != nil {
+		bu.SetKafkaTopic(*s)
+	}
+	return bu
+}
+
+// ClearKafkaTopic clears the value of kafka_topic.
+func (bu *BlockUpdate) ClearKafkaTopic() *BlockUpdate {
+	bu.mutation.ClearKafkaTopic()
+	return bu
+}
+
+// SetKafkaMessage sets the kafka_message field.
+func (bu *BlockUpdate) SetKafkaMessage(s string) *BlockUpdate {
+	bu.mutation.SetKafkaMessage(s)
+	return bu
+}
+
+// SetNillableKafkaMessage sets the kafka_message field if the given value is not nil.
+func (bu *BlockUpdate) SetNillableKafkaMessage(s *string) *BlockUpdate {
+	if s != nil {
+		bu.SetKafkaMessage(*s)
+	}
+	return bu
+}
+
+// ClearKafkaMessage clears the value of kafka_message.
+func (bu *BlockUpdate) ClearKafkaMessage() *BlockUpdate {
+	bu.mutation.ClearKafkaMessage()
+	return bu
+}
+
+// SetKafkaMessageType sets the kafka_message_type field.
+func (bu *BlockUpdate) SetKafkaMessageType(emt enum.KafkaMessageType) *BlockUpdate {
+	bu.mutation.SetKafkaMessageType(emt)
+	return bu
+}
+
+// SetNillableKafkaMessageType sets the kafka_message_type field if the given value is not nil.
+func (bu *BlockUpdate) SetNillableKafkaMessageType(emt *enum.KafkaMessageType) *BlockUpdate {
+	if emt != nil {
+		bu.SetKafkaMessageType(*emt)
+	}
+	return bu
+}
+
+// ClearKafkaMessageType clears the value of kafka_message_type.
+func (bu *BlockUpdate) ClearKafkaMessageType() *BlockUpdate {
+	bu.mutation.ClearKafkaMessageType()
+	return bu
+}
+
+// SetForeachKey sets the foreach_key field.
+func (bu *BlockUpdate) SetForeachKey(s string) *BlockUpdate {
+	bu.mutation.SetForeachKey(s)
+	return bu
+}
+
+// SetNillableForeachKey sets the foreach_key field if the given value is not nil.
+func (bu *BlockUpdate) SetNillableForeachKey(s *string) *BlockUpdate {
+	if s != nil {
+		bu.SetForeachKey(*s)
+	}
+	return bu
+}
+
+// ClearForeachKey clears the value of foreach_key.
+func (bu *BlockUpdate) ClearForeachKey() *BlockUpdate {
+	bu.mutation.ClearForeachKey()
+	return bu
+}
+
+// SetForeachStartBlockID sets the foreach_start_blockID field.
+func (bu *BlockUpdate) SetForeachStartBlockID(i int) *BlockUpdate {
+	bu.mutation.ResetForeachStartBlockID()
+	bu.mutation.SetForeachStartBlockID(i)
+	return bu
+}
+
+// SetNillableForeachStartBlockID sets the foreach_start_blockID field if the given value is not nil.
+func (bu *BlockUpdate) SetNillableForeachStartBlockID(i *int) *BlockUpdate {
+	if i != nil {
+		bu.SetForeachStartBlockID(*i)
+	}
+	return bu
+}
+
+// AddForeachStartBlockID adds i to foreach_start_blockID.
+func (bu *BlockUpdate) AddForeachStartBlockID(i int) *BlockUpdate {
+	bu.mutation.AddForeachStartBlockID(i)
+	return bu
+}
+
+// ClearForeachStartBlockID clears the value of foreach_start_blockID.
+func (bu *BlockUpdate) ClearForeachStartBlockID() *BlockUpdate {
+	bu.mutation.ClearForeachStartBlockID()
 	return bu
 }
 
@@ -476,6 +1264,56 @@ func (bu *BlockUpdate) check() error {
 			return &ValidationError{Name: "trigger_type", err: fmt.Errorf("ent: validator failed for field \"trigger_type\": %w", err)}
 		}
 	}
+	if v, ok := bu.mutation.InputTransfStrategy(); ok {
+		if err := block.InputTransfStrategyValidator(v); err != nil {
+			return &ValidationError{Name: "input_transf_strategy", err: fmt.Errorf("ent: validator failed for field \"input_transf_strategy\": %w", err)}
+		}
+	}
+	if v, ok := bu.mutation.OutputTransfStrategy(); ok {
+		if err := block.OutputTransfStrategyValidator(v); err != nil {
+			return &ValidationError{Name: "output_transf_strategy", err: fmt.Errorf("ent: validator failed for field \"output_transf_strategy\": %w", err)}
+		}
+	}
+	if v, ok := bu.mutation.InputStateTransfStrategy(); ok {
+		if err := block.InputStateTransfStrategyValidator(v); err != nil {
+			return &ValidationError{Name: "input_state_transf_strategy", err: fmt.Errorf("ent: validator failed for field \"input_state_transf_strategy\": %w", err)}
+		}
+	}
+	if v, ok := bu.mutation.OutputStateTransfStrategy(); ok {
+		if err := block.OutputStateTransfStrategyValidator(v); err != nil {
+			return &ValidationError{Name: "output_state_transf_strategy", err: fmt.Errorf("ent: validator failed for field \"output_state_transf_strategy\": %w", err)}
+		}
+	}
+	if v, ok := bu.mutation.RetryUnit(); ok {
+		if err := block.RetryUnitValidator(v); err != nil {
+			return &ValidationError{Name: "retry_unit", err: fmt.Errorf("ent: validator failed for field \"retry_unit\": %w", err)}
+		}
+	}
+	if v, ok := bu.mutation.TimerBehavior(); ok {
+		if err := block.TimerBehaviorValidator(v); err != nil {
+			return &ValidationError{Name: "timer_behavior", err: fmt.Errorf("ent: validator failed for field \"timer_behavior\": %w", err)}
+		}
+	}
+	if v, ok := bu.mutation.URLMethod(); ok {
+		if err := block.URLMethodValidator(v); err != nil {
+			return &ValidationError{Name: "url_method", err: fmt.Errorf("ent: validator failed for field \"url_method\": %w", err)}
+		}
+	}
+	if v, ok := bu.mutation.SignalType(); ok {
+		if err := block.SignalTypeValidator(v); err != nil {
+			return &ValidationError{Name: "signal_type", err: fmt.Errorf("ent: validator failed for field \"signal_type\": %w", err)}
+		}
+	}
+	if v, ok := bu.mutation.SignalModule(); ok {
+		if err := block.SignalModuleValidator(v); err != nil {
+			return &ValidationError{Name: "signal_module", err: fmt.Errorf("ent: validator failed for field \"signal_module\": %w", err)}
+		}
+	}
+	if v, ok := bu.mutation.KafkaMessageType(); ok {
+		if err := block.KafkaMessageTypeValidator(v); err != nil {
+			return &ValidationError{Name: "kafka_message_type", err: fmt.Errorf("ent: validator failed for field \"kafka_message_type\": %w", err)}
+		}
+	}
 	return nil
 }
 
@@ -581,6 +1419,542 @@ func (bu *BlockUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeJSON,
 			Column: block.FieldUIRepresentation,
+		})
+	}
+	if value, ok := bu.mutation.EnableInputTransformation(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Value:  value,
+			Column: block.FieldEnableInputTransformation,
+		})
+	}
+	if bu.mutation.EnableInputTransformationCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Column: block.FieldEnableInputTransformation,
+		})
+	}
+	if value, ok := bu.mutation.InputTransfStrategy(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeEnum,
+			Value:  value,
+			Column: block.FieldInputTransfStrategy,
+		})
+	}
+	if bu.mutation.InputTransfStrategyCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeEnum,
+			Column: block.FieldInputTransfStrategy,
+		})
+	}
+	if value, ok := bu.mutation.InputTransformation(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: block.FieldInputTransformation,
+		})
+	}
+	if bu.mutation.InputTransformationCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Column: block.FieldInputTransformation,
+		})
+	}
+	if value, ok := bu.mutation.EnableOutputTransformation(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Value:  value,
+			Column: block.FieldEnableOutputTransformation,
+		})
+	}
+	if bu.mutation.EnableOutputTransformationCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Column: block.FieldEnableOutputTransformation,
+		})
+	}
+	if value, ok := bu.mutation.OutputTransfStrategy(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeEnum,
+			Value:  value,
+			Column: block.FieldOutputTransfStrategy,
+		})
+	}
+	if bu.mutation.OutputTransfStrategyCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeEnum,
+			Column: block.FieldOutputTransfStrategy,
+		})
+	}
+	if value, ok := bu.mutation.OutputTransformation(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: block.FieldOutputTransformation,
+		})
+	}
+	if bu.mutation.OutputTransformationCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Column: block.FieldOutputTransformation,
+		})
+	}
+	if value, ok := bu.mutation.EnableInputStateTransformation(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Value:  value,
+			Column: block.FieldEnableInputStateTransformation,
+		})
+	}
+	if bu.mutation.EnableInputStateTransformationCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Column: block.FieldEnableInputStateTransformation,
+		})
+	}
+	if value, ok := bu.mutation.InputStateTransfStrategy(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeEnum,
+			Value:  value,
+			Column: block.FieldInputStateTransfStrategy,
+		})
+	}
+	if bu.mutation.InputStateTransfStrategyCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeEnum,
+			Column: block.FieldInputStateTransfStrategy,
+		})
+	}
+	if value, ok := bu.mutation.InputStateTransformation(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: block.FieldInputStateTransformation,
+		})
+	}
+	if bu.mutation.InputStateTransformationCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Column: block.FieldInputStateTransformation,
+		})
+	}
+	if value, ok := bu.mutation.EnableOutputStateTransformation(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Value:  value,
+			Column: block.FieldEnableOutputStateTransformation,
+		})
+	}
+	if bu.mutation.EnableOutputStateTransformationCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Column: block.FieldEnableOutputStateTransformation,
+		})
+	}
+	if value, ok := bu.mutation.OutputStateTransfStrategy(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeEnum,
+			Value:  value,
+			Column: block.FieldOutputStateTransfStrategy,
+		})
+	}
+	if bu.mutation.OutputStateTransfStrategyCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeEnum,
+			Column: block.FieldOutputStateTransfStrategy,
+		})
+	}
+	if value, ok := bu.mutation.OutputStateTransformation(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: block.FieldOutputStateTransformation,
+		})
+	}
+	if bu.mutation.OutputStateTransformationCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Column: block.FieldOutputStateTransformation,
+		})
+	}
+	if value, ok := bu.mutation.EnableErrorHandling(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Value:  value,
+			Column: block.FieldEnableErrorHandling,
+		})
+	}
+	if bu.mutation.EnableErrorHandlingCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Column: block.FieldEnableErrorHandling,
+		})
+	}
+	if value, ok := bu.mutation.EnableRetryPolicy(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Value:  value,
+			Column: block.FieldEnableRetryPolicy,
+		})
+	}
+	if bu.mutation.EnableRetryPolicyCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Column: block.FieldEnableRetryPolicy,
+		})
+	}
+	if value, ok := bu.mutation.RetryInterval(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: block.FieldRetryInterval,
+		})
+	}
+	if value, ok := bu.mutation.AddedRetryInterval(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: block.FieldRetryInterval,
+		})
+	}
+	if bu.mutation.RetryIntervalCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Column: block.FieldRetryInterval,
+		})
+	}
+	if value, ok := bu.mutation.RetryUnit(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeEnum,
+			Value:  value,
+			Column: block.FieldRetryUnit,
+		})
+	}
+	if bu.mutation.RetryUnitCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeEnum,
+			Column: block.FieldRetryUnit,
+		})
+	}
+	if value, ok := bu.mutation.MaxAttemps(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: block.FieldMaxAttemps,
+		})
+	}
+	if value, ok := bu.mutation.AddedMaxAttemps(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: block.FieldMaxAttemps,
+		})
+	}
+	if bu.mutation.MaxAttempsCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Column: block.FieldMaxAttemps,
+		})
+	}
+	if value, ok := bu.mutation.BackOffRate(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: block.FieldBackOffRate,
+		})
+	}
+	if value, ok := bu.mutation.AddedBackOffRate(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: block.FieldBackOffRate,
+		})
+	}
+	if bu.mutation.BackOffRateCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Column: block.FieldBackOffRate,
+		})
+	}
+	if value, ok := bu.mutation.TimerBehavior(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeEnum,
+			Value:  value,
+			Column: block.FieldTimerBehavior,
+		})
+	}
+	if bu.mutation.TimerBehaviorCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeEnum,
+			Column: block.FieldTimerBehavior,
+		})
+	}
+	if value, ok := bu.mutation.Seconds(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: block.FieldSeconds,
+		})
+	}
+	if value, ok := bu.mutation.AddedSeconds(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: block.FieldSeconds,
+		})
+	}
+	if bu.mutation.SecondsCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Column: block.FieldSeconds,
+		})
+	}
+	if value, ok := bu.mutation.EnableTimerExpression(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Value:  value,
+			Column: block.FieldEnableTimerExpression,
+		})
+	}
+	if bu.mutation.EnableTimerExpressionCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Column: block.FieldEnableTimerExpression,
+		})
+	}
+	if value, ok := bu.mutation.TimerExpression(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: block.FieldTimerExpression,
+		})
+	}
+	if bu.mutation.TimerExpressionCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Column: block.FieldTimerExpression,
+		})
+	}
+	if value, ok := bu.mutation.TimerSpecificDate(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeTime,
+			Value:  value,
+			Column: block.FieldTimerSpecificDate,
+		})
+	}
+	if bu.mutation.TimerSpecificDateCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeTime,
+			Column: block.FieldTimerSpecificDate,
+		})
+	}
+	if value, ok := bu.mutation.URLMethod(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeEnum,
+			Value:  value,
+			Column: block.FieldURLMethod,
+		})
+	}
+	if bu.mutation.URLMethodCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeEnum,
+			Column: block.FieldURLMethod,
+		})
+	}
+	if value, ok := bu.mutation.URL(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: block.FieldURL,
+		})
+	}
+	if bu.mutation.URLCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Column: block.FieldURL,
+		})
+	}
+	if value, ok := bu.mutation.ConnectionTimeout(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: block.FieldConnectionTimeout,
+		})
+	}
+	if value, ok := bu.mutation.AddedConnectionTimeout(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: block.FieldConnectionTimeout,
+		})
+	}
+	if bu.mutation.ConnectionTimeoutCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Column: block.FieldConnectionTimeout,
+		})
+	}
+	if value, ok := bu.mutation.Body(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: block.FieldBody,
+		})
+	}
+	if bu.mutation.BodyCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Column: block.FieldBody,
+		})
+	}
+	if value, ok := bu.mutation.Headers(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeJSON,
+			Value:  value,
+			Column: block.FieldHeaders,
+		})
+	}
+	if bu.mutation.HeadersCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeJSON,
+			Column: block.FieldHeaders,
+		})
+	}
+	if value, ok := bu.mutation.SignalType(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeEnum,
+			Value:  value,
+			Column: block.FieldSignalType,
+		})
+	}
+	if bu.mutation.SignalTypeCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeEnum,
+			Column: block.FieldSignalType,
+		})
+	}
+	if value, ok := bu.mutation.SignalModule(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeEnum,
+			Value:  value,
+			Column: block.FieldSignalModule,
+		})
+	}
+	if bu.mutation.SignalModuleCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeEnum,
+			Column: block.FieldSignalModule,
+		})
+	}
+	if value, ok := bu.mutation.CustomFilter(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: block.FieldCustomFilter,
+		})
+	}
+	if bu.mutation.CustomFilterCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Column: block.FieldCustomFilter,
+		})
+	}
+	if value, ok := bu.mutation.BlockFlow(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Value:  value,
+			Column: block.FieldBlockFlow,
+		})
+	}
+	if bu.mutation.BlockFlowCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Column: block.FieldBlockFlow,
+		})
+	}
+	if value, ok := bu.mutation.KafkaBrokers(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeJSON,
+			Value:  value,
+			Column: block.FieldKafkaBrokers,
+		})
+	}
+	if bu.mutation.KafkaBrokersCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeJSON,
+			Column: block.FieldKafkaBrokers,
+		})
+	}
+	if value, ok := bu.mutation.KafkaTopic(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: block.FieldKafkaTopic,
+		})
+	}
+	if bu.mutation.KafkaTopicCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Column: block.FieldKafkaTopic,
+		})
+	}
+	if value, ok := bu.mutation.KafkaMessage(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: block.FieldKafkaMessage,
+		})
+	}
+	if bu.mutation.KafkaMessageCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Column: block.FieldKafkaMessage,
+		})
+	}
+	if value, ok := bu.mutation.KafkaMessageType(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeEnum,
+			Value:  value,
+			Column: block.FieldKafkaMessageType,
+		})
+	}
+	if bu.mutation.KafkaMessageTypeCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeEnum,
+			Column: block.FieldKafkaMessageType,
+		})
+	}
+	if value, ok := bu.mutation.ForeachKey(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: block.FieldForeachKey,
+		})
+	}
+	if bu.mutation.ForeachKeyCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Column: block.FieldForeachKey,
+		})
+	}
+	if value, ok := bu.mutation.ForeachStartBlockID(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: block.FieldForeachStartBlockID,
+		})
+	}
+	if value, ok := bu.mutation.AddedForeachStartBlockID(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: block.FieldForeachStartBlockID,
+		})
+	}
+	if bu.mutation.ForeachStartBlockIDCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Column: block.FieldForeachStartBlockID,
 		})
 	}
 	if bu.mutation.FlowCleared() {
@@ -1061,6 +2435,792 @@ func (buo *BlockUpdateOne) ClearUIRepresentation() *BlockUpdateOne {
 	return buo
 }
 
+// SetEnableInputTransformation sets the enable_input_transformation field.
+func (buo *BlockUpdateOne) SetEnableInputTransformation(b bool) *BlockUpdateOne {
+	buo.mutation.SetEnableInputTransformation(b)
+	return buo
+}
+
+// SetNillableEnableInputTransformation sets the enable_input_transformation field if the given value is not nil.
+func (buo *BlockUpdateOne) SetNillableEnableInputTransformation(b *bool) *BlockUpdateOne {
+	if b != nil {
+		buo.SetEnableInputTransformation(*b)
+	}
+	return buo
+}
+
+// ClearEnableInputTransformation clears the value of enable_input_transformation.
+func (buo *BlockUpdateOne) ClearEnableInputTransformation() *BlockUpdateOne {
+	buo.mutation.ClearEnableInputTransformation()
+	return buo
+}
+
+// SetInputTransfStrategy sets the input_transf_strategy field.
+func (buo *BlockUpdateOne) SetInputTransfStrategy(es enum.TransfStrategy) *BlockUpdateOne {
+	buo.mutation.SetInputTransfStrategy(es)
+	return buo
+}
+
+// SetNillableInputTransfStrategy sets the input_transf_strategy field if the given value is not nil.
+func (buo *BlockUpdateOne) SetNillableInputTransfStrategy(es *enum.TransfStrategy) *BlockUpdateOne {
+	if es != nil {
+		buo.SetInputTransfStrategy(*es)
+	}
+	return buo
+}
+
+// ClearInputTransfStrategy clears the value of input_transf_strategy.
+func (buo *BlockUpdateOne) ClearInputTransfStrategy() *BlockUpdateOne {
+	buo.mutation.ClearInputTransfStrategy()
+	return buo
+}
+
+// SetInputTransformation sets the input_transformation field.
+func (buo *BlockUpdateOne) SetInputTransformation(s string) *BlockUpdateOne {
+	buo.mutation.SetInputTransformation(s)
+	return buo
+}
+
+// SetNillableInputTransformation sets the input_transformation field if the given value is not nil.
+func (buo *BlockUpdateOne) SetNillableInputTransformation(s *string) *BlockUpdateOne {
+	if s != nil {
+		buo.SetInputTransformation(*s)
+	}
+	return buo
+}
+
+// ClearInputTransformation clears the value of input_transformation.
+func (buo *BlockUpdateOne) ClearInputTransformation() *BlockUpdateOne {
+	buo.mutation.ClearInputTransformation()
+	return buo
+}
+
+// SetEnableOutputTransformation sets the enable_output_transformation field.
+func (buo *BlockUpdateOne) SetEnableOutputTransformation(b bool) *BlockUpdateOne {
+	buo.mutation.SetEnableOutputTransformation(b)
+	return buo
+}
+
+// SetNillableEnableOutputTransformation sets the enable_output_transformation field if the given value is not nil.
+func (buo *BlockUpdateOne) SetNillableEnableOutputTransformation(b *bool) *BlockUpdateOne {
+	if b != nil {
+		buo.SetEnableOutputTransformation(*b)
+	}
+	return buo
+}
+
+// ClearEnableOutputTransformation clears the value of enable_output_transformation.
+func (buo *BlockUpdateOne) ClearEnableOutputTransformation() *BlockUpdateOne {
+	buo.mutation.ClearEnableOutputTransformation()
+	return buo
+}
+
+// SetOutputTransfStrategy sets the output_transf_strategy field.
+func (buo *BlockUpdateOne) SetOutputTransfStrategy(es enum.TransfStrategy) *BlockUpdateOne {
+	buo.mutation.SetOutputTransfStrategy(es)
+	return buo
+}
+
+// SetNillableOutputTransfStrategy sets the output_transf_strategy field if the given value is not nil.
+func (buo *BlockUpdateOne) SetNillableOutputTransfStrategy(es *enum.TransfStrategy) *BlockUpdateOne {
+	if es != nil {
+		buo.SetOutputTransfStrategy(*es)
+	}
+	return buo
+}
+
+// ClearOutputTransfStrategy clears the value of output_transf_strategy.
+func (buo *BlockUpdateOne) ClearOutputTransfStrategy() *BlockUpdateOne {
+	buo.mutation.ClearOutputTransfStrategy()
+	return buo
+}
+
+// SetOutputTransformation sets the output_transformation field.
+func (buo *BlockUpdateOne) SetOutputTransformation(s string) *BlockUpdateOne {
+	buo.mutation.SetOutputTransformation(s)
+	return buo
+}
+
+// SetNillableOutputTransformation sets the output_transformation field if the given value is not nil.
+func (buo *BlockUpdateOne) SetNillableOutputTransformation(s *string) *BlockUpdateOne {
+	if s != nil {
+		buo.SetOutputTransformation(*s)
+	}
+	return buo
+}
+
+// ClearOutputTransformation clears the value of output_transformation.
+func (buo *BlockUpdateOne) ClearOutputTransformation() *BlockUpdateOne {
+	buo.mutation.ClearOutputTransformation()
+	return buo
+}
+
+// SetEnableInputStateTransformation sets the enable_input_state_transformation field.
+func (buo *BlockUpdateOne) SetEnableInputStateTransformation(b bool) *BlockUpdateOne {
+	buo.mutation.SetEnableInputStateTransformation(b)
+	return buo
+}
+
+// SetNillableEnableInputStateTransformation sets the enable_input_state_transformation field if the given value is not nil.
+func (buo *BlockUpdateOne) SetNillableEnableInputStateTransformation(b *bool) *BlockUpdateOne {
+	if b != nil {
+		buo.SetEnableInputStateTransformation(*b)
+	}
+	return buo
+}
+
+// ClearEnableInputStateTransformation clears the value of enable_input_state_transformation.
+func (buo *BlockUpdateOne) ClearEnableInputStateTransformation() *BlockUpdateOne {
+	buo.mutation.ClearEnableInputStateTransformation()
+	return buo
+}
+
+// SetInputStateTransfStrategy sets the input_state_transf_strategy field.
+func (buo *BlockUpdateOne) SetInputStateTransfStrategy(es enum.TransfStrategy) *BlockUpdateOne {
+	buo.mutation.SetInputStateTransfStrategy(es)
+	return buo
+}
+
+// SetNillableInputStateTransfStrategy sets the input_state_transf_strategy field if the given value is not nil.
+func (buo *BlockUpdateOne) SetNillableInputStateTransfStrategy(es *enum.TransfStrategy) *BlockUpdateOne {
+	if es != nil {
+		buo.SetInputStateTransfStrategy(*es)
+	}
+	return buo
+}
+
+// ClearInputStateTransfStrategy clears the value of input_state_transf_strategy.
+func (buo *BlockUpdateOne) ClearInputStateTransfStrategy() *BlockUpdateOne {
+	buo.mutation.ClearInputStateTransfStrategy()
+	return buo
+}
+
+// SetInputStateTransformation sets the input_state_transformation field.
+func (buo *BlockUpdateOne) SetInputStateTransformation(s string) *BlockUpdateOne {
+	buo.mutation.SetInputStateTransformation(s)
+	return buo
+}
+
+// SetNillableInputStateTransformation sets the input_state_transformation field if the given value is not nil.
+func (buo *BlockUpdateOne) SetNillableInputStateTransformation(s *string) *BlockUpdateOne {
+	if s != nil {
+		buo.SetInputStateTransformation(*s)
+	}
+	return buo
+}
+
+// ClearInputStateTransformation clears the value of input_state_transformation.
+func (buo *BlockUpdateOne) ClearInputStateTransformation() *BlockUpdateOne {
+	buo.mutation.ClearInputStateTransformation()
+	return buo
+}
+
+// SetEnableOutputStateTransformation sets the enable_output_state_transformation field.
+func (buo *BlockUpdateOne) SetEnableOutputStateTransformation(b bool) *BlockUpdateOne {
+	buo.mutation.SetEnableOutputStateTransformation(b)
+	return buo
+}
+
+// SetNillableEnableOutputStateTransformation sets the enable_output_state_transformation field if the given value is not nil.
+func (buo *BlockUpdateOne) SetNillableEnableOutputStateTransformation(b *bool) *BlockUpdateOne {
+	if b != nil {
+		buo.SetEnableOutputStateTransformation(*b)
+	}
+	return buo
+}
+
+// ClearEnableOutputStateTransformation clears the value of enable_output_state_transformation.
+func (buo *BlockUpdateOne) ClearEnableOutputStateTransformation() *BlockUpdateOne {
+	buo.mutation.ClearEnableOutputStateTransformation()
+	return buo
+}
+
+// SetOutputStateTransfStrategy sets the output_state_transf_strategy field.
+func (buo *BlockUpdateOne) SetOutputStateTransfStrategy(es enum.TransfStrategy) *BlockUpdateOne {
+	buo.mutation.SetOutputStateTransfStrategy(es)
+	return buo
+}
+
+// SetNillableOutputStateTransfStrategy sets the output_state_transf_strategy field if the given value is not nil.
+func (buo *BlockUpdateOne) SetNillableOutputStateTransfStrategy(es *enum.TransfStrategy) *BlockUpdateOne {
+	if es != nil {
+		buo.SetOutputStateTransfStrategy(*es)
+	}
+	return buo
+}
+
+// ClearOutputStateTransfStrategy clears the value of output_state_transf_strategy.
+func (buo *BlockUpdateOne) ClearOutputStateTransfStrategy() *BlockUpdateOne {
+	buo.mutation.ClearOutputStateTransfStrategy()
+	return buo
+}
+
+// SetOutputStateTransformation sets the output_state_transformation field.
+func (buo *BlockUpdateOne) SetOutputStateTransformation(s string) *BlockUpdateOne {
+	buo.mutation.SetOutputStateTransformation(s)
+	return buo
+}
+
+// SetNillableOutputStateTransformation sets the output_state_transformation field if the given value is not nil.
+func (buo *BlockUpdateOne) SetNillableOutputStateTransformation(s *string) *BlockUpdateOne {
+	if s != nil {
+		buo.SetOutputStateTransformation(*s)
+	}
+	return buo
+}
+
+// ClearOutputStateTransformation clears the value of output_state_transformation.
+func (buo *BlockUpdateOne) ClearOutputStateTransformation() *BlockUpdateOne {
+	buo.mutation.ClearOutputStateTransformation()
+	return buo
+}
+
+// SetEnableErrorHandling sets the enable_error_handling field.
+func (buo *BlockUpdateOne) SetEnableErrorHandling(b bool) *BlockUpdateOne {
+	buo.mutation.SetEnableErrorHandling(b)
+	return buo
+}
+
+// SetNillableEnableErrorHandling sets the enable_error_handling field if the given value is not nil.
+func (buo *BlockUpdateOne) SetNillableEnableErrorHandling(b *bool) *BlockUpdateOne {
+	if b != nil {
+		buo.SetEnableErrorHandling(*b)
+	}
+	return buo
+}
+
+// ClearEnableErrorHandling clears the value of enable_error_handling.
+func (buo *BlockUpdateOne) ClearEnableErrorHandling() *BlockUpdateOne {
+	buo.mutation.ClearEnableErrorHandling()
+	return buo
+}
+
+// SetEnableRetryPolicy sets the enable_retry_policy field.
+func (buo *BlockUpdateOne) SetEnableRetryPolicy(b bool) *BlockUpdateOne {
+	buo.mutation.SetEnableRetryPolicy(b)
+	return buo
+}
+
+// SetNillableEnableRetryPolicy sets the enable_retry_policy field if the given value is not nil.
+func (buo *BlockUpdateOne) SetNillableEnableRetryPolicy(b *bool) *BlockUpdateOne {
+	if b != nil {
+		buo.SetEnableRetryPolicy(*b)
+	}
+	return buo
+}
+
+// ClearEnableRetryPolicy clears the value of enable_retry_policy.
+func (buo *BlockUpdateOne) ClearEnableRetryPolicy() *BlockUpdateOne {
+	buo.mutation.ClearEnableRetryPolicy()
+	return buo
+}
+
+// SetRetryInterval sets the retryInterval field.
+func (buo *BlockUpdateOne) SetRetryInterval(i int) *BlockUpdateOne {
+	buo.mutation.ResetRetryInterval()
+	buo.mutation.SetRetryInterval(i)
+	return buo
+}
+
+// SetNillableRetryInterval sets the retryInterval field if the given value is not nil.
+func (buo *BlockUpdateOne) SetNillableRetryInterval(i *int) *BlockUpdateOne {
+	if i != nil {
+		buo.SetRetryInterval(*i)
+	}
+	return buo
+}
+
+// AddRetryInterval adds i to retryInterval.
+func (buo *BlockUpdateOne) AddRetryInterval(i int) *BlockUpdateOne {
+	buo.mutation.AddRetryInterval(i)
+	return buo
+}
+
+// ClearRetryInterval clears the value of retryInterval.
+func (buo *BlockUpdateOne) ClearRetryInterval() *BlockUpdateOne {
+	buo.mutation.ClearRetryInterval()
+	return buo
+}
+
+// SetRetryUnit sets the retry_unit field.
+func (buo *BlockUpdateOne) SetRetryUnit(bu block.RetryUnit) *BlockUpdateOne {
+	buo.mutation.SetRetryUnit(bu)
+	return buo
+}
+
+// SetNillableRetryUnit sets the retry_unit field if the given value is not nil.
+func (buo *BlockUpdateOne) SetNillableRetryUnit(bu *block.RetryUnit) *BlockUpdateOne {
+	if bu != nil {
+		buo.SetRetryUnit(*bu)
+	}
+	return buo
+}
+
+// ClearRetryUnit clears the value of retry_unit.
+func (buo *BlockUpdateOne) ClearRetryUnit() *BlockUpdateOne {
+	buo.mutation.ClearRetryUnit()
+	return buo
+}
+
+// SetMaxAttemps sets the maxAttemps field.
+func (buo *BlockUpdateOne) SetMaxAttemps(i int) *BlockUpdateOne {
+	buo.mutation.ResetMaxAttemps()
+	buo.mutation.SetMaxAttemps(i)
+	return buo
+}
+
+// SetNillableMaxAttemps sets the maxAttemps field if the given value is not nil.
+func (buo *BlockUpdateOne) SetNillableMaxAttemps(i *int) *BlockUpdateOne {
+	if i != nil {
+		buo.SetMaxAttemps(*i)
+	}
+	return buo
+}
+
+// AddMaxAttemps adds i to maxAttemps.
+func (buo *BlockUpdateOne) AddMaxAttemps(i int) *BlockUpdateOne {
+	buo.mutation.AddMaxAttemps(i)
+	return buo
+}
+
+// ClearMaxAttemps clears the value of maxAttemps.
+func (buo *BlockUpdateOne) ClearMaxAttemps() *BlockUpdateOne {
+	buo.mutation.ClearMaxAttemps()
+	return buo
+}
+
+// SetBackOffRate sets the backOffRate field.
+func (buo *BlockUpdateOne) SetBackOffRate(i int) *BlockUpdateOne {
+	buo.mutation.ResetBackOffRate()
+	buo.mutation.SetBackOffRate(i)
+	return buo
+}
+
+// SetNillableBackOffRate sets the backOffRate field if the given value is not nil.
+func (buo *BlockUpdateOne) SetNillableBackOffRate(i *int) *BlockUpdateOne {
+	if i != nil {
+		buo.SetBackOffRate(*i)
+	}
+	return buo
+}
+
+// AddBackOffRate adds i to backOffRate.
+func (buo *BlockUpdateOne) AddBackOffRate(i int) *BlockUpdateOne {
+	buo.mutation.AddBackOffRate(i)
+	return buo
+}
+
+// ClearBackOffRate clears the value of backOffRate.
+func (buo *BlockUpdateOne) ClearBackOffRate() *BlockUpdateOne {
+	buo.mutation.ClearBackOffRate()
+	return buo
+}
+
+// SetTimerBehavior sets the timer_behavior field.
+func (buo *BlockUpdateOne) SetTimerBehavior(bb block.TimerBehavior) *BlockUpdateOne {
+	buo.mutation.SetTimerBehavior(bb)
+	return buo
+}
+
+// SetNillableTimerBehavior sets the timer_behavior field if the given value is not nil.
+func (buo *BlockUpdateOne) SetNillableTimerBehavior(bb *block.TimerBehavior) *BlockUpdateOne {
+	if bb != nil {
+		buo.SetTimerBehavior(*bb)
+	}
+	return buo
+}
+
+// ClearTimerBehavior clears the value of timer_behavior.
+func (buo *BlockUpdateOne) ClearTimerBehavior() *BlockUpdateOne {
+	buo.mutation.ClearTimerBehavior()
+	return buo
+}
+
+// SetSeconds sets the seconds field.
+func (buo *BlockUpdateOne) SetSeconds(i int) *BlockUpdateOne {
+	buo.mutation.ResetSeconds()
+	buo.mutation.SetSeconds(i)
+	return buo
+}
+
+// SetNillableSeconds sets the seconds field if the given value is not nil.
+func (buo *BlockUpdateOne) SetNillableSeconds(i *int) *BlockUpdateOne {
+	if i != nil {
+		buo.SetSeconds(*i)
+	}
+	return buo
+}
+
+// AddSeconds adds i to seconds.
+func (buo *BlockUpdateOne) AddSeconds(i int) *BlockUpdateOne {
+	buo.mutation.AddSeconds(i)
+	return buo
+}
+
+// ClearSeconds clears the value of seconds.
+func (buo *BlockUpdateOne) ClearSeconds() *BlockUpdateOne {
+	buo.mutation.ClearSeconds()
+	return buo
+}
+
+// SetEnableTimerExpression sets the enable_timer_expression field.
+func (buo *BlockUpdateOne) SetEnableTimerExpression(b bool) *BlockUpdateOne {
+	buo.mutation.SetEnableTimerExpression(b)
+	return buo
+}
+
+// SetNillableEnableTimerExpression sets the enable_timer_expression field if the given value is not nil.
+func (buo *BlockUpdateOne) SetNillableEnableTimerExpression(b *bool) *BlockUpdateOne {
+	if b != nil {
+		buo.SetEnableTimerExpression(*b)
+	}
+	return buo
+}
+
+// ClearEnableTimerExpression clears the value of enable_timer_expression.
+func (buo *BlockUpdateOne) ClearEnableTimerExpression() *BlockUpdateOne {
+	buo.mutation.ClearEnableTimerExpression()
+	return buo
+}
+
+// SetTimerExpression sets the timer_expression field.
+func (buo *BlockUpdateOne) SetTimerExpression(s string) *BlockUpdateOne {
+	buo.mutation.SetTimerExpression(s)
+	return buo
+}
+
+// SetNillableTimerExpression sets the timer_expression field if the given value is not nil.
+func (buo *BlockUpdateOne) SetNillableTimerExpression(s *string) *BlockUpdateOne {
+	if s != nil {
+		buo.SetTimerExpression(*s)
+	}
+	return buo
+}
+
+// ClearTimerExpression clears the value of timer_expression.
+func (buo *BlockUpdateOne) ClearTimerExpression() *BlockUpdateOne {
+	buo.mutation.ClearTimerExpression()
+	return buo
+}
+
+// SetTimerSpecificDate sets the timer_specific_date field.
+func (buo *BlockUpdateOne) SetTimerSpecificDate(t time.Time) *BlockUpdateOne {
+	buo.mutation.SetTimerSpecificDate(t)
+	return buo
+}
+
+// SetNillableTimerSpecificDate sets the timer_specific_date field if the given value is not nil.
+func (buo *BlockUpdateOne) SetNillableTimerSpecificDate(t *time.Time) *BlockUpdateOne {
+	if t != nil {
+		buo.SetTimerSpecificDate(*t)
+	}
+	return buo
+}
+
+// ClearTimerSpecificDate clears the value of timer_specific_date.
+func (buo *BlockUpdateOne) ClearTimerSpecificDate() *BlockUpdateOne {
+	buo.mutation.ClearTimerSpecificDate()
+	return buo
+}
+
+// SetURLMethod sets the url_method field.
+func (buo *BlockUpdateOne) SetURLMethod(bm block.URLMethod) *BlockUpdateOne {
+	buo.mutation.SetURLMethod(bm)
+	return buo
+}
+
+// SetNillableURLMethod sets the url_method field if the given value is not nil.
+func (buo *BlockUpdateOne) SetNillableURLMethod(bm *block.URLMethod) *BlockUpdateOne {
+	if bm != nil {
+		buo.SetURLMethod(*bm)
+	}
+	return buo
+}
+
+// ClearURLMethod clears the value of url_method.
+func (buo *BlockUpdateOne) ClearURLMethod() *BlockUpdateOne {
+	buo.mutation.ClearURLMethod()
+	return buo
+}
+
+// SetURL sets the url field.
+func (buo *BlockUpdateOne) SetURL(s string) *BlockUpdateOne {
+	buo.mutation.SetURL(s)
+	return buo
+}
+
+// SetNillableURL sets the url field if the given value is not nil.
+func (buo *BlockUpdateOne) SetNillableURL(s *string) *BlockUpdateOne {
+	if s != nil {
+		buo.SetURL(*s)
+	}
+	return buo
+}
+
+// ClearURL clears the value of url.
+func (buo *BlockUpdateOne) ClearURL() *BlockUpdateOne {
+	buo.mutation.ClearURL()
+	return buo
+}
+
+// SetConnectionTimeout sets the connection_timeout field.
+func (buo *BlockUpdateOne) SetConnectionTimeout(i int) *BlockUpdateOne {
+	buo.mutation.ResetConnectionTimeout()
+	buo.mutation.SetConnectionTimeout(i)
+	return buo
+}
+
+// SetNillableConnectionTimeout sets the connection_timeout field if the given value is not nil.
+func (buo *BlockUpdateOne) SetNillableConnectionTimeout(i *int) *BlockUpdateOne {
+	if i != nil {
+		buo.SetConnectionTimeout(*i)
+	}
+	return buo
+}
+
+// AddConnectionTimeout adds i to connection_timeout.
+func (buo *BlockUpdateOne) AddConnectionTimeout(i int) *BlockUpdateOne {
+	buo.mutation.AddConnectionTimeout(i)
+	return buo
+}
+
+// ClearConnectionTimeout clears the value of connection_timeout.
+func (buo *BlockUpdateOne) ClearConnectionTimeout() *BlockUpdateOne {
+	buo.mutation.ClearConnectionTimeout()
+	return buo
+}
+
+// SetBody sets the body field.
+func (buo *BlockUpdateOne) SetBody(s string) *BlockUpdateOne {
+	buo.mutation.SetBody(s)
+	return buo
+}
+
+// SetNillableBody sets the body field if the given value is not nil.
+func (buo *BlockUpdateOne) SetNillableBody(s *string) *BlockUpdateOne {
+	if s != nil {
+		buo.SetBody(*s)
+	}
+	return buo
+}
+
+// ClearBody clears the value of body.
+func (buo *BlockUpdateOne) ClearBody() *BlockUpdateOne {
+	buo.mutation.ClearBody()
+	return buo
+}
+
+// SetHeaders sets the headers field.
+func (buo *BlockUpdateOne) SetHeaders(fv []*flowschema.VariableValue) *BlockUpdateOne {
+	buo.mutation.SetHeaders(fv)
+	return buo
+}
+
+// ClearHeaders clears the value of headers.
+func (buo *BlockUpdateOne) ClearHeaders() *BlockUpdateOne {
+	buo.mutation.ClearHeaders()
+	return buo
+}
+
+// SetSignalType sets the signal_type field.
+func (buo *BlockUpdateOne) SetSignalType(bt block.SignalType) *BlockUpdateOne {
+	buo.mutation.SetSignalType(bt)
+	return buo
+}
+
+// SetNillableSignalType sets the signal_type field if the given value is not nil.
+func (buo *BlockUpdateOne) SetNillableSignalType(bt *block.SignalType) *BlockUpdateOne {
+	if bt != nil {
+		buo.SetSignalType(*bt)
+	}
+	return buo
+}
+
+// ClearSignalType clears the value of signal_type.
+func (buo *BlockUpdateOne) ClearSignalType() *BlockUpdateOne {
+	buo.mutation.ClearSignalType()
+	return buo
+}
+
+// SetSignalModule sets the signal_module field.
+func (buo *BlockUpdateOne) SetSignalModule(bm block.SignalModule) *BlockUpdateOne {
+	buo.mutation.SetSignalModule(bm)
+	return buo
+}
+
+// SetNillableSignalModule sets the signal_module field if the given value is not nil.
+func (buo *BlockUpdateOne) SetNillableSignalModule(bm *block.SignalModule) *BlockUpdateOne {
+	if bm != nil {
+		buo.SetSignalModule(*bm)
+	}
+	return buo
+}
+
+// ClearSignalModule clears the value of signal_module.
+func (buo *BlockUpdateOne) ClearSignalModule() *BlockUpdateOne {
+	buo.mutation.ClearSignalModule()
+	return buo
+}
+
+// SetCustomFilter sets the custom_filter field.
+func (buo *BlockUpdateOne) SetCustomFilter(s string) *BlockUpdateOne {
+	buo.mutation.SetCustomFilter(s)
+	return buo
+}
+
+// SetNillableCustomFilter sets the custom_filter field if the given value is not nil.
+func (buo *BlockUpdateOne) SetNillableCustomFilter(s *string) *BlockUpdateOne {
+	if s != nil {
+		buo.SetCustomFilter(*s)
+	}
+	return buo
+}
+
+// ClearCustomFilter clears the value of custom_filter.
+func (buo *BlockUpdateOne) ClearCustomFilter() *BlockUpdateOne {
+	buo.mutation.ClearCustomFilter()
+	return buo
+}
+
+// SetBlockFlow sets the block_flow field.
+func (buo *BlockUpdateOne) SetBlockFlow(b bool) *BlockUpdateOne {
+	buo.mutation.SetBlockFlow(b)
+	return buo
+}
+
+// SetNillableBlockFlow sets the block_flow field if the given value is not nil.
+func (buo *BlockUpdateOne) SetNillableBlockFlow(b *bool) *BlockUpdateOne {
+	if b != nil {
+		buo.SetBlockFlow(*b)
+	}
+	return buo
+}
+
+// ClearBlockFlow clears the value of block_flow.
+func (buo *BlockUpdateOne) ClearBlockFlow() *BlockUpdateOne {
+	buo.mutation.ClearBlockFlow()
+	return buo
+}
+
+// SetKafkaBrokers sets the kafka_brokers field.
+func (buo *BlockUpdateOne) SetKafkaBrokers(s []string) *BlockUpdateOne {
+	buo.mutation.SetKafkaBrokers(s)
+	return buo
+}
+
+// ClearKafkaBrokers clears the value of kafka_brokers.
+func (buo *BlockUpdateOne) ClearKafkaBrokers() *BlockUpdateOne {
+	buo.mutation.ClearKafkaBrokers()
+	return buo
+}
+
+// SetKafkaTopic sets the kafka_topic field.
+func (buo *BlockUpdateOne) SetKafkaTopic(s string) *BlockUpdateOne {
+	buo.mutation.SetKafkaTopic(s)
+	return buo
+}
+
+// SetNillableKafkaTopic sets the kafka_topic field if the given value is not nil.
+func (buo *BlockUpdateOne) SetNillableKafkaTopic(s *string) *BlockUpdateOne {
+	if s != nil {
+		buo.SetKafkaTopic(*s)
+	}
+	return buo
+}
+
+// ClearKafkaTopic clears the value of kafka_topic.
+func (buo *BlockUpdateOne) ClearKafkaTopic() *BlockUpdateOne {
+	buo.mutation.ClearKafkaTopic()
+	return buo
+}
+
+// SetKafkaMessage sets the kafka_message field.
+func (buo *BlockUpdateOne) SetKafkaMessage(s string) *BlockUpdateOne {
+	buo.mutation.SetKafkaMessage(s)
+	return buo
+}
+
+// SetNillableKafkaMessage sets the kafka_message field if the given value is not nil.
+func (buo *BlockUpdateOne) SetNillableKafkaMessage(s *string) *BlockUpdateOne {
+	if s != nil {
+		buo.SetKafkaMessage(*s)
+	}
+	return buo
+}
+
+// ClearKafkaMessage clears the value of kafka_message.
+func (buo *BlockUpdateOne) ClearKafkaMessage() *BlockUpdateOne {
+	buo.mutation.ClearKafkaMessage()
+	return buo
+}
+
+// SetKafkaMessageType sets the kafka_message_type field.
+func (buo *BlockUpdateOne) SetKafkaMessageType(emt enum.KafkaMessageType) *BlockUpdateOne {
+	buo.mutation.SetKafkaMessageType(emt)
+	return buo
+}
+
+// SetNillableKafkaMessageType sets the kafka_message_type field if the given value is not nil.
+func (buo *BlockUpdateOne) SetNillableKafkaMessageType(emt *enum.KafkaMessageType) *BlockUpdateOne {
+	if emt != nil {
+		buo.SetKafkaMessageType(*emt)
+	}
+	return buo
+}
+
+// ClearKafkaMessageType clears the value of kafka_message_type.
+func (buo *BlockUpdateOne) ClearKafkaMessageType() *BlockUpdateOne {
+	buo.mutation.ClearKafkaMessageType()
+	return buo
+}
+
+// SetForeachKey sets the foreach_key field.
+func (buo *BlockUpdateOne) SetForeachKey(s string) *BlockUpdateOne {
+	buo.mutation.SetForeachKey(s)
+	return buo
+}
+
+// SetNillableForeachKey sets the foreach_key field if the given value is not nil.
+func (buo *BlockUpdateOne) SetNillableForeachKey(s *string) *BlockUpdateOne {
+	if s != nil {
+		buo.SetForeachKey(*s)
+	}
+	return buo
+}
+
+// ClearForeachKey clears the value of foreach_key.
+func (buo *BlockUpdateOne) ClearForeachKey() *BlockUpdateOne {
+	buo.mutation.ClearForeachKey()
+	return buo
+}
+
+// SetForeachStartBlockID sets the foreach_start_blockID field.
+func (buo *BlockUpdateOne) SetForeachStartBlockID(i int) *BlockUpdateOne {
+	buo.mutation.ResetForeachStartBlockID()
+	buo.mutation.SetForeachStartBlockID(i)
+	return buo
+}
+
+// SetNillableForeachStartBlockID sets the foreach_start_blockID field if the given value is not nil.
+func (buo *BlockUpdateOne) SetNillableForeachStartBlockID(i *int) *BlockUpdateOne {
+	if i != nil {
+		buo.SetForeachStartBlockID(*i)
+	}
+	return buo
+}
+
+// AddForeachStartBlockID adds i to foreach_start_blockID.
+func (buo *BlockUpdateOne) AddForeachStartBlockID(i int) *BlockUpdateOne {
+	buo.mutation.AddForeachStartBlockID(i)
+	return buo
+}
+
+// ClearForeachStartBlockID clears the value of foreach_start_blockID.
+func (buo *BlockUpdateOne) ClearForeachStartBlockID() *BlockUpdateOne {
+	buo.mutation.ClearForeachStartBlockID()
+	return buo
+}
+
 // SetFlowID sets the flow edge to Flow by id.
 func (buo *BlockUpdateOne) SetFlowID(id int) *BlockUpdateOne {
 	buo.mutation.SetFlowID(id)
@@ -1412,6 +3572,56 @@ func (buo *BlockUpdateOne) check() error {
 			return &ValidationError{Name: "trigger_type", err: fmt.Errorf("ent: validator failed for field \"trigger_type\": %w", err)}
 		}
 	}
+	if v, ok := buo.mutation.InputTransfStrategy(); ok {
+		if err := block.InputTransfStrategyValidator(v); err != nil {
+			return &ValidationError{Name: "input_transf_strategy", err: fmt.Errorf("ent: validator failed for field \"input_transf_strategy\": %w", err)}
+		}
+	}
+	if v, ok := buo.mutation.OutputTransfStrategy(); ok {
+		if err := block.OutputTransfStrategyValidator(v); err != nil {
+			return &ValidationError{Name: "output_transf_strategy", err: fmt.Errorf("ent: validator failed for field \"output_transf_strategy\": %w", err)}
+		}
+	}
+	if v, ok := buo.mutation.InputStateTransfStrategy(); ok {
+		if err := block.InputStateTransfStrategyValidator(v); err != nil {
+			return &ValidationError{Name: "input_state_transf_strategy", err: fmt.Errorf("ent: validator failed for field \"input_state_transf_strategy\": %w", err)}
+		}
+	}
+	if v, ok := buo.mutation.OutputStateTransfStrategy(); ok {
+		if err := block.OutputStateTransfStrategyValidator(v); err != nil {
+			return &ValidationError{Name: "output_state_transf_strategy", err: fmt.Errorf("ent: validator failed for field \"output_state_transf_strategy\": %w", err)}
+		}
+	}
+	if v, ok := buo.mutation.RetryUnit(); ok {
+		if err := block.RetryUnitValidator(v); err != nil {
+			return &ValidationError{Name: "retry_unit", err: fmt.Errorf("ent: validator failed for field \"retry_unit\": %w", err)}
+		}
+	}
+	if v, ok := buo.mutation.TimerBehavior(); ok {
+		if err := block.TimerBehaviorValidator(v); err != nil {
+			return &ValidationError{Name: "timer_behavior", err: fmt.Errorf("ent: validator failed for field \"timer_behavior\": %w", err)}
+		}
+	}
+	if v, ok := buo.mutation.URLMethod(); ok {
+		if err := block.URLMethodValidator(v); err != nil {
+			return &ValidationError{Name: "url_method", err: fmt.Errorf("ent: validator failed for field \"url_method\": %w", err)}
+		}
+	}
+	if v, ok := buo.mutation.SignalType(); ok {
+		if err := block.SignalTypeValidator(v); err != nil {
+			return &ValidationError{Name: "signal_type", err: fmt.Errorf("ent: validator failed for field \"signal_type\": %w", err)}
+		}
+	}
+	if v, ok := buo.mutation.SignalModule(); ok {
+		if err := block.SignalModuleValidator(v); err != nil {
+			return &ValidationError{Name: "signal_module", err: fmt.Errorf("ent: validator failed for field \"signal_module\": %w", err)}
+		}
+	}
+	if v, ok := buo.mutation.KafkaMessageType(); ok {
+		if err := block.KafkaMessageTypeValidator(v); err != nil {
+			return &ValidationError{Name: "kafka_message_type", err: fmt.Errorf("ent: validator failed for field \"kafka_message_type\": %w", err)}
+		}
+	}
 	return nil
 }
 
@@ -1515,6 +3725,542 @@ func (buo *BlockUpdateOne) sqlSave(ctx context.Context) (_node *Block, err error
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeJSON,
 			Column: block.FieldUIRepresentation,
+		})
+	}
+	if value, ok := buo.mutation.EnableInputTransformation(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Value:  value,
+			Column: block.FieldEnableInputTransformation,
+		})
+	}
+	if buo.mutation.EnableInputTransformationCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Column: block.FieldEnableInputTransformation,
+		})
+	}
+	if value, ok := buo.mutation.InputTransfStrategy(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeEnum,
+			Value:  value,
+			Column: block.FieldInputTransfStrategy,
+		})
+	}
+	if buo.mutation.InputTransfStrategyCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeEnum,
+			Column: block.FieldInputTransfStrategy,
+		})
+	}
+	if value, ok := buo.mutation.InputTransformation(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: block.FieldInputTransformation,
+		})
+	}
+	if buo.mutation.InputTransformationCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Column: block.FieldInputTransformation,
+		})
+	}
+	if value, ok := buo.mutation.EnableOutputTransformation(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Value:  value,
+			Column: block.FieldEnableOutputTransformation,
+		})
+	}
+	if buo.mutation.EnableOutputTransformationCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Column: block.FieldEnableOutputTransformation,
+		})
+	}
+	if value, ok := buo.mutation.OutputTransfStrategy(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeEnum,
+			Value:  value,
+			Column: block.FieldOutputTransfStrategy,
+		})
+	}
+	if buo.mutation.OutputTransfStrategyCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeEnum,
+			Column: block.FieldOutputTransfStrategy,
+		})
+	}
+	if value, ok := buo.mutation.OutputTransformation(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: block.FieldOutputTransformation,
+		})
+	}
+	if buo.mutation.OutputTransformationCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Column: block.FieldOutputTransformation,
+		})
+	}
+	if value, ok := buo.mutation.EnableInputStateTransformation(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Value:  value,
+			Column: block.FieldEnableInputStateTransformation,
+		})
+	}
+	if buo.mutation.EnableInputStateTransformationCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Column: block.FieldEnableInputStateTransformation,
+		})
+	}
+	if value, ok := buo.mutation.InputStateTransfStrategy(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeEnum,
+			Value:  value,
+			Column: block.FieldInputStateTransfStrategy,
+		})
+	}
+	if buo.mutation.InputStateTransfStrategyCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeEnum,
+			Column: block.FieldInputStateTransfStrategy,
+		})
+	}
+	if value, ok := buo.mutation.InputStateTransformation(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: block.FieldInputStateTransformation,
+		})
+	}
+	if buo.mutation.InputStateTransformationCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Column: block.FieldInputStateTransformation,
+		})
+	}
+	if value, ok := buo.mutation.EnableOutputStateTransformation(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Value:  value,
+			Column: block.FieldEnableOutputStateTransformation,
+		})
+	}
+	if buo.mutation.EnableOutputStateTransformationCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Column: block.FieldEnableOutputStateTransformation,
+		})
+	}
+	if value, ok := buo.mutation.OutputStateTransfStrategy(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeEnum,
+			Value:  value,
+			Column: block.FieldOutputStateTransfStrategy,
+		})
+	}
+	if buo.mutation.OutputStateTransfStrategyCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeEnum,
+			Column: block.FieldOutputStateTransfStrategy,
+		})
+	}
+	if value, ok := buo.mutation.OutputStateTransformation(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: block.FieldOutputStateTransformation,
+		})
+	}
+	if buo.mutation.OutputStateTransformationCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Column: block.FieldOutputStateTransformation,
+		})
+	}
+	if value, ok := buo.mutation.EnableErrorHandling(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Value:  value,
+			Column: block.FieldEnableErrorHandling,
+		})
+	}
+	if buo.mutation.EnableErrorHandlingCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Column: block.FieldEnableErrorHandling,
+		})
+	}
+	if value, ok := buo.mutation.EnableRetryPolicy(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Value:  value,
+			Column: block.FieldEnableRetryPolicy,
+		})
+	}
+	if buo.mutation.EnableRetryPolicyCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Column: block.FieldEnableRetryPolicy,
+		})
+	}
+	if value, ok := buo.mutation.RetryInterval(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: block.FieldRetryInterval,
+		})
+	}
+	if value, ok := buo.mutation.AddedRetryInterval(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: block.FieldRetryInterval,
+		})
+	}
+	if buo.mutation.RetryIntervalCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Column: block.FieldRetryInterval,
+		})
+	}
+	if value, ok := buo.mutation.RetryUnit(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeEnum,
+			Value:  value,
+			Column: block.FieldRetryUnit,
+		})
+	}
+	if buo.mutation.RetryUnitCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeEnum,
+			Column: block.FieldRetryUnit,
+		})
+	}
+	if value, ok := buo.mutation.MaxAttemps(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: block.FieldMaxAttemps,
+		})
+	}
+	if value, ok := buo.mutation.AddedMaxAttemps(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: block.FieldMaxAttemps,
+		})
+	}
+	if buo.mutation.MaxAttempsCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Column: block.FieldMaxAttemps,
+		})
+	}
+	if value, ok := buo.mutation.BackOffRate(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: block.FieldBackOffRate,
+		})
+	}
+	if value, ok := buo.mutation.AddedBackOffRate(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: block.FieldBackOffRate,
+		})
+	}
+	if buo.mutation.BackOffRateCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Column: block.FieldBackOffRate,
+		})
+	}
+	if value, ok := buo.mutation.TimerBehavior(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeEnum,
+			Value:  value,
+			Column: block.FieldTimerBehavior,
+		})
+	}
+	if buo.mutation.TimerBehaviorCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeEnum,
+			Column: block.FieldTimerBehavior,
+		})
+	}
+	if value, ok := buo.mutation.Seconds(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: block.FieldSeconds,
+		})
+	}
+	if value, ok := buo.mutation.AddedSeconds(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: block.FieldSeconds,
+		})
+	}
+	if buo.mutation.SecondsCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Column: block.FieldSeconds,
+		})
+	}
+	if value, ok := buo.mutation.EnableTimerExpression(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Value:  value,
+			Column: block.FieldEnableTimerExpression,
+		})
+	}
+	if buo.mutation.EnableTimerExpressionCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Column: block.FieldEnableTimerExpression,
+		})
+	}
+	if value, ok := buo.mutation.TimerExpression(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: block.FieldTimerExpression,
+		})
+	}
+	if buo.mutation.TimerExpressionCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Column: block.FieldTimerExpression,
+		})
+	}
+	if value, ok := buo.mutation.TimerSpecificDate(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeTime,
+			Value:  value,
+			Column: block.FieldTimerSpecificDate,
+		})
+	}
+	if buo.mutation.TimerSpecificDateCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeTime,
+			Column: block.FieldTimerSpecificDate,
+		})
+	}
+	if value, ok := buo.mutation.URLMethod(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeEnum,
+			Value:  value,
+			Column: block.FieldURLMethod,
+		})
+	}
+	if buo.mutation.URLMethodCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeEnum,
+			Column: block.FieldURLMethod,
+		})
+	}
+	if value, ok := buo.mutation.URL(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: block.FieldURL,
+		})
+	}
+	if buo.mutation.URLCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Column: block.FieldURL,
+		})
+	}
+	if value, ok := buo.mutation.ConnectionTimeout(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: block.FieldConnectionTimeout,
+		})
+	}
+	if value, ok := buo.mutation.AddedConnectionTimeout(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: block.FieldConnectionTimeout,
+		})
+	}
+	if buo.mutation.ConnectionTimeoutCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Column: block.FieldConnectionTimeout,
+		})
+	}
+	if value, ok := buo.mutation.Body(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: block.FieldBody,
+		})
+	}
+	if buo.mutation.BodyCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Column: block.FieldBody,
+		})
+	}
+	if value, ok := buo.mutation.Headers(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeJSON,
+			Value:  value,
+			Column: block.FieldHeaders,
+		})
+	}
+	if buo.mutation.HeadersCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeJSON,
+			Column: block.FieldHeaders,
+		})
+	}
+	if value, ok := buo.mutation.SignalType(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeEnum,
+			Value:  value,
+			Column: block.FieldSignalType,
+		})
+	}
+	if buo.mutation.SignalTypeCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeEnum,
+			Column: block.FieldSignalType,
+		})
+	}
+	if value, ok := buo.mutation.SignalModule(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeEnum,
+			Value:  value,
+			Column: block.FieldSignalModule,
+		})
+	}
+	if buo.mutation.SignalModuleCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeEnum,
+			Column: block.FieldSignalModule,
+		})
+	}
+	if value, ok := buo.mutation.CustomFilter(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: block.FieldCustomFilter,
+		})
+	}
+	if buo.mutation.CustomFilterCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Column: block.FieldCustomFilter,
+		})
+	}
+	if value, ok := buo.mutation.BlockFlow(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Value:  value,
+			Column: block.FieldBlockFlow,
+		})
+	}
+	if buo.mutation.BlockFlowCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Column: block.FieldBlockFlow,
+		})
+	}
+	if value, ok := buo.mutation.KafkaBrokers(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeJSON,
+			Value:  value,
+			Column: block.FieldKafkaBrokers,
+		})
+	}
+	if buo.mutation.KafkaBrokersCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeJSON,
+			Column: block.FieldKafkaBrokers,
+		})
+	}
+	if value, ok := buo.mutation.KafkaTopic(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: block.FieldKafkaTopic,
+		})
+	}
+	if buo.mutation.KafkaTopicCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Column: block.FieldKafkaTopic,
+		})
+	}
+	if value, ok := buo.mutation.KafkaMessage(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: block.FieldKafkaMessage,
+		})
+	}
+	if buo.mutation.KafkaMessageCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Column: block.FieldKafkaMessage,
+		})
+	}
+	if value, ok := buo.mutation.KafkaMessageType(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeEnum,
+			Value:  value,
+			Column: block.FieldKafkaMessageType,
+		})
+	}
+	if buo.mutation.KafkaMessageTypeCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeEnum,
+			Column: block.FieldKafkaMessageType,
+		})
+	}
+	if value, ok := buo.mutation.ForeachKey(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: block.FieldForeachKey,
+		})
+	}
+	if buo.mutation.ForeachKeyCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Column: block.FieldForeachKey,
+		})
+	}
+	if value, ok := buo.mutation.ForeachStartBlockID(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: block.FieldForeachStartBlockID,
+		})
+	}
+	if value, ok := buo.mutation.AddedForeachStartBlockID(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: block.FieldForeachStartBlockID,
+		})
+	}
+	if buo.mutation.ForeachStartBlockIDCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Column: block.FieldForeachStartBlockID,
 		})
 	}
 	if buo.mutation.FlowCleared() {

@@ -19,66 +19,66 @@ export type CheckListItemEnumSelectionMode = "multiple" | "single" | "%future ad
 export type CheckListItemType = "cell_scan" | "enum" | "files" | "simple" | "string" | "wifi_scan" | "yes_no" | "%future added value";
 export type PropertyKind = "bool" | "date" | "datetime_local" | "email" | "enum" | "float" | "gps_location" | "int" | "node" | "range" | "string" | "%future added value";
 export type EditWorkOrderTypeInput = {|
+  assigneeCanCompleteWorkOrder?: ?boolean,
+  checkListCategories?: ?$ReadOnlyArray<CheckListCategoryDefinitionInput>,
+  description?: ?string,
+  duration?: ?number,
   id: string,
   name: string,
-  description?: ?string,
   properties?: ?$ReadOnlyArray<?PropertyTypeInput>,
-  checkListCategories?: ?$ReadOnlyArray<CheckListCategoryDefinitionInput>,
-  assigneeCanCompleteWorkOrder?: ?boolean,
-  duration?: ?number,
+|};
+export type CheckListCategoryDefinitionInput = {|
+  checkList: $ReadOnlyArray<CheckListDefinitionInput>,
+  description?: ?string,
+  id?: ?string,
+  title: string,
+|};
+export type CheckListDefinitionInput = {|
+  enumSelectionMode?: ?CheckListItemEnumSelectionMode,
+  enumValues?: ?string,
+  helpText?: ?string,
+  id?: ?string,
+  index?: ?number,
+  isMandatory?: ?boolean,
+  title: string,
+  type: CheckListItemType,
 |};
 export type PropertyTypeInput = {|
-  id?: ?string,
-  externalId?: ?string,
-  name: string,
-  type: PropertyKind,
-  nodeType?: ?string,
-  index?: ?number,
-  category?: ?string,
-  stringValue?: ?string,
-  intValue?: ?number,
   booleanValue?: ?boolean,
+  category?: ?string,
+  dependencePropertyTypes?: ?$ReadOnlyArray<?PropertyTypeInput>,
+  externalId?: ?string,
   floatValue?: ?number,
-  latitudeValue?: ?number,
-  longitudeValue?: ?number,
-  rangeFromValue?: ?number,
-  rangeToValue?: ?number,
+  id?: ?string,
+  index?: ?number,
+  intValue?: ?number,
+  isDeleted?: ?boolean,
   isEditable?: ?boolean,
   isInstanceProperty?: ?boolean,
-  isMandatory?: ?boolean,
-  isDeleted?: ?boolean,
-  propertyCategoryID?: ?string,
   isListable?: ?boolean,
-  dependencePropertyTypes?: ?$ReadOnlyArray<?PropertyTypeInput>,
+  isMandatory?: ?boolean,
+  latitudeValue?: ?number,
+  longitudeValue?: ?number,
+  name: string,
+  nodeType?: ?string,
+  propertyCategoryID?: ?string,
   propertyTypeValues?: ?$ReadOnlyArray<?AddPropertyTypeValueInput>,
+  rangeFromValue?: ?number,
+  rangeToValue?: ?number,
+  stringValue?: ?string,
+  type: PropertyKind,
 |};
 export type AddPropertyTypeValueInput = {|
   id?: ?string,
-  name: string,
   isDeleted?: ?boolean,
-  propertyType?: ?string,
-  parentPropertyTypeValue?: ?$ReadOnlyArray<?string>,
+  name: string,
   parentPropertyType?: ?$ReadOnlyArray<?ParentPropertyTypeValueInput>,
+  parentPropertyTypeValue?: ?$ReadOnlyArray<?string>,
+  propertyType?: ?string,
 |};
 export type ParentPropertyTypeValueInput = {|
-  parentPropertyTypeValue?: ?string,
   parentPropertyType?: ?string,
-|};
-export type CheckListCategoryDefinitionInput = {|
-  id?: ?string,
-  title: string,
-  description?: ?string,
-  checkList: $ReadOnlyArray<CheckListDefinitionInput>,
-|};
-export type CheckListDefinitionInput = {|
-  id?: ?string,
-  title: string,
-  type: CheckListItemType,
-  index?: ?number,
-  isMandatory?: ?boolean,
-  enumValues?: ?string,
-  enumSelectionMode?: ?CheckListItemEnumSelectionMode,
-  helpText?: ?string,
+  parentPropertyTypeValue?: ?string,
 |};
 export type EditWorkOrderTypeMutationVariables = {|
   input: EditWorkOrderTypeInput

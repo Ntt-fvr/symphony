@@ -24,6 +24,8 @@ type Tx struct {
 	AlarmStatus *AlarmStatusClient
 	// Appointment is the client for interacting with the Appointment builders.
 	Appointment *AppointmentClient
+	// AutomationActivity is the client for interacting with the AutomationActivity builders.
+	AutomationActivity *AutomationActivityClient
 	// Block is the client for interacting with the Block builders.
 	Block *BlockClient
 	// BlockInstance is the client for interacting with the BlockInstance builders.
@@ -152,6 +154,18 @@ type Tx struct {
 	RecommendationsSources *RecommendationsSourcesClient
 	// ReportFilter is the client for interacting with the ReportFilter builders.
 	ReportFilter *ReportFilterClient
+	// ResourcePropertyType is the client for interacting with the ResourcePropertyType builders.
+	ResourcePropertyType *ResourcePropertyTypeClient
+	// ResourceSpecification is the client for interacting with the ResourceSpecification builders.
+	ResourceSpecification *ResourceSpecificationClient
+	// ResourceSpecificationItems is the client for interacting with the ResourceSpecificationItems builders.
+	ResourceSpecificationItems *ResourceSpecificationItemsClient
+	// ResourceSpecificationRelationship is the client for interacting with the ResourceSpecificationRelationship builders.
+	ResourceSpecificationRelationship *ResourceSpecificationRelationshipClient
+	// ResourceType is the client for interacting with the ResourceType builders.
+	ResourceType *ResourceTypeClient
+	// ResourceTypeRelationship is the client for interacting with the ResourceTypeRelationship builders.
+	ResourceTypeRelationship *ResourceTypeRelationshipClient
 	// Rule is the client for interacting with the Rule builders.
 	Rule *RuleClient
 	// RuleLimit is the client for interacting with the RuleLimit builders.
@@ -337,6 +351,7 @@ func (tx *Tx) init() {
 	tx.AlarmFilter = NewAlarmFilterClient(tx.config)
 	tx.AlarmStatus = NewAlarmStatusClient(tx.config)
 	tx.Appointment = NewAppointmentClient(tx.config)
+	tx.AutomationActivity = NewAutomationActivityClient(tx.config)
 	tx.Block = NewBlockClient(tx.config)
 	tx.BlockInstance = NewBlockInstanceClient(tx.config)
 	tx.CheckListCategory = NewCheckListCategoryClient(tx.config)
@@ -401,6 +416,12 @@ func (tx *Tx) init() {
 	tx.RecommendationsCategory = NewRecommendationsCategoryClient(tx.config)
 	tx.RecommendationsSources = NewRecommendationsSourcesClient(tx.config)
 	tx.ReportFilter = NewReportFilterClient(tx.config)
+	tx.ResourcePropertyType = NewResourcePropertyTypeClient(tx.config)
+	tx.ResourceSpecification = NewResourceSpecificationClient(tx.config)
+	tx.ResourceSpecificationItems = NewResourceSpecificationItemsClient(tx.config)
+	tx.ResourceSpecificationRelationship = NewResourceSpecificationRelationshipClient(tx.config)
+	tx.ResourceType = NewResourceTypeClient(tx.config)
+	tx.ResourceTypeRelationship = NewResourceTypeRelationshipClient(tx.config)
 	tx.Rule = NewRuleClient(tx.config)
 	tx.RuleLimit = NewRuleLimitClient(tx.config)
 	tx.RuleType = NewRuleTypeClient(tx.config)

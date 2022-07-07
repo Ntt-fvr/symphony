@@ -26,6 +26,15 @@ func (vendorResolver) VendorRecommendations(ctx context.Context, vendor *ent.Ven
 	return variable, nil
 }
 
+func (vendorResolver) ResourceSpecification(ctx context.Context, vendor *ent.Vendor) ([]*ent.ResourceSpecification, error) {
+	variable, err := vendor.VendorRs(ctx)
+
+	if err != nil {
+		return nil, fmt.Errorf("has occurred error on process: %w", err)
+	}
+	return variable, nil
+}
+
 func (r mutationResolver) AddVendor(ctx context.Context, input models.AddVendorInput) (*ent.Vendor, error) {
 	client := r.ClientFrom(ctx)
 	typ, err := client.

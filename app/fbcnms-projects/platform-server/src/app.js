@@ -9,6 +9,7 @@
  */
 import type {ExpressResponse} from 'express';
 import type {FBCNMSRequest} from '@fbcnms/auth/access';
+import cors from 'cors';
 
 const {LOG_FORMAT, LOG_LEVEL} = require('./config');
 
@@ -171,6 +172,14 @@ app.use(
   access(USER),
   insertFeatures,
   require('./graph/routes'),
+);
+app.use(
+  '/apollo',
+  cors(),
+  passport.authenticate(['bearer', 'basic_local', 'session'], {session: false}),
+  access(USER),
+  insertFeatures,
+  require('./apollo/routes'),
 );
 app.use(
   '/store',

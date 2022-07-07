@@ -70,6 +70,7 @@ services:
       - conf/telemetry.env
     networks:
       - private
+      - public 
     depends_on:
       - migrate-graph
       - mysql
@@ -168,6 +169,7 @@ services:
       - 443:443
       - 33060:33060
       - 9000:9000
+      - 80:80
     networks:
       public:
         aliases:
@@ -182,6 +184,21 @@ services:
     healthcheck:
       test: curl -Ifk https://localhost/healthz
     restart: on-failure
+
+  apollo:
+    build:
+      <<: *buildctx
+      dockerfile: apollo/router/Dockerfile
+    image: apollo
+    environment:
+      - APOLLO_SCHEMA_CONFIG_EMBEDDED=true
+    volumes:
+      - .././apollo/supergraph.graphql:/etc/config/supergraph.graphql
+    ports:
+      - "4000:80"
+    networks:
+      - private
+      - public
 
   mysql:
     image: mysql
@@ -238,6 +255,35 @@ services:
       - conf/cadence.env
     depends_on:
       - mysql
+  zero:
+    image: dgraph/dgraph:latest
+    networks:
+      - public
+    volumes:
+      - ./dgraph:/dgraph
+    ports:
+      - 5080:5080
+      - 6080:6080
+    restart: on-failure
+    command: dgraph zero --my=zero:5080
+  alpha:
+    image: dgraph/dgraph:latest
+    networks:
+      - public
+    volumes:
+      - ./dgraph:/dgraph
+    ports:
+      - 8080:8080
+      - 9080:9080
+    restart: on-failure
+    command: dgraph alpha --my=alpha:7080 --zero=zero:5080 --security "whitelist=0.0.0.0/0" --telemetry "reports=false; sentry=false;"
+  ratel:
+    image: dgraph/ratel:latest
+    networks:
+      - public
+    ports:
+      - 8000:8000
+    command: dgraph-ratel
 
 networks:
   public:

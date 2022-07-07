@@ -12,6 +12,7 @@ import (
 	"github.com/facebook/ent/dialect/sql"
 	"github.com/facebook/ent/dialect/sql/sqlgraph"
 	"github.com/facebookincubator/symphony/pkg/ent/predicate"
+	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
 	"github.com/facebookincubator/symphony/pkg/flowengine/flowschema"
 )
 
@@ -116,6 +117,188 @@ func UpdateTime(v time.Time) predicate.Block {
 func Cid(v string) predicate.Block {
 	return predicate.Block(func(s *sql.Selector) {
 		s.Where(sql.EQ(s.C(FieldCid), v))
+	})
+}
+
+// EnableInputTransformation applies equality check predicate on the "enable_input_transformation" field. It's identical to EnableInputTransformationEQ.
+func EnableInputTransformation(v bool) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldEnableInputTransformation), v))
+	})
+}
+
+// InputTransformation applies equality check predicate on the "input_transformation" field. It's identical to InputTransformationEQ.
+func InputTransformation(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldInputTransformation), v))
+	})
+}
+
+// EnableOutputTransformation applies equality check predicate on the "enable_output_transformation" field. It's identical to EnableOutputTransformationEQ.
+func EnableOutputTransformation(v bool) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldEnableOutputTransformation), v))
+	})
+}
+
+// OutputTransformation applies equality check predicate on the "output_transformation" field. It's identical to OutputTransformationEQ.
+func OutputTransformation(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldOutputTransformation), v))
+	})
+}
+
+// EnableInputStateTransformation applies equality check predicate on the "enable_input_state_transformation" field. It's identical to EnableInputStateTransformationEQ.
+func EnableInputStateTransformation(v bool) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldEnableInputStateTransformation), v))
+	})
+}
+
+// InputStateTransformation applies equality check predicate on the "input_state_transformation" field. It's identical to InputStateTransformationEQ.
+func InputStateTransformation(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldInputStateTransformation), v))
+	})
+}
+
+// EnableOutputStateTransformation applies equality check predicate on the "enable_output_state_transformation" field. It's identical to EnableOutputStateTransformationEQ.
+func EnableOutputStateTransformation(v bool) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldEnableOutputStateTransformation), v))
+	})
+}
+
+// OutputStateTransformation applies equality check predicate on the "output_state_transformation" field. It's identical to OutputStateTransformationEQ.
+func OutputStateTransformation(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldOutputStateTransformation), v))
+	})
+}
+
+// EnableErrorHandling applies equality check predicate on the "enable_error_handling" field. It's identical to EnableErrorHandlingEQ.
+func EnableErrorHandling(v bool) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldEnableErrorHandling), v))
+	})
+}
+
+// EnableRetryPolicy applies equality check predicate on the "enable_retry_policy" field. It's identical to EnableRetryPolicyEQ.
+func EnableRetryPolicy(v bool) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldEnableRetryPolicy), v))
+	})
+}
+
+// RetryInterval applies equality check predicate on the "retryInterval" field. It's identical to RetryIntervalEQ.
+func RetryInterval(v int) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldRetryInterval), v))
+	})
+}
+
+// MaxAttemps applies equality check predicate on the "maxAttemps" field. It's identical to MaxAttempsEQ.
+func MaxAttemps(v int) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldMaxAttemps), v))
+	})
+}
+
+// BackOffRate applies equality check predicate on the "backOffRate" field. It's identical to BackOffRateEQ.
+func BackOffRate(v int) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldBackOffRate), v))
+	})
+}
+
+// Seconds applies equality check predicate on the "seconds" field. It's identical to SecondsEQ.
+func Seconds(v int) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldSeconds), v))
+	})
+}
+
+// EnableTimerExpression applies equality check predicate on the "enable_timer_expression" field. It's identical to EnableTimerExpressionEQ.
+func EnableTimerExpression(v bool) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldEnableTimerExpression), v))
+	})
+}
+
+// TimerExpression applies equality check predicate on the "timer_expression" field. It's identical to TimerExpressionEQ.
+func TimerExpression(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldTimerExpression), v))
+	})
+}
+
+// TimerSpecificDate applies equality check predicate on the "timer_specific_date" field. It's identical to TimerSpecificDateEQ.
+func TimerSpecificDate(v time.Time) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldTimerSpecificDate), v))
+	})
+}
+
+// URL applies equality check predicate on the "url" field. It's identical to URLEQ.
+func URL(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldURL), v))
+	})
+}
+
+// ConnectionTimeout applies equality check predicate on the "connection_timeout" field. It's identical to ConnectionTimeoutEQ.
+func ConnectionTimeout(v int) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldConnectionTimeout), v))
+	})
+}
+
+// Body applies equality check predicate on the "body" field. It's identical to BodyEQ.
+func Body(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldBody), v))
+	})
+}
+
+// CustomFilter applies equality check predicate on the "custom_filter" field. It's identical to CustomFilterEQ.
+func CustomFilter(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldCustomFilter), v))
+	})
+}
+
+// BlockFlow applies equality check predicate on the "block_flow" field. It's identical to BlockFlowEQ.
+func BlockFlow(v bool) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldBlockFlow), v))
+	})
+}
+
+// KafkaTopic applies equality check predicate on the "kafka_topic" field. It's identical to KafkaTopicEQ.
+func KafkaTopic(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldKafkaTopic), v))
+	})
+}
+
+// KafkaMessage applies equality check predicate on the "kafka_message" field. It's identical to KafkaMessageEQ.
+func KafkaMessage(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldKafkaMessage), v))
+	})
+}
+
+// ForeachKey applies equality check predicate on the "foreach_key" field. It's identical to ForeachKeyEQ.
+func ForeachKey(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldForeachKey), v))
+	})
+}
+
+// ForeachStartBlockID applies equality check predicate on the "foreach_start_blockID" field. It's identical to ForeachStartBlockIDEQ.
+func ForeachStartBlockID(v int) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldForeachStartBlockID), v))
 	})
 }
 
@@ -597,6 +780,2893 @@ func UIRepresentationIsNil() predicate.Block {
 func UIRepresentationNotNil() predicate.Block {
 	return predicate.Block(func(s *sql.Selector) {
 		s.Where(sql.NotNull(s.C(FieldUIRepresentation)))
+	})
+}
+
+// EnableInputTransformationEQ applies the EQ predicate on the "enable_input_transformation" field.
+func EnableInputTransformationEQ(v bool) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldEnableInputTransformation), v))
+	})
+}
+
+// EnableInputTransformationNEQ applies the NEQ predicate on the "enable_input_transformation" field.
+func EnableInputTransformationNEQ(v bool) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldEnableInputTransformation), v))
+	})
+}
+
+// EnableInputTransformationIsNil applies the IsNil predicate on the "enable_input_transformation" field.
+func EnableInputTransformationIsNil() predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldEnableInputTransformation)))
+	})
+}
+
+// EnableInputTransformationNotNil applies the NotNil predicate on the "enable_input_transformation" field.
+func EnableInputTransformationNotNil() predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldEnableInputTransformation)))
+	})
+}
+
+// InputTransfStrategyEQ applies the EQ predicate on the "input_transf_strategy" field.
+func InputTransfStrategyEQ(v enum.TransfStrategy) predicate.Block {
+	vc := v
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldInputTransfStrategy), vc))
+	})
+}
+
+// InputTransfStrategyNEQ applies the NEQ predicate on the "input_transf_strategy" field.
+func InputTransfStrategyNEQ(v enum.TransfStrategy) predicate.Block {
+	vc := v
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldInputTransfStrategy), vc))
+	})
+}
+
+// InputTransfStrategyIn applies the In predicate on the "input_transf_strategy" field.
+func InputTransfStrategyIn(vs ...enum.TransfStrategy) predicate.Block {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Block(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.In(s.C(FieldInputTransfStrategy), v...))
+	})
+}
+
+// InputTransfStrategyNotIn applies the NotIn predicate on the "input_transf_strategy" field.
+func InputTransfStrategyNotIn(vs ...enum.TransfStrategy) predicate.Block {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Block(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.NotIn(s.C(FieldInputTransfStrategy), v...))
+	})
+}
+
+// InputTransfStrategyIsNil applies the IsNil predicate on the "input_transf_strategy" field.
+func InputTransfStrategyIsNil() predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldInputTransfStrategy)))
+	})
+}
+
+// InputTransfStrategyNotNil applies the NotNil predicate on the "input_transf_strategy" field.
+func InputTransfStrategyNotNil() predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldInputTransfStrategy)))
+	})
+}
+
+// InputTransformationEQ applies the EQ predicate on the "input_transformation" field.
+func InputTransformationEQ(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldInputTransformation), v))
+	})
+}
+
+// InputTransformationNEQ applies the NEQ predicate on the "input_transformation" field.
+func InputTransformationNEQ(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldInputTransformation), v))
+	})
+}
+
+// InputTransformationIn applies the In predicate on the "input_transformation" field.
+func InputTransformationIn(vs ...string) predicate.Block {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Block(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.In(s.C(FieldInputTransformation), v...))
+	})
+}
+
+// InputTransformationNotIn applies the NotIn predicate on the "input_transformation" field.
+func InputTransformationNotIn(vs ...string) predicate.Block {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Block(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.NotIn(s.C(FieldInputTransformation), v...))
+	})
+}
+
+// InputTransformationGT applies the GT predicate on the "input_transformation" field.
+func InputTransformationGT(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldInputTransformation), v))
+	})
+}
+
+// InputTransformationGTE applies the GTE predicate on the "input_transformation" field.
+func InputTransformationGTE(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldInputTransformation), v))
+	})
+}
+
+// InputTransformationLT applies the LT predicate on the "input_transformation" field.
+func InputTransformationLT(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldInputTransformation), v))
+	})
+}
+
+// InputTransformationLTE applies the LTE predicate on the "input_transformation" field.
+func InputTransformationLTE(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldInputTransformation), v))
+	})
+}
+
+// InputTransformationContains applies the Contains predicate on the "input_transformation" field.
+func InputTransformationContains(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.Contains(s.C(FieldInputTransformation), v))
+	})
+}
+
+// InputTransformationHasPrefix applies the HasPrefix predicate on the "input_transformation" field.
+func InputTransformationHasPrefix(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.HasPrefix(s.C(FieldInputTransformation), v))
+	})
+}
+
+// InputTransformationHasSuffix applies the HasSuffix predicate on the "input_transformation" field.
+func InputTransformationHasSuffix(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.HasSuffix(s.C(FieldInputTransformation), v))
+	})
+}
+
+// InputTransformationIsNil applies the IsNil predicate on the "input_transformation" field.
+func InputTransformationIsNil() predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldInputTransformation)))
+	})
+}
+
+// InputTransformationNotNil applies the NotNil predicate on the "input_transformation" field.
+func InputTransformationNotNil() predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldInputTransformation)))
+	})
+}
+
+// InputTransformationEqualFold applies the EqualFold predicate on the "input_transformation" field.
+func InputTransformationEqualFold(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.EqualFold(s.C(FieldInputTransformation), v))
+	})
+}
+
+// InputTransformationContainsFold applies the ContainsFold predicate on the "input_transformation" field.
+func InputTransformationContainsFold(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.ContainsFold(s.C(FieldInputTransformation), v))
+	})
+}
+
+// EnableOutputTransformationEQ applies the EQ predicate on the "enable_output_transformation" field.
+func EnableOutputTransformationEQ(v bool) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldEnableOutputTransformation), v))
+	})
+}
+
+// EnableOutputTransformationNEQ applies the NEQ predicate on the "enable_output_transformation" field.
+func EnableOutputTransformationNEQ(v bool) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldEnableOutputTransformation), v))
+	})
+}
+
+// EnableOutputTransformationIsNil applies the IsNil predicate on the "enable_output_transformation" field.
+func EnableOutputTransformationIsNil() predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldEnableOutputTransformation)))
+	})
+}
+
+// EnableOutputTransformationNotNil applies the NotNil predicate on the "enable_output_transformation" field.
+func EnableOutputTransformationNotNil() predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldEnableOutputTransformation)))
+	})
+}
+
+// OutputTransfStrategyEQ applies the EQ predicate on the "output_transf_strategy" field.
+func OutputTransfStrategyEQ(v enum.TransfStrategy) predicate.Block {
+	vc := v
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldOutputTransfStrategy), vc))
+	})
+}
+
+// OutputTransfStrategyNEQ applies the NEQ predicate on the "output_transf_strategy" field.
+func OutputTransfStrategyNEQ(v enum.TransfStrategy) predicate.Block {
+	vc := v
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldOutputTransfStrategy), vc))
+	})
+}
+
+// OutputTransfStrategyIn applies the In predicate on the "output_transf_strategy" field.
+func OutputTransfStrategyIn(vs ...enum.TransfStrategy) predicate.Block {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Block(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.In(s.C(FieldOutputTransfStrategy), v...))
+	})
+}
+
+// OutputTransfStrategyNotIn applies the NotIn predicate on the "output_transf_strategy" field.
+func OutputTransfStrategyNotIn(vs ...enum.TransfStrategy) predicate.Block {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Block(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.NotIn(s.C(FieldOutputTransfStrategy), v...))
+	})
+}
+
+// OutputTransfStrategyIsNil applies the IsNil predicate on the "output_transf_strategy" field.
+func OutputTransfStrategyIsNil() predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldOutputTransfStrategy)))
+	})
+}
+
+// OutputTransfStrategyNotNil applies the NotNil predicate on the "output_transf_strategy" field.
+func OutputTransfStrategyNotNil() predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldOutputTransfStrategy)))
+	})
+}
+
+// OutputTransformationEQ applies the EQ predicate on the "output_transformation" field.
+func OutputTransformationEQ(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldOutputTransformation), v))
+	})
+}
+
+// OutputTransformationNEQ applies the NEQ predicate on the "output_transformation" field.
+func OutputTransformationNEQ(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldOutputTransformation), v))
+	})
+}
+
+// OutputTransformationIn applies the In predicate on the "output_transformation" field.
+func OutputTransformationIn(vs ...string) predicate.Block {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Block(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.In(s.C(FieldOutputTransformation), v...))
+	})
+}
+
+// OutputTransformationNotIn applies the NotIn predicate on the "output_transformation" field.
+func OutputTransformationNotIn(vs ...string) predicate.Block {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Block(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.NotIn(s.C(FieldOutputTransformation), v...))
+	})
+}
+
+// OutputTransformationGT applies the GT predicate on the "output_transformation" field.
+func OutputTransformationGT(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldOutputTransformation), v))
+	})
+}
+
+// OutputTransformationGTE applies the GTE predicate on the "output_transformation" field.
+func OutputTransformationGTE(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldOutputTransformation), v))
+	})
+}
+
+// OutputTransformationLT applies the LT predicate on the "output_transformation" field.
+func OutputTransformationLT(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldOutputTransformation), v))
+	})
+}
+
+// OutputTransformationLTE applies the LTE predicate on the "output_transformation" field.
+func OutputTransformationLTE(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldOutputTransformation), v))
+	})
+}
+
+// OutputTransformationContains applies the Contains predicate on the "output_transformation" field.
+func OutputTransformationContains(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.Contains(s.C(FieldOutputTransformation), v))
+	})
+}
+
+// OutputTransformationHasPrefix applies the HasPrefix predicate on the "output_transformation" field.
+func OutputTransformationHasPrefix(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.HasPrefix(s.C(FieldOutputTransformation), v))
+	})
+}
+
+// OutputTransformationHasSuffix applies the HasSuffix predicate on the "output_transformation" field.
+func OutputTransformationHasSuffix(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.HasSuffix(s.C(FieldOutputTransformation), v))
+	})
+}
+
+// OutputTransformationIsNil applies the IsNil predicate on the "output_transformation" field.
+func OutputTransformationIsNil() predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldOutputTransformation)))
+	})
+}
+
+// OutputTransformationNotNil applies the NotNil predicate on the "output_transformation" field.
+func OutputTransformationNotNil() predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldOutputTransformation)))
+	})
+}
+
+// OutputTransformationEqualFold applies the EqualFold predicate on the "output_transformation" field.
+func OutputTransformationEqualFold(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.EqualFold(s.C(FieldOutputTransformation), v))
+	})
+}
+
+// OutputTransformationContainsFold applies the ContainsFold predicate on the "output_transformation" field.
+func OutputTransformationContainsFold(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.ContainsFold(s.C(FieldOutputTransformation), v))
+	})
+}
+
+// EnableInputStateTransformationEQ applies the EQ predicate on the "enable_input_state_transformation" field.
+func EnableInputStateTransformationEQ(v bool) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldEnableInputStateTransformation), v))
+	})
+}
+
+// EnableInputStateTransformationNEQ applies the NEQ predicate on the "enable_input_state_transformation" field.
+func EnableInputStateTransformationNEQ(v bool) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldEnableInputStateTransformation), v))
+	})
+}
+
+// EnableInputStateTransformationIsNil applies the IsNil predicate on the "enable_input_state_transformation" field.
+func EnableInputStateTransformationIsNil() predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldEnableInputStateTransformation)))
+	})
+}
+
+// EnableInputStateTransformationNotNil applies the NotNil predicate on the "enable_input_state_transformation" field.
+func EnableInputStateTransformationNotNil() predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldEnableInputStateTransformation)))
+	})
+}
+
+// InputStateTransfStrategyEQ applies the EQ predicate on the "input_state_transf_strategy" field.
+func InputStateTransfStrategyEQ(v enum.TransfStrategy) predicate.Block {
+	vc := v
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldInputStateTransfStrategy), vc))
+	})
+}
+
+// InputStateTransfStrategyNEQ applies the NEQ predicate on the "input_state_transf_strategy" field.
+func InputStateTransfStrategyNEQ(v enum.TransfStrategy) predicate.Block {
+	vc := v
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldInputStateTransfStrategy), vc))
+	})
+}
+
+// InputStateTransfStrategyIn applies the In predicate on the "input_state_transf_strategy" field.
+func InputStateTransfStrategyIn(vs ...enum.TransfStrategy) predicate.Block {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Block(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.In(s.C(FieldInputStateTransfStrategy), v...))
+	})
+}
+
+// InputStateTransfStrategyNotIn applies the NotIn predicate on the "input_state_transf_strategy" field.
+func InputStateTransfStrategyNotIn(vs ...enum.TransfStrategy) predicate.Block {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Block(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.NotIn(s.C(FieldInputStateTransfStrategy), v...))
+	})
+}
+
+// InputStateTransfStrategyIsNil applies the IsNil predicate on the "input_state_transf_strategy" field.
+func InputStateTransfStrategyIsNil() predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldInputStateTransfStrategy)))
+	})
+}
+
+// InputStateTransfStrategyNotNil applies the NotNil predicate on the "input_state_transf_strategy" field.
+func InputStateTransfStrategyNotNil() predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldInputStateTransfStrategy)))
+	})
+}
+
+// InputStateTransformationEQ applies the EQ predicate on the "input_state_transformation" field.
+func InputStateTransformationEQ(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldInputStateTransformation), v))
+	})
+}
+
+// InputStateTransformationNEQ applies the NEQ predicate on the "input_state_transformation" field.
+func InputStateTransformationNEQ(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldInputStateTransformation), v))
+	})
+}
+
+// InputStateTransformationIn applies the In predicate on the "input_state_transformation" field.
+func InputStateTransformationIn(vs ...string) predicate.Block {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Block(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.In(s.C(FieldInputStateTransformation), v...))
+	})
+}
+
+// InputStateTransformationNotIn applies the NotIn predicate on the "input_state_transformation" field.
+func InputStateTransformationNotIn(vs ...string) predicate.Block {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Block(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.NotIn(s.C(FieldInputStateTransformation), v...))
+	})
+}
+
+// InputStateTransformationGT applies the GT predicate on the "input_state_transformation" field.
+func InputStateTransformationGT(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldInputStateTransformation), v))
+	})
+}
+
+// InputStateTransformationGTE applies the GTE predicate on the "input_state_transformation" field.
+func InputStateTransformationGTE(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldInputStateTransformation), v))
+	})
+}
+
+// InputStateTransformationLT applies the LT predicate on the "input_state_transformation" field.
+func InputStateTransformationLT(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldInputStateTransformation), v))
+	})
+}
+
+// InputStateTransformationLTE applies the LTE predicate on the "input_state_transformation" field.
+func InputStateTransformationLTE(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldInputStateTransformation), v))
+	})
+}
+
+// InputStateTransformationContains applies the Contains predicate on the "input_state_transformation" field.
+func InputStateTransformationContains(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.Contains(s.C(FieldInputStateTransformation), v))
+	})
+}
+
+// InputStateTransformationHasPrefix applies the HasPrefix predicate on the "input_state_transformation" field.
+func InputStateTransformationHasPrefix(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.HasPrefix(s.C(FieldInputStateTransformation), v))
+	})
+}
+
+// InputStateTransformationHasSuffix applies the HasSuffix predicate on the "input_state_transformation" field.
+func InputStateTransformationHasSuffix(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.HasSuffix(s.C(FieldInputStateTransformation), v))
+	})
+}
+
+// InputStateTransformationIsNil applies the IsNil predicate on the "input_state_transformation" field.
+func InputStateTransformationIsNil() predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldInputStateTransformation)))
+	})
+}
+
+// InputStateTransformationNotNil applies the NotNil predicate on the "input_state_transformation" field.
+func InputStateTransformationNotNil() predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldInputStateTransformation)))
+	})
+}
+
+// InputStateTransformationEqualFold applies the EqualFold predicate on the "input_state_transformation" field.
+func InputStateTransformationEqualFold(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.EqualFold(s.C(FieldInputStateTransformation), v))
+	})
+}
+
+// InputStateTransformationContainsFold applies the ContainsFold predicate on the "input_state_transformation" field.
+func InputStateTransformationContainsFold(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.ContainsFold(s.C(FieldInputStateTransformation), v))
+	})
+}
+
+// EnableOutputStateTransformationEQ applies the EQ predicate on the "enable_output_state_transformation" field.
+func EnableOutputStateTransformationEQ(v bool) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldEnableOutputStateTransformation), v))
+	})
+}
+
+// EnableOutputStateTransformationNEQ applies the NEQ predicate on the "enable_output_state_transformation" field.
+func EnableOutputStateTransformationNEQ(v bool) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldEnableOutputStateTransformation), v))
+	})
+}
+
+// EnableOutputStateTransformationIsNil applies the IsNil predicate on the "enable_output_state_transformation" field.
+func EnableOutputStateTransformationIsNil() predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldEnableOutputStateTransformation)))
+	})
+}
+
+// EnableOutputStateTransformationNotNil applies the NotNil predicate on the "enable_output_state_transformation" field.
+func EnableOutputStateTransformationNotNil() predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldEnableOutputStateTransformation)))
+	})
+}
+
+// OutputStateTransfStrategyEQ applies the EQ predicate on the "output_state_transf_strategy" field.
+func OutputStateTransfStrategyEQ(v enum.TransfStrategy) predicate.Block {
+	vc := v
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldOutputStateTransfStrategy), vc))
+	})
+}
+
+// OutputStateTransfStrategyNEQ applies the NEQ predicate on the "output_state_transf_strategy" field.
+func OutputStateTransfStrategyNEQ(v enum.TransfStrategy) predicate.Block {
+	vc := v
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldOutputStateTransfStrategy), vc))
+	})
+}
+
+// OutputStateTransfStrategyIn applies the In predicate on the "output_state_transf_strategy" field.
+func OutputStateTransfStrategyIn(vs ...enum.TransfStrategy) predicate.Block {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Block(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.In(s.C(FieldOutputStateTransfStrategy), v...))
+	})
+}
+
+// OutputStateTransfStrategyNotIn applies the NotIn predicate on the "output_state_transf_strategy" field.
+func OutputStateTransfStrategyNotIn(vs ...enum.TransfStrategy) predicate.Block {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Block(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.NotIn(s.C(FieldOutputStateTransfStrategy), v...))
+	})
+}
+
+// OutputStateTransfStrategyIsNil applies the IsNil predicate on the "output_state_transf_strategy" field.
+func OutputStateTransfStrategyIsNil() predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldOutputStateTransfStrategy)))
+	})
+}
+
+// OutputStateTransfStrategyNotNil applies the NotNil predicate on the "output_state_transf_strategy" field.
+func OutputStateTransfStrategyNotNil() predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldOutputStateTransfStrategy)))
+	})
+}
+
+// OutputStateTransformationEQ applies the EQ predicate on the "output_state_transformation" field.
+func OutputStateTransformationEQ(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldOutputStateTransformation), v))
+	})
+}
+
+// OutputStateTransformationNEQ applies the NEQ predicate on the "output_state_transformation" field.
+func OutputStateTransformationNEQ(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldOutputStateTransformation), v))
+	})
+}
+
+// OutputStateTransformationIn applies the In predicate on the "output_state_transformation" field.
+func OutputStateTransformationIn(vs ...string) predicate.Block {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Block(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.In(s.C(FieldOutputStateTransformation), v...))
+	})
+}
+
+// OutputStateTransformationNotIn applies the NotIn predicate on the "output_state_transformation" field.
+func OutputStateTransformationNotIn(vs ...string) predicate.Block {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Block(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.NotIn(s.C(FieldOutputStateTransformation), v...))
+	})
+}
+
+// OutputStateTransformationGT applies the GT predicate on the "output_state_transformation" field.
+func OutputStateTransformationGT(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldOutputStateTransformation), v))
+	})
+}
+
+// OutputStateTransformationGTE applies the GTE predicate on the "output_state_transformation" field.
+func OutputStateTransformationGTE(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldOutputStateTransformation), v))
+	})
+}
+
+// OutputStateTransformationLT applies the LT predicate on the "output_state_transformation" field.
+func OutputStateTransformationLT(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldOutputStateTransformation), v))
+	})
+}
+
+// OutputStateTransformationLTE applies the LTE predicate on the "output_state_transformation" field.
+func OutputStateTransformationLTE(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldOutputStateTransformation), v))
+	})
+}
+
+// OutputStateTransformationContains applies the Contains predicate on the "output_state_transformation" field.
+func OutputStateTransformationContains(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.Contains(s.C(FieldOutputStateTransformation), v))
+	})
+}
+
+// OutputStateTransformationHasPrefix applies the HasPrefix predicate on the "output_state_transformation" field.
+func OutputStateTransformationHasPrefix(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.HasPrefix(s.C(FieldOutputStateTransformation), v))
+	})
+}
+
+// OutputStateTransformationHasSuffix applies the HasSuffix predicate on the "output_state_transformation" field.
+func OutputStateTransformationHasSuffix(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.HasSuffix(s.C(FieldOutputStateTransformation), v))
+	})
+}
+
+// OutputStateTransformationIsNil applies the IsNil predicate on the "output_state_transformation" field.
+func OutputStateTransformationIsNil() predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldOutputStateTransformation)))
+	})
+}
+
+// OutputStateTransformationNotNil applies the NotNil predicate on the "output_state_transformation" field.
+func OutputStateTransformationNotNil() predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldOutputStateTransformation)))
+	})
+}
+
+// OutputStateTransformationEqualFold applies the EqualFold predicate on the "output_state_transformation" field.
+func OutputStateTransformationEqualFold(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.EqualFold(s.C(FieldOutputStateTransformation), v))
+	})
+}
+
+// OutputStateTransformationContainsFold applies the ContainsFold predicate on the "output_state_transformation" field.
+func OutputStateTransformationContainsFold(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.ContainsFold(s.C(FieldOutputStateTransformation), v))
+	})
+}
+
+// EnableErrorHandlingEQ applies the EQ predicate on the "enable_error_handling" field.
+func EnableErrorHandlingEQ(v bool) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldEnableErrorHandling), v))
+	})
+}
+
+// EnableErrorHandlingNEQ applies the NEQ predicate on the "enable_error_handling" field.
+func EnableErrorHandlingNEQ(v bool) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldEnableErrorHandling), v))
+	})
+}
+
+// EnableErrorHandlingIsNil applies the IsNil predicate on the "enable_error_handling" field.
+func EnableErrorHandlingIsNil() predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldEnableErrorHandling)))
+	})
+}
+
+// EnableErrorHandlingNotNil applies the NotNil predicate on the "enable_error_handling" field.
+func EnableErrorHandlingNotNil() predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldEnableErrorHandling)))
+	})
+}
+
+// EnableRetryPolicyEQ applies the EQ predicate on the "enable_retry_policy" field.
+func EnableRetryPolicyEQ(v bool) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldEnableRetryPolicy), v))
+	})
+}
+
+// EnableRetryPolicyNEQ applies the NEQ predicate on the "enable_retry_policy" field.
+func EnableRetryPolicyNEQ(v bool) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldEnableRetryPolicy), v))
+	})
+}
+
+// EnableRetryPolicyIsNil applies the IsNil predicate on the "enable_retry_policy" field.
+func EnableRetryPolicyIsNil() predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldEnableRetryPolicy)))
+	})
+}
+
+// EnableRetryPolicyNotNil applies the NotNil predicate on the "enable_retry_policy" field.
+func EnableRetryPolicyNotNil() predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldEnableRetryPolicy)))
+	})
+}
+
+// RetryIntervalEQ applies the EQ predicate on the "retryInterval" field.
+func RetryIntervalEQ(v int) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldRetryInterval), v))
+	})
+}
+
+// RetryIntervalNEQ applies the NEQ predicate on the "retryInterval" field.
+func RetryIntervalNEQ(v int) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldRetryInterval), v))
+	})
+}
+
+// RetryIntervalIn applies the In predicate on the "retryInterval" field.
+func RetryIntervalIn(vs ...int) predicate.Block {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Block(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.In(s.C(FieldRetryInterval), v...))
+	})
+}
+
+// RetryIntervalNotIn applies the NotIn predicate on the "retryInterval" field.
+func RetryIntervalNotIn(vs ...int) predicate.Block {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Block(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.NotIn(s.C(FieldRetryInterval), v...))
+	})
+}
+
+// RetryIntervalGT applies the GT predicate on the "retryInterval" field.
+func RetryIntervalGT(v int) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldRetryInterval), v))
+	})
+}
+
+// RetryIntervalGTE applies the GTE predicate on the "retryInterval" field.
+func RetryIntervalGTE(v int) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldRetryInterval), v))
+	})
+}
+
+// RetryIntervalLT applies the LT predicate on the "retryInterval" field.
+func RetryIntervalLT(v int) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldRetryInterval), v))
+	})
+}
+
+// RetryIntervalLTE applies the LTE predicate on the "retryInterval" field.
+func RetryIntervalLTE(v int) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldRetryInterval), v))
+	})
+}
+
+// RetryIntervalIsNil applies the IsNil predicate on the "retryInterval" field.
+func RetryIntervalIsNil() predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldRetryInterval)))
+	})
+}
+
+// RetryIntervalNotNil applies the NotNil predicate on the "retryInterval" field.
+func RetryIntervalNotNil() predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldRetryInterval)))
+	})
+}
+
+// RetryUnitEQ applies the EQ predicate on the "retry_unit" field.
+func RetryUnitEQ(v RetryUnit) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldRetryUnit), v))
+	})
+}
+
+// RetryUnitNEQ applies the NEQ predicate on the "retry_unit" field.
+func RetryUnitNEQ(v RetryUnit) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldRetryUnit), v))
+	})
+}
+
+// RetryUnitIn applies the In predicate on the "retry_unit" field.
+func RetryUnitIn(vs ...RetryUnit) predicate.Block {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Block(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.In(s.C(FieldRetryUnit), v...))
+	})
+}
+
+// RetryUnitNotIn applies the NotIn predicate on the "retry_unit" field.
+func RetryUnitNotIn(vs ...RetryUnit) predicate.Block {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Block(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.NotIn(s.C(FieldRetryUnit), v...))
+	})
+}
+
+// RetryUnitIsNil applies the IsNil predicate on the "retry_unit" field.
+func RetryUnitIsNil() predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldRetryUnit)))
+	})
+}
+
+// RetryUnitNotNil applies the NotNil predicate on the "retry_unit" field.
+func RetryUnitNotNil() predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldRetryUnit)))
+	})
+}
+
+// MaxAttempsEQ applies the EQ predicate on the "maxAttemps" field.
+func MaxAttempsEQ(v int) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldMaxAttemps), v))
+	})
+}
+
+// MaxAttempsNEQ applies the NEQ predicate on the "maxAttemps" field.
+func MaxAttempsNEQ(v int) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldMaxAttemps), v))
+	})
+}
+
+// MaxAttempsIn applies the In predicate on the "maxAttemps" field.
+func MaxAttempsIn(vs ...int) predicate.Block {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Block(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.In(s.C(FieldMaxAttemps), v...))
+	})
+}
+
+// MaxAttempsNotIn applies the NotIn predicate on the "maxAttemps" field.
+func MaxAttempsNotIn(vs ...int) predicate.Block {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Block(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.NotIn(s.C(FieldMaxAttemps), v...))
+	})
+}
+
+// MaxAttempsGT applies the GT predicate on the "maxAttemps" field.
+func MaxAttempsGT(v int) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldMaxAttemps), v))
+	})
+}
+
+// MaxAttempsGTE applies the GTE predicate on the "maxAttemps" field.
+func MaxAttempsGTE(v int) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldMaxAttemps), v))
+	})
+}
+
+// MaxAttempsLT applies the LT predicate on the "maxAttemps" field.
+func MaxAttempsLT(v int) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldMaxAttemps), v))
+	})
+}
+
+// MaxAttempsLTE applies the LTE predicate on the "maxAttemps" field.
+func MaxAttempsLTE(v int) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldMaxAttemps), v))
+	})
+}
+
+// MaxAttempsIsNil applies the IsNil predicate on the "maxAttemps" field.
+func MaxAttempsIsNil() predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldMaxAttemps)))
+	})
+}
+
+// MaxAttempsNotNil applies the NotNil predicate on the "maxAttemps" field.
+func MaxAttempsNotNil() predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldMaxAttemps)))
+	})
+}
+
+// BackOffRateEQ applies the EQ predicate on the "backOffRate" field.
+func BackOffRateEQ(v int) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldBackOffRate), v))
+	})
+}
+
+// BackOffRateNEQ applies the NEQ predicate on the "backOffRate" field.
+func BackOffRateNEQ(v int) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldBackOffRate), v))
+	})
+}
+
+// BackOffRateIn applies the In predicate on the "backOffRate" field.
+func BackOffRateIn(vs ...int) predicate.Block {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Block(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.In(s.C(FieldBackOffRate), v...))
+	})
+}
+
+// BackOffRateNotIn applies the NotIn predicate on the "backOffRate" field.
+func BackOffRateNotIn(vs ...int) predicate.Block {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Block(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.NotIn(s.C(FieldBackOffRate), v...))
+	})
+}
+
+// BackOffRateGT applies the GT predicate on the "backOffRate" field.
+func BackOffRateGT(v int) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldBackOffRate), v))
+	})
+}
+
+// BackOffRateGTE applies the GTE predicate on the "backOffRate" field.
+func BackOffRateGTE(v int) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldBackOffRate), v))
+	})
+}
+
+// BackOffRateLT applies the LT predicate on the "backOffRate" field.
+func BackOffRateLT(v int) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldBackOffRate), v))
+	})
+}
+
+// BackOffRateLTE applies the LTE predicate on the "backOffRate" field.
+func BackOffRateLTE(v int) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldBackOffRate), v))
+	})
+}
+
+// BackOffRateIsNil applies the IsNil predicate on the "backOffRate" field.
+func BackOffRateIsNil() predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldBackOffRate)))
+	})
+}
+
+// BackOffRateNotNil applies the NotNil predicate on the "backOffRate" field.
+func BackOffRateNotNil() predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldBackOffRate)))
+	})
+}
+
+// TimerBehaviorEQ applies the EQ predicate on the "timer_behavior" field.
+func TimerBehaviorEQ(v TimerBehavior) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldTimerBehavior), v))
+	})
+}
+
+// TimerBehaviorNEQ applies the NEQ predicate on the "timer_behavior" field.
+func TimerBehaviorNEQ(v TimerBehavior) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldTimerBehavior), v))
+	})
+}
+
+// TimerBehaviorIn applies the In predicate on the "timer_behavior" field.
+func TimerBehaviorIn(vs ...TimerBehavior) predicate.Block {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Block(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.In(s.C(FieldTimerBehavior), v...))
+	})
+}
+
+// TimerBehaviorNotIn applies the NotIn predicate on the "timer_behavior" field.
+func TimerBehaviorNotIn(vs ...TimerBehavior) predicate.Block {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Block(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.NotIn(s.C(FieldTimerBehavior), v...))
+	})
+}
+
+// TimerBehaviorIsNil applies the IsNil predicate on the "timer_behavior" field.
+func TimerBehaviorIsNil() predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldTimerBehavior)))
+	})
+}
+
+// TimerBehaviorNotNil applies the NotNil predicate on the "timer_behavior" field.
+func TimerBehaviorNotNil() predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldTimerBehavior)))
+	})
+}
+
+// SecondsEQ applies the EQ predicate on the "seconds" field.
+func SecondsEQ(v int) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldSeconds), v))
+	})
+}
+
+// SecondsNEQ applies the NEQ predicate on the "seconds" field.
+func SecondsNEQ(v int) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldSeconds), v))
+	})
+}
+
+// SecondsIn applies the In predicate on the "seconds" field.
+func SecondsIn(vs ...int) predicate.Block {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Block(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.In(s.C(FieldSeconds), v...))
+	})
+}
+
+// SecondsNotIn applies the NotIn predicate on the "seconds" field.
+func SecondsNotIn(vs ...int) predicate.Block {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Block(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.NotIn(s.C(FieldSeconds), v...))
+	})
+}
+
+// SecondsGT applies the GT predicate on the "seconds" field.
+func SecondsGT(v int) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldSeconds), v))
+	})
+}
+
+// SecondsGTE applies the GTE predicate on the "seconds" field.
+func SecondsGTE(v int) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldSeconds), v))
+	})
+}
+
+// SecondsLT applies the LT predicate on the "seconds" field.
+func SecondsLT(v int) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldSeconds), v))
+	})
+}
+
+// SecondsLTE applies the LTE predicate on the "seconds" field.
+func SecondsLTE(v int) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldSeconds), v))
+	})
+}
+
+// SecondsIsNil applies the IsNil predicate on the "seconds" field.
+func SecondsIsNil() predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldSeconds)))
+	})
+}
+
+// SecondsNotNil applies the NotNil predicate on the "seconds" field.
+func SecondsNotNil() predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldSeconds)))
+	})
+}
+
+// EnableTimerExpressionEQ applies the EQ predicate on the "enable_timer_expression" field.
+func EnableTimerExpressionEQ(v bool) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldEnableTimerExpression), v))
+	})
+}
+
+// EnableTimerExpressionNEQ applies the NEQ predicate on the "enable_timer_expression" field.
+func EnableTimerExpressionNEQ(v bool) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldEnableTimerExpression), v))
+	})
+}
+
+// EnableTimerExpressionIsNil applies the IsNil predicate on the "enable_timer_expression" field.
+func EnableTimerExpressionIsNil() predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldEnableTimerExpression)))
+	})
+}
+
+// EnableTimerExpressionNotNil applies the NotNil predicate on the "enable_timer_expression" field.
+func EnableTimerExpressionNotNil() predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldEnableTimerExpression)))
+	})
+}
+
+// TimerExpressionEQ applies the EQ predicate on the "timer_expression" field.
+func TimerExpressionEQ(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldTimerExpression), v))
+	})
+}
+
+// TimerExpressionNEQ applies the NEQ predicate on the "timer_expression" field.
+func TimerExpressionNEQ(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldTimerExpression), v))
+	})
+}
+
+// TimerExpressionIn applies the In predicate on the "timer_expression" field.
+func TimerExpressionIn(vs ...string) predicate.Block {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Block(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.In(s.C(FieldTimerExpression), v...))
+	})
+}
+
+// TimerExpressionNotIn applies the NotIn predicate on the "timer_expression" field.
+func TimerExpressionNotIn(vs ...string) predicate.Block {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Block(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.NotIn(s.C(FieldTimerExpression), v...))
+	})
+}
+
+// TimerExpressionGT applies the GT predicate on the "timer_expression" field.
+func TimerExpressionGT(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldTimerExpression), v))
+	})
+}
+
+// TimerExpressionGTE applies the GTE predicate on the "timer_expression" field.
+func TimerExpressionGTE(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldTimerExpression), v))
+	})
+}
+
+// TimerExpressionLT applies the LT predicate on the "timer_expression" field.
+func TimerExpressionLT(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldTimerExpression), v))
+	})
+}
+
+// TimerExpressionLTE applies the LTE predicate on the "timer_expression" field.
+func TimerExpressionLTE(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldTimerExpression), v))
+	})
+}
+
+// TimerExpressionContains applies the Contains predicate on the "timer_expression" field.
+func TimerExpressionContains(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.Contains(s.C(FieldTimerExpression), v))
+	})
+}
+
+// TimerExpressionHasPrefix applies the HasPrefix predicate on the "timer_expression" field.
+func TimerExpressionHasPrefix(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.HasPrefix(s.C(FieldTimerExpression), v))
+	})
+}
+
+// TimerExpressionHasSuffix applies the HasSuffix predicate on the "timer_expression" field.
+func TimerExpressionHasSuffix(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.HasSuffix(s.C(FieldTimerExpression), v))
+	})
+}
+
+// TimerExpressionIsNil applies the IsNil predicate on the "timer_expression" field.
+func TimerExpressionIsNil() predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldTimerExpression)))
+	})
+}
+
+// TimerExpressionNotNil applies the NotNil predicate on the "timer_expression" field.
+func TimerExpressionNotNil() predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldTimerExpression)))
+	})
+}
+
+// TimerExpressionEqualFold applies the EqualFold predicate on the "timer_expression" field.
+func TimerExpressionEqualFold(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.EqualFold(s.C(FieldTimerExpression), v))
+	})
+}
+
+// TimerExpressionContainsFold applies the ContainsFold predicate on the "timer_expression" field.
+func TimerExpressionContainsFold(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.ContainsFold(s.C(FieldTimerExpression), v))
+	})
+}
+
+// TimerSpecificDateEQ applies the EQ predicate on the "timer_specific_date" field.
+func TimerSpecificDateEQ(v time.Time) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldTimerSpecificDate), v))
+	})
+}
+
+// TimerSpecificDateNEQ applies the NEQ predicate on the "timer_specific_date" field.
+func TimerSpecificDateNEQ(v time.Time) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldTimerSpecificDate), v))
+	})
+}
+
+// TimerSpecificDateIn applies the In predicate on the "timer_specific_date" field.
+func TimerSpecificDateIn(vs ...time.Time) predicate.Block {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Block(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.In(s.C(FieldTimerSpecificDate), v...))
+	})
+}
+
+// TimerSpecificDateNotIn applies the NotIn predicate on the "timer_specific_date" field.
+func TimerSpecificDateNotIn(vs ...time.Time) predicate.Block {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Block(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.NotIn(s.C(FieldTimerSpecificDate), v...))
+	})
+}
+
+// TimerSpecificDateGT applies the GT predicate on the "timer_specific_date" field.
+func TimerSpecificDateGT(v time.Time) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldTimerSpecificDate), v))
+	})
+}
+
+// TimerSpecificDateGTE applies the GTE predicate on the "timer_specific_date" field.
+func TimerSpecificDateGTE(v time.Time) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldTimerSpecificDate), v))
+	})
+}
+
+// TimerSpecificDateLT applies the LT predicate on the "timer_specific_date" field.
+func TimerSpecificDateLT(v time.Time) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldTimerSpecificDate), v))
+	})
+}
+
+// TimerSpecificDateLTE applies the LTE predicate on the "timer_specific_date" field.
+func TimerSpecificDateLTE(v time.Time) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldTimerSpecificDate), v))
+	})
+}
+
+// TimerSpecificDateIsNil applies the IsNil predicate on the "timer_specific_date" field.
+func TimerSpecificDateIsNil() predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldTimerSpecificDate)))
+	})
+}
+
+// TimerSpecificDateNotNil applies the NotNil predicate on the "timer_specific_date" field.
+func TimerSpecificDateNotNil() predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldTimerSpecificDate)))
+	})
+}
+
+// URLMethodEQ applies the EQ predicate on the "url_method" field.
+func URLMethodEQ(v URLMethod) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldURLMethod), v))
+	})
+}
+
+// URLMethodNEQ applies the NEQ predicate on the "url_method" field.
+func URLMethodNEQ(v URLMethod) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldURLMethod), v))
+	})
+}
+
+// URLMethodIn applies the In predicate on the "url_method" field.
+func URLMethodIn(vs ...URLMethod) predicate.Block {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Block(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.In(s.C(FieldURLMethod), v...))
+	})
+}
+
+// URLMethodNotIn applies the NotIn predicate on the "url_method" field.
+func URLMethodNotIn(vs ...URLMethod) predicate.Block {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Block(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.NotIn(s.C(FieldURLMethod), v...))
+	})
+}
+
+// URLMethodIsNil applies the IsNil predicate on the "url_method" field.
+func URLMethodIsNil() predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldURLMethod)))
+	})
+}
+
+// URLMethodNotNil applies the NotNil predicate on the "url_method" field.
+func URLMethodNotNil() predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldURLMethod)))
+	})
+}
+
+// URLEQ applies the EQ predicate on the "url" field.
+func URLEQ(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldURL), v))
+	})
+}
+
+// URLNEQ applies the NEQ predicate on the "url" field.
+func URLNEQ(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldURL), v))
+	})
+}
+
+// URLIn applies the In predicate on the "url" field.
+func URLIn(vs ...string) predicate.Block {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Block(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.In(s.C(FieldURL), v...))
+	})
+}
+
+// URLNotIn applies the NotIn predicate on the "url" field.
+func URLNotIn(vs ...string) predicate.Block {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Block(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.NotIn(s.C(FieldURL), v...))
+	})
+}
+
+// URLGT applies the GT predicate on the "url" field.
+func URLGT(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldURL), v))
+	})
+}
+
+// URLGTE applies the GTE predicate on the "url" field.
+func URLGTE(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldURL), v))
+	})
+}
+
+// URLLT applies the LT predicate on the "url" field.
+func URLLT(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldURL), v))
+	})
+}
+
+// URLLTE applies the LTE predicate on the "url" field.
+func URLLTE(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldURL), v))
+	})
+}
+
+// URLContains applies the Contains predicate on the "url" field.
+func URLContains(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.Contains(s.C(FieldURL), v))
+	})
+}
+
+// URLHasPrefix applies the HasPrefix predicate on the "url" field.
+func URLHasPrefix(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.HasPrefix(s.C(FieldURL), v))
+	})
+}
+
+// URLHasSuffix applies the HasSuffix predicate on the "url" field.
+func URLHasSuffix(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.HasSuffix(s.C(FieldURL), v))
+	})
+}
+
+// URLIsNil applies the IsNil predicate on the "url" field.
+func URLIsNil() predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldURL)))
+	})
+}
+
+// URLNotNil applies the NotNil predicate on the "url" field.
+func URLNotNil() predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldURL)))
+	})
+}
+
+// URLEqualFold applies the EqualFold predicate on the "url" field.
+func URLEqualFold(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.EqualFold(s.C(FieldURL), v))
+	})
+}
+
+// URLContainsFold applies the ContainsFold predicate on the "url" field.
+func URLContainsFold(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.ContainsFold(s.C(FieldURL), v))
+	})
+}
+
+// ConnectionTimeoutEQ applies the EQ predicate on the "connection_timeout" field.
+func ConnectionTimeoutEQ(v int) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldConnectionTimeout), v))
+	})
+}
+
+// ConnectionTimeoutNEQ applies the NEQ predicate on the "connection_timeout" field.
+func ConnectionTimeoutNEQ(v int) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldConnectionTimeout), v))
+	})
+}
+
+// ConnectionTimeoutIn applies the In predicate on the "connection_timeout" field.
+func ConnectionTimeoutIn(vs ...int) predicate.Block {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Block(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.In(s.C(FieldConnectionTimeout), v...))
+	})
+}
+
+// ConnectionTimeoutNotIn applies the NotIn predicate on the "connection_timeout" field.
+func ConnectionTimeoutNotIn(vs ...int) predicate.Block {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Block(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.NotIn(s.C(FieldConnectionTimeout), v...))
+	})
+}
+
+// ConnectionTimeoutGT applies the GT predicate on the "connection_timeout" field.
+func ConnectionTimeoutGT(v int) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldConnectionTimeout), v))
+	})
+}
+
+// ConnectionTimeoutGTE applies the GTE predicate on the "connection_timeout" field.
+func ConnectionTimeoutGTE(v int) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldConnectionTimeout), v))
+	})
+}
+
+// ConnectionTimeoutLT applies the LT predicate on the "connection_timeout" field.
+func ConnectionTimeoutLT(v int) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldConnectionTimeout), v))
+	})
+}
+
+// ConnectionTimeoutLTE applies the LTE predicate on the "connection_timeout" field.
+func ConnectionTimeoutLTE(v int) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldConnectionTimeout), v))
+	})
+}
+
+// ConnectionTimeoutIsNil applies the IsNil predicate on the "connection_timeout" field.
+func ConnectionTimeoutIsNil() predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldConnectionTimeout)))
+	})
+}
+
+// ConnectionTimeoutNotNil applies the NotNil predicate on the "connection_timeout" field.
+func ConnectionTimeoutNotNil() predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldConnectionTimeout)))
+	})
+}
+
+// BodyEQ applies the EQ predicate on the "body" field.
+func BodyEQ(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldBody), v))
+	})
+}
+
+// BodyNEQ applies the NEQ predicate on the "body" field.
+func BodyNEQ(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldBody), v))
+	})
+}
+
+// BodyIn applies the In predicate on the "body" field.
+func BodyIn(vs ...string) predicate.Block {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Block(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.In(s.C(FieldBody), v...))
+	})
+}
+
+// BodyNotIn applies the NotIn predicate on the "body" field.
+func BodyNotIn(vs ...string) predicate.Block {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Block(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.NotIn(s.C(FieldBody), v...))
+	})
+}
+
+// BodyGT applies the GT predicate on the "body" field.
+func BodyGT(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldBody), v))
+	})
+}
+
+// BodyGTE applies the GTE predicate on the "body" field.
+func BodyGTE(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldBody), v))
+	})
+}
+
+// BodyLT applies the LT predicate on the "body" field.
+func BodyLT(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldBody), v))
+	})
+}
+
+// BodyLTE applies the LTE predicate on the "body" field.
+func BodyLTE(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldBody), v))
+	})
+}
+
+// BodyContains applies the Contains predicate on the "body" field.
+func BodyContains(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.Contains(s.C(FieldBody), v))
+	})
+}
+
+// BodyHasPrefix applies the HasPrefix predicate on the "body" field.
+func BodyHasPrefix(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.HasPrefix(s.C(FieldBody), v))
+	})
+}
+
+// BodyHasSuffix applies the HasSuffix predicate on the "body" field.
+func BodyHasSuffix(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.HasSuffix(s.C(FieldBody), v))
+	})
+}
+
+// BodyIsNil applies the IsNil predicate on the "body" field.
+func BodyIsNil() predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldBody)))
+	})
+}
+
+// BodyNotNil applies the NotNil predicate on the "body" field.
+func BodyNotNil() predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldBody)))
+	})
+}
+
+// BodyEqualFold applies the EqualFold predicate on the "body" field.
+func BodyEqualFold(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.EqualFold(s.C(FieldBody), v))
+	})
+}
+
+// BodyContainsFold applies the ContainsFold predicate on the "body" field.
+func BodyContainsFold(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.ContainsFold(s.C(FieldBody), v))
+	})
+}
+
+// HeadersIsNil applies the IsNil predicate on the "headers" field.
+func HeadersIsNil() predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldHeaders)))
+	})
+}
+
+// HeadersNotNil applies the NotNil predicate on the "headers" field.
+func HeadersNotNil() predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldHeaders)))
+	})
+}
+
+// SignalTypeEQ applies the EQ predicate on the "signal_type" field.
+func SignalTypeEQ(v SignalType) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldSignalType), v))
+	})
+}
+
+// SignalTypeNEQ applies the NEQ predicate on the "signal_type" field.
+func SignalTypeNEQ(v SignalType) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldSignalType), v))
+	})
+}
+
+// SignalTypeIn applies the In predicate on the "signal_type" field.
+func SignalTypeIn(vs ...SignalType) predicate.Block {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Block(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.In(s.C(FieldSignalType), v...))
+	})
+}
+
+// SignalTypeNotIn applies the NotIn predicate on the "signal_type" field.
+func SignalTypeNotIn(vs ...SignalType) predicate.Block {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Block(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.NotIn(s.C(FieldSignalType), v...))
+	})
+}
+
+// SignalTypeIsNil applies the IsNil predicate on the "signal_type" field.
+func SignalTypeIsNil() predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldSignalType)))
+	})
+}
+
+// SignalTypeNotNil applies the NotNil predicate on the "signal_type" field.
+func SignalTypeNotNil() predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldSignalType)))
+	})
+}
+
+// SignalModuleEQ applies the EQ predicate on the "signal_module" field.
+func SignalModuleEQ(v SignalModule) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldSignalModule), v))
+	})
+}
+
+// SignalModuleNEQ applies the NEQ predicate on the "signal_module" field.
+func SignalModuleNEQ(v SignalModule) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldSignalModule), v))
+	})
+}
+
+// SignalModuleIn applies the In predicate on the "signal_module" field.
+func SignalModuleIn(vs ...SignalModule) predicate.Block {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Block(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.In(s.C(FieldSignalModule), v...))
+	})
+}
+
+// SignalModuleNotIn applies the NotIn predicate on the "signal_module" field.
+func SignalModuleNotIn(vs ...SignalModule) predicate.Block {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Block(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.NotIn(s.C(FieldSignalModule), v...))
+	})
+}
+
+// SignalModuleIsNil applies the IsNil predicate on the "signal_module" field.
+func SignalModuleIsNil() predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldSignalModule)))
+	})
+}
+
+// SignalModuleNotNil applies the NotNil predicate on the "signal_module" field.
+func SignalModuleNotNil() predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldSignalModule)))
+	})
+}
+
+// CustomFilterEQ applies the EQ predicate on the "custom_filter" field.
+func CustomFilterEQ(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldCustomFilter), v))
+	})
+}
+
+// CustomFilterNEQ applies the NEQ predicate on the "custom_filter" field.
+func CustomFilterNEQ(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldCustomFilter), v))
+	})
+}
+
+// CustomFilterIn applies the In predicate on the "custom_filter" field.
+func CustomFilterIn(vs ...string) predicate.Block {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Block(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.In(s.C(FieldCustomFilter), v...))
+	})
+}
+
+// CustomFilterNotIn applies the NotIn predicate on the "custom_filter" field.
+func CustomFilterNotIn(vs ...string) predicate.Block {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Block(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.NotIn(s.C(FieldCustomFilter), v...))
+	})
+}
+
+// CustomFilterGT applies the GT predicate on the "custom_filter" field.
+func CustomFilterGT(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldCustomFilter), v))
+	})
+}
+
+// CustomFilterGTE applies the GTE predicate on the "custom_filter" field.
+func CustomFilterGTE(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldCustomFilter), v))
+	})
+}
+
+// CustomFilterLT applies the LT predicate on the "custom_filter" field.
+func CustomFilterLT(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldCustomFilter), v))
+	})
+}
+
+// CustomFilterLTE applies the LTE predicate on the "custom_filter" field.
+func CustomFilterLTE(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldCustomFilter), v))
+	})
+}
+
+// CustomFilterContains applies the Contains predicate on the "custom_filter" field.
+func CustomFilterContains(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.Contains(s.C(FieldCustomFilter), v))
+	})
+}
+
+// CustomFilterHasPrefix applies the HasPrefix predicate on the "custom_filter" field.
+func CustomFilterHasPrefix(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.HasPrefix(s.C(FieldCustomFilter), v))
+	})
+}
+
+// CustomFilterHasSuffix applies the HasSuffix predicate on the "custom_filter" field.
+func CustomFilterHasSuffix(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.HasSuffix(s.C(FieldCustomFilter), v))
+	})
+}
+
+// CustomFilterIsNil applies the IsNil predicate on the "custom_filter" field.
+func CustomFilterIsNil() predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldCustomFilter)))
+	})
+}
+
+// CustomFilterNotNil applies the NotNil predicate on the "custom_filter" field.
+func CustomFilterNotNil() predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldCustomFilter)))
+	})
+}
+
+// CustomFilterEqualFold applies the EqualFold predicate on the "custom_filter" field.
+func CustomFilterEqualFold(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.EqualFold(s.C(FieldCustomFilter), v))
+	})
+}
+
+// CustomFilterContainsFold applies the ContainsFold predicate on the "custom_filter" field.
+func CustomFilterContainsFold(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.ContainsFold(s.C(FieldCustomFilter), v))
+	})
+}
+
+// BlockFlowEQ applies the EQ predicate on the "block_flow" field.
+func BlockFlowEQ(v bool) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldBlockFlow), v))
+	})
+}
+
+// BlockFlowNEQ applies the NEQ predicate on the "block_flow" field.
+func BlockFlowNEQ(v bool) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldBlockFlow), v))
+	})
+}
+
+// BlockFlowIsNil applies the IsNil predicate on the "block_flow" field.
+func BlockFlowIsNil() predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldBlockFlow)))
+	})
+}
+
+// BlockFlowNotNil applies the NotNil predicate on the "block_flow" field.
+func BlockFlowNotNil() predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldBlockFlow)))
+	})
+}
+
+// KafkaBrokersIsNil applies the IsNil predicate on the "kafka_brokers" field.
+func KafkaBrokersIsNil() predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldKafkaBrokers)))
+	})
+}
+
+// KafkaBrokersNotNil applies the NotNil predicate on the "kafka_brokers" field.
+func KafkaBrokersNotNil() predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldKafkaBrokers)))
+	})
+}
+
+// KafkaTopicEQ applies the EQ predicate on the "kafka_topic" field.
+func KafkaTopicEQ(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldKafkaTopic), v))
+	})
+}
+
+// KafkaTopicNEQ applies the NEQ predicate on the "kafka_topic" field.
+func KafkaTopicNEQ(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldKafkaTopic), v))
+	})
+}
+
+// KafkaTopicIn applies the In predicate on the "kafka_topic" field.
+func KafkaTopicIn(vs ...string) predicate.Block {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Block(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.In(s.C(FieldKafkaTopic), v...))
+	})
+}
+
+// KafkaTopicNotIn applies the NotIn predicate on the "kafka_topic" field.
+func KafkaTopicNotIn(vs ...string) predicate.Block {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Block(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.NotIn(s.C(FieldKafkaTopic), v...))
+	})
+}
+
+// KafkaTopicGT applies the GT predicate on the "kafka_topic" field.
+func KafkaTopicGT(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldKafkaTopic), v))
+	})
+}
+
+// KafkaTopicGTE applies the GTE predicate on the "kafka_topic" field.
+func KafkaTopicGTE(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldKafkaTopic), v))
+	})
+}
+
+// KafkaTopicLT applies the LT predicate on the "kafka_topic" field.
+func KafkaTopicLT(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldKafkaTopic), v))
+	})
+}
+
+// KafkaTopicLTE applies the LTE predicate on the "kafka_topic" field.
+func KafkaTopicLTE(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldKafkaTopic), v))
+	})
+}
+
+// KafkaTopicContains applies the Contains predicate on the "kafka_topic" field.
+func KafkaTopicContains(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.Contains(s.C(FieldKafkaTopic), v))
+	})
+}
+
+// KafkaTopicHasPrefix applies the HasPrefix predicate on the "kafka_topic" field.
+func KafkaTopicHasPrefix(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.HasPrefix(s.C(FieldKafkaTopic), v))
+	})
+}
+
+// KafkaTopicHasSuffix applies the HasSuffix predicate on the "kafka_topic" field.
+func KafkaTopicHasSuffix(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.HasSuffix(s.C(FieldKafkaTopic), v))
+	})
+}
+
+// KafkaTopicIsNil applies the IsNil predicate on the "kafka_topic" field.
+func KafkaTopicIsNil() predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldKafkaTopic)))
+	})
+}
+
+// KafkaTopicNotNil applies the NotNil predicate on the "kafka_topic" field.
+func KafkaTopicNotNil() predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldKafkaTopic)))
+	})
+}
+
+// KafkaTopicEqualFold applies the EqualFold predicate on the "kafka_topic" field.
+func KafkaTopicEqualFold(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.EqualFold(s.C(FieldKafkaTopic), v))
+	})
+}
+
+// KafkaTopicContainsFold applies the ContainsFold predicate on the "kafka_topic" field.
+func KafkaTopicContainsFold(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.ContainsFold(s.C(FieldKafkaTopic), v))
+	})
+}
+
+// KafkaMessageEQ applies the EQ predicate on the "kafka_message" field.
+func KafkaMessageEQ(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldKafkaMessage), v))
+	})
+}
+
+// KafkaMessageNEQ applies the NEQ predicate on the "kafka_message" field.
+func KafkaMessageNEQ(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldKafkaMessage), v))
+	})
+}
+
+// KafkaMessageIn applies the In predicate on the "kafka_message" field.
+func KafkaMessageIn(vs ...string) predicate.Block {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Block(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.In(s.C(FieldKafkaMessage), v...))
+	})
+}
+
+// KafkaMessageNotIn applies the NotIn predicate on the "kafka_message" field.
+func KafkaMessageNotIn(vs ...string) predicate.Block {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Block(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.NotIn(s.C(FieldKafkaMessage), v...))
+	})
+}
+
+// KafkaMessageGT applies the GT predicate on the "kafka_message" field.
+func KafkaMessageGT(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldKafkaMessage), v))
+	})
+}
+
+// KafkaMessageGTE applies the GTE predicate on the "kafka_message" field.
+func KafkaMessageGTE(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldKafkaMessage), v))
+	})
+}
+
+// KafkaMessageLT applies the LT predicate on the "kafka_message" field.
+func KafkaMessageLT(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldKafkaMessage), v))
+	})
+}
+
+// KafkaMessageLTE applies the LTE predicate on the "kafka_message" field.
+func KafkaMessageLTE(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldKafkaMessage), v))
+	})
+}
+
+// KafkaMessageContains applies the Contains predicate on the "kafka_message" field.
+func KafkaMessageContains(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.Contains(s.C(FieldKafkaMessage), v))
+	})
+}
+
+// KafkaMessageHasPrefix applies the HasPrefix predicate on the "kafka_message" field.
+func KafkaMessageHasPrefix(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.HasPrefix(s.C(FieldKafkaMessage), v))
+	})
+}
+
+// KafkaMessageHasSuffix applies the HasSuffix predicate on the "kafka_message" field.
+func KafkaMessageHasSuffix(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.HasSuffix(s.C(FieldKafkaMessage), v))
+	})
+}
+
+// KafkaMessageIsNil applies the IsNil predicate on the "kafka_message" field.
+func KafkaMessageIsNil() predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldKafkaMessage)))
+	})
+}
+
+// KafkaMessageNotNil applies the NotNil predicate on the "kafka_message" field.
+func KafkaMessageNotNil() predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldKafkaMessage)))
+	})
+}
+
+// KafkaMessageEqualFold applies the EqualFold predicate on the "kafka_message" field.
+func KafkaMessageEqualFold(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.EqualFold(s.C(FieldKafkaMessage), v))
+	})
+}
+
+// KafkaMessageContainsFold applies the ContainsFold predicate on the "kafka_message" field.
+func KafkaMessageContainsFold(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.ContainsFold(s.C(FieldKafkaMessage), v))
+	})
+}
+
+// KafkaMessageTypeEQ applies the EQ predicate on the "kafka_message_type" field.
+func KafkaMessageTypeEQ(v enum.KafkaMessageType) predicate.Block {
+	vc := v
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldKafkaMessageType), vc))
+	})
+}
+
+// KafkaMessageTypeNEQ applies the NEQ predicate on the "kafka_message_type" field.
+func KafkaMessageTypeNEQ(v enum.KafkaMessageType) predicate.Block {
+	vc := v
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldKafkaMessageType), vc))
+	})
+}
+
+// KafkaMessageTypeIn applies the In predicate on the "kafka_message_type" field.
+func KafkaMessageTypeIn(vs ...enum.KafkaMessageType) predicate.Block {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Block(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.In(s.C(FieldKafkaMessageType), v...))
+	})
+}
+
+// KafkaMessageTypeNotIn applies the NotIn predicate on the "kafka_message_type" field.
+func KafkaMessageTypeNotIn(vs ...enum.KafkaMessageType) predicate.Block {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Block(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.NotIn(s.C(FieldKafkaMessageType), v...))
+	})
+}
+
+// KafkaMessageTypeIsNil applies the IsNil predicate on the "kafka_message_type" field.
+func KafkaMessageTypeIsNil() predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldKafkaMessageType)))
+	})
+}
+
+// KafkaMessageTypeNotNil applies the NotNil predicate on the "kafka_message_type" field.
+func KafkaMessageTypeNotNil() predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldKafkaMessageType)))
+	})
+}
+
+// ForeachKeyEQ applies the EQ predicate on the "foreach_key" field.
+func ForeachKeyEQ(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldForeachKey), v))
+	})
+}
+
+// ForeachKeyNEQ applies the NEQ predicate on the "foreach_key" field.
+func ForeachKeyNEQ(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldForeachKey), v))
+	})
+}
+
+// ForeachKeyIn applies the In predicate on the "foreach_key" field.
+func ForeachKeyIn(vs ...string) predicate.Block {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Block(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.In(s.C(FieldForeachKey), v...))
+	})
+}
+
+// ForeachKeyNotIn applies the NotIn predicate on the "foreach_key" field.
+func ForeachKeyNotIn(vs ...string) predicate.Block {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Block(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.NotIn(s.C(FieldForeachKey), v...))
+	})
+}
+
+// ForeachKeyGT applies the GT predicate on the "foreach_key" field.
+func ForeachKeyGT(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldForeachKey), v))
+	})
+}
+
+// ForeachKeyGTE applies the GTE predicate on the "foreach_key" field.
+func ForeachKeyGTE(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldForeachKey), v))
+	})
+}
+
+// ForeachKeyLT applies the LT predicate on the "foreach_key" field.
+func ForeachKeyLT(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldForeachKey), v))
+	})
+}
+
+// ForeachKeyLTE applies the LTE predicate on the "foreach_key" field.
+func ForeachKeyLTE(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldForeachKey), v))
+	})
+}
+
+// ForeachKeyContains applies the Contains predicate on the "foreach_key" field.
+func ForeachKeyContains(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.Contains(s.C(FieldForeachKey), v))
+	})
+}
+
+// ForeachKeyHasPrefix applies the HasPrefix predicate on the "foreach_key" field.
+func ForeachKeyHasPrefix(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.HasPrefix(s.C(FieldForeachKey), v))
+	})
+}
+
+// ForeachKeyHasSuffix applies the HasSuffix predicate on the "foreach_key" field.
+func ForeachKeyHasSuffix(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.HasSuffix(s.C(FieldForeachKey), v))
+	})
+}
+
+// ForeachKeyIsNil applies the IsNil predicate on the "foreach_key" field.
+func ForeachKeyIsNil() predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldForeachKey)))
+	})
+}
+
+// ForeachKeyNotNil applies the NotNil predicate on the "foreach_key" field.
+func ForeachKeyNotNil() predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldForeachKey)))
+	})
+}
+
+// ForeachKeyEqualFold applies the EqualFold predicate on the "foreach_key" field.
+func ForeachKeyEqualFold(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.EqualFold(s.C(FieldForeachKey), v))
+	})
+}
+
+// ForeachKeyContainsFold applies the ContainsFold predicate on the "foreach_key" field.
+func ForeachKeyContainsFold(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.ContainsFold(s.C(FieldForeachKey), v))
+	})
+}
+
+// ForeachStartBlockIDEQ applies the EQ predicate on the "foreach_start_blockID" field.
+func ForeachStartBlockIDEQ(v int) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldForeachStartBlockID), v))
+	})
+}
+
+// ForeachStartBlockIDNEQ applies the NEQ predicate on the "foreach_start_blockID" field.
+func ForeachStartBlockIDNEQ(v int) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldForeachStartBlockID), v))
+	})
+}
+
+// ForeachStartBlockIDIn applies the In predicate on the "foreach_start_blockID" field.
+func ForeachStartBlockIDIn(vs ...int) predicate.Block {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Block(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.In(s.C(FieldForeachStartBlockID), v...))
+	})
+}
+
+// ForeachStartBlockIDNotIn applies the NotIn predicate on the "foreach_start_blockID" field.
+func ForeachStartBlockIDNotIn(vs ...int) predicate.Block {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Block(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.NotIn(s.C(FieldForeachStartBlockID), v...))
+	})
+}
+
+// ForeachStartBlockIDGT applies the GT predicate on the "foreach_start_blockID" field.
+func ForeachStartBlockIDGT(v int) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldForeachStartBlockID), v))
+	})
+}
+
+// ForeachStartBlockIDGTE applies the GTE predicate on the "foreach_start_blockID" field.
+func ForeachStartBlockIDGTE(v int) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldForeachStartBlockID), v))
+	})
+}
+
+// ForeachStartBlockIDLT applies the LT predicate on the "foreach_start_blockID" field.
+func ForeachStartBlockIDLT(v int) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldForeachStartBlockID), v))
+	})
+}
+
+// ForeachStartBlockIDLTE applies the LTE predicate on the "foreach_start_blockID" field.
+func ForeachStartBlockIDLTE(v int) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldForeachStartBlockID), v))
+	})
+}
+
+// ForeachStartBlockIDIsNil applies the IsNil predicate on the "foreach_start_blockID" field.
+func ForeachStartBlockIDIsNil() predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldForeachStartBlockID)))
+	})
+}
+
+// ForeachStartBlockIDNotNil applies the NotNil predicate on the "foreach_start_blockID" field.
+func ForeachStartBlockIDNotNil() predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldForeachStartBlockID)))
 	})
 }
 

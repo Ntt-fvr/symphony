@@ -28,6 +28,8 @@ const (
 
 	// EdgePropertiesType holds the string denoting the properties_type edge name in mutations.
 	EdgePropertiesType = "properties_type"
+	// EdgeResourcePropertiesType holds the string denoting the resource_properties_type edge name in mutations.
+	EdgeResourcePropertiesType = "resource_properties_type"
 	// EdgeParameterCatalog holds the string denoting the parameter_catalog edge name in mutations.
 	EdgeParameterCatalog = "parameter_catalog"
 
@@ -40,6 +42,13 @@ const (
 	PropertiesTypeInverseTable = "property_types"
 	// PropertiesTypeColumn is the table column denoting the properties_type relation/edge.
 	PropertiesTypeColumn = "property_category_properties_type"
+	// ResourcePropertiesTypeTable is the table the holds the resource_properties_type relation/edge.
+	ResourcePropertiesTypeTable = "resource_property_types"
+	// ResourcePropertiesTypeInverseTable is the table name for the ResourcePropertyType entity.
+	// It exists in this package in order to avoid circular dependency with the "resourcepropertytype" package.
+	ResourcePropertiesTypeInverseTable = "resource_property_types"
+	// ResourcePropertiesTypeColumn is the table column denoting the resource_properties_type relation/edge.
+	ResourcePropertiesTypeColumn = "property_category_resource_properties_type"
 	// ParameterCatalogTable is the table the holds the parameter_catalog relation/edge.
 	ParameterCatalogTable = "property_categories"
 	// ParameterCatalogInverseTable is the table name for the ParameterCatalog entity.

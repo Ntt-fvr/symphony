@@ -658,6 +658,17 @@ input AddImageInput {
   documentCategoryId: ID
 }
 
+input AddFilesInput {
+  imgKey: String!
+  fileName: String!
+  fileSize: Int!
+  modified: Time!
+  contentType: String!
+  category: String
+  annotation: String
+  documentCategoryId: ID
+}
+
 type Comment implements Node {
   id: ID!
   author: User!
@@ -1631,6 +1642,23 @@ type ServiceTypeEdge {
 enum PropertyKind
   @goModel(
     model: "github.com/facebookincubator/symphony/pkg/ent/propertytype.Type"
+  ) {
+  string
+  int
+  bool
+  float
+  date
+  enum
+  range
+  email
+  gps_location
+  datetime_local
+  node
+}
+
+enum ResourcePropertyKind
+  @goModel(
+    model: "github.com/facebookincubator/symphony/pkg/ent/resourcepropertytype.Type"
   ) {
   string
   int
@@ -2810,6 +2838,73 @@ type CounterEdge {
   The counters at the end of the edge.
   """
   node: Counter
+  """
+  A cursor for use in pagination.
+  """
+  cursor: Cursor!
+}
+
+"""
+Properties by which ResourceSpecificationRelationships connections can be ordered.
+"""
+enum ResourceSpecificationRelationshipOrderField {
+  """
+  Order ResourceSpecificationRelationships by name.
+  """
+  NAME
+
+  """
+  Order ResourceSpecificationRelationships by creation time.
+  """
+  CREATED_AT
+
+  """
+  Order ResourceSpecificationRelationships by update time.
+  """
+  UPDATED_AT
+}
+
+"""
+Ordering options for ResourceSpecificationRelationships connections.
+"""
+input ResourceSpecificationRelationshipOrder {
+  """
+  The ordering direction.
+  """
+  direction: OrderDirection!
+
+  """
+  The field to order ResourceSpecificationRelationships by.
+  """
+  field: ResourceSpecificationRelationshipOrderField
+}
+
+"""
+A connection to a list of ResourceSpecificationRelationships.
+"""
+type ResourceSpecificationRelationshipConnection {
+  """
+  Total ResourceSpecificationRelationships of projects in all pages.
+  """
+  totalCount: Int!
+  """
+  A list of ResourceSpecificationRelationships edges.
+  """
+  edges: [ResourceSpecificationRelationshipEdge!]!
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+}
+
+"""
+A ResourceSpecificationRelationships edge in a connection.
+"""
+type ResourceSpecificationRelationshipEdge {
+  """
+  The ResourceSpecificationRelationships at the end of the edge.
+  """
+  node: ResourceSpecificationRelationship
   """
   A cursor for use in pagination.
   """
@@ -4425,7 +4520,6 @@ type TechEdge {
   cursor: Cursor!
 }
 
-
 """
 Properties by which network types connections can be ordered.
 """
@@ -4487,6 +4581,273 @@ type NetworkTypeEdge {
   The network types at the end of the edge.
   """
   node: NetworkType
+  """
+  A cursor for use in pagination.
+  """
+  cursor: Cursor!
+}
+
+"""
+Properties by which ResourceType connections can be ordered.
+"""
+enum ResourceTypeOrderField {
+  """
+  Order ResourceType by name.
+  """
+  NAME
+
+  """
+  Order ResourceType by TypeClass.
+  """
+  RESOURCE_TYPE_CLASS
+  
+  """
+  Order ResourceType by BaseType.
+  """
+  RESOURCE_TYPE_BASE_TYPE
+
+  """
+  Order ResourceType by creation time.
+  """
+  CREATED_AT
+
+  """
+  Order ResourceType by update time.
+  """
+  UPDATED_AT
+}
+
+"""
+Ordering options for ResourceType connections.
+"""
+input ResourceTypeOrder {
+  """
+  The ordering direction.
+  """
+  direction: OrderDirection!
+
+  """
+  The field to order ResourceType by.
+  """
+  field: ResourceTypeOrderField
+}
+
+"""
+A connection to a list of ResourceType.
+"""
+type ResourceTypeConnection {
+  """
+  Total ResourceType of projects in all pages.
+  """
+  totalCount: Int!
+  """
+  A list of ResourceType edges.
+  """
+  edges: [ResourceTypeEdge!]!
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+}
+
+"""
+A ResourceType edge in a connection.
+"""
+type ResourceTypeEdge {
+  """
+  The ResourceType at the end of the edge.
+  """
+  node: ResourceType
+  """
+  A cursor for use in pagination.
+  """
+  cursor: Cursor!
+}
+
+"""
+Properties by which ResourceTypeRelationship connections can be ordered.
+"""
+enum ResourceTypeRelationshipOrderField {
+  """
+  Order ResourceTypeRelationship by ResourceTypeA.
+  """
+  RESOURCE_TYPE_A
+
+  """
+  Order ResourceTypeRelationship by ResourceTypeB.
+  """
+  RESOURCE_TYPE_B
+
+  """
+  Order ResourceTypeRelationship by LocationType.
+  """
+  LOCATION_TYPE
+
+  """
+  Order ResourceTypeRelationship by ResourceRelationshipType.
+  """
+  RESOURCE_RELATIONSHIP_TYPE
+
+  """
+  Order ResourceTypeRelationship by ResourceRelationshipMultiplicity.
+  """
+  RESOURCE_RELATIONSHIP_MULTIPLICITY
+
+  """
+  Order ResourceTypeRelationship by creation time.
+  """
+  CREATED_AT
+
+  """
+  Order ResourceTypeRelationship by update time.
+  """
+  UPDATED_AT
+}
+
+"""
+Ordering options for ResourceTypeRelationship connections.
+"""
+input ResourceTypeRelationshipOrder {
+  """
+  The ordering direction.
+  """
+  direction: OrderDirection!
+
+  """
+  The field to order ResourceTypeRelationship by.
+  """
+  field: ResourceTypeRelationshipOrderField
+}
+
+"""
+A connection to a list of ResourceTypeRelationship.
+"""
+type ResourceTypeRelationshipConnection {
+  """
+  Total ResourceTypeRelationship of projects in all pages.
+  """
+  totalCount: Int!
+  """
+  A list of ResourceTypeRelationship edges.
+  """
+  edges: [ResourceTypeRelationshipEdge!]!
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+}
+
+"""
+A ResourceTypeRelationship edge in a connection.
+"""
+type ResourceTypeRelationshipEdge {
+  """
+  The ResourceTypeRelationship at the end of the edge.
+  """
+  node: ResourceTypeRelationship
+  """
+  A cursor for use in pagination.
+  """
+  cursor: Cursor!
+}
+"""
+Properties by which ResourceSpecification connections can be ordered.
+"""
+enum ResourceSpecificationOrderField {
+  """
+  Order ResourceSpecification by name.
+  """
+  NAME
+
+  """
+  Order ResourceType by name.
+  """
+  RESOURCE_TYPE
+
+  """
+  Order ResourceSpecification by creation time.
+  """
+  CREATED_AT
+
+  """
+  Order ResourceSpecification by update time.
+  """
+  UPDATED_AT
+}
+
+"""
+Ordering options for ResourceSpecification connections.
+"""
+input ResourceSpecificationOrder {
+  """
+  The ordering direction.
+  """
+  direction: OrderDirection!
+
+  """
+  The field to order ResourceSpecification by.
+  """
+  field: ResourceSpecificationOrderField
+}
+
+"""
+A connection to a list of ResourceSpecification.
+"""
+type ResourceSpecificationConnection {
+  """
+  Total ResourceSpecification of projects in all pages.
+  """
+  totalCount: Int!
+  """
+  A list of ResourceSpecification edges.
+  """
+  edges: [ResourceSpecificationEdge!]!
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+}
+
+"""
+A ResourceSpecification edge in a connection.
+"""
+type ResourceSpecificationEdge {
+  """
+  The ResourceSpecification at the end of the edge.
+  """
+  node: ResourceSpecification
+  """
+  A cursor for use in pagination.
+  """
+  cursor: Cursor!
+}
+
+"""
+A connection to a list of ResourceSpecificationItems.
+"""
+type ResourceSpecificationItemsConnection {
+  """
+  Total ResourceSpecificationItems of projects in all pages.
+  """
+  totalCount: Int!
+  """
+  A list of ResourceSpecificationItems edges.
+  """
+  edges: [ResourceSpecificationItemsEdge!]!
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+}
+
+"""
+A ResourceSpecificationItems edge in a connection.
+"""
+type ResourceSpecificationItemsEdge {
+  """
+  The ResourceSpecificationItems at the end of the edge.
+  """
+  node: ResourceSpecificationItems
   """
   A cursor for use in pagination.
   """
@@ -5512,6 +5873,20 @@ type TriggerType
   variables: [VariableDefinition!]!
 }
 
+enum TransfStrategy
+@goModel(
+    model: "github.com/facebookincubator/symphony/pkg/ent/schema/enum.TransfStrategy"
+  ){
+  REPLACE
+  MERGE
+}
+
+enum RetryUnit {
+  SECONDS
+  MINUTES
+  HOURS
+}
+
 # Block definitions
 
 type Block implements Node {
@@ -5523,6 +5898,24 @@ type Block implements Node {
   inputParamDefinitions: [VariableDefinition!]!
   outputParamDefinitions: [VariableDefinition!]!
   uiRepresentation: BlockUIRepresentation
+  enableInputTransformation: Boolean!
+  inputTransfStrategy: TransfStrategy
+  inputTransformation: String
+  enableOutputTransformation: Boolean!
+  outputTransfStrategy: TransfStrategy
+  outputTransformation: String
+  enableInputStateTransformation: Boolean!
+  inputStateTransfStrategy: TransfStrategy
+  inputStateTransformation: String
+  enableOutputStateTransformation: Boolean!
+  outputStateTransfStrategy: TransfStrategy
+  outputStateTransformation: String
+  enableErrorHandling: Boolean
+  enableRetryPolicy: Boolean
+  retryInterval: Int
+  units: RetryUnit
+  maxAttemps: Int 
+  backoffRate: Int
 }
 
 type BlockVariable
@@ -5677,6 +6070,90 @@ type ActionBlock {
   workerType: WorkerType
 }
 
+enum GoToType{
+  ORIGIN
+  DESTINATION
+}
+
+type ChoiceBlock {
+  entryPoint: EntryPoint!
+  defaultExitPoint: ExitPoint!
+  rules: [DecisionRoute!]!
+}
+
+enum TimerBehavior{
+  FIXED_INTERVAL
+  SPECIFIC_DATETIME
+}
+
+type TimerBlock {
+  behavior: TimerBehavior!
+  seconds: Int
+  datetime: Time
+  enableExpressionL: Boolean
+  expression: String
+  exitPoint: ExitPoint!
+}
+
+type ExecuteFlowBlock {
+  flow: Flow
+  params: [VariableExpression!]!
+  entryPoint: EntryPoint!
+  exitPoint: ExitPoint!
+}
+
+enum UrlMethod {
+  GET
+  POST
+  PUT
+  DELETE
+  PATCH
+}
+
+type InvokeRestAPIBlock {
+  entryPoint: EntryPoint!
+  method: UrlMethod!
+  url: String!
+  connectionTimeOut: Int!
+  body: String!
+  headers: [VariableValue!]!
+  exitPoint: ExitPoint!
+}
+
+type ForEachBlock {
+  entryPoint: EntryPoint!
+  internalExitPoint: ExitPoint!
+  exitPoint: ExitPoint!
+}
+
+type ParallelBlock {
+  entryPoint: EntryPoint!
+  internalExitPoint: ExitPoint!
+  exitPoint: ExitPoint!
+}
+
+enum SignalType {
+  NOTIFICATION
+  WOCREATION
+  CRCREATION
+  WOUPDATE
+  CRUPDATE
+}
+
+enum SignalModule {
+  INVENTORY
+  CONFIGURATION
+}
+
+type WaitForSignalBlock {
+  entryPoint: EntryPoint!
+  exitPoint: ExitPoint!
+  type: SignalType
+  signalModule: SignalModule
+  customFilter: String
+  blocked: Boolean!
+}
+
 union BlockDetails =
     StartBlock
   | EndBlock
@@ -5686,6 +6163,15 @@ union BlockDetails =
   | TriggerBlock
   | ActionBlock
   | TrueFalseBlock
+  | ChoiceBlock
+  | TimerBlock
+  | WaitForSignalBlock
+  | InvokeRestAPIBlock
+  | ExecuteFlowBlock
+  | ForEachBlock
+  | ParallelBlock
+
+
 
 input StartBlockInput {
   cid: String!
@@ -5718,6 +6204,7 @@ input TrueFalseBlockInput {
 input GotoBlockInput {
   cid: String!
   targetBlockCid: String
+  type: GoToType!
   uiRepresentation: BlockUIRepresentationInput
 }
 
@@ -5764,6 +6251,86 @@ type Connector {
   target: EntryPoint!
 }
 
+input BaseBlockInput {
+  enableInputTransformation: Boolean!
+  inputTransfStrategy: TransfStrategy
+  inputParamDefinitions: String
+  enableOutputTransformation: Boolean!
+  outputTransfStrategy: TransfStrategy
+  outputParamDefinitions: String
+  enableInputStateTransformation: Boolean!
+  inputStateTransfStrategy: TransfStrategy
+  inputStateParamDefinitions: String
+  enableOutputStateTransformation: Boolean!
+  outputStateTransfStrategy: TransfStrategy
+  outputStateParamDefinitions: String
+  enableErrorHandling: Boolean
+  enableRetryPolicy: Boolean
+  retryInterval: Int
+  units: RetryUnit
+  maxAttemps: Int
+  backoffRate: Int
+}
+
+
+input ChoiceBlockInput {
+  cid: String!
+  entryPoint: EntryPointInput!
+  routes: [DecisionRouteInput!]
+  basicDefinitions: BaseBlockInput!
+  uiRepresentation: BlockUIRepresentationInput
+}
+
+input TimerBlockInput {
+  cid: String!
+  exitPoint: ExitPointInput!
+  entryPoint: EntryPointInput!
+  behavior: TimerBehavior!
+  seconds: Int
+  specificDatetime: Time
+  enableExpressionL: Boolean
+  expression: String
+  params: [VariableExpressionInput!]!
+  uiRepresentation: BlockUIRepresentationInput
+}
+
+input WaitForSignalBlockInput {
+  cid: String!
+  entryPoint: EntryPointInput!
+  exitPoint: ExitPointInput!
+  type: SignalType!
+  signalModule: SignalModule!
+  customFilter: String
+  blocked: Boolean!
+  params: [VariableExpressionInput!]!
+  basicDefinitions: BaseBlockInput!
+  uiRepresentation: BlockUIRepresentationInput
+}
+
+input InvokeRestAPIBlockInput {
+  cid: String!
+  entryPoint: EntryPointInput!
+  exitPoint: ExitPointInput!
+  method: UrlMethod!
+  url: String!
+  connectionTimeOut: Int!
+  body: String!
+  headers: [VariableValueInput]!
+  basicDefinitions: BaseBlockInput!
+  params: [VariableExpressionInput!]!
+  uiRepresentation: BlockUIRepresentationInput
+}
+
+input ExecuteFlowBlockInput {
+  cid: String!
+  entryPoint: EntryPointInput!
+  exitPoint: ExitPointInput!
+  flow: ID!
+  params: [VariableExpressionInput!]!
+  basicDefinitions: BaseBlockInput!
+  uiRepresentation: BlockUIRepresentationInput
+}
+
 input ImportFlowDraftInput {
   id: ID!
   name: String!
@@ -5777,6 +6344,11 @@ input ImportFlowDraftInput {
   triggerBlocks: [TriggerBlockInput!]
   actionBlocks: [ActionBlockInput!]
   trueFalseBlocks: [TrueFalseBlockInput!]
+  choiceBlocks: [ChoiceBlockInput!]
+  executeFlowBlocks: [ExecuteFlowBlockInput!]
+  timerBlocks: [TimerBlockInput!]
+  waitForSignalBlocks: [WaitForSignalBlockInput!]
+  invokeRestAPIBlocks: [InvokeRestAPIBlockInput!]
   connectors: [ConnectorInput!]
 }
 
@@ -5912,7 +6484,7 @@ input EditBlockInstanceInput {
 
 type FlowInstance implements Node {
   id: ID!
-  bssCode: String!
+  #bssCode: String
   serviceInstanceCode: String
   status: FlowInstanceStatus!
   template: FlowExecutionTemplate!
@@ -5950,7 +6522,7 @@ input VariableValueInput
 
 input StartFlowInput {
   flowID: ID!
-  bssCode: String!
+  #bssCode: String
   startDate: Time!
   params: [VariableValueInput]!
 }
@@ -7342,7 +7914,176 @@ type Query {
   last: Int @numberValue(min: 0)
   ): ParameterCatalogConnection!
   propertiesByCategories(filterBy: [PropertiesByCategoryFilterInput!]): [PropertiesByCategories]!
+
+  """
+  A list of resourceSpecificationItems.
+  """
+  resourceSpecificationItems(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: Cursor
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int @numberValue(min: 0)
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: Cursor
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int @numberValue(min: 0)
+
+    #Filtering options for the returned ResourceSpecificationItems.
+    filterBy: [ResourceSpecificationItemsFilterInput!]
+  ): ResourceSpecificationItemsConnection!
+
+  """
+  A list of resourceSpecificationRelationships.
+  """
+  resourceSpecificationRelationships(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: Cursor
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int @numberValue(min: 0)
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: Cursor
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int @numberValue(min: 0)
+
+    """
+    Ordering options for the returned resourceSpecificationRelationships.
+    """
+    orderBy: ResourceSpecificationRelationshipOrder
+
+    
+    #Filtering options for the returned resourceSpecificationRelationships.
+    
+    filterBy: [ResourceSpecificationRelationshipFilterInput!]
+  ): ResourceSpecificationRelationshipConnection!
+
+  """
+  A list of resourceTypeRelationships.
+  """
+  resourceTypeRelationships(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: Cursor
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int @numberValue(min: 0)
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: Cursor
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int @numberValue(min: 0)
+
+    """
+    Ordering options for the returned resourceTypeRelationships.
+    """
+    orderBy: ResourceTypeRelationshipOrder
+
+    
+    #Filtering options for the returned resourceTypeRelationships.
+    
+    filterBy: [ResourceTypeRelationshipFilterInput!]
+  ): ResourceTypeRelationshipConnection!
+
+  """
+  A list of resourceSpecifications.
+  """
+  resourceSpecifications(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: Cursor
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int @numberValue(min: 0)
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: Cursor
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int @numberValue(min: 0)
+
+    """
+    Ordering options for the returned resourceSpecifications.
+    """
+    orderBy: ResourceSpecificationOrder
+
+    
+    #Filtering options for the returned resourceSpecifications.
+    
+    filterBy: [ResourceSpecificationFilterInput!]
+  ): ResourceSpecificationConnection!
+
+  """
+  A list of resourceTypes.
+  """
+  resourceTypes(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: Cursor
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int @numberValue(min: 0)
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: Cursor
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int @numberValue(min: 0)
+
+    """
+    Ordering options for the returned resourceTypes.
+    """
+    orderBy: ResourceTypeOrder
+
+    
+    #Filtering options for the returned resourceTypes.
+    
+    filterBy: [ResourceTypeFilterInput!]
+  ): ResourceTypeConnection!
 }
+
 
 type Mutation {
   editUser(input: EditUserInput!): User!
@@ -7428,6 +8169,7 @@ type Mutation {
   ): EquipmentPosition!
   addComment(input: CommentInput!): Comment!
   addImage(input: AddImageInput!): File!
+  addFiles(input: AddFilesInput!): File!
   addHyperlink(input: AddHyperlinkInput!): Hyperlink!
   deleteHyperlink(id: ID!): Hyperlink!
   deleteImage(
@@ -7544,6 +8286,11 @@ type Mutation {
   addTriggerBlock(flowDraftId: ID!, input: TriggerBlockInput!): Block!
   addActionBlock(flowDraftId: ID!, input: ActionBlockInput!): Block!
   addTrueFalseBlock(flowDraftId: ID!, input: TrueFalseBlockInput!): Block!
+  addChoiceBlock(flowDraftId: ID!, input: ChoiceBlockInput!): Block!
+  addExecuteFlowBlock(flowDraftId: ID!, input: ExecuteFlowBlockInput!): Block!
+  addTimerBlock(flowDraftId: ID!, input: TimerBlockInput!): Block!
+  addInvokeRestAPIBlock(flowDraftId: ID!, input: InvokeRestAPIBlockInput!): Block!
+  addWaitForSignalBlock(flowDraftId: ID!, input: WaitForSignalBlockInput!): Block!
   editBlock(input: EditBlockInput!): Block!
   deleteBlock(id: ID!): Boolean!
   addConnector(flowDraftId: ID!, input: ConnectorInput!): Connector!
@@ -7620,6 +8367,15 @@ type Mutation {
   addOrganization(input: AddOrganizationInput!):Organization!
   editOrganization(input: EditOrganizationInput!): Organization!
   removeOrganization(id: ID!): ID!
+  addResourceType(input: AddResourceTypeInput!):ResourceType!
+  editResourceType(input: EditResourceTypeInput!): ResourceType!
+  removeResourceType(id: ID!): ID!
+  addResourceTypeRelationship(input: AddResourceTypeRelationshipInput!):ResourceTypeRelationship!
+  editResourceTypeRelationship(input: EditResourceTypeRelationshipInput!): ResourceTypeRelationship!
+  removeResourceTypeRelationship(id: ID!): ID!
+  addResourceSpecification(input: AddResourceSpecificationInput!):ResourceSpecification!
+  editResourceSpecification(input: EditResourceSpecificationInput!): ResourceSpecification!
+  removeResourceSpecification(id: ID!): ID!
   addKqi(input: AddKqiInput!):Kqi!
   editKqi(input: EditKqiInput!): Kqi!
   removeKqi(id: ID!): ID!
@@ -7659,6 +8415,13 @@ type Mutation {
   editParametersCatalog(parametersCatalog: [EditParameterCatalogInput]!): [ParameterCatalog!]
   removeParameterCatalog(entityType: ParameterCatalogEntity!, id: ID!): ID!
   editIsListable(input: EditIsListableInput!): PropertyType!
+  addResourceSpecificationRelationshipList(input: [AddResourceSpecificationRelationshipInput!]!):[ResourceSpecificationRelationship!]!
+  addResourceSpecificationRelationship(input: AddResourceSpecificationRelationshipInput!): ResourceSpecificationRelationship!
+  editResourceSpecificationRelationship(input: EditResourceSpecificationRelationshipInput!): ResourceSpecificationRelationship!
+  removeResourceSpecificationRelationship(id: ID!): ID!
+  addResourceSpecificationItems(input: AddResourceSpecificationItemsInput!): ResourceSpecificationItems!
+  editResourceSpecificationItems(input: EditResourceSpecificationItemsInput!): ResourceSpecificationItems!
+  removeResourceSpecificationItems(id: ID!): ID!
   addPropertyTypeValue(input: AddPropertyTypeValueInput!): PropertyTypeValue!
   editPropertyTypeValue(input: EditPropertyTypeValueInput!): PropertyTypeValue!
   removePropertyTypeValue(id: ID!): ID!
@@ -7766,6 +8529,7 @@ type Vendor implements Node {
   id: ID!
   name: String!
   vendorRecommendations: [Recommendations!]
+  resourceSpecification: [ResourceSpecification!]
 }
 
 input AddVendorInput {
@@ -8712,6 +9476,133 @@ input RecommendationsCategoryFilterInput {
   stringSet: [String!]
 }
 
+enum ResourceTypeClassKind
+  @goModel(
+  model: "github.com/facebookincubator/symphony/pkg/ent/resourcetype.ResourceTypeClass"
+  ) {
+  EQUIPMENT
+	SLOT
+	RACK
+	PORT
+	CARD
+  VLAN
+  NETWORK_FUNCTION
+}
+
+enum ResourceTypeBaseTypeKind
+  @goModel(
+  model: "github.com/facebookincubator/symphony/pkg/ent/resourcetype.ResourceTypeBaseType"
+  ) {
+  LOGICAL_RESOURCE
+	PHYSICAL_RESOURCE
+	VIRTUAL_RESOURCE
+}
+
+type ResourceType implements Node {
+  id: ID!
+  name: String!
+  resourceTypeBaseType: ResourceTypeBaseTypeKind!
+  resourceTypeClass: ResourceTypeClassKind!
+  resourceSpecification: [ResourceSpecification]
+}
+
+input AddResourceTypeInput {  
+  name: String!
+  resourceTypeBaseType: ResourceTypeBaseTypeKind!
+  resourceTypeClass: ResourceTypeClassKind!
+}
+
+input EditResourceTypeInput {
+  id: ID!
+  name: String!
+  resourceTypeBaseType: ResourceTypeBaseTypeKind!
+  resourceTypeClass: ResourceTypeClassKind!
+}
+
+enum ResourceTypeFilterType {
+  NAME
+  RESOURCE_TYPE_CLASS
+  RESOURCE_TYPE_BASE_TYPE
+}
+
+input ResourceTypeFilterInput {
+  filterType: ResourceTypeFilterType!
+  operator: FilterOperator!
+  stringValue: String
+  typeClassValue: ResourceTypeClassKind
+  typeBaseTypeValue: ResourceTypeBaseTypeKind
+  idSet: [ID!]
+  maxDepth: Int = 5
+  stringSet: [String!]
+}
+
+enum ResourceRelationshipTypeKind
+  @goModel(
+  model: "github.com/facebookincubator/symphony/pkg/ent/resourcetyperelationship.ResourceRelationshipType"
+  ) {
+  BELONGS_TO
+  LOCATED_IN
+  PHYSICAL_LINK
+  LOGICAL_LINK
+  CROSS_CONNECTION
+}
+
+enum ResourceRelationshipMultiplicityKind
+  @goModel(
+  model: "github.com/facebookincubator/symphony/pkg/ent/resourcetyperelationship.ResourceRelationshipMultiplicity"
+  ) {
+  ONE_TO_ONE
+  ONE_TO_MANY
+  MANY_TO_ONE
+  MANY_TO_MANY
+}
+
+type ResourceTypeRelationship implements Node {
+  id: ID!
+  resourceRelationshipType: ResourceRelationshipTypeKind!
+  resourceRelationshipMultiplicity: ResourceRelationshipMultiplicityKind!
+  locationType: LocationType
+  resourceTypeA: ResourceType!
+  resourceTypeB: ResourceType
+}
+
+input AddResourceTypeRelationshipInput {
+  resourceRelationshipType: ResourceRelationshipTypeKind!
+  resourceRelationshipMultiplicity:ResourceRelationshipMultiplicityKind!
+  locationType: ID
+  resourceTypeA: ID!
+  resourceTypeB: ID
+}
+
+input EditResourceTypeRelationshipInput {
+  id: ID!
+  resourceRelationshipType: ResourceRelationshipTypeKind!
+  resourceRelationshipMultiplicity: ResourceRelationshipMultiplicityKind!
+  locationType: ID
+  resourceTypeA: ID!
+  resourceTypeB: ID
+}
+
+enum ResourceTypeRelationshipFilterType {
+  RESOURCE_RELATIONSHIP_MULTIPLICITY
+  RESOURCE_RELATIONSHIP_LOCATION_TYPE
+  RESOURCE_RELATIONSHIP_TYPE
+  RESOURCE_RELATIONSHIP_TYPE_A
+  RESOURCE_RELATIONSHIP_TYPE_B
+  RESOURCE_RELATIONSHIP_RESOURCE
+}
+
+input ResourceTypeRelationshipFilterInput {
+  filterType: ResourceTypeRelationshipFilterType!
+  operator: FilterOperator!
+  stringValue: String
+  multiplicityValue: ResourceRelationshipMultiplicityKind
+  typeValue: ResourceRelationshipTypeKind
+  idSet: [ID!]
+  maxDepth: Int = 5
+  stringSet: [String!]
+}
+
 """
 A connection to a list of appoinments.
 """
@@ -8837,4 +9728,158 @@ enum AppointmentStatus
   ) {
   ACTIVE
   CANCELED
+}
+
+type ResourceSpecification implements Node {
+  id: ID!
+  name: String!  
+  quantity: Int
+  resourceType: ResourceType
+  resourcePropertyTypes: [ResourcePropertyType]!  
+  resourceSpecificationRelationship: [ResourceSpecificationRelationship]
+  resourceSpecificationItems: [ResourceSpecificationItems]
+  vendor: Vendor
+}
+input AddResourceSpecificationInput {  
+  name: String!
+  quantity: Int
+  resourceType: ID!
+  resourcePropertyTypes: [AddResourcePropertyTypeInput]
+  vendor: ID
+}
+input EditResourceSpecificationInput {
+  id: ID!
+  name: String!
+  quantity: Int
+  resourceType: ID 
+  resourcePropertyTypes: [AddResourcePropertyTypeInput]
+  vendor: ID
+}
+enum ResourceSpecificationFilterType {
+  ID
+  NAME  
+  RESOURCE_TYPE
+}
+
+input ResourceSpecificationFilterInput {
+  filterType: ResourceSpecificationFilterType!
+  operator: FilterOperator!
+  stringValue: String
+  idSet: [ID!]
+  maxDepth: Int = 5
+  stringSet: [String!]  
+}
+
+type ResourceSpecificationRelationship implements Node {
+  id: ID!
+  name: String!
+  resourceSpecification: ResourceSpecification!
+  resourceSpecificationItems: [ResourceSpecificationItems]
+}
+
+input AddResourceSpecificationRelationshipInput {  
+  name: String!
+  resourceSpecification: ID!
+  resourceSpecificationList: [ID]
+}
+
+input EditResourceSpecificationRelationshipInput {
+  id: ID!
+  name: String!
+  resourceSpecification: ID
+}
+
+enum ResourceSpecificationRelationshipFilterType {
+  NAME
+  RESOURCE_SPECIFICATION
+}
+
+input ResourceSpecificationRelationshipFilterInput {
+  filterType: ResourceSpecificationRelationshipFilterType!
+  operator: FilterOperator!
+  stringValue: String
+  idSet: [ID!]
+  maxDepth: Int = 5
+  stringSet: [String!]
+}
+
+type ResourceSpecificationItems implements Node {
+  id: ID!
+  resourceSpecificationRelationship: ResourceSpecificationRelationship!
+  resourceSpecification: ResourceSpecification
+}
+
+input AddResourceSpecificationItemsInput {  
+  resourceSpecificationRelationship: ID!
+  resourceSpecification: ID
+}
+
+input EditResourceSpecificationItemsInput {
+  id: ID!
+  resourceSpecificationRelationship: ID
+  resourceSpecification: ID
+}
+
+enum ResourceSpecificationItemsFilterType {
+  RESOURCE_SPECIFICATION_RELATIONSHIP
+  RESOURCE_SPECIFICATION
+}
+
+input ResourceSpecificationItemsFilterInput {
+  filterType: ResourceSpecificationItemsFilterType!
+  operator: FilterOperator!
+  idSet: [ID!]
+  maxDepth: Int = 5
+}
+
+type ResourcePropertyType implements Node {
+  id: ID!
+  externalId: String
+  name: String!
+  type: ResourcePropertyKind!
+  nodeType: String
+  index: Int
+  category: String
+  rawValue: String
+  stringValue: String
+  intValue: Int
+  booleanValue: Boolean
+  floatValue: Float
+  latitudeValue: Float
+  longitudeValue: Float
+  rangeFromValue: Float
+  rangeToValue: Float
+  isEditable: Boolean
+  isInstanceProperty: Boolean
+  isMandatory: Boolean
+  isDeleted: Boolean
+  propertyCategory: PropertyCategory
+  isListable: Boolean
+  resourceSpecification: ResourceSpecification!
+}
+
+input AddResourcePropertyTypeInput {
+  id: ID
+  externalId: String
+  name: String!
+  type: ResourcePropertyKind!
+  nodeType: String
+  index: Int
+  category: String
+  rawValue: String
+  stringValue: String
+  intValue: Int
+  booleanValue: Boolean
+  floatValue: Float
+  latitudeValue: Float
+  longitudeValue: Float
+  rangeFromValue: Float
+  rangeToValue: Float
+  isEditable: Boolean
+  isInstanceProperty: Boolean
+  isMandatory: Boolean
+  isDeleted: Boolean
+  propertyCategory: ID
+  isListable: Boolean
+  resourceSpecification: ID
 }
