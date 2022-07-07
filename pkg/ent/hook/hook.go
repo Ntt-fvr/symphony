@@ -65,6 +65,19 @@ func (f AppointmentFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value,
 	return f(ctx, mv)
 }
 
+// The AutomationActivityFunc type is an adapter to allow the use of ordinary
+// function as AutomationActivity mutator.
+type AutomationActivityFunc func(context.Context, *ent.AutomationActivityMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f AutomationActivityFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.AutomationActivityMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.AutomationActivityMutation", m)
+	}
+	return f(ctx, mv)
+}
+
 // The BlockFunc type is an adapter to allow the use of ordinary
 // function as Block mutator.
 type BlockFunc func(context.Context, *ent.BlockMutation) (ent.Value, error)

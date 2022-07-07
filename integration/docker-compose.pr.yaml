@@ -16,6 +16,8 @@ services:
     image: nginx:alpine
     ports:
       - ${PORT:-443}:443
+      - 9000:9000
+      - 33060:33060
     #networks:
     #  default:
     #    aliases:

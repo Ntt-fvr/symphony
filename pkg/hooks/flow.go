@@ -8,8 +8,8 @@ import (
 	"context"
 	"errors"
 	"fmt"
-
 	"github.com/facebookincubator/symphony/pkg/ent"
+	"github.com/facebookincubator/symphony/pkg/ent/automationactivity"
 	"github.com/facebookincubator/symphony/pkg/ent/block"
 	"github.com/facebookincubator/symphony/pkg/ent/flow"
 	"github.com/facebookincubator/symphony/pkg/ent/flowdraft"
@@ -199,4 +199,39 @@ func CopyFlowToFlowExecutionTemplateHook() ent.Hook {
 		})
 	}
 	return hook.On(hk, ent.OpCreate)
+}
+
+func FlowInstanceAutomationActivity() ent.Hook {
+	hk := func(next ent.Mutator) ent.Mutator {
+		return hook.FlowInstanceFunc(
+			func(ctx context.Context, mutation *ent.FlowInstanceMutation) (ent.Value, error) {
+				client := mutation.Client()
+
+				status, _ := mutation.Status()
+
+				mutationActivity := client.AutomationActivity.Create().
+					SetAutomationEntityType(automationactivity.AutomationEntityTypeFlowInstance).
+					SetNewValue(status.String())
+
+				if mutation.Op().Is(ent.OpCreate) {
+					mutationActivity = mutationActivity.SetActivityType(automationactivity.ActivityTypeCreation)
+				} else {
+					oldStatus, err := mutation.OldStatus(ctx)
+					if err != nil {
+						return nil, fmt.Errorf("failed to get previous status: %w", err)
+					}
+
+					mutationActivity = mutationActivity.
+						SetActivityType(automationactivity.ActivityTypeStatus).
+						SetOldValue(oldStatus.String())
+				}
+
+				mutationActivity.SaveX(ctx)
+
+				return next.Mutate(ctx, mutation)
+			},
+		)
+	}
+
+	return hook.On(hk, ent.OpCreate|ent.OpUpdateOne)
 }

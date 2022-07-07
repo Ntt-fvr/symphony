@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/facebookincubator/symphony/async/automation/celgo"
+	"github.com/facebookincubator/symphony/async/automation/executors/util"
 	"io"
 	"io/ioutil"
 	"net/http"
@@ -80,7 +81,7 @@ func (b *InvokeRestAPIBlock) runLogic() error {
 	client := &http.Client{}
 
 	if b.timeout > 0 {
-		client.Timeout = getDurationFromSeconds(b.timeout)
+		client.Timeout = util.GetDurationFromSeconds(b.timeout)
 	}
 
 	response, err := client.Do(request)

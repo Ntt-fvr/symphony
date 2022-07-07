@@ -1,3 +1,4 @@
+
 schema
   @core(feature: "https://specs.apollo.dev/core/v0.2"),
   @core(feature: "https://specs.apollo.dev/join/v0.1", for: EXECUTION)
@@ -5099,7 +5100,6 @@ type FlowExecutionTemplate implements Node {
 
 type FlowInstance implements Node {
   blocks: [BlockInstance!]!
-  bssCode: String!
   endDate: Time
   id: ID!
   serviceInstanceCode: String
@@ -11311,7 +11311,6 @@ input StartBlockInput {
 }
 
 input StartFlowInput {
-  bssCode: String!
   flowID: ID!
   params: [VariableValueInput]!
   startDate: Time!

@@ -67,7 +67,7 @@ type baseBlock struct {
 	nextBlock                 int
 	blockInstanceID           int
 
-	blockStatusFunction func(context.Context, int, blockinstance.Status, *time.Time) error
+	blockStatusFunction func(context.Context, int, blockinstance.Status, *time.Time, map[string]interface{}) error
 }
 
 func (b *baseBlock) updateBlockInProgress() {
@@ -90,7 +90,7 @@ func (b *baseBlock) updateBlockCompleted() {
 
 func (b *baseBlock) updateBlockInstanceStatus(status blockinstance.Status, endDate *time.Time) {
 	if b.blockStatusFunction != nil {
-		err := b.blockStatusFunction(b.appCtx, b.blockInstanceID, status, endDate)
+		err := b.blockStatusFunction(b.appCtx, b.blockInstanceID, status, endDate, b.output)
 		if err != nil {
 
 		}

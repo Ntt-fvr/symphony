@@ -26,6 +26,7 @@ func (c *Client) ReadOnly() *Client {
 		AlarmFilter:                       NewAlarmFilterClient(cfg),
 		AlarmStatus:                       NewAlarmStatusClient(cfg),
 		Appointment:                       NewAppointmentClient(cfg),
+		AutomationActivity:                NewAutomationActivityClient(cfg),
 		Block:                             NewBlockClient(cfg),
 		BlockInstance:                     NewBlockInstanceClient(cfg),
 		CheckListCategory:                 NewCheckListCategoryClient(cfg),

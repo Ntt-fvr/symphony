@@ -23,6 +23,7 @@ require (
 	github.com/badoux/checkmail v1.2.1
 	github.com/cenkalti/backoff/v4 v4.1.0
 	github.com/cespare/xxhash/v2 v2.1.2 // indirect
+	github.com/confluentinc/confluent-kafka-go v1.9.0
 	github.com/evanphx/json-patch v0.5.2
 	github.com/facebook/ent v0.5.2-0.20201207120713-86b9d850ee78
 	github.com/facebookincubator/ent-contrib v0.0.0-20201210145028-3c4e794cc516

@@ -227,7 +227,7 @@ func (r blockResolver) Details(ctx context.Context, obj *ent.Block) (models.Bloc
 	case block.TypeChoice:
 		var rules []*models.DecisionRoute
 		exitPoints, err := obj.QueryExitPoints().
-			Where(exitpoint.RoleEQ(flowschema.ExitPointRoleDecision)).
+			Where(exitpoint.RoleEQ(flowschema.ExitPointRoleChoice)).
 			All(ctx)
 		if err != nil {
 			return nil, fmt.Errorf("failed to query exit points: %w", err)
@@ -850,12 +850,12 @@ func (r mutationResolver) AddChoiceBlock(ctx context.Context, flowDraftID int, i
 				return nil, fmt.Errorf("there is not a condition for route %s", *route.Cid)
 			}
 			if _, err := client.ExitPoint.Create().
-				SetRole(flowschema.ExitPointRoleDecision).
+				SetRole(flowschema.ExitPointRoleChoice).
 				SetCid(*route.Cid).
 				SetParentBlockID(b.ID).
 				SetCondition(variableExpressions[0]).
 				Save(ctx); err != nil {
-				return nil, fmt.Errorf("failed to create decision exit points: %w", err)
+				return nil, fmt.Errorf("failed to create choice exit points: %w", err)
 			}
 		}
 	}
@@ -890,7 +890,7 @@ func (r mutationResolver) AddTimerBlock(ctx context.Context, flowDraftID int, in
 		SetTimerExpression(*input.Expression).
 		SetTimerBehavior((block.TimerBehavior)(input.Behavior)).
 		SetNillableSeconds(input.Seconds).
-		SetTimerSpecificDate(*input.SpecificDatetime).
+		SetNillableTimerSpecificDate(input.SpecificDatetime).
 		Save(ctx)
 }
 
