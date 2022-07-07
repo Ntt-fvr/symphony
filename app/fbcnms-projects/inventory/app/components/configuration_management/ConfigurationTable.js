@@ -44,7 +44,7 @@ const ConfigurationTable = (props: Props) => {
 
   // const {queryCMVersion, queryResource, resourceSpecification} = dataConfig;
 
-  console.log('CMV', dataMock);
+  console.log('CMV', dataConfig);
 
   const tableColumns = [
     {

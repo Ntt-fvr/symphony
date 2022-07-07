@@ -12,7 +12,7 @@ import type {FilterConfig} from '../comparison_view/ComparisonViewTypes';
 
 import ConfigureTitle from './common/ConfigureTitle';
 import PowerSearchBar from '../power_search/PowerSearchBar';
-import React, {useMemo, useState} from 'react';
+import React, {useEffect, useMemo, useState} from 'react';
 import Table from '@symphony/design-system/components/Table/Table';
 import fbt from 'fbt';
 import {ConfigurationTable} from './ConfigurationTable';
@@ -110,11 +110,10 @@ const ConfigurationsView = () => {
 
   const {queryCMVersion} = dataQuery;
 
-  const [filters, setFilters] = useState([]);
+  // const [filters, setFilters] = useState([]);
   const [dataTable, setDataTable] = useState(queryCMVersion);
-
+  console.log('==> ', dataTable);
   const classes = useStyles();
-  // const dataConfig = useLazyLoadQuery<ConfigurationsViewQuery>(Configurations);
 
   const filterConfigs = useMemo(
     () =>
@@ -128,15 +127,63 @@ const ConfigurationsView = () => {
   const filterData = filterChange => {
     console.log('filtro-cambio ->', filterChange);
 
-    const filterName = queryCMVersion.filter(
-      item => item.resource.name === filterChange[0].stringValue,
+    const filterName = queryCMVersion?.filter(
+      item => item?.resource?.name === filterChange[0]?.stringValue,
     );
-    console.log('FILTRO-NAME -> ', filterName);
-    setDataTable(filterName);
-    // setPato(filterName);
+    const filterLocation = queryCMVersion?.filter(
+      item => item?.resource?.locatedIn === filterChange[0]?.stringValue,
+    );
+    const filterParameterName = queryCMVersion?.filter(
+      item => item?.resource?.locatedIn === filterChange[0]?.stringValue,
+    );
+    const filterParameterTag = queryCMVersion?.filter(
+      item => item?.resource?.locatedIn === filterChange[0]?.stringValue,
+    );
+    const filterParameterPriority = queryCMVersion?.filter(
+      item => item?.resource?.locatedIn === filterChange[0]?.stringValue,
+    );
+
+    filterChange.length === 0 && setDataTable(queryCMVersion);
+
+    switch (filterChange[0]?.key) {
+      case 'resource_name':
+        setDataTable(filterName);
+        break;
+      case 'location_inst_external_id':
+        setDataTable(filterLocation);
+        break;
+      case 'parameter_selector_name':
+        setDataTable(filterParameterName);
+        break;
+      case 'parameter_selector_tags':
+        setDataTable(filterParameterTag);
+        break;
+      case 'parameter_selector_priority':
+        setDataTable(filterParameterPriority);
+        break;
+
+      default:
+        setDataTable(queryCMVersion);
+        break;
+    }
+
+    /*filterChange.length === 0
+      ? setDataTable(queryCMVersion)
+      : filterChange[0]?.key === 'resource_name'
+      ? setDataTable(filterName)
+      : filterChange[0]?.key === 'location_inst_external_id'
+      ? setDataTable(filterLocation)
+      : filterChange[0]?.key === 'parameter_selector_name'
+      ? setDataTable(filterParameterName)
+      : filterChange[0]?.key === 'parameter_selector_tags'
+      ? setDataTable(filterParameterTag)
+      : filterChange[0]?.key === 'parameter_selector_priority'
+      ? setDataTable(filterParameterPriority)
+      : null;
+      */
   };
 
-  console.log('View-> ', ResourcesSearchConfig, dataTable, queryCMVersion);
+  // console.log('View-> ', ResourcesSearchConfig, dataTable, queryCMVersion);
 
   return (
     <Grid className={classes.root} container spacing={0}>
@@ -156,7 +203,6 @@ const ConfigurationsView = () => {
               placeholder="Configuration"
               filterConfigs={filterConfigs} //opciones de filtrado
               searchConfig={ResourcesSearchConfig} //opciones de filtrado unificadas
-              filterValues={filters}
               getSelectedFilter={(filterConfig: FilterConfig) =>
                 getInitialFilterValue(
                   filterConfig.key,
