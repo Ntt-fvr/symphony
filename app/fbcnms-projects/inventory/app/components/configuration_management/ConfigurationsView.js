@@ -11,12 +11,16 @@
 import type {FilterConfig} from '../comparison_view/ComparisonViewTypes';
 
 import ConfigureTitle from './common/ConfigureTitle';
+import FormField from '@symphony/design-system/components/FormField/FormField';
 import PowerSearchBar from '../power_search/PowerSearchBar';
 import React, {useEffect, useMemo, useState} from 'react';
+import Select from '@symphony/design-system/components/Select/Select';
 import Table from '@symphony/design-system/components/Table/Table';
+import TextField from '@material-ui/core/TextField';
 import fbt from 'fbt';
 import {ConfigurationTable} from './ConfigurationTable';
 import {Grid} from '@material-ui/core';
+import {MenuItem} from '@material-ui/core';
 import {ResourcesSearchConfig} from './ResourcesSearchConfig';
 import {getInitialFilterValue} from '../comparison_view/FilterUtils';
 import {graphql} from 'relay-runtime';
@@ -30,6 +34,23 @@ const useStyles = makeStyles(() => ({
   },
   titleCounter: {
     margin: '0 0 30px 0',
+  },
+  containerSelects: {
+    display: 'inline-block',
+    borderRight: '1px solid rgba(157, 169, 190, 0.3)',
+    background: 'white',
+  },
+  selectField: {
+    width: '100%',
+  },
+  selectResourceType: {
+    width: '160px',
+    margin: '5px',
+  },
+  selectResourceSpecification: {
+    paddingLeft: '0px',
+    width: '200px',
+    margin: '5px',
   },
   bar: {
     display: 'flex',
@@ -106,14 +127,20 @@ const Configurations = graphql`
 `;
 
 const ConfigurationsView = () => {
+  const classes = useStyles();
   const dataQuery = useLazyLoadQuery<ConfigurationsViewQuery>(Configurations);
 
-  const {queryCMVersion} = dataQuery;
+  const {queryCMVersion, resourceSpecifications} = dataQuery;
 
   const [dataTable, setDataTable] = useState(queryCMVersion);
-  console.log('C-TYPES', dataTable);
-  const classes = useStyles();
+  console.log('C-TYPES', dataTable, resourceSpecifications);
 
+  const resourceTypesFilters = resourceSpecifications?.edges.map(
+    item => item?.node?.resourceType?.name,
+  );
+  const uniqueResourceType = [...new Set(resourceTypesFilters)];
+  console.log('RT= ', resourceTypesFilters);
+  console.log('UNIQUE RT= ', uniqueResourceType);
   const filterConfigs = useMemo(
     () =>
       ResourcesSearchConfig.map(ent => ent.filters).reduce(
@@ -122,6 +149,17 @@ const ConfigurationsView = () => {
       ),
     [],
   );
+
+  // const uniqueResourceTypeOptions = useMemo(() => {
+  //   const options = uniqueResourceType.map(opt => {
+  //     return {
+  //       value: opt,
+  //       label: opt,
+  //     };
+  //   });
+
+  //   return options;
+  // }, []);
 
   const filterData = filterChange => {
     console.log('filtro-cambio ->', filterChange);
@@ -167,7 +205,9 @@ const ConfigurationsView = () => {
     }
   };
 
-  // console.log('View-> ', ResourcesSearchConfig, dataTable, queryCMVersion);
+  const selectResourceType = RT => {
+    return RT;
+  };
 
   return (
     <Grid className={classes.root} container spacing={0}>
@@ -182,6 +222,66 @@ const ConfigurationsView = () => {
       </Grid>
       <Grid item xs={12}>
         <div className={classes.bar}>
+          <FormField className={classes.containerSelects}>
+            {/*<Select
+              className={classes.selectResourceType}
+              data-testid="select-resource-type"
+              // label="Resource Type"
+              tooltip="Resource Type"
+              disabled={false}
+              options={uniqueResourceTypeOptions}
+              selectValue={'123'}
+              size="full"
+              onChange={selected => selectResourceType(selected)}
+          />*/}
+            <TextField
+              id="outlined-select-family"
+              select
+              className={classes.selectResourceType}
+              label="Resource Type"
+              // onChange={handleChange}
+              name="resource_Type"
+              defaultValue=""
+              variant="outlined">
+              <MenuItem value={''} disabled>
+                {'Resource Type'}
+              </MenuItem>
+              {uniqueResourceType.map((item, index) => (
+                <MenuItem key={index} value={item}>
+                  {item}
+                </MenuItem>
+              ))}
+            </TextField>
+            <TextField
+              id="outlined-select-family"
+              select
+              className={classes.selectResourceSpecification}
+              label="Resource Specification"
+              // onChange={handleChange}
+              name="resourceSpecification"
+              defaultValue=""
+              variant="outlined">
+              <MenuItem value={''} disabled>
+                {'Resource Specification'}
+              </MenuItem>
+              {uniqueResourceType.map((item, index) => (
+                <MenuItem key={index} value={item}>
+                  {item}
+                </MenuItem>
+              ))}
+            </TextField>
+            {/*<Select
+              className={classes.selectResourceSpecification}
+              data-testid="select-resource-specification"
+              label="Resource Specification"
+              tooltip="Resource Specification"
+              disabled={false}
+              options={[]}
+              selectedValue={''}
+              size="full"
+              // onChange={selected => onParamSelect(i, selected)}
+            />*/}
+          </FormField>
           <div className={classes.searchBar}>
             <PowerSearchBar
               placeholder="Configuration"

@@ -13,6 +13,13 @@ import Table from '@symphony/design-system/components/Table/Table';
 import fbt from 'fbt';
 import {CircleIndicator} from '../resource_instance/CircleIndicator';
 import {Grid} from '@material-ui/core';
+import {makeStyles} from '@material-ui/styles';
+
+const useStyles = makeStyles(() => ({
+  sizeColumn: {
+    width: '800px',
+  },
+}));
 
 export const PROJECTS_PAGE_SIZE = 15;
 
@@ -38,6 +45,7 @@ export type Props = $ReadOnly<{|
 |}>;
 
 const ConfigurationTable = (props: Props) => {
+  const classes = useStyles();
   const {dataConfig} = props;
 
   console.log('C-TABLE ', dataConfig);
