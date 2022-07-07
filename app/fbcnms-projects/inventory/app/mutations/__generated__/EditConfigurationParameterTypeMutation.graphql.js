@@ -150,11 +150,7 @@ export type ResourceRef = {|
   crossconnectionInv?: ?ResourceRef,
   externalId?: ?string,
   id?: ?string,
-<<<<<<< HEAD
   isDeleted?: ?boolean,
-=======
-  isDelete?: ?boolean,
->>>>>>> feat/CM0.5
   isEditable?: ?boolean,
   lifecycleStatus?: ?LifecycleStatus,
   locatedIn?: ?string,

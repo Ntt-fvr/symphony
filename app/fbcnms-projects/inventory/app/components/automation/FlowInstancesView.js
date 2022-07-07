@@ -71,7 +71,6 @@ const FlowInstancesView = (props: Props) => {
               status
               startDate
               endDate
-              bssCode
               serviceInstanceCode
               template {
                 id

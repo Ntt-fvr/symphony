@@ -104,7 +104,6 @@ fragment FlowInstancesView_query_10glCF on Query {
         status
         startDate
         endDate
-        bssCode
         serviceInstanceCode
         template {
           id
@@ -249,13 +248,6 @@ return {
                     "alias": null,
                     "args": null,
                     "kind": "ScalarField",
-                    "name": "bssCode",
-                    "storageKey": null
-                  },
-                  {
-                    "alias": null,
-                    "args": null,
-                    "kind": "ScalarField",
                     "name": "serviceInstanceCode",
                     "storageKey": null
                   },
@@ -341,12 +333,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "908534bed0dd802f5f6581e76989313e",
+    "cacheID": "3162e801d5fa2ec3580f23b830a854f7",
     "id": null,
     "metadata": {},
     "name": "AutomationFlowInstancesQueryRendererQuery",
     "operationKind": "query",
-    "text": "query AutomationFlowInstancesQueryRendererQuery(\n  $limit: Int\n  $orderBy: FlowInstanceOrder\n  $filters: [FlowInstanceFilterInput!]!\n) {\n  ...FlowInstancesView_query_10glCF\n}\n\nfragment FlowInstancesView_query_10glCF on Query {\n  flowInstances(first: $limit, orderBy: $orderBy, filterBy: $filters) {\n    totalCount\n    edges {\n      node {\n        id\n        status\n        startDate\n        endDate\n        bssCode\n        serviceInstanceCode\n        template {\n          id\n          name\n        }\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n}\n"
+    "text": "query AutomationFlowInstancesQueryRendererQuery(\n  $limit: Int\n  $orderBy: FlowInstanceOrder\n  $filters: [FlowInstanceFilterInput!]!\n) {\n  ...FlowInstancesView_query_10glCF\n}\n\nfragment FlowInstancesView_query_10glCF on Query {\n  flowInstances(first: $limit, orderBy: $orderBy, filterBy: $filters) {\n    totalCount\n    edges {\n      node {\n        id\n        status\n        startDate\n        endDate\n        serviceInstanceCode\n        template {\n          id\n          name\n        }\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n}\n"
   }
 };
 })();
