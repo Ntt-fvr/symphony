@@ -1,3 +1,4 @@
+
 schema
   @core(feature: "https://specs.apollo.dev/core/v0.2"),
   @core(feature: "https://specs.apollo.dev/join/v0.1", for: EXECUTION)
@@ -9913,6 +9914,7 @@ enum ResourceTypeBaseTypeKind {
 enum ResourceTypeClassKind {
   CARD
   EQUIPMENT
+  NETWORK_FUNCTION
   PORT
   RACK
   SLOT
@@ -13020,6 +13022,6 @@ enum core__Purpose {
 scalar join__FieldSet
 
 enum join__Graph {
-  DGRAPHSERVICE @join__graph(name: "dgraphservice" url: "http://alpha:8080/graphql")
-  SYMPHONY @join__graph(name: "symphony" url: "http://graph/query")
+   DGRAPHSERVICE @join__graph(name: "dgraphservice" url: "http://alpha:8080/graphql")
+   SYMPHONY @join__graph(name: "symphony" url: "http://graph/query")
 }

@@ -24390,6 +24390,7 @@ enum ResourceTypeClassKind
 	PORT
 	CARD
   VLAN
+  NETWORK_FUNCTION
 }
 
 enum ResourceTypeBaseTypeKind

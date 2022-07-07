@@ -24,7 +24,9 @@ import {commitMutation, graphql} from 'react-relay';
 const mutation = graphql`
   mutation UpdateResourceMutation($input: UpdateResourceInput!) {
     updateResource(input: $input) {
+      numUids
       resource {
+        id
         name
         externalId
         locatedIn
@@ -35,6 +37,9 @@ const mutation = graphql`
         typePlanningSubStatus
         usageSubStatus
         operationalSubStatus
+        logicalLinks {
+          name
+        }
       }
     }
   }

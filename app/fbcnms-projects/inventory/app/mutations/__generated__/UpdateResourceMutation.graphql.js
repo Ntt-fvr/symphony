@@ -270,7 +270,9 @@ export type UpdateResourceMutationVariables = {|
 |};
 export type UpdateResourceMutationResponse = {|
   +updateResource: ?{|
+    +numUids: ?number,
     +resource: ?$ReadOnlyArray<?{|
+      +id: string,
       +name: string,
       +externalId: ?string,
       +locatedIn: ?string,
@@ -281,7 +283,10 @@ export type UpdateResourceMutationResponse = {|
       +typePlanningSubStatus: ?TypePlanningSubStatus,
       +usageSubStatus: ?UsageSubStatus,
       +operationalSubStatus: ?OperationalSubStatus,
-    |}>
+      +logicalLinks: ?$ReadOnlyArray<?{|
+        +name: string
+      |}>,
+    |}>,
   |}
 |};
 export type UpdateResourceMutation = {|
@@ -296,7 +301,9 @@ mutation UpdateResourceMutation(
   $input: UpdateResourceInput!
 ) {
   updateResource(input: $input) {
+    numUids
     resource {
+      id
       name
       externalId
       locatedIn
@@ -307,7 +314,10 @@ mutation UpdateResourceMutation(
       typePlanningSubStatus
       usageSubStatus
       operationalSubStatus
-      id
+      logicalLinks {
+        name
+        id
+      }
     }
   }
 }
@@ -332,66 +342,80 @@ v2 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "name",
+  "name": "numUids",
   "storageKey": null
 },
 v3 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "externalId",
+  "name": "id",
   "storageKey": null
 },
 v4 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "locatedIn",
+  "name": "name",
   "storageKey": null
 },
 v5 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "resourceSpecification",
+  "name": "externalId",
   "storageKey": null
 },
 v6 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "isDeleted",
+  "name": "locatedIn",
   "storageKey": null
 },
 v7 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "lifecycleStatus",
+  "name": "resourceSpecification",
   "storageKey": null
 },
 v8 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "planningSubStatus",
+  "name": "isDeleted",
   "storageKey": null
 },
 v9 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "typePlanningSubStatus",
+  "name": "lifecycleStatus",
   "storageKey": null
 },
 v10 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "usageSubStatus",
+  "name": "planningSubStatus",
   "storageKey": null
 },
 v11 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "typePlanningSubStatus",
+  "storageKey": null
+},
+v12 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "usageSubStatus",
+  "storageKey": null
+},
+v13 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
@@ -413,6 +437,7 @@ return {
         "name": "updateResource",
         "plural": false,
         "selections": [
+          (v2/*: any*/),
           {
             "alias": null,
             "args": null,
@@ -421,7 +446,6 @@ return {
             "name": "resource",
             "plural": true,
             "selections": [
-              (v2/*: any*/),
               (v3/*: any*/),
               (v4/*: any*/),
               (v5/*: any*/),
@@ -430,7 +454,21 @@ return {
               (v8/*: any*/),
               (v9/*: any*/),
               (v10/*: any*/),
-              (v11/*: any*/)
+              (v11/*: any*/),
+              (v12/*: any*/),
+              (v13/*: any*/),
+              {
+                "alias": null,
+                "args": null,
+                "concreteType": "Resource",
+                "kind": "LinkedField",
+                "name": "logicalLinks",
+                "plural": true,
+                "selections": [
+                  (v4/*: any*/)
+                ],
+                "storageKey": null
+              }
             ],
             "storageKey": null
           }
@@ -455,6 +493,7 @@ return {
         "name": "updateResource",
         "plural": false,
         "selections": [
+          (v2/*: any*/),
           {
             "alias": null,
             "args": null,
@@ -463,7 +502,6 @@ return {
             "name": "resource",
             "plural": true,
             "selections": [
-              (v2/*: any*/),
               (v3/*: any*/),
               (v4/*: any*/),
               (v5/*: any*/),
@@ -473,11 +511,19 @@ return {
               (v9/*: any*/),
               (v10/*: any*/),
               (v11/*: any*/),
+              (v12/*: any*/),
+              (v13/*: any*/),
               {
                 "alias": null,
                 "args": null,
-                "kind": "ScalarField",
-                "name": "id",
+                "concreteType": "Resource",
+                "kind": "LinkedField",
+                "name": "logicalLinks",
+                "plural": true,
+                "selections": [
+                  (v4/*: any*/),
+                  (v3/*: any*/)
+                ],
                 "storageKey": null
               }
             ],
@@ -489,16 +535,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "1e85a843708bd9f98e23172864bff2bf",
+    "cacheID": "611845b268bf1a39e8bd5fac63c09a5f",
     "id": null,
     "metadata": {},
     "name": "UpdateResourceMutation",
     "operationKind": "mutation",
-    "text": "mutation UpdateResourceMutation(\n  $input: UpdateResourceInput!\n) {\n  updateResource(input: $input) {\n    resource {\n      name\n      externalId\n      locatedIn\n      resourceSpecification\n      isDeleted\n      lifecycleStatus\n      planningSubStatus\n      typePlanningSubStatus\n      usageSubStatus\n      operationalSubStatus\n      id\n    }\n  }\n}\n"
+    "text": "mutation UpdateResourceMutation(\n  $input: UpdateResourceInput!\n) {\n  updateResource(input: $input) {\n    numUids\n    resource {\n      id\n      name\n      externalId\n      locatedIn\n      resourceSpecification\n      isDeleted\n      lifecycleStatus\n      planningSubStatus\n      typePlanningSubStatus\n      usageSubStatus\n      operationalSubStatus\n      logicalLinks {\n        name\n        id\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = 'c8ef295a5dd8c8994af297af1647a142';
+(node/*: any*/).hash = '465e61b84f8951d9a8bba60f32c2b86f';
 
 module.exports = node;
