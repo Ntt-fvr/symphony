@@ -20,7 +20,7 @@ export type ExecuteFlowSettingsType = $ReadOnly<{|
 |}>;
 
 export const initialExecuteFlowSettings: ExecuteFlowSettingsType = {
-  flow: null,
+  flow: undefined,
 };
 
 export const setExecuteFlowSettings: ExecuteFlowSettingsType = (

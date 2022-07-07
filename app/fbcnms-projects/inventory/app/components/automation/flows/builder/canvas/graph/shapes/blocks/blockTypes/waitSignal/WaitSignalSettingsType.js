@@ -17,10 +17,10 @@ export type WaitSignalSettingsType = $ReadOnly<{|
 |}>;
 
 export const initialWaitSignalSettings: WaitSignalSettingsType = {
-  signalType: null,
-  signalModule: null,
-  customFilter: null,
-  blocked: null,
+  signalType: undefined,
+  signalModule: undefined,
+  customFilter: undefined,
+  blocked: undefined,
 };
 
 export const setWaitSignalSettings: WaitSignalSettingsType = (

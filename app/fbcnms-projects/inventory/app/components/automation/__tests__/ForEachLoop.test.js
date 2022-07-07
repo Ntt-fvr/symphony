@@ -8,19 +8,19 @@
  * @format
  */
 
+import React, {useMemo} from 'react';
+import {render, screen} from '@testing-library/react';
+
 import type {ForEachLoopSettings} from '../flows/builder/canvas/graph/shapes/blocks/blockTypes/forEachLoop/ForEachLoopSettings';
 
-import '@testing-library/jest-dom';
-import React, {useMemo} from 'react';
 import {TYPE} from '../flows/builder/canvas/graph/facades/shapes/vertexes/logic/ForEachLoop';
+
+import ForEachLoopBlockType from '../flows/builder/canvas/graph/shapes/blocks/blockTypes/forEachLoop/ForEachLoopBlockType';
+import ForEachLoopPresentation from '../flows/builder/canvas/graph/shapes/blocks/blockTypes/forEachLoop/ForEachLoopPresentation';
 import {
   getInitialBlockSettings,
   setBlockSettings,
 } from '../flows/builder/canvas/graph/shapes/blocks/blockTypes/BaseSettings';
-import {render, screen} from '@testing-library/react';
-
-import ForEachLoopBlockType from '../flows/builder/canvas/graph/shapes/blocks/blockTypes/forEachLoop/ForEachLoopBlockType';
-import ForEachLoopPresentation from '../flows/builder/canvas/graph/shapes/blocks/blockTypes/forEachLoop/ForEachLoopPresentation';
 import {useGraph} from '../flows/builder/canvas/graph/graphAPIContext/GraphContext';
 
 describe('Suite Test Components /ForEachLoop/: ', () => {
@@ -44,7 +44,7 @@ describe('Suite Test Components /ForEachLoop/: ', () => {
     const text = screen.getByText(/forEachLoopBlock/i);
     expect(text).toBeInTheDocument();
   });
-  test('AUT-FE-05055 Test setParallelSettings', () => {
+  test('AUT-FE-05055 Test setForEachLoopSettings', () => {
     const objectTest: ForEachLoopSettings = getInitialBlockSettings(TYPE);
 
     expect(objectTest.forEachLoopSettings).toStrictEqual(null);

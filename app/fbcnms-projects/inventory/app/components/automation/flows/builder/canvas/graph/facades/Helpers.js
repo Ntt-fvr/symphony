@@ -9,6 +9,9 @@
  */
 'use strict';
 
+import type {Graph} from '../facades/Graph';
+import type {IShape} from './shapes/BaseShape';
+
 export type Primitive = string | number | boolean;
 export type KeyValuePair = {
   [key: string]:
@@ -66,3 +69,32 @@ export const Events = {
     MouseUp: 'link:pointerup',
   },
 };
+
+export function restrictPosition(block: ?IShape, graph: Graph) {
+  let parentId: string = '';
+
+  if (block.idParent) {
+    parentId = block.idParent;
+  }
+
+  if (!parentId) return;
+
+  const parent = graph.getCell(parentId);
+  const parentBlockBox = parent.getBBox();
+  const blockBox = block.getBBox();
+
+  if (parentId) {
+    if (
+      parentBlockBox.containsPoint(blockBox.origin()) &&
+      parentBlockBox.containsPoint(blockBox.topRight()) &&
+      parentBlockBox.containsPoint(blockBox.corner()) &&
+      parentBlockBox.containsPoint(blockBox.bottomLeft())
+    ) {
+      return;
+    }
+
+    block.set('position', block.previous('position'));
+  } else {
+    return;
+  }
+}

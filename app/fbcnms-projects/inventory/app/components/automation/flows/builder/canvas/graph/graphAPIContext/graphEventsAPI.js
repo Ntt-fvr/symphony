@@ -26,7 +26,7 @@ import type {
 } from '../facades/shapes/edges/Link';
 import type {PaperEventCallback} from '../facades/Paper';
 
-import {Events} from '../facades/Helpers';
+import {Events, restrictPosition} from '../facades/Helpers';
 
 export type BlockEventCallback = (IBlock, MouseEvent, number, number) => void;
 export type BlockPortEventCallback = (
@@ -112,9 +112,15 @@ function paperOnBlockEvent(event: BlockEvent, handler: BlockEventCallback) {
     if (block == null) {
       return;
     }
+    vertexView.model.attributes.parent &&
+      block.setParent(vertexView.model.attributes.parent);
     handler(block, generalEventArgs, positionX, positionY);
   };
   this.current.paper.on(event, wrappedHandler);
+  this.current?.graph.on('change:position', cell => {
+    const graph = this.current?.graph;
+    restrictPosition(cell, graph);
+  });
 }
 
 function paperOnBlockPortEvent(
