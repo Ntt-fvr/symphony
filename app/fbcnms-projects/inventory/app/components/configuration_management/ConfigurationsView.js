@@ -63,8 +63,11 @@ const useStyles = makeStyles(() => ({
 }));
 
 const Configurations = graphql`
-  query ConfigurationsViewQuery {
-    queryResource {
+  query ConfigurationsViewQuery(
+    $filter: ResourceFilter
+    $filterBy: [ResourceTypeFilterInput!]
+  ) {
+    queryResource(filter: $filter) {
       id
       name
       locatedIn
@@ -77,6 +80,18 @@ const Configurations = graphql`
       operationalSubStatus
       createTime
       updateTime
+    }
+    resourceTypes(filterBy: $filterBy) {
+      edges {
+        node {
+          id
+          name
+          resourceSpecification {
+            id
+            name
+          }
+        }
+      }
     }
     resourceSpecifications {
       edges {
@@ -125,22 +140,29 @@ const Configurations = graphql`
     }
   }
 `;
+// const queryFilterResourceType = graphql`
+//   query ConfigurationsView2Query($filterBy: [ResourceTypeFilterInput!]) {
+//     resourceTypes(filterBy: $filterBy) {
+//       edges {
+//         node {
+//           id
+//           name
+//           resourceSpecification {
+//             id
+//             name
+//           }
+//         }
+//       }
+//     }
+//   }
+// `;
 
 const ConfigurationsView = () => {
   const classes = useStyles();
-  const dataQuery = useLazyLoadQuery<ConfigurationsViewQuery>(Configurations);
+  const [resSpeci, setResSpeci] = useState({});
 
-  const {queryCMVersion, resourceSpecifications} = dataQuery;
+  const [resourceType, setResourceType] = useState({});
 
-  const [dataTable, setDataTable] = useState(queryCMVersion);
-  console.log('C-TYPES', dataTable, resourceSpecifications);
-
-  const resourceTypesFilters = resourceSpecifications?.edges.map(
-    item => item?.node?.resourceType?.name,
-  );
-  const uniqueResourceType = [...new Set(resourceTypesFilters)];
-  console.log('RT= ', resourceTypesFilters);
-  console.log('UNIQUE RT= ', uniqueResourceType);
   const filterConfigs = useMemo(
     () =>
       ResourcesSearchConfig.map(ent => ent.filters).reduce(
@@ -150,19 +172,64 @@ const ConfigurationsView = () => {
     [],
   );
 
-  // const uniqueResourceTypeOptions = useMemo(() => {
-  //   const options = uniqueResourceType.map(opt => {
-  //     return {
-  //       value: opt,
-  //       label: opt,
-  //     };
-  //   });
+  function selectResourceType({target}) {
+    setResourceType({
+      ...resourceType,
+      [target.name]: target.value.trim(),
+    });
+    target.name === 'resourceSpecification' &&
+      setResSpeci({
+        ...resSpeci,
+        [target.name]: target.value.trim(),
+      });
+  }
 
-  //   return options;
-  // }, []);
+  const verifyResourceType =
+    Object.entries(resourceType).length === 0
+      ? ''
+      : resourceType?.resource_Type;
+
+  const filterResourceType = useLazyLoadQuery<ConfigurationsViewQuery>(
+    Configurations,
+    {
+      filterBy: [
+        {
+          filterType: 'NAME',
+          operator: 'IS',
+          stringValue: verifyResourceType,
+        },
+      ],
+    },
+  );
+  const verifyResourceSpecification =
+    Object.entries(resSpeci)?.length === 0
+      ? ''
+      : resSpeci?.resourceSpecification;
+
+  const dataQuery = useLazyLoadQuery<ConfigurationsViewQuery>(Configurations, {
+    filter: {
+      resourceSpecification: {
+        eq: verifyResourceSpecification,
+      },
+    },
+  });
+  const {queryCMVersion, resourceSpecifications} = dataQuery;
+
+  const [dataTable, setDataTable] = useState(queryCMVersion);
+
+  console.log('C-TYPES', dataTable, resourceSpecifications);
+
+  const resourceTypesFilters = resourceSpecifications?.edges.map(
+    item => item?.node?.resourceType?.name,
+  );
+  const uniqueResourceType = [...new Set(resourceTypesFilters)];
+
+  const resourceSpecificationFiltered = filterResourceType?.resourceTypes?.edges?.map(
+    item => item?.node?.resourceSpecification?.map(rs => rs),
+  );
 
   const filterData = filterChange => {
-    console.log('filtro-cambio ->', filterChange);
+    // console.log('filtro-cambio ->', filterChange);
 
     const filterName = queryCMVersion?.filter(
       item => item?.resource?.name === filterChange[0]?.stringValue,
@@ -205,10 +272,6 @@ const ConfigurationsView = () => {
     }
   };
 
-  const selectResourceType = RT => {
-    return RT;
-  };
-
   return (
     <Grid className={classes.root} container spacing={0}>
       <Grid className={classes.titleCounter} item xs={12}>
@@ -223,23 +286,12 @@ const ConfigurationsView = () => {
       <Grid item xs={12}>
         <div className={classes.bar}>
           <FormField className={classes.containerSelects}>
-            {/*<Select
-              className={classes.selectResourceType}
-              data-testid="select-resource-type"
-              // label="Resource Type"
-              tooltip="Resource Type"
-              disabled={false}
-              options={uniqueResourceTypeOptions}
-              selectValue={'123'}
-              size="full"
-              onChange={selected => selectResourceType(selected)}
-          />*/}
             <TextField
               id="outlined-select-family"
               select
               className={classes.selectResourceType}
               label="Resource Type"
-              // onChange={handleChange}
+              onChange={selectResourceType}
               name="resource_Type"
               defaultValue=""
               variant="outlined">
@@ -257,30 +309,19 @@ const ConfigurationsView = () => {
               select
               className={classes.selectResourceSpecification}
               label="Resource Specification"
-              // onChange={handleChange}
+              onChange={selectResourceType}
               name="resourceSpecification"
               defaultValue=""
               variant="outlined">
               <MenuItem value={''} disabled>
                 {'Resource Specification'}
               </MenuItem>
-              {uniqueResourceType.map((item, index) => (
-                <MenuItem key={index} value={item}>
-                  {item}
+              {resourceSpecificationFiltered[0]?.map((item, index) => (
+                <MenuItem key={index} value={item?.name}>
+                  {item.name}
                 </MenuItem>
               ))}
             </TextField>
-            {/*<Select
-              className={classes.selectResourceSpecification}
-              data-testid="select-resource-specification"
-              label="Resource Specification"
-              tooltip="Resource Specification"
-              disabled={false}
-              options={[]}
-              selectedValue={''}
-              size="full"
-              // onChange={selected => onParamSelect(i, selected)}
-            />*/}
           </FormField>
           <div className={classes.searchBar}>
             <PowerSearchBar
@@ -303,7 +344,7 @@ const ConfigurationsView = () => {
         </div>
       </Grid>
       <Grid item xs={12} style={{margin: '20px 0 0 0'}}>
-        <ConfigurationTable dataConfig={dataTable} />
+        <ConfigurationTable dataConfig={[]} />
       </Grid>
     </Grid>
   );
