@@ -38,6 +38,14 @@ export type ResourceCardQueryResponse = {|
       +node: ?{|
         +id: string,
         +name: string,
+        +resourceSpecification: ?$ReadOnlyArray<?{|
+          +id: string,
+          +name: string,
+          +vendor: ?{|
+            +id: string,
+            +name: string,
+          |},
+        |}>,
       |}
     |}>
   |},
@@ -80,6 +88,14 @@ query ResourceCardQuery {
       node {
         id
         name
+        resourceSpecification {
+          id
+          name
+          vendor {
+            id
+            name
+          }
+        }
       }
     }
   }
@@ -210,7 +226,33 @@ v3 = [
             "kind": "LinkedField",
             "name": "node",
             "plural": false,
-            "selections": (v2/*: any*/),
+            "selections": [
+              (v0/*: any*/),
+              (v1/*: any*/),
+              {
+                "alias": null,
+                "args": null,
+                "concreteType": "ResourceSpecification",
+                "kind": "LinkedField",
+                "name": "resourceSpecification",
+                "plural": true,
+                "selections": [
+                  (v0/*: any*/),
+                  (v1/*: any*/),
+                  {
+                    "alias": null,
+                    "args": null,
+                    "concreteType": "Vendor",
+                    "kind": "LinkedField",
+                    "name": "vendor",
+                    "plural": false,
+                    "selections": (v2/*: any*/),
+                    "storageKey": null
+                  }
+                ],
+                "storageKey": null
+              }
+            ],
             "storageKey": null
           }
         ],
@@ -283,16 +325,16 @@ return {
     "selections": (v3/*: any*/)
   },
   "params": {
-    "cacheID": "7fa986ce2c9764f42b2bfee639350fc2",
+    "cacheID": "e1ed3587ba753e961019be748f02116f",
     "id": null,
     "metadata": {},
     "name": "ResourceCardQuery",
     "operationKind": "query",
-    "text": "query ResourceCardQuery {\n  queryResource {\n    id\n    name\n    locatedIn\n    resourceSpecification\n    isDeleted\n    lifecycleStatus\n    typePlanningSubStatus\n    planningSubStatus\n    usageSubStatus\n    operationalSubStatus\n  }\n  resourceTypes {\n    edges {\n      node {\n        id\n        name\n      }\n    }\n  }\n  resourceSpecifications {\n    edges {\n      node {\n        id\n        name\n        resourceType {\n          id\n          name\n        }\n      }\n    }\n  }\n}\n"
+    "text": "query ResourceCardQuery {\n  queryResource {\n    id\n    name\n    locatedIn\n    resourceSpecification\n    isDeleted\n    lifecycleStatus\n    typePlanningSubStatus\n    planningSubStatus\n    usageSubStatus\n    operationalSubStatus\n  }\n  resourceTypes {\n    edges {\n      node {\n        id\n        name\n        resourceSpecification {\n          id\n          name\n          vendor {\n            id\n            name\n          }\n        }\n      }\n    }\n  }\n  resourceSpecifications {\n    edges {\n      node {\n        id\n        name\n        resourceType {\n          id\n          name\n        }\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = '20875516c227b0d3373b621e137ed528';
+(node/*: any*/).hash = '9f74b7cd4f3665f2792a7dadbcc5f180';
 
 module.exports = node;

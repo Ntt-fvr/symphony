@@ -27,7 +27,6 @@ export type FlowInstancesView_query = {|
         +status: FlowInstanceStatus,
         +startDate: any,
         +endDate: ?any,
-        +bssCode: string,
         +serviceInstanceCode: ?string,
         +template: {|
           +id: string,
@@ -174,13 +173,6 @@ return {
                   "alias": null,
                   "args": null,
                   "kind": "ScalarField",
-                  "name": "bssCode",
-                  "storageKey": null
-                },
-                {
-                  "alias": null,
-                  "args": null,
-                  "kind": "ScalarField",
                   "name": "serviceInstanceCode",
                   "storageKey": null
                 },
@@ -257,6 +249,6 @@ return {
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = '7942d016ca3ac6e6094785f425707d9a';
+(node/*: any*/).hash = '37bb699bb1f095dcfb24d5ad6dc75e98';
 
 module.exports = node;
