@@ -21,6 +21,7 @@ import {makeStyles} from '@material-ui/styles';
 import {withStyles} from '@material-ui/core/styles';
 import {graphql} from 'relay-runtime';
 import {useLazyLoadQuery} from 'react-relay/hooks';
+import moment from 'moment';
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -65,23 +66,25 @@ const QontoConnector = withStyles({
 })(StepConnector);
 
 const StepperTimeLineQuery = graphql`
-query StepperTimeLineQuery($filter: ResourceFilter) {
-  queryResource(filter: $filter) {
-    id
-    name
-    cmVersions{
+  query StepperTimeLineQuery($filter: ResourceFilter) {
+    queryResource(filter: $filter) {
+      id
+      name
+      cmVersions {
         id
         status
         validFrom
         validTo
         parameters {
-            id
-            stringValue
+          id
+          stringValue
+          floatValue
+          intValue
         }
         createTime
       }
+    }
   }
-}
 `;
 
 const TooltipTime = withStyles(() => ({
@@ -113,8 +116,6 @@ const TooltipTime = withStyles(() => ({
 type Props = $ReadOnly<{||}>;
 
 const StepperTimeLine = (props: Props) => {
-  const {} = props;
-
   const classes = useStyles();
 
   const handleInfo = data => {
@@ -125,20 +126,19 @@ const StepperTimeLine = (props: Props) => {
   const urlParams = new URLSearchParams(queryString);
   const resourceId = urlParams.get('resource');
 
-
   const queryCMVersion = useLazyLoadQuery(StepperTimeLineQuery, {
     filter: {
       and: [
         {
-          id: resourceId
-        }
-      ]
-    }
+          id: resourceId,
+        },
+      ],
+    },
   });
 
   const formatDate = date => {
-    const dateConvert = new Date(date);
-    return dateConvert.toLocaleDateString();
+    const dateConvert = moment(date).format('DD MMM YYYY');
+    return dateConvert;
   };
 
   return (
@@ -152,7 +152,10 @@ const StepperTimeLine = (props: Props) => {
             onClick={() => handleInfo(label)}
             className={classes.stepLabelRoot}
             icon={
-              <TooltipTime arrow={false} placement="top" title={formatDate(label.createTime)}>
+              <TooltipTime
+                arrow={false}
+                placement="top"
+                title={formatDate(label.createTime)}>
                 <FiberManualRecordIcon className={classes.stepLabelRoot} />
               </TooltipTime>
             }>
