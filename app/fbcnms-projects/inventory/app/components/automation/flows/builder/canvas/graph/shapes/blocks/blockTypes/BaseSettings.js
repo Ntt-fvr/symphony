@@ -9,8 +9,8 @@
  */
 'use strict';
 
+import {TYPE as ChoiceType} from '../../../facades/shapes/vertexes/logic/Choice';
 import {TYPE as CreateWorkorderType} from '../../../facades/shapes/vertexes/actions/CreateWorkorder';
-import {TYPE as DecisionType} from '../../../facades/shapes/vertexes/logic/Decision';
 import {TYPE as EndType} from '../../../facades/shapes/vertexes/administrative/End';
 import {TYPE as ExecuteFlowType} from '../../../facades/shapes/vertexes/actions/ExecuteFlow';
 import {TYPE as ExecuteNetworkActionType} from '../../../facades/shapes/vertexes/actions/ExecuteNetworkAction';
@@ -27,13 +27,13 @@ import {TYPE as UpdateInventoryType} from '../../../facades/shapes/vertexes/acti
 import {TYPE as UpdateWorkforceType} from '../../../facades/shapes/vertexes/actions/UpdateWorkforce';
 import {TYPE as WaitSignalType} from '../../../facades/shapes/vertexes/triggers/WaitSignal';
 import {
+  initialChoiceSettings,
+  setChoiceSettings,
+} from './choice/ChoiceSettingsType';
+import {
   initialCreateWorkorderSettings,
   setCreateWorkorderSettings,
 } from './createWorkorder/CreateWorkorderSettings';
-import {
-  initialDecisionSettings,
-  setDecisionSettings,
-} from './decision/DecisionSettingsType';
 import {initialEndSettings, setEndSettings} from './end/EndSettings';
 import {
   initialExecuteFlowSettings,
@@ -110,8 +110,8 @@ export const getInitialBlockSettings = type => {
     case EndType:
       return initialEndSettings;
     // Logic
-    case DecisionType:
-      return initialDecisionSettings;
+    case ChoiceType:
+      return initialChoiceSettings;
     case ForEachLoopType:
       return initialForEachLoopSettings;
     case GoToType:
@@ -155,8 +155,8 @@ export const setBlockSettings = (type, newSettings) => {
     case EndType:
       return setEndSettings(newSettings);
     // Logic
-    case DecisionType:
-      return setDecisionSettings(newSettings);
+    case ChoiceType:
+      return setChoiceSettings(newSettings);
     case ForEachLoopType:
       return setForEachLoopSettings(newSettings);
     case GoToType:

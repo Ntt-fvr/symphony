@@ -23,16 +23,16 @@ type Props = $ReadOnly<{|
 const ConfigurationGoTo = ({block}: Props) => {
   const {settings} = block;
   const types = [
-    {name: 'Origin', id: 'origin'},
-    {name: 'Destination', id: 'destination'},
+    {name: 'Origin', id: 'ORIGIN'},
+    {name: 'Destination', id: 'DESTINATION'},
   ];
 
   const [goToSettingsValues, handleInputChange] = useForm({
-    goToType: settings?.goToType || '',
+    type: settings?.type || '',
     targetBlockCid: settings?.targetBlockCid || '',
   });
 
-  const {goToType} = goToSettingsValues;
+  const {type} = goToSettingsValues;
 
   useEffect(() => {
     block.setSettings(goToSettingsValues);
@@ -42,8 +42,8 @@ const ConfigurationGoTo = ({block}: Props) => {
     <Grid item xs={12}>
       <Select
         label={'Type'}
-        name={'goToType'}
-        value={goToType}
+        name={'type'}
+        value={type}
         onChange={handleInputChange}
         items={types}
       />

@@ -10,8 +10,8 @@
 
 import * as React from 'react';
 import BlocksCategory from './BlocksCategory';
+import ChoiceBlockType from '../../canvas/graph/shapes/blocks/blockTypes/choice/ChoiceBlockType';
 import CreateWorkorderBlockType from '../../canvas/graph/shapes/blocks/blockTypes/createWorkorder/CreateWorkorderBlockType';
-import DecisionBlockType from '../../canvas/graph/shapes/blocks/blockTypes/decision/DecisionBlockType';
 import EndBlockType from '../../canvas/graph/shapes/blocks/blockTypes/end/EndBlockType';
 import ExecuteFlowBlockType from '../../canvas/graph/shapes/blocks/blockTypes/executeFlow/ExecuteFlowBlockType';
 import ExecuteNetworkActionBlockType from '../../canvas/graph/shapes/blocks/blockTypes/executeNetworkAction/ExecuteNetworkActionBlockType';
@@ -83,7 +83,7 @@ export default function BlocksBar(props: Props) {
       new TriggerStartBlockType(flow),
       new Timer(flow),
       new ForEachLoop(flow),
-      new DecisionBlockType(flow),
+      new ChoiceBlockType(flow),
       new ParallelBlockType(flow),
       new GoToBlockType(flow),
     ],

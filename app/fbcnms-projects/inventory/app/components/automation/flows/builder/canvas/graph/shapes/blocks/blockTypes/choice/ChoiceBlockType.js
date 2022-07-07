@@ -11,13 +11,14 @@
 
 import type {IBlockType} from '../BaseBlockType';
 
-import DecisionPresentation from './DecisionPresentation';
+import ChoicePresentation from './ChoicePresentation';
 import {BaseBlockType} from '../BaseBlockType';
-import {TYPE} from '../../../../facades/shapes/vertexes/logic/Decision';
+import {TYPE} from '../../../../facades/shapes/vertexes/logic/Choice';
 
-export default class DecisionBlockType extends BaseBlockType
+export default class ChoiceBlockType
+  extends BaseBlockType
   implements IBlockType {
   type = TYPE;
-  presentationComponent = DecisionPresentation;
+  presentationComponent = ChoicePresentation;
   explanationComponent = null;
 }

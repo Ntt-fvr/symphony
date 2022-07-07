@@ -36,7 +36,7 @@ func (Block) Fields() []ent.Field {
 			NamedValues(
 				"Start", "START",
 				"End", "END",
-				"Decision", "DECISION",
+				"Choice", "DECISION",
 				"SubFlow", "SUB_FLOW",
 				"GoTo", "GO_TO",
 				"Trigger", "TRIGGER",

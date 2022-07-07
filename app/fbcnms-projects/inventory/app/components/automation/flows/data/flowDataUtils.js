@@ -9,12 +9,12 @@
  * @format
  */
 import type {BaseBlockInputType} from '../builder/canvas/graph/shapes/blocks/blockTypes/BaseBlockSettingsTypes';
+import type {ChoiceBlockInputType} from '../builder/canvas/graph/shapes/blocks/blockTypes/choice/ChoiceSettingsType';
 import type {
   ConnectorInput,
   ImportFlowDraftInput,
   ImportFlowDraftMutationResponse,
 } from '../../../../mutations/__generated__/ImportFlowDraftMutation.graphql';
-import type {DecisionBlockInputType} from '../builder/canvas/graph/shapes/blocks/blockTypes/decision/DecisionSettingsType';
 import type {EndBlockInputType} from '../builder/canvas/graph/shapes/blocks/blockTypes/end/EndSettings';
 import type {ExecuteFlowBlockInputType} from '../builder/canvas/graph/shapes/blocks/blockTypes/executeFlow/ExecuteFlowSettingsType';
 import type {GoToBlockInputType} from '../builder/canvas/graph/shapes/blocks/blockTypes/goTo/GoToSettingsType';
@@ -30,7 +30,6 @@ import type {
 import type {StartBlockInputType} from '../builder/canvas/graph/shapes/blocks/blockTypes/manualStart/ManualStartSettingsType';
 import type {TrueFalseBlockInputType} from '../builder/canvas/graph/shapes/blocks/blockTypes/trueFalse/TrueFalseSettings';
 
-import {TYPE as TimerType} from '../builder/canvas/graph/facades/shapes/vertexes/triggers/Timer';
 import {TYPE as TriggerStart} from '../builder/canvas/graph/facades/shapes/vertexes/triggers/TriggerStart';
 import {TYPE as TriggerWorkforce} from '../builder/canvas/graph/facades/shapes/vertexes/triggers/TriggerWorkforce';
 import {TYPE as WaitSignal} from '../builder/canvas/graph/facades/shapes/vertexes/triggers/WaitSignal';
@@ -82,7 +81,8 @@ export function mapStartBlockForSave(block: IBlock): StartBlockInputType {
   const {paramDefinitions} = block.settings;
   return {
     cid: block.id,
-    paramDefinitions: paramDefinitions,
+    // TODO AVeriguar
+    paramDefinitions: {key: 'prueba', type: 'STRING', choices: ['1']},
     uiRepresentation: {
       name: block.name,
       xPosition: Math.floor(block.model.attributes.position.x),
@@ -91,7 +91,7 @@ export function mapStartBlockForSave(block: IBlock): StartBlockInputType {
   };
 }
 
-export function mapDecisionBlockForSave(block: IBlock): DecisionBlockInputType {
+export function mapChoiceBlockForSave(block: IBlock): ChoiceBlockInputType {
   const {routes} = block.settings;
   const newRoutes = routes?.map(route => ({
     cid: route.id,
@@ -137,7 +137,7 @@ export function mapInvokeRestAPIBlockForSave(
 }
 
 export function mapGoToBlockForSave(block: IBlock): GoToBlockInputType {
-  const {goToType, targetBlockCid} = block.settings;
+  const {type, targetBlockCid} = block.settings;
   return {
     cid: block.id,
     uiRepresentation: {
@@ -146,7 +146,7 @@ export function mapGoToBlockForSave(block: IBlock): GoToBlockInputType {
       yPosition: Math.floor(block.model.attributes.position.y),
     },
     targetBlockCid: targetBlockCid,
-    type: goToType,
+    type: type,
   };
 }
 
@@ -174,35 +174,9 @@ type TriggerBlockInputType = {
 };
 
 export function mapTriggerBlocksForSave(block: IBlock): TriggerBlockInputType {
-  const {
-    blocked,
-    customFilter,
-    signalModule,
-    signalType,
-    behavior,
-    seconds,
-    datetime,
-    enableExpressionL,
-    expression,
-    exitPoint,
-  } = block.settings;
+  const {blocked, customFilter, signalModule, signalType} = block.settings;
 
   switch (block.model.attributes.type) {
-    case TimerType:
-      return {
-        cid: block.id,
-        behavior: behavior,
-        seconds: seconds,
-        datetime: datetime,
-        enableExpressionL: enableExpressionL,
-        expression: expression,
-        exitPoint: exitPoint,
-        uiRepresentation: {
-          name: block.name,
-          xPosition: Math.floor(block.model.attributes.position.x),
-          yPosition: Math.floor(block.model.attributes.position.y),
-        },
-      };
     case TriggerStart:
       return {};
     case TriggerWorkforce:
@@ -220,11 +194,39 @@ export function mapTriggerBlocksForSave(block: IBlock): TriggerBlockInputType {
   }
 }
 
+export function mapTimerBlocksForSave(block: IBlock): TriggerBlockInputType {
+  const {
+    behavior,
+    seconds,
+    specificDatetime,
+    enableExpressionL,
+    expression,
+    exitPoint,
+  } = block.settings;
+
+  return {
+    cid: block.id,
+    behavior: behavior,
+    seconds: seconds,
+    specificDatetime: specificDatetime,
+    enableExpressionL: enableExpressionL,
+    expression: expression,
+    exitPoint: exitPoint,
+    params: {type: 'VariableDefinition', expression: 'a', blockVariables: []},
+    entryPoint: null,
+    uiRepresentation: {
+      name: block.name,
+      xPosition: Math.floor(block.model.attributes.position.x),
+      yPosition: Math.floor(block.model.attributes.position.y),
+    },
+  };
+}
+
 export function mapEndBlockForSave(block: IBlock): EndBlockInputType {
   const {params} = block.settings;
   return {
     cid: block.id,
-    params: params,
+    params: {type: 'VariableDefinition', expression: 'a', blockVariables: []},
     uiRepresentation: {
       name: block.name,
       xPosition: Math.floor(block.model.attributes.position.x),

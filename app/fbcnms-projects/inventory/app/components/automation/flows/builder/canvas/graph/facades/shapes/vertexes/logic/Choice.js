@@ -21,7 +21,7 @@ import {
   getInitObject,
 } from '../BaseVertext';
 
-export const TYPE = 'DecisionBlock';
+export const TYPE = 'ChoiceBlock';
 
 const FILL_COLOR = symphony.palette.AUTOMATION.VIOLET;
 
@@ -53,7 +53,7 @@ const defaultProperties = {
     },
     image: {
       ...VERTEX_COMMON_DISPLAY.defaultAttrProps,
-      xlinkHref: '/inventory/static/svg/BlockFlowDecision.svg',
+      xlinkHref: '/inventory/static/svg/BlockFlowChoice.svg',
       width: IMAGE_SIZE,
       height: IMAGE_SIZE,
       x: IMAGE_PADDING,
@@ -78,15 +78,13 @@ const markup = {
   ],
 };
 
-const DecisionBaseClass = jointJS.dia.Element.define(
+const ChoiceBaseClass = jointJS.dia.Element.define(
   TYPE,
   defaultProperties,
   markup,
 );
 
-export default class Decision
-  extends DecisionBaseClass
-  implements IVertexModel {
+export default class Choice extends ChoiceBaseClass implements IVertexModel {
   constructor(id?: string) {
     super(
       getInitObject(
@@ -102,7 +100,7 @@ export default class Decision
   }
 }
 
-export function isDecision(element: ?IVertexModel): boolean {
+export function isChoice(element: ?IVertexModel): boolean {
   if (element == null) {
     return false;
   }

@@ -11,7 +11,7 @@
 import type {EndSettings} from '../flows/builder/canvas/graph/shapes/blocks/blockTypes/end/EndSettings';
 
 import '@testing-library/jest-dom';
-import DecisionPresentation from '../flows/builder/canvas/graph/shapes/blocks/blockTypes/end/EndPresentation';
+import ChoicePresentation from '../flows/builder/canvas/graph/shapes/blocks/blockTypes/end/EndPresentation';
 import EndBlockType from '../flows/builder/canvas/graph/shapes/blocks/blockTypes/end/EndBlockType';
 import React, {useMemo} from 'react';
 import {TYPE} from '../flows/builder/canvas/graph/facades/shapes/vertexes/administrative/End';
@@ -25,7 +25,7 @@ import {useGraph} from '../flows/builder/canvas/graph/graphAPIContext/GraphConte
 
 describe('Suite Test Components /End/: ', () => {
   it('AUT-FE-05011 Render component <EndPresentation/>', () => {
-    render(<DecisionPresentation />);
+    render(<ChoicePresentation />);
 
     const text = screen.getByText(/end/i);
     expect(text).toBeInTheDocument();

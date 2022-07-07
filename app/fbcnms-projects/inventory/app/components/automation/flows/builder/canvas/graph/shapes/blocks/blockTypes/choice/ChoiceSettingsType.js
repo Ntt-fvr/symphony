@@ -11,26 +11,26 @@
 
 import type {BaseBlockInputType} from '../BaseBlockSettingsTypes';
 
-type DecisionRouteInputType = {|
+type ChoiceRouteInputType = {|
   cid: string,
   name: string,
   condition: string,
 |};
 
-export type DecisionBlockInputType = {
-  routes: DecisionRouteInputType,
+export type ChoiceBlockInputType = {
+  routes: ChoiceRouteInputType,
   ...BaseBlockInputType,
 };
-export type DecisionSettingsType = $ReadOnly<{|
-  routes: Array<DecisionRouteInputType>,
+export type ChoiceSettingsType = $ReadOnly<{|
+  routes: Array<ChoiceRouteInputType>,
 |}>;
 
-export const initialDecisionSettings: DecisionSettingsType = {
+export const initialChoiceSettings: ChoiceSettingsType = {
   routes: undefined,
 };
 
-export const setDecisionSettings: DecisionSettingsType = (
-  newDecisionSettings: Array<DecisionRouteInputType>,
+export const setChoiceSettings: ChoiceSettingsType = (
+  newChoiceSettings: Array<ChoiceRouteInputType>,
 ) => {
-  return {routes: newDecisionSettings};
+  return {routes: newChoiceSettings};
 };

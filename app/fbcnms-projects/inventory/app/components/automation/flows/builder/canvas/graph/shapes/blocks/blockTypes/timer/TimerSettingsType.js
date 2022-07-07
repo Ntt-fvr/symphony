@@ -12,7 +12,7 @@
 export type TimerSettingsType = $ReadOnly<{|
   behavior: string,
   seconds: number,
-  datetime: string,
+  specificDatetime: string,
   enableExpressionL: boolean,
   expression: string,
   exitPoint: string,
@@ -21,7 +21,7 @@ export type TimerSettingsType = $ReadOnly<{|
 export const initialTimerSettings: TimerSettingsType = {
   behavior: null,
   seconds: null,
-  datetime: null,
+  specificDatetime: null,
   enableExpressionL: null,
   expression: null,
   exitPoint: null,

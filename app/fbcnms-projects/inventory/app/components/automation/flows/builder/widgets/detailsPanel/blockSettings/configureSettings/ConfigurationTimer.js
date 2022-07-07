@@ -53,7 +53,7 @@ const ConfigurationTimer = ({block}: Props) => {
     handleAllInputChange,
   ] = useForm({
     behavior: settings.behavior || 'fixed_interval',
-    datetime: settings.datetime || 'date',
+    specificDatetime: settings.specificDatetime || 'date',
     enableExpressionL: settings.enableExpressionL || false,
     expression: settings.expression || 'null',
     exitPoint: settings.exitPoint || false,
@@ -70,7 +70,7 @@ const ConfigurationTimer = ({block}: Props) => {
     behavior,
     enableExpressionL,
     seconds,
-    datetime,
+    specificDatetime,
     expression,
     exitPoint,
   } = timerSettingsValues;
@@ -79,7 +79,7 @@ const ConfigurationTimer = ({block}: Props) => {
     if (timerSettingsValues.behavior) {
       const copy = Object.assign({}, timerSettingsValues);
       copy['seconds'] = 0;
-      copy['datetime'] = 'date';
+      copy['specificDatetime'] = 'date';
       copy['expression'] = '';
       copy['seconds'] = '';
       handleAllInputChange(copy);
@@ -136,8 +136,8 @@ const ConfigurationTimer = ({block}: Props) => {
           <Grid item xs={12} className={classes.grid}>
             <Select
               label={'Date and Time'}
-              name={'datetime'}
-              value={datetime}
+              name={'specificDatetime'}
+              value={specificDatetime}
               onChange={handleInputChange}
               items={dateTimeValues}
             />

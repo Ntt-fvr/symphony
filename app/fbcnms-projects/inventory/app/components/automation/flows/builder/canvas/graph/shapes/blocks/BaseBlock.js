@@ -18,7 +18,7 @@ import type {
 } from '../../facades/shapes/vertexes/BaseVertext';
 import type {Paper} from '../../facades/Paper';
 
-import type {DecisionSettingsType} from './blockTypes/decision/DecisionSettingsType';
+import type {ChoiceSettingsType} from './blockTypes/choice/ChoiceSettingsType';
 import type {EndSettings} from './blockTypes/end/EndSettings';
 import type {ErrorHandlingType} from './blockTypes/ErrorSettings';
 import type {ExecuteFlowSettingsType} from './blockTypes/executeFlow/ExecuteFlowSettingsType';
@@ -69,7 +69,7 @@ type settingsTypes =
   | WaitSignalSettingsType
   | TimerSettingsType
   | GoToSettingsType
-  | DecisionSettingsType
+  | ChoiceSettingsType
   | ManualStartSettingsType
   | EndSettings
   | InvokeRestApiSettingsType

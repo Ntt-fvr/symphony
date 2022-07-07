@@ -18,12 +18,12 @@ export type GoToBlockInputType = {
 };
 
 export type GoToSettingsType = $ReadOnly<{|
-  goToType: string,
+  type: string,
   targetBlockCid: string,
 |}>;
 
 export const initialGoToSettings: GoToSettingsType = {
-  goToType: null,
+  type: null,
   targetBlockCid: null,
 };
 
