@@ -17,6 +17,7 @@ import type { ConcreteRequest } from 'relay-runtime';
 export type LifecycleStatus = "INSTALLING" | "OPERATING" | "PLANNING" | "RETIRING" | "%future added value";
 export type OperationalSubStatus = "NOT_WORKING" | "WORKING" | "%future added value";
 export type PlanningSubStatus = "ACTIVATED" | "DESACTIVATED" | "%future added value";
+export type ResourcePropertyKind = "bool" | "date" | "datetime_local" | "email" | "enum" | "float" | "gps_location" | "int" | "node" | "range" | "string" | "%future added value";
 export type TypePlanningSubStatus = "DESIGNED" | "FEASIBILITY_CHECKED" | "ORDERED" | "PROPOSED" | "%future added value";
 export type UsageSubStatus = "ASSIGNED" | "AVAILABLE" | "NO_AVAILABLE" | "RESERVED" | "TERMINATING" | "%future added value";
 export type ResourceCardQueryVariables = {||};
@@ -41,10 +42,26 @@ export type ResourceCardQueryResponse = {|
         +resourceSpecification: ?$ReadOnlyArray<?{|
           +id: string,
           +name: string,
-          +vendor: ?{|
+          +resourcePropertyTypes: $ReadOnlyArray<?{|
             +id: string,
             +name: string,
-          |},
+            +type: ResourcePropertyKind,
+            +nodeType: ?string,
+            +index: ?number,
+            +stringValue: ?string,
+            +intValue: ?number,
+            +booleanValue: ?boolean,
+            +floatValue: ?number,
+            +latitudeValue: ?number,
+            +longitudeValue: ?number,
+            +rangeFromValue: ?number,
+            +rangeToValue: ?number,
+            +isEditable: ?boolean,
+            +isMandatory: ?boolean,
+            +isInstanceProperty: ?boolean,
+            +isDeleted: ?boolean,
+            +category: ?string,
+          |}>,
         |}>,
       |}
     |}>
@@ -91,9 +108,25 @@ query ResourceCardQuery {
         resourceSpecification {
           id
           name
-          vendor {
+          resourcePropertyTypes {
             id
             name
+            type
+            nodeType
+            index
+            stringValue
+            intValue
+            booleanValue
+            floatValue
+            latitudeValue
+            longitudeValue
+            rangeFromValue
+            rangeToValue
+            isEditable
+            isMandatory
+            isInstanceProperty
+            isDeleted
+            category
           }
         }
       }
@@ -129,10 +162,13 @@ v1 = {
   "name": "name",
   "storageKey": null
 },
-v2 = [
-  (v0/*: any*/),
-  (v1/*: any*/)
-],
+v2 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "isDeleted",
+  "storageKey": null
+},
 v3 = [
   {
     "alias": null,
@@ -158,13 +194,7 @@ v3 = [
         "name": "resourceSpecification",
         "storageKey": null
       },
-      {
-        "alias": null,
-        "args": null,
-        "kind": "ScalarField",
-        "name": "isDeleted",
-        "storageKey": null
-      },
+      (v2/*: any*/),
       {
         "alias": null,
         "args": null,
@@ -242,11 +272,120 @@ v3 = [
                   {
                     "alias": null,
                     "args": null,
-                    "concreteType": "Vendor",
+                    "concreteType": "ResourcePropertyType",
                     "kind": "LinkedField",
-                    "name": "vendor",
-                    "plural": false,
-                    "selections": (v2/*: any*/),
+                    "name": "resourcePropertyTypes",
+                    "plural": true,
+                    "selections": [
+                      (v0/*: any*/),
+                      (v1/*: any*/),
+                      {
+                        "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
+                        "name": "type",
+                        "storageKey": null
+                      },
+                      {
+                        "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
+                        "name": "nodeType",
+                        "storageKey": null
+                      },
+                      {
+                        "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
+                        "name": "index",
+                        "storageKey": null
+                      },
+                      {
+                        "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
+                        "name": "stringValue",
+                        "storageKey": null
+                      },
+                      {
+                        "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
+                        "name": "intValue",
+                        "storageKey": null
+                      },
+                      {
+                        "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
+                        "name": "booleanValue",
+                        "storageKey": null
+                      },
+                      {
+                        "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
+                        "name": "floatValue",
+                        "storageKey": null
+                      },
+                      {
+                        "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
+                        "name": "latitudeValue",
+                        "storageKey": null
+                      },
+                      {
+                        "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
+                        "name": "longitudeValue",
+                        "storageKey": null
+                      },
+                      {
+                        "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
+                        "name": "rangeFromValue",
+                        "storageKey": null
+                      },
+                      {
+                        "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
+                        "name": "rangeToValue",
+                        "storageKey": null
+                      },
+                      {
+                        "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
+                        "name": "isEditable",
+                        "storageKey": null
+                      },
+                      {
+                        "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
+                        "name": "isMandatory",
+                        "storageKey": null
+                      },
+                      {
+                        "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
+                        "name": "isInstanceProperty",
+                        "storageKey": null
+                      },
+                      (v2/*: any*/),
+                      {
+                        "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
+                        "name": "category",
+                        "storageKey": null
+                      }
+                    ],
                     "storageKey": null
                   }
                 ],
@@ -294,7 +433,10 @@ v3 = [
                 "kind": "LinkedField",
                 "name": "resourceType",
                 "plural": false,
-                "selections": (v2/*: any*/),
+                "selections": [
+                  (v0/*: any*/),
+                  (v1/*: any*/)
+                ],
                 "storageKey": null
               }
             ],
@@ -325,16 +467,16 @@ return {
     "selections": (v3/*: any*/)
   },
   "params": {
-    "cacheID": "e1ed3587ba753e961019be748f02116f",
+    "cacheID": "349d74bfbc8808cbc5cb4a23f665de04",
     "id": null,
     "metadata": {},
     "name": "ResourceCardQuery",
     "operationKind": "query",
-    "text": "query ResourceCardQuery {\n  queryResource {\n    id\n    name\n    locatedIn\n    resourceSpecification\n    isDeleted\n    lifecycleStatus\n    typePlanningSubStatus\n    planningSubStatus\n    usageSubStatus\n    operationalSubStatus\n  }\n  resourceTypes {\n    edges {\n      node {\n        id\n        name\n        resourceSpecification {\n          id\n          name\n          vendor {\n            id\n            name\n          }\n        }\n      }\n    }\n  }\n  resourceSpecifications {\n    edges {\n      node {\n        id\n        name\n        resourceType {\n          id\n          name\n        }\n      }\n    }\n  }\n}\n"
+    "text": "query ResourceCardQuery {\n  queryResource {\n    id\n    name\n    locatedIn\n    resourceSpecification\n    isDeleted\n    lifecycleStatus\n    typePlanningSubStatus\n    planningSubStatus\n    usageSubStatus\n    operationalSubStatus\n  }\n  resourceTypes {\n    edges {\n      node {\n        id\n        name\n        resourceSpecification {\n          id\n          name\n          resourcePropertyTypes {\n            id\n            name\n            type\n            nodeType\n            index\n            stringValue\n            intValue\n            booleanValue\n            floatValue\n            latitudeValue\n            longitudeValue\n            rangeFromValue\n            rangeToValue\n            isEditable\n            isMandatory\n            isInstanceProperty\n            isDeleted\n            category\n          }\n        }\n      }\n    }\n  }\n  resourceSpecifications {\n    edges {\n      node {\n        id\n        name\n        resourceType {\n          id\n          name\n        }\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = '9f74b7cd4f3665f2792a7dadbcc5f180';
+(node/*: any*/).hash = '213f74a0ed052db33bddc5d6252c8b9b';
 
 module.exports = node;

@@ -24,18 +24,13 @@ import AddResourceMutation from '../../mutations/AddResourceMutation';
 import Button from '@material-ui/core/Button';
 import Card from '@symphony/design-system/components/Card/Card';
 import CardHeader from '@symphony/design-system/components/Card/CardHeader';
-import Event from '@material-ui/icons/Event';
 import Grid from '@material-ui/core/Grid';
-import IconButton from '@material-ui/core/IconButton';
-import InputAdornment from '@material-ui/core/InputAdornment';
-import MomentUtils from '@date-io/moment';
+import PropertyValueInput from '../form/PropertyValueInput';
 import SaveDialogConfirm from '../configure/SaveDialogConfirm';
 import TextField from '@material-ui/core/TextField';
 import UpdateResourceMutation from '../../mutations/UpdateResourceMutation';
 import inventoryTheme from '../../common/theme';
-import moment from 'moment';
 import symphony from '@symphony/design-system/theme/symphony';
-import {DateTimePicker, MuiPickersUtilsProvider} from '@material-ui/pickers';
 import {MenuItem} from '@material-ui/core';
 import {camelCase, startCase} from 'lodash';
 import {makeStyles} from '@material-ui/styles';
@@ -66,6 +61,10 @@ const useStyles = makeStyles(() => ({
       backgroundColor: 'transparent',
       color: symphony.palette.B600,
     },
+  },
+  input: {
+    display: 'inline-flex',
+    width: '100%',
   },
 }));
 
@@ -121,10 +120,6 @@ const AddEditResourceInLocation = (props: Props) => {
   const classes = useStyles();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [resourceType, setResourceType] = useState<ResourceType>({data: {}});
-  const [slotStartDate, setSlotStartDate] = useState(moment);
-  const [slotEndDate, setSlotEndDate] = useState(moment);
-  const [slotInstallDate, setSlotInstallDate] = useState(moment);
-
   const nameEdit = useFormInput(dataformModal.name);
   const externalID = useFormInput(dataformModal.externalID);
   const lifecycleStatus = useFormInput(dataformModal.lifecycleStatus);
@@ -170,21 +165,32 @@ const AddEditResourceInLocation = (props: Props) => {
     });
   }
 
+  const setData = {
+    externalId: externalID.value,
+    lifecycleStatus: lifecycleStatus.value,
+    typePlanningSubStatus: typePlanningSubStatus.value,
+    planningSubStatus: planningSubStatus.value,
+    usageSubStatus: usageSubStatus.value,
+    operationalSubStatus: operationalSubStatus.value,
+  };
+
+  const nameValidation =
+    nameEdit.value === dataformModal.name
+      ? {
+          ...setData,
+        }
+      : {
+          ...setData,
+          name: nameEdit.value,
+        };
+
   function handleEditForm() {
     const variables: UpdateResourceMutationVariables = {
       input: {
         filter: {
           id: Array<string>(dataformModal.id),
         },
-        set: {
-          name: nameEdit.value,
-          externalId: externalID.value,
-          lifecycleStatus: lifecycleStatus.value,
-          typePlanningSubStatus: typePlanningSubStatus.value,
-          planningSubStatus: planningSubStatus.value,
-          usageSubStatus: usageSubStatus.value,
-          operationalSubStatus: operationalSubStatus.value,
-        },
+        set: nameValidation,
       },
     };
     UpdateResourceMutation(variables, {
@@ -262,64 +268,6 @@ const AddEditResourceInLocation = (props: Props) => {
     );
   };
 
-  const renderFormPicker = (label, value, setValue) => {
-    return mode === 'edit' ? (
-      <Grid item xs={6}>
-        <MuiPickersUtilsProvider utils={MomentUtils}>
-          <DateTimePicker
-            label={label}
-            variant="inline"
-            inputVariant="outlined"
-            className={classes.formField}
-            style={{
-              width: '-webkit-fill-available',
-              marginBottom: '41px',
-            }}
-            value={value}
-            onChange={setValue}
-            format="yyyy/MM/DD HH:mm a"
-            InputProps={{
-              endAdornment: (
-                <InputAdornment position="end">
-                  <IconButton>
-                    <Event style={{color: '#8895AD'}} />
-                  </IconButton>
-                </InputAdornment>
-              ),
-            }}
-          />
-        </MuiPickersUtilsProvider>
-      </Grid>
-    ) : (
-      <Grid item xs={6}>
-        <MuiPickersUtilsProvider utils={MomentUtils}>
-          <DateTimePicker
-            label={label}
-            variant="inline"
-            inputVariant="outlined"
-            className={classes.formField}
-            style={{
-              width: '-webkit-fill-available',
-              marginBottom: '41px',
-            }}
-            value={value}
-            onChange={setValue}
-            format="yyyy/MM/DD HH:mm a"
-            InputProps={{
-              endAdornment: (
-                <InputAdornment position="end">
-                  <IconButton>
-                    <Event style={{color: '#8895AD'}} />
-                  </IconButton>
-                </InputAdornment>
-              ),
-            }}
-          />
-        </MuiPickersUtilsProvider>
-      </Grid>
-    );
-  };
-  console.log('hola soy lifecycleStatus', lifecycleStatus.value);
   return (
     <>
       <Grid item xs={12} sm={12} lg={12} xl={12}>
@@ -374,30 +322,28 @@ const AddEditResourceInLocation = (props: Props) => {
             <Grid item xs={12}>
               <CardHeader className={classes.cardHeader}>Properties</CardHeader>
             </Grid>
-            {renderForm('ID', 'id')}
-            {renderForm('Administrative Substate', 'administrativeSubstate')}
-            {renderFormPicker(
-              'In Service Date',
-              slotStartDate,
-              setSlotStartDate,
-            )}
-            {renderFormPicker(
-              'End Service Date',
-              slotStartDate,
-              setSlotStartDate,
-            )}
-            {renderFormPicker(
-              'Out of Service Date',
-              slotEndDate,
-              setSlotEndDate,
-            )}
-            {renderFormPicker(
-              'Install Date',
-              slotInstallDate,
-              setSlotInstallDate,
-            )}
-            {renderForm('Bandwith from', 'bandwithFrom')}
-            {renderForm('Bandwith from', 'bandwithFrom')}
+            <Grid container>
+              {dataformModal?.resourcePropertyTypes?.map((property, index) => (
+                <Grid
+                  key={property.id}
+                  style={{
+                    padding: '0 22px 22px 22px',
+                  }}
+                  item
+                  xs={6}>
+                  <PropertyValueInput
+                    label={property.name}
+                    className={classes.input}
+                    inputType="Property"
+                    property={property}
+                    headlineVariant="form"
+                    // required={!!property.propertyType.isMandatory}
+                    // disabled={!property.propertyType.isInstanceProperty}
+                    // onChange={this.props.onChange(index)}
+                  />
+                </Grid>
+              ))}
+            </Grid>
           </Grid>
           <Grid
             className={classes.header}

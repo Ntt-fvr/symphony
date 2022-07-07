@@ -75,9 +75,25 @@ const ResourceCardListQuery = graphql`
           resourceSpecification {
             id
             name
-            vendor {
+            resourcePropertyTypes {
               id
               name
+              type
+              nodeType
+              index
+              stringValue
+              intValue
+              booleanValue
+              floatValue
+              latitudeValue
+              longitudeValue
+              rangeFromValue
+              rangeToValue
+              isEditable
+              isMandatory
+              isInstanceProperty
+              isDeleted
+              category
             }
           }
         }
