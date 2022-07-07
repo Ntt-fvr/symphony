@@ -8,7 +8,7 @@
  * @format
  */
 import Button from '@symphony/design-system/components/Button';
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import Table from '@symphony/design-system/components/Table/Table';
 import fbt from 'fbt';
 import {CircleIndicator} from '../resource_instance/CircleIndicator';
@@ -16,7 +16,7 @@ import {Grid} from '@material-ui/core';
 
 export const PROJECTS_PAGE_SIZE = 15;
 
-const dataMock = [
+/*const dataMock = [
   {
     creationDate: '01/03/22',
     lastModificationDate: '01/05/22',
@@ -31,7 +31,7 @@ const dataMock = [
     source: 'source2',
     affectedResources: 'affectedResources2',
   },
-];
+];*/
 
 export type Props = $ReadOnly<{|
   dataConfig?: any,
@@ -40,44 +40,42 @@ export type Props = $ReadOnly<{|
 const ConfigurationTable = (props: Props) => {
   const {dataConfig} = props;
 
-  // console.log('tabla-> ', dataConfig);
+  console.log('C-TABLE ', dataConfig);
 
-  // const {queryCMVersion, queryResource, resourceSpecification} = dataConfig;
-
-  console.log('CMV', dataConfig);
+  const po = dataConfig?.map(item =>
+    item?.parameters?.map(item => item?.parameterType?.name),
+  );
+  console.log('name-> ', po);
 
   const tableColumns = [
     {
       key: 'location',
       title: 'Location',
-      render: row => row.resource.locatedIn ?? '',
+      render: row => (
+        <Button variant="text" tooltip={row.resource.locatedIn ?? ''}>
+          {row.resource.locatedIn}
+        </Button>
+      ),
       tooltip: row => row.resource.locatedIn ?? '',
     },
-    {
-      key: 'parameter',
-      title: `${fbt('parameter', '')}`,
-      render: row => row.lastModificationDate ?? '',
-      tooltip: row => row.lastModificationDate ?? '',
-    },
-    {
-      key: 'parameter1',
-      title: `${fbt('parameter', '')}`,
-      render: row => row.resourceType ?? '',
-      tooltip: row => row.resourceType ?? '',
-    },
-    {
-      key: 'parameter2',
-      title: `${fbt('parameter', '')}`,
-      render: row => row.source ?? '',
-      tooltip: row => row.source ?? '',
-    },
-    {
-      key: 'parameter3',
-      title: `${fbt('parameter', '')}`,
-      render: row => row.affectedResources,
-      tooltip: row => row.affectedResources ?? '',
-    },
   ];
+
+  const [resour, setResour] = useState(tableColumns);
+
+  useEffect(
+    () =>
+      setResour([
+        ...resour,
+        {
+          key: 'parameter1',
+          title: `${fbt('parameter', '')}`,
+          render: row => row.lastModificationDate ?? '',
+          tooltip: row => row.lastModificationDate ?? '',
+        },
+      ]),
+    [],
+  ),
+    console.log('data-table ', resour);
 
   return (
     <Grid>
@@ -111,3 +109,22 @@ const ConfigurationTable = (props: Props) => {
 };
 
 export {ConfigurationTable};
+
+/*{
+      key: 'parameter1',
+      title: `${fbt('parameter', '')}`,
+      render: row => row.resourceType ?? '',
+      tooltip: row => row.resourceType ?? '',
+    },
+    {
+      key: 'parameter2',
+      title: `${fbt('parameter', '')}`,
+      render: row => row.source ?? '',
+      tooltip: row => row.source ?? '',
+    },
+    {
+      key: 'parameter3',
+      title: `${fbt('parameter', '')}`,
+      render: row => row.affectedResources,
+      tooltip: row => row.affectedResources ?? '',
+    },*/

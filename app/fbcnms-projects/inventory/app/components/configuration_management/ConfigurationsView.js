@@ -110,9 +110,8 @@ const ConfigurationsView = () => {
 
   const {queryCMVersion} = dataQuery;
 
-  // const [filters, setFilters] = useState([]);
   const [dataTable, setDataTable] = useState(queryCMVersion);
-  console.log('==> ', dataTable);
+  console.log('C-TYPES', dataTable);
   const classes = useStyles();
 
   const filterConfigs = useMemo(
@@ -166,21 +165,6 @@ const ConfigurationsView = () => {
         setDataTable(queryCMVersion);
         break;
     }
-
-    /*filterChange.length === 0
-      ? setDataTable(queryCMVersion)
-      : filterChange[0]?.key === 'resource_name'
-      ? setDataTable(filterName)
-      : filterChange[0]?.key === 'location_inst_external_id'
-      ? setDataTable(filterLocation)
-      : filterChange[0]?.key === 'parameter_selector_name'
-      ? setDataTable(filterParameterName)
-      : filterChange[0]?.key === 'parameter_selector_tags'
-      ? setDataTable(filterParameterTag)
-      : filterChange[0]?.key === 'parameter_selector_priority'
-      ? setDataTable(filterParameterPriority)
-      : null;
-      */
   };
 
   // console.log('View-> ', ResourcesSearchConfig, dataTable, queryCMVersion);
