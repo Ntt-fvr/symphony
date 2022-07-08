@@ -19,7 +19,9 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/block"
 	"github.com/facebookincubator/symphony/pkg/ent/flow"
 	"github.com/facebookincubator/symphony/pkg/ent/flowdraft"
+	"github.com/facebookincubator/symphony/pkg/ent/flowinstance"
 	"github.com/facebookincubator/symphony/pkg/ent/predicate"
+	"github.com/facebookincubator/symphony/pkg/ent/user"
 )
 
 // FlowQuery is the builder for querying Flow entities.
@@ -31,8 +33,12 @@ type FlowQuery struct {
 	unique     []string
 	predicates []predicate.Flow
 	// eager-loading edges.
-	withBlocks *BlockQuery
-	withDraft  *FlowDraftQuery
+	withBlocks   *BlockQuery
+	withDraft    *FlowDraftQuery
+	withAuthor   *UserQuery
+	withEditor   *UserQuery
+	withInstance *FlowInstanceQuery
+	withFKs      bool
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -99,6 +105,72 @@ func (fq *FlowQuery) QueryDraft() *FlowDraftQuery {
 			sqlgraph.From(flow.Table, flow.FieldID, selector),
 			sqlgraph.To(flowdraft.Table, flowdraft.FieldID),
 			sqlgraph.Edge(sqlgraph.O2O, false, flow.DraftTable, flow.DraftColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(fq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryAuthor chains the current query on the author edge.
+func (fq *FlowQuery) QueryAuthor() *UserQuery {
+	query := &UserQuery{config: fq.config}
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := fq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := fq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(flow.Table, flow.FieldID, selector),
+			sqlgraph.To(user.Table, user.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, false, flow.AuthorTable, flow.AuthorColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(fq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryEditor chains the current query on the editor edge.
+func (fq *FlowQuery) QueryEditor() *UserQuery {
+	query := &UserQuery{config: fq.config}
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := fq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := fq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(flow.Table, flow.FieldID, selector),
+			sqlgraph.To(user.Table, user.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, flow.EditorTable, flow.EditorColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(fq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryInstance chains the current query on the instance edge.
+func (fq *FlowQuery) QueryInstance() *FlowInstanceQuery {
+	query := &FlowInstanceQuery{config: fq.config}
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := fq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := fq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(flow.Table, flow.FieldID, selector),
+			sqlgraph.To(flowinstance.Table, flowinstance.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, true, flow.InstanceTable, flow.InstanceColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(fq.driver.Dialect(), step)
 		return fromU, nil
@@ -276,14 +348,17 @@ func (fq *FlowQuery) Clone() *FlowQuery {
 		return nil
 	}
 	return &FlowQuery{
-		config:     fq.config,
-		limit:      fq.limit,
-		offset:     fq.offset,
-		order:      append([]OrderFunc{}, fq.order...),
-		unique:     append([]string{}, fq.unique...),
-		predicates: append([]predicate.Flow{}, fq.predicates...),
-		withBlocks: fq.withBlocks.Clone(),
-		withDraft:  fq.withDraft.Clone(),
+		config:       fq.config,
+		limit:        fq.limit,
+		offset:       fq.offset,
+		order:        append([]OrderFunc{}, fq.order...),
+		unique:       append([]string{}, fq.unique...),
+		predicates:   append([]predicate.Flow{}, fq.predicates...),
+		withBlocks:   fq.withBlocks.Clone(),
+		withDraft:    fq.withDraft.Clone(),
+		withAuthor:   fq.withAuthor.Clone(),
+		withEditor:   fq.withEditor.Clone(),
+		withInstance: fq.withInstance.Clone(),
 		// clone intermediate query.
 		sql:  fq.sql.Clone(),
 		path: fq.path,
@@ -309,6 +384,39 @@ func (fq *FlowQuery) WithDraft(opts ...func(*FlowDraftQuery)) *FlowQuery {
 		opt(query)
 	}
 	fq.withDraft = query
+	return fq
+}
+
+//  WithAuthor tells the query-builder to eager-loads the nodes that are connected to
+// the "author" edge. The optional arguments used to configure the query builder of the edge.
+func (fq *FlowQuery) WithAuthor(opts ...func(*UserQuery)) *FlowQuery {
+	query := &UserQuery{config: fq.config}
+	for _, opt := range opts {
+		opt(query)
+	}
+	fq.withAuthor = query
+	return fq
+}
+
+//  WithEditor tells the query-builder to eager-loads the nodes that are connected to
+// the "editor" edge. The optional arguments used to configure the query builder of the edge.
+func (fq *FlowQuery) WithEditor(opts ...func(*UserQuery)) *FlowQuery {
+	query := &UserQuery{config: fq.config}
+	for _, opt := range opts {
+		opt(query)
+	}
+	fq.withEditor = query
+	return fq
+}
+
+//  WithInstance tells the query-builder to eager-loads the nodes that are connected to
+// the "instance" edge. The optional arguments used to configure the query builder of the edge.
+func (fq *FlowQuery) WithInstance(opts ...func(*FlowInstanceQuery)) *FlowQuery {
+	query := &FlowInstanceQuery{config: fq.config}
+	for _, opt := range opts {
+		opt(query)
+	}
+	fq.withInstance = query
 	return fq
 }
 
@@ -380,16 +488,29 @@ func (fq *FlowQuery) prepareQuery(ctx context.Context) error {
 func (fq *FlowQuery) sqlAll(ctx context.Context) ([]*Flow, error) {
 	var (
 		nodes       = []*Flow{}
+		withFKs     = fq.withFKs
 		_spec       = fq.querySpec()
-		loadedTypes = [2]bool{
+		loadedTypes = [5]bool{
 			fq.withBlocks != nil,
 			fq.withDraft != nil,
+			fq.withAuthor != nil,
+			fq.withEditor != nil,
+			fq.withInstance != nil,
 		}
 	)
+	if fq.withAuthor != nil {
+		withFKs = true
+	}
+	if withFKs {
+		_spec.Node.Columns = append(_spec.Node.Columns, flow.ForeignKeys...)
+	}
 	_spec.ScanValues = func() []interface{} {
 		node := &Flow{config: fq.config}
 		nodes = append(nodes, node)
 		values := node.scanValues()
+		if withFKs {
+			values = append(values, node.fkValues()...)
+		}
 		return values
 	}
 	_spec.Assign = func(values ...interface{}) error {
@@ -461,6 +582,89 @@ func (fq *FlowQuery) sqlAll(ctx context.Context) ([]*Flow, error) {
 				return nil, fmt.Errorf(`unexpected foreign-key "flow_draft" returned %v for node %v`, *fk, n.ID)
 			}
 			node.Edges.Draft = n
+		}
+	}
+
+	if query := fq.withAuthor; query != nil {
+		ids := make([]int, 0, len(nodes))
+		nodeids := make(map[int][]*Flow)
+		for i := range nodes {
+			if fk := nodes[i].flow_author; fk != nil {
+				ids = append(ids, *fk)
+				nodeids[*fk] = append(nodeids[*fk], nodes[i])
+			}
+		}
+		query.Where(user.IDIn(ids...))
+		neighbors, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, n := range neighbors {
+			nodes, ok := nodeids[n.ID]
+			if !ok {
+				return nil, fmt.Errorf(`unexpected foreign-key "flow_author" returned %v`, n.ID)
+			}
+			for i := range nodes {
+				nodes[i].Edges.Author = n
+			}
+		}
+	}
+
+	if query := fq.withEditor; query != nil {
+		fks := make([]driver.Value, 0, len(nodes))
+		nodeids := make(map[int]*Flow)
+		for i := range nodes {
+			fks = append(fks, nodes[i].ID)
+			nodeids[nodes[i].ID] = nodes[i]
+			nodes[i].Edges.Editor = []*User{}
+		}
+		query.withFKs = true
+		query.Where(predicate.User(func(s *sql.Selector) {
+			s.Where(sql.InValues(flow.EditorColumn, fks...))
+		}))
+		neighbors, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, n := range neighbors {
+			fk := n.flow_editor
+			if fk == nil {
+				return nil, fmt.Errorf(`foreign-key "flow_editor" is nil for node %v`, n.ID)
+			}
+			node, ok := nodeids[*fk]
+			if !ok {
+				return nil, fmt.Errorf(`unexpected foreign-key "flow_editor" returned %v for node %v`, *fk, n.ID)
+			}
+			node.Edges.Editor = append(node.Edges.Editor, n)
+		}
+	}
+
+	if query := fq.withInstance; query != nil {
+		fks := make([]driver.Value, 0, len(nodes))
+		nodeids := make(map[int]*Flow)
+		for i := range nodes {
+			fks = append(fks, nodes[i].ID)
+			nodeids[nodes[i].ID] = nodes[i]
+			nodes[i].Edges.Instance = []*FlowInstance{}
+		}
+		query.withFKs = true
+		query.Where(predicate.FlowInstance(func(s *sql.Selector) {
+			s.Where(sql.InValues(flow.InstanceColumn, fks...))
+		}))
+		neighbors, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, n := range neighbors {
+			fk := n.flow_instance_flow
+			if fk == nil {
+				return nil, fmt.Errorf(`foreign-key "flow_instance_flow" is nil for node %v`, n.ID)
+			}
+			node, ok := nodeids[*fk]
+			if !ok {
+				return nil, fmt.Errorf(`unexpected foreign-key "flow_instance_flow" returned %v for node %v`, *fk, n.ID)
+			}
+			node.Edges.Instance = append(node.Edges.Instance, n)
 		}
 	}
 

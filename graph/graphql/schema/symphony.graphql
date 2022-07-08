@@ -6081,7 +6081,10 @@ type ChoiceBlock {
   rules: [DecisionRoute!]!
 }
 
-enum TimerBehavior{
+enum TimerBehavior
+@goModel(
+  model: "github.com/facebookincubator/symphony/pkg/ent/block.TimerBehavior"
+  ) {
   FIXED_INTERVAL
   SPECIFIC_DATETIME
 }
@@ -6102,7 +6105,10 @@ type ExecuteFlowBlock {
   exitPoint: ExitPoint!
 }
 
-enum UrlMethod {
+enum UrlMethod 
+@goModel(
+  model: "github.com/facebookincubator/symphony/pkg/ent/block.URLMethod"
+  ) {
   GET
   POST
   PUT
@@ -6132,7 +6138,10 @@ type ParallelBlock {
   exitPoint: ExitPoint!
 }
 
-enum SignalType {
+enum SignalType 
+@goModel(
+  model: "github.com/facebookincubator/symphony/pkg/ent/block.SignalType"
+  ){
   NOTIFICATION
   WOCREATION
   CRCREATION
@@ -6140,7 +6149,10 @@ enum SignalType {
   CRUPDATE
 }
 
-enum SignalModule {
+enum SignalModule 
+@goModel(
+  model: "github.com/facebookincubator/symphony/pkg/ent/block.SignalModule"
+  ){
   INVENTORY
   CONFIGURATION
 }
@@ -6384,6 +6396,12 @@ type Flow implements Node {
   blocks: [Block!]!
   connectors: [Connector!]!
   draft: FlowDraft
+  runningInstances: Int!
+  failedInstances: Int!
+  author: User!
+  creationDate: Time!
+  editor: User!
+  updateTime: Time!
 }
 
 type FlowDraft implements Node {
@@ -6421,10 +6439,13 @@ enum FlowInstanceStatus
   @goModel(
     model: "github.com/facebookincubator/symphony/pkg/ent/flowinstance.Status"
   ) {
-  IN_PROGRESS
+  RUNNING
   FAILED
+  FAILING
   COMPLETED
   CANCELED
+  PAUSED
+  CLOSED
 }
 
 type FlowExecutionTemplate implements Node {
@@ -6484,7 +6505,7 @@ input EditBlockInstanceInput {
 
 type FlowInstance implements Node {
   id: ID!
-  #bssCode: String
+  bssCode: String
   serviceInstanceCode: String
   status: FlowInstanceStatus!
   template: FlowExecutionTemplate!
@@ -6522,7 +6543,7 @@ input VariableValueInput
 
 input StartFlowInput {
   flowID: ID!
-  #bssCode: String
+  bssCode: String
   startDate: Time!
   params: [VariableValueInput]!
 }

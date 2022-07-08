@@ -348,8 +348,8 @@ func TestStartFlow(t *testing.T) {
 		},
 	}
 	instance, err := mr.StartFlow(ctx, models.StartFlowInput{
-		FlowID:    flw.ID,
-		BssCode:   "CODE123",
+		FlowID: flw.ID,
+		// BssCode:   "CODE123",
 		StartDate: time.Now(),
 		Params:    inputParams,
 	})
@@ -378,8 +378,8 @@ func TestAddBlockInstancesOfFlowInstance(t *testing.T) {
 		},
 	}
 	flowInstance, err := mr.StartFlow(ctx, models.StartFlowInput{
-		FlowID:    flw.ID,
-		BssCode:   "CODE123",
+		FlowID: flw.ID,
+		// BssCode:   "CODE123",
 		StartDate: time.Now(),
 		Params:    inputParams,
 	})
