@@ -143,6 +143,48 @@ var (
 			},
 		},
 	}
+	// AutomationActivitiesColumns holds the columns for the "automation_activities" table.
+	AutomationActivitiesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "create_time", Type: field.TypeTime},
+		{Name: "update_time", Type: field.TypeTime},
+		{Name: "activity_type", Type: field.TypeEnum, Enums: []string{"CREATION", "STATUS"}},
+		{Name: "automation_entity_type", Type: field.TypeEnum, Enums: []string{"FLOW_INSTANCE", "BLOCK_INSTANCE"}},
+		{Name: "old_value", Type: field.TypeString, Nullable: true},
+		{Name: "new_value", Type: field.TypeString, Nullable: true},
+		{Name: "automation_activity_author", Type: field.TypeInt, Nullable: true},
+		{Name: "block_instance_block_activities", Type: field.TypeInt, Nullable: true},
+		{Name: "flow_instance_flow_activities", Type: field.TypeInt, Nullable: true},
+	}
+	// AutomationActivitiesTable holds the schema information for the "automation_activities" table.
+	AutomationActivitiesTable = &schema.Table{
+		Name:       "automation_activities",
+		Columns:    AutomationActivitiesColumns,
+		PrimaryKey: []*schema.Column{AutomationActivitiesColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:  "automation_activities_users_author",
+				Columns: []*schema.Column{AutomationActivitiesColumns[7]},
+
+				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+			{
+				Symbol:  "automation_activities_block_instances_block_activities",
+				Columns: []*schema.Column{AutomationActivitiesColumns[8]},
+
+				RefColumns: []*schema.Column{BlockInstancesColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+			{
+				Symbol:  "automation_activities_flow_instances_flow_activities",
+				Columns: []*schema.Column{AutomationActivitiesColumns[9]},
+
+				RefColumns: []*schema.Column{FlowInstancesColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+		},
+	}
 	// BlocksColumns holds the columns for the "blocks" table.
 	BlocksColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
@@ -267,6 +309,8 @@ var (
 		{Name: "status", Type: field.TypeEnum, Enums: []string{"PENDING", "IN_PROGRESS", "FAILED", "COMPLETED", "WAITING"}, Default: "PENDING"},
 		{Name: "inputs", Type: field.TypeJSON, Nullable: true},
 		{Name: "outputs", Type: field.TypeJSON, Nullable: true},
+		{Name: "input_json", Type: field.TypeString, Nullable: true, Size: 2147483647},
+		{Name: "output_json", Type: field.TypeString, Nullable: true, Size: 2147483647},
 		{Name: "failure_reason", Type: field.TypeString, Nullable: true},
 		{Name: "block_instance_counter", Type: field.TypeInt, Nullable: true},
 		{Name: "start_date", Type: field.TypeTime},
@@ -282,14 +326,14 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:  "block_instances_blocks_block",
-				Columns: []*schema.Column{BlockInstancesColumns[10]},
+				Columns: []*schema.Column{BlockInstancesColumns[12]},
 
 				RefColumns: []*schema.Column{BlocksColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
 				Symbol:  "block_instances_flow_instances_blocks",
-				Columns: []*schema.Column{BlockInstancesColumns[11]},
+				Columns: []*schema.Column{BlockInstancesColumns[13]},
 
 				RefColumns: []*schema.Column{FlowInstancesColumns[0]},
 				OnDelete:   schema.SetNull,
@@ -1141,15 +1185,25 @@ var (
 		{Name: "name", Type: field.TypeString},
 		{Name: "description", Type: field.TypeString, Nullable: true},
 		{Name: "end_param_definitions", Type: field.TypeJSON, Nullable: true},
-		{Name: "status", Type: field.TypeEnum, Enums: []string{"PUBLISHED", "UNPUBLISHED", "ARCHIVED"}, Default: "UNPUBLISHED"},
+		{Name: "status", Type: field.TypeEnum, Enums: []string{"PUBLISHED", "UNPUBLISHED", "ARCHIVED", "ON_HOLD"}, Default: "UNPUBLISHED"},
 		{Name: "new_instances_policy", Type: field.TypeEnum, Enums: []string{"ENABLED", "DISABLED"}, Default: "DISABLED"},
+		{Name: "creation_date", Type: field.TypeTime},
+		{Name: "flow_author", Type: field.TypeInt, Nullable: true},
 	}
 	// FlowsTable holds the schema information for the "flows" table.
 	FlowsTable = &schema.Table{
-		Name:        "flows",
-		Columns:     FlowsColumns,
-		PrimaryKey:  []*schema.Column{FlowsColumns[0]},
-		ForeignKeys: []*schema.ForeignKey{},
+		Name:       "flows",
+		Columns:    FlowsColumns,
+		PrimaryKey: []*schema.Column{FlowsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:  "flows_users_author",
+				Columns: []*schema.Column{FlowsColumns[9]},
+
+				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+		},
 		Indexes: []*schema.Index{
 			{
 				Name:    "flow_name",
@@ -1205,10 +1259,11 @@ var (
 		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "create_time", Type: field.TypeTime},
 		{Name: "update_time", Type: field.TypeTime},
-		{Name: "status", Type: field.TypeEnum, Enums: []string{"IN_PROGRESS", "FAILED", "COMPLETED", "CANCELED"}, Default: "IN_PROGRESS"},
+		{Name: "status", Type: field.TypeEnum, Enums: []string{"RUNNING", "FAILED", "FAILING", "COMPLETED", "CANCELED", "PAUSED", "CLOSED"}, Default: "RUNNING"},
+		{Name: "start_params", Type: field.TypeJSON, Nullable: true},
 		{Name: "output_params", Type: field.TypeJSON, Nullable: true},
 		{Name: "incompletion_reason", Type: field.TypeString, Nullable: true},
-		{Name: "bss_code", Type: field.TypeString},
+		{Name: "bss_code", Type: field.TypeString, Nullable: true},
 		{Name: "service_instance_code", Type: field.TypeString, Nullable: true},
 		{Name: "start_date", Type: field.TypeTime},
 		{Name: "end_date", Type: field.TypeTime, Nullable: true},
@@ -1224,21 +1279,21 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:  "flow_instances_block_instances_subflow_instance",
-				Columns: []*schema.Column{FlowInstancesColumns[10]},
+				Columns: []*schema.Column{FlowInstancesColumns[11]},
 
 				RefColumns: []*schema.Column{BlockInstancesColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
 				Symbol:  "flow_instances_flows_flow",
-				Columns: []*schema.Column{FlowInstancesColumns[11]},
+				Columns: []*schema.Column{FlowInstancesColumns[12]},
 
 				RefColumns: []*schema.Column{FlowsColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
 				Symbol:  "flow_instances_flow_execution_templates_template",
-				Columns: []*schema.Column{FlowInstancesColumns[12]},
+				Columns: []*schema.Column{FlowInstancesColumns[13]},
 
 				RefColumns: []*schema.Column{FlowExecutionTemplatesColumns[0]},
 				OnDelete:   schema.SetNull,
@@ -3051,6 +3106,7 @@ var (
 		{Name: "status", Type: field.TypeEnum, Enums: []string{"ACTIVE", "DEACTIVATED"}, Default: "ACTIVE"},
 		{Name: "role", Type: field.TypeEnum, Enums: []string{"USER", "ADMIN", "OWNER"}, Default: "USER"},
 		{Name: "distance_unit", Type: field.TypeEnum, Enums: []string{"KILOMETER", "MILE"}, Default: "KILOMETER"},
+		{Name: "flow_editor", Type: field.TypeInt, Nullable: true},
 		{Name: "organization_user_fk", Type: field.TypeInt, Nullable: true},
 	}
 	// UsersTable holds the schema information for the "users" table.
@@ -3060,8 +3116,15 @@ var (
 		PrimaryKey: []*schema.Column{UsersColumns[0]},
 		ForeignKeys: []*schema.ForeignKey{
 			{
-				Symbol:  "users_organizations_user_fk",
+				Symbol:  "users_flows_editor",
 				Columns: []*schema.Column{UsersColumns[10]},
+
+				RefColumns: []*schema.Column{FlowsColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+			{
+				Symbol:  "users_organizations_user_fk",
+				Columns: []*schema.Column{UsersColumns[11]},
 
 				RefColumns: []*schema.Column{OrganizationsColumns[0]},
 				OnDelete:   schema.SetNull,
@@ -3645,6 +3708,7 @@ var (
 		AlarmFiltersTable,
 		AlarmStatusTable,
 		AppointmentsTable,
+		AutomationActivitiesTable,
 		BlocksTable,
 		BlockInstancesTable,
 		CheckListCategoriesTable,
@@ -3759,6 +3823,9 @@ func init() {
 	AlarmFiltersTable.ForeignKeys[0].RefTable = AlarmStatusTable
 	AppointmentsTable.ForeignKeys[0].RefTable = UsersTable
 	AppointmentsTable.ForeignKeys[1].RefTable = WorkOrdersTable
+	AutomationActivitiesTable.ForeignKeys[0].RefTable = UsersTable
+	AutomationActivitiesTable.ForeignKeys[1].RefTable = BlockInstancesTable
+	AutomationActivitiesTable.ForeignKeys[2].RefTable = FlowInstancesTable
 	BlocksTable.ForeignKeys[0].RefTable = FlowsTable
 	BlocksTable.ForeignKeys[1].RefTable = BlocksTable
 	BlocksTable.ForeignKeys[2].RefTable = FlowsTable
@@ -3807,6 +3874,7 @@ func init() {
 	FloorPlansTable.ForeignKeys[0].RefTable = LocationsTable
 	FloorPlansTable.ForeignKeys[1].RefTable = FloorPlanReferencePointsTable
 	FloorPlansTable.ForeignKeys[2].RefTable = FloorPlanScalesTable
+	FlowsTable.ForeignKeys[0].RefTable = UsersTable
 	FlowDraftsTable.ForeignKeys[0].RefTable = FlowsTable
 	FlowInstancesTable.ForeignKeys[0].RefTable = BlockInstancesTable
 	FlowInstancesTable.ForeignKeys[1].RefTable = FlowsTable
@@ -3904,7 +3972,8 @@ func init() {
 	SurveyWiFiScansTable.ForeignKeys[2].RefTable = LocationsTable
 	TechesTable.ForeignKeys[0].RefTable = DomainsTable
 	ThresholdsTable.ForeignKeys[0].RefTable = KpisTable
-	UsersTable.ForeignKeys[0].RefTable = OrganizationsTable
+	UsersTable.ForeignKeys[0].RefTable = FlowsTable
+	UsersTable.ForeignKeys[1].RefTable = OrganizationsTable
 	VendorsTable.ForeignKeys[0].RefTable = ResourceSpecificationsTable
 	WorkOrdersTable.ForeignKeys[0].RefTable = OrganizationsTable
 	WorkOrdersTable.ForeignKeys[1].RefTable = ProjectsTable

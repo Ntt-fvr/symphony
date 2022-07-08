@@ -11,8 +11,8 @@ type ForEachBlock struct {
 	key          string
 	blocks       []int
 	startBlock   int
-	SearchBlock  func(int2 int) *model.Block
-	ExecuteBlock func(model.Block, map[string]interface{}, map[string]interface{}) (*ExecutorResult, error)
+	SearchBlock  func(int2 int) *model.AutomationBlock
+	ExecuteBlock func(model.AutomationBlock, map[string]interface{}, map[string]interface{}) (*ExecutorResult, error)
 }
 
 func (b *ForEachBlock) Execute() (*ExecutorResult, error) {

@@ -289,6 +289,10 @@ func (BlockInstance) Fields() []ent.Field {
 			Optional(),
 		field.JSON("outputs", []*flowschema.VariableValue{}).
 			Optional(),
+		field.Text("input_json").
+			Optional(),
+		field.Text("output_json").
+			Optional(),
 		field.String("failure_reason").
 			Optional(),
 		field.Int("block_instance_counter").
@@ -329,6 +333,7 @@ func (BlockInstance) Edges() []ent.Edge {
 			Required(),
 		edge.To("subflow_instance", FlowInstance.Type).
 			Unique(),
+		edge.To("block_activities", AutomationActivity.Type),
 	}
 }
 

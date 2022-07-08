@@ -23,7 +23,7 @@ COPY pkg /src/symphony/pkg
 # Build services
 WORKDIR /src/symphony/async
 COPY async .
-RUN mkdir /build && go build -o /build ./cmd/...
+RUN mkdir /build && go build -tags musl -o /build ./cmd/...
 
 # Create deployable image
 FROM alpine

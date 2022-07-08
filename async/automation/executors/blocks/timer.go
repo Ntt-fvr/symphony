@@ -2,6 +2,7 @@ package blocks
 
 import (
 	"github.com/facebookincubator/symphony/async/automation/celgo"
+	"github.com/facebookincubator/symphony/async/automation/executors/util"
 	"github.com/facebookincubator/symphony/pkg/ent/block"
 	"github.com/google/cel-go/common/types/ref"
 	"go.uber.org/cadence/workflow"
@@ -79,7 +80,7 @@ func (b *TimerBlock) runLogic() error {
 				b.seconds = value
 			}
 		}
-		duration = getDurationFromSeconds(b.seconds)
+		duration = util.GetDurationFromSeconds(b.seconds)
 	case block.TimerBehaviorSPECIFIC_DATETIME:
 		if b.enableExpressionL {
 			result, err := celgo.CompileAndEvaluate(b.expression, variables)
@@ -89,10 +90,10 @@ func (b *TimerBlock) runLogic() error {
 
 			value, ok := result.Value().(string)
 			if ok {
-				b.datetime = getDateTimeFromString(value)
+				b.datetime = util.GetDateTimeFromString(value)
 			}
 		}
-		duration = getDurationFromDateTime(b.datetime)
+		duration = util.GetDurationFromDateTime(b.datetime)
 	}
 
 	value := b.TimerFunction(b.workflowCtx, duration)
@@ -114,7 +115,7 @@ func (b *TimerBlock) runLogic() error {
 			b.output = b.input
 			return nil
 		}
-		b.datetime = getDateTimeFromString(result)
+		b.datetime = util.GetDateTimeFromString(result)
 	}
 	return b.runLogic()
 }

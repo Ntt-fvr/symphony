@@ -13,8 +13,8 @@ import (
 )
 
 func GetBlockInstances(
-	automationBlock model.Block, input, state map[string]interface{},
-	blockStatusFunction func(context.Context, int, blockinstance.Status, *time.Time) error,
+	automationBlock model.AutomationBlock, input, state map[string]interface{},
+	blockStatusFunction func(context.Context, int, blockinstance.Status, *time.Time, map[string]interface{}) error,
 ) ExecutorBlock {
 
 	var executorBlock ExecutorBlock
@@ -147,7 +147,7 @@ func getHeaders(values []*flowschema.VariableValue) map[string]string {
 	return headers
 }
 
-func getTransformation(block model.Block) blockTransformations {
+func getTransformation(block model.AutomationBlock) blockTransformations {
 	transformations := blockTransformations{}
 
 	if block.EnableInputTransformation != nil && *block.EnableInputTransformation {
@@ -210,8 +210,8 @@ func getTransformation(block model.Block) blockTransformations {
 }
 
 func getBaseBlock(
-	block model.Block, input, state map[string]interface{}, transformations blockTransformations,
-	blockStatusFunction func(context.Context, int, blockinstance.Status, *time.Time) error,
+	block model.AutomationBlock, input, state map[string]interface{}, transformations blockTransformations,
+	blockStatusFunction func(context.Context, int, blockinstance.Status, *time.Time, map[string]interface{}) error,
 ) baseBlock {
 
 	var inputTransformation bool
@@ -249,7 +249,7 @@ func getBaseBlock(
 	}
 }
 
-func getChoiceRules(block model.Block) []ChoiceRuleBlock {
+func getChoiceRules(block model.AutomationBlock) []ChoiceRuleBlock {
 	var rules []ChoiceRuleBlock
 	for _, rule := range block.ChoiceRoutes {
 		rules = append(rules, ChoiceRuleBlock{
@@ -258,24 +258,4 @@ func getChoiceRules(block model.Block) []ChoiceRuleBlock {
 		})
 	}
 	return rules
-}
-
-func getDateTimeFromString(date string) time.Time {
-	dateTime, err := time.Parse(time.RFC3339, date)
-	if err != nil {
-		return time.Now()
-	}
-	return dateTime
-}
-
-func getDurationFromSeconds(value int) time.Duration {
-	duration, err := time.ParseDuration(fmt.Sprintf("%ds", value))
-	if err != nil {
-		return time.Minute
-	}
-	return duration
-}
-
-func getDurationFromDateTime(dateTime time.Time) time.Duration {
-	return dateTime.Sub(time.Now())
 }

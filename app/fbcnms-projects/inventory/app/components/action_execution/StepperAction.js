@@ -11,17 +11,26 @@
 import ActionPickerScheduled from './ActionPickerScheduled';
 import Button from '@material-ui/core/Button';
 import Card from '@symphony/design-system/components/Card/Card';
-import Checkbox from '@symphony/design-system/components/Checkbox/Checkbox';
+import Divider from '@material-ui/core/Divider';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Grid from '@material-ui/core/Grid';
 import PowerSearchBar from '../power_search/PowerSearchBar';
 import React, {useState} from 'react';
+import RelayEnvironment from '../../common/RelayEnvironment';
+import ResourceFilterDropDown from './resource-filter/ResourceFilterDropDown';
 import Table from '@symphony/design-system/components/Table/Table';
 import Text from '@symphony/design-system/components/Text';
 import TextField from '@material-ui/core/TextField';
 import symphony from '@symphony/design-system/theme/symphony';
+import {Checkbox} from '@material-ui/core';
 import {MenuItem} from '@material-ui/core';
+import {ResourceCriteriaConfig} from './resource-filter/ResourceCriteriaConfig';
 import {StepToStep} from './StepToStep';
+import {fetchQuery, graphql} from 'relay-runtime';
+import {getSelectedFilter} from '../comparison_view/FilterUtils';
 import {makeStyles} from '@material-ui/styles';
+
+import {useValidation} from '../assurance/common/useValidation';
 
 const useStyles = makeStyles(() => ({
   root: {},
@@ -74,7 +83,15 @@ const useStyles = makeStyles(() => ({
     boxShadow: '0px 1px 3px 0px rgba(0, 0, 43, 0.15)',
   },
   searchBar: {
-    flexGrow: 1,
+    display: 'flex',
+    flexDirection: 'row',
+    boxShadow: '0px 2px 2px 0px rgba(0, 0, 0, 0.1)',
+  },
+  backgroundWhite: {
+    backgroundColor: 'white',
+  },
+  searchArea: {
+    backgroundColor: symphony.palette.D10,
   },
   selectField: {
     width: '200px',
@@ -87,11 +104,34 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
+const queryResource = graphql`
+  query StepperActionQuery($filter: ResourceFilter) {
+    queryResource(filter: $filter) {
+      id
+      locatedIn
+      resourceSpecification
+      name
+    }
+  }
+`;
+
+const queryActionTemplate = graphql`
+  query StepperActionTemplateQuery($filter: ActionTemplateFilter) {
+    queryActionTemplate(filter: $filter) {
+      id
+      name
+    }
+  }
+`;
 type Props = $ReadOnly<{|
   open?: boolean,
   onClose?: () => void,
+  names?: [],
+  closeForm?: () => void,
   returnSheduledAction?: () => void,
+  resourceSpecs?: [],
 |}>;
+
 const tableColumns = [
   {
     key: 'location',
@@ -99,68 +139,155 @@ const tableColumns = [
     getSortingValue: row => row.location,
     render: row => (
       <Button color="primary" variant="text" tooltip={row.location ?? ''}>
-        {row.location}
+        {row?.locatedIn}
       </Button>
     ),
   },
 ];
-const data = [
-  {
-    id: '386547056643',
-    key: '386547056643',
-    location: 'S17161',
-  },
-  {
-    id: '386547056644',
-    key: '386547056644',
-    location: 'S17162',
-  },
-  {
-    id: '386547056645',
-    key: '386547056645',
-    location: 'S17163',
-  },
-  {
-    id: '386547056646',
-    key: '386547056646',
-    location: 'S17164',
-  },
-  {
-    id: '386547056647',
-    key: '386547056647',
-    location: 'S17165',
-  },
-  {
-    id: '386547056648',
-    key: '386547056648',
-    location: 'S17166',
-  },
-  {
-    id: '386547056649',
-    key: '386547056649',
-    location: 'S17167',
-  },
-  {
-    id: '386547056650',
-    key: '386547056650',
-    location: 'S17168',
-  },
-];
-const StepperAction = (props: Props) => {
-  const {returnSheduledAction} = props;
 
-  const [activeStep, setActiveStep] = useState(1);
-  const [checked, setChecked] = useState(true);
-  const [checkedResource, setCheckedResource] = useState(false);
+const StepperAction = (props: Props) => {
+  const {returnSheduledAction, closeForm, names, resourceSpecs} = props;
+
+  const activeStep = 1;
+  const [selectedSpecification, setSelectedSpecification] = useState('');
+  const [name, setName] = useState('');
+  const [description, setDescription] = useState('');
+  const [resourceData, setResourceData] = useState([]);
+  const [actionTemplates, setActionTemplates] = useState([]);
+  const [filters, setFiltes] = useState([]);
+  const [selectedAction, setSelectedAction] = useState();
+  const [checkedResource, setCheckedResource] = useState([]);
   const [openActionPickerScheduled, setOpenActionPickerScheduled] = useState(
     true,
   );
 
+  const validationName = useValidation(name, names, 'Action');
+
   const handleConfirmDate = () => {
     setOpenActionPickerScheduled(prevStatePicker => !prevStatePicker);
   };
+  const filterConfigs = ResourceCriteriaConfig.map(ent => ent.filters).reduce(
+    (allFilters, currentFilter) => allFilters.concat(currentFilter),
+    [],
+  );
+  const onFiltersChanged = data => {
+    setFiltes(data);
+    updateTableData(selectedSpecification, data);
+  };
+
+  const updateTableData = (specification, filtersData) => {
+    fetchQuery(RelayEnvironment, queryResource, {
+      filter: {
+        resourceSpecification: {
+          eq: specification,
+        },
+        id:
+          filtersData?.filter(item => item.key == 'id')?.length > 0
+            ? filtersData
+                ?.filter(item => item.key == 'id')
+                .map(i => i.name.join())
+            : null,
+        name:
+          filtersData?.filter(item => item.key == 'name')?.length > 0
+            ? {
+                in: filtersData
+                  ?.filter(item => item.key == 'name')
+                  .map(i => i.name.join()),
+              }
+            : null,
+      },
+    }).then(data => {
+      setResourceData(
+        data.queryResource.map(item => {
+          return {
+            ...item,
+            selected: false,
+          };
+        }),
+      );
+    });
+    fetchQuery(RelayEnvironment, queryActionTemplate, {
+      filter: {
+        resourceSpecifications: {
+          eq: specification,
+        },
+      },
+    }).then(data => {
+      setActionTemplates(data.queryActionTemplate);
+    });
+  };
+
+  const handleSpecification = (type, spec) => {
+    setSelectedSpecification(spec);
+    updateTableData(spec, filters);
+  };
+
+  const handleChecked = (id, value) => {
+    const index = resourceData.findIndex(item => item.id == id);
+    if (value) {
+      setCheckedResource([
+        {id: resourceData?.find(item => item.id == id).id},
+        ...checkedResource,
+      ]);
+    } else {
+      setCheckedResource(checkedResource?.filter(item => item.id != id));
+    }
+    setResourceData([
+      ...resourceData.slice(0, index),
+      {
+        ...resourceData[index],
+        selected: value,
+      },
+      ...resourceData.slice(index + 1),
+    ]);
+  };
+
+  const handleCheckedAll = value => {
+    if (value) {
+      setCheckedResource(
+        resourceData.map(item => {
+          return {id: item?.id};
+        }),
+      );
+    } else {
+      setCheckedResource([]);
+    }
+    setResourceData(
+      resourceData.map(item => {
+        return {
+          ...item,
+          selected: value,
+        };
+      }),
+    );
+  };
 
   const classes = useStyles();
+
+  const formData = () => {
+    return {
+      name,
+      description,
+      status: 'ACTIVED',
+      resources: checkedResource,
+      actionTemplate: {
+        id: selectedAction,
+        name: actionTemplates.find(template => template.id == selectedAction)
+          .name,
+      },
+    };
+  };
+
+  const handleDisabled = () => {
+    return !(
+      name &&
+      description &&
+      checkedResource?.length > 0 &&
+      selectedAction &&
+      !names.includes(name)
+    );
+  };
+
   return (
     <div>
       <Grid item xs={12}>
@@ -197,14 +324,19 @@ const StepperAction = (props: Props) => {
                 spacing={3}>
                 <Grid item xs={5}>
                   <TextField
+                    {...validationName}
                     className={classes.formField}
-                    helperText={'*Required'}
                     required
                     label="Name"
                     fullWidth
                     name="name"
+                    autoComplete="off"
                     variant="outlined"
-                    defaultValue={''}
+                    value={name}
+                    placeholder="actionName"
+                    onChange={({target}) => {
+                      setName(target.value);
+                    }}
                   />
                 </Grid>
                 <Grid item xs={5}>
@@ -214,21 +346,35 @@ const StepperAction = (props: Props) => {
                     label="Description"
                     fullWidth
                     name="description"
+                    autoComplete="off"
                     variant="outlined"
-                    defaultValue={''}
+                    value={description}
+                    onChange={({target}) => setDescription(target.value)}
                   />
                 </Grid>
               </Grid>
               <Grid style={{marginBottom: '40px'}} item xs={12}>
-                <div className={classes.bar}>
+                <div className={classes.searchArea}>
                   <div className={classes.searchBar}>
+                    <Grid div className={classes.backgroundWhite}>
+                      <ResourceFilterDropDown
+                        onEntitySelected={(type, spec) =>
+                          handleSpecification(type, spec)
+                        }
+                      />
+                    </Grid>
+                    <Divider orientation="vertical" />
                     <PowerSearchBar
+                      filterValues={filters}
                       placeholder="Filter Resource Type"
-                      getSelectedFilter={[]}
-                      onFiltersChanged={[]}
-                      filterConfigs={[]}
-                      searchConfig={[]}
+                      getSelectedFilter={filterConfig =>
+                        getSelectedFilter(filterConfig, [])
+                      }
+                      onFiltersChanged={onFiltersChanged}
+                      filterConfigs={filterConfigs}
+                      searchConfig={ResourceCriteriaConfig}
                       entity={'SERVICE'}
+                      resourceSpecification={selectedSpecification}
                     />
                   </div>
                 </div>
@@ -237,52 +383,58 @@ const StepperAction = (props: Props) => {
                 style={{marginBottom: '20px'}}
                 container
                 justify="space-between">
-                <Checkbox
-                  checked={checked}
-                  title="Select All"
-                  onChange={() =>
-                    setChecked(prevStateChecked => !prevStateChecked)
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      color="primary"
+                      checked={resourceData.length == checkedResource.length}
+                      inputProps={{'aria-label': 'secondary checkbox'}}
+                      onChange={({target}) => handleCheckedAll(target.checked)}
+                    />
                   }
+                  label="Select All"
                 />
                 <TextField
                   required
                   id="outlined-select-family"
                   select
                   className={classes.selectField}
-                  label="Sleep"
+                  label="Action"
                   name="family"
-                  defaultValue=""
-                  variant="outlined">
-                  <MenuItem>Reset</MenuItem>
-                  <MenuItem>Sleep</MenuItem>
-                  <MenuItem>Update</MenuItem>
+                  value={selectedAction ?? ''}
+                  variant="outlined"
+                  onChange={({target}) => {
+                    setSelectedAction(target.value);
+                  }}>
+                  {actionTemplates?.map(template => (
+                    <MenuItem key={template?.id} value={template?.id}>
+                      {template?.name}
+                    </MenuItem>
+                  ))}
                 </TextField>
               </Grid>
               <Grid item xs={12} style={{margin: '20px 0 20px 0'}}>
                 <Table
                   className={classes.tableInside}
-                  data={data}
+                  data={resourceData}
                   columns={[
                     {
                       key: 'id',
                       title: 'ID',
                       getSortingValue: row => row.id,
                       render: row => (
-                        <Checkbox
-                          checked={checkedResource}
-                          title={
-                            <Button
+                        <FormControlLabel
+                          control={
+                            <Checkbox
+                              checked={row.selected}
                               color="primary"
-                              variant="text"
-                              tooltip={row.id ?? ''}>
-                              {row.id}
-                            </Button>
+                              inputProps={{'aria-label': 'secondary checkbox'}}
+                              onChange={event =>
+                                handleChecked(row.id, event.target.checked)
+                              }
+                            />
                           }
-                          onChange={() =>
-                            setCheckedResource(
-                              prevStateCheckResource => !prevStateCheckResource,
-                            )
-                          }
+                          label={<Button color="primary">{row.id}</Button>}
                         />
                       ),
                     },
@@ -306,13 +458,23 @@ const StepperAction = (props: Props) => {
                   }}
                   className={classes.option}
                   variant="contained"
+                  disabled={handleDisabled()}
                   color="primary">
                   Next
                 </Button>
               </Grid>
             </div>
           ) : (
-            <ActionPickerScheduled goBack={handleConfirmDate} />
+            <ActionPickerScheduled
+              goBack={handleConfirmDate}
+              formData={formData()}
+              nameValid={!names.includes(name)}
+              closeForm={closeForm}
+              resourceSpec={
+                resourceSpecs.find(item => item.id == selectedSpecification)
+                  .name
+              }
+            />
           )}
         </Card>
       </Grid>

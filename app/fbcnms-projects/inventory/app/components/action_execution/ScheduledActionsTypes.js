@@ -11,16 +11,27 @@
 import Button from '@symphony/design-system/components/Button';
 import ConfigureTitle from './common/ConfigureTitle';
 import DialogExecuteNow from './common/DialogExecuteNow';
+import Divider from '@material-ui/core/Divider';
 import IconButton from '@symphony/design-system/components/IconButton';
 import LaunchIcon from '@material-ui/icons/Launch';
 import PowerSearchBar from '../power_search/PowerSearchBar';
-import React, {useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
+import RelayEnvironment from '../../common/RelayEnvironment';
+import ResourceFilterDropDown from './resource-filter/ResourceFilterDropDown';
+import ResourceTypeQuery from './common/ResourceTypesFetch';
 import Switch from '@material-ui/core/Switch';
 import Table from '@symphony/design-system/components/Table/Table';
+import UpdateActionSchedulerMutation from '../../mutations/UpdateActionScheduler';
 import fbt from 'fbt';
+import symphony from '@symphony/design-system/theme/symphony';
 import {CreateAction} from './CreateAction';
 import {Grid} from '@material-ui/core';
+import {ResourceCriteriaConfig} from './resource-filter/ResourceCriteriaConfig';
+import {actionExecutionStatusEnums} from './common/ActionExecution-enums';
+import {fetchQuery, graphql} from 'relay-runtime';
+import {getSelectedFilter} from '../comparison_view/FilterUtils';
 import {makeStyles} from '@material-ui/styles';
+import {withStyles} from '@material-ui/core/styles';
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -37,7 +48,15 @@ const useStyles = makeStyles(() => ({
     boxShadow: '0px 2px 2px 0px rgba(0, 0, 0, 0.1)',
   },
   searchBar: {
-    flexGrow: 1,
+    display: 'flex',
+    flexDirection: 'row',
+    boxShadow: '0px 2px 2px 0px rgba(0, 0, 0, 0.1)',
+  },
+  backgroundWhite: {
+    backgroundColor: 'white',
+  },
+  searchArea: {
+    backgroundColor: symphony.palette.D10,
   },
 }));
 const tableColumns = [
@@ -52,10 +71,10 @@ const tableColumns = [
     ),
   },
   {
-    key: 'actionTempleate',
-    title: 'Action Templeate',
-    render: row => row.actionTempleate ?? '',
-    tooltip: row => row.actionTempleate ?? '',
+    key: 'actionTemplate',
+    title: 'Action Template',
+    render: row => row.actionTemplate.name ?? '',
+    tooltip: row => row.actionTemplate.name ?? '',
   },
   {
     key: 'resourceType',
@@ -72,114 +91,178 @@ const tableColumns = [
   {
     key: 'lastExecution',
     title: `${fbt('Last Execution', '')}`,
-    render: row => row.logs?.actionExecutionStartTime ?? '',
-    tooltip: row => row.logs?.actionExecutionStartTime ?? '',
+    render: row => (row.actions.length > 0 ? row.actions?.starTime : ''),
+    tooltip: row => (row.actions.length > 0 ? row.actions?.starTime : ''),
   },
   {
     key: 'executionType',
     title: `${fbt('Execution Type', '')}`,
-    render: row => row.executionType ?? '',
-    tooltip: row => row.executionType ?? '',
+    render: row => row.type ?? '',
+    tooltip: row => row.type ?? '',
   },
   {
     key: 'manualExecutions',
     title: `${fbt('Manual Executions', '')}`,
-    render: row => row.manualExecutions ?? '',
-    tooltip: row => row.manualExecutions ?? '',
+    render: row => row.actionsAggregate?.count ?? '',
+    tooltip: row => row.actionsAggregate?.count ?? '',
   },
 ];
 
-const data = [
-  {
-    id: '386547056643',
-    key: '386547056643',
-    resourceType: 'RNCellDU',
-    resourceSpecification: 'RNCellDU_Nokia_MLN1_3132331',
-    executionTime: '22-02-2022 - 10:22:00',
-    actionTempleate: 'Sleep',
-    executionType: 'Manual',
-    manualExecutions: '2',
-    logs: {
-      actionExecutionStartTime: '22-02-2022 - 10:22:00',
-      actionExecutionEndTime: '15-02-2022 - 13:05:00',
-    },
-    executionResult: 'Succesful',
-    enableExecution: true,
+const actionsQuery = graphql`
+  query ScheduledActionsTypesQuery {
+    queryActionScheduler {
+      id
+      name
+      actions {
+        starTime
+      }
+      status
+      actionTemplate {
+        resourceSpecifications
+        name
+      }
+      type
+      actionsAggregate {
+        count
+      }
+    }
+  }
+`;
+
+export const PROJECTS_PAGE_SIZE = 5;
+
+const AntSwitch = withStyles(theme => ({
+  root: {
+    width: 28,
+    height: 16,
+    padding: 0,
+    display: 'flex',
   },
-  {
-    id: '386547056644',
-    key: '386547056644',
-    resourceType: 'RNCellDU',
-    resourceSpecification: 'RNCellDU_Nokia_MLN1_3132332',
-    executionTime: '22-02-2022 - 10:22:00',
-    actionTempleate: 'Sleep',
-    executionType: 'One Time',
-    manualExecutions: '5',
-    logs: {
-      actionExecutionStartTime: '22-02-2022 - 10:22:00',
-      actionExecutionEndTime: '15-02-2022 - 13:05:00',
+  switchBase: {
+    padding: 2,
+    color: theme.palette.common.white,
+    '&$checked': {
+      transform: 'translateX(12px)',
+      color: theme.palette.common.white,
+      '& + $track': {
+        opacity: 1,
+        backgroundColor: theme.palette.primary.main,
+        borderColor: theme.palette.primary.main,
+      },
     },
-    executionResult: 'Faild',
-    enableExecution: true,
   },
-  {
-    id: '386547056645',
-    key: '386547056645',
-    resourceType: 'RNCellDU',
-    resourceSpecification: 'RNCellDU_Nokia_MLN1_3132333',
-    executionTime: '22-02-2022 - 10:22:00',
-    actionTempleate: 'Sleep',
-    executionType: 'Periodical',
-    manualExecutions: '10',
-    logs: {
-      actionExecutionStartTime: '22-02-2022 - 10:22:00',
-      actionExecutionEndTime: '15-02-2022 - 13:05:00',
-    },
-    executionResult: 'Succesful',
-    enableExecution: true,
+  thumb: {
+    width: 12,
+    height: 12,
+    boxShadow: 'none',
   },
-  {
-    id: '386547056646',
-    key: '386547056646',
-    resourceType: 'RNCellDU',
-    resourceSpecification: 'RNCellDU_Nokia_MLN1_3132334',
-    executionTime: '22-02-2022 - 10:22:00',
-    actionTempleate: 'Sleep',
-    executionType: 'Manual',
-    manualExecutions: '22',
-    logs: {
-      actionExecutionStartTime: '22-02-2022 - 10:22:00',
-      actionExecutionEndTime: '15-02-2022 - 13:05:00',
-    },
-    executionResult: 'Faild',
-    enableExecution: true,
+  track: {
+    border: `1px solid ${theme.palette.common.white}`,
+    borderRadius: 16 / 2,
+    opacity: 1,
+    backgroundColor: theme.palette.grey[500],
   },
-];
-export const PROJECTS_PAGE_SIZE = 15;
+  checked: {},
+}))(Switch);
 
 const ScheduledActionsTypes = () => {
   const classes = useStyles();
   const [openCreateAction, setOpenCreateAction] = useState(false);
   const [openModal, setOpenModal] = useState(false);
   const [dataRow, setDataRow] = useState({});
-  const [rows, setRows] = useState(data);
+  const [selectedSpecification, setSelectedSpecification] = useState('');
+  const [resourceSpecs, setResourceSpecs] = useState({});
+  const [rows, setRows] = useState([]);
 
   const handleChange = (value, id) => {
-    const action = rows.find(item => item.id == id);
-    delete action.enableExecution;
-    const current = rows.filter(item => item.id != id);
-    setRows([...current, {enableExecution: value, ...action}]);
+    const index = rows.findIndex(item => item.id == id);
+    const updateAction = action => {
+      return {
+        ...action,
+        status: value,
+      };
+    };
+    setRows([
+      ...rows.slice(0, index),
+      updateAction(rows[index]),
+      ...rows.slice(index + 1),
+    ]);
+
+    const variables = {
+      input: {
+        filter: {
+          id: id,
+        },
+        set: {
+          status: value
+            ? actionExecutionStatusEnums.Activated
+            : actionExecutionStatusEnums.Deactivated,
+        },
+      },
+    };
+    UpdateActionSchedulerMutation(variables, {
+      onCompleted: () => {
+        isCompleted();
+      },
+    });
   };
+
+  useEffect(() => {
+    isCompleted();
+  }, []);
+
+  const isCompleted = useCallback(() => {
+    fetchQuery(RelayEnvironment, actionsQuery, {}).then(data => {
+      ResourceTypeQuery().then(resourceTypes => {
+        setRows(
+          data.queryActionScheduler.map(item => {
+            const resourceSpecificationItem = resourceTypes.resourceSpecifications.edges
+              .map(item => item.node)
+              .find(
+                type => type.id == item.actionTemplate.resourceSpecifications,
+              );
+            return {
+              ...item,
+              resourceType: resourceSpecificationItem.resourceType.name,
+              resourceSpecification: resourceSpecificationItem.name,
+            };
+          }),
+        );
+        setResourceSpecs(
+          resourceTypes.resourceSpecifications.edges.map(item => item.node),
+        );
+      });
+    });
+  }, [setRows]);
   const handleOpenModal = dataRow => {
     setOpenModal(prevStateOpenModal => !prevStateOpenModal);
     setDataRow(dataRow);
   };
+
+  const filterConfigs = ResourceCriteriaConfig.map(ent => ent.filters).reduce(
+    (allFilters, currentFilter) => allFilters.concat(currentFilter),
+    [],
+  );
+
   const handleCreateAction = () => {
     setOpenCreateAction(setStateCreateAction => !setStateCreateAction);
   };
   if (openCreateAction) {
-    return <CreateAction />;
+    return (
+      <CreateAction
+        closeForm={() => {
+          setOpenCreateAction(false);
+          isCompleted();
+        }}
+        resourceSpecs={resourceSpecs}
+        names={rows.map(item => item?.name)}
+      />
+    );
   }
+
+  const onFiltersChanged = data => {
+    console.log(data);
+  };
 
   return (
     <Grid className={classes.root} container spacing={0}>
@@ -200,23 +283,52 @@ const ScheduledActionsTypes = () => {
         <Button onClick={handleCreateAction}>Create Action</Button>
       </Grid>
       <Grid item xs={12}>
-        <div className={classes.bar}>
+        <div className={classes.searchArea}>
           <div className={classes.searchBar}>
+            <Grid div className={classes.backgroundWhite}>
+              <ResourceFilterDropDown
+                onEntitySelected={(type, spec) =>
+                  setSelectedSpecification(spec)
+                }
+              />
+            </Grid>
+            <Divider orientation="vertical" />
             <PowerSearchBar
+              filterValues={[]}
               placeholder="Filter Resource Type"
-              getSelectedFilter={[]}
-              onFiltersChanged={[]}
-              filterConfigs={[]}
-              searchConfig={[]}
+              getSelectedFilter={filterConfig =>
+                getSelectedFilter(filterConfig, [])
+              }
+              onFiltersChanged={onFiltersChanged}
+              filterConfigs={filterConfigs}
+              searchConfig={ResourceCriteriaConfig}
               entity={'SERVICE'}
+              resourceSpecification={selectedSpecification}
             />
           </div>
         </div>
       </Grid>
       <Grid item xs={12} style={{margin: '20px 0 0 0'}}>
         <Table
-          data={data}
+          data={rows}
           columns={[
+            {
+              key: 'status',
+              title: `${fbt('Status', '')}`,
+              render: row =>
+                (
+                  <AntSwitch
+                    key={row.id}
+                    onChange={e => {
+                      handleChange(e.target.checked, row.id);
+                    }}
+                    checked={
+                      row.status != actionExecutionStatusEnums.Deactivated
+                    }
+                    inputProps={{'aria-label': 'ant design'}}
+                  />
+                ) ?? '',
+            },
             ...tableColumns,
             {
               key: 'executeNow',
@@ -230,21 +342,6 @@ const ScheduledActionsTypes = () => {
                 />
               ),
             },
-            {
-              key: 'enableExecution',
-              title: `${fbt('Status', '')}`,
-              render: row =>
-                (
-                  <Switch
-                    onChange={e => {
-                      handleChange(e.target.checked, row.id);
-                    }}
-                    color="primary"
-                    name="Status"
-                    inputProps={{'aria-label': 'primary checkbox'}}
-                  />
-                ) ?? '',
-            },
           ]}
           paginationSettings={{
             loadNext: onCompleted => {
@@ -253,7 +350,7 @@ const ScheduledActionsTypes = () => {
               });
             },
             pageSize: PROJECTS_PAGE_SIZE,
-            totalRowsCount: 10,
+            totalRowsCount: rows?.length,
           }}
         />
       </Grid>
@@ -269,4 +366,4 @@ const ScheduledActionsTypes = () => {
   );
 };
 
-export {ScheduledActionsTypes};
+export default ScheduledActionsTypes;

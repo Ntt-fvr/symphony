@@ -23,10 +23,12 @@ require (
 	github.com/badoux/checkmail v1.2.1
 	github.com/cenkalti/backoff/v4 v4.1.0
 	github.com/cespare/xxhash/v2 v2.1.2 // indirect
+	github.com/confluentinc/confluent-kafka-go v1.9.0
 	github.com/evanphx/json-patch v0.5.2
 	github.com/facebook/ent v0.5.2-0.20201207120713-86b9d850ee78
 	github.com/facebookincubator/ent-contrib v0.0.0-20201210145028-3c4e794cc516
 	github.com/go-sql-driver/mysql v1.6.0
+	github.com/gogo/protobuf v1.3.2 // indirect
 	github.com/golang/snappy v0.0.4 // indirect
 	github.com/google/addlicense v1.0.0
 	github.com/google/cel-go v0.11.4
@@ -56,7 +58,8 @@ require (
 	github.com/vmihailenco/msgpack/v5 v5.1.0
 	github.com/xuri/efp v0.0.0-20201016154823-031c29024257 // indirect
 	go.opencensus.io v0.23.0
-	go.uber.org/cadence v0.19.1
+	go.uber.org/cadence v0.15.0
+	go.uber.org/fx v1.13.1 // indirect
 	go.uber.org/yarpc v1.55.0
 	go.uber.org/zap v1.21.0
 	gocloud.dev v0.25.0

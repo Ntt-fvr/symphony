@@ -21,6 +21,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/alarmfilter"
 	"github.com/facebookincubator/symphony/pkg/ent/alarmstatus"
 	"github.com/facebookincubator/symphony/pkg/ent/appointment"
+	"github.com/facebookincubator/symphony/pkg/ent/automationactivity"
 	"github.com/facebookincubator/symphony/pkg/ent/block"
 	"github.com/facebookincubator/symphony/pkg/ent/blockinstance"
 	"github.com/facebookincubator/symphony/pkg/ent/checklistcategory"
@@ -458,6 +459,95 @@ func (a *Appointment) Node(ctx context.Context) (node *Node, err error) {
 	}
 	node.Edges[1].IDs, err = a.QueryAssignee().
 		Select(user.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return node, nil
+}
+
+func (aa *AutomationActivity) Node(ctx context.Context) (node *Node, err error) {
+	node = &Node{
+		ID:     aa.ID,
+		Type:   "AutomationActivity",
+		Fields: make([]*Field, 6),
+		Edges:  make([]*Edge, 3),
+	}
+	var buf []byte
+	if buf, err = json.Marshal(aa.CreateTime); err != nil {
+		return nil, err
+	}
+	node.Fields[0] = &Field{
+		Type:  "time.Time",
+		Name:  "create_time",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(aa.UpdateTime); err != nil {
+		return nil, err
+	}
+	node.Fields[1] = &Field{
+		Type:  "time.Time",
+		Name:  "update_time",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(aa.ActivityType); err != nil {
+		return nil, err
+	}
+	node.Fields[2] = &Field{
+		Type:  "automationactivity.ActivityType",
+		Name:  "activity_type",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(aa.AutomationEntityType); err != nil {
+		return nil, err
+	}
+	node.Fields[3] = &Field{
+		Type:  "automationactivity.AutomationEntityType",
+		Name:  "automation_entity_type",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(aa.OldValue); err != nil {
+		return nil, err
+	}
+	node.Fields[4] = &Field{
+		Type:  "string",
+		Name:  "old_value",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(aa.NewValue); err != nil {
+		return nil, err
+	}
+	node.Fields[5] = &Field{
+		Type:  "string",
+		Name:  "new_value",
+		Value: string(buf),
+	}
+	node.Edges[0] = &Edge{
+		Type: "User",
+		Name: "author",
+	}
+	node.Edges[0].IDs, err = aa.QueryAuthor().
+		Select(user.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	node.Edges[1] = &Edge{
+		Type: "FlowInstance",
+		Name: "flow_instance",
+	}
+	node.Edges[1].IDs, err = aa.QueryFlowInstance().
+		Select(flowinstance.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	node.Edges[2] = &Edge{
+		Type: "BlockInstance",
+		Name: "block_instance",
+	}
+	node.Edges[2].IDs, err = aa.QueryBlockInstance().
+		Select(blockinstance.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
@@ -946,8 +1036,8 @@ func (bi *BlockInstance) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
 		ID:     bi.ID,
 		Type:   "BlockInstance",
-		Fields: make([]*Field, 9),
-		Edges:  make([]*Edge, 3),
+		Fields: make([]*Field, 11),
+		Edges:  make([]*Edge, 4),
 	}
 	var buf []byte
 	if buf, err = json.Marshal(bi.CreateTime); err != nil {
@@ -990,10 +1080,26 @@ func (bi *BlockInstance) Node(ctx context.Context) (node *Node, err error) {
 		Name:  "outputs",
 		Value: string(buf),
 	}
-	if buf, err = json.Marshal(bi.FailureReason); err != nil {
+	if buf, err = json.Marshal(bi.InputJSON); err != nil {
 		return nil, err
 	}
 	node.Fields[5] = &Field{
+		Type:  "string",
+		Name:  "input_json",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(bi.OutputJSON); err != nil {
+		return nil, err
+	}
+	node.Fields[6] = &Field{
+		Type:  "string",
+		Name:  "output_json",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(bi.FailureReason); err != nil {
+		return nil, err
+	}
+	node.Fields[7] = &Field{
 		Type:  "string",
 		Name:  "failure_reason",
 		Value: string(buf),
@@ -1001,7 +1107,7 @@ func (bi *BlockInstance) Node(ctx context.Context) (node *Node, err error) {
 	if buf, err = json.Marshal(bi.BlockInstanceCounter); err != nil {
 		return nil, err
 	}
-	node.Fields[6] = &Field{
+	node.Fields[8] = &Field{
 		Type:  "int",
 		Name:  "block_instance_counter",
 		Value: string(buf),
@@ -1009,7 +1115,7 @@ func (bi *BlockInstance) Node(ctx context.Context) (node *Node, err error) {
 	if buf, err = json.Marshal(bi.StartDate); err != nil {
 		return nil, err
 	}
-	node.Fields[7] = &Field{
+	node.Fields[9] = &Field{
 		Type:  "time.Time",
 		Name:  "start_date",
 		Value: string(buf),
@@ -1017,7 +1123,7 @@ func (bi *BlockInstance) Node(ctx context.Context) (node *Node, err error) {
 	if buf, err = json.Marshal(bi.EndDate); err != nil {
 		return nil, err
 	}
-	node.Fields[8] = &Field{
+	node.Fields[10] = &Field{
 		Type:  "time.Time",
 		Name:  "end_date",
 		Value: string(buf),
@@ -1048,6 +1154,16 @@ func (bi *BlockInstance) Node(ctx context.Context) (node *Node, err error) {
 	}
 	node.Edges[2].IDs, err = bi.QuerySubflowInstance().
 		Select(flowinstance.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	node.Edges[3] = &Edge{
+		Type: "AutomationActivity",
+		Name: "block_activities",
+	}
+	node.Edges[3].IDs, err = bi.QueryBlockActivities().
+		Select(automationactivity.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
@@ -3304,8 +3420,8 @@ func (f *Flow) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
 		ID:     f.ID,
 		Type:   "Flow",
-		Fields: make([]*Field, 7),
-		Edges:  make([]*Edge, 2),
+		Fields: make([]*Field, 8),
+		Edges:  make([]*Edge, 5),
 	}
 	var buf []byte
 	if buf, err = json.Marshal(f.CreateTime); err != nil {
@@ -3364,6 +3480,14 @@ func (f *Flow) Node(ctx context.Context) (node *Node, err error) {
 		Name:  "newInstancesPolicy",
 		Value: string(buf),
 	}
+	if buf, err = json.Marshal(f.CreationDate); err != nil {
+		return nil, err
+	}
+	node.Fields[7] = &Field{
+		Type:  "time.Time",
+		Name:  "creation_date",
+		Value: string(buf),
+	}
 	node.Edges[0] = &Edge{
 		Type: "Block",
 		Name: "blocks",
@@ -3380,6 +3504,36 @@ func (f *Flow) Node(ctx context.Context) (node *Node, err error) {
 	}
 	node.Edges[1].IDs, err = f.QueryDraft().
 		Select(flowdraft.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	node.Edges[2] = &Edge{
+		Type: "User",
+		Name: "author",
+	}
+	node.Edges[2].IDs, err = f.QueryAuthor().
+		Select(user.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	node.Edges[3] = &Edge{
+		Type: "User",
+		Name: "editor",
+	}
+	node.Edges[3].IDs, err = f.QueryEditor().
+		Select(user.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	node.Edges[4] = &Edge{
+		Type: "FlowInstance",
+		Name: "instance",
+	}
+	node.Edges[4].IDs, err = f.QueryInstance().
+		Select(flowinstance.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
@@ -3531,8 +3685,8 @@ func (fi *FlowInstance) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
 		ID:     fi.ID,
 		Type:   "FlowInstance",
-		Fields: make([]*Field, 9),
-		Edges:  make([]*Edge, 4),
+		Fields: make([]*Field, 10),
+		Edges:  make([]*Edge, 5),
 	}
 	var buf []byte
 	if buf, err = json.Marshal(fi.CreateTime); err != nil {
@@ -3559,10 +3713,18 @@ func (fi *FlowInstance) Node(ctx context.Context) (node *Node, err error) {
 		Name:  "status",
 		Value: string(buf),
 	}
-	if buf, err = json.Marshal(fi.OutputParams); err != nil {
+	if buf, err = json.Marshal(fi.StartParams); err != nil {
 		return nil, err
 	}
 	node.Fields[3] = &Field{
+		Type:  "[]*flowschema.VariableValue",
+		Name:  "start_params",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(fi.OutputParams); err != nil {
+		return nil, err
+	}
+	node.Fields[4] = &Field{
 		Type:  "[]*flowschema.VariableValue",
 		Name:  "output_params",
 		Value: string(buf),
@@ -3570,7 +3732,7 @@ func (fi *FlowInstance) Node(ctx context.Context) (node *Node, err error) {
 	if buf, err = json.Marshal(fi.IncompletionReason); err != nil {
 		return nil, err
 	}
-	node.Fields[4] = &Field{
+	node.Fields[5] = &Field{
 		Type:  "string",
 		Name:  "incompletion_reason",
 		Value: string(buf),
@@ -3578,7 +3740,7 @@ func (fi *FlowInstance) Node(ctx context.Context) (node *Node, err error) {
 	if buf, err = json.Marshal(fi.BssCode); err != nil {
 		return nil, err
 	}
-	node.Fields[5] = &Field{
+	node.Fields[6] = &Field{
 		Type:  "string",
 		Name:  "bss_code",
 		Value: string(buf),
@@ -3586,7 +3748,7 @@ func (fi *FlowInstance) Node(ctx context.Context) (node *Node, err error) {
 	if buf, err = json.Marshal(fi.ServiceInstanceCode); err != nil {
 		return nil, err
 	}
-	node.Fields[6] = &Field{
+	node.Fields[7] = &Field{
 		Type:  "string",
 		Name:  "service_instance_code",
 		Value: string(buf),
@@ -3594,7 +3756,7 @@ func (fi *FlowInstance) Node(ctx context.Context) (node *Node, err error) {
 	if buf, err = json.Marshal(fi.StartDate); err != nil {
 		return nil, err
 	}
-	node.Fields[7] = &Field{
+	node.Fields[8] = &Field{
 		Type:  "time.Time",
 		Name:  "start_date",
 		Value: string(buf),
@@ -3602,7 +3764,7 @@ func (fi *FlowInstance) Node(ctx context.Context) (node *Node, err error) {
 	if buf, err = json.Marshal(fi.EndDate); err != nil {
 		return nil, err
 	}
-	node.Fields[8] = &Field{
+	node.Fields[9] = &Field{
 		Type:  "time.Time",
 		Name:  "end_date",
 		Value: string(buf),
@@ -3643,6 +3805,16 @@ func (fi *FlowInstance) Node(ctx context.Context) (node *Node, err error) {
 	}
 	node.Edges[3].IDs, err = fi.QueryParentSubflowBlock().
 		Select(blockinstance.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	node.Edges[4] = &Edge{
+		Type: "AutomationActivity",
+		Name: "flow_activities",
+	}
+	node.Edges[4].IDs, err = fi.QueryFlowActivities().
+		Select(automationactivity.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
@@ -8551,7 +8723,7 @@ func (u *User) Node(ctx context.Context) (node *Node, err error) {
 		ID:     u.ID,
 		Type:   "User",
 		Fields: make([]*Field, 9),
-		Edges:  make([]*Edge, 10),
+		Edges:  make([]*Edge, 11),
 	}
 	var buf []byte
 	if buf, err = json.Marshal(u.CreateTime); err != nil {
@@ -8722,6 +8894,16 @@ func (u *User) Node(ctx context.Context) (node *Node, err error) {
 	}
 	node.Edges[9].IDs, err = u.QueryAppointment().
 		Select(appointment.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	node.Edges[10] = &Edge{
+		Type: "Flow",
+		Name: "authored_flow",
+	}
+	node.Edges[10].IDs, err = u.QueryAuthoredFlow().
+		Select(flow.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
@@ -9560,6 +9742,15 @@ func (c *Client) noder(ctx context.Context, tbl string, id int) (Noder, error) {
 		n, err := c.Appointment.Query().
 			Where(appointment.ID(id)).
 			CollectFields(ctx, "Appointment").
+			Only(ctx)
+		if err != nil {
+			return nil, err
+		}
+		return n, nil
+	case automationactivity.Table:
+		n, err := c.AutomationActivity.Query().
+			Where(automationactivity.ID(id)).
+			CollectFields(ctx, "AutomationActivity").
 			Only(ctx)
 		if err != nil {
 			return nil, err

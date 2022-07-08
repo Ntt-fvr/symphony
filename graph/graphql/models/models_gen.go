@@ -12,6 +12,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/activity"
 	"github.com/facebookincubator/symphony/pkg/ent/appointment"
+	"github.com/facebookincubator/symphony/pkg/ent/block"
 	"github.com/facebookincubator/symphony/pkg/ent/blockinstance"
 	"github.com/facebookincubator/symphony/pkg/ent/checklistitem"
 	"github.com/facebookincubator/symphony/pkg/ent/file"
@@ -1395,7 +1396,7 @@ type ImportFlowDraftInput struct {
 
 type InvokeRestAPIBlock struct {
 	EntryPoint        *ent.EntryPoint             `json:"entryPoint"`
-	Method            URLMethod                   `json:"method"`
+	Method            block.URLMethod             `json:"method"`
 	URL               string                      `json:"url"`
 	ConnectionTimeOut int                         `json:"connectionTimeOut"`
 	Body              string                      `json:"body"`
@@ -1409,7 +1410,7 @@ type InvokeRestAPIBlockInput struct {
 	Cid               string                            `json:"cid"`
 	EntryPoint        *EntryPointInput                  `json:"entryPoint"`
 	ExitPoint         *ExitPointInput                   `json:"exitPoint"`
-	Method            URLMethod                         `json:"method"`
+	Method            block.URLMethod                   `json:"method"`
 	URL               string                            `json:"url"`
 	ConnectionTimeOut int                               `json:"connectionTimeOut"`
 	Body              string                            `json:"body"`
@@ -1815,7 +1816,7 @@ type StartBlockInput struct {
 
 type StartFlowInput struct {
 	FlowID    int                         `json:"flowID"`
-	BssCode   string                      `json:"bssCode"`
+	BssCode   *string                     `json:"bssCode"`
 	StartDate time.Time                   `json:"startDate"`
 	Params    []*flowschema.VariableValue `json:"params"`
 }
@@ -1985,12 +1986,12 @@ type ThresholdInput struct {
 }
 
 type TimerBlock struct {
-	Behavior          TimerBehavior  `json:"behavior"`
-	Seconds           *int           `json:"seconds"`
-	Datetime          *time.Time     `json:"datetime"`
-	EnableExpressionL *bool          `json:"enableExpressionL"`
-	Expression        *string        `json:"expression"`
-	ExitPoint         *ent.ExitPoint `json:"exitPoint"`
+	Behavior          block.TimerBehavior `json:"behavior"`
+	Seconds           *int                `json:"seconds"`
+	Datetime          *time.Time          `json:"datetime"`
+	EnableExpressionL *bool               `json:"enableExpressionL"`
+	Expression        *string             `json:"expression"`
+	ExitPoint         *ent.ExitPoint      `json:"exitPoint"`
 }
 
 func (TimerBlock) IsBlockDetails() {}
@@ -1999,7 +2000,7 @@ type TimerBlockInput struct {
 	Cid               string                            `json:"cid"`
 	ExitPoint         *ExitPointInput                   `json:"exitPoint"`
 	EntryPoint        *EntryPointInput                  `json:"entryPoint"`
-	Behavior          TimerBehavior                     `json:"behavior"`
+	Behavior          block.TimerBehavior               `json:"behavior"`
 	Seconds           *int                              `json:"seconds"`
 	SpecificDatetime  *time.Time                        `json:"specificDatetime"`
 	EnableExpressionL *bool                             `json:"enableExpressionL"`
@@ -2100,12 +2101,12 @@ type VendorFilterInput struct {
 }
 
 type WaitForSignalBlock struct {
-	EntryPoint   *ent.EntryPoint `json:"entryPoint"`
-	ExitPoint    *ent.ExitPoint  `json:"exitPoint"`
-	Type         *SignalType     `json:"type"`
-	SignalModule *SignalModule   `json:"signalModule"`
-	CustomFilter *string         `json:"customFilter"`
-	Blocked      bool            `json:"blocked"`
+	EntryPoint   *ent.EntryPoint     `json:"entryPoint"`
+	ExitPoint    *ent.ExitPoint      `json:"exitPoint"`
+	Type         *block.SignalType   `json:"type"`
+	SignalModule *block.SignalModule `json:"signalModule"`
+	CustomFilter *string             `json:"customFilter"`
+	Blocked      bool                `json:"blocked"`
 }
 
 func (WaitForSignalBlock) IsBlockDetails() {}
@@ -2114,8 +2115,8 @@ type WaitForSignalBlockInput struct {
 	Cid              string                            `json:"cid"`
 	EntryPoint       *EntryPointInput                  `json:"entryPoint"`
 	ExitPoint        *ExitPointInput                   `json:"exitPoint"`
-	Type             SignalType                        `json:"type"`
-	SignalModule     SignalModule                      `json:"signalModule"`
+	Type             block.SignalType                  `json:"type"`
+	SignalModule     block.SignalModule                `json:"signalModule"`
 	CustomFilter     *string                           `json:"customFilter"`
 	Blocked          bool                              `json:"blocked"`
 	Params           []*VariableExpressionInput        `json:"params"`
@@ -3654,94 +3655,6 @@ func (e RuleTypeFilterType) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 
-type SignalModule string
-
-const (
-	SignalModuleInventory     SignalModule = "INVENTORY"
-	SignalModuleConfiguration SignalModule = "CONFIGURATION"
-)
-
-var AllSignalModule = []SignalModule{
-	SignalModuleInventory,
-	SignalModuleConfiguration,
-}
-
-func (e SignalModule) IsValid() bool {
-	switch e {
-	case SignalModuleInventory, SignalModuleConfiguration:
-		return true
-	}
-	return false
-}
-
-func (e SignalModule) String() string {
-	return string(e)
-}
-
-func (e *SignalModule) UnmarshalGQL(v interface{}) error {
-	str, ok := v.(string)
-	if !ok {
-		return fmt.Errorf("enums must be strings")
-	}
-
-	*e = SignalModule(str)
-	if !e.IsValid() {
-		return fmt.Errorf("%s is not a valid SignalModule", str)
-	}
-	return nil
-}
-
-func (e SignalModule) MarshalGQL(w io.Writer) {
-	fmt.Fprint(w, strconv.Quote(e.String()))
-}
-
-type SignalType string
-
-const (
-	SignalTypeNotification SignalType = "NOTIFICATION"
-	SignalTypeWocreation   SignalType = "WOCREATION"
-	SignalTypeCrcreation   SignalType = "CRCREATION"
-	SignalTypeWoupdate     SignalType = "WOUPDATE"
-	SignalTypeCrupdate     SignalType = "CRUPDATE"
-)
-
-var AllSignalType = []SignalType{
-	SignalTypeNotification,
-	SignalTypeWocreation,
-	SignalTypeCrcreation,
-	SignalTypeWoupdate,
-	SignalTypeCrupdate,
-}
-
-func (e SignalType) IsValid() bool {
-	switch e {
-	case SignalTypeNotification, SignalTypeWocreation, SignalTypeCrcreation, SignalTypeWoupdate, SignalTypeCrupdate:
-		return true
-	}
-	return false
-}
-
-func (e SignalType) String() string {
-	return string(e)
-}
-
-func (e *SignalType) UnmarshalGQL(v interface{}) error {
-	str, ok := v.(string)
-	if !ok {
-		return fmt.Errorf("enums must be strings")
-	}
-
-	*e = SignalType(str)
-	if !e.IsValid() {
-		return fmt.Errorf("%s is not a valid SignalType", str)
-	}
-	return nil
-}
-
-func (e SignalType) MarshalGQL(w io.Writer) {
-	fmt.Fprint(w, strconv.Quote(e.String()))
-}
-
 type SurveyQuestionType string
 
 const (
@@ -3924,47 +3837,6 @@ func (e ThresholdFilterType) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 
-type TimerBehavior string
-
-const (
-	TimerBehaviorFixedInterval    TimerBehavior = "FIXED_INTERVAL"
-	TimerBehaviorSpecificDatetime TimerBehavior = "SPECIFIC_DATETIME"
-)
-
-var AllTimerBehavior = []TimerBehavior{
-	TimerBehaviorFixedInterval,
-	TimerBehaviorSpecificDatetime,
-}
-
-func (e TimerBehavior) IsValid() bool {
-	switch e {
-	case TimerBehaviorFixedInterval, TimerBehaviorSpecificDatetime:
-		return true
-	}
-	return false
-}
-
-func (e TimerBehavior) String() string {
-	return string(e)
-}
-
-func (e *TimerBehavior) UnmarshalGQL(v interface{}) error {
-	str, ok := v.(string)
-	if !ok {
-		return fmt.Errorf("enums must be strings")
-	}
-
-	*e = TimerBehavior(str)
-	if !e.IsValid() {
-		return fmt.Errorf("%s is not a valid TimerBehavior", str)
-	}
-	return nil
-}
-
-func (e TimerBehavior) MarshalGQL(w io.Writer) {
-	fmt.Fprint(w, strconv.Quote(e.String()))
-}
-
 type TopologyLinkType string
 
 const (
@@ -4001,53 +3873,6 @@ func (e *TopologyLinkType) UnmarshalGQL(v interface{}) error {
 }
 
 func (e TopologyLinkType) MarshalGQL(w io.Writer) {
-	fmt.Fprint(w, strconv.Quote(e.String()))
-}
-
-type URLMethod string
-
-const (
-	URLMethodGet    URLMethod = "GET"
-	URLMethodPost   URLMethod = "POST"
-	URLMethodPut    URLMethod = "PUT"
-	URLMethodDelete URLMethod = "DELETE"
-	URLMethodPatch  URLMethod = "PATCH"
-)
-
-var AllURLMethod = []URLMethod{
-	URLMethodGet,
-	URLMethodPost,
-	URLMethodPut,
-	URLMethodDelete,
-	URLMethodPatch,
-}
-
-func (e URLMethod) IsValid() bool {
-	switch e {
-	case URLMethodGet, URLMethodPost, URLMethodPut, URLMethodDelete, URLMethodPatch:
-		return true
-	}
-	return false
-}
-
-func (e URLMethod) String() string {
-	return string(e)
-}
-
-func (e *URLMethod) UnmarshalGQL(v interface{}) error {
-	str, ok := v.(string)
-	if !ok {
-		return fmt.Errorf("enums must be strings")
-	}
-
-	*e = URLMethod(str)
-	if !e.IsValid() {
-		return fmt.Errorf("%s is not a valid UrlMethod", str)
-	}
-	return nil
-}
-
-func (e URLMethod) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 

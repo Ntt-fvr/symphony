@@ -10,52 +10,40 @@ import (
 	"time"
 )
 
-func getAutomationFlow(
-	workflowCtx workflow.Context, appCtx context.Context, flowId int,
-) (*model.Flow, error) {
-
-	flowBlocks, err := getFlowBlocks(appCtx, flowId)
+func getFlowInstanceBlocksAndInput(
+	ctx context.Context, flowInstanceID int,
+) ([]*ent.Block, map[string]interface{}, error) {
+	flowInstance, err := ent.FromContext(ctx).FlowInstance.Get(ctx, flowInstanceID)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
-	automationBlocks, err := getAutomationBlocks(workflowCtx, appCtx, flowBlocks, flowId)
-	if err != nil {
-		return nil, err
+	input := map[string]interface{}{}
+
+	if flowInstance != nil {
+		for _, params := range flowInstance.StartParams {
+			if params != nil {
+				input[params.VariableDefinitionKey] = params.Value
+			}
+		}
 	}
 
-	return &model.Flow{
-		Id:     flowId,
-		Blocks: automationBlocks,
-	}, nil
-}
-
-func getFlowBlocks(appCtx context.Context, flowId int) ([]*ent.Block, error) {
-	flowInstance, err := ent.FromContext(appCtx).FlowInstance.Get(appCtx, flowId)
-	if err != nil {
-		return nil, err
-	}
-
-	flowBlocks, err := flowInstance.QueryTemplate().
+	blocks, err := flowInstance.QueryTemplate().
 		QueryBlocks().
-		All(appCtx)
+		All(ctx)
 
-	if err != nil {
-		return nil, err
-	}
-
-	return flowBlocks, nil
+	return blocks, input, err
 }
 
 func getAutomationBlocks(
-	workflowCtx workflow.Context, appCtx context.Context, entBlocks []*ent.Block, flowId int,
-) ([]model.Block, error) {
+	workflowCtx workflow.Context, appCtx context.Context, flowInstanceID int, entBlocks []*ent.Block,
+) ([]model.AutomationBlock, error) {
 
-	var automationBlocks []model.Block
+	var automationBlocks []model.AutomationBlock
 	for _, entBlock := range entBlocks {
 		if entBlock != nil {
-			automationBlock := model.Block{
-				FlowID:      flowId,
+			automationBlock := model.AutomationBlock{
+				FlowID:      flowInstanceID,
 				Block:       *entBlock,
 				WorkflowCtx: workflowCtx,
 				AppCtx:      appCtx,

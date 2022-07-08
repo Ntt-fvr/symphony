@@ -34,6 +34,10 @@ type BlockInstance struct {
 	Inputs []*flowschema.VariableValue `json:"inputs,omitempty"`
 	// Outputs holds the value of the "outputs" field.
 	Outputs []*flowschema.VariableValue `json:"outputs,omitempty"`
+	// InputJSON holds the value of the "input_json" field.
+	InputJSON string `json:"input_json,omitempty"`
+	// OutputJSON holds the value of the "output_json" field.
+	OutputJSON string `json:"output_json,omitempty"`
 	// FailureReason holds the value of the "failure_reason" field.
 	FailureReason string `json:"failure_reason,omitempty"`
 	// BlockInstanceCounter holds the value of the "block_instance_counter" field.
@@ -57,9 +61,11 @@ type BlockInstanceEdges struct {
 	Block *Block
 	// SubflowInstance holds the value of the subflow_instance edge.
 	SubflowInstance *FlowInstance
+	// BlockActivities holds the value of the block_activities edge.
+	BlockActivities []*AutomationActivity
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [3]bool
+	loadedTypes [4]bool
 }
 
 // FlowInstanceOrErr returns the FlowInstance value or an error if the edge
@@ -104,6 +110,15 @@ func (e BlockInstanceEdges) SubflowInstanceOrErr() (*FlowInstance, error) {
 	return nil, &NotLoadedError{edge: "subflow_instance"}
 }
 
+// BlockActivitiesOrErr returns the BlockActivities value or an error if the edge
+// was not loaded in eager-loading.
+func (e BlockInstanceEdges) BlockActivitiesOrErr() ([]*AutomationActivity, error) {
+	if e.loadedTypes[3] {
+		return e.BlockActivities, nil
+	}
+	return nil, &NotLoadedError{edge: "block_activities"}
+}
+
 // scanValues returns the types for scanning values from sql.Rows.
 func (*BlockInstance) scanValues() []interface{} {
 	return []interface{}{
@@ -113,6 +128,8 @@ func (*BlockInstance) scanValues() []interface{} {
 		&sql.NullString{}, // status
 		&[]byte{},         // inputs
 		&[]byte{},         // outputs
+		&sql.NullString{}, // input_json
+		&sql.NullString{}, // output_json
 		&sql.NullString{}, // failure_reason
 		&sql.NullInt64{},  // block_instance_counter
 		&sql.NullTime{},   // start_date
@@ -172,27 +189,37 @@ func (bi *BlockInstance) assignValues(values ...interface{}) error {
 		}
 	}
 	if value, ok := values[5].(*sql.NullString); !ok {
-		return fmt.Errorf("unexpected type %T for field failure_reason", values[5])
+		return fmt.Errorf("unexpected type %T for field input_json", values[5])
+	} else if value.Valid {
+		bi.InputJSON = value.String
+	}
+	if value, ok := values[6].(*sql.NullString); !ok {
+		return fmt.Errorf("unexpected type %T for field output_json", values[6])
+	} else if value.Valid {
+		bi.OutputJSON = value.String
+	}
+	if value, ok := values[7].(*sql.NullString); !ok {
+		return fmt.Errorf("unexpected type %T for field failure_reason", values[7])
 	} else if value.Valid {
 		bi.FailureReason = value.String
 	}
-	if value, ok := values[6].(*sql.NullInt64); !ok {
-		return fmt.Errorf("unexpected type %T for field block_instance_counter", values[6])
+	if value, ok := values[8].(*sql.NullInt64); !ok {
+		return fmt.Errorf("unexpected type %T for field block_instance_counter", values[8])
 	} else if value.Valid {
 		bi.BlockInstanceCounter = int(value.Int64)
 	}
-	if value, ok := values[7].(*sql.NullTime); !ok {
-		return fmt.Errorf("unexpected type %T for field start_date", values[7])
+	if value, ok := values[9].(*sql.NullTime); !ok {
+		return fmt.Errorf("unexpected type %T for field start_date", values[9])
 	} else if value.Valid {
 		bi.StartDate = value.Time
 	}
-	if value, ok := values[8].(*sql.NullTime); !ok {
-		return fmt.Errorf("unexpected type %T for field end_date", values[8])
+	if value, ok := values[10].(*sql.NullTime); !ok {
+		return fmt.Errorf("unexpected type %T for field end_date", values[10])
 	} else if value.Valid {
 		bi.EndDate = new(time.Time)
 		*bi.EndDate = value.Time
 	}
-	values = values[9:]
+	values = values[11:]
 	if len(values) == len(blockinstance.ForeignKeys) {
 		if value, ok := values[0].(*sql.NullInt64); !ok {
 			return fmt.Errorf("unexpected type %T for edge-field block_instance_block", value)
@@ -223,6 +250,11 @@ func (bi *BlockInstance) QueryBlock() *BlockQuery {
 // QuerySubflowInstance queries the subflow_instance edge of the BlockInstance.
 func (bi *BlockInstance) QuerySubflowInstance() *FlowInstanceQuery {
 	return (&BlockInstanceClient{config: bi.config}).QuerySubflowInstance(bi)
+}
+
+// QueryBlockActivities queries the block_activities edge of the BlockInstance.
+func (bi *BlockInstance) QueryBlockActivities() *AutomationActivityQuery {
+	return (&BlockInstanceClient{config: bi.config}).QueryBlockActivities(bi)
 }
 
 // Update returns a builder for updating this BlockInstance.
@@ -258,6 +290,10 @@ func (bi *BlockInstance) String() string {
 	builder.WriteString(fmt.Sprintf("%v", bi.Inputs))
 	builder.WriteString(", outputs=")
 	builder.WriteString(fmt.Sprintf("%v", bi.Outputs))
+	builder.WriteString(", input_json=")
+	builder.WriteString(bi.InputJSON)
+	builder.WriteString(", output_json=")
+	builder.WriteString(bi.OutputJSON)
 	builder.WriteString(", failure_reason=")
 	builder.WriteString(bi.FailureReason)
 	builder.WriteString(", block_instance_counter=")

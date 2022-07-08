@@ -12,20 +12,18 @@ import type {AddConfigurationParameterTypeMutationResponse} from '../../mutation
 import type {AddConfigurationParameterTypeMutationVariables} from '../../mutations/__generated__/AddConfigurationParameterTypeMutation.graphql';
 import type {AddEditResourceSpecificationQuery} from './__generated__/AddEditResourceSpecificationQuery.graphql';
 import type {AddResourceSpecificationMutationVariables} from '../../mutations/__generated__/AddResourceSpecificationMutation.graphql';
-import type {AddResourceSpecificationRelationshipListMutationVariables} from '../../mutations/__generated__/AddResourceSpecificationRelationshipListMutation.graphql';
-import type {EditConfigurationParameterTypeMutationVariables} from '../../mutations/__generated__/EditConfigurationParameterTypeMutation.graphql';
 import type {EditResourceSpecificationMutationVariables} from '../../mutations/__generated__/EditResourceSpecificationMutation.graphql';
 import type {MutationCallbacks} from '../../mutations/MutationCallbacks';
 import type {ResourceSpecifications} from './EditResourceTypeItem';
 
+import ActionTypesTableDispatcher from '../action_catalog/context/ActionTypesTableDispactcher';
+import AddConfigurationParameterMutation from '../../mutations/AddConfigurationParameter';
 import AddConfigurationParameterTypeMutation from '../../mutations/AddConfigurationParameterTypeMutation';
 import AddResourceSpecificationMutation from '../../mutations/AddResourceSpecificationMutation';
-import AddResourceSpecificationRelationshipListMutation from '../../mutations/AddResourceSpecificationRelationshipListMutation';
 import Button from '@material-ui/core/Button';
 import Card from '@symphony/design-system/components/Card/Card';
 import CardHeader from '@symphony/design-system/components/Card/CardHeader';
 import ConfigureTitleSubItem from '../assurance/common/ConfigureTitleSubItem';
-import EditConfigurationParameterTypeMutation from '../../mutations/EditConfigurationParameterTypeMutation';
 import EditResourceSpecificationMutation from '../../mutations/EditResourceSpecificationMutation';
 import ExpandingPanel from '@fbcnms/ui/components/ExpandingPanel';
 import ExperimentalParametersTypesTable from '../form/ExperimentalParametersTypesTable';
@@ -39,6 +37,7 @@ import RelationshipTypeItem from './RelationshipTypeItem';
 import SaveDialogConfirm from './SaveDialogConfirm';
 import TableConfigureAction from '../action_catalog/TableConfigureAction';
 import TextField from '@material-ui/core/TextField';
+import UpdateonfigurationParameterTypeMutation from '../../mutations/UpdateConfigurationParameterType';
 import fbt from 'fbt';
 import inventoryTheme from '../../common/theme';
 import {camelCase, omit, startCase} from 'lodash';
@@ -50,6 +49,7 @@ import {isTempId} from '../../common/EntUtils';
 import {makeStyles} from '@material-ui/styles';
 import {toMutableParameterType} from '../../common/ParameterType';
 import {toMutablePropertyType} from '../../common/PropertyType';
+import {useActionTypesReducer} from '../action_catalog/context/ActionTypesTableState';
 import {useDisabledButton} from '../assurance/common/useDisabledButton';
 import {useDisabledButtonEdit} from '../assurance/common/useDisabledButton';
 import {useFormInput} from '../assurance/common/useFormInput';
@@ -101,11 +101,30 @@ const ConfigurationParameters = graphql`
       rawValue
       resourceSpecification
       stringValue
+      type
+      __typename
       tags {
         id
         name
       }
+    }
+    queryActionTemplate {
+      id
+      name
       type
+      actionTemplateItems {
+        id
+        parameters {
+          id
+          name
+        }
+        value {
+          stringValue
+        }
+        isDeleted
+      }
+      resourceSpecifications
+      isDeleted
     }
   }
 `;
@@ -118,7 +137,7 @@ type ResourceSpecification = {
 };
 
 type Props = $ReadOnly<{|
-  dataForm: any,
+  dataForm: ResourceSpecifications,
   vendorData?: any,
   formValues: ResourceSpecifications,
   editMode: boolean,
@@ -140,6 +159,8 @@ export const AddEditResourceSpecification = (props: Props) => {
   const [dialogSaveForm, setDialogSaveForm] = useState(false);
   const [dialogCancelForm, setDialogCancelForm] = useState(false);
 
+  const classes = useStyles();
+
   const [configurationParameters, setConfigurationParameters] = useState(
     useLazyLoadQuery<AddEditResourceSpecificationQuery>(
       ConfigurationParameters,
@@ -151,10 +172,13 @@ export const AddEditResourceSpecification = (props: Props) => {
   const callback = data => {
     setDataCallback(data);
   };
-  const classes = useStyles();
 
   const filterConfigurationParameter = configurationParameters?.queryConfigurationParameterType?.filter(
     item => item?.resourceSpecification === dataForm?.id,
+  );
+
+  const filterActionTemplate = configurationParameters?.queryActionTemplate?.filter(
+    item => item?.resourceSpecifications === dataForm?.id,
   );
 
   const [
@@ -175,6 +199,13 @@ export const AddEditResourceSpecification = (props: Props) => {
     resourceSpecification: dataForm?.id,
   });
 
+  const currentParams = (filterConfigurationParameter ?? [])
+    .filter(Boolean)
+    .map(item => item.id);
+  const [actionTypes, actionTypesTableDispatcher] = useActionTypesReducer(
+    (filterActionTemplate ?? []).filter(Boolean),
+  );
+
   const filterEdit = parameterTypes.filter(item => item.name !== item.oldName);
 
   const editOneToOne = filterEdit.map(item => item);
@@ -194,6 +225,7 @@ export const AddEditResourceSpecification = (props: Props) => {
       ) || []
     );
   };
+
   const handleDisable = useDisabledButton(
     omit(resourceSpecification.data, 'vendor'),
     namesFilter,
@@ -251,6 +283,7 @@ export const AddEditResourceSpecification = (props: Props) => {
         AddConfigurationParameterTypeMutation(variablesCP, {
           onCompleted: () => {
             isCompleted();
+            setResourceSpecification({data: {}});
             setConfigurationParameters({});
             closeForm();
           },
@@ -265,81 +298,64 @@ export const AddEditResourceSpecification = (props: Props) => {
       input: {
         id: dataForm.id,
         name: nameEdit.value,
-        vendor: vendorEdit.value,
-        vendor: 'nokia',
         resourceType: dataForm.resourceType.id,
         resourcePropertyTypes: convertPropertyTypeToMutationInput(
           propertyTypes,
         ),
       },
     };
-    EditResourceSpecificationMutation(variables, {
-      onCompleted: () => {
-        isCompleted();
-        closeForm();
-      },
-    });
 
-    const variablesCP: AddConfigurationParameterTypeMutationVariables = {
-      input: convertParameterTypeToMutationInput(newParameter, dataForm?.id),
-    };
-    AddConfigurationParameterTypeMutation(variablesCP, {
-      onCompleted: () => {
-        isCompleted();
-        setConfigurationParameters({});
-        closeForm();
-      },
-    });
+    const response = {
+      onCompleted: response => {
+        const addConfigParamVariables = {
+          input: convertPropertyTypeToMutationInput(parameterTypes)
+            .filter(item =>
+              currentParams.length > 0
+                ? !currentParams.includes(item?.id)
+                : true,
+            )
+            ?.map(item => {
+              return {
+                ...convertParameterTypeToMutationInput(item),
+                resourceSpecification: response.editResourceSpecification?.id,
+              };
+            }),
+        };
 
-    editOneToOne.forEach(pt => {
-      const ptfilter = editOneToOne.find(Pt => Pt.id === pt.id);
-      const variablesEditCP: EditConfigurationParameterTypeMutationVariables = {
-        input: {
-          filter: {
-            id: pt.id,
+        AddConfigurationParameterMutation(addConfigParamVariables, {
+          onCompleted: () => {
+            if (currentParams.length > 0) {
+              convertPropertyTypeToMutationInput(parameterTypes)
+                .filter(item => currentParams.includes(item.id))
+                .map(item => {
+                  const configParamVariables = {
+                    input: {
+                      filter: {
+                        id: item.id,
+                      },
+                      set: {
+                        ...convertParameterTypeToMutationInput(item),
+                      },
+                    },
+                  };
+                  UpdateonfigurationParameterTypeMutation(
+                    configParamVariables,
+                    {
+                      onCompleted: () => {
+                        setResourceSpecification({data: {}});
+                        setConfigurationParametes({data: {}});
+                      },
+                    },
+                  );
+                });
+            }
+            isCompleted();
+            closeForm();
           },
-          set: {
-            type: ptfilter.type,
-            nodeType: ptfilter.nodeType,
-            name: ptfilter.name,
-            index: ptfilter.index,
-            floatValue: ptfilter.floatValue,
-            category: ptfilter.category,
-            externalId: ptfilter.externalId,
-            booleanValue: ptfilter.booleanValue,
-            stringValue: ptfilter.stringValue,
-            mappingIn: ptfilter.mappingIn,
-            mappingOut: ptfilter.mappingOut,
-            intValue: ptfilter.intValue,
-            isEditable: ptfilter.isEditable,
-            isMandatory: ptfilter.isMandatory,
-            isPrioritary: ptfilter.isPrioritary,
-            isListable: ptfilter.isListable,
-            isDeleted: ptfilter.isDeleted,
-            rawValue: ptfilter.rawValue,
-            tags: ptfilter.tags,
-            resourceSpecification: ptfilter.resourceSpecification,
-          },
-        },
-      };
-
-      EditConfigurationParameterTypeMutation(variablesEditCP, {
-        onCompleted: () => {
-          isCompleted();
-          setConfigurationParameters({});
-          closeForm();
-        },
-      });
-    });
-
-    const variablesPort: AddResourceSpecificationRelationshipListMutationVariables = {
-      input: convertTableTypeToMutationInput(dataCallback),
-    };
-    AddResourceSpecificationRelationshipListMutation(variablesPort, {
-      onCompleted: () => {
-        isCompleted();
+        });
       },
-    });
+    };
+    EditResourceSpecificationMutation(variables, response);
   }
 
   return (
@@ -474,7 +490,13 @@ export const AddEditResourceSpecification = (props: Props) => {
       </Card>
       <Card margins="none">
         <ExpandingPanel title="Configure Actions">
-          <TableConfigureAction />
+          <ActionTypesTableDispatcher.Provider
+            value={{dispatch: actionTypesTableDispatcher, actionTypes}}>
+            <TableConfigureAction
+              actionTypes={actionTypes}
+              resourceSpecification={dataForm?.id}
+            />
+          </ActionTypesTableDispatcher.Provider>
         </ExpandingPanel>
       </Card>
       {dialogSaveForm && (

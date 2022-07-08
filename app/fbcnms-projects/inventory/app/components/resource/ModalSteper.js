@@ -130,7 +130,7 @@ function customStepIcon(props) {
   );
 }
 
-const ModalSteperListLogicLinkQuery = graphql`
+const ModalSteperListResourceInstanceQuery = graphql`
   query ModalSteperQuery($filter: ResourceFilter) {
     queryResource(filter: $filter) {
       id
@@ -142,6 +142,7 @@ const ModalSteperListLogicLinkQuery = graphql`
     }
   }
 `;
+
 type Props = $ReadOnly<{|
   openModal: boolean,
   titleSteps: Array<string>,
@@ -165,16 +166,18 @@ const ModalSteper = (props: Props) => {
   const [selectedIndex, setSelectedIndex] = useState(null);
   const [getDataList, setGetDataList] = useState({});
   const [searchData, setSearchData] = useState('');
-  const [resourceLogicLinks, setResourceLogicLinks] = useState({});
+  const [resourceInstance, setResourceInstance] = useState({});
   const [selectedId, setSelectedId] = useState({});
+  const [selectedRS, setSelectedRS] = useState({});
+  const [logicalLinkInput, setLogicalLinkInput] = useState({});
 
-  const isResourceLogicLinks = useCallback(() => {
-    fetchQuery(RelayEnvironment, ModalSteperListLogicLinkQuery, {
+  const listResourceInstance = useCallback(() => {
+    fetchQuery(RelayEnvironment, ModalSteperListResourceInstanceQuery, {
       filter: {resourceSpecification: selectedId},
     }).then(data => {
-      setResourceLogicLinks(data);
+      setResourceInstance(data);
     });
-  }, [setResourceLogicLinks, selectedId]);
+  }, [setResourceInstance, selectedId]);
 
   const connector = (
     <StepConnector
@@ -186,47 +189,70 @@ const ModalSteper = (props: Props) => {
     />
   );
 
+  const handleSaveNextModal = () => {
+    if (activeStep === titleSteps.length) {
+      if (titleSteps.length >= 2 && activeStep === 3) {
+        saveModal(logicalLinkInput);
+      } else saveModal(getDataList);
+    } else handleNext();
+  };
+
   const handleNext = () => {
     if (activeStep === 2) {
-      isResourceLogicLinks();
+      listResourceInstance();
     }
     setActiveStep(prevActiveStep => prevActiveStep + 1);
     setSelectedIndex(null);
   };
 
   const handleListItemClick = (event, index, item) => {
+    activeStep === 1 && setSelectedRS(item);
     if (activeStep === 2) {
-      setSelectedId({eq: item.node.id});
+      setSelectedId({eq: item.id});
+    }
+    if (activeStep !== 3) {
+      setGetDataList(item.node);
+    } else {
+      setLogicalLinkInput({
+        set: {
+          logicalLinks: {
+            id: item.id,
+          },
+        },
+      });
     }
     setSelectedIndex(index);
-    setGetDataList(item.node);
+    setGetDataList(item);
   };
 
-  const searchResourceType = dataListStepper?.resourceTypes?.edges.filter(
-    item =>
-      item.node?.name
+  const searchResourceType = dataListStepper?.resourceTypes?.edges
+    .flatMap(item => item.node)
+    .filter(item =>
+      item.name
         .toString()
         .toLowerCase()
         .includes(searchData.toLocaleLowerCase()),
-  );
+    );
 
-  const searchRSpecifications = dataListStepper?.resourceSpecifications?.edges.filter(
-    item =>
-      item.node?.name
-        .toString()
-        .toLowerCase()
-        .includes(searchData.toLocaleLowerCase()),
-  );
-
-  const searchRInstance =
-    resourceLogicLinks?.queryResource
-      ?.flatMap(item => item.logicalLinks)
-      ?.filter(item =>
+  const searchRSpecifications =
+    dataListStepper?.resourceTypes?.edges
+      .flatMap(item => item.node)
+      .filter(item => item.id === selectedRS.id)
+      .flatMap(item => item.resourceSpecification)
+      .filter(item =>
         item?.name
           .toString()
           .toLowerCase()
           .includes(searchData.toLocaleLowerCase()),
       ) || [];
+
+  const searchRInstance =
+    resourceInstance?.queryResource?.filter(item =>
+      item?.name
+        .toString()
+        .toLowerCase()
+        .includes(searchData.toLocaleLowerCase()),
+    ) || [];
 
   return (
     <div>
@@ -280,7 +306,7 @@ const ModalSteper = (props: Props) => {
                   <List component="nav">
                     <ListItem
                       button
-                      key={item.node?.id}
+                      key={item.id}
                       selected={selectedIndex === index}
                       onClick={event =>
                         handleListItemClick(event, index, item)
@@ -290,7 +316,7 @@ const ModalSteper = (props: Props) => {
                           <RouterIcon fontSize="medium" color="primary" />
                         </Avatar>
                       </ListItemAvatar>
-                      <ListItemText primary={item.node?.name} />
+                      <ListItemText primary={item.name} />
                     </ListItem>
                   </List>
                 ))}
@@ -299,7 +325,7 @@ const ModalSteper = (props: Props) => {
                   <List component="nav">
                     <ListItem
                       button
-                      key={item.node.id}
+                      key={item.id}
                       selected={selectedIndex === index}
                       onClick={event =>
                         handleListItemClick(event, index, item)
@@ -309,7 +335,7 @@ const ModalSteper = (props: Props) => {
                           <RouterIcon fontSize="medium" color="primary" />
                         </Avatar>
                       </ListItemAvatar>
-                      <ListItemText primary={item.node.name} />
+                      <ListItemText primary={item.name} />
                     </ListItem>
                   </List>
                 ))}
@@ -338,7 +364,7 @@ const ModalSteper = (props: Props) => {
               <List component="nav">
                 <ListItem
                   button
-                  key={item.node.id}
+                  key={item.id}
                   selected={selectedIndex === index}
                   onClick={event => handleListItemClick(event, index, item)}>
                   <ListItemAvatar>
@@ -346,7 +372,7 @@ const ModalSteper = (props: Props) => {
                       <RouterIcon fontSize="medium" color="primary" />
                     </Avatar>
                   </ListItemAvatar>
-                  <ListItemText primary={item.node.name} />
+                  <ListItemText primary={item.name} />
                 </ListItem>
               </List>
             ))
@@ -357,10 +383,12 @@ const ModalSteper = (props: Props) => {
             <Grid item xs>
               {activeStep === 3 && (
                 <AddButton
-                  disabled={selectedIndex !== null ? true : false}
+                  disabled={selectedIndex !== null}
                   textButton="New Resource"
                   onClick={() =>
-                    !addButtonLink ? undefined : addButtonLink(getDataList)
+                    !addButtonLink
+                      ? undefined
+                      : addButtonLink({...getDataList, isNewResource: true})
                   }
                 />
               )}
@@ -375,12 +403,8 @@ const ModalSteper = (props: Props) => {
             <Button
               variant="contained"
               color="primary"
-              disabled={selectedIndex !== null ? false : true}
-              onClick={
-                activeStep === titleSteps.length
-                  ? () => saveModal(getDataList)
-                  : handleNext
-              }>
+              disabled={selectedIndex === null}
+              onClick={handleSaveNextModal}>
               {titleSteps.length >= 2 && activeStep === 3 ? 'Add Link' : 'Next'}
             </Button>
           </Grid>
