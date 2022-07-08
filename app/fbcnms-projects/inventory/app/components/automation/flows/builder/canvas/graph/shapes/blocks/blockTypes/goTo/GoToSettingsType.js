@@ -23,8 +23,8 @@ export type GoToSettingsType = $ReadOnly<{|
 |}>;
 
 export const initialGoToSettings: GoToSettingsType = {
-  type: null,
-  targetBlockCid: null,
+  type: undefined,
+  targetBlockCid: undefined,
 };
 
 export const setGoToSettings: GoToSettingsType = (
