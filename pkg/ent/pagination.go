@@ -8913,6 +8913,49 @@ func (f *FlowQuery) Paginate(
 	return conn, nil
 }
 
+var (
+	// FlowOrderFieldCreationDate orders Flow by creation_date.
+	FlowOrderFieldCreationDate = &FlowOrderField{
+		field: flow.FieldCreationDate,
+		toCursor: func(f *Flow) Cursor {
+			return Cursor{
+				ID:    f.ID,
+				Value: f.CreationDate,
+			}
+		},
+	}
+)
+
+// String implement fmt.Stringer interface.
+func (f FlowOrderField) String() string {
+	var str string
+	switch f.field {
+	case flow.FieldCreationDate:
+		str = "CREATED_AT"
+	}
+	return str
+}
+
+// MarshalGQL implements graphql.Marshaler interface.
+func (f FlowOrderField) MarshalGQL(w io.Writer) {
+	io.WriteString(w, strconv.Quote(f.String()))
+}
+
+// UnmarshalGQL implements graphql.Unmarshaler interface.
+func (f *FlowOrderField) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("FlowOrderField %T must be a string", v)
+	}
+	switch str {
+	case "CREATED_AT":
+		*f = *FlowOrderFieldCreationDate
+	default:
+		return fmt.Errorf("%s is not a valid FlowOrderField", str)
+	}
+	return nil
+}
+
 // FlowOrderField defines the ordering field of Flow.
 type FlowOrderField struct {
 	field    string

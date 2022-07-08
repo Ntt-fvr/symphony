@@ -41,13 +41,13 @@ export type InvokeRestApiSettingsType = $ReadOnly<{|
 |}>;
 
 export const initialInvokeRestApiSettings: InvokeRestApiSettingsType = {
-  entryPoint: null,
-  exitPoint: null,
-  method: null,
-  url: null,
-  connectionTimeOut: null,
-  body: null,
-  headers: null,
+  entryPoint: undefined,
+  exitPoint: undefined,
+  method: undefined,
+  url: undefined,
+  connectionTimeOut: undefined,
+  body: undefined,
+  headers: undefined,
 };
 
 export const setInvokeRestApiSettings: InvokeRestApiSettingsType = (

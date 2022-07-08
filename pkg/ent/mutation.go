@@ -31599,12 +31599,21 @@ type FlowMutation struct {
 	end_param_definitions *[]*flowschema.VariableDefinition
 	status                *flow.Status
 	newInstancesPolicy    *flow.NewInstancesPolicy
+	creation_date         *time.Time
 	clearedFields         map[string]struct{}
 	blocks                map[int]struct{}
 	removedblocks         map[int]struct{}
 	clearedblocks         bool
 	draft                 *int
 	cleareddraft          bool
+	author                *int
+	clearedauthor         bool
+	editor                map[int]struct{}
+	removededitor         map[int]struct{}
+	clearededitor         bool
+	instance              map[int]struct{}
+	removedinstance       map[int]struct{}
+	clearedinstance       bool
 	done                  bool
 	oldValue              func(context.Context) (*Flow, error)
 	predicates            []predicate.Flow
@@ -31974,6 +31983,43 @@ func (m *FlowMutation) ResetNewInstancesPolicy() {
 	m.newInstancesPolicy = nil
 }
 
+// SetCreationDate sets the creation_date field.
+func (m *FlowMutation) SetCreationDate(t time.Time) {
+	m.creation_date = &t
+}
+
+// CreationDate returns the creation_date value in the mutation.
+func (m *FlowMutation) CreationDate() (r time.Time, exists bool) {
+	v := m.creation_date
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreationDate returns the old creation_date value of the Flow.
+// If the Flow object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *FlowMutation) OldCreationDate(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldCreationDate is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldCreationDate requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreationDate: %w", err)
+	}
+	return oldValue.CreationDate, nil
+}
+
+// ResetCreationDate reset all changes of the "creation_date" field.
+func (m *FlowMutation) ResetCreationDate() {
+	m.creation_date = nil
+}
+
 // AddBlockIDs adds the blocks edge to Block by ids.
 func (m *FlowMutation) AddBlockIDs(ids ...int) {
 	if m.blocks == nil {
@@ -32066,6 +32112,151 @@ func (m *FlowMutation) ResetDraft() {
 	m.cleareddraft = false
 }
 
+// SetAuthorID sets the author edge to User by id.
+func (m *FlowMutation) SetAuthorID(id int) {
+	m.author = &id
+}
+
+// ClearAuthor clears the author edge to User.
+func (m *FlowMutation) ClearAuthor() {
+	m.clearedauthor = true
+}
+
+// AuthorCleared returns if the edge author was cleared.
+func (m *FlowMutation) AuthorCleared() bool {
+	return m.clearedauthor
+}
+
+// AuthorID returns the author id in the mutation.
+func (m *FlowMutation) AuthorID() (id int, exists bool) {
+	if m.author != nil {
+		return *m.author, true
+	}
+	return
+}
+
+// AuthorIDs returns the author ids in the mutation.
+// Note that ids always returns len(ids) <= 1 for unique edges, and you should use
+// AuthorID instead. It exists only for internal usage by the builders.
+func (m *FlowMutation) AuthorIDs() (ids []int) {
+	if id := m.author; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetAuthor reset all changes of the "author" edge.
+func (m *FlowMutation) ResetAuthor() {
+	m.author = nil
+	m.clearedauthor = false
+}
+
+// AddEditorIDs adds the editor edge to User by ids.
+func (m *FlowMutation) AddEditorIDs(ids ...int) {
+	if m.editor == nil {
+		m.editor = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.editor[ids[i]] = struct{}{}
+	}
+}
+
+// ClearEditor clears the editor edge to User.
+func (m *FlowMutation) ClearEditor() {
+	m.clearededitor = true
+}
+
+// EditorCleared returns if the edge editor was cleared.
+func (m *FlowMutation) EditorCleared() bool {
+	return m.clearededitor
+}
+
+// RemoveEditorIDs removes the editor edge to User by ids.
+func (m *FlowMutation) RemoveEditorIDs(ids ...int) {
+	if m.removededitor == nil {
+		m.removededitor = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.removededitor[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedEditor returns the removed ids of editor.
+func (m *FlowMutation) RemovedEditorIDs() (ids []int) {
+	for id := range m.removededitor {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// EditorIDs returns the editor ids in the mutation.
+func (m *FlowMutation) EditorIDs() (ids []int) {
+	for id := range m.editor {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetEditor reset all changes of the "editor" edge.
+func (m *FlowMutation) ResetEditor() {
+	m.editor = nil
+	m.clearededitor = false
+	m.removededitor = nil
+}
+
+// AddInstanceIDs adds the instance edge to FlowInstance by ids.
+func (m *FlowMutation) AddInstanceIDs(ids ...int) {
+	if m.instance == nil {
+		m.instance = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.instance[ids[i]] = struct{}{}
+	}
+}
+
+// ClearInstance clears the instance edge to FlowInstance.
+func (m *FlowMutation) ClearInstance() {
+	m.clearedinstance = true
+}
+
+// InstanceCleared returns if the edge instance was cleared.
+func (m *FlowMutation) InstanceCleared() bool {
+	return m.clearedinstance
+}
+
+// RemoveInstanceIDs removes the instance edge to FlowInstance by ids.
+func (m *FlowMutation) RemoveInstanceIDs(ids ...int) {
+	if m.removedinstance == nil {
+		m.removedinstance = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.removedinstance[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedInstance returns the removed ids of instance.
+func (m *FlowMutation) RemovedInstanceIDs() (ids []int) {
+	for id := range m.removedinstance {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// InstanceIDs returns the instance ids in the mutation.
+func (m *FlowMutation) InstanceIDs() (ids []int) {
+	for id := range m.instance {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetInstance reset all changes of the "instance" edge.
+func (m *FlowMutation) ResetInstance() {
+	m.instance = nil
+	m.clearedinstance = false
+	m.removedinstance = nil
+}
+
 // Op returns the operation name.
 func (m *FlowMutation) Op() Op {
 	return m.op
@@ -32080,7 +32271,7 @@ func (m *FlowMutation) Type() string {
 // this mutation. Note that, in order to get all numeric
 // fields that were in/decremented, call AddedFields().
 func (m *FlowMutation) Fields() []string {
-	fields := make([]string, 0, 7)
+	fields := make([]string, 0, 8)
 	if m.create_time != nil {
 		fields = append(fields, flow.FieldCreateTime)
 	}
@@ -32101,6 +32292,9 @@ func (m *FlowMutation) Fields() []string {
 	}
 	if m.newInstancesPolicy != nil {
 		fields = append(fields, flow.FieldNewInstancesPolicy)
+	}
+	if m.creation_date != nil {
+		fields = append(fields, flow.FieldCreationDate)
 	}
 	return fields
 }
@@ -32124,6 +32318,8 @@ func (m *FlowMutation) Field(name string) (ent.Value, bool) {
 		return m.Status()
 	case flow.FieldNewInstancesPolicy:
 		return m.NewInstancesPolicy()
+	case flow.FieldCreationDate:
+		return m.CreationDate()
 	}
 	return nil, false
 }
@@ -32147,6 +32343,8 @@ func (m *FlowMutation) OldField(ctx context.Context, name string) (ent.Value, er
 		return m.OldStatus(ctx)
 	case flow.FieldNewInstancesPolicy:
 		return m.OldNewInstancesPolicy(ctx)
+	case flow.FieldCreationDate:
+		return m.OldCreationDate(ctx)
 	}
 	return nil, fmt.Errorf("unknown Flow field %s", name)
 }
@@ -32204,6 +32402,13 @@ func (m *FlowMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetNewInstancesPolicy(v)
+		return nil
+	case flow.FieldCreationDate:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreationDate(v)
 		return nil
 	}
 	return fmt.Errorf("unknown Flow field %s", name)
@@ -32291,6 +32496,9 @@ func (m *FlowMutation) ResetField(name string) error {
 	case flow.FieldNewInstancesPolicy:
 		m.ResetNewInstancesPolicy()
 		return nil
+	case flow.FieldCreationDate:
+		m.ResetCreationDate()
+		return nil
 	}
 	return fmt.Errorf("unknown Flow field %s", name)
 }
@@ -32298,12 +32506,21 @@ func (m *FlowMutation) ResetField(name string) error {
 // AddedEdges returns all edge names that were set/added in this
 // mutation.
 func (m *FlowMutation) AddedEdges() []string {
-	edges := make([]string, 0, 2)
+	edges := make([]string, 0, 5)
 	if m.blocks != nil {
 		edges = append(edges, flow.EdgeBlocks)
 	}
 	if m.draft != nil {
 		edges = append(edges, flow.EdgeDraft)
+	}
+	if m.author != nil {
+		edges = append(edges, flow.EdgeAuthor)
+	}
+	if m.editor != nil {
+		edges = append(edges, flow.EdgeEditor)
+	}
+	if m.instance != nil {
+		edges = append(edges, flow.EdgeInstance)
 	}
 	return edges
 }
@@ -32322,6 +32539,22 @@ func (m *FlowMutation) AddedIDs(name string) []ent.Value {
 		if id := m.draft; id != nil {
 			return []ent.Value{*id}
 		}
+	case flow.EdgeAuthor:
+		if id := m.author; id != nil {
+			return []ent.Value{*id}
+		}
+	case flow.EdgeEditor:
+		ids := make([]ent.Value, 0, len(m.editor))
+		for id := range m.editor {
+			ids = append(ids, id)
+		}
+		return ids
+	case flow.EdgeInstance:
+		ids := make([]ent.Value, 0, len(m.instance))
+		for id := range m.instance {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
@@ -32329,9 +32562,15 @@ func (m *FlowMutation) AddedIDs(name string) []ent.Value {
 // RemovedEdges returns all edge names that were removed in this
 // mutation.
 func (m *FlowMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 2)
+	edges := make([]string, 0, 5)
 	if m.removedblocks != nil {
 		edges = append(edges, flow.EdgeBlocks)
+	}
+	if m.removededitor != nil {
+		edges = append(edges, flow.EdgeEditor)
+	}
+	if m.removedinstance != nil {
+		edges = append(edges, flow.EdgeInstance)
 	}
 	return edges
 }
@@ -32346,6 +32585,18 @@ func (m *FlowMutation) RemovedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case flow.EdgeEditor:
+		ids := make([]ent.Value, 0, len(m.removededitor))
+		for id := range m.removededitor {
+			ids = append(ids, id)
+		}
+		return ids
+	case flow.EdgeInstance:
+		ids := make([]ent.Value, 0, len(m.removedinstance))
+		for id := range m.removedinstance {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
@@ -32353,12 +32604,21 @@ func (m *FlowMutation) RemovedIDs(name string) []ent.Value {
 // ClearedEdges returns all edge names that were cleared in this
 // mutation.
 func (m *FlowMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 2)
+	edges := make([]string, 0, 5)
 	if m.clearedblocks {
 		edges = append(edges, flow.EdgeBlocks)
 	}
 	if m.cleareddraft {
 		edges = append(edges, flow.EdgeDraft)
+	}
+	if m.clearedauthor {
+		edges = append(edges, flow.EdgeAuthor)
+	}
+	if m.clearededitor {
+		edges = append(edges, flow.EdgeEditor)
+	}
+	if m.clearedinstance {
+		edges = append(edges, flow.EdgeInstance)
 	}
 	return edges
 }
@@ -32371,6 +32631,12 @@ func (m *FlowMutation) EdgeCleared(name string) bool {
 		return m.clearedblocks
 	case flow.EdgeDraft:
 		return m.cleareddraft
+	case flow.EdgeAuthor:
+		return m.clearedauthor
+	case flow.EdgeEditor:
+		return m.clearededitor
+	case flow.EdgeInstance:
+		return m.clearedinstance
 	}
 	return false
 }
@@ -32381,6 +32647,9 @@ func (m *FlowMutation) ClearEdge(name string) error {
 	switch name {
 	case flow.EdgeDraft:
 		m.ClearDraft()
+		return nil
+	case flow.EdgeAuthor:
+		m.ClearAuthor()
 		return nil
 	}
 	return fmt.Errorf("unknown Flow unique edge %s", name)
@@ -32396,6 +32665,15 @@ func (m *FlowMutation) ResetEdge(name string) error {
 		return nil
 	case flow.EdgeDraft:
 		m.ResetDraft()
+		return nil
+	case flow.EdgeAuthor:
+		m.ResetAuthor()
+		return nil
+	case flow.EdgeEditor:
+		m.ResetEditor()
+		return nil
+	case flow.EdgeInstance:
+		m.ResetInstance()
 		return nil
 	}
 	return fmt.Errorf("unknown Flow edge %s", name)
@@ -81856,6 +82134,9 @@ type UserMutation struct {
 	appointment                 map[int]struct{}
 	removedappointment          map[int]struct{}
 	clearedappointment          bool
+	authored_flow               map[int]struct{}
+	removedauthored_flow        map[int]struct{}
+	clearedauthored_flow        bool
 	done                        bool
 	oldValue                    func(context.Context) (*User, error)
 	predicates                  []predicate.User
@@ -82814,6 +83095,59 @@ func (m *UserMutation) ResetAppointment() {
 	m.removedappointment = nil
 }
 
+// AddAuthoredFlowIDs adds the authored_flow edge to Flow by ids.
+func (m *UserMutation) AddAuthoredFlowIDs(ids ...int) {
+	if m.authored_flow == nil {
+		m.authored_flow = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.authored_flow[ids[i]] = struct{}{}
+	}
+}
+
+// ClearAuthoredFlow clears the authored_flow edge to Flow.
+func (m *UserMutation) ClearAuthoredFlow() {
+	m.clearedauthored_flow = true
+}
+
+// AuthoredFlowCleared returns if the edge authored_flow was cleared.
+func (m *UserMutation) AuthoredFlowCleared() bool {
+	return m.clearedauthored_flow
+}
+
+// RemoveAuthoredFlowIDs removes the authored_flow edge to Flow by ids.
+func (m *UserMutation) RemoveAuthoredFlowIDs(ids ...int) {
+	if m.removedauthored_flow == nil {
+		m.removedauthored_flow = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.removedauthored_flow[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedAuthoredFlow returns the removed ids of authored_flow.
+func (m *UserMutation) RemovedAuthoredFlowIDs() (ids []int) {
+	for id := range m.removedauthored_flow {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// AuthoredFlowIDs returns the authored_flow ids in the mutation.
+func (m *UserMutation) AuthoredFlowIDs() (ids []int) {
+	for id := range m.authored_flow {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetAuthoredFlow reset all changes of the "authored_flow" edge.
+func (m *UserMutation) ResetAuthoredFlow() {
+	m.authored_flow = nil
+	m.clearedauthored_flow = false
+	m.removedauthored_flow = nil
+}
+
 // Op returns the operation name.
 func (m *UserMutation) Op() Op {
 	return m.op
@@ -83086,7 +83420,7 @@ func (m *UserMutation) ResetField(name string) error {
 // AddedEdges returns all edge names that were set/added in this
 // mutation.
 func (m *UserMutation) AddedEdges() []string {
-	edges := make([]string, 0, 10)
+	edges := make([]string, 0, 11)
 	if m.profile_photo != nil {
 		edges = append(edges, user.EdgeProfilePhoto)
 	}
@@ -83116,6 +83450,9 @@ func (m *UserMutation) AddedEdges() []string {
 	}
 	if m.appointment != nil {
 		edges = append(edges, user.EdgeAppointment)
+	}
+	if m.authored_flow != nil {
+		edges = append(edges, user.EdgeAuthoredFlow)
 	}
 	return edges
 }
@@ -83180,6 +83517,12 @@ func (m *UserMutation) AddedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case user.EdgeAuthoredFlow:
+		ids := make([]ent.Value, 0, len(m.authored_flow))
+		for id := range m.authored_flow {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
@@ -83187,7 +83530,7 @@ func (m *UserMutation) AddedIDs(name string) []ent.Value {
 // RemovedEdges returns all edge names that were removed in this
 // mutation.
 func (m *UserMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 10)
+	edges := make([]string, 0, 11)
 	if m.removed_User_create != nil {
 		edges = append(edges, user.EdgeUserCreate)
 	}
@@ -83211,6 +83554,9 @@ func (m *UserMutation) RemovedEdges() []string {
 	}
 	if m.removedappointment != nil {
 		edges = append(edges, user.EdgeAppointment)
+	}
+	if m.removedauthored_flow != nil {
+		edges = append(edges, user.EdgeAuthoredFlow)
 	}
 	return edges
 }
@@ -83267,6 +83613,12 @@ func (m *UserMutation) RemovedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case user.EdgeAuthoredFlow:
+		ids := make([]ent.Value, 0, len(m.removedauthored_flow))
+		for id := range m.removedauthored_flow {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
@@ -83274,7 +83626,7 @@ func (m *UserMutation) RemovedIDs(name string) []ent.Value {
 // ClearedEdges returns all edge names that were cleared in this
 // mutation.
 func (m *UserMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 10)
+	edges := make([]string, 0, 11)
 	if m.clearedprofile_photo {
 		edges = append(edges, user.EdgeProfilePhoto)
 	}
@@ -83305,6 +83657,9 @@ func (m *UserMutation) ClearedEdges() []string {
 	if m.clearedappointment {
 		edges = append(edges, user.EdgeAppointment)
 	}
+	if m.clearedauthored_flow {
+		edges = append(edges, user.EdgeAuthoredFlow)
+	}
 	return edges
 }
 
@@ -83332,6 +83687,8 @@ func (m *UserMutation) EdgeCleared(name string) bool {
 		return m.clearedfeatures
 	case user.EdgeAppointment:
 		return m.clearedappointment
+	case user.EdgeAuthoredFlow:
+		return m.clearedauthored_flow
 	}
 	return false
 }
@@ -83384,6 +83741,9 @@ func (m *UserMutation) ResetEdge(name string) error {
 		return nil
 	case user.EdgeAppointment:
 		m.ResetAppointment()
+		return nil
+	case user.EdgeAuthoredFlow:
+		m.ResetAuthoredFlow()
 		return nil
 	}
 	return fmt.Errorf("unknown User edge %s", name)

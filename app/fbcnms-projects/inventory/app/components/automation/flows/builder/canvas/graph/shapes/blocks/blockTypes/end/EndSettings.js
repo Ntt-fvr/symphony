@@ -22,7 +22,7 @@ export type EndSettings = $ReadOnly<{|
 |}>;
 
 export const initialEndSettings: EndSettings = {
-  params: null,
+  params: undefined,
 };
 
 export const setEndSettings: EndSettings = newEndSettings => {

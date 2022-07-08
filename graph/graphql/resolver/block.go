@@ -241,37 +241,56 @@ func (r blockResolver) Details(ctx context.Context, obj *ent.Block) (models.Bloc
 			Rules:            rules,
 		}, nil
 	case block.TypeInvokeRestAPI:
+		var (
+			url, body string
+			method    block.URLMethod
+		)
+		if obj.URL != nil {
+			url = *obj.URL
+		} else {
+			url = ""
+		}
+
+		if obj.Body != nil {
+			body = *obj.Body
+		} else {
+			body = ""
+		}
+
+		if obj.URLMethod != nil {
+			method = *obj.URLMethod
+		}
+
 		return &models.InvokeRestAPIBlock{
 			EntryPoint: entryPoint,
-			URL:        *obj.URL,
-			// Method:     *obj.URLMethod,
-			Headers: obj.Headers,
-			Body:    *obj.Body,
+			URL:        url,
+			Method:     method,
+			Headers:    obj.Headers,
+			Body:       body,
 		}, nil
 	case block.TypeTimer:
 		return &models.TimerBlock{
-			ExitPoint: exitPoint,
-			/*behavior:          *obj.TimerBehavior,
-			expression:        *obj.TimerExpression,
-			enableExpressionL: obj.EnableTimerExpression,
-			seconds:           *obj.Seconds,*/
+			ExitPoint:         exitPoint,
+			Behavior:          *obj.TimerBehavior,
+			Expression:        obj.TimerExpression,
+			EnableExpressionL: obj.EnableTimerExpression,
+			Seconds:           obj.Seconds,
 		}, nil
-
 	case block.TypeExecuteFlow:
 		return &models.ExecuteFlowBlock{
 			ExitPoint:  exitPoint,
 			EntryPoint: entryPoint,
 			Params:     obj.InputParams,
-			//Flow: obj.Flow(ctx)
+			//Flow:       flow.ID(),
 		}, nil
 	case block.TypeWaitForSignal:
 		return &models.WaitForSignalBlock{
-			ExitPoint:  exitPoint,
-			EntryPoint: entryPoint,
-			/*Type:       obj.SignalType,
-			SignalModule: obj.SignalModule,
-			CustomFilter: obj.CustomFilter,
-			Blocked:      obj.BlockFlow,*/
+			ExitPoint:    exitPoint,
+			EntryPoint:   entryPoint,
+			Type:         &obj.SignalType,
+			SignalModule: &obj.SignalModule,
+			CustomFilter: &obj.CustomFilter,
+			Blocked:      obj.BlockFlow,
 		}, nil
 	default:
 		return nil, fmt.Errorf("type %q is unknown", obj.Type)

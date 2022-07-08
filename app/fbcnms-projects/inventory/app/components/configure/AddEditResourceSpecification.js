@@ -266,7 +266,6 @@ export const AddEditResourceSpecification = (props: Props) => {
         id: dataForm.id,
         name: nameEdit.value,
         vendor: vendorEdit.value,
-        vendor: 'nokia',
         resourceType: dataForm.resourceType.id,
         resourcePropertyTypes: convertPropertyTypeToMutationInput(
           propertyTypes,

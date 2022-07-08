@@ -142,11 +142,16 @@ export default class BaseBlock implements IBlock {
     this.inputSettings = initialInputSettings;
     this.outputSettings = initialOutputSettings;
     this.errorSettings = initialErrorSettings;
+    this.model.idParent = '';
   }
 
   setName(newName: string) {
     this.name = newName;
     this.model.attr('label/text', newName);
+  }
+
+  setParent(id: string) {
+    this.model.idParent = id;
   }
 
   setSettings(settings: string) {

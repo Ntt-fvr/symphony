@@ -8,17 +8,17 @@
  * @format
  */
 
+import React, {useMemo} from 'react';
+import {render, screen} from '@testing-library/react';
+
 import type {ExecuteFlowSettings} from '../flows/builder/canvas/graph/shapes/blocks/blockTypes/executeFlow/ExecuteFlowSettings';
 
 import {TYPE} from '../flows/builder/canvas/graph/facades/shapes/vertexes/actions/ExecuteFlow';
 
-import '@testing-library/jest-dom';
-import React, {useMemo} from 'react';
 import {
   getInitialBlockSettings,
   setBlockSettings,
 } from '../flows/builder/canvas/graph/shapes/blocks/blockTypes/BaseSettings';
-import {render, screen} from '@testing-library/react';
 
 import ExecuteFlowBlockType from '../flows/builder/canvas/graph/shapes/blocks/blockTypes/executeFlow/ExecuteFlowBlockType';
 import ExecuteFlowPresentation from '../flows/builder/canvas/graph/shapes/blocks/blockTypes/executeFlow/ExecuteFlowPresentation';
@@ -46,7 +46,7 @@ describe('Suite Test Components /ExecuteFlow/: ', () => {
   test('AUT-FE-05050 Test setExecuteFlowSettings', () => {
     const objectTest: ExecuteFlowSettings = getInitialBlockSettings(TYPE);
 
-    expect(objectTest.flow).toStrictEqual(null);
+    expect(objectTest.flow).toStrictEqual(undefined);
     const setObjectTest: ExecuteFlowSettings = setBlockSettings(TYPE, {
       ...objectTest,
       flow: 'testParams',
