@@ -83,6 +83,8 @@ const Configuration = (props: Props) => {
   const [isDialogSelectDate, setIsDialogSelectDate] = useState(false);
   const [checked, setChecked] = useState(true);
   const [openSimpleChangeRequest, setOpenSimpleChangeRequest] = useState(false);
+  const [configurationParameters, setConfigurationParameters] = useState([]);
+  const [currentVersion, setCurrentVersion] = useState([]);
   const classes = useStyles();
 
   const handleClickOpenInformation = () => {
@@ -103,6 +105,11 @@ const Configuration = (props: Props) => {
       />
     );
   }
+
+  const CMSelected = (CMSelected, currentVersion) => {
+    setConfigurationParameters(CMSelected);
+    setCurrentVersion(currentVersion);
+  };
   return (
     <Grid className={classes.root}>
       <Grid
@@ -169,7 +176,7 @@ const Configuration = (props: Props) => {
         </Grid>
       </Grid>
       <Grid className={classes.timeLineContainer} item md={12}>
-        <TimeLine />
+        <TimeLine CMSelected={CMSelected} />
       </Grid>
       <Grid className={classes.cardTable} item xs={12}>
         <Card className={classes.cardContainer}>
@@ -224,7 +231,12 @@ const Configuration = (props: Props) => {
             </Grid>
           </Grid>
           <Grid item xs={12}>
-            <TableConfigurationParameters />
+            <br></br>
+            <TableConfigurationParameters
+              ConfigurationParameters={configurationParameters}
+              setComparationCurrent={checked}
+              setCurrentVersion={currentVersion}
+            />
           </Grid>
         </Card>
       </Grid>
