@@ -22,6 +22,7 @@ import React, {useState} from 'react';
 import RelayEnvironment from '../../common/RelayEnvironment';
 import TextField from '@material-ui/core/TextField';
 import {MenuItem} from '@material-ui/core';
+import {camelCase, startCase} from 'lodash';
 import {fetchQuery, graphql} from 'relay-runtime';
 import {makeStyles} from '@material-ui/styles';
 import {useDisabledButtonSelect} from '../assurance/common/useDisabledButton';
@@ -100,6 +101,23 @@ type Relationship = {
     resourceTypeA: string,
     resourceTypeB: string,
   },
+};
+
+const dataSelectorsForm = {
+  resourceTypeClass: ['CARD', 'EQUIPMENT', 'PORT', 'RACK', 'SLOT', 'VLAN'],
+  resourceRelationshipTypes: [
+    'BELONGS_TO',
+    'LOCATED_IN',
+    'PHYSICAL_LINK',
+    'LOGICAL_LINK',
+    'CROSS_CONNECTION',
+  ],
+  resourceRelationshipMultiplicity: [
+    'MANY_TO_MANY',
+    'MANY_TO_ONE',
+    'ONE_TO_MANY',
+    'ONE_TO_ONE',
+  ],
 };
 
 const AddRelationshipsTypeForm = (props: Props) => {
@@ -213,11 +231,11 @@ const AddRelationshipsTypeForm = (props: Props) => {
           name="classTypeA"
           variant="outlined"
           defaultValue="">
-          <MenuItem value={'EQUIPMENT'}>EQUIPMENT</MenuItem>
-          <MenuItem value={'SLOT'}>SLOT</MenuItem>
-          <MenuItem value={'RACK'}>RACK</MenuItem>
-          <MenuItem value={'PORT'}>PORT</MenuItem>
-          <MenuItem value={'CARD'}>CARD</MenuItem>
+          {dataSelectorsForm?.resourceTypeClass?.map((item, index) => (
+            <MenuItem key={index} value={item}>
+              {startCase(camelCase(item))}
+            </MenuItem>
+          ))}
         </TextField>
 
         <TextField
@@ -248,11 +266,11 @@ const AddRelationshipsTypeForm = (props: Props) => {
           name="resourceRelationshipTypes"
           variant="outlined"
           defaultValue="">
-          <MenuItem value={'BELONGS_TO'}>BELONGS_TO</MenuItem>
-          <MenuItem value={'LOCATED_IN'}>LOCATED_IN</MenuItem>
-          <MenuItem value={'PHYSICAL_LINK'}>PHYSICAL_LINK</MenuItem>
-          <MenuItem value={'LOGICAL_LINK'}>LOGICAL_LINK</MenuItem>
-          <MenuItem value={'CROSS_CONNECTION'}>CROSS_CONNECTION</MenuItem>
+          {dataSelectorsForm?.resourceRelationshipTypes?.map((item, index) => (
+            <MenuItem key={index} value={item}>
+              {startCase(camelCase(item))}
+            </MenuItem>
+          ))}
         </TextField>
         <TextField
           required
@@ -264,10 +282,13 @@ const AddRelationshipsTypeForm = (props: Props) => {
           name="resourceRelationshipMultiplicity"
           variant="outlined"
           defaultValue="">
-          <MenuItem value={'MANY_TO_MANY'}>MANY_TO_MANY</MenuItem>
-          <MenuItem value={'MANY_TO_ONE'}>MANY_TO_ONE</MenuItem>
-          <MenuItem value={'ONE_TO_MANY'}>ONE_TO_MANY</MenuItem>
-          <MenuItem value={'ONE_TO_ONE'}>ONE_TO_ONE</MenuItem>
+          {dataSelectorsForm?.resourceRelationshipMultiplicity?.map(
+            (item, index) => (
+              <MenuItem key={index} value={item}>
+                {startCase(camelCase(item))}
+              </MenuItem>
+            ),
+          )}
         </TextField>
         <TextField
           required
@@ -280,11 +301,11 @@ const AddRelationshipsTypeForm = (props: Props) => {
           name="classTypeB"
           variant="outlined"
           defaultValue="">
-          <MenuItem value={'EQUIPMENT'}>EQUIPMENT</MenuItem>
-          <MenuItem value={'SLOT'}>SLOT</MenuItem>
-          <MenuItem value={'RACK'}>RACK</MenuItem>
-          <MenuItem value={'PORT'}>PORT</MenuItem>
-          <MenuItem value={'CARD'}>CARD</MenuItem>
+          {dataSelectorsForm?.resourceTypeClass?.map((item, index) => (
+            <MenuItem key={index} value={item}>
+              {startCase(camelCase(item))}
+            </MenuItem>
+          ))}
         </TextField>
 
         <TextField

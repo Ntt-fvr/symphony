@@ -22,6 +22,9 @@ type AlarmStatus func(*sql.Selector)
 // Appointment is the predicate function for appointment builders.
 type Appointment func(*sql.Selector)
 
+// AutomationActivity is the predicate function for automationactivity builders.
+type AutomationActivity func(*sql.Selector)
+
 // Block is the predicate function for block builders.
 type Block func(*sql.Selector)
 

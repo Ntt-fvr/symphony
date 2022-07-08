@@ -16,7 +16,7 @@
 import type { ConcreteRequest } from 'relay-runtime';
 export type ResourcePropertyKind = "bool" | "date" | "datetime_local" | "email" | "enum" | "float" | "gps_location" | "int" | "node" | "range" | "string" | "%future added value";
 export type ResourceTypeBaseTypeKind = "LOGICAL_RESOURCE" | "PHYSICAL_RESOURCE" | "VIRTUAL_RESOURCE" | "%future added value";
-export type ResourceTypeClassKind = "CARD" | "EQUIPMENT" | "PORT" | "RACK" | "SLOT" | "VLAN" | "%future added value";
+export type ResourceTypeClassKind = "CARD" | "EQUIPMENT" | "NETWORK_FUNCTION" | "PORT" | "RACK" | "SLOT" | "VLAN" | "%future added value";
 export type ResourceTypesQueryVariables = {||};
 export type ResourceTypesQueryResponse = {|
   +resourceTypes: {|
@@ -34,8 +34,13 @@ export type ResourceTypesQueryResponse = {|
       +node: ?{|
         +id: string,
         +name: string,
+        +vendor: ?{|
+          +id: string,
+          +name: string,
+        |},
         +resourceType: ?{|
-          +id: string
+          +id: string,
+          +resourceTypeClass: ResourceTypeClassKind,
         |},
         +resourcePropertyTypes: $ReadOnlyArray<?{|
           +id: string,
@@ -57,6 +62,14 @@ export type ResourceTypesQueryResponse = {|
           +isDeleted: ?boolean,
           +category: ?string,
         |}>,
+      |}
+    |}>
+  |},
+  +vendors: {|
+    +edges: $ReadOnlyArray<{|
+      +node: ?{|
+        +id: string,
+        +name: string,
       |}
     |}>
   |},
@@ -85,8 +98,13 @@ query ResourceTypesQuery {
       node {
         id
         name
+        vendor {
+          id
+          name
+        }
         resourceType {
           id
+          resourceTypeClass
         }
         resourcePropertyTypes {
           id
@@ -111,6 +129,14 @@ query ResourceTypesQuery {
       }
     }
   }
+  vendors {
+    edges {
+      node {
+        id
+        name
+      }
+    }
+  }
 }
 */
 
@@ -129,7 +155,18 @@ v1 = {
   "name": "name",
   "storageKey": null
 },
-v2 = [
+v2 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "resourceTypeClass",
+  "storageKey": null
+},
+v3 = [
+  (v0/*: any*/),
+  (v1/*: any*/)
+],
+v4 = [
   {
     "alias": null,
     "args": null,
@@ -163,13 +200,7 @@ v2 = [
                 "name": "resourceTypeBaseType",
                 "storageKey": null
               },
-              {
-                "alias": null,
-                "args": null,
-                "kind": "ScalarField",
-                "name": "resourceTypeClass",
-                "storageKey": null
-              }
+              (v2/*: any*/)
             ],
             "storageKey": null
           }
@@ -208,12 +239,23 @@ v2 = [
               {
                 "alias": null,
                 "args": null,
+                "concreteType": "Vendor",
+                "kind": "LinkedField",
+                "name": "vendor",
+                "plural": false,
+                "selections": (v3/*: any*/),
+                "storageKey": null
+              },
+              {
+                "alias": null,
+                "args": null,
                 "concreteType": "ResourceType",
                 "kind": "LinkedField",
                 "name": "resourceType",
                 "plural": false,
                 "selections": [
-                  (v0/*: any*/)
+                  (v0/*: any*/),
+                  (v2/*: any*/)
                 ],
                 "storageKey": null
               },
@@ -350,6 +392,38 @@ v2 = [
       }
     ],
     "storageKey": null
+  },
+  {
+    "alias": null,
+    "args": null,
+    "concreteType": "VendorConnection",
+    "kind": "LinkedField",
+    "name": "vendors",
+    "plural": false,
+    "selections": [
+      {
+        "alias": null,
+        "args": null,
+        "concreteType": "VendorEdge",
+        "kind": "LinkedField",
+        "name": "edges",
+        "plural": true,
+        "selections": [
+          {
+            "alias": null,
+            "args": null,
+            "concreteType": "Vendor",
+            "kind": "LinkedField",
+            "name": "node",
+            "plural": false,
+            "selections": (v3/*: any*/),
+            "storageKey": null
+          }
+        ],
+        "storageKey": null
+      }
+    ],
+    "storageKey": null
   }
 ];
 return {
@@ -358,7 +432,7 @@ return {
     "kind": "Fragment",
     "metadata": null,
     "name": "ResourceTypesQuery",
-    "selections": (v2/*: any*/),
+    "selections": (v4/*: any*/),
     "type": "Query",
     "abstractKey": null
   },
@@ -367,19 +441,19 @@ return {
     "argumentDefinitions": [],
     "kind": "Operation",
     "name": "ResourceTypesQuery",
-    "selections": (v2/*: any*/)
+    "selections": (v4/*: any*/)
   },
   "params": {
-    "cacheID": "1433617df5e4bab0bae7418f52e62b47",
+    "cacheID": "e19f16e09db27390664f76becc7fe64d",
     "id": null,
     "metadata": {},
     "name": "ResourceTypesQuery",
     "operationKind": "query",
-    "text": "query ResourceTypesQuery {\n  resourceTypes {\n    edges {\n      node {\n        id\n        name\n        resourceTypeBaseType\n        resourceTypeClass\n      }\n    }\n  }\n  resourceSpecifications {\n    edges {\n      node {\n        id\n        name\n        resourceType {\n          id\n        }\n        resourcePropertyTypes {\n          id\n          name\n          type\n          nodeType\n          index\n          stringValue\n          intValue\n          booleanValue\n          floatValue\n          latitudeValue\n          longitudeValue\n          rangeFromValue\n          rangeToValue\n          isEditable\n          isMandatory\n          isInstanceProperty\n          isDeleted\n          category\n        }\n      }\n    }\n  }\n}\n"
+    "text": "query ResourceTypesQuery {\n  resourceTypes {\n    edges {\n      node {\n        id\n        name\n        resourceTypeBaseType\n        resourceTypeClass\n      }\n    }\n  }\n  resourceSpecifications {\n    edges {\n      node {\n        id\n        name\n        vendor {\n          id\n          name\n        }\n        resourceType {\n          id\n          resourceTypeClass\n        }\n        resourcePropertyTypes {\n          id\n          name\n          type\n          nodeType\n          index\n          stringValue\n          intValue\n          booleanValue\n          floatValue\n          latitudeValue\n          longitudeValue\n          rangeFromValue\n          rangeToValue\n          isEditable\n          isMandatory\n          isInstanceProperty\n          isDeleted\n          category\n        }\n      }\n    }\n  }\n  vendors {\n    edges {\n      node {\n        id\n        name\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = '0cc37789f568af8d8f94fce937ecbdd4';
+(node/*: any*/).hash = '9d16d54816be9cc30b9a3fb2b8bbb319';
 
 module.exports = node;

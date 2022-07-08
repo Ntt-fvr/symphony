@@ -14,7 +14,6 @@ const gateway = new ApolloGateway({
     return new RemoteGraphQLDataSource({
       url,
       willSendRequest({ request, context }) {
-        console.log("Symphony integration type");
           request.http.headers = {
             ...context.headers
           }

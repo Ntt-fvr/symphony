@@ -8,12 +8,17 @@
  * @format
  */
 
-// import type {PropertyKind} from '../../../configure/__generated__/AddEditEquipmentTypeCard_editingEquipmentType.graphql';
-import type {PropertyType} from '../../../../common/PropertyType';
+import type {ParameterKind} from '../../../../mutations/__generated__/AddConfigurationParameterTypeMutation.graphql';
+import type {ParameterType} from '../../../../common/ParameterType';
 
 export type ParameterTypeTableDispatcherActionType =
   | {|
       type: 'ADD_PARAMETER_TYPE',
+      resourceSpecification: string,
+    |}
+  | {|
+      type: 'DELETE_PARAMETER_TYPE',
+      id: string,
     |}
   | {|
       type: 'REMOVE_PARAMETER_TYPE',
@@ -25,14 +30,25 @@ export type ParameterTypeTableDispatcherActionType =
       name: string,
     |}
   | {|
+      type: 'UPDATE_PARAMETER_TYPE_TEXT_IN',
+      id: string,
+      mappingIn: string,
+    |}
+  | {|
+      type: 'UPDATE_PARAMETER_TYPE_TEXT_OUT',
+      id: string,
+      mappingOut: string,
+    |}
+  | {|
       type: 'UPDATE_PARAMETER_TYPE_KIND',
       id: string,
-      //kind: PropertyKind,
+      kind: ParameterKind,
       nodeType?: ?string,
+      resourceSpecification: string,
     |}
   | {|
       type: 'UPDATE_PARAMETER_TYPE',
-      value: PropertyType,
+      value: ParameterType,
     |}
   | {|
       type: 'CHANGE_PARAMETER_TYPE_INDEX',

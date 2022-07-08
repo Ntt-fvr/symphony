@@ -8,12 +8,7 @@
  * @format
  */
 
-import React, {useState} from 'react';
-import fbt from 'fbt';
-
-import {useFormInput} from '../assurance/common/useFormInput';
-
-import type {DataSelector} from './ResourceTypes';
+import type {DataSelectorsForm} from './ResourceTypes';
 import type {EditResourceTypeMutationVariables} from '../../mutations/__generated__/EditResourceTypeMutation.graphql';
 import type {PropertyType} from '../../common/PropertyType';
 
@@ -25,15 +20,19 @@ import ConfigureTitleSubItem from '../assurance/common/ConfigureTitleSubItem';
 import Divider from '@material-ui/core/Divider';
 import EditResourceTypeMutation from '../../mutations/EditResourceTypeMutation';
 import IconButton from '@symphony/design-system/components/IconButton';
+import React, {useState} from 'react';
 import SaveDialogConfirm from './SaveDialogConfirm';
 import Text from '@symphony/design-system/components/Text';
 import TextField from '@material-ui/core/TextField';
 import VisibilityIcon from '@material-ui/icons/Visibility';
+import fbt from 'fbt';
 import symphony from '@symphony/design-system/theme/symphony';
 import {AddEditResourceSpecification} from './AddEditResourceSpecification';
 import {Grid, MenuItem} from '@material-ui/core';
+import {camelCase, startCase} from 'lodash';
 import {makeStyles} from '@material-ui/styles';
 import {useDisabledButtonEdit} from '../assurance/common/useDisabledButton';
+import {useFormInput} from '../assurance/common/useFormInput';
 import {useValidationEdit} from '../assurance/common/useValidation';
 
 const useStyles = makeStyles(() => ({
@@ -91,15 +90,12 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-type Resource = {
-  name: string,
-};
-
 export type ResourceSpecifications = {
   id: string,
   name: string,
   resourceType: {
     id: string,
+    resourceTypeClass: string,
   },
   resourcePropertyTypes: Array<PropertyType>,
 };
@@ -110,26 +106,25 @@ type Props = $ReadOnly<{|
     name: string,
     resourceType: {
       id: string,
+      resourceTypeClass: string,
     },
     resourceTypeBaseType: string,
     resourceTypeClass: string,
-    propertyTypes: Array<PropertyType>,
+    resourcePropertyTypes: Array<PropertyType>,
   },
   hideEditResourceTypeForm: void => void,
   isCompleted: void => void,
-  resources: Array<Resource>,
-  resourceSpecifications: ResourceSpecifications,
-  dataSelector: DataSelector,
+  dataFormQuery: any,
+  dataSelectorsForm: DataSelectorsForm,
 |}>;
 
 export const EditResourceTypeItem = (props: Props) => {
   const {
     formValues,
     hideEditResourceTypeForm,
-    resources,
+    dataFormQuery,
     isCompleted,
-    resourceSpecifications,
-    dataSelector,
+    dataSelectorsForm,
   } = props;
   const [dialogOpen, setDialogOpen] = useState(false);
   const [openForm, setOpenForm] = useState(false);
@@ -141,7 +136,9 @@ export const EditResourceTypeItem = (props: Props) => {
   const resourceTypeBaseType = useFormInput(formValues.resourceTypeBaseType);
   const resourceTypeClass = useFormInput(formValues.resourceTypeClass);
 
-  const resourcesNames = resources?.map(item => item.name);
+  const resourcesNames = dataFormQuery?.resourceTypes?.edges.map(
+    item => item.node.name,
+  );
 
   const dataInputsObject = [
     name.value.trim(),
@@ -157,7 +154,10 @@ export const EditResourceTypeItem = (props: Props) => {
     );
   };
 
-  const filterDataById = resourceSpecifications.filter(
+  const dataResourceSpecifications = dataFormQuery.resourceSpecifications?.edges.map(
+    item => item.node,
+  );
+  const filterDataById = dataResourceSpecifications.filter(
     rsData => rsData?.resourceType?.id === formValues.id,
   );
 
@@ -191,9 +191,10 @@ export const EditResourceTypeItem = (props: Props) => {
     return (
       <AddEditResourceSpecification
         isCompleted={isCompleted}
-        dataForm={resourceSpecifications}
+        dataForm={''}
         formValues={formValues}
         filterData={filterDataById}
+        vendorData={dataFormQuery.vendors?.edges.map(item => item.node)}
         editMode={false}
         closeForm={() => setOpenForm(false)}
       />
@@ -204,9 +205,10 @@ export const EditResourceTypeItem = (props: Props) => {
     return (
       <AddEditResourceSpecification
         isCompleted={isCompleted}
-        dataForm={dataEdit.item}
-        formValues={dataEdit.item}
+        dataForm={dataEdit}
+        formValues={dataEdit}
         filterData={filterDataById}
+        vendorData={dataFormQuery.vendors?.edges.map(item => item.node)}
         editMode={true}
         closeForm={() => setOpenFormEdit(false)}
       />
@@ -275,9 +277,9 @@ export const EditResourceTypeItem = (props: Props) => {
                   name="resourceTypeClass"
                   fullWidth
                   {...resourceTypeClass}>
-                  {dataSelector.resourceTypeClass.map((item, index) => (
-                    <MenuItem key={index} value={item.name}>
-                      {item.name.toLowerCase()}
+                  {dataSelectorsForm.resourceTypeClass.map((item, index) => (
+                    <MenuItem key={index} value={item}>
+                      {startCase(camelCase(item))}
                     </MenuItem>
                   ))}
                 </TextField>
@@ -294,9 +296,9 @@ export const EditResourceTypeItem = (props: Props) => {
                   type="string"
                   fullWidth
                   {...resourceTypeBaseType}>
-                  {dataSelector.resourceTypeBaseType.map((item, index) => (
-                    <MenuItem key={index} value={item.name}>
-                      {item.name.toLowerCase()}
+                  {dataSelectorsForm.resourceTypeBaseType.map((item, index) => (
+                    <MenuItem key={index} value={item}>
+                      {startCase(camelCase(item))}
                     </MenuItem>
                   ))}
                 </TextField>
@@ -352,7 +354,7 @@ export const EditResourceTypeItem = (props: Props) => {
                     className={classes.iconVisibility}
                     skin="gray"
                     icon={VisibilityIcon}
-                    onClick={() => showEditFormData({item})}
+                    onClick={() => showEditFormData(item)}
                   />
                 </Grid>
                 <Divider />

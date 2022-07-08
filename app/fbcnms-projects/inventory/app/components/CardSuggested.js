@@ -41,47 +41,57 @@ const useStyles = makeStyles(() => ({
 export type Props = $ReadOnly<{||}>;
 
 const days = [
-  'Monday',
-  'Tuesday',
-  'Wednesday',
-  'Thursday',
-  'Friday',
-  'Saturday',
-  'Sunday',
+  'MONDAY',
+  'TUESDAY',
+  'WEDNESDAY',
+  'THURSDAY',
+  'FRIDAY',
+  'SATURDAY',
+  'SUNDAY',
 ];
 
 const CardSuggested = (props: Props) => {
-  const {} = props;
+  const {schedule, onSchedule, 'data-testid': dataTestId} = props;
   const classes = useStyles();
 
   const [checkedHidden, setCheckedHidden] = useState(true);
-  const [selectedDate, setSelectedDate] = useState(
-    new Date('2022-03-02T24:00:00'),
-  );
 
   const handleDateChange = date => {
-    setSelectedDate(date);
+    onSchedule({...schedule, date});
+  };
+
+  const handleOnSelectDay = e => {
+    onSchedule({...schedule, day: e.target.value});
+  };
+
+  const handleOnChangeScheduleType = () => {
+    const checked = !checkedHidden;
+    setCheckedHidden(checked);
+    onSchedule({
+      ...schedule,
+      type: checked ? 'AS_SOON_AS_APPROVED' : 'SCHEDULED_CHANGE',
+    });
   };
 
   return (
-    <div className={classes.container}>
+    <div className={classes.container} data-testid={dataTestId}>
       <Card margins="none">
         <Grid style={{margin: '0 16px'}}>
           <CardHeader className={classes.cardHeader}>
-            Parameters to changed
+            Suggested change request schedule
           </CardHeader>
           <Grid container>
             <Grid item xs={12}>
               <FormControlLabel
                 style={{padding: '0 0 0 40px'}}
-                onChange={() => setCheckedHidden(!checkedHidden)}
+                onChange={handleOnChangeScheduleType}
                 checked={checkedHidden}
                 value="approved"
                 control={<Radio color="primary" />}
-                label="As soon as approved "
+                label="As soon as approved"
               />
               <FormControlLabel
-                onChange={() => setCheckedHidden(!checkedHidden)}
+                onChange={handleOnChangeScheduleType}
                 checked={!checkedHidden}
                 value="approval"
                 control={<Radio color="primary" />}
@@ -105,15 +115,16 @@ const CardSuggested = (props: Props) => {
                     <TextField
                       required
                       id="outlined-select-family"
+                      label="Day"
                       select
                       style={{
                         padding: '0',
                         marginLeft: '40px',
                         width: '70%',
                       }}
-                      label="Family name"
-                      name="family"
                       defaultValue=""
+                      onChange={handleOnSelectDay}
+                      value={schedule.day}
                       variant="outlined">
                       {days.map((item, index) => (
                         <MenuItem key={index} value={item}>
@@ -126,12 +137,12 @@ const CardSuggested = (props: Props) => {
                     <MuiPickersUtilsProvider utils={MomentUtils}>
                       <KeyboardTimePicker
                         keyboardIcon={<AccessTimeIcon />}
-                        label="Masked timepicker"
+                        label="Time"
                         placeholder="08:00 AM"
                         mask="__:__ _M"
                         inputVariant="outlined"
-                        value={selectedDate}
-                        onChange={date => handleDateChange(date)}
+                        value={schedule.date}
+                        onChange={handleDateChange}
                       />
                     </MuiPickersUtilsProvider>
                   </Grid>

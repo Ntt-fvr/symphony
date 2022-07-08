@@ -8,50 +8,25 @@
  * @format
  */
 
+import type {EditScheduleChangeRequestMutationVariables} from '../../mutations/__generated__/EditScheduleChangeRequestMutation.graphql';
+
 import ButtonAlarmStatus from './common/ButtonAlarmStatus';
 import ButtonSaveDelete from './common/ButtonSaveDelete';
 import CommentsActivitiesBox from '../comments/CommentsActivitiesBox';
 import ConfigureTitle from './common/ConfigureTitle';
-import React from 'react';
+import EditScheduleChangeRequestMutation from '../../mutations/EditScheduleChangeRequestMutation';
+import React, {useState} from 'react';
 import TextField from '@material-ui/core/TextField';
 import fbt from 'fbt';
 import {CardAccordion} from './common/CardAccordion';
-import {CardSuggested} from './common/CardSuggested';
+import {CardChangeRequestSchedule} from './common/CardChangeRequestSchedule';
 import {FormField} from './common/FormField';
 import {Grid} from '@material-ui/core';
-import {MenuItem} from '@material-ui/core';
 import {TableResource} from './common/TableResource';
+import {graphql} from 'relay-runtime';
 import {makeStyles} from '@material-ui/styles';
 import {useFormInput} from '../assurance/common/useFormInput';
-
-const valuesTable = [
-  {
-    resource: 'RNCellDU_Nokia_MLN1_3132331',
-    parameter: 'arfcndu1',
-    currentValue: '3960001',
-    newValue: '183001',
-  },
-  {
-    resource: 'RNCellDU_Nokia_MLN1_3132332',
-    parameter: 'arfcndu2',
-    currentValue: '3960002',
-    newValue: '183002',
-  },
-  {
-    resource: 'RNCellDU_Nokia_MLN1_3132333',
-    parameter: 'arfcndu3',
-    currentValue: '3960003',
-    newValue: '183003',
-  },
-  {
-    resource: 'RNCellDU_Nokia_MLN1_3132333',
-    parameter: 'arfcndu4',
-    currentValue: '3960004',
-    newValue: '183004',
-  },
-];
-
-const status = ['Approve', 'Reject'];
+import {useLazyLoadQuery} from 'react-relay/hooks';
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -60,7 +35,7 @@ const useStyles = makeStyles(() => ({
     margin: '0',
   },
   titleModule: {
-    margin: '0 0 40px 0',
+    margin: '0 0 20px 0',
     display: 'flex',
     justifyContent: 'space-between',
   },
@@ -69,6 +44,7 @@ const useStyles = makeStyles(() => ({
   },
   buttonStatus: {
     height: '38px',
+    margin: '0 0 30px 0',
   },
   accordionDetails: {
     '&.MuiAccordionDetails-root': {
@@ -90,17 +66,153 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
+const ChangeRequest = graphql`
+  query ChangeRequestDetailsQuery(
+    $filterBy: [ResourceSpecificationFilterInput!]
+    $filter: ChangeRequestFilter
+  ) {
+    queryChangeRequest(filter: $filter) {
+      description
+      id
+      source
+      status
+      type
+      requester
+      #
+      scheduler {
+        time
+        type
+        weekDay
+      }
+      #
+      items {
+        id
+        stringValue
+        intValue
+        floatValue
+        #
+        parameterType {
+          id
+          name
+          stringValue
+          intValue
+          floatValue
+          type
+          resourceSpecification
+          parameters {
+            id
+            stringValue
+            intValue
+            floatValue
+          }
+        }
+        #
+        resource {
+          id
+          name
+          resourceSpecification
+        }
+      }
+    }
+    resourceSpecifications(filterBy: $filterBy) {
+      edges {
+        node {
+          id
+          name
+          resourceType {
+            id
+            name
+          }
+        }
+      }
+    }
+  }
+`;
+
 export type Props = $ReadOnly<{|
   setOpenDetails: any,
-  data: any,
+  idChangeRequest: string,
 |}>;
 
 const ChangeRequestDetails = (props: Props) => {
-  const {setOpenDetails, data} = props;
-  const classes = useStyles();
+  const {setOpenDetails, idChangeRequest} = props;
 
-  const resourceType = useFormInput(data.resourceType.trim());
-  const changeSource = useFormInput(data.changeSource.trim());
+  const stringCapitalizeFisrt = string => {
+    const convertString = string.toLowerCase();
+
+    return convertString.charAt(0).toUpperCase() + convertString.slice(1);
+  };
+  const classes = useStyles();
+  const dataChRq = useLazyLoadQuery<ChangeRequestDetailsQuery>(ChangeRequest, {
+    filter: {
+      id: idChangeRequest,
+    },
+  });
+
+  const filterChangeRequest = dataChRq?.queryChangeRequest?.find(
+    itemChRq => itemChRq?.id === idChangeRequest,
+  );
+
+  const rs = filterChangeRequest?.items.map(
+    itemRS => itemRS?.parameterType?.resourceSpecification,
+  );
+
+  const [idResourceSpecification] = rs;
+
+  const idRS = idResourceSpecification?.toString();
+
+  const confirm = rs.length === 0 ? [] : [idRS];
+
+  const dataQuery = useLazyLoadQuery<ChangeRequestDetailsQuery>(ChangeRequest, {
+    filterBy: [
+      {
+        filterType: 'ID',
+        operator: 'IS_ONE_OF',
+        idSet: confirm,
+      },
+    ],
+    filter: {
+      id: idChangeRequest,
+    },
+  });
+
+  const changeRequest = dataQuery?.queryChangeRequest?.find(
+    chRq => chRq?.id === idChangeRequest,
+  );
+
+  const dateSchedule = changeRequest?.scheduler;
+
+  const [schedule, setSchedule] = useState(dateSchedule);
+
+  const resourceTypeFilter = dataQuery?.resourceSpecifications?.edges?.find(
+    chRq => chRq?.node?.id === idRS,
+  );
+
+  const resourceType = useFormInput(
+    resourceTypeFilter?.node?.resourceType?.name,
+  );
+  const changeSource = useFormInput(changeRequest?.source);
+  const description = useFormInput(changeRequest?.description);
+
+  const editSchedule = () => {
+    const variables: EditScheduleChangeRequestMutationVariables = {
+      input: {
+        filter: {
+          id: changeRequest?.id,
+        },
+        set: {
+          scheduler: {
+            time: schedule?.time,
+            type: schedule?.type,
+            weekDay: schedule?.weekDay,
+          },
+        },
+      },
+    };
+    EditScheduleChangeRequestMutation(variables, {
+      onCompleted: () => isCompleted(),
+    });
+  };
 
   return (
     <div>
@@ -117,38 +229,20 @@ const ChangeRequestDetails = (props: Props) => {
               variant="outlined">
               Cancel
             </ButtonSaveDelete>
-            <ButtonSaveDelete onClick={() => setOpenDetails()}>
+            <ButtonSaveDelete
+              onClick={() => {
+                setOpenDetails(), editSchedule();
+              }}>
               Save
             </ButtonSaveDelete>
           </Grid>
         </Grid>
-        <Grid style={{display: 'flex'}}>
+        <Grid style={{}}>
           <ButtonAlarmStatus
             className={classes.buttonStatus}
-            skin={data.status}>
-            Status: {data.status}{' '}
+            skin={changeRequest?.status}>
+            Status: {stringCapitalizeFisrt(changeRequest?.status)}
           </ButtonAlarmStatus>
-          <FormField>
-            <TextField
-              required
-              id="outlined-select-action"
-              select
-              style={{
-                padding: '0',
-                marginLeft: '40px',
-                width: '250px',
-              }}
-              label="Action"
-              name="action"
-              defaultValue=""
-              variant="outlined">
-              {status.map((item, index) => (
-                <MenuItem key={index} value={item}>
-                  {item}
-                </MenuItem>
-              ))}
-            </TextField>
-          </FormField>
         </Grid>
         <Grid container spacing={2}>
           <Grid item xs={8}>
@@ -164,7 +258,7 @@ const ChangeRequestDetails = (props: Props) => {
                       label="Id"
                       variant="outlined"
                       name="ID"
-                      value={data.id}
+                      value={changeRequest?.id}
                       disabled
                     />
                   </Grid>
@@ -175,6 +269,7 @@ const ChangeRequestDetails = (props: Props) => {
                       label="Resource type"
                       variant="outlined"
                       name="resourceType"
+                      disabled
                       {...resourceType}
                     />
                   </Grid>
@@ -185,28 +280,34 @@ const ChangeRequestDetails = (props: Props) => {
                       label="Change source"
                       variant="outlined"
                       name="changeSource"
+                      disabled
                       {...changeSource}
                     />
                   </Grid>
                   <Grid item xs={12}>
                     <TextField
                       style={{width: '100%'}}
-                      id="change_source"
-                      label="Change source"
+                      id="description"
+                      label="Description"
                       variant="outlined"
                       multiline
                       rows={4}
-                      name="name"
+                      name="description"
+                      disabled
+                      {...description}
                     />
                   </Grid>
                 </Grid>
               </FormField>
             </CardAccordion>
             <CardAccordion title={'Target parameters'}>
-              <TableResource valuesTable={valuesTable} />
+              <TableResource valuesTable={changeRequest} />
             </CardAccordion>
-            <CardAccordion title={'Suggested change request schedule'}>
-              <CardSuggested />
+            <CardAccordion title={'Change request schedule'}>
+              <CardChangeRequestSchedule
+                setSchedule={setSchedule}
+                schedule={schedule}
+              />
             </CardAccordion>
           </Grid>
           <Grid item xs={4}>

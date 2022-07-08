@@ -17,7 +17,7 @@ import type { ConcreteRequest } from 'relay-runtime';
 export type ActionExecutionItemStatus = "FAILED" | "PENDING" | "SUCCESSFULL" | "%future added value";
 export type ActionSchedulerStatus = "ACTIVED" | "DEACTIVATED" | "%future added value";
 export type ActionSchedulerType = "MANUAL_EXECUTION" | "ONE_TIME_EXECUTION" | "PERIODICAL_EXECUTION" | "%future added value";
-export type ActionTemplateItemHasFilter = "actionTemplate" | "parameters" | "value" | "%future added value";
+export type ActionTemplateItemHasFilter = "actionTemplate" | "createTime" | "isDeleted" | "parameters" | "updateTime" | "value" | "%future added value";
 export type ActionTemplateType = "AUTOMATION_FLOW" | "CONFIGURATION_PARAMETER" | "%future added value";
 export type ChangeItemStatus = "CANCELLED" | "FAILED" | "IN_EXECUTION" | "PENDING" | "SUCCESSFUL" | "%future added value";
 export type LifecycleStatus = "INSTALLING" | "OPERATING" | "PLANNING" | "RETIRING" | "%future added value";
@@ -41,39 +41,49 @@ export type ActionTemplateItemFilter = {|
 |};
 export type ActionTemplateItemPatch = {|
   actionTemplate?: ?ActionTemplateRef,
-  parameters?: ?ConfigurationParameterTypeRef,
-  value?: ?ParameterRef,
+  createTime?: ?any,
   isDeleted?: ?boolean,
+  parameters?: ?ConfigurationParameterTypeRef,
+  updateTime?: ?any,
+  value?: ?ParameterRef,
 |};
 export type ActionTemplateRef = {|
   actionExecutions?: ?$ReadOnlyArray<ActionExecutionRef>,
   actionTemplateItems?: ?$ReadOnlyArray<ActionTemplateItemRef>,
+  createTime?: ?any,
   id?: ?string,
-  name?: ?string,
   isDeleted?: ?boolean,
+  name?: ?string,
   resourceSpecifications?: ?string,
   type?: ?ActionTemplateType,
+  updateTime?: ?any,
 |};
 export type ActionExecutionRef = {|
+  createTime?: ?any,
   endTime?: ?any,
   id?: ?string,
   items?: ?$ReadOnlyArray<?ActionExecutionItemRef>,
   scheduler?: ?ActionSchedulerRef,
   starTime?: ?any,
   template?: ?ActionTemplateRef,
+  updateTime?: ?any,
 |};
 export type ActionExecutionItemRef = {|
   action?: ?ActionExecutionRef,
+  createTime?: ?any,
   id?: ?string,
   resources?: ?$ReadOnlyArray<?ResourceRef>,
   status?: ?ActionExecutionItemStatus,
+  updateTime?: ?any,
 |};
 export type ResourceRef = {|
   actionScheduler?: ?ActionSchedulerRef,
   available?: ?boolean,
   belongsTo?: ?ResourceRef,
   changeItems?: ?$ReadOnlyArray<?ChangeItemRef>,
+  cmVersions?: ?$ReadOnlyArray<?CMVersionRef>,
   composedOf?: ?$ReadOnlyArray<?ResourceRef>,
+  createTime?: ?any,
   crossConnection?: ?ResourceRef,
   crossconnectionInv?: ?ResourceRef,
   externalId?: ?string,
@@ -93,24 +103,28 @@ export type ResourceRef = {|
   resourceProperties?: ?$ReadOnlyArray<?ResourcePropertyRef>,
   resourceSpecification?: ?string,
   typePlanningSubStatus?: ?TypePlanningSubStatus,
+  updateTime?: ?any,
   usageSubStatus?: ?UsageSubStatus,
 |};
 export type ActionSchedulerRef = {|
   actionTemplate?: ?ActionTemplateRef,
   actions?: ?$ReadOnlyArray<ActionExecutionRef>,
+  createTime?: ?any,
   cron?: ?string,
   date?: ?any,
   description?: ?string,
   id?: ?string,
   name?: ?string,
-  resourceTypeName?: ?string,
   resourceSpecificationName?: ?string,
+  resourceTypeName?: ?string,
   resources?: ?$ReadOnlyArray<ResourceRef>,
   status?: ?ActionSchedulerStatus,
   type?: ?ActionSchedulerType,
+  updateTime?: ?any,
 |};
 export type ChangeItemRef = {|
   booleanValue?: ?boolean,
+  createTime?: ?any,
   floatValue?: ?number,
   id?: ?string,
   intValue?: ?number,
@@ -122,10 +136,12 @@ export type ChangeItemRef = {|
   resource?: ?ResourceRef,
   status?: ?ChangeItemStatus,
   stringValue?: ?string,
+  updateTime?: ?any,
 |};
 export type ConfigurationParameterTypeRef = {|
   booleanValue?: ?boolean,
   category?: ?string,
+  createTime?: ?any,
   externalId?: ?string,
   floatValue?: ?number,
   id?: ?string,
@@ -150,9 +166,11 @@ export type ConfigurationParameterTypeRef = {|
   stringValue?: ?string,
   tags?: ?$ReadOnlyArray<ConfigParamTagRef>,
   type?: ?ParameterKind,
+  updateTime?: ?any,
 |};
 export type ParameterRef = {|
   booleanValue?: ?boolean,
+  createTime?: ?any,
   floatValue?: ?number,
   id?: ?string,
   intValue?: ?number,
@@ -163,21 +181,26 @@ export type ParameterRef = {|
   rangeFromValue?: ?number,
   rangeToValue?: ?number,
   stringValue?: ?string,
+  updateTime?: ?any,
   versionCMs?: ?$ReadOnlyArray<?CMVersionRef>,
 |};
 export type CMVersionRef = {|
+  createTime?: ?any,
   id?: ?string,
   parameters?: ?$ReadOnlyArray<ParameterRef>,
   previous?: ?CMVersionRef,
   resource?: ?ResourceRef,
   status?: ?VersionStatus,
+  updateTime?: ?any,
   validFrom?: ?any,
   validTo?: ?any,
 |};
 export type ConfigParamTagRef = {|
+  createTime?: ?any,
   id?: ?string,
   name?: ?string,
   parameters?: ?$ReadOnlyArray<?ConfigurationParameterTypeRef>,
+  updateTime?: ?any,
 |};
 export type NumericPoolRef = {|
   customLimit?: ?number,
@@ -196,6 +219,7 @@ export type StatusNumericPoolRef = {|
 |};
 export type ResourcePropertyRef = {|
   booleanValue?: ?boolean,
+  createTime?: ?any,
   floatValue?: ?number,
   id?: ?string,
   intValue?: ?number,
@@ -207,13 +231,16 @@ export type ResourcePropertyRef = {|
   resource?: ?ResourceRef,
   resourcePropertyType?: ?string,
   stringValue?: ?string,
+  updateTime?: ?any,
 |};
 export type ActionTemplateItemRef = {|
   actionTemplate?: ?ActionTemplateRef,
+  createTime?: ?any,
   id?: ?string,
-  parameters?: ?ConfigurationParameterTypeRef,
-  value?: ?ParameterRef,
   isDeleted?: ?boolean,
+  parameters?: ?ConfigurationParameterTypeRef,
+  updateTime?: ?any,
+  value?: ?ParameterRef,
 |};
 export type UpdateActionTemplateItemMutationVariables = {|
   input: UpdateActionTemplateItemInput

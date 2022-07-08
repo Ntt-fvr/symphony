@@ -200,11 +200,11 @@ export const AddEditResourceSpecification = (props: Props) => {
   const classes = useStyles();
 
   const filterConfigurationParameter = configurationParameters?.queryConfigurationParameterType?.filter(
-    item => item?.resourceSpecification == dataForm?.id,
+    item => item?.resourceSpecification === dataForm?.id,
   );
 
   const filterActionTemplate = configurationParameters?.queryActionTemplate?.filter(
-    item => item?.resourceSpecifications == dataForm?.id,
+    item => item?.resourceSpecifications === dataForm?.id,
   );
 
   const [

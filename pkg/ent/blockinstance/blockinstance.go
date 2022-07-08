@@ -30,6 +30,10 @@ const (
 	FieldInputs = "inputs"
 	// FieldOutputs holds the string denoting the outputs field in the database.
 	FieldOutputs = "outputs"
+	// FieldInputJSON holds the string denoting the input_json field in the database.
+	FieldInputJSON = "input_json"
+	// FieldOutputJSON holds the string denoting the output_json field in the database.
+	FieldOutputJSON = "output_json"
 	// FieldFailureReason holds the string denoting the failure_reason field in the database.
 	FieldFailureReason = "failure_reason"
 	// FieldBlockInstanceCounter holds the string denoting the block_instance_counter field in the database.
@@ -45,6 +49,8 @@ const (
 	EdgeBlock = "block"
 	// EdgeSubflowInstance holds the string denoting the subflow_instance edge name in mutations.
 	EdgeSubflowInstance = "subflow_instance"
+	// EdgeBlockActivities holds the string denoting the block_activities edge name in mutations.
+	EdgeBlockActivities = "block_activities"
 
 	// Table holds the table name of the blockinstance in the database.
 	Table = "block_instances"
@@ -69,6 +75,13 @@ const (
 	SubflowInstanceInverseTable = "flow_instances"
 	// SubflowInstanceColumn is the table column denoting the subflow_instance relation/edge.
 	SubflowInstanceColumn = "block_instance_subflow_instance"
+	// BlockActivitiesTable is the table the holds the block_activities relation/edge.
+	BlockActivitiesTable = "automation_activities"
+	// BlockActivitiesInverseTable is the table name for the AutomationActivity entity.
+	// It exists in this package in order to avoid circular dependency with the "automationactivity" package.
+	BlockActivitiesInverseTable = "automation_activities"
+	// BlockActivitiesColumn is the table column denoting the block_activities relation/edge.
+	BlockActivitiesColumn = "block_instance_block_activities"
 )
 
 // Columns holds all SQL columns for blockinstance fields.
@@ -79,6 +92,8 @@ var Columns = []string{
 	FieldStatus,
 	FieldInputs,
 	FieldOutputs,
+	FieldInputJSON,
+	FieldOutputJSON,
 	FieldFailureReason,
 	FieldBlockInstanceCounter,
 	FieldStartDate,

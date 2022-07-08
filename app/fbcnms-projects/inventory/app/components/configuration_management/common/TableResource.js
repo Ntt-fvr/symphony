@@ -61,8 +61,9 @@ export type Props = $ReadOnly<{|
 
 const TableResource = (props: Props) => {
   const {valuesTable} = props;
-  const classes = useStyles();
 
+  const classes = useStyles();
+  const items = valuesTable?.items;
   return (
     <div className={classes.root}>
       <TableContainer className={classes.container}>
@@ -76,7 +77,7 @@ const TableResource = (props: Props) => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {valuesTable?.map((item, index) => (
+            {items?.map((item, index) => (
               <StyledTableRow key={index}>
                 <TableCell>
                   <Button variant="text">
@@ -85,13 +86,19 @@ const TableResource = (props: Props) => {
                       variant={'subtitle1'}
                       weight={'medium'}
                       color={'primary'}>
-                      {item.resource}
+                      {item?.resource?.name || null}
                     </Text>
                   </Button>
                 </TableCell>
-                <TableCell>{item.parameter}</TableCell>
-                <TableCell>{item.currentValue}</TableCell>
-                <TableCell>{item.newValue}</TableCell>
+                <TableCell>{item?.parameterType?.name}</TableCell>
+                <TableCell>
+                  {item?.parameterType?.parameters[0]?.stringValue ||
+                    item?.parameterType?.parameters[0]?.intValue ||
+                    item?.parameterType?.parameters[0]?.floatValue}
+                </TableCell>
+                <TableCell>
+                  {item?.stringValue || item?.intValue || item?.floatValue}
+                </TableCell>
               </StyledTableRow>
             ))}
           </TableBody>

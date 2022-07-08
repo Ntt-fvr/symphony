@@ -8,20 +8,24 @@
  * @format
  */
 
+import type {RemoveConfigurationParameterTypeMutationVariables} from '../../mutations/__generated__/RemoveConfigurationParameterTypeMutation.graphql';
+
+import RemoveConfigurationParameterTypeMutation from '../../mutations/RemoveConfigurationParameterTypeMutation';
+
 import * as React from 'react';
 import Button from '@symphony/design-system/components/Button';
+import ButtonDialogMapping from '../configure/ButtonDialogMapping';
 import Checkbox from '@symphony/design-system/components/Checkbox/Checkbox';
 import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutline';
-import DialogMapping from '../configure/DialogMapping';
 import DraggableTableRow from '../draggable/DraggableTableRow';
 import DroppableTableBody from '../draggable/DroppableTableBody';
+import EnumPropertyValueInput from './EnumPropertyValueInput';
 import FormAction from '@symphony/design-system/components/Form/FormAction';
 import FormField from '@symphony/design-system/components/FormField/FormField';
 import IconButton from '@material-ui/core/IconButton';
 import ParameterTypeSelect from './ParameterTypeSelect';
 import ParameterTypesTableDispatcher from './context/property_types/ParameterTypesTableDispatcher';
 import ParameterValueInput from './ParameterValueInput';
-import SubjectIcon from '@material-ui/icons/Subject';
 import Table from '@material-ui/core/Table';
 import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
@@ -34,9 +38,7 @@ import {PlusIcon} from '@symphony/design-system/icons';
 import {isTempId} from '../../common/EntUtils';
 import {makeStyles} from '@material-ui/styles';
 import {sortByIndex} from '../draggable/DraggableUtils';
-import {useContext, useState} from 'react';
-
-import EnumPropertyValueInput from './EnumPropertyValueInput';
+import {useContext} from 'react';
 
 const useStyles = makeStyles(() => ({
   container: {
@@ -104,18 +106,25 @@ const useStyles = makeStyles(() => ({
 }));
 
 type Props = $ReadOnly<{|
-  parameterTypes: Array<any>,
+  parameterTypes?: any,
   supportDelete?: boolean,
+  idRs?: number,
 |}>;
 
 const ExperimentalParametersTypesTable = (props: Props) => {
-  const {supportMandatory = true, parameterTypes, supportDelete} = props;
-  const [openModal, setOpenModal] = useState(false);
+  const {idRs, supportMandatory = true, supportDelete, parameterTypes} = props;
   const classes = useStyles();
   const {dispatch} = useContext(ParameterTypesTableDispatcher);
 
-  const handleModal = () => {
-    setOpenModal(preventState => !preventState);
+  const handleRemove = parameterId => {
+    const variables: RemoveConfigurationParameterTypeMutationVariables = {
+      filter: {
+        id: parameterId,
+      },
+    };
+    RemoveConfigurationParameterTypeMutation(variables, {
+      onCompleted: () => isCompleted(),
+    });
   };
 
   return (
@@ -192,7 +201,7 @@ const ExperimentalParametersTypesTable = (props: Props) => {
               </TableCell>
               <TableCell style={{width: '20%'}} component="div" scope="row">
                 <form className={classes.formField} autoComplete="off">
-                  <ParameterTypeSelect propertyType={parameter} />
+                  <ParameterTypeSelect parameterType={parameter} />
                 </form>
               </TableCell>
               <TableCell style={{width: '20%'}} component="div" scope="row">
@@ -216,22 +225,19 @@ const ExperimentalParametersTypesTable = (props: Props) => {
               </TableCell>
               <TableCell className={classes.checkbox} component="div">
                 <FormAction>
-                  <SubjectIcon
-                    className={classes.mapping}
-                    onClick={handleModal}
-                  />
+                  <ButtonDialogMapping parameter={parameter} />
                 </FormAction>
               </TableCell>
               <TableCell className={classes.checkbox} component="div">
                 <FormField>
                   <Checkbox
-                    checked={!!parameter.isMandatory}
+                    checked={!!parameter.isPrioritary}
                     onChange={checkedNewValue =>
                       dispatch({
                         type: 'UPDATE_PARAMETER_TYPE',
                         value: {
                           ...parameter,
-                          isMandatory: checkedNewValue === 'checked',
+                          isPrioritary: checkedNewValue === 'checked',
                         },
                       })
                     }
@@ -244,12 +250,13 @@ const ExperimentalParametersTypesTable = (props: Props) => {
                   <IconButton aria-label="delete">
                     <DeleteOutlinedIcon
                       color="primary"
-                      onClick={() =>
+                      onClick={() => {
                         dispatch({
                           type: 'REMOVE_PARAMETER_TYPE',
                           id: parameter.id,
-                        })
-                      }
+                        });
+                        handleRemove(parameter.id);
+                      }}
                       disabled={!supportDelete && !isTempId(parameter.id)}
                     />
                   </IconButton>
@@ -262,12 +269,16 @@ const ExperimentalParametersTypesTable = (props: Props) => {
       <FormAction>
         <Button
           variant="text"
-          onClick={() => dispatch({type: 'ADD_PARAMETER_TYPE'})}
+          onClick={() =>
+            dispatch({
+              type: 'ADD_PARAMETER_TYPE',
+              resourceSpecification: idRs,
+            })
+          }
           leftIcon={PlusIcon}>
           <fbt desc="">Add Property</fbt>
         </Button>
       </FormAction>
-      {openModal && <DialogMapping name={'Mapping'} onClose={handleModal} />}
     </div>
   );
 };

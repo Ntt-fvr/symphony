@@ -59,13 +59,13 @@ const useStyles = makeStyles(_theme => ({
       textAlign: 'right',
     },
   },
-  SubmitedSkin: {},
-  FaildSkin: {},
-  CancelSkin: {},
-  In_executionSkin: {},
-  SuccesfulSkin: {},
-  PendingSkin: {},
-  ScheduledSkin: {},
+  SUBMITTEDSkin: {},
+  FAILEDSkin: {},
+  CANCELLEDSkin: {},
+  IN_EXECUTIONSkin: {},
+  SUCCESSFULSkin: {},
+  PENDINGSkin: {},
+  SCHEDULEDSkin: {},
   disabled: {},
   containedVariant: {
     height: '28px',
@@ -78,8 +78,8 @@ const useStyles = makeStyles(_theme => ({
     '&$hasLeftIcon': {
       padding: '4px 16px 4px 8px',
     },
-    //SUBMITED
-    '&$SubmitedSkin': {
+    //SUBMITTED
+    '&$SUBMITTEDSkin': {
       backgroundColor: '#E4F2FF',
       border: '1px solid #3A5FD7',
       '&:not($disabled)': {
@@ -88,8 +88,8 @@ const useStyles = makeStyles(_theme => ({
         },
       },
     },
-    //CANCEL
-    '&$CancelSkin': {
+    //CANCELLEDLED
+    '&$CANCELLEDSkin': {
       backgroundColor: '#FAFCFF',
       border: '1px solid #9DA9BE',
       '&:not($disabled)': {
@@ -98,8 +98,8 @@ const useStyles = makeStyles(_theme => ({
         },
       },
     },
-    //FAILD
-    '&$FaildSkin': {
+    //FAILED
+    '&$FAILEDSkin': {
       backgroundColor: '#FFE8E8',
       border: '1px solid #D4040B',
 
@@ -110,7 +110,7 @@ const useStyles = makeStyles(_theme => ({
       },
     },
     //SCHEDULED
-    '&$ScheduledSkin': {
+    '&$SCHEDULEDSkin': {
       backgroundColor: '#FFF9D8',
       border: '1px solid #D4850D',
       '&:not($disabled)': {
@@ -119,8 +119,8 @@ const useStyles = makeStyles(_theme => ({
         },
       },
     },
-    //SUCCESFUL
-    '&$SuccesfulSkin': {
+    //SUCCESSFUL
+    '&$SUCCESSFULSkin': {
       backgroundColor: '#EBFFE1',
       border: '1px solid #00AF5B',
       '&:not($disabled)': {
@@ -130,7 +130,7 @@ const useStyles = makeStyles(_theme => ({
       },
     },
     //PENDING
-    '&$PendingSkin': {
+    '&$PENDINGSkin': {
       backgroundColor: '#eae7fa',
       border: '1px solid #7B61FF',
       '&:not($disabled)': {
@@ -139,8 +139,8 @@ const useStyles = makeStyles(_theme => ({
         },
       },
     },
-    //EXECUTION
-    '&$In_executionSkin': {
+    //IN_EXECUTION
+    '&$IN_EXECUTIONSkin': {
       backgroundColor: '#faf1ec',
       border: '1px solid #ef9a74',
       '&:not($disabled)': {
@@ -167,13 +167,13 @@ const useStyles = makeStyles(_theme => ({
 
 export type ButtonVariant = 'contained' | 'text';
 export type ButtonSkin =
-  | 'Submited'
-  | 'In_execution'
-  | 'Pending'
-  | 'Succesful'
-  | 'Scheduled'
-  | 'Faild'
-  | 'Cancel'
+  | 'SUBMITTED'
+  | 'IN_EXECUTION'
+  | 'PENDING'
+  | 'SUCCESSFUL'
+  | 'SCHEDULED'
+  | 'FAILED'
+  | 'CANCELLED'
   | 'disabled';
 export type SvgIconComponent =
   | React.ComponentType<SvgIconStyleProps>
@@ -206,7 +206,7 @@ const ButtonAlarmStatus = (
   const {
     className,
     children,
-    skin = 'Submited',
+    skin = 'SUBMITTED',
     disabled: disabledProp = false,
     variant = 'contained',
     useEllipsis = true,

@@ -22,7 +22,7 @@ import Radio from '@material-ui/core/Radio';
 import RadioGroup from '@material-ui/core/RadioGroup';
 import React, {useState} from 'react';
 import Text from '@symphony/design-system/components/Text';
-import UpdateResourceMutation from '../../mutations/UpdateResource';
+import UpdateResourceMutation from '../../mutations/UpdateResourceMutation';
 import moment from 'moment';
 import symphony from '@symphony/design-system/theme/symphony';
 import {

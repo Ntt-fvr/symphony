@@ -23,7 +23,7 @@ export type LifecycleStatus = "INSTALLING" | "OPERATING" | "PLANNING" | "RETIRIN
 export type OperationalSubStatus = "NOT_WORKING" | "WORKING" | "%future added value";
 export type ParameterKind = "bool" | "date" | "datetime_local" | "email" | "enum" | "float" | "gps_location" | "int" | "range" | "string" | "%future added value";
 export type PlanningSubStatus = "ACTIVATED" | "DESACTIVATED" | "%future added value";
-export type ResourceHasFilter = "actionScheduler" | "available" | "belongsTo" | "changeItems" | "composedOf" | "crossConnection" | "crossconnectionInv" | "externalId" | "isDeleted" | "isEditable" | "lifecycleStatus" | "locatedIn" | "logicalLinkInv" | "logicalLinks" | "name" | "numericPools" | "operationalSubStatus" | "physicalLink" | "physicalLinkInv" | "planningSubStatus" | "resourceProperties" | "resourceSpecification" | "typePlanningSubStatus" | "usageSubStatus" | "%future added value";
+export type ResourceHasFilter = "actionScheduler" | "available" | "belongsTo" | "changeItems" | "cmVersions" | "composedOf" | "createTime" | "crossConnection" | "crossconnectionInv" | "externalId" | "isDeleted" | "isEditable" | "lifecycleStatus" | "locatedIn" | "logicalLinkInv" | "logicalLinks" | "name" | "numericPools" | "operationalSubStatus" | "physicalLink" | "physicalLinkInv" | "planningSubStatus" | "resourceProperties" | "resourceSpecification" | "typePlanningSubStatus" | "updateTime" | "usageSubStatus" | "%future added value";
 export type TypePlanningSubStatus = "DESIGNED" | "FEASIBILITY_CHECKED" | "ORDERED" | "PROPOSED" | "%future added value";
 export type UsageSubStatus = "ASSIGNED" | "AVAILABLE" | "NO_AVAILABLE" | "RESERVED" | "TERMINATING" | "%future added value";
 export type VersionStatus = "CURRENT" | "REPLACED" | "%future added value";
@@ -34,6 +34,7 @@ export type UpdateResourceInput = {|
 |};
 export type ResourceFilter = {|
   and?: ?$ReadOnlyArray<?ResourceFilter>,
+  externalId?: ?StringHashFilter,
   has?: ?$ReadOnlyArray<?ResourceHasFilter>,
   id?: ?$ReadOnlyArray<string>,
   locatedIn?: ?StringHashFilter,
@@ -51,7 +52,9 @@ export type ResourcePatch = {|
   available?: ?boolean,
   belongsTo?: ?ResourceRef,
   changeItems?: ?$ReadOnlyArray<?ChangeItemRef>,
+  cmVersions?: ?$ReadOnlyArray<?CMVersionRef>,
   composedOf?: ?$ReadOnlyArray<?ResourceRef>,
+  createTime?: ?any,
   crossConnection?: ?ResourceRef,
   crossconnectionInv?: ?ResourceRef,
   externalId?: ?string,
@@ -70,51 +73,62 @@ export type ResourcePatch = {|
   resourceProperties?: ?$ReadOnlyArray<?ResourcePropertyRef>,
   resourceSpecification?: ?string,
   typePlanningSubStatus?: ?TypePlanningSubStatus,
+  updateTime?: ?any,
   usageSubStatus?: ?UsageSubStatus,
 |};
 export type ActionSchedulerRef = {|
   actionTemplate?: ?ActionTemplateRef,
   actions?: ?$ReadOnlyArray<ActionExecutionRef>,
+  createTime?: ?any,
   cron?: ?string,
   date?: ?any,
   description?: ?string,
   id?: ?string,
   name?: ?string,
-  resourceTypeName?: ?string,
   resourceSpecificationName?: ?string,
+  resourceTypeName?: ?string,
   resources?: ?$ReadOnlyArray<ResourceRef>,
   status?: ?ActionSchedulerStatus,
   type?: ?ActionSchedulerType,
+  updateTime?: ?any,
 |};
 export type ActionTemplateRef = {|
   actionExecutions?: ?$ReadOnlyArray<ActionExecutionRef>,
   actionTemplateItems?: ?$ReadOnlyArray<ActionTemplateItemRef>,
+  createTime?: ?any,
   id?: ?string,
-  name?: ?string,
   isDeleted?: ?boolean,
+  name?: ?string,
   resourceSpecifications?: ?string,
   type?: ?ActionTemplateType,
+  updateTime?: ?any,
 |};
 export type ActionExecutionRef = {|
+  createTime?: ?any,
   endTime?: ?any,
   id?: ?string,
   items?: ?$ReadOnlyArray<?ActionExecutionItemRef>,
   scheduler?: ?ActionSchedulerRef,
   starTime?: ?any,
   template?: ?ActionTemplateRef,
+  updateTime?: ?any,
 |};
 export type ActionExecutionItemRef = {|
   action?: ?ActionExecutionRef,
+  createTime?: ?any,
   id?: ?string,
   resources?: ?$ReadOnlyArray<?ResourceRef>,
   status?: ?ActionExecutionItemStatus,
+  updateTime?: ?any,
 |};
 export type ResourceRef = {|
   actionScheduler?: ?ActionSchedulerRef,
   available?: ?boolean,
   belongsTo?: ?ResourceRef,
   changeItems?: ?$ReadOnlyArray<?ChangeItemRef>,
+  cmVersions?: ?$ReadOnlyArray<?CMVersionRef>,
   composedOf?: ?$ReadOnlyArray<?ResourceRef>,
+  createTime?: ?any,
   crossConnection?: ?ResourceRef,
   crossconnectionInv?: ?ResourceRef,
   externalId?: ?string,
@@ -134,10 +148,12 @@ export type ResourceRef = {|
   resourceProperties?: ?$ReadOnlyArray<?ResourcePropertyRef>,
   resourceSpecification?: ?string,
   typePlanningSubStatus?: ?TypePlanningSubStatus,
+  updateTime?: ?any,
   usageSubStatus?: ?UsageSubStatus,
 |};
 export type ChangeItemRef = {|
   booleanValue?: ?boolean,
+  createTime?: ?any,
   floatValue?: ?number,
   id?: ?string,
   intValue?: ?number,
@@ -149,10 +165,12 @@ export type ChangeItemRef = {|
   resource?: ?ResourceRef,
   status?: ?ChangeItemStatus,
   stringValue?: ?string,
+  updateTime?: ?any,
 |};
 export type ConfigurationParameterTypeRef = {|
   booleanValue?: ?boolean,
   category?: ?string,
+  createTime?: ?any,
   externalId?: ?string,
   floatValue?: ?number,
   id?: ?string,
@@ -177,9 +195,11 @@ export type ConfigurationParameterTypeRef = {|
   stringValue?: ?string,
   tags?: ?$ReadOnlyArray<ConfigParamTagRef>,
   type?: ?ParameterKind,
+  updateTime?: ?any,
 |};
 export type ParameterRef = {|
   booleanValue?: ?boolean,
+  createTime?: ?any,
   floatValue?: ?number,
   id?: ?string,
   intValue?: ?number,
@@ -190,21 +210,26 @@ export type ParameterRef = {|
   rangeFromValue?: ?number,
   rangeToValue?: ?number,
   stringValue?: ?string,
+  updateTime?: ?any,
   versionCMs?: ?$ReadOnlyArray<?CMVersionRef>,
 |};
 export type CMVersionRef = {|
+  createTime?: ?any,
   id?: ?string,
   parameters?: ?$ReadOnlyArray<ParameterRef>,
   previous?: ?CMVersionRef,
   resource?: ?ResourceRef,
   status?: ?VersionStatus,
+  updateTime?: ?any,
   validFrom?: ?any,
   validTo?: ?any,
 |};
 export type ConfigParamTagRef = {|
+  createTime?: ?any,
   id?: ?string,
   name?: ?string,
   parameters?: ?$ReadOnlyArray<?ConfigurationParameterTypeRef>,
+  updateTime?: ?any,
 |};
 export type NumericPoolRef = {|
   customLimit?: ?number,
@@ -223,6 +248,7 @@ export type StatusNumericPoolRef = {|
 |};
 export type ResourcePropertyRef = {|
   booleanValue?: ?boolean,
+  createTime?: ?any,
   floatValue?: ?number,
   id?: ?string,
   intValue?: ?number,
@@ -234,22 +260,30 @@ export type ResourcePropertyRef = {|
   resource?: ?ResourceRef,
   resourcePropertyType?: ?string,
   stringValue?: ?string,
+  updateTime?: ?any,
 |};
 export type ActionTemplateItemRef = {|
   actionTemplate?: ?ActionTemplateRef,
+  createTime?: ?any,
   id?: ?string,
-  parameters?: ?ConfigurationParameterTypeRef,
-  value?: ?ParameterRef,
   isDeleted?: ?boolean,
+  parameters?: ?ConfigurationParameterTypeRef,
+  updateTime?: ?any,
+  value?: ?ParameterRef,
 |};
 export type UpdateResourceMutationVariables = {|
   input: UpdateResourceInput
 |};
 export type UpdateResourceMutationResponse = {|
   +updateResource: ?{|
+    +numUids: ?number,
     +resource: ?$ReadOnlyArray<?{|
-      +id: string
-    |}>
+      +id: string,
+      +name: string,
+      +logicalLinks: ?$ReadOnlyArray<?{|
+        +name: string
+      |}>,
+    |}>,
   |}
 |};
 export type UpdateResourceMutation = {|
@@ -264,8 +298,14 @@ mutation UpdateResourceMutation(
   $input: UpdateResourceInput!
 ) {
   updateResource(input: $input) {
+    numUids
     resource {
       id
+      name
+      logicalLinks {
+        name
+        id
+      }
     }
   }
 }
@@ -281,48 +321,77 @@ var v0 = [
 ],
 v1 = [
   {
-    "alias": null,
-    "args": [
-      {
-        "kind": "Variable",
-        "name": "input",
-        "variableName": "input"
-      }
-    ],
-    "concreteType": "UpdateResourcePayload",
-    "kind": "LinkedField",
-    "name": "updateResource",
-    "plural": false,
-    "selections": [
-      {
-        "alias": null,
-        "args": null,
-        "concreteType": "Resource",
-        "kind": "LinkedField",
-        "name": "resource",
-        "plural": true,
-        "selections": [
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "id",
-            "storageKey": null
-          }
-        ],
-        "storageKey": null
-      }
-    ],
-    "storageKey": null
+    "kind": "Variable",
+    "name": "input",
+    "variableName": "input"
   }
-];
+],
+v2 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "numUids",
+  "storageKey": null
+},
+v3 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "id",
+  "storageKey": null
+},
+v4 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "name",
+  "storageKey": null
+};
 return {
   "fragment": {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Fragment",
     "metadata": null,
     "name": "UpdateResourceMutation",
-    "selections": (v1/*: any*/),
+    "selections": [
+      {
+        "alias": null,
+        "args": (v1/*: any*/),
+        "concreteType": "UpdateResourcePayload",
+        "kind": "LinkedField",
+        "name": "updateResource",
+        "plural": false,
+        "selections": [
+          (v2/*: any*/),
+          {
+            "alias": null,
+            "args": null,
+            "concreteType": "Resource",
+            "kind": "LinkedField",
+            "name": "resource",
+            "plural": true,
+            "selections": [
+              (v3/*: any*/),
+              (v4/*: any*/),
+              {
+                "alias": null,
+                "args": null,
+                "concreteType": "Resource",
+                "kind": "LinkedField",
+                "name": "logicalLinks",
+                "plural": true,
+                "selections": [
+                  (v4/*: any*/)
+                ],
+                "storageKey": null
+              }
+            ],
+            "storageKey": null
+          }
+        ],
+        "storageKey": null
+      }
+    ],
     "type": "Mutation",
     "abstractKey": null
   },
@@ -331,19 +400,58 @@ return {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
     "name": "UpdateResourceMutation",
-    "selections": (v1/*: any*/)
+    "selections": [
+      {
+        "alias": null,
+        "args": (v1/*: any*/),
+        "concreteType": "UpdateResourcePayload",
+        "kind": "LinkedField",
+        "name": "updateResource",
+        "plural": false,
+        "selections": [
+          (v2/*: any*/),
+          {
+            "alias": null,
+            "args": null,
+            "concreteType": "Resource",
+            "kind": "LinkedField",
+            "name": "resource",
+            "plural": true,
+            "selections": [
+              (v3/*: any*/),
+              (v4/*: any*/),
+              {
+                "alias": null,
+                "args": null,
+                "concreteType": "Resource",
+                "kind": "LinkedField",
+                "name": "logicalLinks",
+                "plural": true,
+                "selections": [
+                  (v4/*: any*/),
+                  (v3/*: any*/)
+                ],
+                "storageKey": null
+              }
+            ],
+            "storageKey": null
+          }
+        ],
+        "storageKey": null
+      }
+    ]
   },
   "params": {
-    "cacheID": "fbfec567a5edf33318829bc5a49aba5d",
+    "cacheID": "b2f80383e9723419a7fc90d4d833b867",
     "id": null,
     "metadata": {},
     "name": "UpdateResourceMutation",
     "operationKind": "mutation",
-    "text": "mutation UpdateResourceMutation(\n  $input: UpdateResourceInput!\n) {\n  updateResource(input: $input) {\n    resource {\n      id\n    }\n  }\n}\n"
+    "text": "mutation UpdateResourceMutation(\n  $input: UpdateResourceInput!\n) {\n  updateResource(input: $input) {\n    numUids\n    resource {\n      id\n      name\n      logicalLinks {\n        name\n        id\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = '0b281fcbd379fc4f7323a636e078e354';
+(node/*: any*/).hash = '4c3b644d19fb8c2eb0e08192ad6d828d';
 
 module.exports = node;

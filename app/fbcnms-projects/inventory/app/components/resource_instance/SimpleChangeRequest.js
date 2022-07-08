@@ -14,6 +14,7 @@ import CardPlusDnD from '../CardPlusDnD';
 import DialogStatus from '../configure/DialogStatus';
 import Grid from '@material-ui/core/Grid';
 import {CardSuggested} from '../CardSuggested';
+import {isTempId} from '../../common/EntUtils';
 import {makeStyles} from '@material-ui/styles';
 import {useState} from 'react';
 
@@ -33,12 +34,25 @@ type Props = $ReadOnly<{|
   handleSimpleChangeRequest: any,
 |}>;
 
+const DEFAULT_DATA_SCHEDULE = {
+  date: new Date(),
+  day: 'MONDAY',
+  type: 'AS_SOON_AS_APPROVED',
+};
+
 const SimpleChangeRequest = (props: Props) => {
-  const {handleSimpleChangeRequest} = props;
+  const {handleSimpleChangeRequest, cmVersion, resource} = props;
+  const [parameters, setParameters] = useState([]);
+  const [schedule, setSchedule] = useState(DEFAULT_DATA_SCHEDULE);
+  const [description, setDescription] = useState('');
   const classes = useStyles();
   const [openModalStatus, setOpenModalStatus] = useState(false);
-  const handelModal = () => {
+  const handleModal = () => {
     setOpenModalStatus(prevStateOpenModal => !prevStateOpenModal);
+  };
+  const handleOnClose = () => {
+    setOpenModalStatus(prevStateOpenModal => !prevStateOpenModal);
+    setSchedule(DEFAULT_DATA_SCHEDULE);
   };
 
   return (
@@ -61,27 +75,43 @@ const SimpleChangeRequest = (props: Props) => {
         </Grid>
         <Grid>
           <Button
+            data-testid="btn-submit"
+            disabled={parameters.filter(p => !isTempId(p.id)).length === 0}
             variant="contained"
             color="primary"
             className={classes.buttons}
-            onClick={() => handelModal()}>
+            onClick={() => handleModal()}>
             Submit
           </Button>
         </Grid>
       </Grid>
       <Grid>
-        <CardPlusDnD />
+        <CardPlusDnD
+          data-testid="card-plus-dnd"
+          onChange={setParameters}
+          parameters={parameters}
+          cmVersionParams={cmVersion.parameters}
+        />
       </Grid>
       <Grid>
-        <CardSuggested />
+        <CardSuggested
+          data-testid="card-suggested"
+          onSchedule={setSchedule}
+          schedule={schedule}
+        />
       </Grid>
       {openModalStatus && (
         <DialogStatus
+          data-testid="dialog-status"
+          description={description}
+          onChangeDescription={setDescription}
+          cmVersion={cmVersion}
+          schedule={schedule}
+          parameters={parameters.filter(p => !isTempId(p.id))}
           onClick={() => handleSimpleChangeRequest()}
           open={openModalStatus}
-          onClose={() =>
-            setOpenModalStatus(prevStateOpenModal => !prevStateOpenModal)
-          }
+          resource={resource}
+          onClose={handleOnClose}
         />
       )}
     </Grid>

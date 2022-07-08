@@ -69,7 +69,6 @@ const flowInstanceQuery = graphql`
         status
         startDate
         endDate
-        bssCode
         serviceInstanceCode
         template {
           id

@@ -7,6 +7,7 @@
  * @flow
  * @format
  */
+
 import type {
   UpdateResourceMutation,
   UpdateResourceMutationResponse,
@@ -14,7 +15,6 @@ import type {
 } from './__generated__/UpdateResourceMutation.graphql';
 
 import type {MutationCallbacks} from './MutationCallbacks.js';
-
 import type {SelectorStoreUpdater} from 'relay-runtime';
 
 import RelayEnvironment from '../common/RelayEnvironment.js';
@@ -23,8 +23,13 @@ import {commitMutation, graphql} from 'react-relay';
 const mutation = graphql`
   mutation UpdateResourceMutation($input: UpdateResourceInput!) {
     updateResource(input: $input) {
+      numUids
       resource {
         id
+        name
+        logicalLinks {
+          name
+        }
       }
     }
   }
