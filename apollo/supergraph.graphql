@@ -4958,15 +4958,21 @@ type FloorPlanScale {
 }
 
 type Flow implements Node {
+  author: User!
   blocks: [Block!]!
   connectors: [Connector!]!
+  creationDate: Time!
   description: String
   draft: FlowDraft
+  editor: User!
   endParamDefinitions: [VariableDefinition!]!
+  failedInstances: Int!
   id: ID!
   name: String!
   newInstancesPolicy: FlowNewInstancesPolicy!
+  runningInstances: Int!
   status: FlowStatus!
+  updateTime: Time!
 }
 
 """A connection to a list of Flows."""
@@ -5126,6 +5132,7 @@ type FlowExecutionTemplate implements Node {
 
 type FlowInstance implements Node {
   blocks: [BlockInstance!]!
+  bssCode: String
   endDate: Time
   id: ID!
   serviceInstanceCode: String
@@ -5197,9 +5204,12 @@ enum FlowInstanceOrderField {
 
 enum FlowInstanceStatus {
   CANCELED
+  CLOSED
   COMPLETED
   FAILED
-  IN_PROGRESS
+  FAILING
+  PAUSED
+  RUNNING
 }
 
 enum FlowNewInstancesPolicy {
@@ -11337,6 +11347,7 @@ input StartBlockInput {
 }
 
 input StartFlowInput {
+  bssCode: String
   flowID: ID!
   params: [VariableValueInput]!
   startDate: Time!

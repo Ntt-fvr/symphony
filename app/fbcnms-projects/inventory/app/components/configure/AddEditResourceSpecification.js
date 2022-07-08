@@ -8,37 +8,46 @@
  * @format
  */
 
-import Button from '@material-ui/core/Button';
-import Card from '@symphony/design-system/components/Card/Card';
-import CardHeader from '@symphony/design-system/components/Card/CardHeader';
-import ConfigureTitleSubItem from '../assurance/common/ConfigureTitleSubItem';
-import Grid from '@material-ui/core/Grid';
-
-import React, {useMemo, useState} from 'react';
-import RelationshipTypeItem from './RelationshipTypeItem';
-import Text from '@symphony/design-system/components/Text';
-import TextField from '@material-ui/core/TextField';
-import fbt from 'fbt';
-import {makeStyles} from '@material-ui/styles';
-
+import type {AddConfigurationParameterTypeMutationResponse} from '../../mutations/__generated__/AddConfigurationParameterTypeMutation.graphql';
+import type {AddConfigurationParameterTypeMutationVariables} from '../../mutations/__generated__/AddConfigurationParameterTypeMutation.graphql';
+import type {AddEditResourceSpecificationQuery} from './__generated__/AddEditResourceSpecificationQuery.graphql';
 import type {AddResourceSpecificationMutationVariables} from '../../mutations/__generated__/AddResourceSpecificationMutation.graphql';
 import type {EditResourceSpecificationMutationVariables} from '../../mutations/__generated__/EditResourceSpecificationMutation.graphql';
+import type {MutationCallbacks} from '../../mutations/MutationCallbacks';
 import type {ResourceSpecifications} from './EditResourceTypeItem';
 
 import ActionTypesTableDispatcher from '../action_catalog/context/ActionTypesTableDispactcher';
 import AddConfigurationParameterMutation from '../../mutations/AddConfigurationParameter';
+import AddConfigurationParameterTypeMutation from '../../mutations/AddConfigurationParameterTypeMutation';
 import AddResourceSpecificationMutation from '../../mutations/AddResourceSpecificationMutation';
+import Button from '@material-ui/core/Button';
+import Card from '@symphony/design-system/components/Card/Card';
+import CardHeader from '@symphony/design-system/components/Card/CardHeader';
+import ConfigureTitleSubItem from '../assurance/common/ConfigureTitleSubItem';
 import EditResourceSpecificationMutation from '../../mutations/EditResourceSpecificationMutation';
 import ExpandingPanel from '@fbcnms/ui/components/ExpandingPanel';
 import ExperimentalParametersTypesTable from '../form/ExperimentalParametersTypesTable';
 import ExperimentalPropertyTypesTable from '../form/ExperimentalPropertyTypesTable';
+import Grid from '@material-ui/core/Grid';
+import MenuItem from '@material-ui/core/MenuItem';
 import ParameterTypesTableDispatcher from '../form/context/property_types/ParameterTypesTableDispatcher';
 import PropertyTypesTableDispatcher from '../form/context/property_types/PropertyTypesTableDispatcher';
+import React, {useMemo, useState} from 'react';
+import RelationshipTypeItem from './RelationshipTypeItem';
 import SaveDialogConfirm from './SaveDialogConfirm';
 import TableConfigureAction from '../action_catalog/TableConfigureAction';
+import TextField from '@material-ui/core/TextField';
 import UpdateonfigurationParameterTypeMutation from '../../mutations/UpdateConfigurationParameterType';
+import fbt from 'fbt';
+import inventoryTheme from '../../common/theme';
+import {camelCase, omit, startCase} from 'lodash';
+import {convertParameterTypeToMutationInput} from '../../common/ParameterType';
 import {convertPropertyTypeToMutationInput} from '../../common/PropertyType';
+import {convertTableTypeToMutationInput} from '../context/TableTypeState';
 import {graphql} from 'relay-runtime';
+import {isTempId} from '../../common/EntUtils';
+import {makeStyles} from '@material-ui/styles';
+import {toMutableParameterType} from '../../common/ParameterType';
 import {toMutablePropertyType} from '../../common/PropertyType';
 import {useActionTypesReducer} from '../action_catalog/context/ActionTypesTableState';
 import {useDisabledButton} from '../assurance/common/useDisabledButton';
@@ -49,41 +58,14 @@ import {useParameterTypesReducer} from '../form/context/property_types/Parameter
 import {usePropertyTypesReducer} from '../form/context/property_types/PropertyTypesTableState';
 import {useValidationEdit} from '../assurance/common/useValidation';
 
-import type {AddEditResourceSpecificationQuery} from './__generated__/AddEditResourceSpecificationQuery.graphql';
-
 const useStyles = makeStyles(() => ({
   root: {
     padding: '24px 25px 34px 34px',
     margin: '0',
   },
   formField: {
-    margin: '0 22px',
-    '& .MuiOutlinedInput-notchedOutline': {
-      borderColor: '#B8C2D3',
-    },
-    '& .Mui-focused .MuiOutlinedInput-notchedOutline': {
-      borderColor: '#3984FF',
-    },
-    '& .MuiInputLabel-outlined.MuiInputLabel-shrink': {
-      transform: 'translate(14px, -3px) scale(0.75)',
-    },
-    '& .MuiFormControl-root': {
-      marginBottom: '41px',
-      '&:hover .MuiOutlinedInput-notchedOutline': {
-        borderColor: '#3984FF',
-      },
-    },
-    '& .MuiOutlinedInput-input': {
-      paddingTop: '7px',
-      paddingBottom: '7px',
-      fontSize: '14px',
-      display: 'flex',
-      alignItems: 'center',
-    },
-    '& label': {
-      fontSize: '14px',
-      lineHeight: '8px',
-    },
+    margin: '0 22px 41px 22px',
+    ...inventoryTheme.formField,
   },
   header: {
     marginBottom: '1rem',
@@ -100,7 +82,6 @@ const useStyles = makeStyles(() => ({
 const ConfigurationParameters = graphql`
   query AddEditResourceSpecificationQuery {
     queryConfigurationParameterType {
-      resourceSpecification
       name
       id
       booleanValue
@@ -114,18 +95,18 @@ const ConfigurationParameters = graphql`
       isListable
       isMandatory
       isPrioritary
-      latitudeValue
-      longitudeValue
       mappingIn
       mappingOut
       nodeType
-      rangeFromValue
-      rangeToValue
       rawValue
       resourceSpecification
       stringValue
       type
       __typename
+      tags {
+        id
+        name
+      }
     }
     queryActionTemplate {
       id
@@ -151,35 +132,19 @@ const ConfigurationParameters = graphql`
 type ResourceSpecification = {
   data: {
     name: string,
+    vendor: string,
   },
 };
 
 type Props = $ReadOnly<{|
   dataForm: ResourceSpecifications,
+  vendorData?: any,
   formValues: ResourceSpecifications,
   editMode: boolean,
   closeForm: () => void,
   isCompleted: () => void,
   filterData: Array<ResourceSpecifications>,
 |}>;
-
-function convertParameterTypeToMutationInput(params) {
-  return {
-    booleanValue: params?.booleanValue,
-    floatValue: params?.floatValue,
-    index: params?.index,
-    intValue: params?.intValue,
-    isEditable: params?.isEditable,
-    latitudeValue: params?.latitudeValue,
-    longitudeValue: params?.longitudeValue,
-    name: params?.name,
-    nodeType: params?.nodeType,
-    rangeFromValue: params?.rangeFromValue,
-    rangeToValue: params?.rangeToValue,
-    stringValue: params?.stringValue,
-    type: params?.type,
-  };
-}
 
 export const AddEditResourceSpecification = (props: Props) => {
   const {
@@ -189,15 +154,24 @@ export const AddEditResourceSpecification = (props: Props) => {
     isCompleted,
     editMode,
     filterData,
+    vendorData,
   } = props;
   const [dialogSaveForm, setDialogSaveForm] = useState(false);
   const [dialogCancelForm, setDialogCancelForm] = useState(false);
-  const [configurationParameters, setConfigurationParametes] = useState(
+
+  const classes = useStyles();
+
+  const [configurationParameters, setConfigurationParameters] = useState(
     useLazyLoadQuery<AddEditResourceSpecificationQuery>(
       ConfigurationParameters,
     ),
   );
-  const classes = useStyles();
+
+  const [dataCallback, setDataCallback] = useState();
+
+  const callback = data => {
+    setDataCallback(data);
+  };
 
   const filterConfigurationParameter = configurationParameters?.queryConfigurationParameterType?.filter(
     item => item?.resourceSpecification === dataForm?.id,
@@ -211,16 +185,19 @@ export const AddEditResourceSpecification = (props: Props) => {
     resourceSpecification,
     setResourceSpecification,
   ] = useState<ResourceSpecification>({data: {}});
+
   const [propertyTypes, propertyTypesDispatcher] = usePropertyTypesReducer(
     (dataForm?.resourcePropertyTypes ?? [])
       .filter(Boolean)
       .map(toMutablePropertyType),
   );
-  const [parameterTypes, parameterTypesDispacher] = useParameterTypesReducer(
-    (filterConfigurationParameter ?? [])
+
+  const [parameterTypes, parameterTypesDispacher] = useParameterTypesReducer({
+    parameterTypes: (filterConfigurationParameter ?? [])
       .filter(Boolean)
-      .map(toMutablePropertyType),
-  );
+      .map(toMutableParameterType),
+    resourceSpecification: dataForm?.id,
+  });
 
   const currentParams = (filterConfigurationParameter ?? [])
     .filter(Boolean)
@@ -229,7 +206,15 @@ export const AddEditResourceSpecification = (props: Props) => {
     (filterActionTemplate ?? []).filter(Boolean),
   );
 
+  const filterEdit = parameterTypes.filter(item => item.name !== item.oldName);
+
+  const editOneToOne = filterEdit.map(item => item);
+
+  const newParameter = parameterTypes?.filter(item => isTempId(item?.id));
+
   const nameEdit = useFormInput(dataForm.name);
+
+  const vendorEdit = useFormInput(dataForm?.vendor?.id);
 
   const namesFilter = filterData?.map(item => item.name);
 
@@ -240,11 +225,13 @@ export const AddEditResourceSpecification = (props: Props) => {
       ) || []
     );
   };
+
   const handleDisable = useDisabledButton(
-    resourceSpecification.data,
+    omit(resourceSpecification.data, 'vendor'),
     namesFilter,
     1,
   );
+
   const dataInputsObject = [nameEdit.value];
 
   const handleDisableEdit = useDisabledButtonEdit(
@@ -277,36 +264,32 @@ export const AddEditResourceSpecification = (props: Props) => {
       input: {
         name: resourceSpecification.data.name,
         resourceType: formValues.id,
+        vendor: resourceSpecification.data.vendor,
         resourcePropertyTypes: convertPropertyTypeToMutationInput(
           propertyTypes,
         ),
       },
     };
 
-    const response = {
+    const response: MutationCallbacks<AddConfigurationParameterTypeMutationResponse> = {
       onCompleted: response => {
-        const configParamVariables = {
-          input: convertPropertyTypeToMutationInput(parameterTypes).map(
-            item => {
-              return {
-                ...convertParameterTypeToMutationInput(item),
-                resourceSpecification: response.addResourceSpecification?.id,
-              };
-            },
+        const variablesCP: AddConfigurationParameterTypeMutationVariables = {
+          input: convertParameterTypeToMutationInput(
+            parameterTypes,
+            response?.addResourceSpecification.id,
           ),
         };
 
-        AddConfigurationParameterMutation(configParamVariables, {
+        AddConfigurationParameterTypeMutation(variablesCP, {
           onCompleted: () => {
             isCompleted();
             setResourceSpecification({data: {}});
-            setConfigurationParametes({data: {}});
+            setConfigurationParameters({});
             closeForm();
           },
         });
       },
     };
-
     AddResourceSpecificationMutation(variables, response);
   }
 
@@ -385,7 +368,9 @@ export const AddEditResourceSpecification = (props: Props) => {
         alignItems="center">
         <Grid item xs>
           <ConfigureTitleSubItem
-            title={fbt('Resources/', '') + ` ${dataForm.name}/`}
+            title={
+              fbt('Resources/', '') + ` ${editMode ? dataForm.name + '/' : ''}`
+            }
             tag={' Resource specification'}
           />
         </Grid>
@@ -441,6 +426,40 @@ export const AddEditResourceSpecification = (props: Props) => {
               )}
             </form>
           </Grid>
+          <Grid item xs={4}>
+            <form className={classes.formField} autoComplete="off">
+              {editMode ? (
+                <TextField
+                  required
+                  select
+                  label="Vendor"
+                  variant="outlined"
+                  fullWidth
+                  {...vendorEdit}>
+                  {vendorData?.map((item, index) => (
+                    <MenuItem key={index} value={item.id}>
+                      {startCase(camelCase(item.name))}
+                    </MenuItem>
+                  ))}
+                </TextField>
+              ) : (
+                <TextField
+                  required
+                  select
+                  label="Vendor"
+                  name="vendor"
+                  onChange={handleChange}
+                  variant="outlined"
+                  fullWidth>
+                  {vendorData?.map((item, index) => (
+                    <MenuItem key={index} value={item.id}>
+                      {startCase(camelCase(item.name))}
+                    </MenuItem>
+                  ))}
+                </TextField>
+              )}
+            </form>
+          </Grid>
         </Grid>
       </Card>
       <Card margins="none">
@@ -457,10 +476,14 @@ export const AddEditResourceSpecification = (props: Props) => {
       <Card margins="none">
         <ExpandingPanel title="Configuration parameters">
           <ParameterTypesTableDispatcher.Provider
-            value={{dispatch: parameterTypesDispacher, parameterTypes}}>
+            value={{
+              dispatch: parameterTypesDispacher,
+              parameterTypes,
+            }}>
             <ExperimentalParametersTypesTable
               supportDelete={true}
               parameterTypes={parameterTypes}
+              idRs={dataForm?.id}
             />
           </ParameterTypesTableDispatcher.Provider>
         </ExpandingPanel>
@@ -514,12 +537,7 @@ export const AddEditResourceSpecification = (props: Props) => {
           }
         />
       )}
-      <Grid className={classes.relationship} item xs={12}>
-        <Text weight={'bold'} variant={'h6'}>
-          Relationship types definition
-        </Text>
-      </Grid>
-      <RelationshipTypeItem dataForm={formValues} />
+      <RelationshipTypeItem callback={callback} dataForm={formValues} />
     </div>
   );
 };

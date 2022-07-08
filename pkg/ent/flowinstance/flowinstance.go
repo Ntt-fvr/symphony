@@ -148,15 +148,18 @@ var (
 // Status defines the type for the status enum field.
 type Status string
 
-// StatusInProgress is the default Status.
-const DefaultStatus = StatusInProgress
+// StatusRunning is the default Status.
+const DefaultStatus = StatusRunning
 
 // Status values.
 const (
-	StatusInProgress Status = "IN_PROGRESS"
-	StatusFailed     Status = "FAILED"
-	StatusCompleted  Status = "COMPLETED"
-	StatusCancelled  Status = "CANCELED"
+	StatusRunning   Status = "RUNNING"
+	StatusFailed    Status = "FAILED"
+	StatusFailing   Status = "FAILING"
+	StatusCompleted Status = "COMPLETED"
+	StatusCancelled Status = "CANCELED"
+	StatusPaused    Status = "PAUSED"
+	StatusClosed    Status = "CLOSED"
 )
 
 func (s Status) String() string {
@@ -166,7 +169,7 @@ func (s Status) String() string {
 // StatusValidator is a validator for the "status" field enum values. It is called by the builders before save.
 func StatusValidator(s Status) error {
 	switch s {
-	case StatusInProgress, StatusFailed, StatusCompleted, StatusCancelled:
+	case StatusRunning, StatusFailed, StatusFailing, StatusCompleted, StatusCancelled, StatusPaused, StatusClosed:
 		return nil
 	default:
 		return fmt.Errorf("flowinstance: invalid enum value for status field: %q", s)
