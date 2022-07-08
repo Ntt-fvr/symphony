@@ -13252,6 +13252,6 @@ enum core__Purpose {
 scalar join__FieldSet
 
 enum join__Graph {
-    DGRAPHSERVICE @join__graph(name: "dgraphservice" url: "http://alpha:8080/graphql")
-    SYMPHONY @join__graph(name: "symphony" url: "http://graph/query")
+  DGRAPHSERVICE @join__graph(name: "dgraphservice" url: "http://dgraph-dgraph-alpha.dgraph.svc.cluster.local:8080/graphql")
+  SYMPHONY @join__graph(name: "symphony" url: "http://symphony-graph/query")
 }
