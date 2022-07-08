@@ -283,6 +283,20 @@ export type UpdateResourceMutationResponse = {|
       +typePlanningSubStatus: ?TypePlanningSubStatus,
       +usageSubStatus: ?UsageSubStatus,
       +operationalSubStatus: ?OperationalSubStatus,
+      +resourceProperties: ?$ReadOnlyArray<?{|
+        +booleanValue: ?boolean,
+        +createTime: ?any,
+        +floatValue: ?number,
+        +id: string,
+        +intValue: ?number,
+        +latitudeValue: ?number,
+        +longitudeValue: ?number,
+        +rangeFromValue: ?number,
+        +rangeToValue: ?number,
+        +rawValue: ?string,
+        +stringValue: ?string,
+        +updateTime: ?any,
+      |}>,
       +logicalLinks: ?$ReadOnlyArray<?{|
         +name: string
       |}>,
@@ -314,6 +328,20 @@ mutation UpdateResourceMutation(
       typePlanningSubStatus
       usageSubStatus
       operationalSubStatus
+      resourceProperties {
+        booleanValue
+        createTime
+        floatValue
+        id
+        intValue
+        latitudeValue
+        longitudeValue
+        rangeFromValue
+        rangeToValue
+        rawValue
+        stringValue
+        updateTime
+      }
       logicalLinks {
         name
         id
@@ -421,6 +449,95 @@ v13 = {
   "kind": "ScalarField",
   "name": "operationalSubStatus",
   "storageKey": null
+},
+v14 = {
+  "alias": null,
+  "args": null,
+  "concreteType": "ResourceProperty",
+  "kind": "LinkedField",
+  "name": "resourceProperties",
+  "plural": true,
+  "selections": [
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "booleanValue",
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "createTime",
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "floatValue",
+      "storageKey": null
+    },
+    (v3/*: any*/),
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "intValue",
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "latitudeValue",
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "longitudeValue",
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "rangeFromValue",
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "rangeToValue",
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "rawValue",
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "stringValue",
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "updateTime",
+      "storageKey": null
+    }
+  ],
+  "storageKey": null
 };
 return {
   "fragment": {
@@ -457,6 +574,7 @@ return {
               (v11/*: any*/),
               (v12/*: any*/),
               (v13/*: any*/),
+              (v14/*: any*/),
               {
                 "alias": null,
                 "args": null,
@@ -513,6 +631,7 @@ return {
               (v11/*: any*/),
               (v12/*: any*/),
               (v13/*: any*/),
+              (v14/*: any*/),
               {
                 "alias": null,
                 "args": null,
@@ -535,16 +654,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "611845b268bf1a39e8bd5fac63c09a5f",
+    "cacheID": "d2e932c95dba9370832c42678acf5ac4",
     "id": null,
     "metadata": {},
     "name": "UpdateResourceMutation",
     "operationKind": "mutation",
-    "text": "mutation UpdateResourceMutation(\n  $input: UpdateResourceInput!\n) {\n  updateResource(input: $input) {\n    numUids\n    resource {\n      id\n      name\n      externalId\n      locatedIn\n      resourceSpecification\n      isDeleted\n      lifecycleStatus\n      planningSubStatus\n      typePlanningSubStatus\n      usageSubStatus\n      operationalSubStatus\n      logicalLinks {\n        name\n        id\n      }\n    }\n  }\n}\n"
+    "text": "mutation UpdateResourceMutation(\n  $input: UpdateResourceInput!\n) {\n  updateResource(input: $input) {\n    numUids\n    resource {\n      id\n      name\n      externalId\n      locatedIn\n      resourceSpecification\n      isDeleted\n      lifecycleStatus\n      planningSubStatus\n      typePlanningSubStatus\n      usageSubStatus\n      operationalSubStatus\n      resourceProperties {\n        booleanValue\n        createTime\n        floatValue\n        id\n        intValue\n        latitudeValue\n        longitudeValue\n        rangeFromValue\n        rangeToValue\n        rawValue\n        stringValue\n        updateTime\n      }\n      logicalLinks {\n        name\n        id\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = '465e61b84f8951d9a8bba60f32c2b86f';
+(node/*: any*/).hash = '8e8b24c955514c646d9991c1c0dc0c1a';
 
 module.exports = node;

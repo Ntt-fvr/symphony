@@ -46,8 +46,6 @@ export type ResourceCardQueryResponse = {|
             +id: string,
             +name: string,
             +type: ResourcePropertyKind,
-            +nodeType: ?string,
-            +index: ?number,
             +stringValue: ?string,
             +intValue: ?number,
             +booleanValue: ?boolean,
@@ -56,11 +54,6 @@ export type ResourceCardQueryResponse = {|
             +longitudeValue: ?number,
             +rangeFromValue: ?number,
             +rangeToValue: ?number,
-            +isEditable: ?boolean,
-            +isMandatory: ?boolean,
-            +isInstanceProperty: ?boolean,
-            +isDeleted: ?boolean,
-            +category: ?string,
           |}>,
         |}>,
       |}
@@ -112,8 +105,6 @@ query ResourceCardQuery {
             id
             name
             type
-            nodeType
-            index
             stringValue
             intValue
             booleanValue
@@ -122,11 +113,6 @@ query ResourceCardQuery {
             longitudeValue
             rangeFromValue
             rangeToValue
-            isEditable
-            isMandatory
-            isInstanceProperty
-            isDeleted
-            category
           }
         }
       }
@@ -162,14 +148,7 @@ v1 = {
   "name": "name",
   "storageKey": null
 },
-v2 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "isDeleted",
-  "storageKey": null
-},
-v3 = [
+v2 = [
   {
     "alias": null,
     "args": null,
@@ -194,7 +173,13 @@ v3 = [
         "name": "resourceSpecification",
         "storageKey": null
       },
-      (v2/*: any*/),
+      {
+        "alias": null,
+        "args": null,
+        "kind": "ScalarField",
+        "name": "isDeleted",
+        "storageKey": null
+      },
       {
         "alias": null,
         "args": null,
@@ -290,20 +275,6 @@ v3 = [
                         "alias": null,
                         "args": null,
                         "kind": "ScalarField",
-                        "name": "nodeType",
-                        "storageKey": null
-                      },
-                      {
-                        "alias": null,
-                        "args": null,
-                        "kind": "ScalarField",
-                        "name": "index",
-                        "storageKey": null
-                      },
-                      {
-                        "alias": null,
-                        "args": null,
-                        "kind": "ScalarField",
                         "name": "stringValue",
                         "storageKey": null
                       },
@@ -354,35 +325,6 @@ v3 = [
                         "args": null,
                         "kind": "ScalarField",
                         "name": "rangeToValue",
-                        "storageKey": null
-                      },
-                      {
-                        "alias": null,
-                        "args": null,
-                        "kind": "ScalarField",
-                        "name": "isEditable",
-                        "storageKey": null
-                      },
-                      {
-                        "alias": null,
-                        "args": null,
-                        "kind": "ScalarField",
-                        "name": "isMandatory",
-                        "storageKey": null
-                      },
-                      {
-                        "alias": null,
-                        "args": null,
-                        "kind": "ScalarField",
-                        "name": "isInstanceProperty",
-                        "storageKey": null
-                      },
-                      (v2/*: any*/),
-                      {
-                        "alias": null,
-                        "args": null,
-                        "kind": "ScalarField",
-                        "name": "category",
                         "storageKey": null
                       }
                     ],
@@ -455,7 +397,7 @@ return {
     "kind": "Fragment",
     "metadata": null,
     "name": "ResourceCardQuery",
-    "selections": (v3/*: any*/),
+    "selections": (v2/*: any*/),
     "type": "Query",
     "abstractKey": null
   },
@@ -464,19 +406,19 @@ return {
     "argumentDefinitions": [],
     "kind": "Operation",
     "name": "ResourceCardQuery",
-    "selections": (v3/*: any*/)
+    "selections": (v2/*: any*/)
   },
   "params": {
-    "cacheID": "349d74bfbc8808cbc5cb4a23f665de04",
+    "cacheID": "96c35afe3981e0eb5bab576ad0ab19bf",
     "id": null,
     "metadata": {},
     "name": "ResourceCardQuery",
     "operationKind": "query",
-    "text": "query ResourceCardQuery {\n  queryResource {\n    id\n    name\n    locatedIn\n    resourceSpecification\n    isDeleted\n    lifecycleStatus\n    typePlanningSubStatus\n    planningSubStatus\n    usageSubStatus\n    operationalSubStatus\n  }\n  resourceTypes {\n    edges {\n      node {\n        id\n        name\n        resourceSpecification {\n          id\n          name\n          resourcePropertyTypes {\n            id\n            name\n            type\n            nodeType\n            index\n            stringValue\n            intValue\n            booleanValue\n            floatValue\n            latitudeValue\n            longitudeValue\n            rangeFromValue\n            rangeToValue\n            isEditable\n            isMandatory\n            isInstanceProperty\n            isDeleted\n            category\n          }\n        }\n      }\n    }\n  }\n  resourceSpecifications {\n    edges {\n      node {\n        id\n        name\n        resourceType {\n          id\n          name\n        }\n      }\n    }\n  }\n}\n"
+    "text": "query ResourceCardQuery {\n  queryResource {\n    id\n    name\n    locatedIn\n    resourceSpecification\n    isDeleted\n    lifecycleStatus\n    typePlanningSubStatus\n    planningSubStatus\n    usageSubStatus\n    operationalSubStatus\n  }\n  resourceTypes {\n    edges {\n      node {\n        id\n        name\n        resourceSpecification {\n          id\n          name\n          resourcePropertyTypes {\n            id\n            name\n            type\n            stringValue\n            intValue\n            booleanValue\n            floatValue\n            latitudeValue\n            longitudeValue\n            rangeFromValue\n            rangeToValue\n          }\n        }\n      }\n    }\n  }\n  resourceSpecifications {\n    edges {\n      node {\n        id\n        name\n        resourceType {\n          id\n          name\n        }\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = '213f74a0ed052db33bddc5d6252c8b9b';
+(node/*: any*/).hash = '6167170c1d2d1f007b44c99d5c9585cf';
 
 module.exports = node;

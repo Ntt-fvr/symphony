@@ -52,6 +52,23 @@ export const toMutableTableType = (
   resourceSpecification: immutableTableType.resourceSpecification,
 });
 
+export const toMutableProperty = (immutablePropertyType: T): T => ({
+  id: immutablePropertyType.id,
+  type: immutablePropertyType.type,
+  name: immutablePropertyType.name,
+  booleanValue: immutablePropertyType.booleanValue,
+  stringValue: immutablePropertyType.stringValue,
+  intValue: immutablePropertyType.intValue,
+  floatValue: immutablePropertyType.floatValue,
+  latitudeValue: immutablePropertyType.latitudeValue,
+  longitudeValue: immutablePropertyType.longitudeValue,
+  rangeFromValue: immutablePropertyType.rangeFromValue,
+  rangeToValue: immutablePropertyType.rangeToValue,
+  propertyType: {
+    ...immutablePropertyType,
+  },
+});
+
 export const convertTableTypeToMutationInput = (
   propertyTypes: Array<TableType>,
 ): Array<TableType> => {

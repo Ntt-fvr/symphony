@@ -79,8 +79,6 @@ const ResourceCardListQuery = graphql`
               id
               name
               type
-              nodeType
-              index
               stringValue
               intValue
               booleanValue
@@ -89,11 +87,6 @@ const ResourceCardListQuery = graphql`
               longitudeValue
               rangeFromValue
               rangeToValue
-              isEditable
-              isMandatory
-              isInstanceProperty
-              isDeleted
-              category
             }
           }
         }

@@ -8,8 +8,6 @@
  * @format
  */
 
-import React, {useState} from 'react';
-
 import type {AddResourceMutationVariables} from '../../mutations/__generated__/AddResourceMutation.graphql';
 import type {
   LifecycleStatus,
@@ -20,12 +18,14 @@ import type {
 } from '../../mutations/__generated__/AddResourceMutation.graphql';
 import type {UpdateResourceMutationVariables} from '../../mutations/__generated__/UpdateResourceMutation.graphql';
 
+import AddEditPropertyList from './AddEditPropertyList';
 import AddResourceMutation from '../../mutations/AddResourceMutation';
 import Button from '@material-ui/core/Button';
 import Card from '@symphony/design-system/components/Card/Card';
 import CardHeader from '@symphony/design-system/components/Card/CardHeader';
 import Grid from '@material-ui/core/Grid';
-import PropertyValueInput from '../form/PropertyValueInput';
+import PropertyTypesTableDispatcher from '../form/context/property_types/PropertyTypesTableDispatcher';
+import React, {useState} from 'react';
 import SaveDialogConfirm from '../configure/SaveDialogConfirm';
 import TextField from '@material-ui/core/TextField';
 import UpdateResourceMutation from '../../mutations/UpdateResourceMutation';
@@ -34,7 +34,10 @@ import symphony from '@symphony/design-system/theme/symphony';
 import {MenuItem} from '@material-ui/core';
 import {camelCase, startCase} from 'lodash';
 import {makeStyles} from '@material-ui/styles';
+import {omit} from 'lodash';
+import {toMutableProperty} from '../context/TableTypeState';
 import {useFormInput} from '../assurance/common/useFormInput';
+import {usePropertyTypesReducer} from '../form/context/property_types/PropertyTypesTableState';
 
 const useStyles = makeStyles(() => ({
   formField: {
@@ -139,6 +142,16 @@ const AddEditResourceInLocation = (props: Props) => {
     });
   }
 
+  const [propertyTypes, propertyTypesDispatcher] = usePropertyTypesReducer(
+    (dataformModal?.resourcePropertyTypes ?? [])
+      .filter(Boolean)
+      .map(toMutableProperty),
+  );
+
+  const spliceProperties = propertyTypes.map(o =>
+    omit(o, ['name', 'type', 'id', 'propertyType']),
+  );
+
   function handleCreateForm() {
     const variables: AddResourceMutationVariables = {
       input: [
@@ -153,6 +166,7 @@ const AddEditResourceInLocation = (props: Props) => {
           planningSubStatus: resourceType.data.planningSubStatus,
           usageSubStatus: resourceType.data.usageSubStatus,
           operationalSubStatus: resourceType.data.operationalSubStatus,
+          resourceProperties: spliceProperties,
         },
       ],
     };
@@ -176,19 +190,14 @@ const AddEditResourceInLocation = (props: Props) => {
 
   const nameValidation =
     nameEdit.value === dataformModal.name
-      ? {
-          ...setData,
-        }
-      : {
-          ...setData,
-          name: nameEdit.value,
-        };
+      ? {...setData}
+      : {...setData, name: nameEdit.value};
 
   function handleEditForm() {
     const variables: UpdateResourceMutationVariables = {
       input: {
         filter: {
-          id: Array<string>(dataformModal.id),
+          id: dataformModal.id,
         },
         set: nameValidation,
       },
@@ -322,28 +331,11 @@ const AddEditResourceInLocation = (props: Props) => {
             <Grid item xs={12}>
               <CardHeader className={classes.cardHeader}>Properties</CardHeader>
             </Grid>
-            <Grid container>
-              {dataformModal?.resourcePropertyTypes?.map((property, index) => (
-                <Grid
-                  key={property.id}
-                  style={{
-                    padding: '0 22px 22px 22px',
-                  }}
-                  item
-                  xs={6}>
-                  <PropertyValueInput
-                    label={property.name}
-                    className={classes.input}
-                    inputType="Property"
-                    property={property}
-                    headlineVariant="form"
-                    // required={!!property.propertyType.isMandatory}
-                    // disabled={!property.propertyType.isInstanceProperty}
-                    // onChange={this.props.onChange(index)}
-                  />
-                </Grid>
-              ))}
-            </Grid>
+
+            <PropertyTypesTableDispatcher.Provider
+              value={{dispatch: propertyTypesDispatcher, propertyTypes}}>
+              <AddEditPropertyList propertyTypes={propertyTypes} />
+            </PropertyTypesTableDispatcher.Provider>
           </Grid>
           <Grid
             className={classes.header}
