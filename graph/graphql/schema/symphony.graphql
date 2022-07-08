@@ -6434,10 +6434,13 @@ enum FlowInstanceStatus
   @goModel(
     model: "github.com/facebookincubator/symphony/pkg/ent/flowinstance.Status"
   ) {
-  IN_PROGRESS
+  RUNNING
   FAILED
+  FAILING
   COMPLETED
   CANCELED
+  PAUSED
+  CLOSED
 }
 
 type FlowExecutionTemplate implements Node {
