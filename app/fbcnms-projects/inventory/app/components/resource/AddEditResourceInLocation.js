@@ -179,7 +179,7 @@ const AddEditResourceInLocation = (props: Props) => {
     });
   }
 
-  const setData = {
+  const setDataFormEdit = {
     externalId: externalID.value,
     lifecycleStatus: lifecycleStatus.value,
     typePlanningSubStatus: typePlanningSubStatus.value,
@@ -188,10 +188,10 @@ const AddEditResourceInLocation = (props: Props) => {
     operationalSubStatus: operationalSubStatus.value,
   };
 
-  const nameValidation =
+  const setDataValidation =
     nameEdit.value === dataformModal.name
-      ? {...setData}
-      : {...setData, name: nameEdit.value};
+      ? {...setDataFormEdit}
+      : {...setDataFormEdit, name: nameEdit.value};
 
   function handleEditForm() {
     const variables: UpdateResourceMutationVariables = {
@@ -199,7 +199,7 @@ const AddEditResourceInLocation = (props: Props) => {
         filter: {
           id: dataformModal.id,
         },
-        set: nameValidation,
+        set: setDataValidation,
       },
     };
     UpdateResourceMutation(variables, {
