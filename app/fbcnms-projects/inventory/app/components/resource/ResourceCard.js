@@ -174,6 +174,7 @@ const ResourceCard = (props: Props) => {
         id: data.resourceSpecification,
         idResource: data.id,
         nameResource: data.name,
+        locationId: data.locatedIn,
       },
     ],
   }));
@@ -191,7 +192,9 @@ const ResourceCard = (props: Props) => {
     ),
   });
 
-  const newArrayDataForm = resourceId?.map(mapResources);
+  const newArrayDataForm = resourceId
+    ?.map(mapResources)
+    .filter(data => data.data[0].locationId === selectedLocationId);
 
   switch (mode) {
     case 'add':
