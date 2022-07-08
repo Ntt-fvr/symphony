@@ -203,6 +203,7 @@ enum WeekDay {
 enum TypeSchedulerConfig {
   AS_SOON_AS_APPROVED
   SCHEDULED_CHANGE
+  NOT_APPROVAL_REQUIRED
 }
 
 type SchedulerConfig implements DefaultConfig{
@@ -682,7 +683,7 @@ type ServiceReference {
 type ResourceOrderIM{
   id: ID!
   reservationId: String @search(by: [hash])
-  lineId: String
+  lineId: String @search(by: [hash])
   category: String
   description: String
   externalId: String
