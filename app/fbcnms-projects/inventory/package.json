@@ -18,6 +18,7 @@
     "@material-ui/lab": "^4.0.0-alpha.30",
     "@material-ui/pickers": "^3.3.10",
     "@material-ui/styles": "^4.0.0",
+    "@testing-library/jest-dom": "^5.16.4",
     "add": "^2.0.6",
     "axios": "^0.18.0",
     "chart.js": "^2.7.3",

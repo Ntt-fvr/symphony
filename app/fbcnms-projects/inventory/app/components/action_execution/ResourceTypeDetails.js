@@ -8,18 +8,17 @@
  * @format
  */
 
-import * as React from 'react';
 import Breadcrumbs from '@fbcnms/ui/components/Breadcrumbs';
 import Card from '@symphony/design-system/components/Card/Card';
 import CardHeader from '@symphony/design-system/components/Card/CardHeader';
+import ExecutionsTypes from './ExecutionsTypes';
+import React, {useState} from 'react';
 import fbt from 'fbt';
-import {ExecutionsTypes} from './ExecutionsTypes';
 import {Grid} from '@material-ui/core';
 import {TableAffectedResources} from './common/TableAffectedResources';
 import {TableDetails} from './common/TableDetails';
 import {TableLogs} from './common/TableLogs';
 import {makeStyles} from '@material-ui/styles';
-import {useState} from 'react';
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -40,11 +39,13 @@ const useStyles = makeStyles(() => ({
 }));
 export type Props = $ReadOnly<{|
   setOpenDetails: any,
-  data: any,
+  data?: any,
+  resourceData?: {},
+  resourceExecData?: [],
 |}>;
 
 const ResourceTypeDetails = (props: Props) => {
-  const {data} = props;
+  const {data, resourceData, resourceExecData} = props;
   const classes = useStyles();
   const [returnExecutionsTypes, setReturnExecutionsTypes] = useState(false);
   const showExecutionsTypes = () => {
@@ -66,8 +67,8 @@ const ResourceTypeDetails = (props: Props) => {
                 onClick: () => showExecutionsTypes(),
               },
               true && {
-                id: data.id,
-                name: `${data.id}`,
+                id: data?.id,
+                name: `${data?.id}`,
               },
             ]}
             size="large"
@@ -77,7 +78,7 @@ const ResourceTypeDetails = (props: Props) => {
           <Grid item xs={12}>
             <Card className={classes.accordionDetails}>
               <CardHeader>Details</CardHeader>
-              <TableDetails valuesTable={data} />
+              <TableDetails valuesTable={data} resourceData={resourceData} />
             </Card>
             <Card>
               <CardHeader>Logs</CardHeader>
@@ -85,7 +86,11 @@ const ResourceTypeDetails = (props: Props) => {
             </Card>
             <Card>
               <CardHeader>Affected Resources</CardHeader>
-              <TableAffectedResources valuesTable={data} />
+              <TableAffectedResources
+                valuesTable={data}
+                resourceData={resourceData}
+                resourceExecData={resourceExecData}
+              />
             </Card>
           </Grid>
         </Grid>

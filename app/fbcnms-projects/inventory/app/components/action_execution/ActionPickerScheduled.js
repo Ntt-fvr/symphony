@@ -9,6 +9,7 @@
  */
 
 import AccessTimeIcon from '@material-ui/icons/AccessTime';
+import AddActionSchedulerMutation from '../../mutations/AddActionScheduler';
 import Button from '@material-ui/core/Button';
 import DialogExecuteNow from './common/DialogExecuteNow';
 import Event from '@material-ui/icons/Event';
@@ -21,12 +22,15 @@ import Radio from '@material-ui/core/Radio';
 import RadioGroup from '@material-ui/core/RadioGroup';
 import React, {useState} from 'react';
 import Text from '@symphony/design-system/components/Text';
+import UpdateResourceMutation from '../../mutations/UpdateResourceMutation';
+import moment from 'moment';
 import symphony from '@symphony/design-system/theme/symphony';
 import {
   DatePicker,
   MuiPickersUtilsProvider,
   TimePicker,
 } from '@material-ui/pickers';
+import {actionExecutionTypes} from './common/ActionExecution-enums';
 import {makeStyles} from '@material-ui/styles';
 
 const useStyles = makeStyles(() => ({
@@ -44,7 +48,7 @@ const useStyles = makeStyles(() => ({
     },
   },
   option: {
-    width: '75px',
+    width: '120px',
     height: '36px',
     marginLeft: '24px',
   },
@@ -54,14 +58,11 @@ type Props = $ReadOnly<{|
   open?: boolean,
   onClose?: () => void,
   goBack?: () => void,
+  formData: {},
 |}>;
 
-const data = {
-  actionTempleate: 'Sleep',
-  resourceSpecification: 'RNCellDU_Nokia_MLN1_3132331',
-};
 const ActionPickerScheduled = (props: Props) => {
-  const {goBack} = props;
+  const {goBack, formData, closeForm, nameValid, resourceSpec} = props;
   const [execType, setExecType] = useState(false);
   const [date, setDate] = useState(new Date());
   const [time, setTime] = useState(new Date('2022-03-02T24:00:00'));
@@ -73,6 +74,56 @@ const ActionPickerScheduled = (props: Props) => {
     );
   };
 
+  const handleSave = () => {
+    const selectedDate = moment(date).format('MM/DD/YYYY');
+    const selectedTime = moment(time).format('LT');
+    const dateTime =
+      execType == actionExecutionTypes.OneTimeExecution
+        ? moment(selectedDate + selectedTime, 'MM/DD/YYYYLT')
+        : null;
+    const variables = {
+      input: [
+        {
+          ...formData,
+          type: execType,
+          date: dateTime?.toISOString(),
+        },
+      ],
+    };
+    const response = {
+      onCompleted: response => {
+        const resourceVariables = {
+          input: {
+            filter: {
+              id: response.addActionScheduler.actionScheduler[0].resources?.map(
+                item => item.id,
+              ),
+            },
+            set: {
+              actionScheduler: {
+                id: response.addActionScheduler.actionScheduler[0].id,
+              },
+            },
+          },
+        };
+        UpdateResourceMutation(resourceVariables, {
+          onCompleted: () => closeForm(),
+        });
+      },
+    };
+    AddActionSchedulerMutation(variables, response);
+  };
+
+  const handleDisabled = () => {
+    return !(
+      formData?.name &&
+      formData?.description &&
+      execType &&
+      nameValid &&
+      formData.resources?.length > 0 &&
+      formData.actionTemplate?.id
+    );
+  };
   const classes = useStyles();
   return (
     <div>
@@ -98,26 +149,26 @@ const ActionPickerScheduled = (props: Props) => {
             <RadioGroup row onChange={({target}) => setExecType(target.value)}>
               <FormControlLabel
                 className={classes.radioButton}
-                value="End"
+                value={actionExecutionTypes.ManualExecution}
                 control={<Radio color="primary" />}
                 label="Manual Execution"
                 labelPlacement="end"
               />
               <FormControlLabel
                 className={classes.radioButton}
-                value="start"
+                value={actionExecutionTypes.OneTimeExecution}
                 control={<Radio color="primary" />}
                 label="One time execution"
               />
               <FormControlLabel
                 className={classes.radioButton}
-                value="bottom"
+                value={actionExecutionTypes.PeriodicalExecution}
                 control={<Radio color="primary" />}
                 label="Períodical Execution"
               />
             </RadioGroup>
           </Grid>
-          {execType == 'start' && (
+          {execType == actionExecutionTypes.OneTimeExecution && (
             <Grid item xs={12}>
               <MuiPickersUtilsProvider utils={MomentUtils}>
                 <Grid container spacing={3}>
@@ -187,17 +238,22 @@ const ActionPickerScheduled = (props: Props) => {
             }}
             className={classes.option}
             variant="contained"
+            disabled={handleDisabled()}
             color="primary">
-            Save
+            {execType == actionExecutionTypes.ManualExecution
+              ? 'Execute now'
+              : 'Save'}
           </Button>
         </Grid>
       </Grid>
       {openDialogExecuteNow && (
         <DialogExecuteNow
-          dataRow={data}
+          dataRow={formData}
           execType={execType ?? ''}
           execDetails={{date: date ?? '', hour: time ?? ''}}
           onClose={handleOpenModal}
+          onSave={handleSave}
+          resourceSpec={resourceSpec}
         />
       )}
     </div>
