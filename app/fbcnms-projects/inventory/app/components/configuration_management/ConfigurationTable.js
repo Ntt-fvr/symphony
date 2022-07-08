@@ -21,15 +21,25 @@ export type Props = $ReadOnly<{|
 
 const ConfigurationTable = (props: Props) => {
   const {dataConfig, stateChange} = props;
+  console.log('dataTable ', dataConfig);
 
-  const dataColumn = dataConfig?.map(itemCMVersion =>
-    itemCMVersion?.cmVersions?.map(itemParameter => itemParameter),
-  );
-  const parameterFilter = dataColumn?.map(
-    parameterItem => parameterItem?.parameters,
-  );
+  // const dataColumn = dataConfig?.map(itemCMVersion =>
+  //   itemCMVersion?.cmVersions?.map(itemParameter => itemParameter),
+  // );
+  // const parameterFilter = dataColumn?.map(
+  //   parameterItem => parameterItem?.parameters,
+  // );
 
-  const parametersNums = parameterFilter[0]?.map(item => {
+  const parametersNums = dataConfig?.map(item =>
+    item?.cmVersions?.find(parameter =>
+      parameter?.parameters?.map(itemParameter => {
+        itemParameter?.parameters;
+      }),
+    ),
+  );
+  const par = parametersNums?.find(item => item);
+
+  const newObj = par?.paramters?.map(item => {
     return {
       key: item?.id,
       title: row => row.parameterType?.name,
@@ -38,44 +48,47 @@ const ConfigurationTable = (props: Props) => {
     };
   });
 
-  const dataResources = [];
+  console.log('PARM', parametersNums, newObj);
+
+  const dataResources = [
+    {
+      key: 'resource',
+      title: 'Resource',
+      // getSortingValue: row => row?.id,
+      render: row => (
+        <Button
+          variant="text"
+          tooltip={row?.cmVersions?.map(item => item?.resource?.name) ?? ''}>
+          {row?.cmVersions?.map(item => item?.resource?.name)}
+        </Button>
+      ),
+    },
+    {
+      key: 'location',
+      title: 'Location',
+      render: row => (
+        <Button variant="text" tooltip={row?.locatedIn ?? ''}>
+          {row?.locatedIn}
+        </Button>
+      ),
+      tooltip: row => row?.locatedIn ?? '',
+    },
+  ];
 
   const [resour, setResour] = useState(dataResources);
 
+  console.log(resour);
+
   useEffect(() => {
-    parameterFilter?.length !== 0
-      ? setResour([...resour, ...parametersNums])
-      : null;
+    // parametersNums?.length !== 0 ?
+    setResour([...resour]);
   }, [stateChange]);
 
   return (
     <Grid>
       <Table
-        data={dataColumn}
-        columns={[
-          {
-            key: 'resource',
-            title: 'Resource',
-            getSortingValue: row => row?.id,
-            render: row => (
-              <Button variant="text" tooltip={row?.resource?.name ?? ''}>
-                {row?.resource?.name}
-              </Button>
-            ),
-          },
-          {
-            key: 'location',
-            title: 'Location',
-            render: row => (
-              <Button variant="text" tooltip={row?.resource?.locatedIn ?? ''}>
-                {row?.resource?.locatedIn}
-              </Button>
-            ),
-            tooltip: row => row?.resource?.locatedIn ?? '',
-          },
-
-          ...resour,
-        ]}
+        data={dataConfig}
+        columns={resour}
         paginationSettings={{
           loadNext: onCompleted => {
             loadNext(PROJECTS_PAGE_SIZE, {
