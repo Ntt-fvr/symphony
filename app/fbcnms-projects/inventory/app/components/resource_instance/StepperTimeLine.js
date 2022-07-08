@@ -80,6 +80,11 @@ const StepperTimeLineQuery = graphql`
           stringValue
           floatValue
           intValue
+          parameterType {
+            id
+            name
+            type
+          }
         }
         createTime
       }
@@ -116,6 +121,7 @@ const TooltipTime = withStyles(() => ({
 type Props = $ReadOnly<{||}>;
 
 const StepperTimeLine = (props: Props) => {
+  const {CMSelected} = props;
   const classes = useStyles();
 
   const handleInfo = data => {
@@ -141,6 +147,13 @@ const StepperTimeLine = (props: Props) => {
     return dateConvert;
   };
 
+  const SelectedAndCurrent = label => {
+    const currentVersion = queryCMVersion.queryResource[0].cmVersions.filter(
+      item => item.status === 'CURRENT',
+    );
+    CMSelected(label, currentVersion);
+  };
+
   return (
     <Stepper
       style={{direction: 'ltr'}}
@@ -151,6 +164,7 @@ const StepperTimeLine = (props: Props) => {
           <StepLabel
             onClick={() => handleInfo(label)}
             className={classes.stepLabelRoot}
+            onClick={() => SelectedAndCurrent(label)}
             icon={
               <TooltipTime
                 arrow={false}
