@@ -12,21 +12,21 @@ import '@testing-library/jest-dom';
 import React, {useMemo} from 'react';
 import {render, screen} from '@testing-library/react';
 
-import DecisionBlockType from '../flows/builder/canvas/graph/shapes/blocks/blockTypes/decision/DecisionBlockType';
-import DecisionPresentation from '../flows/builder/canvas/graph/shapes/blocks/blockTypes/decision/DecisionPresentation';
+import ChoiceBlockType from '../flows/builder/canvas/graph/shapes/blocks/blockTypes/choice/ChoiceBlockType';
+import ChoicePresentation from '../flows/builder/canvas/graph/shapes/blocks/blockTypes/choice/ChoicePresentation';
 import {useGraph} from '../flows/builder/canvas/graph/graphAPIContext/GraphContext';
 
-describe('Suite Test Components /Decision/ : ', () => {
-  it('AUT-FE-05009 Render component <DecisionPresentation/>', () => {
-    render(<DecisionPresentation />);
+describe('Suite Test Components /Choice/ : ', () => {
+  it('AUT-FE-05009 Render component <ChoicePresentation/>', () => {
+    render(<ChoicePresentation />);
     const text = screen.getByText(/choice/i);
     expect(text).toBeInTheDocument();
   });
 
-  it('AUT-FE-05010 Instance class DecisionBlockType', () => {
+  it('AUT-FE-05010 Instance class ChoiceBlockType', () => {
     const TestComponent = () => {
       const flow = useGraph();
-      const flowTypes = useMemo(() => [new DecisionBlockType(flow)], [flow]);
+      const flowTypes = useMemo(() => [new ChoiceBlockType(flow)], [flow]);
 
       return flowTypes[0].type;
     };

@@ -13,12 +13,12 @@ import type {IBaseShapeAttributes, IShape} from '../facades/shapes/BaseShape';
 import type {Paper} from '../facades/Paper';
 
 import BaseBlock from './blocks/BaseBlock';
+import Choice, {
+  TYPE as ChoiceType,
+} from '../facades/shapes/vertexes/logic/Choice';
 import CreateWorkorder, {
   TYPE as CreateWorkorderType,
 } from '../facades/shapes/vertexes/actions/CreateWorkorder';
-import Decision, {
-  TYPE as DecisionType,
-} from '../facades/shapes/vertexes/logic/Decision';
 import End, {
   TYPE as EndType,
 } from '../facades/shapes/vertexes/administrative/End';
@@ -86,7 +86,7 @@ const VERTEXES = {
   [TriggerStartType]: TriggerStart,
   [WaitSignalType]: WaitSignal,
   // Logic
-  [DecisionType]: Decision,
+  [ChoiceType]: Choice,
   [GoToType]: GoTo,
   [TrueFalseType]: TrueFalse,
   [ForEachLoopType]: ForEachLoop,

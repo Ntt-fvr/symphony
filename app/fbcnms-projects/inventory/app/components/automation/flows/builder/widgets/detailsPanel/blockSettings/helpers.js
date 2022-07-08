@@ -14,8 +14,8 @@ import ErrorHandlingSettings from './errorHandlingSettings';
 import InputSettings from './inputSettings';
 import OutputSettings from './outputSettings';
 import React from 'react';
+import {TYPE as ChoiceType} from '../../../canvas/graph/facades/shapes/vertexes/logic/Choice';
 import {TYPE as CreateWorkorderType} from '../../../../builder/canvas/graph/facades/shapes/vertexes/actions/CreateWorkorder';
-import {TYPE as DecisionType} from '../../../../builder/canvas/graph/facades/shapes/vertexes/logic/Decision';
 import {TYPE as EndType} from '../../../../builder/canvas/graph/facades/shapes/vertexes/administrative/End';
 import {TYPE as ExecuteFlowType} from '../../../../builder/canvas/graph/facades/shapes/vertexes/actions/ExecuteFlow';
 import {TYPE as ExecuteNetworkActionType} from '../../../../builder/canvas/graph/facades/shapes/vertexes/actions/ExecuteNetworkAction';
@@ -53,7 +53,7 @@ const blocksTabs: Array<BlockTabs> = [
   {type: ManualStartType, allowedTabs: []},
   {type: EndType, allowedTabs: []},
   // Logic
-  {type: DecisionType, allowedTabs: [ERROR_TYPE]},
+  {type: ChoiceType, allowedTabs: [ERROR_TYPE]},
   {type: ForEachLoopType, allowedTabs: [INPUT_TYPE, OUTPUT_TYPE, ERROR_TYPE]},
   {type: GoToType, allowedTabs: [ERROR_TYPE]},
   {type: ParallelType, allowedTabs: [INPUT_TYPE, OUTPUT_TYPE, ERROR_TYPE]},

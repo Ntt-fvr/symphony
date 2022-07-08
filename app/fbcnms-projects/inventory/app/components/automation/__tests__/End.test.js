@@ -8,24 +8,24 @@
  * @format
  */
 
-import React, {useMemo} from 'react';
-import {render, screen} from '@testing-library/react';
-
 import type {EndSettings} from '../flows/builder/canvas/graph/shapes/blocks/blockTypes/end/EndSettings';
 
-import {TYPE} from '../flows/builder/canvas/graph/facades/shapes/vertexes/administrative/End';
-
-import DecisionPresentation from '../flows/builder/canvas/graph/shapes/blocks/blockTypes/end/EndPresentation';
+import '@testing-library/jest-dom';
+import ChoicePresentation from '../flows/builder/canvas/graph/shapes/blocks/blockTypes/end/EndPresentation';
 import EndBlockType from '../flows/builder/canvas/graph/shapes/blocks/blockTypes/end/EndBlockType';
+import React, {useMemo} from 'react';
+import {TYPE} from '../flows/builder/canvas/graph/facades/shapes/vertexes/administrative/End';
 import {
   getInitialBlockSettings,
   setBlockSettings,
 } from '../flows/builder/canvas/graph/shapes/blocks/blockTypes/BaseSettings';
+import {render, screen} from '@testing-library/react';
+
 import {useGraph} from '../flows/builder/canvas/graph/graphAPIContext/GraphContext';
 
 describe('Suite Test Components /End/: ', () => {
   it('AUT-FE-05011 Render component <EndPresentation/>', () => {
-    render(<DecisionPresentation />);
+    render(<ChoicePresentation />);
 
     const text = screen.getByText(/end/i);
     expect(text).toBeInTheDocument();
@@ -48,7 +48,7 @@ describe('Suite Test Components /End/: ', () => {
   test('AUT-FE-05044 Test setEndSettings', () => {
     const objectTest: EndSettings = getInitialBlockSettings(TYPE);
 
-    expect(objectTest.params).toStrictEqual(undefined);
+    expect(objectTest.params).toStrictEqual(null);
     const setObjectTest: EndSettings = setBlockSettings(TYPE, {
       ...objectTest,
       params: 'testParams',

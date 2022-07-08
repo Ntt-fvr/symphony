@@ -26,11 +26,11 @@ import * as React from 'react';
 import BaseBlock from '../builder/canvas/graph/shapes/blocks/BaseBlock.js';
 import fbt from 'fbt';
 import withInventoryErrorBoundary from '../../../../common/withInventoryErrorBoundary';
+import {TYPE as ChoiceType} from '../builder/canvas/graph/facades/shapes/vertexes/logic/Choice';
 import {
   ACTION_TYPE_ID as CreateWorkorderActionTypeID,
   TYPE as CreateWorkorderType,
 } from '../builder/canvas/graph/facades/shapes/vertexes/actions/CreateWorkorder';
-import {TYPE as DecisionType} from '../builder/canvas/graph/facades/shapes/vertexes/logic/Decision';
 import {TYPE as EndType} from '../builder/canvas/graph/facades/shapes/vertexes/administrative/End';
 import {Events} from '../builder/canvas/graph/facades/Helpers.js';
 import {
@@ -84,11 +84,12 @@ import {graphql} from 'react-relay';
 import {
   hasMeaningfulChanges,
   mapActionBlocksForSave,
+  mapChoiceBlockForSave,
   mapConnectorsForSave,
-  mapDecisionBlockForSave,
   mapEndBlockForSave,
   mapGoToBlockForSave,
   mapStartBlockForSave,
+  mapTimerBlocksForSave,
   mapTriggerBlocksForSave,
   mapTrueFalseBlockForSave,
   publishFlow,
@@ -309,9 +310,9 @@ function FlowDataContextProviderComponent(props: Props) {
       const startBlocks = flow
         .getBlocksByType(ManualStartType)
         .map(mapStartBlockForSave);
-      const decisionBlocks = flow
-        .getBlocksByType(DecisionType)
-        .map(mapDecisionBlockForSave);
+      const choiceBlocks = flow
+        .getBlocksByType(ChoiceType)
+        .map(mapChoiceBlockForSave);
       const gotoBlocks = flow
         .getBlocksByType(GoToType)
         .map(mapGoToBlockForSave);
@@ -377,58 +378,37 @@ function FlowDataContextProviderComponent(props: Props) {
 
       const timerBlocks = flow
         .getBlocksByType(TimerBlockType)
-        .map(block => mapTriggerBlocksForSave(block, TimerTriggerTypeID));
+        .map(block => mapTimerBlocksForSave(block, TimerTriggerTypeID));
 
       const waitForSignalBlocks = flow
         .getBlocksByType(WaitSignalBlockType)
         .map(block => mapTriggerBlocksForSave(block, WaitSignalTriggerTypeID));
 
-      const triggerBlocks = [
-        ...triggerWorkforceBlocks,
-        ...triggerStartBlocks,
-        ...timerBlocks,
-        ...waitForSignalBlocks,
-      ];
       const endBlocks = flow.getBlocksByType(EndType).map(mapEndBlockForSave);
 
       if (startBlocks.length > 0) {
         flowData.startBlock = startBlocks[0];
       }
 
-      if (endBlocks.length > 0) {
-        flowData.endBlocks = endBlocks;
-      }
+      const allFlowDataItems = {
+        endBlocks,
+        gotoBlocks,
+        choiceBlocks,
+        timerBlocks,
+        trueFalseBlocks,
+        parallelBlocks,
+        forEachBlocks,
+        connectors,
+        triggerWorkforceBlocks,
+        triggerStartBlocks,
+        waitForSignalBlocks,
+        actionBlocks,
+      };
 
-      if (actionBlocks.length > 0) {
-        flowData.actionBlocks = actionBlocks;
-      }
-
-      if (triggerBlocks.length > 0) {
-        flowData.triggerBlocks = triggerBlocks;
-      }
-
-      if (decisionBlocks.length > 0) {
-        flowData.decisionBlocks = decisionBlocks;
-      }
-
-      if (gotoBlocks.length > 0) {
-        flowData.goToBlocks = gotoBlocks;
-      }
-
-      if (trueFalseBlocks.length > 0) {
-        flowData.trueFalseBlocks = trueFalseBlocks;
-      }
-
-      if (parallelBlocks.length > 0) {
-        flowData.parallelBlocks = parallelBlocks;
-      }
-
-      if (forEachBlocks.length > 0) {
-        flowData.forEachBlocks = forEachBlocks;
-      }
-
-      if (connectors.length > 0) {
-        flowData.connectors = connectors;
+      for (const key of Object.keys(allFlowDataItems)) {
+        if (allFlowDataItems[key].length > 0) {
+          flowData[key] = allFlowDataItems[key];
+        }
       }
 
       const savePromise = saveFlowDraft(flowData);
