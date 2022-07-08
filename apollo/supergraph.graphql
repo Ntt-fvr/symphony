@@ -1,7 +1,7 @@
 
 schema
-  @core(feature: "https://specs.apollo.dev/core/v0.2"),
-  @core(feature: "https://specs.apollo.dev/join/v0.1", for: EXECUTION)
+@core(feature: "https://specs.apollo.dev/core/v0.2"),
+@core(feature: "https://specs.apollo.dev/join/v0.1", for: EXECUTION)
 {
   query: Query
   mutation: Mutation
@@ -187,6 +187,8 @@ type ActionScheduler implements DefaultConfig {
   description: String!
   id: ID!
   name: String!
+  resourceSpecificationName: String
+  resourceTypeName: String
   resources(filter: ResourceFilter, first: Int, offset: Int, order: ResourceOrder): [Resource!]!
   resourcesAggregate(filter: ResourceFilter): ResourceAggregateResult
   status: ActionSchedulerStatus!
@@ -206,6 +208,10 @@ type ActionSchedulerAggregateResult {
   descriptionMin: String
   nameMax: String
   nameMin: String
+  resourceSpecificationNameMax: String
+  resourceSpecificationNameMin: String
+  resourceTypeNameMax: String
+  resourceTypeNameMin: String
   updateTimeMax: DateTime
   updateTimeMin: DateTime
 }
@@ -226,6 +232,8 @@ enum ActionSchedulerHasFilter {
   date
   description
   name
+  resourceSpecificationName
+  resourceTypeName
   resources
   status
   type
@@ -244,6 +252,8 @@ enum ActionSchedulerOrderable {
   date
   description
   name
+  resourceSpecificationName
+  resourceTypeName
   updateTime
 }
 
@@ -255,6 +265,8 @@ input ActionSchedulerPatch {
   date: DateTime
   description: String
   name: String
+  resourceSpecificationName: String
+  resourceTypeName: String
   resources: [ResourceRef!]
   status: ActionSchedulerStatus
   type: ActionSchedulerType
@@ -270,6 +282,8 @@ input ActionSchedulerRef {
   description: String
   id: ID
   name: String
+  resourceSpecificationName: String
+  resourceTypeName: String
   resources: [ResourceRef!]
   status: ActionSchedulerStatus
   type: ActionSchedulerType
@@ -294,6 +308,7 @@ type ActionTemplate implements DefaultConfig {
   actionTemplateItemsAggregate(filter: ActionTemplateItemFilter): ActionTemplateItemAggregateResult
   createTime: DateTime
   id: ID!
+  isDeleted: Boolean
   name: String!
   resourceSpecifications: String!
   type: ActionTemplateType!
@@ -325,6 +340,7 @@ enum ActionTemplateHasFilter {
   actionExecutions
   actionTemplateItems
   createTime
+  isDeleted
   name
   resourceSpecifications
   type
@@ -335,6 +351,7 @@ type ActionTemplateItem implements DefaultConfig {
   actionTemplate(filter: ActionTemplateFilter): ActionTemplate!
   createTime: DateTime
   id: ID!
+  isDeleted: Boolean
   parameters(filter: ConfigurationParameterTypeFilter): ConfigurationParameterType!
   updateTime: DateTime
   value(filter: ParameterFilter): Parameter!
@@ -359,6 +376,7 @@ input ActionTemplateItemFilter {
 enum ActionTemplateItemHasFilter {
   actionTemplate
   createTime
+  isDeleted
   parameters
   updateTime
   value
@@ -378,6 +396,7 @@ enum ActionTemplateItemOrderable {
 input ActionTemplateItemPatch {
   actionTemplate: ActionTemplateRef
   createTime: DateTime
+  isDeleted: Boolean
   parameters: ConfigurationParameterTypeRef
   updateTime: DateTime
   value: ParameterRef
@@ -387,6 +406,7 @@ input ActionTemplateItemRef {
   actionTemplate: ActionTemplateRef
   createTime: DateTime
   id: ID
+  isDeleted: Boolean
   parameters: ConfigurationParameterTypeRef
   updateTime: DateTime
   value: ParameterRef
@@ -409,6 +429,7 @@ input ActionTemplatePatch {
   actionExecutions: [ActionExecutionRef!]
   actionTemplateItems: [ActionTemplateItemRef!]
   createTime: DateTime
+  isDeleted: Boolean
   name: String
   resourceSpecifications: String
   type: ActionTemplateType
@@ -420,6 +441,7 @@ input ActionTemplateRef {
   actionTemplateItems: [ActionTemplateItemRef!]
   createTime: DateTime
   id: ID
+  isDeleted: Boolean
   name: String
   resourceSpecifications: String
   type: ActionTemplateType
@@ -512,6 +534,8 @@ input AddActionSchedulerInput {
   date: DateTime
   description: String!
   name: String!
+  resourceSpecificationName: String
+  resourceTypeName: String
   resources: [ResourceRef!]!
   status: ActionSchedulerStatus!
   type: ActionSchedulerType!
@@ -527,6 +551,7 @@ input AddActionTemplateInput {
   actionExecutions: [ActionExecutionRef!]
   actionTemplateItems: [ActionTemplateItemRef!]!
   createTime: DateTime
+  isDeleted: Boolean
   name: String!
   resourceSpecifications: String!
   type: ActionTemplateType!
@@ -536,6 +561,7 @@ input AddActionTemplateInput {
 input AddActionTemplateItemInput {
   actionTemplate: ActionTemplateRef!
   createTime: DateTime
+  isDeleted: Boolean
   parameters: ConfigurationParameterTypeRef!
   updateTime: DateTime
   value: ParameterRef!
@@ -13252,6 +13278,6 @@ enum core__Purpose {
 scalar join__FieldSet
 
 enum join__Graph {
-  DGRAPHSERVICE @join__graph(name: "dgraphservice" url: "http://dgraph-dgraph-alpha.dgraph.svc.cluster.local:8080/graphql")
-  SYMPHONY @join__graph(name: "symphony" url: "http://symphony-graph/query")
+  DGRAPHSERVICE @join__graph(name: "dgraphservice" url: "http://alpha:8080/graphql")
+  SYMPHONY @join__graph(name: "symphony" url: "http://graph/query")
 }

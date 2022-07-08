@@ -95,7 +95,7 @@ function QontoStepIcon(props) {
   );
 }
 
-const steps = ['Action Definition', 'Select Actions'];
+const steps = ['Action Definition', 'Schedule Action'];
 
 type Props = $ReadOnly<{|
   activeStep: any,

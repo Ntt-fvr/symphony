@@ -10,10 +10,10 @@
 
 import * as React from 'react';
 import Breadcrumbs from '@fbcnms/ui/components/Breadcrumbs';
+import ScheduledActionsTypes from './ScheduledActionsTypes';
 import StepperAction from './StepperAction';
 import fbt from 'fbt';
 import {Grid} from '@material-ui/core';
-import {ScheduledActionsTypes} from './ScheduledActionsTypes';
 import {makeStyles} from '@material-ui/styles';
 import {useState} from 'react';
 
@@ -31,10 +31,12 @@ const useStyles = makeStyles(() => ({
 }));
 export type Props = $ReadOnly<{|
   data?: any,
+  names?: [],
+  closeForm?: () => void,
 |}>;
 
 const CreateAction = (props: Props) => {
-  const {} = props;
+  const {closeForm, names, resourceSpecs} = props;
   const classes = useStyles();
   const [
     returnScheduledActionsTypes,
@@ -67,7 +69,12 @@ const CreateAction = (props: Props) => {
           />
         </Grid>
         <Grid item xs={12}>
-          <StepperAction returnSheduledAction={showScheduledActionsTypes} />
+          <StepperAction
+            returnSheduledAction={showScheduledActionsTypes}
+            names={names}
+            resourceSpecs={resourceSpecs}
+            closeForm={closeForm}
+          />
         </Grid>
       </Grid>
     </div>
