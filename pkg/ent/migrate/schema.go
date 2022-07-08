@@ -1185,15 +1185,25 @@ var (
 		{Name: "name", Type: field.TypeString},
 		{Name: "description", Type: field.TypeString, Nullable: true},
 		{Name: "end_param_definitions", Type: field.TypeJSON, Nullable: true},
-		{Name: "status", Type: field.TypeEnum, Enums: []string{"PUBLISHED", "UNPUBLISHED", "ARCHIVED"}, Default: "UNPUBLISHED"},
+		{Name: "status", Type: field.TypeEnum, Enums: []string{"PUBLISHED", "UNPUBLISHED", "ARCHIVED", "ON_HOLD"}, Default: "UNPUBLISHED"},
 		{Name: "new_instances_policy", Type: field.TypeEnum, Enums: []string{"ENABLED", "DISABLED"}, Default: "DISABLED"},
+		{Name: "creation_date", Type: field.TypeTime},
+		{Name: "flow_author", Type: field.TypeInt, Nullable: true},
 	}
 	// FlowsTable holds the schema information for the "flows" table.
 	FlowsTable = &schema.Table{
-		Name:        "flows",
-		Columns:     FlowsColumns,
-		PrimaryKey:  []*schema.Column{FlowsColumns[0]},
-		ForeignKeys: []*schema.ForeignKey{},
+		Name:       "flows",
+		Columns:    FlowsColumns,
+		PrimaryKey: []*schema.Column{FlowsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:  "flows_users_author",
+				Columns: []*schema.Column{FlowsColumns[9]},
+
+				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+		},
 		Indexes: []*schema.Index{
 			{
 				Name:    "flow_name",
@@ -1249,7 +1259,7 @@ var (
 		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "create_time", Type: field.TypeTime},
 		{Name: "update_time", Type: field.TypeTime},
-		{Name: "status", Type: field.TypeEnum, Enums: []string{"IN_PROGRESS", "FAILED", "COMPLETED", "CANCELED"}, Default: "IN_PROGRESS"},
+		{Name: "status", Type: field.TypeEnum, Enums: []string{"RUNNING", "FAILED", "FAILING", "COMPLETED", "CANCELED", "PAUSED", "CLOSED"}, Default: "RUNNING"},
 		{Name: "start_params", Type: field.TypeJSON, Nullable: true},
 		{Name: "output_params", Type: field.TypeJSON, Nullable: true},
 		{Name: "incompletion_reason", Type: field.TypeString, Nullable: true},
@@ -3096,6 +3106,7 @@ var (
 		{Name: "status", Type: field.TypeEnum, Enums: []string{"ACTIVE", "DEACTIVATED"}, Default: "ACTIVE"},
 		{Name: "role", Type: field.TypeEnum, Enums: []string{"USER", "ADMIN", "OWNER"}, Default: "USER"},
 		{Name: "distance_unit", Type: field.TypeEnum, Enums: []string{"KILOMETER", "MILE"}, Default: "KILOMETER"},
+		{Name: "flow_editor", Type: field.TypeInt, Nullable: true},
 		{Name: "organization_user_fk", Type: field.TypeInt, Nullable: true},
 	}
 	// UsersTable holds the schema information for the "users" table.
@@ -3105,8 +3116,15 @@ var (
 		PrimaryKey: []*schema.Column{UsersColumns[0]},
 		ForeignKeys: []*schema.ForeignKey{
 			{
-				Symbol:  "users_organizations_user_fk",
+				Symbol:  "users_flows_editor",
 				Columns: []*schema.Column{UsersColumns[10]},
+
+				RefColumns: []*schema.Column{FlowsColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+			{
+				Symbol:  "users_organizations_user_fk",
+				Columns: []*schema.Column{UsersColumns[11]},
 
 				RefColumns: []*schema.Column{OrganizationsColumns[0]},
 				OnDelete:   schema.SetNull,
@@ -3856,6 +3874,7 @@ func init() {
 	FloorPlansTable.ForeignKeys[0].RefTable = LocationsTable
 	FloorPlansTable.ForeignKeys[1].RefTable = FloorPlanReferencePointsTable
 	FloorPlansTable.ForeignKeys[2].RefTable = FloorPlanScalesTable
+	FlowsTable.ForeignKeys[0].RefTable = UsersTable
 	FlowDraftsTable.ForeignKeys[0].RefTable = FlowsTable
 	FlowInstancesTable.ForeignKeys[0].RefTable = BlockInstancesTable
 	FlowInstancesTable.ForeignKeys[1].RefTable = FlowsTable
@@ -3953,7 +3972,8 @@ func init() {
 	SurveyWiFiScansTable.ForeignKeys[2].RefTable = LocationsTable
 	TechesTable.ForeignKeys[0].RefTable = DomainsTable
 	ThresholdsTable.ForeignKeys[0].RefTable = KpisTable
-	UsersTable.ForeignKeys[0].RefTable = OrganizationsTable
+	UsersTable.ForeignKeys[0].RefTable = FlowsTable
+	UsersTable.ForeignKeys[1].RefTable = OrganizationsTable
 	VendorsTable.ForeignKeys[0].RefTable = ResourceSpecificationsTable
 	WorkOrdersTable.ForeignKeys[0].RefTable = OrganizationsTable
 	WorkOrdersTable.ForeignKeys[1].RefTable = ProjectsTable

@@ -3420,8 +3420,8 @@ func (f *Flow) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
 		ID:     f.ID,
 		Type:   "Flow",
-		Fields: make([]*Field, 7),
-		Edges:  make([]*Edge, 2),
+		Fields: make([]*Field, 8),
+		Edges:  make([]*Edge, 5),
 	}
 	var buf []byte
 	if buf, err = json.Marshal(f.CreateTime); err != nil {
@@ -3480,6 +3480,14 @@ func (f *Flow) Node(ctx context.Context) (node *Node, err error) {
 		Name:  "newInstancesPolicy",
 		Value: string(buf),
 	}
+	if buf, err = json.Marshal(f.CreationDate); err != nil {
+		return nil, err
+	}
+	node.Fields[7] = &Field{
+		Type:  "time.Time",
+		Name:  "creation_date",
+		Value: string(buf),
+	}
 	node.Edges[0] = &Edge{
 		Type: "Block",
 		Name: "blocks",
@@ -3496,6 +3504,36 @@ func (f *Flow) Node(ctx context.Context) (node *Node, err error) {
 	}
 	node.Edges[1].IDs, err = f.QueryDraft().
 		Select(flowdraft.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	node.Edges[2] = &Edge{
+		Type: "User",
+		Name: "author",
+	}
+	node.Edges[2].IDs, err = f.QueryAuthor().
+		Select(user.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	node.Edges[3] = &Edge{
+		Type: "User",
+		Name: "editor",
+	}
+	node.Edges[3].IDs, err = f.QueryEditor().
+		Select(user.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	node.Edges[4] = &Edge{
+		Type: "FlowInstance",
+		Name: "instance",
+	}
+	node.Edges[4].IDs, err = f.QueryInstance().
+		Select(flowinstance.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
@@ -8685,7 +8723,7 @@ func (u *User) Node(ctx context.Context) (node *Node, err error) {
 		ID:     u.ID,
 		Type:   "User",
 		Fields: make([]*Field, 9),
-		Edges:  make([]*Edge, 10),
+		Edges:  make([]*Edge, 11),
 	}
 	var buf []byte
 	if buf, err = json.Marshal(u.CreateTime); err != nil {
@@ -8856,6 +8894,16 @@ func (u *User) Node(ctx context.Context) (node *Node, err error) {
 	}
 	node.Edges[9].IDs, err = u.QueryAppointment().
 		Select(appointment.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	node.Edges[10] = &Edge{
+		Type: "Flow",
+		Name: "authored_flow",
+	}
+	node.Edges[10].IDs, err = u.QueryAuthoredFlow().
+		Select(flow.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
