@@ -14,8 +14,6 @@ import ConfigureTitle from './common/ConfigureTitle';
 import FormField from '@symphony/design-system/components/FormField/FormField';
 import PowerSearchBar from '../power_search/PowerSearchBar';
 import React, {useEffect, useMemo, useState} from 'react';
-// import Select from '@symphony/design-system/components/Select/Select';
-// import Table from '@symphony/design-system/components/Table/Table';
 import TextField from '@material-ui/core/TextField';
 import fbt from 'fbt';
 import {ConfigurationTable} from './ConfigurationTable';
@@ -146,6 +144,7 @@ const ConfigurationsView = () => {
   const [resSpeci, setResSpeci] = useState({});
 
   const [resourceType, setResourceType] = useState({});
+  const [checkingSelects, setCheckingSelects] = useState(false);
 
   const filterConfigs = useMemo(
     () =>
@@ -163,29 +162,6 @@ const ConfigurationsView = () => {
 
   const verifyResourceType =
     Object.entries(resourceType).length == 0 ? '' : resourceType?.resource_Type;
-
-  function selectResourceType({target}) {
-    setResourceType({
-      ...resourceType,
-      [target.name]: target.value.trim(),
-    });
-    // target.name == 'resourceSpecification' ??
-    //   setResSpeci({
-    //     ...resSpeci,
-    //     [target.name]: target.value.trim(),
-    //   });
-  }
-  function selectResourceType2({target}) {
-    // setResourceType({
-    //   ...resourceType,
-    //   [target.name]: target.value.trim(),
-    // });
-    // target.name == 'resourceSpecification' ??
-    setResSpeci({
-      ...resSpeci,
-      [target.name]: target.value.trim(),
-    });
-  }
 
   const filterResourceType = useLazyLoadQuery<ConfigurationsViewQuery>(
     Configurations,
@@ -215,7 +191,19 @@ const ConfigurationsView = () => {
   });
   const {queryResource, resourceSpecifications} = dataQuery;
 
-  // const cmVersion = dataQuery?.queryResource;
+  function selectResourceType({target}) {
+    setResourceType({
+      ...resourceType,
+      [target.name]: target.value.trim(),
+    });
+  }
+  function selectResourceType2({target}) {
+    setResSpeci({
+      ...resSpeci,
+      [target.name]: target.value.trim(),
+    });
+    setCheckingSelects(!checkingSelects);
+  }
 
   const resourceTypesFilters = resourceSpecifications?.edges.map(
     item => item?.node?.resourceType,
@@ -227,7 +215,7 @@ const ConfigurationsView = () => {
   const resourceSpecificationFiltered = filterResourceType?.resourceTypes?.edges?.map(
     item => item?.node?.resourceSpecification?.map(rs => rs),
   );
-  /*
+
   const filterData = filterChange => {
     const filterName = queryResource?.filter(
       item => item?.resource?.name === filterChange[0]?.stringValue,
@@ -268,10 +256,13 @@ const ConfigurationsView = () => {
         setDataTable(queryResource);
         break;
     }
-  };*/
-  const [pato, setPato] = useState(queryResource);
+  };
 
-  console.log('***', pato, queryResource, dataQuery);
+  const [dataTable, setDataTable] = useState(queryResource);
+
+  useEffect(() => {
+    setDataTable(queryResource);
+  }, [checkingSelects]);
 
   return (
     <Grid className={classes.root} container spacing={0}>
@@ -327,8 +318,8 @@ const ConfigurationsView = () => {
           <div className={classes.searchBar}>
             <PowerSearchBar
               placeholder="Configuration"
-              filterConfigs={filterConfigs} //opciones de filtrado
-              searchConfig={ResourcesSearchConfig} //opciones de filtrado unificadas
+              filterConfigs={filterConfigs}
+              searchConfig={ResourcesSearchConfig}
               getSelectedFilter={(filterConfig: FilterConfig) =>
                 getInitialFilterValue(
                   filterConfig.key,
@@ -337,35 +328,21 @@ const ConfigurationsView = () => {
                   null,
                 )
               }
-              // onFiltersChanged={filterChange => filterData(filterChange)}
+              onFiltersChanged={filterChange => filterData(filterChange)}
               exportPath={'/configurations_views'}
-              //entity={'RESOURCE'}
             />
           </div>
         </div>
       </Grid>
       <Grid item xs={12} style={{margin: '20px 0 0 0'}}>
-        <ConfigurationTable dataConfig={[]} />
+        <ConfigurationTable
+          stateChange={checkingSelects}
+          dataConfig={dataTable}
+          selectResourceType2={selectResourceType2}
+        />
       </Grid>
     </Grid>
   );
 };
-
-/*
-<Table
-    data={data}
-    columns={tableColumns}
-    paginationSettings={{
-        loadNext: onCompleted => {
-            loadNext(PROJECTS_PAGE_SIZE, {
-                onComplete: () => onCompleted && onCompleted(),
-            });
-        },
-        pageSize: PROJECTS_PAGE_SIZE,
-        totalRowsCount: 10,
-    }}
-
-/>
- */
 
 export {ConfigurationsView};

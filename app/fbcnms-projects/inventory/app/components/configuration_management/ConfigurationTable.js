@@ -10,81 +10,43 @@
 import Button from '@symphony/design-system/components/Button';
 import React, {useEffect, useState} from 'react';
 import Table from '@symphony/design-system/components/Table/Table';
-import fbt from 'fbt';
-import {CircleIndicator} from '../resource_instance/CircleIndicator';
 import {Grid} from '@material-ui/core';
-import {makeStyles} from '@material-ui/styles';
-
-const useStyles = makeStyles(() => ({
-  sizeColumn: {
-    width: '800px',
-  },
-}));
 
 export const PROJECTS_PAGE_SIZE = 15;
-
-/*const dataMock = [
-  {
-    creationDate: '01/03/22',
-    lastModificationDate: '01/05/22',
-    resourceType: 'resource1',
-    source: 'source1',
-    affectedResources: 'affectedResources1',
-  },
-  {
-    creationDate: '01/03/30',
-    lastModificationDate: '01/05/30',
-    resourceType: 'resource2',
-    source: 'source2',
-    affectedResources: 'affectedResources2',
-  },
-];*/
-
 export type Props = $ReadOnly<{|
   dataConfig?: any,
+  selectResourceType2?: any,
+  stateChange?: any,
 |}>;
 
 const ConfigurationTable = (props: Props) => {
-  const classes = useStyles();
-  const {dataConfig} = props;
-
-  console.log('C-TABLE ', dataConfig);
+  const {dataConfig, stateChange} = props;
 
   const dataColumn = dataConfig?.map(itemCMVersion =>
-    itemCMVersion?.cmVersions?.find(item =>
-      item?.parameters?.find(itemParameter => itemParameter),
-    ),
+    itemCMVersion?.cmVersions?.map(itemParameter => itemParameter),
   );
-  // console.log('TTTTT', dataColumn);
-  const tableColumns = [
-    {
-      key: 'location',
-      title: 'Location',
-      render: row => (
-        <Button variant="text" tooltip={row.resource.locatedIn ?? ''}>
-          {row.resource.locatedIn}
-        </Button>
-      ),
-      tooltip: row => row.resource.locatedIn ?? '',
-    },
-  ];
-
-  const [resour, setResour] = useState(tableColumns);
-
-  useEffect(
-    () =>
-      setResour([
-        ...resour,
-        {
-          key: 'parameter1',
-          title: `${fbt('parameter', '')}`,
-          render: row => row.lastModificationDate ?? '',
-          tooltip: row => row.lastModificationDate ?? '',
-        },
-      ]),
-    [],
+  const parameterFilter = dataColumn?.map(
+    parameterItem => parameterItem?.parameters,
   );
-  // console.log('data-table ', resour);
+
+  const parametersNums = parameterFilter[0]?.map(item => {
+    return {
+      key: item?.id,
+      title: row => row.parameterType?.name,
+      render: row => row.parameterType?.stringValue ?? '',
+      tooltip: row => row.parameterType?.stringValue ?? '',
+    };
+  });
+
+  const dataResources = [];
+
+  const [resour, setResour] = useState(dataResources);
+
+  useEffect(() => {
+    parameterFilter?.length !== 0
+      ? setResour([...resour, ...parametersNums])
+      : null;
+  }, [stateChange]);
 
   return (
     <Grid>
@@ -94,14 +56,25 @@ const ConfigurationTable = (props: Props) => {
           {
             key: 'resource',
             title: 'Resource',
-            getSortingValue: row => row.id,
+            getSortingValue: row => row?.id,
             render: row => (
-              <Button variant="text" tooltip={row.resource.name ?? ''}>
-                {row.resource.name}
+              <Button variant="text" tooltip={row?.resource?.name ?? ''}>
+                {row?.resource?.name}
               </Button>
             ),
           },
-          ...tableColumns,
+          {
+            key: 'location',
+            title: 'Location',
+            render: row => (
+              <Button variant="text" tooltip={row?.resource?.locatedIn ?? ''}>
+                {row?.resource?.locatedIn}
+              </Button>
+            ),
+            tooltip: row => row?.resource?.locatedIn ?? '',
+          },
+
+          ...resour,
         ]}
         paginationSettings={{
           loadNext: onCompleted => {
@@ -110,7 +83,7 @@ const ConfigurationTable = (props: Props) => {
             });
           },
           pageSize: PROJECTS_PAGE_SIZE,
-          totalRowsCount: 15, //changeRequest.length,
+          totalRowsCount: 15,
         }}
       />
     </Grid>
@@ -118,22 +91,3 @@ const ConfigurationTable = (props: Props) => {
 };
 
 export {ConfigurationTable};
-
-/*{
-      key: 'parameter1',
-      title: `${fbt('parameter', '')}`,
-      render: row => row.resourceType ?? '',
-      tooltip: row => row.resourceType ?? '',
-    },
-    {
-      key: 'parameter2',
-      title: `${fbt('parameter', '')}`,
-      render: row => row.source ?? '',
-      tooltip: row => row.source ?? '',
-    },
-    {
-      key: 'parameter3',
-      title: `${fbt('parameter', '')}`,
-      render: row => row.affectedResources,
-      tooltip: row => row.affectedResources ?? '',
-    },*/
