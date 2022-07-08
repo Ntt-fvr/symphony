@@ -14,8 +14,8 @@ import ConfigureTitle from './common/ConfigureTitle';
 import FormField from '@symphony/design-system/components/FormField/FormField';
 import PowerSearchBar from '../power_search/PowerSearchBar';
 import React, {useEffect, useMemo, useState} from 'react';
-import Select from '@symphony/design-system/components/Select/Select';
-import Table from '@symphony/design-system/components/Table/Table';
+// import Select from '@symphony/design-system/components/Select/Select';
+// import Table from '@symphony/design-system/components/Table/Table';
 import TextField from '@material-ui/core/TextField';
 import fbt from 'fbt';
 import {ConfigurationTable} from './ConfigurationTable';
@@ -147,6 +147,15 @@ const ConfigurationsView = () => {
 
   const [resourceType, setResourceType] = useState({});
 
+  const filterConfigs = useMemo(
+    () =>
+      ResourcesSearchConfig.map(ent => ent.filters).reduce(
+        (allFilters, currentFilter) => allFilters.concat(currentFilter),
+        [],
+      ),
+    [],
+  );
+
   const verifyResourceSpecification =
     Object.entries(resSpeci)?.length === 0
       ? ''
@@ -155,6 +164,41 @@ const ConfigurationsView = () => {
   const verifyResourceType =
     Object.entries(resourceType).length == 0 ? '' : resourceType?.resource_Type;
 
+  function selectResourceType({target}) {
+    setResourceType({
+      ...resourceType,
+      [target.name]: target.value.trim(),
+    });
+    // target.name == 'resourceSpecification' ??
+    //   setResSpeci({
+    //     ...resSpeci,
+    //     [target.name]: target.value.trim(),
+    //   });
+  }
+  function selectResourceType2({target}) {
+    // setResourceType({
+    //   ...resourceType,
+    //   [target.name]: target.value.trim(),
+    // });
+    // target.name == 'resourceSpecification' ??
+    setResSpeci({
+      ...resSpeci,
+      [target.name]: target.value.trim(),
+    });
+  }
+
+  const filterResourceType = useLazyLoadQuery<ConfigurationsViewQuery>(
+    Configurations,
+    {
+      filterBy: [
+        {
+          filterType: 'NAME',
+          operator: 'IS',
+          stringValue: verifyResourceType,
+        },
+      ],
+    },
+  );
   const dataQuery = useLazyLoadQuery<ConfigurationsViewQuery>(Configurations, {
     filter: {
       resourceSpecification: {
@@ -171,47 +215,7 @@ const ConfigurationsView = () => {
   });
   const {queryResource, resourceSpecifications} = dataQuery;
 
-  const filterConfigs = useMemo(
-    () =>
-      ResourcesSearchConfig.map(ent => ent.filters).reduce(
-        (allFilters, currentFilter) => allFilters.concat(currentFilter),
-        [],
-      ),
-    [],
-  );
-
-  const [dataTable, setDataTable] = useState(queryResource);
-
-  console.log('***', dataTable, dataQuery?.queryResource);
-
-  useEffect(() => {
-    setDataTable(queryResource);
-  }, []);
-
-  function selectResourceType({target}) {
-    setResourceType({
-      ...resourceType,
-      [target.name]: target.value.trim(),
-    });
-    target.name === 'resourceSpecification' &&
-      setResSpeci({
-        ...resSpeci,
-        [target.name]: target.value.trim(),
-      });
-  }
-
-  const filterResourceType = useLazyLoadQuery<ConfigurationsViewQuery>(
-    Configurations,
-    {
-      filterBy: [
-        {
-          filterType: 'NAME',
-          operator: 'IS',
-          stringValue: verifyResourceType,
-        },
-      ],
-    },
-  );
+  // const cmVersion = dataQuery?.queryResource;
 
   const resourceTypesFilters = resourceSpecifications?.edges.map(
     item => item?.node?.resourceType,
@@ -223,7 +227,7 @@ const ConfigurationsView = () => {
   const resourceSpecificationFiltered = filterResourceType?.resourceTypes?.edges?.map(
     item => item?.node?.resourceSpecification?.map(rs => rs),
   );
-
+  /*
   const filterData = filterChange => {
     const filterName = queryResource?.filter(
       item => item?.resource?.name === filterChange[0]?.stringValue,
@@ -264,7 +268,10 @@ const ConfigurationsView = () => {
         setDataTable(queryResource);
         break;
     }
-  };
+  };*/
+  const [pato, setPato] = useState(queryResource);
+
+  console.log('***', pato, queryResource, dataQuery);
 
   return (
     <Grid className={classes.root} container spacing={0}>
@@ -303,7 +310,7 @@ const ConfigurationsView = () => {
               select
               className={classes.selectResourceSpecification}
               label="Resource Specification"
-              onChange={selectResourceType}
+              onChange={selectResourceType2}
               name="resourceSpecification"
               defaultValue=""
               variant="outlined">
@@ -330,7 +337,7 @@ const ConfigurationsView = () => {
                   null,
                 )
               }
-              onFiltersChanged={filterChange => filterData(filterChange)}
+              // onFiltersChanged={filterChange => filterData(filterChange)}
               exportPath={'/configurations_views'}
               //entity={'RESOURCE'}
             />
@@ -338,7 +345,7 @@ const ConfigurationsView = () => {
         </div>
       </Grid>
       <Grid item xs={12} style={{margin: '20px 0 0 0'}}>
-        <ConfigurationTable dataConfig={dataTable} />
+        <ConfigurationTable dataConfig={[]} />
       </Grid>
     </Grid>
   );

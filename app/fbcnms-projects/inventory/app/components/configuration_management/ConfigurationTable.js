@@ -55,7 +55,7 @@ const ConfigurationTable = (props: Props) => {
       item?.parameters?.find(itemParameter => itemParameter),
     ),
   );
-  console.log('TTTTT', dataColumn);
+  // console.log('TTTTT', dataColumn);
   const tableColumns = [
     {
       key: 'location',
