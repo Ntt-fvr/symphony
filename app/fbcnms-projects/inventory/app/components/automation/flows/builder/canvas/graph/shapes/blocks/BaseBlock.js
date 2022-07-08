@@ -154,6 +154,21 @@ export default class BaseBlock implements IBlock {
     this.model.idParent = id;
   }
 
+  setSize() {
+    if (
+      this.model.attributes.type == 'ForEachLoopBlock' ||
+      this.model.attributes.type == 'ParallelBlock'
+    ) {
+      this.model.resize(394, 344);
+      this.model.attr('coupled/width', 437);
+      this.model.attr('coupled/height', 420);
+      this.model.attr('body/refY2', 141);
+      this.model.attr('background/refY2', 210);
+      this.model.attr('label/refY2', 213);
+      this.model.attr('image/refY2', 137);
+    }
+  }
+
   setSettings(settings: string) {
     this.settings = setBlockSettings(this.type, settings);
   }

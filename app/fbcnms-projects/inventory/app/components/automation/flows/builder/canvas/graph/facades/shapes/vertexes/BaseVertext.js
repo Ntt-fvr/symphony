@@ -216,6 +216,7 @@ export function getInitObject(
   horizontalPortLeftAlign?: number,
   horizontalPortRightAlign?: number,
   id?: ?string,
+  position?: string,
 ): InitObjectType {
   const inputPorts = getPortsArray(ports?.input, PORTS_GROUPS.INPUT);
   const outputPorts = getPortsArray(ports?.output, PORTS_GROUPS.OUTPUT);
@@ -226,7 +227,7 @@ export function getInitObject(
     ports: {
       groups: {
         input: {
-          position: 'left',
+          position: `${position || 'left'}`,
           markup:
             ports?.input?.markup ??
             getDefaultPortMarkup(
@@ -236,7 +237,7 @@ export function getInitObject(
             ),
         },
         output: {
-          position: 'right',
+          position: `${position || 'right'}`,
           markup:
             ports?.output?.markup ??
             getDefaultPortMarkup(backgroundColor, horizontalPortRightAlign),
