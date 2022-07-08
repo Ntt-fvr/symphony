@@ -679,8 +679,16 @@ func (f *FlowQuery) CollectFields(ctx context.Context, satisfies ...string) *Flo
 func (f *FlowQuery) collectField(ctx *graphql.OperationContext, field graphql.CollectedField, satisfies ...string) *FlowQuery {
 	for _, field := range graphql.CollectFields(ctx, field.Selections, satisfies) {
 		switch field.Name {
+		case "author":
+			f = f.WithAuthor(func(query *UserQuery) {
+				query.collectField(ctx, field)
+			})
 		case "blocks":
 			f = f.WithBlocks(func(query *BlockQuery) {
+				query.collectField(ctx, field)
+			})
+		case "editor":
+			f = f.WithEditor(func(query *UserQuery) {
 				query.collectField(ctx, field)
 			})
 		}

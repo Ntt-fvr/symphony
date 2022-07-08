@@ -123,16 +123,9 @@ func (ff *FlowFactory) RunFlowWorkflow(
 				maxAttempts = *automationBlock.MaxAttemps
 			}
 			if automationBlock.Attempts < maxAttempts {
-				err = ff.updateFlowInstanceStatus(
-					automationBlock.AppCtx, automationBlock.FlowID,
-					flowinstance.StatusFailed, nil, err,
-				)
-				if err != nil {
-					return nil, err
-				}
+				// TODO Retry block execution
 			}
-			// TODO Change flow status (failing / failed)
-			// TODO Retry block execution
+			// TODO Mark block failed
 			return nil, err
 		}
 
@@ -156,8 +149,6 @@ func (ff *FlowFactory) RunFlowWorkflow(
 			automationBlock = nil
 		}
 	}
-
-	// TODO Change flow status
 
 	return output, nil
 }
@@ -327,28 +318,6 @@ func (ff *FlowFactory) updateBlockInstanceStatus(
 	}
 
 	_, err := query.Save(ctx)
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
-func (ff *FlowFactory) updateFlowInstanceStatus(
-	ctx context.Context, flowID int, status flowinstance.Status, endDate *time.Time, err error,
-) error {
-
-	query := ent.FromContext(ctx).FlowInstance.UpdateOneID(flowID).
-		SetStatus(status)
-
-	if endDate != nil {
-		query = query.SetEndDate(*endDate)
-	}
-
-	if err != nil {
-		query = query.SetIncompletionReason(err.Error())
-	}
-
-	_, err = query.Save(ctx)
 	if err != nil {
 		return err
 	}

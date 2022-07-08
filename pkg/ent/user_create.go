@@ -17,6 +17,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/appointment"
 	"github.com/facebookincubator/symphony/pkg/ent/feature"
 	"github.com/facebookincubator/symphony/pkg/ent/file"
+	"github.com/facebookincubator/symphony/pkg/ent/flow"
 	"github.com/facebookincubator/symphony/pkg/ent/organization"
 	"github.com/facebookincubator/symphony/pkg/ent/project"
 	"github.com/facebookincubator/symphony/pkg/ent/recommendations"
@@ -306,6 +307,21 @@ func (uc *UserCreate) AddAppointment(a ...*Appointment) *UserCreate {
 		ids[i] = a[i].ID
 	}
 	return uc.AddAppointmentIDs(ids...)
+}
+
+// AddAuthoredFlowIDs adds the authored_flow edge to Flow by ids.
+func (uc *UserCreate) AddAuthoredFlowIDs(ids ...int) *UserCreate {
+	uc.mutation.AddAuthoredFlowIDs(ids...)
+	return uc
+}
+
+// AddAuthoredFlow adds the authored_flow edges to Flow.
+func (uc *UserCreate) AddAuthoredFlow(f ...*Flow) *UserCreate {
+	ids := make([]int, len(f))
+	for i := range f {
+		ids[i] = f[i].ID
+	}
+	return uc.AddAuthoredFlowIDs(ids...)
 }
 
 // Mutation returns the UserMutation object of the builder.
@@ -718,6 +734,25 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: appointment.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := uc.mutation.AuthoredFlowIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   user.AuthoredFlowTable,
+			Columns: []string{user.AuthoredFlowColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: flow.FieldID,
 				},
 			},
 		}

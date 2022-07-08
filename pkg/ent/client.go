@@ -5801,6 +5801,54 @@ func (c *FlowClient) QueryDraft(f *Flow) *FlowDraftQuery {
 	return query
 }
 
+// QueryAuthor queries the author edge of a Flow.
+func (c *FlowClient) QueryAuthor(f *Flow) *UserQuery {
+	query := &UserQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := f.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(flow.Table, flow.FieldID, id),
+			sqlgraph.To(user.Table, user.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, false, flow.AuthorTable, flow.AuthorColumn),
+		)
+		fromV = sqlgraph.Neighbors(f.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryEditor queries the editor edge of a Flow.
+func (c *FlowClient) QueryEditor(f *Flow) *UserQuery {
+	query := &UserQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := f.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(flow.Table, flow.FieldID, id),
+			sqlgraph.To(user.Table, user.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, flow.EditorTable, flow.EditorColumn),
+		)
+		fromV = sqlgraph.Neighbors(f.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryInstance queries the instance edge of a Flow.
+func (c *FlowClient) QueryInstance(f *Flow) *FlowInstanceQuery {
+	query := &FlowInstanceQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := f.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(flow.Table, flow.FieldID, id),
+			sqlgraph.To(flowinstance.Table, flowinstance.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, true, flow.InstanceTable, flow.InstanceColumn),
+		)
+		fromV = sqlgraph.Neighbors(f.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // Hooks returns the client hooks.
 func (c *FlowClient) Hooks() []Hook {
 	hooks := c.hooks.Flow
@@ -13720,6 +13768,22 @@ func (c *UserClient) QueryAppointment(u *User) *AppointmentQuery {
 			sqlgraph.From(user.Table, user.FieldID, id),
 			sqlgraph.To(appointment.Table, appointment.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, user.AppointmentTable, user.AppointmentColumn),
+		)
+		fromV = sqlgraph.Neighbors(u.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryAuthoredFlow queries the authored_flow edge of a User.
+func (c *UserClient) QueryAuthoredFlow(u *User) *FlowQuery {
+	query := &FlowQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := u.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, id),
+			sqlgraph.To(flow.Table, flow.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, true, user.AuthoredFlowTable, user.AuthoredFlowColumn),
 		)
 		fromV = sqlgraph.Neighbors(u.driver.Dialect(), step)
 		return fromV, nil

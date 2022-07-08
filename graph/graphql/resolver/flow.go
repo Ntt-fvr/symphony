@@ -13,6 +13,7 @@ import (
 
 	"github.com/pkg/errors"
 
+	"github.com/facebookincubator/symphony/pkg/ent/flowinstance"
 	"github.com/facebookincubator/symphony/pkg/ent/predicate"
 
 	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
@@ -174,7 +175,7 @@ func (r mutationResolver) StartFlow(ctx context.Context, input models.StartFlowI
 	client := r.ClientFrom(ctx)
 	flowInstance, err := client.FlowInstance.Create().
 		SetFlowID(input.FlowID).
-		// SetNillableBssCode(&input.BssCode).
+		SetNillableBssCode(input.BssCode).
 		SetStartDate(input.StartDate).
 		SetStartParams(input.Params).
 		Save(ctx)
@@ -714,4 +715,25 @@ func (r mutationResolver) EditFlowInstance(ctx context.Context, input *models.Ed
 		SetNillableEndDate(input.EndDate)
 
 	return mutation.Save(ctx)
+}
+
+func (flowResolver) RunningInstances(ctx context.Context, obj *ent.Flow) (int, error) {
+	instances, err := obj.Edges.InstanceOrErr()
+	if !ent.IsNotLoaded(err) {
+		return len(instances), err
+	}
+	return obj.QueryInstance().Where(flowinstance.StatusEQ(flowinstance.StatusRunning)).Count(ctx)
+}
+
+func (flowResolver) FailedInstances(ctx context.Context, obj *ent.Flow) (int, error) {
+	instances, err := obj.Edges.InstanceOrErr()
+	if !ent.IsNotLoaded(err) {
+		return len(instances), err
+	}
+	return obj.QueryInstance().Where(flowinstance.StatusEQ(flowinstance.StatusRunning)).Count(ctx)
+}
+
+func (r flowResolver) Editor(ctx context.Context, obj *ent.Flow) (*ent.User, error) {
+	e, err := obj.QueryEditor().Only(ctx)
+	return e, err
 }

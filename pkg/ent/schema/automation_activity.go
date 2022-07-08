@@ -9,6 +9,7 @@ import (
 	"github.com/facebook/ent/schema/edge"
 	"github.com/facebook/ent/schema/field"
 	"github.com/facebookincubator/symphony/pkg/authz"
+	"github.com/facebookincubator/symphony/pkg/ent/privacy"
 )
 
 // AutomationActivity defines the location type schema.
@@ -56,11 +57,16 @@ func (AutomationActivity) Edges() []ent.Edge {
 func (AutomationActivity) Policy() ent.Policy {
 	return authz.NewPolicy(
 		authz.WithQueryRules(
-			authz.ActivityReadPolicyRule(),
+			privacy.AlwaysAllowRule(),
 		),
-		authz.WithMutationRules(
-			authz.ActivityWritePolicyRule(),
-			authz.ActivityCreatePolicyRule(),
-		),
+		/*
+			authz.WithQueryRules(
+				authz.ActivityReadPolicyRule(),
+			),
+			authz.WithMutationRules(
+				authz.ActivityWritePolicyRule(),
+				authz.ActivityCreatePolicyRule(),
+			),
+		*/
 	)
 }

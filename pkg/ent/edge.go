@@ -864,6 +864,30 @@ func (f *Flow) Draft(ctx context.Context) (*FlowDraft, error) {
 	return result, MaskNotFound(err)
 }
 
+func (f *Flow) Author(ctx context.Context) (*User, error) {
+	result, err := f.Edges.AuthorOrErr()
+	if IsNotLoaded(err) {
+		result, err = f.QueryAuthor().Only(ctx)
+	}
+	return result, err
+}
+
+func (f *Flow) Editor(ctx context.Context) ([]*User, error) {
+	result, err := f.Edges.EditorOrErr()
+	if IsNotLoaded(err) {
+		result, err = f.QueryEditor().All(ctx)
+	}
+	return result, err
+}
+
+func (f *Flow) Instance(ctx context.Context) ([]*FlowInstance, error) {
+	result, err := f.Edges.InstanceOrErr()
+	if IsNotLoaded(err) {
+		result, err = f.QueryInstance().All(ctx)
+	}
+	return result, err
+}
+
 func (fd *FlowDraft) Blocks(ctx context.Context) ([]*Block, error) {
 	result, err := fd.Edges.BlocksOrErr()
 	if IsNotLoaded(err) {
@@ -2420,6 +2444,14 @@ func (u *User) Appointment(ctx context.Context) ([]*Appointment, error) {
 	result, err := u.Edges.AppointmentOrErr()
 	if IsNotLoaded(err) {
 		result, err = u.QueryAppointment().All(ctx)
+	}
+	return result, err
+}
+
+func (u *User) AuthoredFlow(ctx context.Context) ([]*Flow, error) {
+	result, err := u.Edges.AuthoredFlowOrErr()
+	if IsNotLoaded(err) {
+		result, err = u.QueryAuthoredFlow().All(ctx)
 	}
 	return result, err
 }

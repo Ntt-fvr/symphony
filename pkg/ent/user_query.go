@@ -19,6 +19,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/appointment"
 	"github.com/facebookincubator/symphony/pkg/ent/feature"
 	"github.com/facebookincubator/symphony/pkg/ent/file"
+	"github.com/facebookincubator/symphony/pkg/ent/flow"
 	"github.com/facebookincubator/symphony/pkg/ent/organization"
 	"github.com/facebookincubator/symphony/pkg/ent/predicate"
 	"github.com/facebookincubator/symphony/pkg/ent/project"
@@ -47,6 +48,7 @@ type UserQuery struct {
 	withCreatedProjects    *ProjectQuery
 	withFeatures           *FeatureQuery
 	withAppointment        *AppointmentQuery
+	withAuthoredFlow       *FlowQuery
 	withFKs                bool
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
@@ -297,6 +299,28 @@ func (uq *UserQuery) QueryAppointment() *AppointmentQuery {
 	return query
 }
 
+// QueryAuthoredFlow chains the current query on the authored_flow edge.
+func (uq *UserQuery) QueryAuthoredFlow() *FlowQuery {
+	query := &FlowQuery{config: uq.config}
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := uq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := uq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, selector),
+			sqlgraph.To(flow.Table, flow.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, true, user.AuthoredFlowTable, user.AuthoredFlowColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(uq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
 // First returns the first User entity in the query. Returns *NotFoundError when no user was found.
 func (uq *UserQuery) First(ctx context.Context) (*User, error) {
 	nodes, err := uq.Limit(1).All(ctx)
@@ -483,6 +507,7 @@ func (uq *UserQuery) Clone() *UserQuery {
 		withCreatedProjects:    uq.withCreatedProjects.Clone(),
 		withFeatures:           uq.withFeatures.Clone(),
 		withAppointment:        uq.withAppointment.Clone(),
+		withAuthoredFlow:       uq.withAuthoredFlow.Clone(),
 		// clone intermediate query.
 		sql:  uq.sql.Clone(),
 		path: uq.path,
@@ -599,6 +624,17 @@ func (uq *UserQuery) WithAppointment(opts ...func(*AppointmentQuery)) *UserQuery
 	return uq
 }
 
+//  WithAuthoredFlow tells the query-builder to eager-loads the nodes that are connected to
+// the "authored_flow" edge. The optional arguments used to configure the query builder of the edge.
+func (uq *UserQuery) WithAuthoredFlow(opts ...func(*FlowQuery)) *UserQuery {
+	query := &FlowQuery{config: uq.config}
+	for _, opt := range opts {
+		opt(query)
+	}
+	uq.withAuthoredFlow = query
+	return uq
+}
+
 // GroupBy used to group vertices by one or more fields/columns.
 // It is often used with aggregate functions, like: count, max, mean, min, sum.
 //
@@ -669,7 +705,7 @@ func (uq *UserQuery) sqlAll(ctx context.Context) ([]*User, error) {
 		nodes       = []*User{}
 		withFKs     = uq.withFKs
 		_spec       = uq.querySpec()
-		loadedTypes = [10]bool{
+		loadedTypes = [11]bool{
 			uq.withProfilePhoto != nil,
 			uq.withUserCreate != nil,
 			uq.withUserApproved != nil,
@@ -680,6 +716,7 @@ func (uq *UserQuery) sqlAll(ctx context.Context) ([]*User, error) {
 			uq.withCreatedProjects != nil,
 			uq.withFeatures != nil,
 			uq.withAppointment != nil,
+			uq.withAuthoredFlow != nil,
 		}
 	)
 	if uq.withOrganization != nil {
@@ -1064,6 +1101,35 @@ func (uq *UserQuery) sqlAll(ctx context.Context) ([]*User, error) {
 				return nil, fmt.Errorf(`unexpected foreign-key "user_appointment" returned %v for node %v`, *fk, n.ID)
 			}
 			node.Edges.Appointment = append(node.Edges.Appointment, n)
+		}
+	}
+
+	if query := uq.withAuthoredFlow; query != nil {
+		fks := make([]driver.Value, 0, len(nodes))
+		nodeids := make(map[int]*User)
+		for i := range nodes {
+			fks = append(fks, nodes[i].ID)
+			nodeids[nodes[i].ID] = nodes[i]
+			nodes[i].Edges.AuthoredFlow = []*Flow{}
+		}
+		query.withFKs = true
+		query.Where(predicate.Flow(func(s *sql.Selector) {
+			s.Where(sql.InValues(user.AuthoredFlowColumn, fks...))
+		}))
+		neighbors, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, n := range neighbors {
+			fk := n.flow_author
+			if fk == nil {
+				return nil, fmt.Errorf(`foreign-key "flow_author" is nil for node %v`, n.ID)
+			}
+			node, ok := nodeids[*fk]
+			if !ok {
+				return nil, fmt.Errorf(`unexpected foreign-key "flow_author" returned %v for node %v`, *fk, n.ID)
+			}
+			node.Edges.AuthoredFlow = append(node.Edges.AuthoredFlow, n)
 		}
 	}
 
