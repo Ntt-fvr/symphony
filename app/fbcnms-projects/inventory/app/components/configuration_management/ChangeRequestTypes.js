@@ -254,6 +254,7 @@ const ChangeRequestTypes = () => {
   }
 
   const filterData = filters => {
+    console.log(filters, '****');
     const arrayFilters = [];
     const data = {};
 
