@@ -69,6 +69,37 @@ export type ConfigurationsViewQueryResponse = {|
     +operationalSubStatus: ?OperationalSubStatus,
     +createTime: ?any,
     +updateTime: ?any,
+    +cmVersions: ?$ReadOnlyArray<?{|
+      +id: string,
+      +createTime: ?any,
+      +updateTime: ?any,
+      +status: VersionStatus,
+      +resource: {|
+        +id: string,
+        +name: string,
+        +locatedIn: ?string,
+      |},
+      +parameters: $ReadOnlyArray<{|
+        +id: string,
+        +stringValue: ?string,
+        +rangeToValue: ?number,
+        +rangeFromValue: ?number,
+        +floatValue: ?number,
+        +intValue: ?number,
+        +booleanValue: ?boolean,
+        +latitudeValue: ?number,
+        +longitudeValue: ?number,
+        +parameterType: {|
+          +id: string,
+          +name: string,
+          +resourceSpecification: string,
+          +stringValue: ?string,
+          +floatValue: ?number,
+          +intValue: ?number,
+          +type: ParameterKind,
+        |},
+      |}>,
+    |}>,
   |}>,
   +resourceTypes: {|
     +edges: $ReadOnlyArray<{|
@@ -94,39 +125,6 @@ export type ConfigurationsViewQueryResponse = {|
       |}
     |}>
   |},
-  +queryCMVersion: ?$ReadOnlyArray<?{|
-    +id: string,
-    +parameters: $ReadOnlyArray<{|
-      +id: string,
-      +stringValue: ?string,
-      +rangeToValue: ?number,
-      +rangeFromValue: ?number,
-      +floatValue: ?number,
-      +intValue: ?number,
-      +booleanValue: ?boolean,
-      +latitudeValue: ?number,
-      +longitudeValue: ?number,
-      +parameterType: {|
-        +id: string,
-        +name: string,
-        +resourceSpecification: string,
-        +stringValue: ?string,
-        +floatValue: ?number,
-        +intValue: ?number,
-        +type: ParameterKind,
-      |},
-    |}>,
-    +status: VersionStatus,
-    +resource: {|
-      +id: string,
-      +name: string,
-      +resourceProperties: ?$ReadOnlyArray<?{|
-        +id: string,
-        +resourcePropertyType: string,
-      |}>,
-      +locatedIn: ?string,
-    |},
-  |}>,
 |};
 export type ConfigurationsViewQuery = {|
   variables: ConfigurationsViewQueryVariables,
@@ -153,6 +151,37 @@ query ConfigurationsViewQuery(
     operationalSubStatus
     createTime
     updateTime
+    cmVersions {
+      id
+      createTime
+      updateTime
+      status
+      resource {
+        id
+        name
+        locatedIn
+      }
+      parameters {
+        id
+        stringValue
+        rangeToValue
+        rangeFromValue
+        floatValue
+        intValue
+        booleanValue
+        latitudeValue
+        longitudeValue
+        parameterType {
+          id
+          name
+          resourceSpecification
+          stringValue
+          floatValue
+          intValue
+          type
+        }
+      }
+    }
   }
   resourceTypes(filterBy: $filterBy) {
     edges {
@@ -176,39 +205,6 @@ query ConfigurationsViewQuery(
           name
         }
       }
-    }
-  }
-  queryCMVersion {
-    id
-    parameters {
-      id
-      stringValue
-      rangeToValue
-      rangeFromValue
-      floatValue
-      intValue
-      booleanValue
-      latitudeValue
-      longitudeValue
-      parameterType {
-        id
-        name
-        resourceSpecification
-        stringValue
-        floatValue
-        intValue
-        type
-      }
-    }
-    status
-    resource {
-      id
-      name
-      resourceProperties {
-        id
-        resourcePropertyType
-      }
-      locatedIn
     }
   }
 }
@@ -255,32 +251,46 @@ v4 = {
   "name": "resourceSpecification",
   "storageKey": null
 },
-v5 = [
-  (v1/*: any*/),
-  (v2/*: any*/)
-],
+v5 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "createTime",
+  "storageKey": null
+},
 v6 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "stringValue",
+  "name": "updateTime",
   "storageKey": null
 },
 v7 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "floatValue",
+  "name": "stringValue",
   "storageKey": null
 },
 v8 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
+  "name": "floatValue",
+  "storageKey": null
+},
+v9 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
   "name": "intValue",
   "storageKey": null
 },
-v9 = [
+v10 = [
+  (v1/*: any*/),
+  (v2/*: any*/)
+],
+v11 = [
   {
     "alias": null,
     "args": [
@@ -341,18 +351,115 @@ v9 = [
         "name": "operationalSubStatus",
         "storageKey": null
       },
+      (v5/*: any*/),
+      (v6/*: any*/),
       {
         "alias": null,
         "args": null,
-        "kind": "ScalarField",
-        "name": "createTime",
-        "storageKey": null
-      },
-      {
-        "alias": null,
-        "args": null,
-        "kind": "ScalarField",
-        "name": "updateTime",
+        "concreteType": "CMVersion",
+        "kind": "LinkedField",
+        "name": "cmVersions",
+        "plural": true,
+        "selections": [
+          (v1/*: any*/),
+          (v5/*: any*/),
+          (v6/*: any*/),
+          {
+            "alias": null,
+            "args": null,
+            "kind": "ScalarField",
+            "name": "status",
+            "storageKey": null
+          },
+          {
+            "alias": null,
+            "args": null,
+            "concreteType": "Resource",
+            "kind": "LinkedField",
+            "name": "resource",
+            "plural": false,
+            "selections": [
+              (v1/*: any*/),
+              (v2/*: any*/),
+              (v3/*: any*/)
+            ],
+            "storageKey": null
+          },
+          {
+            "alias": null,
+            "args": null,
+            "concreteType": "Parameter",
+            "kind": "LinkedField",
+            "name": "parameters",
+            "plural": true,
+            "selections": [
+              (v1/*: any*/),
+              (v7/*: any*/),
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
+                "name": "rangeToValue",
+                "storageKey": null
+              },
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
+                "name": "rangeFromValue",
+                "storageKey": null
+              },
+              (v8/*: any*/),
+              (v9/*: any*/),
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
+                "name": "booleanValue",
+                "storageKey": null
+              },
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
+                "name": "latitudeValue",
+                "storageKey": null
+              },
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
+                "name": "longitudeValue",
+                "storageKey": null
+              },
+              {
+                "alias": null,
+                "args": null,
+                "concreteType": "ConfigurationParameterType",
+                "kind": "LinkedField",
+                "name": "parameterType",
+                "plural": false,
+                "selections": [
+                  (v1/*: any*/),
+                  (v2/*: any*/),
+                  (v4/*: any*/),
+                  (v7/*: any*/),
+                  (v8/*: any*/),
+                  (v9/*: any*/),
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "type",
+                    "storageKey": null
+                  }
+                ],
+                "storageKey": null
+              }
+            ],
+            "storageKey": null
+          }
+        ],
         "storageKey": null
       }
     ],
@@ -397,7 +504,7 @@ v9 = [
                 "kind": "LinkedField",
                 "name": "resourceSpecification",
                 "plural": true,
-                "selections": (v5/*: any*/),
+                "selections": (v10/*: any*/),
                 "storageKey": null
               }
             ],
@@ -442,138 +549,12 @@ v9 = [
                 "kind": "LinkedField",
                 "name": "resourceType",
                 "plural": false,
-                "selections": (v5/*: any*/),
+                "selections": (v10/*: any*/),
                 "storageKey": null
               }
             ],
             "storageKey": null
           }
-        ],
-        "storageKey": null
-      }
-    ],
-    "storageKey": null
-  },
-  {
-    "alias": null,
-    "args": null,
-    "concreteType": "CMVersion",
-    "kind": "LinkedField",
-    "name": "queryCMVersion",
-    "plural": true,
-    "selections": [
-      (v1/*: any*/),
-      {
-        "alias": null,
-        "args": null,
-        "concreteType": "Parameter",
-        "kind": "LinkedField",
-        "name": "parameters",
-        "plural": true,
-        "selections": [
-          (v1/*: any*/),
-          (v6/*: any*/),
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "rangeToValue",
-            "storageKey": null
-          },
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "rangeFromValue",
-            "storageKey": null
-          },
-          (v7/*: any*/),
-          (v8/*: any*/),
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "booleanValue",
-            "storageKey": null
-          },
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "latitudeValue",
-            "storageKey": null
-          },
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "longitudeValue",
-            "storageKey": null
-          },
-          {
-            "alias": null,
-            "args": null,
-            "concreteType": "ConfigurationParameterType",
-            "kind": "LinkedField",
-            "name": "parameterType",
-            "plural": false,
-            "selections": [
-              (v1/*: any*/),
-              (v2/*: any*/),
-              (v4/*: any*/),
-              (v6/*: any*/),
-              (v7/*: any*/),
-              (v8/*: any*/),
-              {
-                "alias": null,
-                "args": null,
-                "kind": "ScalarField",
-                "name": "type",
-                "storageKey": null
-              }
-            ],
-            "storageKey": null
-          }
-        ],
-        "storageKey": null
-      },
-      {
-        "alias": null,
-        "args": null,
-        "kind": "ScalarField",
-        "name": "status",
-        "storageKey": null
-      },
-      {
-        "alias": null,
-        "args": null,
-        "concreteType": "Resource",
-        "kind": "LinkedField",
-        "name": "resource",
-        "plural": false,
-        "selections": [
-          (v1/*: any*/),
-          (v2/*: any*/),
-          {
-            "alias": null,
-            "args": null,
-            "concreteType": "ResourceProperty",
-            "kind": "LinkedField",
-            "name": "resourceProperties",
-            "plural": true,
-            "selections": [
-              (v1/*: any*/),
-              {
-                "alias": null,
-                "args": null,
-                "kind": "ScalarField",
-                "name": "resourcePropertyType",
-                "storageKey": null
-              }
-            ],
-            "storageKey": null
-          },
-          (v3/*: any*/)
         ],
         "storageKey": null
       }
@@ -587,7 +568,7 @@ return {
     "kind": "Fragment",
     "metadata": null,
     "name": "ConfigurationsViewQuery",
-    "selections": (v9/*: any*/),
+    "selections": (v11/*: any*/),
     "type": "Query",
     "abstractKey": null
   },
@@ -596,19 +577,19 @@ return {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
     "name": "ConfigurationsViewQuery",
-    "selections": (v9/*: any*/)
+    "selections": (v11/*: any*/)
   },
   "params": {
-    "cacheID": "b2d32b106ff15fb41379f8d036d4ecf2",
+    "cacheID": "d15ff34a4ea6b0a04775a4a5d791efac",
     "id": null,
     "metadata": {},
     "name": "ConfigurationsViewQuery",
     "operationKind": "query",
-    "text": "query ConfigurationsViewQuery(\n  $filter: ResourceFilter\n  $filterBy: [ResourceTypeFilterInput!]\n) {\n  queryResource(filter: $filter) {\n    id\n    name\n    locatedIn\n    resourceSpecification\n    isDeleted\n    lifecycleStatus\n    typePlanningSubStatus\n    planningSubStatus\n    usageSubStatus\n    operationalSubStatus\n    createTime\n    updateTime\n  }\n  resourceTypes(filterBy: $filterBy) {\n    edges {\n      node {\n        id\n        name\n        resourceSpecification {\n          id\n          name\n        }\n      }\n    }\n  }\n  resourceSpecifications {\n    edges {\n      node {\n        id\n        name\n        resourceType {\n          id\n          name\n        }\n      }\n    }\n  }\n  queryCMVersion {\n    id\n    parameters {\n      id\n      stringValue\n      rangeToValue\n      rangeFromValue\n      floatValue\n      intValue\n      booleanValue\n      latitudeValue\n      longitudeValue\n      parameterType {\n        id\n        name\n        resourceSpecification\n        stringValue\n        floatValue\n        intValue\n        type\n      }\n    }\n    status\n    resource {\n      id\n      name\n      resourceProperties {\n        id\n        resourcePropertyType\n      }\n      locatedIn\n    }\n  }\n}\n"
+    "text": "query ConfigurationsViewQuery(\n  $filter: ResourceFilter\n  $filterBy: [ResourceTypeFilterInput!]\n) {\n  queryResource(filter: $filter) {\n    id\n    name\n    locatedIn\n    resourceSpecification\n    isDeleted\n    lifecycleStatus\n    typePlanningSubStatus\n    planningSubStatus\n    usageSubStatus\n    operationalSubStatus\n    createTime\n    updateTime\n    cmVersions {\n      id\n      createTime\n      updateTime\n      status\n      resource {\n        id\n        name\n        locatedIn\n      }\n      parameters {\n        id\n        stringValue\n        rangeToValue\n        rangeFromValue\n        floatValue\n        intValue\n        booleanValue\n        latitudeValue\n        longitudeValue\n        parameterType {\n          id\n          name\n          resourceSpecification\n          stringValue\n          floatValue\n          intValue\n          type\n        }\n      }\n    }\n  }\n  resourceTypes(filterBy: $filterBy) {\n    edges {\n      node {\n        id\n        name\n        resourceSpecification {\n          id\n          name\n        }\n      }\n    }\n  }\n  resourceSpecifications {\n    edges {\n      node {\n        id\n        name\n        resourceType {\n          id\n          name\n        }\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = 'cb8b8ad0353d3e054f8c8c4a0de7a217';
+(node/*: any*/).hash = '17c5a4977d04651d615536c45523d876';
 
 module.exports = node;

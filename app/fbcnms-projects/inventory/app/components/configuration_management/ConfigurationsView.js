@@ -80,6 +80,39 @@ const Configurations = graphql`
       operationalSubStatus
       createTime
       updateTime
+      cmVersions {
+        id
+        createTime
+        updateTime
+        status
+        #
+        resource {
+          id
+          name
+          locatedIn
+        }
+        #
+        parameters {
+          id
+          stringValue
+          rangeToValue
+          rangeFromValue
+          floatValue
+          intValue
+          booleanValue
+          latitudeValue
+          longitudeValue
+          parameterType {
+            id
+            name
+            resourceSpecification
+            stringValue
+            floatValue
+            intValue
+            type
+          }
+        }
+      }
     }
     resourceTypes(filterBy: $filterBy) {
       edges {
@@ -105,63 +138,38 @@ const Configurations = graphql`
         }
       }
     }
-    queryCMVersion {
-      id
-      parameters {
-        id
-        stringValue
-        rangeToValue
-        rangeFromValue
-        floatValue
-        intValue
-        booleanValue
-        latitudeValue
-        longitudeValue
-        parameterType {
-          id
-          name
-          resourceSpecification
-          stringValue
-          floatValue
-          intValue
-          type
-        }
-      }
-      status
-      resource {
-        id
-        name
-        resourceProperties {
-          id
-          resourcePropertyType
-        }
-        locatedIn
-      }
-    }
   }
 `;
-// const queryFilterResourceType = graphql`
-//   query ConfigurationsView2Query($filterBy: [ResourceTypeFilterInput!]) {
-//     resourceTypes(filterBy: $filterBy) {
-//       edges {
-//         node {
-//           id
-//           name
-//           resourceSpecification {
-//             id
-//             name
-//           }
-//         }
-//       }
-//     }
-//   }
-// `;
 
 const ConfigurationsView = () => {
   const classes = useStyles();
   const [resSpeci, setResSpeci] = useState({});
 
   const [resourceType, setResourceType] = useState({});
+
+  const verifyResourceSpecification =
+    Object.entries(resSpeci)?.length === 0
+      ? ''
+      : resSpeci?.resourceSpecification;
+
+  const verifyResourceType =
+    Object.entries(resourceType).length == 0 ? '' : resourceType?.resource_Type;
+
+  const dataQuery = useLazyLoadQuery<ConfigurationsViewQuery>(Configurations, {
+    filter: {
+      resourceSpecification: {
+        eq: verifyResourceSpecification,
+      },
+    },
+    filterBy: [
+      {
+        filterType: 'NAME',
+        operator: 'IS',
+        stringValue: verifyResourceType,
+      },
+    ],
+  });
+  const {queryResource, resourceSpecifications} = dataQuery;
 
   const filterConfigs = useMemo(
     () =>
@@ -171,6 +179,14 @@ const ConfigurationsView = () => {
       ),
     [],
   );
+
+  const [dataTable, setDataTable] = useState(queryResource);
+
+  console.log('***', dataTable, dataQuery?.queryResource);
+
+  useEffect(() => {
+    setDataTable(queryResource);
+  }, []);
 
   function selectResourceType({target}) {
     setResourceType({
@@ -184,11 +200,6 @@ const ConfigurationsView = () => {
       });
   }
 
-  const verifyResourceType =
-    Object.entries(resourceType).length === 0
-      ? ''
-      : resourceType?.resource_Type;
-
   const filterResourceType = useLazyLoadQuery<ConfigurationsViewQuery>(
     Configurations,
     {
@@ -201,53 +212,36 @@ const ConfigurationsView = () => {
       ],
     },
   );
-  const verifyResourceSpecification =
-    Object.entries(resSpeci)?.length === 0
-      ? ''
-      : resSpeci?.resourceSpecification;
-
-  const dataQuery = useLazyLoadQuery<ConfigurationsViewQuery>(Configurations, {
-    filter: {
-      resourceSpecification: {
-        eq: verifyResourceSpecification,
-      },
-    },
-  });
-  const {queryCMVersion, resourceSpecifications} = dataQuery;
-
-  const [dataTable, setDataTable] = useState(queryCMVersion);
-
-  console.log('C-TYPES', dataTable, resourceSpecifications);
 
   const resourceTypesFilters = resourceSpecifications?.edges.map(
-    item => item?.node?.resourceType?.name,
+    item => item?.node?.resourceType,
   );
-  const uniqueResourceType = [...new Set(resourceTypesFilters)];
+  const uniqueResourceType = [
+    ...new Set(resourceTypesFilters?.map(item => item?.name)),
+  ];
 
   const resourceSpecificationFiltered = filterResourceType?.resourceTypes?.edges?.map(
     item => item?.node?.resourceSpecification?.map(rs => rs),
   );
 
   const filterData = filterChange => {
-    // console.log('filtro-cambio ->', filterChange);
-
-    const filterName = queryCMVersion?.filter(
+    const filterName = queryResource?.filter(
       item => item?.resource?.name === filterChange[0]?.stringValue,
     );
-    const filterLocation = queryCMVersion?.filter(
+    const filterLocation = queryResource?.filter(
       item => item?.resource?.locatedIn === filterChange[0]?.stringValue,
     );
-    const filterParameterName = queryCMVersion?.filter(
+    const filterParameterName = queryResource?.filter(
       item => item?.resource?.locatedIn === filterChange[0]?.stringValue,
     );
-    const filterParameterTag = queryCMVersion?.filter(
+    const filterParameterTag = queryResource?.filter(
       item => item?.resource?.locatedIn === filterChange[0]?.stringValue,
     );
-    const filterParameterPriority = queryCMVersion?.filter(
+    const filterParameterPriority = queryResource?.filter(
       item => item?.resource?.locatedIn === filterChange[0]?.stringValue,
     );
 
-    filterChange.length === 0 && setDataTable(queryCMVersion);
+    filterChange.length === 0 && setDataTable(queryResource);
 
     switch (filterChange[0]?.key) {
       case 'resource_name':
@@ -267,7 +261,7 @@ const ConfigurationsView = () => {
         break;
 
       default:
-        setDataTable(queryCMVersion);
+        setDataTable(queryResource);
         break;
     }
   };
@@ -317,7 +311,7 @@ const ConfigurationsView = () => {
                 {'Resource Specification'}
               </MenuItem>
               {resourceSpecificationFiltered[0]?.map((item, index) => (
-                <MenuItem key={index} value={item?.name}>
+                <MenuItem key={index} value={item?.id}>
                   {item.name}
                 </MenuItem>
               ))}
@@ -344,7 +338,7 @@ const ConfigurationsView = () => {
         </div>
       </Grid>
       <Grid item xs={12} style={{margin: '20px 0 0 0'}}>
-        <ConfigurationTable dataConfig={[]} />
+        <ConfigurationTable dataConfig={dataTable} />
       </Grid>
     </Grid>
   );

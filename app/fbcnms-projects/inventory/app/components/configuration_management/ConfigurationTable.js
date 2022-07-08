@@ -48,13 +48,14 @@ const ConfigurationTable = (props: Props) => {
   const classes = useStyles();
   const {dataConfig} = props;
 
-  // console.log('C-TABLE ', dataConfig);
+  console.log('C-TABLE ', dataConfig);
 
-  const po = dataConfig?.map(item =>
-    item?.parameters?.map(item => item?.parameterType?.name),
+  const dataColumn = dataConfig?.map(itemCMVersion =>
+    itemCMVersion?.cmVersions?.find(item =>
+      item?.parameters?.find(itemParameter => itemParameter),
+    ),
   );
-  // console.log('name-> ', po);
-
+  console.log('TTTTT', dataColumn);
   const tableColumns = [
     {
       key: 'location',
@@ -88,7 +89,7 @@ const ConfigurationTable = (props: Props) => {
   return (
     <Grid>
       <Table
-        data={dataConfig}
+        data={dataColumn}
         columns={[
           {
             key: 'resource',
