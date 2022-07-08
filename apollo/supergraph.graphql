@@ -9310,6 +9310,7 @@ input ResourceOrderIMFilter {
   and: [ResourceOrderIMFilter]
   has: [ResourceOrderIMHasFilter]
   id: [ID!]
+  lineId: StringHashFilter
   not: ResourceOrderIMFilter
   or: [ResourceOrderIMFilter]
   reservationId: StringHashFilter
@@ -11760,6 +11761,7 @@ enum TypePlanningSubStatus {
 
 enum TypeSchedulerConfig {
   AS_SOON_AS_APPROVED
+  NOT_APPROVAL_REQUIRED
   SCHEDULED_CHANGE
 }
 
@@ -13022,6 +13024,6 @@ enum core__Purpose {
 scalar join__FieldSet
 
 enum join__Graph {
-   DGRAPHSERVICE @join__graph(name: "dgraphservice" url: "http://alpha:8080/graphql")
-   SYMPHONY @join__graph(name: "symphony" url: "http://graph/query")
+  DGRAPHSERVICE @join__graph(name: "dgraphservice" url: "http://dgraph-dgraph-alpha.dgraph.svc.cluster.local:8080/graphql")
+  SYMPHONY @join__graph(name: "symphony" url: "http://graph/query")
 }
