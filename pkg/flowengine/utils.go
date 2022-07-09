@@ -139,6 +139,27 @@ func CopyBlocks(ctx context.Context, blocksQuery *ent.BlockQuery, addToFlow func
 			SetNillableTriggerType(blk.TriggerType).
 			SetNillableActionType(blk.ActionType).
 			SetUIRepresentation(blk.UIRepresentation)
+
+		switch blk.Type {
+		case block.TypeInvokeRestAPI:
+			blockCreate = blockCreate.SetBody(*blk.Body).
+				SetConnectionTimeout(*blk.ConnectionTimeout).
+				SetHeaders(blk.Headers).
+				SetURL(*blk.URL).
+				SetURLMethod(*blk.URLMethod)
+		case block.TypeTimer:
+			blockCreate = blockCreate.SetEnableTimerExpression(*blk.EnableTimerExpression).
+				SetTimerExpression(*blk.TimerExpression).
+				SetTimerBehavior(*blk.TimerBehavior).
+				SetNillableSeconds(blk.Seconds).
+				SetNillableTimerSpecificDate(blk.TimerSpecificDate)
+		case block.TypeWaitForSignal:
+			blockCreate = blockCreate.SetSignalModule(blk.SignalModule).
+				SetSignalType(blk.SignalType).
+				SetCustomFilter(blk.CustomFilter).
+				SetBlockFlow(blk.BlockFlow)
+		}
+
 		addToFlow(blockCreate)
 		if blk.Edges.SubFlow != nil {
 			blockCreate.SetSubFlow(blk.Edges.SubFlow)
@@ -170,7 +191,8 @@ func CopyBlocks(ctx context.Context, blocksQuery *ent.BlockQuery, addToFlow func
 	for _, blk := range blocks {
 		newBlock := oldToNewBlock[blk.ID]
 		switch newBlock.Type {
-		case block.TypeEnd, block.TypeDecision, block.TypeSubFlow, block.TypeTrigger, block.TypeAction, block.TypeTrueFalse:
+		case block.TypeEnd, block.TypeDecision, block.TypeSubFlow, block.TypeTrigger, block.TypeAction, block.TypeTrueFalse,
+			block.TypeChoice, block.TypeExecuteFlow, block.TypeInvokeRestAPI, block.TypeTimer, block.TypeWaitForSignal, block.TypeForEach, block.TypeParallel, block.TypeKafka:
 			if err := copyInputParams(ctx, blk, oldToNewBlock); err != nil {
 				return err
 			}
