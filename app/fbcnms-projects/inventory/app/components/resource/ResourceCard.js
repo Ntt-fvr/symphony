@@ -58,6 +58,8 @@ const ResourceCardListQuery = graphql`
     queryResource {
       id
       name
+      isDeleted
+      resourceSpecification
       locatedIn
       resourceSpecification
       isDeleted
@@ -190,6 +192,10 @@ const ResourceCard = (props: Props) => {
         : data,
     ),
   });
+
+  const newArrayDataForm1 = resourceId
+    ?.map(mapResources)
+    .filter(data => data.data[0].locationId === selectedLocationId);
 
   const newArrayDataForm = resourceId?.map(mapResources);
 

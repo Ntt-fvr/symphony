@@ -14,6 +14,7 @@
 
 /*::
 import type { ConcreteRequest } from 'relay-runtime';
+export type ParameterKind = "bool" | "date" | "datetime_local" | "email" | "enum" | "float" | "gps_location" | "int" | "range" | "string" | "%future added value";
 export type ResourceHasFilter = "actionScheduler" | "available" | "belongsTo" | "changeItems" | "cmVersions" | "composedOf" | "createTime" | "crossConnection" | "crossconnectionInv" | "externalId" | "isDeleted" | "isEditable" | "lifecycleStatus" | "locatedIn" | "logicalLinkInv" | "logicalLinks" | "name" | "numericPools" | "operationalSubStatus" | "physicalLink" | "physicalLinkInv" | "planningSubStatus" | "resourceProperties" | "resourceSpecification" | "typePlanningSubStatus" | "updateTime" | "usageSubStatus" | "%future added value";
 export type VersionStatus = "CURRENT" | "REPLACED" | "%future added value";
 export type ResourceFilter = {|
@@ -48,6 +49,11 @@ export type StepperTimeLineQueryResponse = {|
         +stringValue: ?string,
         +floatValue: ?number,
         +intValue: ?number,
+        +parameterType: {|
+          +id: string,
+          +name: string,
+          +type: ParameterKind,
+        |},
       |}>,
       +createTime: ?any,
     |}>,
@@ -77,6 +83,11 @@ query StepperTimeLineQuery(
         stringValue
         floatValue
         intValue
+        parameterType {
+          id
+          name
+          type
+        }
       }
       createTime
     }
@@ -99,7 +110,14 @@ v1 = {
   "name": "id",
   "storageKey": null
 },
-v2 = [
+v2 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "name",
+  "storageKey": null
+},
+v3 = [
   {
     "alias": null,
     "args": [
@@ -115,13 +133,7 @@ v2 = [
     "plural": true,
     "selections": [
       (v1/*: any*/),
-      {
-        "alias": null,
-        "args": null,
-        "kind": "ScalarField",
-        "name": "name",
-        "storageKey": null
-      },
+      (v2/*: any*/),
       {
         "alias": null,
         "args": null,
@@ -181,6 +193,26 @@ v2 = [
                 "kind": "ScalarField",
                 "name": "intValue",
                 "storageKey": null
+              },
+              {
+                "alias": null,
+                "args": null,
+                "concreteType": "ConfigurationParameterType",
+                "kind": "LinkedField",
+                "name": "parameterType",
+                "plural": false,
+                "selections": [
+                  (v1/*: any*/),
+                  (v2/*: any*/),
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "type",
+                    "storageKey": null
+                  }
+                ],
+                "storageKey": null
               }
             ],
             "storageKey": null
@@ -205,7 +237,7 @@ return {
     "kind": "Fragment",
     "metadata": null,
     "name": "StepperTimeLineQuery",
-    "selections": (v2/*: any*/),
+    "selections": (v3/*: any*/),
     "type": "Query",
     "abstractKey": null
   },
@@ -214,19 +246,19 @@ return {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
     "name": "StepperTimeLineQuery",
-    "selections": (v2/*: any*/)
+    "selections": (v3/*: any*/)
   },
   "params": {
-    "cacheID": "43213e69614cb33f2f0db87d51a23777",
+    "cacheID": "6b98c457694a4d5c35d92d057d96f3fb",
     "id": null,
     "metadata": {},
     "name": "StepperTimeLineQuery",
     "operationKind": "query",
-    "text": "query StepperTimeLineQuery(\n  $filter: ResourceFilter\n) {\n  queryResource(filter: $filter) {\n    id\n    name\n    cmVersions {\n      id\n      status\n      validFrom\n      validTo\n      parameters {\n        id\n        stringValue\n        floatValue\n        intValue\n      }\n      createTime\n    }\n  }\n}\n"
+    "text": "query StepperTimeLineQuery(\n  $filter: ResourceFilter\n) {\n  queryResource(filter: $filter) {\n    id\n    name\n    cmVersions {\n      id\n      status\n      validFrom\n      validTo\n      parameters {\n        id\n        stringValue\n        floatValue\n        intValue\n        parameterType {\n          id\n          name\n          type\n        }\n      }\n      createTime\n    }\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = 'ff03466eac00980c3271fad66ecf3f85';
+(node/*: any*/).hash = 'b45d27db1e3fe99421d75374031f8663';
 
 module.exports = node;
