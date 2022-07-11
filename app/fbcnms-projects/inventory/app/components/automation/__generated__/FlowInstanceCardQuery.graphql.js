@@ -16,7 +16,7 @@
 import type { ConcreteRequest } from 'relay-runtime';
 export type ActionTypeId = "update_inventory" | "update_workforce" | "work_order" | "worker" | "%future added value";
 export type BlockInstanceStatus = "COMPLETED" | "FAILED" | "IN_PROGRESS" | "PENDING" | "WAITING" | "%future added value";
-export type FlowInstanceStatus = "CANCELED" | "COMPLETED" | "FAILED" | "IN_PROGRESS" | "%future added value";
+export type FlowInstanceStatus = "CANCELED" | "CLOSED" | "COMPLETED" | "FAILED" | "FAILING" | "PAUSED" | "RUNNING" | "%future added value";
 export type FlowInstanceCardQueryVariables = {|
   flowInstanceId: string
 |};

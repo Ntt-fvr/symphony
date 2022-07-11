@@ -21,40 +21,11 @@ export type Props = $ReadOnly<{|
 
 const ConfigurationTable = (props: Props) => {
   const {dataConfig, stateChange} = props;
-  console.log('dataTable ', dataConfig);
-
-  // const dataColumn = dataConfig?.map(itemCMVersion =>
-  //   itemCMVersion?.cmVersions?.map(itemParameter => itemParameter),
-  // );
-  // const parameterFilter = dataColumn?.map(
-  //   parameterItem => parameterItem?.parameters,
-  // );
-
-  const parametersNums = dataConfig?.map(item =>
-    item?.cmVersions?.find(parameter =>
-      parameter?.parameters?.map(itemParameter => {
-        itemParameter?.parameters;
-      }),
-    ),
-  );
-  const par = parametersNums?.find(item => item);
-
-  const newObj = par?.paramters?.map(item => {
-    return {
-      key: item?.id,
-      title: row => row.parameterType?.name,
-      render: row => row.parameterType?.stringValue ?? '',
-      tooltip: row => row.parameterType?.stringValue ?? '',
-    };
-  });
-
-  console.log('PARM', parametersNums, newObj);
 
   const dataResources = [
     {
       key: 'resource',
       title: 'Resource',
-      // getSortingValue: row => row?.id,
       render: row => (
         <Button
           variant="text"
@@ -75,20 +46,29 @@ const ConfigurationTable = (props: Props) => {
     },
   ];
 
+  const test = dataConfig?.map(item =>
+    item?.cmVersions[0]?.parameters?.map(item => {
+      return {
+        key: item?.id,
+        title: item?.parameterType?.name,
+        render: row => row?.parameterType?.stringValue ?? '',
+        tooltip: row => row?.parameterType?.stringValue ?? '',
+      };
+    }),
+  );
+
+  const set = test?.filter(item => item).flat();
   const [resour, setResour] = useState(dataResources);
 
-  console.log(resour);
-
   useEffect(() => {
-    // parametersNums?.length !== 0 ?
-    setResour([...resour]);
+    setResour([...resour, ...set]);
   }, [stateChange]);
 
   return (
     <Grid>
       <Table
         data={dataConfig}
-        columns={resour}
+        columns={[...resour]}
         paginationSettings={{
           loadNext: onCompleted => {
             loadNext(PROJECTS_PAGE_SIZE, {
