@@ -57,7 +57,13 @@ const CardChangeRequestSchedule = (props: Props) => {
   });
 
   useEffect(() => {
-    dataSchedule?.type == TYPE_SCHEDULE.AS_SOON_AS_APROVED
+    dataSchedule === null
+      ? setCheckedHidden({
+          asSoonAsAproved: true,
+          scheduleChange: false,
+        })
+      : checkedHidden;
+    dataSchedule?.type === TYPE_SCHEDULE.AS_SOON_AS_APROVED
       ? setCheckedHidden({
           asSoonAsAproved: true,
           scheduleChange: false,
@@ -102,21 +108,21 @@ const CardChangeRequestSchedule = (props: Props) => {
         <FormControlLabel
           style={{padding: '0 0 0 40px'}}
           onChange={handleChangeAproved}
-          checked={checkedHidden.asSoonAsAproved}
+          checked={checkedHidden?.asSoonAsAproved}
           value="approved"
           control={<Radio color="primary" />}
           label="As soon as approved "
         />
         <FormControlLabel
           onChange={handleChangeSchedule}
-          checked={checkedHidden.scheduleChange}
+          checked={checkedHidden?.scheduleChange}
           value="approval"
           control={<Radio color="primary" />}
           label="Schedule with approval"
         />
         <Divider />
       </Grid>
-      <Hidden xsUp={!checkedHidden.scheduleChange}>
+      <Hidden xsUp={!checkedHidden?.scheduleChange}>
         <Grid style={{margin: '0 0 20px 0'}} item xs={12}>
           <Text
             style={{padding: '33px 0 0 40px'}}

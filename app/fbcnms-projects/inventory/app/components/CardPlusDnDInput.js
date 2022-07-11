@@ -56,6 +56,8 @@ const CardPlusDnDInput = ({
     );
   }
 
+  console.log(item.newValue);
+
   const handleOnChange = e => {
     const value = e.target.value;
     let parsedValue = value;
@@ -73,7 +75,7 @@ const CardPlusDnDInput = ({
       autoFocus={autoFocus}
       placeholder={placeholder}
       autoComplete="off"
-      value={item.newValue}
+      value={item.newValue || ''}
       className={classes.input}
       type={type === TYPES.int || type === TYPES.float ? 'number' : 'text'}
       step={type === TYPES.float ? '0.01' : '1'}

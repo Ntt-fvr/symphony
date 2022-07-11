@@ -141,7 +141,7 @@ const ResourcePropertiesCard = (props: Props) => {
   const validateForm = data => {
     return (
       <span className={classes.resourceDetails}>
-        {data !== null ? startCase(camelCase(data)) : startCase('sin registro')}
+        {data !== null ? startCase(camelCase(data)) : startCase('empty')}
       </span>
     );
   };

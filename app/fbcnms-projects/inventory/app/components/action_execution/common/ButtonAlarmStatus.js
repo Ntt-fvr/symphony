@@ -60,10 +60,10 @@ const useStyles = makeStyles(_theme => ({
     },
   },
   SubmitedSkin: {},
-  FaildSkin: {},
+  FailedSkin: {},
   CancelSkin: {},
   In_executionSkin: {},
-  SuccesfulSkin: {},
+  SuccessfullSkin: {},
   PendingSkin: {},
   ScheduledSkin: {},
   disabled: {},
@@ -99,7 +99,7 @@ const useStyles = makeStyles(_theme => ({
       },
     },
     //FAILD
-    '&$FaildSkin': {
+    '&$FailedSkin': {
       backgroundColor: '#FFE8E8',
       border: '1px solid #D4040B',
 
@@ -120,7 +120,7 @@ const useStyles = makeStyles(_theme => ({
       },
     },
     //SUCCESFUL
-    '&$SuccesfulSkin': {
+    '&$SuccessfullSkin': {
       backgroundColor: '#EBFFE1',
       border: '1px solid #00AF5B',
       '&:not($disabled)': {
@@ -169,10 +169,10 @@ export type ButtonVariant = 'contained' | 'text';
 export type ButtonSkin =
   | 'Submited'
   | 'In_execution'
-  | 'Pending'
-  | 'Succesful'
+  | 'PENDING'
+  | 'SUCCESSFULL'
   | 'Scheduled'
-  | 'Faild'
+  | 'FAILED'
   | 'Cancel'
   | 'disabled';
 export type SvgIconComponent =
