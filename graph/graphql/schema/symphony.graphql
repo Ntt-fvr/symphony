@@ -8503,17 +8503,6 @@ type WorkOrderStatusChangedPayload
   workOrder: WorkOrder!
 }
 
-type Subscription {
-  workOrderAdded: WorkOrder
-  workOrderDone: WorkOrder
-  workOrderStatusChanged: WorkOrderStatusChangedPayload!
-  flowInstanceDone: FlowInstance!
-  projectAdded: Project
-  projectChanged: Project
-  locationAdded: Location
-  locationChanged: Location
-  AddImage: File
-}
 
 type Counter implements Node {
   id: ID!

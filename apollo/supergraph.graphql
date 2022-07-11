@@ -587,7 +587,9 @@ type AddAppointmentRefPayload {
 
 input AddBlockInstanceInput {
   blockId: ID!
+  inputJSON: String
   inputs: [VariableValueInput!]
+  outputJSON: String
   outputs: [VariableValueInput!]
   startDate: Time!
   status: BlockInstanceStatus
@@ -1961,7 +1963,7 @@ type Block implements Node {
   units: RetryUnit
 }
 
-union BlockDetails = ActionBlock | ChoiceBlock | DecisionBlock | EndBlock | ExecuteFlowBlock | ForEachBlock | GotoBlock | InvokeRestAPIBlock | ParallelBlock | StartBlock | SubflowBlock | TimerBlock | TriggerBlock | TrueFalseBlock | WaitForSignalBlock
+union BlockDetails = ActionBlock | ChoiceBlock | DecisionBlock | EndBlock | ExecuteFlowBlock | ForEachBlock | GotoBlock | InvokeRestAPIBlock | KafkaBlock | ParallelBlock | StartBlock | SubflowBlock | TimerBlock | TriggerBlock | TrueFalseBlock | WaitForSignalBlock
 
 type BlockInstance implements Node {
   block: Block!
@@ -3899,7 +3901,9 @@ input EditBlockInstanceInput {
   endDate: Time
   failure_reason: String
   id: ID!
+  inputJSON: String
   inputs: [VariableValueInput!]
+  outputJSON: String
   outputs: [VariableValueInput!]
   status: BlockInstanceStatus
 }
@@ -3972,6 +3976,7 @@ input EditFlowInstanceInput {
   endDate: Time
   id: ID!
   serviceInstanceCode: String
+  startParams: [VariableValueInput]
   status: FlowInstanceStatus
 }
 
@@ -5508,6 +5513,33 @@ input InvokeRestAPIBlockInput {
   url: String!
 }
 
+type KafkaBlock {
+  brokers: [String!]
+  entryPoint: EntryPoint!
+  exitPoint: ExitPoint!
+  message: String!
+  topic: String!
+  type: KafkaMessageType!
+}
+
+input KafkaBlockInput {
+  basicDefinitions: BaseBlockInput!
+  brokers: [String!]
+  cid: String!
+  entryPoint: EntryPointInput!
+  exitPoint: ExitPointInput!
+  message: String!
+  topic: String!
+  type: KafkaMessageType!
+  uiRepresentation: BlockUIRepresentationInput
+}
+
+enum KafkaMessageType {
+  EXPRESSION
+  INPUT
+  STATE
+}
+
 type Kpi implements Node {
   description: String!
   domainFk: Domain!
@@ -6386,6 +6418,7 @@ type Mutation {
   addHyperlink(input: AddHyperlinkInput!): Hyperlink! @join__field(graph: SYMPHONY)
   addImage(input: AddImageInput!): File! @join__field(graph: SYMPHONY)
   addInvokeRestAPIBlock(flowDraftId: ID!, input: InvokeRestAPIBlockInput!): Block! @join__field(graph: SYMPHONY)
+  addKafkaBlock(flowDraftId: ID!, input: KafkaBlockInput!): Block! @join__field(graph: SYMPHONY)
   addKpi(input: AddKpiInput!): Kpi! @join__field(graph: SYMPHONY)
   addKpiCategory(input: AddKpiCategoryInput!): KpiCategory! @join__field(graph: SYMPHONY)
   addKqi(input: AddKqiInput!): Kqi! @join__field(graph: SYMPHONY)
