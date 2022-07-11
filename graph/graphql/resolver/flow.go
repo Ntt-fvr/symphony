@@ -724,6 +724,10 @@ func (r mutationResolver) EditFlowInstance(ctx context.Context, input *models.Ed
 		SetNillableStatus(input.Status).
 		SetNillableEndDate(input.EndDate)
 
+	if input.StartParams != nil {
+		mutation = mutation.SetStartParams(input.StartParams)
+	}
+
 	return mutation.Save(ctx)
 }
 

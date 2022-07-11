@@ -158,6 +158,11 @@ func CopyBlocks(ctx context.Context, blocksQuery *ent.BlockQuery, addToFlow func
 				SetSignalType(blk.SignalType).
 				SetCustomFilter(blk.CustomFilter).
 				SetBlockFlow(blk.BlockFlow)
+		case block.TypeKafka:
+			blockCreate = blockCreate.SetKafkaBrokers(blk.KafkaBrokers).
+				SetKafkaTopic(blk.KafkaTopic).
+				SetKafkaMessage(blk.KafkaMessage).
+				SetKafkaMessageType(blk.KafkaMessageType)
 		}
 
 		addToFlow(blockCreate)
