@@ -10,6 +10,7 @@
 
 import type {FilterConfig} from '../comparison_view/ComparisonViewTypes';
 
+import Button from '@symphony/design-system/components/Button';
 import ConfigureTitle from './common/ConfigureTitle';
 import FormField from '@symphony/design-system/components/FormField/FormField';
 import PowerSearchBar from '../power_search/PowerSearchBar';
@@ -24,6 +25,7 @@ import {getInitialFilterValue} from '../comparison_view/FilterUtils';
 import {graphql} from 'relay-runtime';
 import {makeStyles} from '@material-ui/styles';
 import {useLazyLoadQuery} from 'react-relay/hooks';
+
 const useStyles = makeStyles(() => ({
   root: {
     flexGrow: '0',
@@ -139,12 +141,35 @@ const Configurations = graphql`
   }
 `;
 
+const dataResources = [
+  {
+    key: 'resource',
+    title: 'Resource',
+    render: row => (
+      <Button variant="text" tooltip={row?.name ?? ''}>
+        {row?.name}
+      </Button>
+    ),
+  },
+  {
+    key: 'location',
+    title: 'Location',
+    render: row => (
+      <Button variant="text" tooltip={row?.locatedIn ?? ''}>
+        {row?.locatedIn}
+      </Button>
+    ),
+    tooltip: row => row?.locatedIn ?? '',
+  },
+];
+
 const ConfigurationsView = () => {
   const classes = useStyles();
   const [resSpeci, setResSpeci] = useState({});
 
   const [resourceType, setResourceType] = useState({});
-  const [checkingSelects, setCheckingSelects] = useState(false);
+  // const [checkingSelects, setCheckingSelects] = useState(false);
+  const [resour, setResour] = useState(dataResources);
 
   const filterConfigs = useMemo(
     () =>
@@ -162,6 +187,8 @@ const ConfigurationsView = () => {
 
   const verifyResourceType =
     Object.entries(resourceType).length == 0 ? '' : resourceType?.resource_Type;
+  console.log('RT ', verifyResourceType);
+  console.log('RS ', verifyResourceSpecification);
 
   const filterResourceType = useLazyLoadQuery<ConfigurationsViewQuery>(
     Configurations,
@@ -175,6 +202,7 @@ const ConfigurationsView = () => {
       ],
     },
   );
+
   const dataQuery = useLazyLoadQuery<ConfigurationsViewQuery>(Configurations, {
     filter: {
       resourceSpecification: {
@@ -189,8 +217,11 @@ const ConfigurationsView = () => {
       },
     ],
   });
-  const {queryResource, resourceSpecifications} = dataQuery;
 
+  // console.log(filterResourceType, dataQuery);
+  const {queryResource, resourceSpecifications} = dataQuery;
+  const [dataTable, setDataTable] = useState(queryResource);
+  console.log('R+P', queryResource);
   function selectResourceType({target}) {
     setResourceType({
       ...resourceType,
@@ -202,8 +233,22 @@ const ConfigurationsView = () => {
       ...resSpeci,
       [target.name]: target.value.trim(),
     });
-    setCheckingSelects(!checkingSelects);
+    setDataTable([...dataTable, ...test]);
+    // setCheckingSelects(!checkingSelects);
   }
+
+  const test = queryResource?.map(item =>
+    item?.cmVersions[0]?.parameters?.map(item => {
+      return {
+        key: item?.id,
+        title: item?.parameterType?.name,
+        render: row => row?.parameterType?.stringValue ?? '',
+        tooltip: row => row?.parameterType?.stringValue ?? '',
+      };
+    }),
+  );
+  console.log('ROW ', resour);
+  console.log('new-parT', test);
 
   const resourceTypesFilters = resourceSpecifications?.edges.map(
     item => item?.node?.resourceType,
@@ -215,7 +260,7 @@ const ConfigurationsView = () => {
   const resourceSpecificationFiltered = filterResourceType?.resourceTypes?.edges?.map(
     item => item?.node?.resourceSpecification?.map(rs => rs),
   );
-
+  /*
   const filterData = filterChange => {
     const filterName = queryResource?.filter(
       item => item?.resource?.name === filterChange[0]?.stringValue,
@@ -257,12 +302,11 @@ const ConfigurationsView = () => {
         break;
     }
   };
+  */
 
-  const [dataTable, setDataTable] = useState(queryResource);
-
-  useEffect(() => {
-    setDataTable(queryResource);
-  }, [checkingSelects]);
+  // useEffect(() => {
+  //   setDataTable(queryResource);
+  // }, [checkingSelects]);
 
   return (
     <Grid className={classes.root} container spacing={0}>
@@ -336,8 +380,9 @@ const ConfigurationsView = () => {
       </Grid>
       <Grid item xs={12} style={{margin: '20px 0 0 0'}}>
         <ConfigurationTable
-          stateChange={checkingSelects}
-          dataConfig={dataTable}
+          // stateChange={checkingSelects}
+          dataConfig={queryResource}
+          dataColumn={resour}
           selectResourceType2={selectResourceType2}
         />
       </Grid>
