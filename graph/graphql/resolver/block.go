@@ -292,6 +292,15 @@ func (r blockResolver) Details(ctx context.Context, obj *ent.Block) (models.Bloc
 			CustomFilter: &obj.CustomFilter,
 			Blocked:      obj.BlockFlow,
 		}, nil
+	case block.TypeKafka:
+		return &models.KafkaBlock{
+			ExitPoint:  exitPoint,
+			EntryPoint: entryPoint,
+			Brokers:    obj.KafkaBrokers,
+			Topic:      obj.KafkaTopic,
+			Message:    obj.KafkaMessage,
+			Type:       obj.KafkaMessageType,
+		}, nil
 	default:
 		return nil, fmt.Errorf("type %q is unknown", obj.Type)
 	}
@@ -707,6 +716,8 @@ func (r mutationResolver) AddBlockInstance(ctx context.Context, flowInstanceID i
 		SetFlowInstanceID(flowInstanceID).
 		SetNillableStatus(input.Status).
 		SetStartDate(input.StartDate).
+		SetNillableInputJSON(input.InputJSON).
+		SetNillableOutputJSON(input.OutputJSON).
 		SetInputs(input.Inputs).
 		SetOutputs(input.Outputs)
 
@@ -723,6 +734,8 @@ func (r mutationResolver) EditBlockInstance(ctx context.Context, input models.Ed
 		UpdateOne(bi).
 		SetNillableStatus(input.Status).
 		SetNillableEndDate(input.EndDate).
+		SetNillableInputJSON(input.InputJSON).
+		SetNillableOutputJSON(input.OutputJSON).
 		SetInputs(input.Inputs).
 		SetOutputs(input.Outputs)
 
@@ -962,4 +975,19 @@ func addBlockBasicDefinitions(ctx context.Context, mutation *ent.BlockCreate, in
 		SetNillableRetryUnit((*block.RetryUnit)(input.Units)).
 		SetNillableMaxAttemps(input.MaxAttemps).
 		SetNillableBackOffRate(input.BackoffRate)
+}
+
+func (r mutationResolver) AddKafkaBlock(ctx context.Context, flowDraftID int, input models.KafkaBlockInput) (*ent.Block, error) {
+	mutation := addBlockMutation(ctx, input.Cid, block.TypeInvokeRestAPI, flowDraftID, input.UIRepresentation)
+	addBlockBasicDefinitions(ctx, mutation, *input.BasicDefinitions)
+	b, err := mutation.Save(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return b.Update().
+		SetKafkaBrokers(input.Brokers).
+		SetKafkaTopic(input.Topic).
+		SetKafkaMessage(input.Message).
+		SetKafkaMessageType(input.Type).
+		Save(ctx)
 }

@@ -92,11 +92,13 @@ type AddAppointmentInput struct {
 }
 
 type AddBlockInstanceInput struct {
-	Status    *blockinstance.Status       `json:"status"`
-	Inputs    []*flowschema.VariableValue `json:"inputs"`
-	Outputs   []*flowschema.VariableValue `json:"outputs"`
-	BlockID   int                         `json:"blockId"`
-	StartDate time.Time                   `json:"startDate"`
+	Status     *blockinstance.Status       `json:"status"`
+	Inputs     []*flowschema.VariableValue `json:"inputs"`
+	Outputs    []*flowschema.VariableValue `json:"outputs"`
+	InputJSON  *string                     `json:"inputJSON"`
+	OutputJSON *string                     `json:"outputJSON"`
+	BlockID    int                         `json:"blockId"`
+	StartDate  time.Time                   `json:"startDate"`
 }
 
 type AddBulkServiceLinksAndPortsInput struct {
@@ -797,6 +799,8 @@ type EditBlockInstanceInput struct {
 	Status        *blockinstance.Status       `json:"status"`
 	Inputs        []*flowschema.VariableValue `json:"inputs"`
 	Outputs       []*flowschema.VariableValue `json:"outputs"`
+	InputJSON     *string                     `json:"inputJSON"`
+	OutputJSON    *string                     `json:"outputJSON"`
 	FailureReason *string                     `json:"failure_reason"`
 	EndDate       *time.Time                  `json:"endDate"`
 }
@@ -866,10 +870,11 @@ type EditEventSeverityInput struct {
 }
 
 type EditFlowInstanceInput struct {
-	ID                  int                  `json:"id"`
-	ServiceInstanceCode *string              `json:"serviceInstanceCode"`
-	Status              *flowinstance.Status `json:"status"`
-	EndDate             *time.Time           `json:"endDate"`
+	ID                  int                         `json:"id"`
+	ServiceInstanceCode *string                     `json:"serviceInstanceCode"`
+	Status              *flowinstance.Status        `json:"status"`
+	EndDate             *time.Time                  `json:"endDate"`
+	StartParams         []*flowschema.VariableValue `json:"startParams"`
 }
 
 type EditFormulaInput struct {
@@ -1418,6 +1423,29 @@ type InvokeRestAPIBlockInput struct {
 	BasicDefinitions  *BaseBlockInput                   `json:"basicDefinitions"`
 	Params            []*VariableExpressionInput        `json:"params"`
 	UIRepresentation  *flowschema.BlockUIRepresentation `json:"uiRepresentation"`
+}
+
+type KafkaBlock struct {
+	EntryPoint *ent.EntryPoint       `json:"entryPoint"`
+	ExitPoint  *ent.ExitPoint        `json:"exitPoint"`
+	Brokers    []string              `json:"brokers"`
+	Topic      string                `json:"topic"`
+	Message    string                `json:"message"`
+	Type       enum.KafkaMessageType `json:"type"`
+}
+
+func (KafkaBlock) IsBlockDetails() {}
+
+type KafkaBlockInput struct {
+	Cid              string                            `json:"cid"`
+	EntryPoint       *EntryPointInput                  `json:"entryPoint"`
+	ExitPoint        *ExitPointInput                   `json:"exitPoint"`
+	Brokers          []string                          `json:"brokers"`
+	Topic            string                            `json:"topic"`
+	Message          string                            `json:"message"`
+	Type             enum.KafkaMessageType             `json:"type"`
+	BasicDefinitions *BaseBlockInput                   `json:"basicDefinitions"`
+	UIRepresentation *flowschema.BlockUIRepresentation `json:"uiRepresentation"`
 }
 
 type KpiCategoryFilterInput struct {
