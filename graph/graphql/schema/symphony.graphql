@@ -6128,7 +6128,7 @@ type InvokeRestAPIBlock {
 
 type ForEachBlock {
   entryPoint: EntryPoint!
-  internalExitPoint: ExitPoint!
+  internalExitPoint: ExitPoint! 
   exitPoint: ExitPoint!
 }
 
@@ -6166,6 +6166,24 @@ type WaitForSignalBlock {
   blocked: Boolean!
 }
 
+enum KafkaMessageType
+@goModel(
+    model: "github.com/facebookincubator/symphony/pkg/ent/schema/enum.KafkaMessageType"
+  ){
+  EXPRESSION
+	INPUT
+	STATE
+}
+
+type KafkaBlock {
+  entryPoint: EntryPoint!
+  exitPoint: ExitPoint!
+  brokers: [String!]
+  topic: String!
+  message: String!
+  type: KafkaMessageType!
+}
+
 union BlockDetails =
     StartBlock
   | EndBlock
@@ -6182,6 +6200,7 @@ union BlockDetails =
   | ExecuteFlowBlock
   | ForEachBlock
   | ParallelBlock
+  | KafkaBlock
 
 
 
@@ -6343,6 +6362,18 @@ input ExecuteFlowBlockInput {
   uiRepresentation: BlockUIRepresentationInput
 }
 
+input KafkaBlockInput {
+  cid: String!
+  entryPoint: EntryPointInput!
+  exitPoint: ExitPointInput!
+  brokers: [String!]
+  topic: String!
+  message: String!
+  type: KafkaMessageType!
+  basicDefinitions: BaseBlockInput!
+  uiRepresentation: BlockUIRepresentationInput
+}
+
 input ImportFlowDraftInput {
   id: ID!
   name: String!
@@ -6487,9 +6518,11 @@ type BlockInstance implements Node {
 }
 
 input AddBlockInstanceInput {
-  status: BlockInstanceStatus
+  status: BlockInstanceStatus,
   inputs: [VariableValueInput!]
   outputs: [VariableValueInput!]
+  inputJSON: String 
+  outputJSON: String
   blockId: ID!
   startDate: Time!
 }
@@ -6499,6 +6532,8 @@ input EditBlockInstanceInput {
   status: BlockInstanceStatus
   inputs: [VariableValueInput!]
   outputs: [VariableValueInput!]
+  inputJSON: String
+  outputJSON: String
   failure_reason: String
   endDate: Time
 }
@@ -6519,6 +6554,7 @@ input EditFlowInstanceInput {
   serviceInstanceCode: String
   status: FlowInstanceStatus
   endDate: Time
+  startParams: [VariableValueInput]
 }
 
 input AddFlowDraftInput {
@@ -8312,6 +8348,7 @@ type Mutation {
   addTimerBlock(flowDraftId: ID!, input: TimerBlockInput!): Block!
   addInvokeRestAPIBlock(flowDraftId: ID!, input: InvokeRestAPIBlockInput!): Block!
   addWaitForSignalBlock(flowDraftId: ID!, input: WaitForSignalBlockInput!): Block!
+  addKafkaBlock(flowDraftId: ID!, input: KafkaBlockInput!): Block!
   editBlock(input: EditBlockInput!): Block!
   deleteBlock(id: ID!): Boolean!
   addConnector(flowDraftId: ID!, input: ConnectorInput!): Connector!
@@ -8472,17 +8509,6 @@ type WorkOrderStatusChangedPayload
   workOrder: WorkOrder!
 }
 
-type Subscription {
-  workOrderAdded: WorkOrder
-  workOrderDone: WorkOrder
-  workOrderStatusChanged: WorkOrderStatusChangedPayload!
-  flowInstanceDone: FlowInstance!
-  projectAdded: Project
-  projectChanged: Project
-  locationAdded: Location
-  locationChanged: Location
-  AddImage: File
-}
 
 type Counter implements Node {
   id: ID!
