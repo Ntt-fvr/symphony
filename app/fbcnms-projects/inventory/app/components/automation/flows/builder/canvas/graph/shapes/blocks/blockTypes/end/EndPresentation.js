@@ -13,7 +13,7 @@ import EndIcon from './EndIcon';
 import {BasePresentation} from '../BasePresentation';
 import {Typography} from '@material-ui/core';
 
-export default function DecisionPresentation() {
+export default function ChoicePresentation() {
   return (
     <BasePresentation
       icon={EndIcon}

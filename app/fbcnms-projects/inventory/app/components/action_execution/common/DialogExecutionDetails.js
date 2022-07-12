@@ -17,6 +17,7 @@ import Grid from '@material-ui/core/Grid';
 import IconButton from '@material-ui/core/IconButton';
 import React from 'react';
 import Text from '@symphony/design-system/components/Text';
+import moment from 'moment';
 import {makeStyles} from '@material-ui/styles';
 
 const useStyles = makeStyles(() => ({
@@ -47,7 +48,14 @@ type Props = $ReadOnly<{|
 |}>;
 
 const DialogExecutionDetails = (props: Props) => {
-  const {onClose, name} = props;
+  const {
+    onClose,
+    name,
+    valuesTable,
+    resourceName,
+    resourceSpec,
+    resourceData,
+  } = props;
 
   const classes = useStyles();
   return (
@@ -86,13 +94,16 @@ const DialogExecutionDetails = (props: Props) => {
         <Grid style={{padding: '16px'}} container direction="row">
           <Grid item xs={3}>
             <Text useEllipsis={true} weight={'bold'} variant={'body1'}>
+              Resource:
+            </Text>
+            <Text useEllipsis={true} weight={'bold'} variant={'body1'}>
               Action:
             </Text>
             <Text useEllipsis={true} weight={'bold'} variant={'body1'}>
               Date:
             </Text>
             <Text useEllipsis={true} weight={'bold'} variant={'body1'}>
-              Hours:
+              Hour:
             </Text>
             <Text useEllipsis={true} weight={'bold'} variant={'body1'}>
               Resource Type:
@@ -103,19 +114,25 @@ const DialogExecutionDetails = (props: Props) => {
           </Grid>
           <Grid item xs={9}>
             <Text useEllipsis={true} variant={'subtitle1'}>
-              Action
+              {resourceName}
             </Text>
             <Text useEllipsis={true} variant={'subtitle1'}>
-              Date
+              {valuesTable?.template.name}
             </Text>
             <Text useEllipsis={true} variant={'subtitle1'}>
-              Hours
+              {moment(valuesTable?.starTime)?.format('MM/DD/YYYY')}
             </Text>
             <Text useEllipsis={true} variant={'subtitle1'}>
-              Resource Type
+              {moment(valuesTable?.starTime)?.format('LT')}
             </Text>
             <Text useEllipsis={true} variant={'subtitle1'}>
-              Resource Specification
+              {
+                resourceData?.find(item => item.id == resourceSpec)
+                  ?.resourceType.name
+              }
+            </Text>
+            <Text useEllipsis={true} variant={'subtitle1'}>
+              {resourceData?.find(item => item.id == resourceSpec)?.name}
             </Text>
           </Grid>
         </Grid>

@@ -68,12 +68,17 @@ func (Flow) Fields() []ent.Field {
 				"Published", "PUBLISHED",
 				"Unpublished", "UNPUBLISHED",
 				"Archived", "ARCHIVED",
+				"On_Hold", "ON_HOLD",
 			).Default("UNPUBLISHED"),
 		field.Enum("newInstancesPolicy").
 			NamedValues(
 				"Enabled", "ENABLED",
 				"Disabled", "DISABLED",
 			).Default("DISABLED"),
+		field.Time("creation_date").
+			Annotations(
+				entgql.OrderField("CREATED_AT"),
+			),
 	}
 }
 
@@ -82,6 +87,14 @@ func (Flow) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.To("draft", FlowDraft.Type).
 			Unique(),
+		edge.To("author", User.Type).
+			Required().
+			Unique().
+			Annotations(entgql.Bind()),
+		edge.To("editor", User.Type).
+			Annotations(entgql.Bind()),
+		edge.From("instance", FlowInstance.Type).
+			Ref("flow"),
 	}
 }
 
@@ -175,11 +188,14 @@ func (FlowInstance) Fields() []ent.Field {
 	return []ent.Field{
 		field.Enum("status").
 			NamedValues(
-				"InProgress", "IN_PROGRESS",
+				"Running", "RUNNING",
 				"Failed", "FAILED",
+				"Failing", "FAILING",
 				"Completed", "COMPLETED",
 				"Cancelled", "CANCELED",
-			).Default("IN_PROGRESS"),
+				"Paused", "PAUSED",
+				"Closed", "CLOSED",
+			).Default("RUNNING"),
 		field.JSON("start_params", []*flowschema.VariableValue{}).
 			Optional(),
 		field.JSON("output_params", []*flowschema.VariableValue{}).

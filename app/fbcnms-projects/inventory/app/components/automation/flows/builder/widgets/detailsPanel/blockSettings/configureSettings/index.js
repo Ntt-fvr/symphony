@@ -21,7 +21,7 @@ import ConfigurationParallel from './ConfigurationParallel';
 import ConfigurationTimer from './ConfigurationTimer';
 import ConfigurationTriggeredStart from './ConfigurationTriggeredStart';
 import ConfigurationWaitForSignal from './ConfigurationWaitForSignal';
-import {TYPE as ChoiceType} from '../../../../../../flows/builder/canvas/graph/facades/shapes/vertexes/logic/Decision';
+import {TYPE as ChoiceType} from '../../../../canvas/graph/facades/shapes/vertexes/logic/Choice';
 import {TYPE as ExecuteFlowType} from '../../../../../../flows/builder/canvas/graph/facades/shapes/vertexes/actions/ExecuteFlow';
 import {TYPE as ExecuteNetworkActionType} from '../../../../../../flows/builder/canvas/graph/facades/shapes/vertexes/actions/ExecuteNetworkAction';
 import {TYPE as ForEachLoopType} from '../../../../../../flows/builder/canvas/graph/facades/shapes/vertexes/logic/ForEachLoop';

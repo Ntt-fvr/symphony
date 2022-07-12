@@ -43,6 +43,7 @@ type User struct {
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the UserQuery when eager-loading is set.
 	Edges                UserEdges `json:"edges"`
+	flow_editor          *int
 	organization_user_fk *int
 }
 
@@ -68,9 +69,11 @@ type UserEdges struct {
 	Features []*Feature
 	// Appointment holds the value of the appointment edge.
 	Appointment []*Appointment
+	// AuthoredFlow holds the value of the authored_flow edge.
+	AuthoredFlow []*Flow
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [10]bool
+	loadedTypes [11]bool
 }
 
 // ProfilePhotoOrErr returns the ProfilePhoto value or an error if the edge
@@ -173,6 +176,15 @@ func (e UserEdges) AppointmentOrErr() ([]*Appointment, error) {
 	return nil, &NotLoadedError{edge: "appointment"}
 }
 
+// AuthoredFlowOrErr returns the AuthoredFlow value or an error if the edge
+// was not loaded in eager-loading.
+func (e UserEdges) AuthoredFlowOrErr() ([]*Flow, error) {
+	if e.loadedTypes[10] {
+		return e.AuthoredFlow, nil
+	}
+	return nil, &NotLoadedError{edge: "authored_flow"}
+}
+
 // scanValues returns the types for scanning values from sql.Rows.
 func (*User) scanValues() []interface{} {
 	return []interface{}{
@@ -192,6 +204,7 @@ func (*User) scanValues() []interface{} {
 // fkValues returns the types for scanning foreign-keys values from sql.Rows.
 func (*User) fkValues() []interface{} {
 	return []interface{}{
+		&sql.NullInt64{}, // flow_editor
 		&sql.NullInt64{}, // organization_user_fk
 	}
 }
@@ -256,6 +269,12 @@ func (u *User) assignValues(values ...interface{}) error {
 	values = values[9:]
 	if len(values) == len(user.ForeignKeys) {
 		if value, ok := values[0].(*sql.NullInt64); !ok {
+			return fmt.Errorf("unexpected type %T for edge-field flow_editor", value)
+		} else if value.Valid {
+			u.flow_editor = new(int)
+			*u.flow_editor = int(value.Int64)
+		}
+		if value, ok := values[1].(*sql.NullInt64); !ok {
 			return fmt.Errorf("unexpected type %T for edge-field organization_user_fk", value)
 		} else if value.Valid {
 			u.organization_user_fk = new(int)
@@ -313,6 +332,11 @@ func (u *User) QueryFeatures() *FeatureQuery {
 // QueryAppointment queries the appointment edge of the User.
 func (u *User) QueryAppointment() *AppointmentQuery {
 	return (&UserClient{config: u.config}).QueryAppointment(u)
+}
+
+// QueryAuthoredFlow queries the authored_flow edge of the User.
+func (u *User) QueryAuthoredFlow() *FlowQuery {
+	return (&UserClient{config: u.config}).QueryAuthoredFlow(u)
 }
 
 // Update returns a builder for updating this User.
