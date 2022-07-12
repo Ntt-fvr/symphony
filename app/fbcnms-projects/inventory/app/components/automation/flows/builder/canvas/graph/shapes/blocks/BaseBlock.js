@@ -50,6 +50,13 @@ import {
   initialOutputSettings,
   setOutputSettings,
 } from './blockTypes/OutputSettingsType';
+import {
+  mediumSize,
+  originSize,
+} from '../../facades/shapes/vertexes/BaseVertext';
+
+import {TYPE as ForEachLoopType} from '../../facades/shapes/vertexes/logic/ForEachLoop';
+import {TYPE as ParallelType} from '../../facades/shapes/vertexes/logic/Parallel';
 
 const DUPLICATION_SHIFT = {
   x: 84,
@@ -93,6 +100,8 @@ export interface IBlock {
   +getOutputPorts: () => $ReadOnlyArray<VertexPort>;
   +getPortByID: (portID: string) => ?VertexPort;
   +setName: string => void;
+  +setParent: string => void;
+  +setSize: string => void;
   +setSettings: string => void;
   +setInputSettings: string => void;
   +setOutputSettings: string => void;
@@ -154,18 +163,35 @@ export default class BaseBlock implements IBlock {
     this.model.idParent = id;
   }
 
-  setSize() {
+  setSize(typeSizeCoupled: string) {
     if (
-      this.model.attributes.type == 'ForEachLoopBlock' ||
-      this.model.attributes.type == 'ParallelBlock'
+      this.model.attributes.type == ForEachLoopType ||
+      this.model.attributes.type == ParallelType
     ) {
-      this.model.resize(394, 344);
-      this.model.attr('coupled/width', 437);
-      this.model.attr('coupled/height', 420);
-      this.model.attr('body/refY2', 141);
-      this.model.attr('background/refY2', 210);
-      this.model.attr('label/refY2', 213);
-      this.model.attr('image/refY2', 137);
+      switch (typeSizeCoupled) {
+        case 'mediumSizeCoupled':
+          this.model.resize(mediumSize.resizeWidth, mediumSize.resizeHeigth);
+          this.model.attr('coupled/width', mediumSize.width);
+          this.model.attr('coupled/height', mediumSize.height);
+          this.model.attr('body/refY2', mediumSize.bodyY2);
+          this.model.attr('background/refY2', mediumSize.backgroundY2);
+          this.model.attr('label/refY2', mediumSize.labelY2);
+          this.model.attr('image/refY2', mediumSize.imageY2);
+          break;
+
+        case 'originSizeCoupled':
+          this.model.resize(originSize.resizeWidth, originSize.resizeHeigth);
+          this.model.attr('coupled/width', originSize.width);
+          this.model.attr('coupled/height', originSize.height);
+          this.model.attr('body/refY2', originSize.bodyY2);
+          this.model.attr('background/refY2', originSize.backgroundY2);
+          this.model.attr('label/refY2', originSize.labelY2);
+          this.model.attr('image/refY2', originSize.imageY2);
+          break;
+
+        default:
+          return;
+      }
     }
   }
 

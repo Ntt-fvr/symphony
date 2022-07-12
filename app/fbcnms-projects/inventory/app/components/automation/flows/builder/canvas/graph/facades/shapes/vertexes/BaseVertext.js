@@ -248,3 +248,25 @@ export function getInitObject(
     id: id ?? undefined,
   };
 }
+
+export const originSize = {
+  width: 437,
+  height: 298,
+  bodyY2: 86,
+  backgroundY2: 157,
+  labelY2: 160,
+  imageY2: 81,
+  resizeWidth: 394,
+  resizeHeigth: 234,
+};
+
+export const mediumSize = {
+  width: 437,
+  height: 420,
+  bodyY2: 141,
+  backgroundY2: 210,
+  labelY2: 213,
+  imageY2: 137,
+  resizeWidth: 394,
+  resizeHeigth: 344,
+};
