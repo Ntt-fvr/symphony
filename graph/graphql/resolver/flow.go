@@ -8,13 +8,16 @@ import (
 	"context"
 	"fmt"
 	"strconv"
+	"time"
 
 	"github.com/facebookincubator/symphony/graph/resolverutil"
+	"github.com/vektah/gqlparser/v2/gqlerror"
 
 	"github.com/pkg/errors"
 
 	"github.com/facebookincubator/symphony/pkg/ent/flowinstance"
 	"github.com/facebookincubator/symphony/pkg/ent/predicate"
+	"github.com/facebookincubator/symphony/pkg/viewer"
 
 	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
 	"github.com/facebookincubator/symphony/pkg/flowengine/actions"
@@ -84,10 +87,17 @@ func (r mutationResolver) AddFlowDraft(ctx context.Context, input models.AddFlow
 			return nil, fmt.Errorf("cannot creat a new draft for flow id: %d, as a draft already exists", input.FlowID)
 		}
 	} else {
+		v, ok := viewer.FromContext(ctx).(*viewer.UserViewer)
+		if !ok {
+			return nil, gqlerror.Errorf("could not be executed in automation")
+		}
+
 		newFlow, err := client.Flow.Create().
 			SetName(input.Name).
 			SetNillableDescription(input.Description).
 			SetEndParamDefinitions(input.EndParamDefinitions).
+			SetCreationDate(time.Now()).
+			SetAuthor(v.User()).
 			Save(ctx)
 		if err != nil {
 			return nil, fmt.Errorf("failed to create flow: %w", err)
@@ -713,6 +723,10 @@ func (r mutationResolver) EditFlowInstance(ctx context.Context, input *models.Ed
 		SetNillableServiceInstanceCode(input.ServiceInstanceCode).
 		SetNillableStatus(input.Status).
 		SetNillableEndDate(input.EndDate)
+
+	if input.StartParams != nil {
+		mutation = mutation.SetStartParams(input.StartParams)
+	}
 
 	return mutation.Save(ctx)
 }
