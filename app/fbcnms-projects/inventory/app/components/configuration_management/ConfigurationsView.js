@@ -64,74 +64,53 @@ const useStyles = makeStyles(() => ({
 
 const Configurations = graphql`
   query ConfigurationsViewQuery(
-    $filter: ResourceFilter
-    $filterBy: [ResourceTypeFilterInput!]
+    $filterBy: [ResourceSpecificationFilterInput!]
   ) {
-    queryResource(filter: $filter) {
+    queryCMVersion {
       id
-      name
-      locatedIn
-      resourceSpecification
-      isDeleted
-      lifecycleStatus
-      typePlanningSubStatus
-      planningSubStatus
-      usageSubStatus
-      operationalSubStatus
-      createTime
-      updateTime
-      cmVersions {
+      resource {
         id
-        createTime
-        updateTime
-        status
-        #
-        resource {
+        name
+        resourceSpecification
+      }
+      parameters {
+        id
+        intValue
+        stringValue
+        floatValue
+        parameterType {
           id
           name
-          locatedIn
-        }
-        #
-        parameters {
-          id
           stringValue
-          rangeToValue
-          rangeFromValue
-          floatValue
           intValue
-          booleanValue
-          latitudeValue
-          longitudeValue
-          parameterType {
-            id
-            name
-            resourceSpecification
-            stringValue
+          floatValue
+          parameters {
             floatValue
             intValue
-            type
-          }
-        }
-      }
-    }
-    resourceTypes(filterBy: $filterBy) {
-      edges {
-        node {
-          id
-          name
-          resourceSpecification {
+            stringValue
             id
-            name
           }
         }
       }
     }
-    resourceSpecifications {
+    resourceSpecifications(filterBy: $filterBy) {
       edges {
         node {
           id
           name
           resourceType {
+            id
+            name
+          }
+        }
+      }
+    }
+    resourceTypes {
+      edges {
+        node {
+          id
+          name
+          resourceSpecification {
             id
             name
           }
@@ -165,10 +144,10 @@ const dataResources = [
 
 const ConfigurationsView = () => {
   const classes = useStyles();
-  const [resSpeci, setResSpeci] = useState({});
+  const [resourceSpecificationOpt, setResourceSpecificationOpt] = useState({});
 
   const [resourceType, setResourceType] = useState({});
-  // const [checkingSelects, setCheckingSelects] = useState(false);
+  const [checkingSelects, setCheckingSelects] = useState(false);
   const [resour, setResour] = useState(dataResources);
 
   const filterConfigs = useMemo(
@@ -180,86 +159,121 @@ const ConfigurationsView = () => {
     [],
   );
 
-  const verifyResourceSpecification =
-    Object.entries(resSpeci)?.length === 0
-      ? ''
-      : resSpeci?.resourceSpecification;
+  // const verifyResourceSpecification =
+  //   Object.entries(resSpeci)?.length === 0
+  //     ? ''
+  //     : resSpeci?.resourceSpecification;
 
-  const verifyResourceType =
-    Object.entries(resourceType).length == 0 ? '' : resourceType?.resource_Type;
-  console.log('RT ', verifyResourceType);
-  console.log('RS ', verifyResourceSpecification);
+  console.log('RT & RS', resourceType, resourceSpecificationOpt);
+
+  // const verifyResourceType =
+  //   Object.entries(resourceType).length == 0 ? '' : resourceType?.resource_Type;
+  // console.log('RT ', verifyResourceType);
+  // console.log('RS ', verifyResourceSpecification);
 
   const filterResourceType = useLazyLoadQuery<ConfigurationsViewQuery>(
     Configurations,
     {
       filterBy: [
         {
+          idSet: ['300647710720'],
           filterType: 'NAME',
-          operator: 'IS',
-          stringValue: verifyResourceType,
+          stringValue: 'RS1',
+          operator: 'CONTAINS',
         },
       ],
     },
   );
+  console.log('QUERY=', filterResourceType);
 
-  const dataQuery = useLazyLoadQuery<ConfigurationsViewQuery>(Configurations, {
-    filter: {
-      resourceSpecification: {
-        eq: verifyResourceSpecification,
-      },
-    },
-    filterBy: [
-      {
-        filterType: 'NAME',
-        operator: 'IS',
-        stringValue: verifyResourceType,
-      },
-    ],
-  });
+  const {
+    queryResource,
+    resourceSpecifications,
+    resourceTypes,
+  } = filterResourceType;
 
-  // console.log(filterResourceType, dataQuery);
-  const {queryResource, resourceSpecifications} = dataQuery;
   const [dataTable, setDataTable] = useState(queryResource);
+
   console.log('R+P', queryResource);
+
   function selectResourceType({target}) {
     setResourceType({
       ...resourceType,
-      [target.name]: target.value.trim(),
+      [target.name]: target.value,
     });
   }
+
   function selectResourceType2({target}) {
-    setResSpeci({
-      ...resSpeci,
-      [target.name]: target.value.trim(),
+    setResourceSpecificationOpt({
+      ...resourceSpecificationOpt,
+      [target.name]: target.value,
     });
-    setDataTable([...dataTable, ...test]);
-    // setCheckingSelects(!checkingSelects);
   }
 
-  const test = queryResource?.map(item =>
-    item?.cmVersions[0]?.parameters?.map(item => {
-      return {
-        key: item?.id,
-        title: item?.parameterType?.name,
-        render: row => row?.parameterType?.stringValue ?? '',
-        tooltip: row => row?.parameterType?.stringValue ?? '',
-      };
-    }),
-  );
+  /**/
+
+  // const test = queryResource?.map(item =>
+  //   item?.cmVersions[0]?.parameters?.map(itemParameter => {
+  //     return {
+  //       key: row => row?.parameterType?.id,
+  //       title: itemParameter?.parameterType?.name ?? '',
+  //       render: row => row?.intValue ?? row?.stringValue ?? row?.intValue ?? '',
+  //       tooltip: row =>
+  //         row?.intValue ?? row?.stringValue ?? row?.intValue ?? '',
+  //     };
+  //   }),
+  // );
+
+  // const test = queryResource?.map(item =>
+  //   item?.cmVersions[0]?.parameters?.map(item => {
+  //     return {
+  //       key: item?.id,
+  //       title: item?.parameterType?.name,
+  //       render: row => row?.parameterType?.stringValue ?? '',
+  //       tooltip: row => row?.parameterType?.stringValue ?? '',
+  //     };
+  //   }),
+  // );
+
+  // const arrayTest = test.flat();
+
+  // const test = queryResource?.map(() => {
+  //   return {
+  //     key: row => row?.cmVersions[0]?.parameters?.map(item => item.id),
+  //     // title: row =>
+  //     //   row?.cmVersions[0]?.parameters?.map(
+  //     //     item => item?.parameterType?.name,
+  //     //   ) ?? '',
+  //     render: row =>
+  //       row?.cmVersions[0]?.parameters?.map(
+  //         item =>
+  //           item?.parameterType?.intValue ||
+  //           item?.parameterType?.stringValue ||
+  //           item?.parameterType?.floatValue,
+  //       ) ?? '',
+  //     tooltip: row =>
+  //       row?.cmVersions[0]?.parameters?.map(
+  //         item =>
+  //           item?.parameterType?.intValue ||
+  //           item?.parameterType?.stringValue ||
+  //           item?.parameterType?.floatValue,
+  //       ) ?? '',
+  //   };
+  // });
+
   console.log('ROW ', resour);
-  console.log('new-parT', test);
+  // console.log('new-parT', arrayTest);
 
-  const resourceTypesFilters = resourceSpecifications?.edges.map(
-    item => item?.node?.resourceType,
-  );
-  const uniqueResourceType = [
-    ...new Set(resourceTypesFilters?.map(item => item?.name)),
-  ];
+  // const resourceTypesFilters = resourceSpecifications?.edges.map(
+  //   item => item?.node?.resourceType,
+  // );
+  // const uniqueResourceType = [
+  //   ...new Set(resourceTypesFilters?.map(item => item?.name)),
+  // ];
 
-  const resourceSpecificationFiltered = filterResourceType?.resourceTypes?.edges?.map(
-    item => item?.node?.resourceSpecification?.map(rs => rs),
-  );
+  // const resourceSpecificationFiltered = filterResourceType?.resourceTypes?.edges?.map(
+  //   item => item?.node?.resourceSpecification?.map(rs => rs),
+  // );
   /*
   const filterData = filterChange => {
     const filterName = queryResource?.filter(
@@ -305,7 +319,7 @@ const ConfigurationsView = () => {
   */
 
   // useEffect(() => {
-  //   setDataTable(queryResource);
+  //   setResour([...resour, ...arrayTest]);
   // }, [checkingSelects]);
 
   return (
@@ -334,9 +348,9 @@ const ConfigurationsView = () => {
               <MenuItem value={''} disabled>
                 {'Resource Type'}
               </MenuItem>
-              {uniqueResourceType.map((item, index) => (
-                <MenuItem key={index} value={item}>
-                  {item}
+              {resourceTypes?.edges?.map((item, index) => (
+                <MenuItem key={index} value={item?.node}>
+                  {item?.node?.name}
                 </MenuItem>
               ))}
             </TextField>
@@ -352,11 +366,13 @@ const ConfigurationsView = () => {
               <MenuItem value={''} disabled>
                 {'Resource Specification'}
               </MenuItem>
-              {resourceSpecificationFiltered[0]?.map((item, index) => (
-                <MenuItem key={index} value={item?.id}>
-                  {item.name}
-                </MenuItem>
-              ))}
+              {resourceType?.resource_Type?.resourceSpecification?.map(
+                (item, index) => (
+                  <MenuItem key={index} value={item?.id}>
+                    {item.name}
+                  </MenuItem>
+                ),
+              )}
             </TextField>
           </FormField>
           <div className={classes.searchBar}>
@@ -380,10 +396,10 @@ const ConfigurationsView = () => {
       </Grid>
       <Grid item xs={12} style={{margin: '20px 0 0 0'}}>
         <ConfigurationTable
-          // stateChange={checkingSelects}
-          dataConfig={queryResource}
-          dataColumn={resour}
-          selectResourceType2={selectResourceType2}
+        // stateChange={checkingSelects}
+        // dataConfig={queryResource}
+        // dataColumn={resour}
+        // selectResourceType2={selectResourceType2}
         />
       </Grid>
     </Grid>
@@ -391,3 +407,96 @@ const ConfigurationsView = () => {
 };
 
 export {ConfigurationsView};
+
+/*
+      queryResource(filter: $filter) {
+       id
+       name
+       locatedIn
+       resourceSpecification
+       isDeleted
+       lifecycleStatus
+       typePlanningSubStatus
+       planningSubStatus
+       usageSubStatus
+       operationalSubStatus
+       createTime
+       updateTime
+       cmVersions {
+         id
+         createTime
+         updateTime
+         status
+         #
+         resource {
+           id
+           name
+           locatedIn
+         }
+         #
+         parameters {
+           id
+           stringValue
+           rangeToValue
+           rangeFromValue
+           floatValue
+           intValue
+           booleanValue
+           latitudeValue
+           longitudeValue
+           parameterType {
+             id
+             name
+             resourceSpecification
+             stringValue
+             floatValue
+             intValue
+             type
+           }
+         }
+       }
+     }
+     #
+     resourceTypes(filterBy: $filterBy) {
+      edges {
+        node {
+          id
+          name
+          resourceSpecification {
+            id
+            name
+          }
+        }
+      }
+    }
+    #
+     const dataQuery = useLazyLoadQuery<ConfigurationsViewQuery>(Configurations, {
+    filter: {
+      resourceSpecification: {
+        eq: verifyResourceSpecification,
+      },
+    },
+    filterBy: [
+      {
+        filterType: 'NAME',
+        operator: 'IS',
+        stringValue: verifyResourceType,
+      },
+    ],
+  });
+  #
+  const filterResourceType = useLazyLoadQuery<ConfigurationsViewQuery>(
+    Configurations,
+    {
+      filterBy: [
+        {
+          filterType: 'NAME',
+          operator: 'IS',
+          stringValue: verifyResourceType,
+        },
+      ],
+    },
+  );
+  #
+    
+*/

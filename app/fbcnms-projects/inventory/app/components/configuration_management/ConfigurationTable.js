@@ -43,8 +43,8 @@ const ConfigurationTable = (props: Props) => {
   return (
     <Grid>
       <Table
-        data={dataConfig}
-        columns={dataColumn}
+        data={[]}
+        columns={[]}
         paginationSettings={{
           loadNext: onCompleted => {
             loadNext(PROJECTS_PAGE_SIZE, {
