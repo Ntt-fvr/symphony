@@ -174,14 +174,10 @@ const ConfigurationsView = () => {
     [],
   );
 
-  // console.log('RT & RS', resourceType, resourceSpecificationOpt);
-
   const verifyResourceSpecification =
     Object.entries(resourceSpecificationOpt)?.length === 0
       ? '' ?? null
       : resourceSpecificationOpt?.resourceSpecification;
-
-  // console.log('ID RS', verifyResourceSpecification);
 
   const queryTotal = useLazyLoadQuery<ConfigurationsViewQuery>(Configurations);
 
@@ -195,20 +191,20 @@ const ConfigurationsView = () => {
       },
     },
   );
-  // console.log('QUERY', queryTotal);
 
   const {resourceTypes} = queryTotal;
   const {queryResource} = filterQueryResource;
 
-  const [dataTable, setDataTable] = useState(queryResource);
+  // const [dataTable, setDataTable] = useState(queryResource);
 
-  console.log('Data-Table', dataTable);
+  console.log('Data-Table', queryResource);
 
   const selectResourceType = ({target}) => {
     setResourceType({
       ...resourceType,
       [target.name]: target.value,
     });
+    setCheckingSelects(!checkingSelects);
   };
 
   const selectResourceType2 = ({target}) => {
@@ -216,52 +212,37 @@ const ConfigurationsView = () => {
       ...resourceSpecificationOpt,
       [target.name]: target.value,
     });
-    setCheckingSelects(!checkingSelects);
   };
 
-  const onChangeParameter = async () => {
-    await setResourceTable([...resourceTable, ...arrayTest]);
-  };
-  const test = dataTable?.map(item =>
-    item?.cmVersions[0]?.parameters?.find(parameter => {
-      return {
-        key: row => row?.id,
-        title: parameter?.parameterType?.name,
-        render: row => row?.parameterType?.stringValue ?? '',
-        tooltip: row => row?.parameterType?.stringValue ?? '',
-      };
-    }),
-  );
-
-  const arrayTest = test.flat();
-
-  /*const test = queryResource?.map(() => {
+  const test = queryResource?.map(item => {
     return {
       key: row => row?.cmVersions[0]?.parameters?.map(item => item.id),
-      // title: row =>
-      //   row?.cmVersions[0]?.parameters?.map(
-      //     item => item?.parameterType?.name,
-      //   ) ?? '',
+      title:
+        item?.cmVersions[0]?.parameters?.map(
+          item => item?.parameterType?.name,
+        ) ?? '',
       render: row =>
         row?.cmVersions[0]?.parameters?.map(
-          item =>
-            item?.parameterType?.intValue ||
-            item?.parameterType?.stringValue ||
-            item?.parameterType?.floatValue,
+          item => item?.intValue || item?.stringValue || item?.floatValue,
         ) ?? '',
       tooltip: row =>
         row?.cmVersions[0]?.parameters?.map(
-          item =>
-            item?.parameterType?.intValue ||
-            item?.parameterType?.stringValue ||
-            item?.parameterType?.floatValue,
+          item => item?.intValue || item?.stringValue || item?.floatValue,
         ) ?? '',
     };
-  });*/
+  });
+
+  const arrayTest = test.flat();
+
+  const selectResourceSpecification = () => {
+    setCheckingSelects(!checkingSelects);
+    setResourceTable([...resourceTable, ...arrayTest]);
+  };
 
   console.log('ROW ', resourceTable);
-  console.log('new-parT', test);
+  console.log('new-parT', arrayTest);
 
+  // console.log([...resourceTable, ...arrayTest]);
   /*
   const resourceTypesFilters = resourceSpecifications?.edges.map(
     item => item?.node?.resourceType,
@@ -318,7 +299,7 @@ const ConfigurationsView = () => {
   };
   */
   useEffect(() => {
-    setDataTable(queryResource);
+    setResourceTable([...resourceTable, ...arrayTest]);
   }, [checkingSelects]);
 
   return (
@@ -358,9 +339,7 @@ const ConfigurationsView = () => {
               select
               className={classes.selectResourceSpecification}
               label="Resource Specification"
-              onChange={() => {
-                selectResourceType2, onChangeParameter;
-              }}
+              onChange={selectResourceType2}
               name="resourceSpecification"
               defaultValue=""
               variant="outlined">
@@ -369,7 +348,10 @@ const ConfigurationsView = () => {
               </MenuItem>
               {resourceType?.resource_Type?.resourceSpecification?.map(
                 (item, index) => (
-                  <MenuItem key={index} value={item?.id}>
+                  <MenuItem
+                    onClick={selectResourceSpecification}
+                    key={index}
+                    value={item?.id}>
                     {item.name}
                   </MenuItem>
                 ),
@@ -397,10 +379,8 @@ const ConfigurationsView = () => {
       </Grid>
       <Grid item xs={12} style={{margin: '20px 0 0 0'}}>
         <ConfigurationTable
-          // stateChange={checkingSelects}
-          dataConfig={dataTable}
+          dataConfig={queryResource}
           dataColumn={resourceTable}
-          // selectResourceType2={selectResourceType2}
         />
       </Grid>
     </Grid>
