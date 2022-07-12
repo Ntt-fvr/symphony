@@ -19,7 +19,7 @@ import TextField from '@material-ui/core/TextField';
 import fbt from 'fbt';
 import {ConfigurationTable} from './ConfigurationTable';
 import {Grid} from '@material-ui/core';
-import {MenuItem} from '@material-ui/core';
+import {MenuItem, Tooltip} from '@material-ui/core';
 import {ResourcesSearchConfig} from './ResourcesSearchConfig';
 import {getInitialFilterValue} from '../comparison_view/FilterUtils';
 import {graphql} from 'relay-runtime';
@@ -63,37 +63,8 @@ const useStyles = makeStyles(() => ({
 }));
 
 const Configurations = graphql`
-  query ConfigurationsViewQuery(
-    $filterBy: [ResourceSpecificationFilterInput!]
-  ) {
-    queryCMVersion {
-      id
-      resource {
-        id
-        name
-        resourceSpecification
-      }
-      parameters {
-        id
-        intValue
-        stringValue
-        floatValue
-        parameterType {
-          id
-          name
-          stringValue
-          intValue
-          floatValue
-          parameters {
-            floatValue
-            intValue
-            stringValue
-            id
-          }
-        }
-      }
-    }
-    resourceSpecifications(filterBy: $filterBy) {
+  query ConfigurationsViewQuery {
+    resourceSpecifications {
       edges {
         node {
           id
@@ -113,6 +84,50 @@ const Configurations = graphql`
           resourceSpecification {
             id
             name
+          }
+        }
+      }
+    }
+  }
+`;
+const Configurations2 = graphql`
+  query ConfigurationsView2Query($filter: ResourceFilter) {
+    queryResource(filter: $filter) {
+      id
+      name
+      locatedIn
+      resourceSpecification
+      isDeleted
+      cmVersions {
+        id
+        createTime
+        updateTime
+        status
+        #
+        resource {
+          id
+          name
+          locatedIn
+        }
+        #
+        parameters {
+          id
+          stringValue
+          rangeToValue
+          rangeFromValue
+          floatValue
+          intValue
+          booleanValue
+          latitudeValue
+          longitudeValue
+          parameterType {
+            id
+            name
+            resourceSpecification
+            stringValue
+            floatValue
+            intValue
+            type
           }
         }
       }
@@ -148,7 +163,7 @@ const ConfigurationsView = () => {
 
   const [resourceType, setResourceType] = useState({});
   const [checkingSelects, setCheckingSelects] = useState(false);
-  const [resour, setResour] = useState(dataResources);
+  const [resourceTable, setResourceTable] = useState(dataResources);
 
   const filterConfigs = useMemo(
     () =>
@@ -159,121 +174,106 @@ const ConfigurationsView = () => {
     [],
   );
 
-  // const verifyResourceSpecification =
-  //   Object.entries(resSpeci)?.length === 0
-  //     ? ''
-  //     : resSpeci?.resourceSpecification;
+  // console.log('RT & RS', resourceType, resourceSpecificationOpt);
 
-  console.log('RT & RS', resourceType, resourceSpecificationOpt);
+  const verifyResourceSpecification =
+    Object.entries(resourceSpecificationOpt)?.length === 0
+      ? '' ?? null
+      : resourceSpecificationOpt?.resourceSpecification;
 
-  // const verifyResourceType =
-  //   Object.entries(resourceType).length == 0 ? '' : resourceType?.resource_Type;
-  // console.log('RT ', verifyResourceType);
-  // console.log('RS ', verifyResourceSpecification);
+  // console.log('ID RS', verifyResourceSpecification);
 
-  const filterResourceType = useLazyLoadQuery<ConfigurationsViewQuery>(
-    Configurations,
+  const queryTotal = useLazyLoadQuery<ConfigurationsViewQuery>(Configurations);
+
+  const filterQueryResource = useLazyLoadQuery<ConfigurationsView2Query>(
+    Configurations2,
     {
-      filterBy: [
-        {
-          idSet: ['300647710720'],
-          filterType: 'NAME',
-          stringValue: 'RS1',
-          operator: 'CONTAINS',
+      filter: {
+        resourceSpecification: {
+          eq: verifyResourceSpecification,
         },
-      ],
+      },
     },
   );
-  console.log('QUERY=', filterResourceType);
+  // console.log('QUERY', queryTotal);
 
-  const {
-    queryResource,
-    resourceSpecifications,
-    resourceTypes,
-  } = filterResourceType;
+  const {resourceTypes} = queryTotal;
+  const {queryResource} = filterQueryResource;
 
   const [dataTable, setDataTable] = useState(queryResource);
 
-  console.log('R+P', queryResource);
+  console.log('Data-Table', dataTable);
 
-  function selectResourceType({target}) {
+  const selectResourceType = ({target}) => {
     setResourceType({
       ...resourceType,
       [target.name]: target.value,
     });
-  }
+  };
 
-  function selectResourceType2({target}) {
+  const selectResourceType2 = ({target}) => {
     setResourceSpecificationOpt({
       ...resourceSpecificationOpt,
       [target.name]: target.value,
     });
-  }
+    setCheckingSelects(!checkingSelects);
+  };
 
-  /**/
+  const onChangeParameter = async () => {
+    await setResourceTable([...resourceTable, ...arrayTest]);
+  };
+  const test = dataTable?.map(item =>
+    item?.cmVersions[0]?.parameters?.find(parameter => {
+      return {
+        key: row => row?.id,
+        title: parameter?.parameterType?.name,
+        render: row => row?.parameterType?.stringValue ?? '',
+        tooltip: row => row?.parameterType?.stringValue ?? '',
+      };
+    }),
+  );
 
-  // const test = queryResource?.map(item =>
-  //   item?.cmVersions[0]?.parameters?.map(itemParameter => {
-  //     return {
-  //       key: row => row?.parameterType?.id,
-  //       title: itemParameter?.parameterType?.name ?? '',
-  //       render: row => row?.intValue ?? row?.stringValue ?? row?.intValue ?? '',
-  //       tooltip: row =>
-  //         row?.intValue ?? row?.stringValue ?? row?.intValue ?? '',
-  //     };
-  //   }),
-  // );
+  const arrayTest = test.flat();
 
-  // const test = queryResource?.map(item =>
-  //   item?.cmVersions[0]?.parameters?.map(item => {
-  //     return {
-  //       key: item?.id,
-  //       title: item?.parameterType?.name,
-  //       render: row => row?.parameterType?.stringValue ?? '',
-  //       tooltip: row => row?.parameterType?.stringValue ?? '',
-  //     };
-  //   }),
-  // );
+  /*const test = queryResource?.map(() => {
+    return {
+      key: row => row?.cmVersions[0]?.parameters?.map(item => item.id),
+      // title: row =>
+      //   row?.cmVersions[0]?.parameters?.map(
+      //     item => item?.parameterType?.name,
+      //   ) ?? '',
+      render: row =>
+        row?.cmVersions[0]?.parameters?.map(
+          item =>
+            item?.parameterType?.intValue ||
+            item?.parameterType?.stringValue ||
+            item?.parameterType?.floatValue,
+        ) ?? '',
+      tooltip: row =>
+        row?.cmVersions[0]?.parameters?.map(
+          item =>
+            item?.parameterType?.intValue ||
+            item?.parameterType?.stringValue ||
+            item?.parameterType?.floatValue,
+        ) ?? '',
+    };
+  });*/
 
-  // const arrayTest = test.flat();
+  console.log('ROW ', resourceTable);
+  console.log('new-parT', test);
 
-  // const test = queryResource?.map(() => {
-  //   return {
-  //     key: row => row?.cmVersions[0]?.parameters?.map(item => item.id),
-  //     // title: row =>
-  //     //   row?.cmVersions[0]?.parameters?.map(
-  //     //     item => item?.parameterType?.name,
-  //     //   ) ?? '',
-  //     render: row =>
-  //       row?.cmVersions[0]?.parameters?.map(
-  //         item =>
-  //           item?.parameterType?.intValue ||
-  //           item?.parameterType?.stringValue ||
-  //           item?.parameterType?.floatValue,
-  //       ) ?? '',
-  //     tooltip: row =>
-  //       row?.cmVersions[0]?.parameters?.map(
-  //         item =>
-  //           item?.parameterType?.intValue ||
-  //           item?.parameterType?.stringValue ||
-  //           item?.parameterType?.floatValue,
-  //       ) ?? '',
-  //   };
-  // });
+  /*
+  const resourceTypesFilters = resourceSpecifications?.edges.map(
+    item => item?.node?.resourceType,
+  );
+  const uniqueResourceType = [
+    ...new Set(resourceTypesFilters?.map(item => item?.name)),
+  ];
 
-  console.log('ROW ', resour);
-  // console.log('new-parT', arrayTest);
-
-  // const resourceTypesFilters = resourceSpecifications?.edges.map(
-  //   item => item?.node?.resourceType,
-  // );
-  // const uniqueResourceType = [
-  //   ...new Set(resourceTypesFilters?.map(item => item?.name)),
-  // ];
-
-  // const resourceSpecificationFiltered = filterResourceType?.resourceTypes?.edges?.map(
-  //   item => item?.node?.resourceSpecification?.map(rs => rs),
-  // );
+  const resourceSpecificationFiltered = filterResourceType?.resourceTypes?.edges?.map(
+    item => item?.node?.resourceSpecification?.map(rs => rs),
+  );
+  */
   /*
   const filterData = filterChange => {
     const filterName = queryResource?.filter(
@@ -317,10 +317,9 @@ const ConfigurationsView = () => {
     }
   };
   */
-
-  // useEffect(() => {
-  //   setResour([...resour, ...arrayTest]);
-  // }, [checkingSelects]);
+  useEffect(() => {
+    setDataTable(queryResource);
+  }, [checkingSelects]);
 
   return (
     <Grid className={classes.root} container spacing={0}>
@@ -359,7 +358,9 @@ const ConfigurationsView = () => {
               select
               className={classes.selectResourceSpecification}
               label="Resource Specification"
-              onChange={selectResourceType2}
+              onChange={() => {
+                selectResourceType2, onChangeParameter;
+              }}
               name="resourceSpecification"
               defaultValue=""
               variant="outlined">
@@ -396,10 +397,10 @@ const ConfigurationsView = () => {
       </Grid>
       <Grid item xs={12} style={{margin: '20px 0 0 0'}}>
         <ConfigurationTable
-        // stateChange={checkingSelects}
-        // dataConfig={queryResource}
-        // dataColumn={resour}
-        // selectResourceType2={selectResourceType2}
+          // stateChange={checkingSelects}
+          dataConfig={dataTable}
+          dataColumn={resourceTable}
+          // selectResourceType2={selectResourceType2}
         />
       </Grid>
     </Grid>
