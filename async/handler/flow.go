@@ -7,6 +7,7 @@ package handler
 import (
 	"context"
 	"fmt"
+	"github.com/facebookincubator/symphony/async/automation/cadence/flow"
 	"time"
 
 	"github.com/facebookincubator/symphony/async/worker"
@@ -56,10 +57,16 @@ func (f FlowHandler) Handle(ctx context.Context, _ log.Logger, evt ev.EventObjec
 		FlowInstanceID: entry.CurrState.ID,
 	}
 	fmt.Println("FlowInstanceID ", entry.CurrState.ID)
-	_, err := f.client.StartWorkflow(
-		ctx, workflowOptions, worker.RunFlowWorkflowName,
-		ctx, worker.TaskListName, runFlowInput,
-	)
 
+	/*
+		_, err := f.client.StartWorkflow(
+			ctx, workflowOptions, worker.RunFlowWorkflowName,
+			ctx, worker.TaskListName, runFlowInput,
+		)
+	*/
+	_, err := f.client.StartWorkflow(
+		ctx, workflowOptions, flow.AutomationWorkflow,
+		ctx, worker.TaskListName, runFlowInput.FlowInstanceID,
+	)
 	return err
 }

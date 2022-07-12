@@ -31,7 +31,7 @@ require (
 	github.com/gogo/protobuf v1.3.2 // indirect
 	github.com/golang/snappy v0.0.4 // indirect
 	github.com/google/addlicense v1.0.0
-	github.com/google/cel-go v0.11.4
+	github.com/google/cel-go v0.12.0
 	github.com/google/uuid v1.3.0
 	github.com/google/wire v0.5.0
 	github.com/gorilla/mux v1.8.0

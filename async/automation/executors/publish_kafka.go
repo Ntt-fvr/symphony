@@ -1,49 +1,22 @@
-package blocks
+package executors
 
 import (
 	"encoding/json"
 	"github.com/confluentinc/confluent-kafka-go/kafka"
 	"github.com/facebookincubator/symphony/async/automation/celgo"
+	"github.com/facebookincubator/symphony/async/automation/model"
 	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
 	"strings"
 )
 
-type KafkaBlock struct {
-	baseBlock
-	topic       string
-	expression  string
-	brokers     []string
-	messageType enum.KafkaMessageType
+type ExecutorKafkaBlock struct {
+	executorBaseBlock
 }
 
-func (b *KafkaBlock) Execute() (*ExecutorResult, error) {
+func (b *ExecutorKafkaBlock) runLogic() error {
+	kafkaBlock := b.iBlock.(*model.KafkaBlock)
 
-	err := b.executeInputTransformation()
-	if err != nil {
-		return nil, err
-	}
-
-	err = b.runLogic()
-	if err != nil {
-		return nil, err
-	}
-
-	err = b.executeOutputTransformation()
-	if err != nil {
-		return nil, err
-	}
-
-	blockResult := ExecutorResult{
-		Output:    b.output,
-		State:     b.state,
-		NextBlock: b.nextBlock,
-	}
-
-	return &blockResult, nil
-}
-
-func (b *KafkaBlock) runLogic() error {
-	brokers := strings.Join(b.brokers, ";")
+	brokers := strings.Join(kafkaBlock.Brokers, ";")
 
 	kafkaConfig := &kafka.ConfigMap{
 		"bootstrap.servers": brokers,
@@ -57,12 +30,12 @@ func (b *KafkaBlock) runLogic() error {
 	defer producer.Close()
 
 	var message map[string]interface{}
-	switch b.messageType {
-	case "INPUT":
+	switch kafkaBlock.MessageType {
+	case enum.KafkaMessageTypeInput:
 		message = b.input
-	case "STATE":
+	case enum.KafkaMessageTypeState:
 		message = b.state
-	case "EXPRESSION":
+	case enum.KafkaMessageTypeExpression:
 		inputVariable := celgo.ConvertToValue(b.input)
 		stateVariable := celgo.ConvertToValue(b.state)
 
@@ -71,7 +44,7 @@ func (b *KafkaBlock) runLogic() error {
 			celgo.StateVariable: stateVariable,
 		}
 
-		result, err := celgo.CompileAndEvaluate(b.expression, variables)
+		result, err := celgo.CompileAndEvaluate(kafkaBlock.Expression, variables)
 		if err != nil {
 			return err
 		}
@@ -90,7 +63,7 @@ func (b *KafkaBlock) runLogic() error {
 	}
 
 	msg := &kafka.Message{
-		TopicPartition: kafka.TopicPartition{Topic: &b.topic, Partition: kafka.PartitionAny},
+		TopicPartition: kafka.TopicPartition{Topic: &kafkaBlock.Topic, Partition: kafka.PartitionAny},
 		Value:          messageBytes,
 	}
 

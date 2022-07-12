@@ -1,8 +1,7 @@
 package celgo
 
 import (
-	"github.com/google/cel-go/checker/decls"
-	exprpb "google.golang.org/genproto/googleapis/api/expr/v1alpha1"
+	"github.com/google/cel-go/cel"
 )
 
 const (
@@ -15,9 +14,9 @@ type AstKey struct {
 	AstValue string
 }
 
-func variables() []*exprpb.Decl {
-	return []*exprpb.Decl{
-		decls.NewVar(InputVariable, decls.NewMapType(decls.String, decls.Dyn)),
-		decls.NewVar(StateVariable, decls.NewMapType(decls.String, decls.Dyn)),
+func variables() []cel.EnvOption {
+	return []cel.EnvOption{
+		cel.Variable(InputVariable, cel.MapType(cel.StringType, cel.DynType)),
+		cel.Variable(StateVariable, cel.MapType(cel.StringType, cel.DynType)),
 	}
 }

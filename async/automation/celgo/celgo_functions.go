@@ -1,18 +1,15 @@
 package celgo
 
 import (
-	"errors"
-	"fmt"
 	"github.com/google/cel-go/cel"
 	"github.com/google/cel-go/common/types"
 	"github.com/google/cel-go/common/types/ref"
-	exprpb "google.golang.org/genproto/googleapis/api/expr/v1alpha1"
-	"google.golang.org/protobuf/proto"
 	"reflect"
 )
 
 var programs = map[string]cel.Program{}
 
+/*
 func Compile(expr string, exprType *exprpb.Type) (string, error) {
 	ast, err := compile(expr, exprType)
 	if err != nil {
@@ -21,12 +18,8 @@ func Compile(expr string, exprType *exprpb.Type) (string, error) {
 	return astToString(ast)
 }
 
-func compileAst(expr string) (*cel.Ast, error) {
-	ast, iss := environment.Compile(expr)
-	if iss.Err() != nil {
-		return nil, iss.Err()
-	}
-	return ast, nil
+func astToString(ast *cel.Ast) (string, error) {
+	return cel.AstToString(ast)
 }
 
 func compile(expr string, exprType *exprpb.Type) (*cel.Ast, error) {
@@ -40,9 +33,14 @@ func compile(expr string, exprType *exprpb.Type) (*cel.Ast, error) {
 	}
 	return ast, nil
 }
+*/
 
-func astToString(ast *cel.Ast) (string, error) {
-	return cel.AstToString(ast)
+func compileAst(expr string) (*cel.Ast, error) {
+	ast, iss := environment.Compile(expr)
+	if iss.Err() != nil {
+		return nil, iss.Err()
+	}
+	return ast, nil
 }
 
 func ConvertToAst(astValue string) (*cel.Ast, error) {
@@ -102,7 +100,7 @@ func Evaluate(astKey AstKey, variables map[string]interface{}) (ref.Val, error) 
 			return nil, err
 		}
 
-		program, err = environment.Program(ast, functionsImpl)
+		program, err = environment.Program(ast)
 		if err != nil {
 			return nil, err
 		}
@@ -124,7 +122,7 @@ func CompileAndEvaluate(expr string, variables map[string]interface{}) (ref.Val,
 }
 
 func evaluate(ast *cel.Ast, variables map[string]interface{}) (ref.Val, error) {
-	program, err := environment.Program(ast, functionsImpl)
+	program, err := environment.Program(ast)
 	if err != nil {
 		return nil, err
 	}
