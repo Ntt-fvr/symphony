@@ -6,7 +6,7 @@ version: "3.7"
 
 services:
   cadence-web:
-    image: ubercadence/web:3.29.6
+    image: ubercadence/web:v3.29.6
     environment:
       - "CADENCE_TCHANNEL_PEERS=cadence:7933"
     ports:
