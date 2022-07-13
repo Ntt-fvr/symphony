@@ -267,7 +267,7 @@ func getStartBlock(blocks map[int]model.IBlock) model.IBlock {
 	return nil
 }
 
-func flowExecutorFunction(flowId uint64, input map[string]interface{}) (map[string]interface{}, error) {
+func flowExecutorFunction(flowId int, input map[string]interface{}) (map[string]interface{}, error) {
 	if flowId > 0 {
 		return input, nil
 	}

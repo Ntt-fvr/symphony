@@ -4,7 +4,7 @@ import "github.com/facebookincubator/symphony/async/automation/model"
 
 type ExecutorExecuteFlowBlock struct {
 	executorBaseBlock
-	FlowExecutor func(uint64, map[string]interface{}) (map[string]interface{}, error)
+	FlowExecutor func(int, map[string]interface{}) (map[string]interface{}, error)
 }
 
 func (b *ExecutorExecuteFlowBlock) runLogic() error {
