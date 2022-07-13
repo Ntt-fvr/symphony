@@ -214,25 +214,34 @@ const ConfigurationsView = () => {
     });
   };
 
-  const test = queryResource?.map(item => {
-    return {
-      key: row => row?.cmVersions[0]?.parameters?.map(item => item.id),
-      title:
-        item?.cmVersions[0]?.parameters?.map(
-          item => item?.parameterType?.name,
-        ) ?? '',
-      render: row =>
-        row?.cmVersions[0]?.parameters?.map(
-          item => item?.intValue || item?.stringValue || item?.floatValue,
-        ) ?? '',
-      tooltip: row =>
-        row?.cmVersions[0]?.parameters?.map(
-          item => item?.intValue || item?.stringValue || item?.floatValue,
-        ) ?? '',
-    };
-  });
+  const test2 = queryResource?.map(item =>
+    item?.cmVersions[0]?.parameters?.map(itemParameter => ({
+      key: itemParameter?.id,
+      title: itemParameter?.parameterType?.name,
+      render: row => row?.parameterType?.id,
+    })),
+  );
 
-  const arrayTest = test.flat();
+  console.log('NEW OBJECTS -> ', test2.flat());
+  // const test = queryResource?.map(item => {
+  //   return {
+  //     key: row => row?.cmVersions[0]?.parameters?.map(item => item.id),
+  //     title:
+  //       item?.cmVersions[0]?.parameters?.map(
+  //         item => item?.parameterType?.name,
+  //       ) ?? '',
+  //     render: row =>
+  //       row?.cmVersions[0]?.parameters?.map(
+  //         item => item?.intValue || item?.stringValue || item?.floatValue,
+  //       ) ?? '',
+  //     tooltip: row =>
+  //       row?.cmVersions[0]?.parameters?.map(
+  //         item => item?.intValue || item?.stringValue || item?.floatValue,
+  //       ) ?? '',
+  //   };
+  // });
+
+  const arrayTest = test2.flat();
 
   const selectResourceSpecification = () => {
     setCheckingSelects(!checkingSelects);
