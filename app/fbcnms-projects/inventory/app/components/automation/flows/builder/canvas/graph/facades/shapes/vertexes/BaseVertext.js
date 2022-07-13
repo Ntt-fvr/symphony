@@ -216,6 +216,7 @@ export function getInitObject(
   horizontalPortLeftAlign?: number,
   horizontalPortRightAlign?: number,
   id?: ?string,
+  position?: string,
 ): InitObjectType {
   const inputPorts = getPortsArray(ports?.input, PORTS_GROUPS.INPUT);
   const outputPorts = getPortsArray(ports?.output, PORTS_GROUPS.OUTPUT);
@@ -226,7 +227,7 @@ export function getInitObject(
     ports: {
       groups: {
         input: {
-          position: 'left',
+          position: `${position || 'left'}`,
           markup:
             ports?.input?.markup ??
             getDefaultPortMarkup(
@@ -236,7 +237,7 @@ export function getInitObject(
             ),
         },
         output: {
-          position: 'right',
+          position: `${position || 'right'}`,
           markup:
             ports?.output?.markup ??
             getDefaultPortMarkup(backgroundColor, horizontalPortRightAlign),
@@ -247,3 +248,25 @@ export function getInitObject(
     id: id ?? undefined,
   };
 }
+
+export const originSize = {
+  width: 437,
+  height: 298,
+  bodyY2: 86,
+  backgroundY2: 157,
+  labelY2: 160,
+  imageY2: 81,
+  resizeWidth: 394,
+  resizeHeigth: 234,
+};
+
+export const mediumSize = {
+  width: 437,
+  height: 420,
+  bodyY2: 141,
+  backgroundY2: 210,
+  labelY2: 213,
+  imageY2: 137,
+  resizeWidth: 394,
+  resizeHeigth: 344,
+};
