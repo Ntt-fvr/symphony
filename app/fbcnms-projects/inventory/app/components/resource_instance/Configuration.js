@@ -78,7 +78,8 @@ type Props = $ReadOnly<{||}>;
 const Configuration = (props: Props) => {
   const {cmVersion, resource} = props;
   const [filters, setFilters] = useState([]);
-  const [checkedHidden, setCheckedHidden] = useState(true);
+  const [checkedHidden, setCheckedHidden] = useState(false);
+  const [checkedCurrentChange, setCheckedCurrentChange] = useState(false)
   const [isDialogInformation, setIsDialogInformation] = useState(false);
   const [isDialogSelectDate, setIsDialogSelectDate] = useState(false);
   const [checked, setChecked] = useState(true);
@@ -213,11 +214,11 @@ const Configuration = (props: Props) => {
                 label="Previous change"
               />
               <FormControlLabel
-                onChange={() => setCheckedHidden(!checkedHidden)}
-                checked={!checkedHidden}
+                onChange={() => setCheckedCurrentChange(!checkedCurrentChange)}
+                checked={checkedCurrentChange}
                 value="approval"
                 control={<Radio color="primary" />}
-                label="Schedule with approval"
+                label="Current Change"
               />
             </Grid>
             <Grid item xs={6} className={classes.checkSquare}>
@@ -234,7 +235,7 @@ const Configuration = (props: Props) => {
             <br></br>
             <TableConfigurationParameters
               ConfigurationParameters={configurationParameters}
-              setComparationCurrent={checked}
+              setComparationCurrent={checkedCurrentChange}
               setCurrentVersion={currentVersion}
             />
           </Grid>

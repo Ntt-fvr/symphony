@@ -116,10 +116,34 @@ function paperOnBlockEvent(event: BlockEvent, handler: BlockEventCallback) {
       block.setParent(vertexView.model.attributes.parent);
     handler(block, generalEventArgs, positionX, positionY);
   };
+
   this.current.paper.on(event, wrappedHandler);
   this.current?.graph.on('change:position', cell => {
     const graph = this.current?.graph;
     restrictPosition(cell, graph);
+  });
+
+  this.current?.graph.on('change:embeds', element => {
+    const MEDIUM_SIZE_COUPLED = 'mediumSizeCoupled';
+    const ORIGIN_SIZE_COUPLED = 'originSizeCoupled';
+    const BLOCK_LIMIT = 4;
+
+    const blockList = [...this.current?.blocks]
+      .flat()
+      .filter(item => item?.type?.includes('Block') && item);
+
+    const childrenBlocksList: Array<string> = element.attributes.embeds.filter(
+      el => blockList.find(block => block.id === el),
+    );
+
+    const blockParent = blockList.find(block => block.model.id === element.id);
+
+    if (childrenBlocksList.length > BLOCK_LIMIT) {
+      blockParent?.setSize(MEDIUM_SIZE_COUPLED);
+    }
+    if (childrenBlocksList.length < BLOCK_LIMIT) {
+      blockParent?.setSize(ORIGIN_SIZE_COUPLED);
+    }
   });
 }
 
