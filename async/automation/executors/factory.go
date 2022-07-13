@@ -22,20 +22,32 @@ func GetBlockInstances(
 		startBlock := block.(model.StartBlock)
 		baseBlock.iBlock = &startBlock
 
-		executorBlock = &ExecutorStartBlock{
+		executorStartBlock := ExecutorStartBlock{
 			executorBaseBlock: baseBlock,
 		}
+		executorStartBlock.runLogicFunction = executorStartBlock.runLogic
+
+		executorBlock = &executorStartBlock
 	case model.EndBlock:
-		executorBlock = &ExecutorEndBlock{
+		endBlock := block.(model.EndBlock)
+		baseBlock.iBlock = &endBlock
+
+		executorEndBlock := ExecutorEndBlock{
 			executorBaseBlock: baseBlock,
 		}
+		executorEndBlock.runLogicFunction = executorEndBlock.runLogic
+
+		executorBlock = &executorEndBlock
 	case model.GotoBlock:
 		gotoBlock := block.(model.GotoBlock)
 		baseBlock.iBlock = &gotoBlock
 
-		executorBlock = &ExecutorGotoBlock{
+		executorGotoBlock := ExecutorGotoBlock{
 			executorBaseBlock: baseBlock,
 		}
+		executorGotoBlock.runLogicFunction = executorGotoBlock.runLogic
+
+		executorBlock = &executorGotoBlock
 	case model.ChoiceBlock:
 		choiceBlock := block.(model.ChoiceBlock)
 		baseBlock.iBlock = &choiceBlock
@@ -87,9 +99,15 @@ func GetBlockInstances(
 
 		executorBlock = &executorKafkaBlock
 	case model.ParallelBlock:
-		executorBlock = &ExecutorParallelBlock{
+		parallelBlock := block.(model.ParallelBlock)
+		baseBlock.iBlock = &parallelBlock
+
+		executorParallelBlock := ExecutorParallelBlock{
 			executorBaseBlock: baseBlock,
 		}
+		executorParallelBlock.runLogicFunction = executorParallelBlock.runLogic
+
+		executorBlock = &executorParallelBlock
 	case model.TimerBlock:
 		timerBlock := block.(model.TimerBlock)
 		baseBlock.iBlock = &timerBlock
@@ -101,9 +119,15 @@ func GetBlockInstances(
 
 		executorBlock = &executorTimerBlock
 	case model.WaitForSignalBlock:
-		executorBlock = &ExecutorWaitForSignalBlock{
+		waitForSignalBlock := block.(model.WaitForSignalBlock)
+		baseBlock.iBlock = &waitForSignalBlock
+
+		executorWaitForSignalBlock := ExecutorWaitForSignalBlock{
 			executorBaseBlock: baseBlock,
 		}
+		executorWaitForSignalBlock.runLogicFunction = executorWaitForSignalBlock.runLogic
+
+		executorBlock = &executorWaitForSignalBlock
 	}
 
 	return executorBlock
