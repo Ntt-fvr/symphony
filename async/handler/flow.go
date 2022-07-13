@@ -33,11 +33,8 @@ func NewFlowHandler(client client.Client) *FlowHandler {
 
 // Handle handles event based on relevant logic
 func (f FlowHandler) Handle(ctx context.Context, _ log.Logger, evt ev.EventObject) error {
-	fmt.Println("FlowHandler")
 	entry, ok := evt.(event.LogEntry)
-	fmt.Println("evt.(event.LogEntry)", entry, ok)
 	if !ok || entry.Type != ent.TypeFlowInstance || !entry.Operation.Is(ent.OpCreate) {
-		fmt.Println("no es de ent.TypeFlowInstance")
 		return nil
 	}
 
@@ -56,7 +53,7 @@ func (f FlowHandler) Handle(ctx context.Context, _ log.Logger, evt ev.EventObjec
 	runFlowInput := worker.RunFlowInput{
 		FlowInstanceID: entry.CurrState.ID,
 	}
-	fmt.Println("FlowInstanceID ", entry.CurrState.ID)
+	fmt.Println("Automation - FlowInstanceID: ", entry.CurrState.ID)
 
 	/*
 		_, err := f.client.StartWorkflow(
@@ -68,5 +65,17 @@ func (f FlowHandler) Handle(ctx context.Context, _ log.Logger, evt ev.EventObjec
 		ctx, workflowOptions, flow.AutomationWorkflow,
 		ctx, worker.TaskListName, runFlowInput.FlowInstanceID,
 	)
+
+	if err != nil {
+		fmt.Println("Workflow AutomationWorkflow error: ")
+		fmt.Println("-----------------------")
+		fmt.Println(err)
+		fmt.Println("-----------------------")
+		fmt.Println(err.Error())
+		fmt.Println("-----------------------")
+		fmt.Println()
+	} else {
+		fmt.Println("Workflow AutomationWorkflow started!")
+	}
 	return err
 }
