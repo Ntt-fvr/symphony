@@ -103,7 +103,7 @@ const Transform = (props: Props) => {
           <Grid item xs={12}>
             <CodeEditor
               mode="json"
-              value={inputJsonValue}
+              value={inputJsonValue || ''}
               name={inputJsonName}
               onChange={handleInputChange}
             />

@@ -38,21 +38,21 @@ const ConfigurationWaitForSignal = ({block}: Props) => {
   const {settings} = block;
   const [waitForSignalSettingsValues, handleInputChange] = useForm({
     signalModule: settings?.signalModule || '',
-    blockUntilReception: settings?.blockUntilReception || false,
+    blocked: settings?.blocked || false,
     signalType: settings?.signalType || '',
     customFilter: settings?.customFilter || '',
   });
 
   const {
     signalModule,
-    blockUntilReception,
+    blocked,
     signalType,
     customFilter,
   } = waitForSignalSettingsValues;
 
   const signalTypes = [
-    {name: 'WOCreation', id: 'wo_creation'},
-    {name: 'InvUpdate', id: 'in_update'},
+    {name: 'WOCreation', id: 'WOCREATION'},
+    {name: 'InvUpdate', id: 'CRUPDATE'},
   ];
   useEffect(() => {
     block.setSettings(waitForSignalSettingsValues);
@@ -74,8 +74,8 @@ const ConfigurationWaitForSignal = ({block}: Props) => {
       <Grid item xs={12} className={classes.grid}>
         <Switch
           label={'Block flow until reception'}
-          name={'blockUntilReception'}
-          value={blockUntilReception}
+          name={'blocked'}
+          value={blocked}
           handleInputChange={handleInputChange}
         />
       </Grid>

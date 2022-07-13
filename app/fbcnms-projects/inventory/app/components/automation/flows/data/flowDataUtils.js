@@ -32,12 +32,23 @@ import type {TrueFalseBlockInputType} from '../builder/canvas/graph/shapes/block
 
 import {TYPE as TriggerStart} from '../builder/canvas/graph/facades/shapes/vertexes/triggers/TriggerStart';
 import {TYPE as TriggerWorkforce} from '../builder/canvas/graph/facades/shapes/vertexes/triggers/TriggerWorkforce';
-import {TYPE as WaitSignal} from '../builder/canvas/graph/facades/shapes/vertexes/triggers/WaitSignal';
 
+import BaseBlock from '../builder/canvas/graph/shapes/blocks/BaseBlock';
 import ImportFlowDraftMutation from '../../../../mutations/ImportFlowDraft';
 import PublishFlowMutation from '../../../../mutations/PublishFlowMutation';
 import {getGraphError} from '../../../../common/EntUtils';
 import {isLasso} from '../builder/canvas/graph/facades/shapes/vertexes/helpers/Lasso';
+
+const POINT_EXAMPLE = {role: 'DEFAULT', cid: 'hola'};
+const VARIABLE_EXPRESSION_EXAMPLE = {
+  type: 'VariableDefinition',
+  expression: 'a',
+  blockVariables: [],
+};
+const HEADERS_EXAMPLE = {
+  variableDefinitionKey: 'VariableDefinition',
+  value: 'a',
+};
 
 export function saveFlowDraft(
   input: ImportFlowDraftInput,
@@ -77,6 +88,21 @@ export function publishFlow(
   });
 }
 
+function mapBaseBlockInformation(block: IBlock) {
+  const {inputSettings, outputSettings, errorSettings} = block;
+  const {
+    addOriginal,
+    addOriginalJson,
+    additionMethod,
+    ...tempOutputSettings
+  } = outputSettings;
+  return {
+    ...inputSettings,
+    ...tempOutputSettings,
+    ...errorSettings,
+  };
+}
+
 export function mapStartBlockForSave(block: IBlock): StartBlockInputType {
   const {paramDefinitions} = block.settings;
   return {
@@ -95,12 +121,13 @@ export function mapChoiceBlockForSave(block: IBlock): ChoiceBlockInputType {
   const {routes} = block.settings;
   const newRoutes = routes?.map(route => ({
     cid: route.id,
-    name: route.name,
     condition: route.rule,
   }));
   return {
     ...mapBlockForSave(block),
-    routes: newRoutes,
+    basicDefinitions: mapBaseBlockInformation(block),
+    entryPoint: POINT_EXAMPLE,
+    routes: [],
   };
 }
 
@@ -126,13 +153,15 @@ export function mapInvokeRestAPIBlockForSave(
   } = block.settings;
   return {
     ...mapBlockForSave(block),
-    entryPoint: entryPoint,
-    exitPoint: exitPoint,
+    entryPoint: POINT_EXAMPLE,
+    exitPoint: POINT_EXAMPLE,
     method: method,
     url: url,
     connectionTimeOut: connectionTimeOut,
     body: body,
-    headers: headers,
+    headers: HEADERS_EXAMPLE,
+    basicDefinitions: mapBaseBlockInformation(block),
+    params: VARIABLE_EXPRESSION_EXAMPLE,
   };
 }
 
@@ -160,41 +189,18 @@ export function mapActionBlocksForSave(
   };
 }
 
-type TriggerBlockInputType = {
-  type?: string,
-  signalModule?: string,
-  customFilter?: string,
-  blocked?: boolean,
-  behavior?: string,
-  seconds?: number,
-  datetime?: string,
-  enableExpressionL?: boolean,
-  expression?: string,
-  exitPoint?: string,
-};
-
-export function mapTriggerBlocksForSave(block: IBlock): TriggerBlockInputType {
-  const {blocked, customFilter, signalModule, signalType} = block.settings;
-
+export function mapTriggerBlocksForSave(block: IBlock) {
   switch (block.model.attributes.type) {
     case TriggerStart:
       return {};
     case TriggerWorkforce:
       return {};
-    case WaitSignal:
-      return {
-        ...mapBlockForSave(block),
-        type: signalType,
-        signalModule: signalModule,
-        customFilter: customFilter,
-        blocked: blocked,
-      };
     default:
       return;
   }
 }
 
-export function mapTimerBlocksForSave(block: IBlock): TriggerBlockInputType {
+export function mapTimerBlocksForSave(block: IBlock) {
   const {
     behavior,
     seconds,
@@ -212,13 +218,29 @@ export function mapTimerBlocksForSave(block: IBlock): TriggerBlockInputType {
     enableExpressionL: enableExpressionL,
     expression: expression,
     exitPoint: exitPoint,
-    params: {type: 'VariableDefinition', expression: 'a', blockVariables: []},
+    params: VARIABLE_EXPRESSION_EXAMPLE,
     entryPoint: null,
     uiRepresentation: {
       name: block.name,
       xPosition: Math.floor(block.model.attributes.position.x),
       yPosition: Math.floor(block.model.attributes.position.y),
     },
+  };
+}
+
+export function mapWaitForSignalBlocksForSave(block: IBlock) {
+  const {signalType, signalModule, customFilter, blocked} = block.settings;
+
+  return {
+    ...mapBlockForSave(block),
+    type: signalType,
+    signalModule: 'CONFIGURATION',
+    customFilter: customFilter,
+    blocked: blocked,
+    entryPoint: POINT_EXAMPLE,
+    exitPoint: POINT_EXAMPLE,
+    basicDefinitions: mapBaseBlockInformation(block),
+    params: VARIABLE_EXPRESSION_EXAMPLE,
   };
 }
 
@@ -236,8 +258,6 @@ export function mapEndBlockForSave(block: IBlock): EndBlockInputType {
 }
 
 function mapBlockForSave(block: IBlock): BaseBlockInputType {
-  const {inputSettings, outputSettings, errorSettings} = block;
-
   return {
     cid: block.id,
     uiRepresentation: {
@@ -245,9 +265,6 @@ function mapBlockForSave(block: IBlock): BaseBlockInputType {
       xPosition: Math.floor(block.model.attributes.position.x),
       yPosition: Math.floor(block.model.attributes.position.y),
     },
-    ...inputSettings,
-    ...outputSettings,
-    ...errorSettings,
   };
 }
 
@@ -273,3 +290,44 @@ export function hasMeaningfulChanges(shape: IShape): boolean {
     ) > -1
   );
 }
+
+export const saveBlockInformation = (
+  blockFormQuery,
+  createdBlock: BaseBlock,
+) => {
+  createdBlock.setInputSettings({
+    enableInputTransformation: blockFormQuery.enableInputTransformation,
+    inputTransfStrategy: blockFormQuery.inputTransfStrategy,
+    inputParamDefinitions: blockFormQuery.inputParamDefinitions?.toString(),
+    enableInputStateTransformation:
+      blockFormQuery.enableInputStateTransformation,
+    inputStateTransfStrategy: blockFormQuery.inputStateTransfStrategy,
+    inputStateParamDefinitions: blockFormQuery.inputStateParamDefinitions,
+  });
+  createdBlock.setOutputSettings({
+    enableOutputTransformation: blockFormQuery.enableOutputTransformation,
+    outputTransfStrategy: blockFormQuery.outputTransfStrategy,
+    outputParamDefinitions: blockFormQuery.outputParamDefinitions?.toString(),
+    enableOutputStateTransformation:
+      blockFormQuery.enableOutputStateTransformation,
+    outputStateTransfStrategy: blockFormQuery.outputStateTransfStrategy,
+    outputStateParamDefinitions: blockFormQuery.outputStateParamDefinitions,
+    addOriginal: blockFormQuery.addOriginal,
+    addOriginalJson: blockFormQuery.addOriginalJson,
+    additionMethod: blockFormQuery.additionMethod,
+  });
+  createdBlock.setErrorSettings({
+    enableErrorHandling: blockFormQuery.enableErrorHandling,
+    enableRetryPolicy: blockFormQuery.enableRetryPolicy,
+    retryInterval: blockFormQuery.retryInterval,
+    units: blockFormQuery.units,
+    maxAttemps: blockFormQuery.maxAttemps,
+    backoffRate: blockFormQuery.backoffRate,
+  });
+  console.log(
+    'outputStateParamDefinitions',
+    blockFormQuery.outputStateParamDefinitions,
+  );
+  const {__typename, ...configurationParameters} = blockFormQuery.details;
+  createdBlock.setSettings(configurationParameters);
+};

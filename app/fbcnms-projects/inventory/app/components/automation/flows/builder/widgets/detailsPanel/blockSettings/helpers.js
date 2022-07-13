@@ -46,7 +46,7 @@ const blocksTabs: Array<BlockTabs> = [
   {type: CreateWorkorderType, allowedTabs: [OUTPUT_TYPE, ERROR_TYPE]},
   {type: ExecuteFlowType, allowedTabs: [OUTPUT_TYPE, ERROR_TYPE]},
   {type: ExecuteNetworkActionType, allowedTabs: [OUTPUT_TYPE, ERROR_TYPE]},
-  {type: InvokeRestApiType, allowedTabs: [OUTPUT_TYPE, ERROR_TYPE]},
+  {type: InvokeRestApiType, allowedTabs: [INPUT_TYPE, OUTPUT_TYPE, ERROR_TYPE]},
   {type: UpdateInventoryType, allowedTabs: [OUTPUT_TYPE, ERROR_TYPE]},
   {type: UpdateWorkforceType, allowedTabs: [OUTPUT_TYPE, ERROR_TYPE]},
   // Administrative
