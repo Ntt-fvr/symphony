@@ -61,7 +61,7 @@ func (f FlowHandler) Handle(ctx context.Context, _ log.Logger, evt ev.EventObjec
 			ctx, worker.TaskListName, runFlowInput,
 		)
 	*/
-	_, err := f.client.StartWorkflow(
+	execution, err := f.client.StartWorkflow(
 		ctx, workflowOptions, flow.AutomationWorkflow,
 		ctx, worker.TaskListName, runFlowInput.FlowInstanceID,
 	)
@@ -74,8 +74,17 @@ func (f FlowHandler) Handle(ctx context.Context, _ log.Logger, evt ev.EventObjec
 		fmt.Println(err.Error())
 		fmt.Println("-----------------------")
 		fmt.Println()
+	} else if execution != nil {
+		fmt.Println()
+		fmt.Printf(
+			"Workflow AutomationWorkflow started!\n"+
+				"Worflow ID: %s\n"+
+				"Run ID: %s",
+			execution.ID, execution.RunID,
+		)
+		fmt.Println()
 	} else {
-		fmt.Println("Workflow AutomationWorkflow started!")
+		fmt.Println("Workflow Execution is null")
 	}
 	return err
 }
