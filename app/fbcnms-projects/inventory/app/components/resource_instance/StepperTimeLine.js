@@ -87,6 +87,20 @@ const StepperTimeLineQuery = graphql`
           }
         }
         createTime
+        previous {
+          id
+          parameters {
+            id
+            stringValue
+            floatValue
+            intValue
+            parameterType {
+              id
+              name
+              type
+            }
+          }
+        }
       }
     }
   }
@@ -151,7 +165,7 @@ const StepperTimeLine = (props: Props) => {
     const currentVersion = queryCMVersion.queryResource[0].cmVersions.filter(
       item => item.status === 'CURRENT',
     );
-    CMSelected(label, currentVersion);
+    CMSelected(label, currentVersion, queryCMVersion.queryResource[0].cmVersions);
   };
 
   return (

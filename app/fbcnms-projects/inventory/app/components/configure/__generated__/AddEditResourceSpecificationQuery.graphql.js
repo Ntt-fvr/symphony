@@ -19,7 +19,6 @@ export type ParameterKind = "bool" | "date" | "datetime_local" | "email" | "enum
 export type AddEditResourceSpecificationQueryVariables = {||};
 export type AddEditResourceSpecificationQueryResponse = {|
   +queryConfigurationParameterType: ?$ReadOnlyArray<?{|
-    +resourceSpecification: string,
     +name: string,
     +id: string,
     +booleanValue: ?boolean,
@@ -33,17 +32,18 @@ export type AddEditResourceSpecificationQueryResponse = {|
     +isListable: ?boolean,
     +isMandatory: ?boolean,
     +isPrioritary: ?boolean,
-    +latitudeValue: ?number,
-    +longitudeValue: ?number,
     +mappingIn: ?string,
     +mappingOut: ?string,
     +nodeType: ?string,
-    +rangeFromValue: ?number,
-    +rangeToValue: ?number,
     +rawValue: ?string,
+    +resourceSpecification: string,
     +stringValue: ?string,
     +type: ParameterKind,
     +__typename: string,
+    +tags: ?$ReadOnlyArray<{|
+      +id: string,
+      +name: string,
+    |}>,
   |}>,
   +queryActionTemplate: ?$ReadOnlyArray<?{|
     +id: string,
@@ -74,7 +74,6 @@ export type AddEditResourceSpecificationQuery = {|
 /*
 query AddEditResourceSpecificationQuery {
   queryConfigurationParameterType {
-    resourceSpecification
     name
     id
     booleanValue
@@ -88,17 +87,18 @@ query AddEditResourceSpecificationQuery {
     isListable
     isMandatory
     isPrioritary
-    latitudeValue
-    longitudeValue
     mappingIn
     mappingOut
     nodeType
-    rangeFromValue
-    rangeToValue
     rawValue
+    resourceSpecification
     stringValue
     type
     __typename
+    tags {
+      id
+      name
+    }
   }
   queryActionTemplate {
     id
@@ -158,7 +158,11 @@ v4 = {
   "name": "type",
   "storageKey": null
 },
-v5 = {
+v5 = [
+  (v1/*: any*/),
+  (v0/*: any*/)
+],
+v6 = {
   "alias": null,
   "args": null,
   "concreteType": "ConfigurationParameterType",
@@ -166,13 +170,6 @@ v5 = {
   "name": "queryConfigurationParameterType",
   "plural": true,
   "selections": [
-    {
-      "alias": null,
-      "args": null,
-      "kind": "ScalarField",
-      "name": "resourceSpecification",
-      "storageKey": null
-    },
     (v0/*: any*/),
     (v1/*: any*/),
     {
@@ -250,20 +247,6 @@ v5 = {
       "alias": null,
       "args": null,
       "kind": "ScalarField",
-      "name": "latitudeValue",
-      "storageKey": null
-    },
-    {
-      "alias": null,
-      "args": null,
-      "kind": "ScalarField",
-      "name": "longitudeValue",
-      "storageKey": null
-    },
-    {
-      "alias": null,
-      "args": null,
-      "kind": "ScalarField",
       "name": "mappingIn",
       "storageKey": null
     },
@@ -285,21 +268,14 @@ v5 = {
       "alias": null,
       "args": null,
       "kind": "ScalarField",
-      "name": "rangeFromValue",
-      "storageKey": null
-    },
-    {
-      "alias": null,
-      "args": null,
-      "kind": "ScalarField",
-      "name": "rangeToValue",
-      "storageKey": null
-    },
-    {
-      "alias": null,
-      "args": null,
-      "kind": "ScalarField",
       "name": "rawValue",
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "resourceSpecification",
       "storageKey": null
     },
     (v3/*: any*/),
@@ -310,24 +286,31 @@ v5 = {
       "kind": "ScalarField",
       "name": "__typename",
       "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "concreteType": "ConfigParamTag",
+      "kind": "LinkedField",
+      "name": "tags",
+      "plural": true,
+      "selections": (v5/*: any*/),
+      "storageKey": null
     }
   ],
   "storageKey": null
 },
-v6 = {
+v7 = {
   "alias": null,
   "args": null,
   "concreteType": "ConfigurationParameterType",
   "kind": "LinkedField",
   "name": "parameters",
   "plural": false,
-  "selections": [
-    (v1/*: any*/),
-    (v0/*: any*/)
-  ],
+  "selections": (v5/*: any*/),
   "storageKey": null
 },
-v7 = {
+v8 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
@@ -341,7 +324,7 @@ return {
     "metadata": null,
     "name": "AddEditResourceSpecificationQuery",
     "selections": [
-      (v5/*: any*/),
+      (v6/*: any*/),
       {
         "alias": null,
         "args": null,
@@ -362,7 +345,7 @@ return {
             "plural": true,
             "selections": [
               (v1/*: any*/),
-              (v6/*: any*/),
+              (v7/*: any*/),
               {
                 "alias": null,
                 "args": null,
@@ -379,7 +362,7 @@ return {
             ],
             "storageKey": null
           },
-          (v7/*: any*/),
+          (v8/*: any*/),
           (v2/*: any*/)
         ],
         "storageKey": null
@@ -394,7 +377,7 @@ return {
     "kind": "Operation",
     "name": "AddEditResourceSpecificationQuery",
     "selections": [
-      (v5/*: any*/),
+      (v6/*: any*/),
       {
         "alias": null,
         "args": null,
@@ -415,7 +398,7 @@ return {
             "plural": true,
             "selections": [
               (v1/*: any*/),
-              (v6/*: any*/),
+              (v7/*: any*/),
               {
                 "alias": null,
                 "args": null,
@@ -433,7 +416,7 @@ return {
             ],
             "storageKey": null
           },
-          (v7/*: any*/),
+          (v8/*: any*/),
           (v2/*: any*/)
         ],
         "storageKey": null
@@ -441,16 +424,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "6b4f4d674229df9ff5a0934dea69a8ff",
+    "cacheID": "2818ffef2c1926d505c34a7d1e489f64",
     "id": null,
     "metadata": {},
     "name": "AddEditResourceSpecificationQuery",
     "operationKind": "query",
-    "text": "query AddEditResourceSpecificationQuery {\n  queryConfigurationParameterType {\n    resourceSpecification\n    name\n    id\n    booleanValue\n    category\n    externalId\n    floatValue\n    index\n    intValue\n    isDeleted\n    isEditable\n    isListable\n    isMandatory\n    isPrioritary\n    latitudeValue\n    longitudeValue\n    mappingIn\n    mappingOut\n    nodeType\n    rangeFromValue\n    rangeToValue\n    rawValue\n    stringValue\n    type\n    __typename\n  }\n  queryActionTemplate {\n    id\n    name\n    type\n    actionTemplateItems {\n      id\n      parameters {\n        id\n        name\n      }\n      value {\n        stringValue\n        id\n      }\n      isDeleted\n    }\n    resourceSpecifications\n    isDeleted\n  }\n}\n"
+    "text": "query AddEditResourceSpecificationQuery {\n  queryConfigurationParameterType {\n    name\n    id\n    booleanValue\n    category\n    externalId\n    floatValue\n    index\n    intValue\n    isDeleted\n    isEditable\n    isListable\n    isMandatory\n    isPrioritary\n    mappingIn\n    mappingOut\n    nodeType\n    rawValue\n    resourceSpecification\n    stringValue\n    type\n    __typename\n    tags {\n      id\n      name\n    }\n  }\n  queryActionTemplate {\n    id\n    name\n    type\n    actionTemplateItems {\n      id\n      parameters {\n        id\n        name\n      }\n      value {\n        stringValue\n        id\n      }\n      isDeleted\n    }\n    resourceSpecifications\n    isDeleted\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = 'c5b7e46e504e41917e32913ed1bcb27f';
+(node/*: any*/).hash = '0584c2d9800dcaf755493251baa6eff2';
 
 module.exports = node;
