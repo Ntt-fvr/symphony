@@ -195,16 +195,11 @@ const ConfigurationsView = () => {
   const {resourceTypes} = queryTotal;
   const {queryResource} = filterQueryResource;
 
-  // const [dataTable, setDataTable] = useState(queryResource);
-
-  console.log('Data-Table', queryResource);
-
   const selectResourceType = ({target}) => {
     setResourceType({
       ...resourceType,
       [target.name]: target.value,
     });
-    setCheckingSelects(!checkingSelects);
   };
 
   const selectResourceType2 = ({target}) => {
@@ -212,101 +207,29 @@ const ConfigurationsView = () => {
       ...resourceSpecificationOpt,
       [target.name]: target.value,
     });
+    setCheckingSelects(!checkingSelects);
   };
 
-  const test2 = queryResource?.map(item =>
-    item?.cmVersions[0]?.parameters?.map(itemParameter => ({
+  const renderOp = (row, itemParameter) => {
+    const parTemp = row?.cmVersions[0]?.parameters?.find(
+      item => item.parameterType.id === itemParameter.parameterType.id,
+    );
+    return parTemp?.stringValue ?? parTemp?.floatValue ?? parTemp?.intValue;
+  };
+  const test2 =
+    queryResource[0]?.cmVersions[0]?.parameters?.map(itemParameter => ({
       key: itemParameter?.id,
       title: itemParameter?.parameterType?.name,
-      render: row => row?.parameterType?.id,
-    })),
-  );
+      render: row => renderOp(row, itemParameter),
+    })) ?? [];
 
-  console.log('NEW OBJECTS -> ', test2.flat());
-  // const test = queryResource?.map(item => {
-  //   return {
-  //     key: row => row?.cmVersions[0]?.parameters?.map(item => item.id),
-  //     title:
-  //       item?.cmVersions[0]?.parameters?.map(
-  //         item => item?.parameterType?.name,
-  //       ) ?? '',
-  //     render: row =>
-  //       row?.cmVersions[0]?.parameters?.map(
-  //         item => item?.intValue || item?.stringValue || item?.floatValue,
-  //       ) ?? '',
-  //     tooltip: row =>
-  //       row?.cmVersions[0]?.parameters?.map(
-  //         item => item?.intValue || item?.stringValue || item?.floatValue,
-  //       ) ?? '',
-  //   };
-  // });
+  const arrayTest = test2;
 
-  const arrayTest = test2.flat();
+  // const selectResourceSpecification = () => {
+  //   setCheckingSelects(!checkingSelects);
+  //   setResourceTable([...resourceTable, ...arrayTest]);
+  // };
 
-  const selectResourceSpecification = () => {
-    setCheckingSelects(!checkingSelects);
-    setResourceTable([...resourceTable, ...arrayTest]);
-  };
-
-  console.log('ROW ', resourceTable);
-  console.log('new-parT', arrayTest);
-
-  // console.log([...resourceTable, ...arrayTest]);
-  /*
-  const resourceTypesFilters = resourceSpecifications?.edges.map(
-    item => item?.node?.resourceType,
-  );
-  const uniqueResourceType = [
-    ...new Set(resourceTypesFilters?.map(item => item?.name)),
-  ];
-
-  const resourceSpecificationFiltered = filterResourceType?.resourceTypes?.edges?.map(
-    item => item?.node?.resourceSpecification?.map(rs => rs),
-  );
-  */
-  /*
-  const filterData = filterChange => {
-    const filterName = queryResource?.filter(
-      item => item?.resource?.name === filterChange[0]?.stringValue,
-    );
-    const filterLocation = queryResource?.filter(
-      item => item?.resource?.locatedIn === filterChange[0]?.stringValue,
-    );
-    const filterParameterName = queryResource?.filter(
-      item => item?.resource?.locatedIn === filterChange[0]?.stringValue,
-    );
-    const filterParameterTag = queryResource?.filter(
-      item => item?.resource?.locatedIn === filterChange[0]?.stringValue,
-    );
-    const filterParameterPriority = queryResource?.filter(
-      item => item?.resource?.locatedIn === filterChange[0]?.stringValue,
-    );
-
-    filterChange.length === 0 && setDataTable(queryResource);
-
-    switch (filterChange[0]?.key) {
-      case 'resource_name':
-        setDataTable(filterName);
-        break;
-      case 'location_inst_external_id':
-        setDataTable(filterLocation);
-        break;
-      case 'parameter_selector_name':
-        setDataTable(filterParameterName);
-        break;
-      case 'parameter_selector_tags':
-        setDataTable(filterParameterTag);
-        break;
-      case 'parameter_selector_priority':
-        setDataTable(filterParameterPriority);
-        break;
-
-      default:
-        setDataTable(queryResource);
-        break;
-    }
-  };
-  */
   useEffect(() => {
     setResourceTable([...resourceTable, ...arrayTest]);
   }, [checkingSelects]);
@@ -358,7 +281,7 @@ const ConfigurationsView = () => {
               {resourceType?.resource_Type?.resourceSpecification?.map(
                 (item, index) => (
                   <MenuItem
-                    onClick={selectResourceSpecification}
+                    // onClick={selectResourceSpecification}
                     key={index}
                     value={item?.id}>
                     {item.name}
@@ -397,96 +320,3 @@ const ConfigurationsView = () => {
 };
 
 export {ConfigurationsView};
-
-/*
-      queryResource(filter: $filter) {
-       id
-       name
-       locatedIn
-       resourceSpecification
-       isDeleted
-       lifecycleStatus
-       typePlanningSubStatus
-       planningSubStatus
-       usageSubStatus
-       operationalSubStatus
-       createTime
-       updateTime
-       cmVersions {
-         id
-         createTime
-         updateTime
-         status
-         #
-         resource {
-           id
-           name
-           locatedIn
-         }
-         #
-         parameters {
-           id
-           stringValue
-           rangeToValue
-           rangeFromValue
-           floatValue
-           intValue
-           booleanValue
-           latitudeValue
-           longitudeValue
-           parameterType {
-             id
-             name
-             resourceSpecification
-             stringValue
-             floatValue
-             intValue
-             type
-           }
-         }
-       }
-     }
-     #
-     resourceTypes(filterBy: $filterBy) {
-      edges {
-        node {
-          id
-          name
-          resourceSpecification {
-            id
-            name
-          }
-        }
-      }
-    }
-    #
-     const dataQuery = useLazyLoadQuery<ConfigurationsViewQuery>(Configurations, {
-    filter: {
-      resourceSpecification: {
-        eq: verifyResourceSpecification,
-      },
-    },
-    filterBy: [
-      {
-        filterType: 'NAME',
-        operator: 'IS',
-        stringValue: verifyResourceType,
-      },
-    ],
-  });
-  #
-  const filterResourceType = useLazyLoadQuery<ConfigurationsViewQuery>(
-    Configurations,
-    {
-      filterBy: [
-        {
-          filterType: 'NAME',
-          operator: 'IS',
-          stringValue: verifyResourceType,
-        },
-      ],
-    },
-  );
-  #
-    
-*/
