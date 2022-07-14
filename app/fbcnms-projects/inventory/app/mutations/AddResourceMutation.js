@@ -45,6 +45,7 @@ const mutation = graphql`
           rangeFromValue
           rangeToValue
           stringValue
+          resourcePropertyType
         }
       }
     }

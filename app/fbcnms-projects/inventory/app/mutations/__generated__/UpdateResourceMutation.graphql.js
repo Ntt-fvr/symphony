@@ -285,7 +285,6 @@ export type UpdateResourceMutationResponse = {|
       +operationalSubStatus: ?OperationalSubStatus,
       +resourceProperties: ?$ReadOnlyArray<?{|
         +booleanValue: ?boolean,
-        +createTime: ?any,
         +floatValue: ?number,
         +id: string,
         +intValue: ?number,
@@ -295,7 +294,7 @@ export type UpdateResourceMutationResponse = {|
         +rangeToValue: ?number,
         +rawValue: ?string,
         +stringValue: ?string,
-        +updateTime: ?any,
+        +resourcePropertyType: string,
       |}>,
       +logicalLinks: ?$ReadOnlyArray<?{|
         +name: string
@@ -330,7 +329,6 @@ mutation UpdateResourceMutation(
       operationalSubStatus
       resourceProperties {
         booleanValue
-        createTime
         floatValue
         id
         intValue
@@ -340,7 +338,7 @@ mutation UpdateResourceMutation(
         rangeToValue
         rawValue
         stringValue
-        updateTime
+        resourcePropertyType
       }
       logicalLinks {
         name
@@ -469,13 +467,6 @@ v14 = {
       "alias": null,
       "args": null,
       "kind": "ScalarField",
-      "name": "createTime",
-      "storageKey": null
-    },
-    {
-      "alias": null,
-      "args": null,
-      "kind": "ScalarField",
       "name": "floatValue",
       "storageKey": null
     },
@@ -533,7 +524,7 @@ v14 = {
       "alias": null,
       "args": null,
       "kind": "ScalarField",
-      "name": "updateTime",
+      "name": "resourcePropertyType",
       "storageKey": null
     }
   ],
@@ -654,16 +645,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "d2e932c95dba9370832c42678acf5ac4",
+    "cacheID": "2f17bf81c28a444c6b19860dcaeba817",
     "id": null,
     "metadata": {},
     "name": "UpdateResourceMutation",
     "operationKind": "mutation",
-    "text": "mutation UpdateResourceMutation(\n  $input: UpdateResourceInput!\n) {\n  updateResource(input: $input) {\n    numUids\n    resource {\n      id\n      name\n      externalId\n      locatedIn\n      resourceSpecification\n      isDeleted\n      lifecycleStatus\n      planningSubStatus\n      typePlanningSubStatus\n      usageSubStatus\n      operationalSubStatus\n      resourceProperties {\n        booleanValue\n        createTime\n        floatValue\n        id\n        intValue\n        latitudeValue\n        longitudeValue\n        rangeFromValue\n        rangeToValue\n        rawValue\n        stringValue\n        updateTime\n      }\n      logicalLinks {\n        name\n        id\n      }\n    }\n  }\n}\n"
+    "text": "mutation UpdateResourceMutation(\n  $input: UpdateResourceInput!\n) {\n  updateResource(input: $input) {\n    numUids\n    resource {\n      id\n      name\n      externalId\n      locatedIn\n      resourceSpecification\n      isDeleted\n      lifecycleStatus\n      planningSubStatus\n      typePlanningSubStatus\n      usageSubStatus\n      operationalSubStatus\n      resourceProperties {\n        booleanValue\n        floatValue\n        id\n        intValue\n        latitudeValue\n        longitudeValue\n        rangeFromValue\n        rangeToValue\n        rawValue\n        stringValue\n        resourcePropertyType\n      }\n      logicalLinks {\n        name\n        id\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = '8e8b24c955514c646d9991c1c0dc0c1a';
+(node/*: any*/).hash = '9a16bde322a64d4962965c7969b1eac4';
 
 module.exports = node;

@@ -17,6 +17,7 @@ import type {
   UsageSubStatus,
 } from '../../mutations/__generated__/AddResourceMutation.graphql';
 import type {UpdateResourceMutationVariables} from '../../mutations/__generated__/UpdateResourceMutation.graphql';
+import type {UpdateResourcePropertyMutationVariables} from '../../mutations/__generated__/UpdateResourcePropertyMutation.graphql';
 
 import AddEditPropertyList from './AddEditPropertyList';
 import AddResourceMutation from '../../mutations/AddResourceMutation';
@@ -29,6 +30,7 @@ import React, {useState} from 'react';
 import SaveDialogConfirm from '../configure/SaveDialogConfirm';
 import TextField from '@material-ui/core/TextField';
 import UpdateResourceMutation from '../../mutations/UpdateResourceMutation';
+import UpdateResourcePropertyMutation from '../../mutations/UpdateResourcePropertyMutation';
 import inventoryTheme from '../../common/theme';
 import symphony from '@symphony/design-system/theme/symphony';
 import {MenuItem} from '@material-ui/core';
@@ -124,7 +126,7 @@ const AddEditResourceInLocation = (props: Props) => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [resourceType, setResourceType] = useState<ResourceType>({data: {}});
   const nameEdit = useFormInput(dataformModal.name);
-  const externalID = useFormInput(dataformModal.externalID);
+  const externalId = useFormInput(dataformModal.externalId);
   const lifecycleStatus = useFormInput(dataformModal.lifecycleStatus);
   const planningSubStatus = useFormInput(dataformModal.planningSubStatus);
   const operationalSubStatus = useFormInput(dataformModal.operationalSubStatus);
@@ -141,16 +143,30 @@ const AddEditResourceInLocation = (props: Props) => {
       },
     });
   }
+  const dataFormEdit = dataformModal.propertyTypes?.map(o => {
+    return {
+      ...o,
+      type: o?.resourcePropertyType,
+    };
+  });
 
   const [propertyTypes, propertyTypesDispatcher] = usePropertyTypesReducer(
-    (dataformModal?.resourcePropertyTypes ?? [])
+    (mode === 'edit'
+      ? dataFormEdit ?? []
+      : dataformModal?.resourcePropertyTypes ?? []
+    )
       .filter(Boolean)
       .map(toMutableProperty),
   );
 
-  const spliceProperties = propertyTypes.map(o =>
-    omit(o, ['name', 'type', 'id', 'propertyType']),
-  );
+  const spliceProperties = propertyTypes
+    ?.map(o => {
+      return {
+        ...o,
+        resourcePropertyType: o.type,
+      };
+    })
+    .map(o => omit(o, ['name', 'type', 'id', 'propertyType']));
 
   function handleCreateForm() {
     const variables: AddResourceMutationVariables = {
@@ -180,7 +196,7 @@ const AddEditResourceInLocation = (props: Props) => {
   }
 
   const setDataFormEdit = {
-    externalId: externalID.value,
+    externalId: externalId.value,
     lifecycleStatus: lifecycleStatus.value,
     typePlanningSubStatus: typePlanningSubStatus.value,
     planningSubStatus: planningSubStatus.value,
@@ -202,6 +218,19 @@ const AddEditResourceInLocation = (props: Props) => {
         set: setDataValidation,
       },
     };
+
+    propertyTypes.forEach(e => {
+      const variablesEditpropeties: UpdateResourcePropertyMutationVariables = {
+        input: {
+          filter: {
+            id: Array<string>(e.id),
+          },
+          set: omit(e, ['name', 'type', 'id', 'propertyType']),
+        },
+      };
+      UpdateResourcePropertyMutation(variablesEditpropeties);
+    });
+
     UpdateResourceMutation(variables, {
       onCompleted: () => {
         isCompleted();
@@ -209,6 +238,7 @@ const AddEditResourceInLocation = (props: Props) => {
       },
     });
   }
+
   const renderForm = (label, nameCreate, nameEdit) => {
     return mode === 'edit' ? (
       <Grid item xs={6}>
@@ -286,7 +316,7 @@ const AddEditResourceInLocation = (props: Props) => {
           </CardHeader>
           <Grid container>
             {renderForm('Name', 'name', nameEdit)}
-            {renderForm('External ID', 'externalID', externalID)}
+            {renderForm('External ID', 'externalId', externalId)}
             {renderFormSelect(
               'Lifesycle State',
               'lifecycleStatus',

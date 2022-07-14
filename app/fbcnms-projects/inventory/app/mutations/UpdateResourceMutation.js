@@ -39,7 +39,6 @@ const mutation = graphql`
         operationalSubStatus
         resourceProperties {
           booleanValue
-          createTime
           floatValue
           id
           intValue
@@ -49,7 +48,7 @@ const mutation = graphql`
           rangeToValue
           rawValue
           stringValue
-          updateTime
+          resourcePropertyType
         }
         logicalLinks {
           name

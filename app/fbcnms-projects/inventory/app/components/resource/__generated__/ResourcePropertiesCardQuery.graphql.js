@@ -14,10 +14,13 @@
 
 /*::
 import type { ConcreteRequest } from 'relay-runtime';
+export type FilterOperator = "CONTAINS" | "DATE_GREATER_OR_EQUAL_THAN" | "DATE_GREATER_THAN" | "DATE_LESS_OR_EQUAL_THAN" | "DATE_LESS_THAN" | "IS" | "IS_NIL" | "IS_NIL_OR_DATE_GREATER_OR_EQUAL_THAN" | "IS_NOT_ONE_OF" | "IS_ONE_OF" | "%future added value";
 export type LifecycleStatus = "INSTALLING" | "OPERATING" | "PLANNING" | "RETIRING" | "%future added value";
 export type OperationalSubStatus = "NOT_WORKING" | "WORKING" | "%future added value";
 export type PlanningSubStatus = "ACTIVATED" | "DESACTIVATED" | "%future added value";
 export type ResourceHasFilter = "actionScheduler" | "available" | "belongsTo" | "changeItems" | "composedOf" | "createTime" | "crossConnection" | "crossconnectionInv" | "externalId" | "isDeleted" | "isEditable" | "lifecycleStatus" | "locatedIn" | "logicalLinkInv" | "logicalLinks" | "name" | "numericPools" | "operationalSubStatus" | "physicalLink" | "physicalLinkInv" | "planningSubStatus" | "resourceProperties" | "resourceSpecification" | "typePlanningSubStatus" | "updateTime" | "usageSubStatus" | "%future added value";
+export type ResourcePropertyKind = "bool" | "date" | "datetime_local" | "email" | "enum" | "float" | "gps_location" | "int" | "node" | "range" | "string" | "%future added value";
+export type ResourceSpecificationFilterType = "ID" | "NAME" | "RESOURCE_TYPE" | "%future added value";
 export type TypePlanningSubStatus = "DESIGNED" | "FEASIBILITY_CHECKED" | "ORDERED" | "PROPOSED" | "%future added value";
 export type UsageSubStatus = "ASSIGNED" | "AVAILABLE" | "NO_AVAILABLE" | "RESERVED" | "TERMINATING" | "%future added value";
 export type ResourceFilter = {|
@@ -35,14 +38,24 @@ export type StringHashFilter = {|
   eq?: ?string,
   in?: ?$ReadOnlyArray<?string>,
 |};
+export type ResourceSpecificationFilterInput = {|
+  filterType: ResourceSpecificationFilterType,
+  idSet?: ?$ReadOnlyArray<string>,
+  maxDepth?: ?number,
+  operator: FilterOperator,
+  stringSet?: ?$ReadOnlyArray<string>,
+  stringValue?: ?string,
+|};
 export type ResourcePropertiesCardQueryVariables = {|
-  filterResource?: ?ResourceFilter
+  filterResource?: ?ResourceFilter,
+  filterBy?: ?$ReadOnlyArray<ResourceSpecificationFilterInput>,
 |};
 export type ResourcePropertiesCardQueryResponse = {|
   +queryResource: ?$ReadOnlyArray<?{|
     +id: string,
     +name: string,
     +locatedIn: ?string,
+    +externalId: ?string,
     +resourceSpecification: string,
     +isDeleted: boolean,
     +lifecycleStatus: ?LifecycleStatus,
@@ -50,12 +63,37 @@ export type ResourcePropertiesCardQueryResponse = {|
     +planningSubStatus: ?PlanningSubStatus,
     +usageSubStatus: ?UsageSubStatus,
     +operationalSubStatus: ?OperationalSubStatus,
+    +resourceProperties: ?$ReadOnlyArray<?{|
+      +booleanValue: ?boolean,
+      +floatValue: ?number,
+      +id: string,
+      +intValue: ?number,
+      +latitudeValue: ?number,
+      +longitudeValue: ?number,
+      +rangeFromValue: ?number,
+      +rangeToValue: ?number,
+      +stringValue: ?string,
+      +resourcePropertyType: string,
+    |}>,
   |}>,
   +resourceSpecifications: {|
     +edges: $ReadOnlyArray<{|
       +node: ?{|
         +id: string,
         +name: string,
+        +resourcePropertyTypes: $ReadOnlyArray<?{|
+          +id: string,
+          +name: string,
+          +type: ResourcePropertyKind,
+          +stringValue: ?string,
+          +intValue: ?number,
+          +booleanValue: ?boolean,
+          +floatValue: ?number,
+          +latitudeValue: ?number,
+          +longitudeValue: ?number,
+          +rangeFromValue: ?number,
+          +rangeToValue: ?number,
+        |}>,
         +resourceType: ?{|
           +id: string,
           +name: string,
@@ -74,11 +112,13 @@ export type ResourcePropertiesCardQuery = {|
 /*
 query ResourcePropertiesCardQuery(
   $filterResource: ResourceFilter
+  $filterBy: [ResourceSpecificationFilterInput!]
 ) {
   queryResource(filter: $filterResource) {
     id
     name
     locatedIn
+    externalId
     resourceSpecification
     isDeleted
     lifecycleStatus
@@ -86,12 +126,37 @@ query ResourcePropertiesCardQuery(
     planningSubStatus
     usageSubStatus
     operationalSubStatus
+    resourceProperties {
+      booleanValue
+      floatValue
+      id
+      intValue
+      latitudeValue
+      longitudeValue
+      rangeFromValue
+      rangeToValue
+      stringValue
+      resourcePropertyType
+    }
   }
-  resourceSpecifications {
+  resourceSpecifications(filterBy: $filterBy) {
     edges {
       node {
         id
         name
+        resourcePropertyTypes {
+          id
+          name
+          type
+          stringValue
+          intValue
+          booleanValue
+          floatValue
+          latitudeValue
+          longitudeValue
+          rangeFromValue
+          rangeToValue
+        }
         resourceType {
           id
           name
@@ -103,28 +168,87 @@ query ResourcePropertiesCardQuery(
 */
 
 const node/*: ConcreteRequest*/ = (function(){
-var v0 = [
-  {
-    "defaultValue": null,
-    "kind": "LocalArgument",
-    "name": "filterResource"
-  }
-],
+var v0 = {
+  "defaultValue": null,
+  "kind": "LocalArgument",
+  "name": "filterBy"
+},
 v1 = {
+  "defaultValue": null,
+  "kind": "LocalArgument",
+  "name": "filterResource"
+},
+v2 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "id",
   "storageKey": null
 },
-v2 = {
+v3 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "name",
   "storageKey": null
 },
-v3 = [
+v4 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "booleanValue",
+  "storageKey": null
+},
+v5 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "floatValue",
+  "storageKey": null
+},
+v6 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "intValue",
+  "storageKey": null
+},
+v7 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "latitudeValue",
+  "storageKey": null
+},
+v8 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "longitudeValue",
+  "storageKey": null
+},
+v9 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "rangeFromValue",
+  "storageKey": null
+},
+v10 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "rangeToValue",
+  "storageKey": null
+},
+v11 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "stringValue",
+  "storageKey": null
+},
+v12 = [
   {
     "alias": null,
     "args": [
@@ -139,13 +263,20 @@ v3 = [
     "name": "queryResource",
     "plural": true,
     "selections": [
-      (v1/*: any*/),
       (v2/*: any*/),
+      (v3/*: any*/),
       {
         "alias": null,
         "args": null,
         "kind": "ScalarField",
         "name": "locatedIn",
+        "storageKey": null
+      },
+      {
+        "alias": null,
+        "args": null,
+        "kind": "ScalarField",
+        "name": "externalId",
         "storageKey": null
       },
       {
@@ -196,13 +327,46 @@ v3 = [
         "kind": "ScalarField",
         "name": "operationalSubStatus",
         "storageKey": null
+      },
+      {
+        "alias": null,
+        "args": null,
+        "concreteType": "ResourceProperty",
+        "kind": "LinkedField",
+        "name": "resourceProperties",
+        "plural": true,
+        "selections": [
+          (v4/*: any*/),
+          (v5/*: any*/),
+          (v2/*: any*/),
+          (v6/*: any*/),
+          (v7/*: any*/),
+          (v8/*: any*/),
+          (v9/*: any*/),
+          (v10/*: any*/),
+          (v11/*: any*/),
+          {
+            "alias": null,
+            "args": null,
+            "kind": "ScalarField",
+            "name": "resourcePropertyType",
+            "storageKey": null
+          }
+        ],
+        "storageKey": null
       }
     ],
     "storageKey": null
   },
   {
     "alias": null,
-    "args": null,
+    "args": [
+      {
+        "kind": "Variable",
+        "name": "filterBy",
+        "variableName": "filterBy"
+      }
+    ],
     "concreteType": "ResourceSpecificationConnection",
     "kind": "LinkedField",
     "name": "resourceSpecifications",
@@ -224,8 +388,36 @@ v3 = [
             "name": "node",
             "plural": false,
             "selections": [
-              (v1/*: any*/),
               (v2/*: any*/),
+              (v3/*: any*/),
+              {
+                "alias": null,
+                "args": null,
+                "concreteType": "ResourcePropertyType",
+                "kind": "LinkedField",
+                "name": "resourcePropertyTypes",
+                "plural": true,
+                "selections": [
+                  (v2/*: any*/),
+                  (v3/*: any*/),
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "type",
+                    "storageKey": null
+                  },
+                  (v11/*: any*/),
+                  (v6/*: any*/),
+                  (v4/*: any*/),
+                  (v5/*: any*/),
+                  (v7/*: any*/),
+                  (v8/*: any*/),
+                  (v9/*: any*/),
+                  (v10/*: any*/)
+                ],
+                "storageKey": null
+              },
               {
                 "alias": null,
                 "args": null,
@@ -234,8 +426,8 @@ v3 = [
                 "name": "resourceType",
                 "plural": false,
                 "selections": [
-                  (v1/*: any*/),
-                  (v2/*: any*/)
+                  (v2/*: any*/),
+                  (v3/*: any*/)
                 ],
                 "storageKey": null
               }
@@ -251,32 +443,38 @@ v3 = [
 ];
 return {
   "fragment": {
-    "argumentDefinitions": (v0/*: any*/),
+    "argumentDefinitions": [
+      (v0/*: any*/),
+      (v1/*: any*/)
+    ],
     "kind": "Fragment",
     "metadata": null,
     "name": "ResourcePropertiesCardQuery",
-    "selections": (v3/*: any*/),
+    "selections": (v12/*: any*/),
     "type": "Query",
     "abstractKey": null
   },
   "kind": "Request",
   "operation": {
-    "argumentDefinitions": (v0/*: any*/),
+    "argumentDefinitions": [
+      (v1/*: any*/),
+      (v0/*: any*/)
+    ],
     "kind": "Operation",
     "name": "ResourcePropertiesCardQuery",
-    "selections": (v3/*: any*/)
+    "selections": (v12/*: any*/)
   },
   "params": {
-    "cacheID": "983165df93a0b8d8b0513c825e104502",
+    "cacheID": "dfe44941e90b8cf0992bace181127337",
     "id": null,
     "metadata": {},
     "name": "ResourcePropertiesCardQuery",
     "operationKind": "query",
-    "text": "query ResourcePropertiesCardQuery(\n  $filterResource: ResourceFilter\n) {\n  queryResource(filter: $filterResource) {\n    id\n    name\n    locatedIn\n    resourceSpecification\n    isDeleted\n    lifecycleStatus\n    typePlanningSubStatus\n    planningSubStatus\n    usageSubStatus\n    operationalSubStatus\n  }\n  resourceSpecifications {\n    edges {\n      node {\n        id\n        name\n        resourceType {\n          id\n          name\n        }\n      }\n    }\n  }\n}\n"
+    "text": "query ResourcePropertiesCardQuery(\n  $filterResource: ResourceFilter\n  $filterBy: [ResourceSpecificationFilterInput!]\n) {\n  queryResource(filter: $filterResource) {\n    id\n    name\n    locatedIn\n    externalId\n    resourceSpecification\n    isDeleted\n    lifecycleStatus\n    typePlanningSubStatus\n    planningSubStatus\n    usageSubStatus\n    operationalSubStatus\n    resourceProperties {\n      booleanValue\n      floatValue\n      id\n      intValue\n      latitudeValue\n      longitudeValue\n      rangeFromValue\n      rangeToValue\n      stringValue\n      resourcePropertyType\n    }\n  }\n  resourceSpecifications(filterBy: $filterBy) {\n    edges {\n      node {\n        id\n        name\n        resourcePropertyTypes {\n          id\n          name\n          type\n          stringValue\n          intValue\n          booleanValue\n          floatValue\n          latitudeValue\n          longitudeValue\n          rangeFromValue\n          rangeToValue\n        }\n        resourceType {\n          id\n          name\n        }\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = 'c1f6b8e6254d067fc3d9a32d5b4675a1';
+(node/*: any*/).hash = '5729b473a647fa1fcb4298eac99b7ef7';
 
 module.exports = node;

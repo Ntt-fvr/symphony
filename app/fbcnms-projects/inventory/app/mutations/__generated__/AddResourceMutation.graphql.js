@@ -270,6 +270,7 @@ export type AddResourceMutationResponse = {|
         +rangeFromValue: ?number,
         +rangeToValue: ?number,
         +stringValue: ?string,
+        +resourcePropertyType: string,
       |}>,
     |}>,
   |}
@@ -307,6 +308,7 @@ mutation AddResourceMutation(
         rangeFromValue
         rangeToValue
         stringValue
+        resourcePropertyType
         id
       }
       id
@@ -467,6 +469,13 @@ v21 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
+  "name": "resourcePropertyType",
+  "storageKey": null
+},
+v22 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
   "name": "id",
   "storageKey": null
 };
@@ -519,7 +528,8 @@ return {
                   (v17/*: any*/),
                   (v18/*: any*/),
                   (v19/*: any*/),
-                  (v20/*: any*/)
+                  (v20/*: any*/),
+                  (v21/*: any*/)
                 ],
                 "storageKey": null
               }
@@ -582,11 +592,12 @@ return {
                   (v18/*: any*/),
                   (v19/*: any*/),
                   (v20/*: any*/),
-                  (v21/*: any*/)
+                  (v21/*: any*/),
+                  (v22/*: any*/)
                 ],
                 "storageKey": null
               },
-              (v21/*: any*/)
+              (v22/*: any*/)
             ],
             "storageKey": null
           }
@@ -596,16 +607,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "47fdc8d6d2b06c34fbb4e7b2f7e2c5b2",
+    "cacheID": "7c20a95c2ea9f1a73c1a9319d8b5cf91",
     "id": null,
     "metadata": {},
     "name": "AddResourceMutation",
     "operationKind": "mutation",
-    "text": "mutation AddResourceMutation(\n  $input: [AddResourceInput!]!\n) {\n  addResource(input: $input) {\n    numUids\n    resource {\n      name\n      externalId\n      locatedIn\n      resourceSpecification\n      isDeleted\n      lifecycleStatus\n      planningSubStatus\n      typePlanningSubStatus\n      usageSubStatus\n      operationalSubStatus\n      resourceProperties {\n        booleanValue\n        floatValue\n        intValue\n        latitudeValue\n        longitudeValue\n        rangeFromValue\n        rangeToValue\n        stringValue\n        id\n      }\n      id\n    }\n  }\n}\n"
+    "text": "mutation AddResourceMutation(\n  $input: [AddResourceInput!]!\n) {\n  addResource(input: $input) {\n    numUids\n    resource {\n      name\n      externalId\n      locatedIn\n      resourceSpecification\n      isDeleted\n      lifecycleStatus\n      planningSubStatus\n      typePlanningSubStatus\n      usageSubStatus\n      operationalSubStatus\n      resourceProperties {\n        booleanValue\n        floatValue\n        intValue\n        latitudeValue\n        longitudeValue\n        rangeFromValue\n        rangeToValue\n        stringValue\n        resourcePropertyType\n        id\n      }\n      id\n    }\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = 'db51fac2905e5f4cf4a20e65835da3f0';
+(node/*: any*/).hash = '05134ea7719f4aa0719f349746952fbd';
 
 module.exports = node;

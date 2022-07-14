@@ -63,6 +63,7 @@ const ResourceCardListQuery = graphql`
       id
       name
       locatedIn
+      externalId
       resourceSpecification
       isDeleted
       lifecycleStatus
@@ -70,12 +71,37 @@ const ResourceCardListQuery = graphql`
       planningSubStatus
       usageSubStatus
       operationalSubStatus
+      resourceProperties {
+        booleanValue
+        floatValue
+        id
+        intValue
+        latitudeValue
+        longitudeValue
+        rangeFromValue
+        rangeToValue
+        stringValue
+        resourcePropertyType
+      }
     }
     resourceSpecifications {
       edges {
         node {
           id
           name
+          resourcePropertyTypes {
+            id
+            name
+            type
+            stringValue
+            intValue
+            booleanValue
+            floatValue
+            latitudeValue
+            longitudeValue
+            rangeFromValue
+            rangeToValue
+          }
           resourceType {
             id
             name
@@ -121,9 +147,18 @@ const ResourcePropertiesCard = (props: Props) => {
         },
       }}
       render={resourceData => {
+        const convertParametersMap = resourceData.queryResource.flatMap(
+          prop => {
+            return {
+              ...prop,
+              propertyTypes: prop.resourceProperties,
+            };
+          },
+        );
+
         return (
           <div className={classes.root}>
-            {resourceData.queryResource.map(item => (
+            {convertParametersMap.map(item => (
               <>
                 <Grid
                   container
