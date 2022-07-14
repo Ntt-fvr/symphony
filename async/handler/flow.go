@@ -46,7 +46,7 @@ func (f FlowHandler) Handle(ctx context.Context, _ log.Logger, evt ev.EventObjec
 
 	workflowOptions := client.StartWorkflowOptions{
 		ID:                           worker.GetGlobalWorkflowID(ctx, entry.CurrState.ID),
-		TaskList:                     worker.TaskListName,
+		TaskList:                     worker.AutomationTaskListName,
 		ExecutionStartToCloseTimeout: 365 * 24 * time.Hour,
 	}
 
@@ -63,7 +63,7 @@ func (f FlowHandler) Handle(ctx context.Context, _ log.Logger, evt ev.EventObjec
 	*/
 	execution, err := f.client.StartWorkflow(
 		ctx, workflowOptions, flow.AutomationWorkflow,
-		ctx, worker.TaskListName, runFlowInput.FlowInstanceID,
+		ctx, worker.AutomationTaskListName, runFlowInput.FlowInstanceID,
 	)
 
 	if err != nil {
