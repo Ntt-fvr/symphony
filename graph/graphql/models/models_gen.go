@@ -656,6 +656,7 @@ func (ChoiceBlock) IsBlockDetails() {}
 type ChoiceBlockInput struct {
 	Cid              string                            `json:"cid"`
 	EntryPoint       *EntryPointInput                  `json:"entryPoint"`
+	DefaultExitPoint *ExitPointInput                   `json:"defaultExitPoint"`
 	Routes           []*DecisionRouteInput             `json:"routes"`
 	BasicDefinitions *BaseBlockInput                   `json:"basicDefinitions"`
 	UIRepresentation *flowschema.BlockUIRepresentation `json:"uiRepresentation"`
@@ -747,6 +748,7 @@ type DecisionRoute struct {
 
 type DecisionRouteInput struct {
 	Cid       *string                  `json:"cid"`
+	Index     *int                     `json:"index"`
 	Condition *VariableExpressionInput `json:"condition"`
 }
 

@@ -25721,6 +25721,8 @@ type ExitPointMutation struct {
 	role                     *flowschema.ExitPointRole
 	cid                      *string
 	condition                **flowschema.VariableExpression
+	index                    *int
+	addindex                 *int
 	clearedFields            map[string]struct{}
 	next_entry_points        map[int]struct{}
 	removednext_entry_points map[int]struct{}
@@ -26022,6 +26024,77 @@ func (m *ExitPointMutation) ResetCondition() {
 	delete(m.clearedFields, exitpoint.FieldCondition)
 }
 
+// SetIndex sets the index field.
+func (m *ExitPointMutation) SetIndex(i int) {
+	m.index = &i
+	m.addindex = nil
+}
+
+// Index returns the index value in the mutation.
+func (m *ExitPointMutation) Index() (r int, exists bool) {
+	v := m.index
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldIndex returns the old index value of the ExitPoint.
+// If the ExitPoint object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *ExitPointMutation) OldIndex(ctx context.Context) (v int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldIndex is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldIndex requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldIndex: %w", err)
+	}
+	return oldValue.Index, nil
+}
+
+// AddIndex adds i to index.
+func (m *ExitPointMutation) AddIndex(i int) {
+	if m.addindex != nil {
+		*m.addindex += i
+	} else {
+		m.addindex = &i
+	}
+}
+
+// AddedIndex returns the value that was added to the index field in this mutation.
+func (m *ExitPointMutation) AddedIndex() (r int, exists bool) {
+	v := m.addindex
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearIndex clears the value of index.
+func (m *ExitPointMutation) ClearIndex() {
+	m.index = nil
+	m.addindex = nil
+	m.clearedFields[exitpoint.FieldIndex] = struct{}{}
+}
+
+// IndexCleared returns if the field index was cleared in this mutation.
+func (m *ExitPointMutation) IndexCleared() bool {
+	_, ok := m.clearedFields[exitpoint.FieldIndex]
+	return ok
+}
+
+// ResetIndex reset all changes of the "index" field.
+func (m *ExitPointMutation) ResetIndex() {
+	m.index = nil
+	m.addindex = nil
+	delete(m.clearedFields, exitpoint.FieldIndex)
+}
+
 // AddNextEntryPointIDs adds the next_entry_points edge to EntryPoint by ids.
 func (m *ExitPointMutation) AddNextEntryPointIDs(ids ...int) {
 	if m.next_entry_points == nil {
@@ -26128,7 +26201,7 @@ func (m *ExitPointMutation) Type() string {
 // this mutation. Note that, in order to get all numeric
 // fields that were in/decremented, call AddedFields().
 func (m *ExitPointMutation) Fields() []string {
-	fields := make([]string, 0, 5)
+	fields := make([]string, 0, 6)
 	if m.create_time != nil {
 		fields = append(fields, exitpoint.FieldCreateTime)
 	}
@@ -26143,6 +26216,9 @@ func (m *ExitPointMutation) Fields() []string {
 	}
 	if m.condition != nil {
 		fields = append(fields, exitpoint.FieldCondition)
+	}
+	if m.index != nil {
+		fields = append(fields, exitpoint.FieldIndex)
 	}
 	return fields
 }
@@ -26162,6 +26238,8 @@ func (m *ExitPointMutation) Field(name string) (ent.Value, bool) {
 		return m.Cid()
 	case exitpoint.FieldCondition:
 		return m.Condition()
+	case exitpoint.FieldIndex:
+		return m.Index()
 	}
 	return nil, false
 }
@@ -26181,6 +26259,8 @@ func (m *ExitPointMutation) OldField(ctx context.Context, name string) (ent.Valu
 		return m.OldCid(ctx)
 	case exitpoint.FieldCondition:
 		return m.OldCondition(ctx)
+	case exitpoint.FieldIndex:
+		return m.OldIndex(ctx)
 	}
 	return nil, fmt.Errorf("unknown ExitPoint field %s", name)
 }
@@ -26225,6 +26305,13 @@ func (m *ExitPointMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetCondition(v)
 		return nil
+	case exitpoint.FieldIndex:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetIndex(v)
+		return nil
 	}
 	return fmt.Errorf("unknown ExitPoint field %s", name)
 }
@@ -26232,13 +26319,21 @@ func (m *ExitPointMutation) SetField(name string, value ent.Value) error {
 // AddedFields returns all numeric fields that were incremented
 // or decremented during this mutation.
 func (m *ExitPointMutation) AddedFields() []string {
-	return nil
+	var fields []string
+	if m.addindex != nil {
+		fields = append(fields, exitpoint.FieldIndex)
+	}
+	return fields
 }
 
 // AddedField returns the numeric value that was in/decremented
 // from a field with the given name. The second value indicates
 // that this field was not set, or was not define in the schema.
 func (m *ExitPointMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case exitpoint.FieldIndex:
+		return m.AddedIndex()
+	}
 	return nil, false
 }
 
@@ -26247,6 +26342,13 @@ func (m *ExitPointMutation) AddedField(name string) (ent.Value, bool) {
 // type mismatch the field type.
 func (m *ExitPointMutation) AddField(name string, value ent.Value) error {
 	switch name {
+	case exitpoint.FieldIndex:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddIndex(v)
+		return nil
 	}
 	return fmt.Errorf("unknown ExitPoint numeric field %s", name)
 }
@@ -26260,6 +26362,9 @@ func (m *ExitPointMutation) ClearedFields() []string {
 	}
 	if m.FieldCleared(exitpoint.FieldCondition) {
 		fields = append(fields, exitpoint.FieldCondition)
+	}
+	if m.FieldCleared(exitpoint.FieldIndex) {
+		fields = append(fields, exitpoint.FieldIndex)
 	}
 	return fields
 }
@@ -26280,6 +26385,9 @@ func (m *ExitPointMutation) ClearField(name string) error {
 		return nil
 	case exitpoint.FieldCondition:
 		m.ClearCondition()
+		return nil
+	case exitpoint.FieldIndex:
+		m.ClearIndex()
 		return nil
 	}
 	return fmt.Errorf("unknown ExitPoint nullable field %s", name)
@@ -26304,6 +26412,9 @@ func (m *ExitPointMutation) ResetField(name string) error {
 		return nil
 	case exitpoint.FieldCondition:
 		m.ResetCondition()
+		return nil
+	case exitpoint.FieldIndex:
+		m.ResetIndex()
 		return nil
 	}
 	return fmt.Errorf("unknown ExitPoint field %s", name)

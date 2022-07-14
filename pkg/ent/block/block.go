@@ -291,6 +291,22 @@ var (
 	UpdateDefaultUpdateTime func() time.Time
 	// CidValidator is a validator for the "cid" field. It is called by the builders before save.
 	CidValidator func(string) error
+	// DefaultEnableInputTransformation holds the default value on creation for the enable_input_transformation field.
+	DefaultEnableInputTransformation bool
+	// DefaultEnableOutputTransformation holds the default value on creation for the enable_output_transformation field.
+	DefaultEnableOutputTransformation bool
+	// DefaultEnableInputStateTransformation holds the default value on creation for the enable_input_state_transformation field.
+	DefaultEnableInputStateTransformation bool
+	// DefaultEnableOutputStateTransformation holds the default value on creation for the enable_output_state_transformation field.
+	DefaultEnableOutputStateTransformation bool
+	// DefaultEnableErrorHandling holds the default value on creation for the enable_error_handling field.
+	DefaultEnableErrorHandling bool
+	// DefaultEnableRetryPolicy holds the default value on creation for the enable_retry_policy field.
+	DefaultEnableRetryPolicy bool
+	// DefaultEnableTimerExpression holds the default value on creation for the enable_timer_expression field.
+	DefaultEnableTimerExpression bool
+	// DefaultBlockFlow holds the default value on creation for the block_flow field.
+	DefaultBlockFlow bool
 )
 
 // Type defines the type for the type enum field.

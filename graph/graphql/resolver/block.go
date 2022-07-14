@@ -886,9 +886,19 @@ func (r mutationResolver) AddChoiceBlock(ctx context.Context, flowDraftID int, i
 				SetCid(*route.Cid).
 				SetParentBlockID(b.ID).
 				SetCondition(variableExpressions[0]).
+				SetIndex(*route.Index).
 				Save(ctx); err != nil {
 				return nil, fmt.Errorf("failed to create choice exit points: %w", err)
 			}
+		}
+	}
+	if input.DefaultExitPoint != nil {
+		if _, err := client.ExitPoint.Create().
+			SetRole(flowschema.ExitPointRoleChoice).
+			SetCid(*input.DefaultExitPoint.Cid).
+			SetParentBlockID(b.ID).
+			Save(ctx); err != nil {
+			return nil, fmt.Errorf("failed to create choice exit points: %w", err)
 		}
 	}
 	return b, nil

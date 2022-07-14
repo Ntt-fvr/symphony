@@ -942,6 +942,7 @@ var (
 		{Name: "role", Type: field.TypeEnum, Enums: []string{"DEFAULT", "DECISION", "TRUE", "FALSE", "CHOICE"}},
 		{Name: "cid", Type: field.TypeString, Nullable: true},
 		{Name: "condition", Type: field.TypeJSON, Nullable: true},
+		{Name: "index", Type: field.TypeInt, Nullable: true},
 		{Name: "block_exit_points", Type: field.TypeInt, Nullable: true},
 	}
 	// ExitPointsTable holds the schema information for the "exit_points" table.
@@ -952,7 +953,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:  "exit_points_blocks_exit_points",
-				Columns: []*schema.Column{ExitPointsColumns[6]},
+				Columns: []*schema.Column{ExitPointsColumns[7]},
 
 				RefColumns: []*schema.Column{BlocksColumns[0]},
 				OnDelete:   schema.SetNull,
@@ -962,7 +963,7 @@ var (
 			{
 				Name:    "exitpoint_cid_block_exit_points",
 				Unique:  true,
-				Columns: []*schema.Column{ExitPointsColumns[4], ExitPointsColumns[6]},
+				Columns: []*schema.Column{ExitPointsColumns[4], ExitPointsColumns[7]},
 			},
 		},
 	}

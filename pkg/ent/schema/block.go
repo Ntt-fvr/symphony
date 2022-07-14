@@ -68,6 +68,7 @@ func (Block) Fields() []ent.Field {
 			Optional(),
 		field.Bool("enable_input_transformation").
 			Optional().
+			Default(false).
 			Nillable(),
 		field.Enum("input_transf_strategy").
 			GoType(enum.TransfStrategy("")).
@@ -78,6 +79,7 @@ func (Block) Fields() []ent.Field {
 			Nillable(),
 		field.Bool("enable_output_transformation").
 			Optional().
+			Default(false).
 			Nillable(),
 		field.Enum("output_transf_strategy").
 			GoType(enum.TransfStrategy("")).
@@ -88,6 +90,7 @@ func (Block) Fields() []ent.Field {
 			Nillable(),
 		field.Bool("enable_input_state_transformation").
 			Optional().
+			Default(false).
 			Nillable(),
 		field.Enum("input_state_transf_strategy").
 			GoType(enum.TransfStrategy("")).
@@ -98,6 +101,7 @@ func (Block) Fields() []ent.Field {
 			Nillable(),
 		field.Bool("enable_output_state_transformation").
 			Optional().
+			Default(false).
 			Nillable(),
 		field.Enum("output_state_transf_strategy").
 			GoType(enum.TransfStrategy("")).
@@ -108,9 +112,11 @@ func (Block) Fields() []ent.Field {
 			Nillable(),
 		field.Bool("enable_error_handling").
 			Optional().
+			Default(false).
 			Nillable(),
 		field.Bool("enable_retry_policy").
 			Optional().
+			Default(false).
 			Nillable(),
 		field.Int("retryInterval").
 			Optional().
@@ -141,6 +147,7 @@ func (Block) Fields() []ent.Field {
 			Nillable(),
 		field.Bool("enable_timer_expression").
 			Optional().
+			Default(false).
 			Nillable(),
 		field.String("timer_expression").
 			Optional().
@@ -189,6 +196,7 @@ func (Block) Fields() []ent.Field {
 		field.String("custom_filter").
 			Optional(),
 		field.Bool("block_flow").
+			Default(false).
 			Optional(),
 
 		field.Strings("kafka_brokers").

@@ -7380,6 +7380,49 @@ func (ep *ExitPointQuery) Paginate(
 	return conn, nil
 }
 
+var (
+	// ExitPointOrderFieldIndex orders ExitPoint by index.
+	ExitPointOrderFieldIndex = &ExitPointOrderField{
+		field: exitpoint.FieldIndex,
+		toCursor: func(ep *ExitPoint) Cursor {
+			return Cursor{
+				ID:    ep.ID,
+				Value: ep.Index,
+			}
+		},
+	}
+)
+
+// String implement fmt.Stringer interface.
+func (f ExitPointOrderField) String() string {
+	var str string
+	switch f.field {
+	case exitpoint.FieldIndex:
+		str = "INDEX"
+	}
+	return str
+}
+
+// MarshalGQL implements graphql.Marshaler interface.
+func (f ExitPointOrderField) MarshalGQL(w io.Writer) {
+	io.WriteString(w, strconv.Quote(f.String()))
+}
+
+// UnmarshalGQL implements graphql.Unmarshaler interface.
+func (f *ExitPointOrderField) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("ExitPointOrderField %T must be a string", v)
+	}
+	switch str {
+	case "INDEX":
+		*f = *ExitPointOrderFieldIndex
+	default:
+		return fmt.Errorf("%s is not a valid ExitPointOrderField", str)
+	}
+	return nil
+}
+
 // ExitPointOrderField defines the ordering field of ExitPoint.
 type ExitPointOrderField struct {
 	field    string
