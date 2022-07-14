@@ -32,10 +32,10 @@ export type StringHashFilter = {|
   eq?: ?string,
   in?: ?$ReadOnlyArray<?string>,
 |};
-export type ConfigurationsView2QueryVariables = {|
+export type ConfigurationsViewResourceQueryVariables = {|
   filter?: ?ResourceFilter
 |};
-export type ConfigurationsView2QueryResponse = {|
+export type ConfigurationsViewResourceQueryResponse = {|
   +queryResource: ?$ReadOnlyArray<?{|
     +id: string,
     +name: string,
@@ -75,15 +75,15 @@ export type ConfigurationsView2QueryResponse = {|
     |}>,
   |}>
 |};
-export type ConfigurationsView2Query = {|
-  variables: ConfigurationsView2QueryVariables,
-  response: ConfigurationsView2QueryResponse,
+export type ConfigurationsViewResourceQuery = {|
+  variables: ConfigurationsViewResourceQueryVariables,
+  response: ConfigurationsViewResourceQueryResponse,
 |};
 */
 
 
 /*
-query ConfigurationsView2Query(
+query ConfigurationsViewResourceQuery(
   $filter: ResourceFilter
 ) {
   queryResource(filter: $filter) {
@@ -340,7 +340,7 @@ return {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Fragment",
     "metadata": null,
-    "name": "ConfigurationsView2Query",
+    "name": "ConfigurationsViewResourceQuery",
     "selections": (v8/*: any*/),
     "type": "Query",
     "abstractKey": null
@@ -349,20 +349,20 @@ return {
   "operation": {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
-    "name": "ConfigurationsView2Query",
+    "name": "ConfigurationsViewResourceQuery",
     "selections": (v8/*: any*/)
   },
   "params": {
-    "cacheID": "1bc583c1c776895b56263617201c8e0c",
+    "cacheID": "f7bdbfa00dcde042b73ad8c82b83c3d2",
     "id": null,
     "metadata": {},
-    "name": "ConfigurationsView2Query",
+    "name": "ConfigurationsViewResourceQuery",
     "operationKind": "query",
-    "text": "query ConfigurationsView2Query(\n  $filter: ResourceFilter\n) {\n  queryResource(filter: $filter) {\n    id\n    name\n    locatedIn\n    resourceSpecification\n    isDeleted\n    cmVersions {\n      id\n      createTime\n      updateTime\n      status\n      resource {\n        id\n        name\n        locatedIn\n      }\n      parameters {\n        id\n        stringValue\n        rangeToValue\n        rangeFromValue\n        floatValue\n        intValue\n        booleanValue\n        latitudeValue\n        longitudeValue\n        parameterType {\n          id\n          name\n          resourceSpecification\n          stringValue\n          floatValue\n          intValue\n          type\n        }\n      }\n    }\n  }\n}\n"
+    "text": "query ConfigurationsViewResourceQuery(\n  $filter: ResourceFilter\n) {\n  queryResource(filter: $filter) {\n    id\n    name\n    locatedIn\n    resourceSpecification\n    isDeleted\n    cmVersions {\n      id\n      createTime\n      updateTime\n      status\n      resource {\n        id\n        name\n        locatedIn\n      }\n      parameters {\n        id\n        stringValue\n        rangeToValue\n        rangeFromValue\n        floatValue\n        intValue\n        booleanValue\n        latitudeValue\n        longitudeValue\n        parameterType {\n          id\n          name\n          resourceSpecification\n          stringValue\n          floatValue\n          intValue\n          type\n        }\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = 'dc5b3cf9f6375ff98d6137b4fa4b6dbd';
+(node/*: any*/).hash = '9784f26f14aaef21d2632700a68cb249';
 
 module.exports = node;

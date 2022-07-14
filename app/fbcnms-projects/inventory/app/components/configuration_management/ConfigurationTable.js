@@ -22,24 +22,6 @@ export type Props = $ReadOnly<{|
 const ConfigurationTable = (props: Props) => {
   const {dataConfig, dataColumn} = props;
 
-  // const test = dataConfig?.map(item =>
-  //   item?.cmVersions[0]?.parameters?.map(item => {
-  //     return {
-  //       key: item?.id,
-  //       title: item?.parameterType?.name,
-  //       render: row => row?.parameterType?.stringValue ?? '',
-  //       tooltip: row => row?.parameterType?.stringValue ?? '',
-  //     };
-  //   }),
-  // );
-
-  // const set = test?.filter(item => item).flat();
-  // // const [resour, setResour] = useState(dataResources);
-
-  // useEffect(() => {
-  //   setResour([...resour, ...set]);
-  // }, [stateChange]);
-
   return (
     <Grid>
       <Table

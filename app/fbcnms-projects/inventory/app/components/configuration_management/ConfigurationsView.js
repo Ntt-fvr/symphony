@@ -62,7 +62,7 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-const Configurations = graphql`
+const ConfigurationQuery = graphql`
   query ConfigurationsViewQuery {
     resourceSpecifications {
       edges {
@@ -90,8 +90,8 @@ const Configurations = graphql`
     }
   }
 `;
-const Configurations2 = graphql`
-  query ConfigurationsView2Query($filter: ResourceFilter) {
+const ConfigurationQueryResource = graphql`
+  query ConfigurationsViewResourceQuery($filter: ResourceFilter) {
     queryResource(filter: $filter) {
       id
       name
@@ -179,10 +179,12 @@ const ConfigurationsView = () => {
       ? '' ?? null
       : resourceSpecificationOpt?.resourceSpecification;
 
-  const queryTotal = useLazyLoadQuery<ConfigurationsViewQuery>(Configurations);
+  const queryTotal = useLazyLoadQuery<ConfigurationsViewQuery>(
+    ConfigurationQuery,
+  );
 
-  const filterQueryResource = useLazyLoadQuery<ConfigurationsView2Query>(
-    Configurations2,
+  const filterQueryResource = useLazyLoadQuery<ConfigurationsViewResourceQuery>(
+    ConfigurationQueryResource,
     {
       filter: {
         resourceSpecification: {
@@ -202,7 +204,7 @@ const ConfigurationsView = () => {
     });
   };
 
-  const selectResourceType2 = ({target}) => {
+  const selectResourceSpecification = ({target}) => {
     setResourceSpecificationOpt({
       ...resourceSpecificationOpt,
       [target.name]: target.value,
@@ -210,28 +212,22 @@ const ConfigurationsView = () => {
     setCheckingSelects(!checkingSelects);
   };
 
-  const renderOp = (row, itemParameter) => {
+  const renderOption = (row, itemParameter) => {
     const parTemp = row?.cmVersions[0]?.parameters?.find(
       item => item.parameterType.id === itemParameter.parameterType.id,
     );
     return parTemp?.stringValue ?? parTemp?.floatValue ?? parTemp?.intValue;
   };
-  const test2 =
+
+  const columnDinamic =
     queryResource[0]?.cmVersions[0]?.parameters?.map(itemParameter => ({
       key: itemParameter?.id,
       title: itemParameter?.parameterType?.name,
-      render: row => renderOp(row, itemParameter),
+      render: row => renderOption(row, itemParameter),
     })) ?? [];
 
-  const arrayTest = test2;
-
-  // const selectResourceSpecification = () => {
-  //   setCheckingSelects(!checkingSelects);
-  //   setResourceTable([...resourceTable, ...arrayTest]);
-  // };
-
   useEffect(() => {
-    setResourceTable([...resourceTable, ...arrayTest]);
+    setResourceTable([...resourceTable, ...columnDinamic]);
   }, [checkingSelects]);
 
   return (
@@ -271,7 +267,7 @@ const ConfigurationsView = () => {
               select
               className={classes.selectResourceSpecification}
               label="Resource Specification"
-              onChange={selectResourceType2}
+              onChange={selectResourceSpecification}
               name="resourceSpecification"
               defaultValue=""
               variant="outlined">
@@ -280,10 +276,7 @@ const ConfigurationsView = () => {
               </MenuItem>
               {resourceType?.resource_Type?.resourceSpecification?.map(
                 (item, index) => (
-                  <MenuItem
-                    // onClick={selectResourceSpecification}
-                    key={index}
-                    value={item?.id}>
+                  <MenuItem key={index} value={item?.id}>
                     {item.name}
                   </MenuItem>
                 ),
