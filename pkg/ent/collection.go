@@ -69,6 +69,18 @@ func (a *AppointmentQuery) collectField(ctx *graphql.OperationContext, field gra
 }
 
 // CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
+func (aa *AutomationActivityQuery) CollectFields(ctx context.Context, satisfies ...string) *AutomationActivityQuery {
+	if fc := graphql.GetFieldContext(ctx); fc != nil {
+		aa = aa.collectField(graphql.GetOperationContext(ctx), fc.Field, satisfies...)
+	}
+	return aa
+}
+
+func (aa *AutomationActivityQuery) collectField(ctx *graphql.OperationContext, field graphql.CollectedField, satisfies ...string) *AutomationActivityQuery {
+	return aa
+}
+
+// CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
 func (b *BlockQuery) CollectFields(ctx context.Context, satisfies ...string) *BlockQuery {
 	if fc := graphql.GetFieldContext(ctx); fc != nil {
 		b = b.collectField(graphql.GetOperationContext(ctx), fc.Field, satisfies...)
@@ -667,8 +679,16 @@ func (f *FlowQuery) CollectFields(ctx context.Context, satisfies ...string) *Flo
 func (f *FlowQuery) collectField(ctx *graphql.OperationContext, field graphql.CollectedField, satisfies ...string) *FlowQuery {
 	for _, field := range graphql.CollectFields(ctx, field.Selections, satisfies) {
 		switch field.Name {
+		case "author":
+			f = f.WithAuthor(func(query *UserQuery) {
+				query.collectField(ctx, field)
+			})
 		case "blocks":
 			f = f.WithBlocks(func(query *BlockQuery) {
+				query.collectField(ctx, field)
+			})
+		case "editor":
+			f = f.WithEditor(func(query *UserQuery) {
 				query.collectField(ctx, field)
 			})
 		}

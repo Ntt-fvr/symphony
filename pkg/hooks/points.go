@@ -50,7 +50,9 @@ func VerifyEntryPointTypeHook() ent.Hook {
 				return nil, fmt.Errorf("cannot get parent block: %w", err)
 			}
 			switch blk.Type {
-			case block.TypeEnd, block.TypeGoTo, block.TypeDecision, block.TypeSubFlow, block.TypeAction, block.TypeTrueFalse:
+			case block.TypeEnd, block.TypeGoTo, block.TypeDecision, block.TypeSubFlow, block.TypeAction, block.TypeTrueFalse,
+				block.TypeChoice, block.TypeExecuteFlow, block.TypeInvokeRestAPI, block.TypeTimer, block.TypeWaitForSignal,
+				block.TypeForEach, block.TypeParallel, block.TypeKafka:
 			default:
 				return nil, fmt.Errorf("block type %v is not allowed entry points", blk.Type)
 			}
@@ -122,7 +124,9 @@ func VerifyExitPointTypeHook() ent.Hook {
 				return nil, fmt.Errorf("entry point has no role")
 			}
 			switch blk.Type {
-			case block.TypeStart, block.TypeTrigger, block.TypeSubFlow, block.TypeAction:
+			case block.TypeStart, block.TypeTrigger, block.TypeSubFlow, block.TypeAction,
+				block.TypeExecuteFlow, block.TypeInvokeRestAPI, block.TypeTimer, block.TypeWaitForSignal, block.TypeKafka,
+				block.TypeForEach, block.TypeParallel:
 				if role != flowschema.ExitPointRoleDefault {
 					return nil, fmt.Errorf("exit point role %v not valid for block type %v", role, blk.Type)
 				}
@@ -132,6 +136,10 @@ func VerifyExitPointTypeHook() ent.Hook {
 				}
 			case block.TypeTrueFalse:
 				if role != flowschema.ExitPointRoleTrue && role != flowschema.ExitPointRoleFalse {
+					return nil, fmt.Errorf("exit point role %v not valid for block type %v", role, blk.Type)
+				}
+			case block.TypeChoice:
+				if role != flowschema.ExitPointRoleDefault && role != flowschema.ExitPointRoleChoice {
 					return nil, fmt.Errorf("exit point role %v not valid for block type %v", role, blk.Type)
 				}
 			default:

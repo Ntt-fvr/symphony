@@ -4,97 +4,171 @@
  * This source code is licensed under the BSD-style license found in the
  * LICENSE file in the root directory of this source tree.
  *
- * @flow
+ * @flow strict-local
  * @format
  */
 
 import * as React from 'react';
-import Button from '@symphony/design-system/components/Button';
-import Grid from '@material-ui/core/Grid';
-import Table from '@symphony/design-system/components/Table/Table';
+import {useEffect, useState} from 'react';
+import Table from '@material-ui/core/Table';
+import TableBody from '@material-ui/core/TableBody';
+import TableCell from '@material-ui/core/TableCell';
+import TableContainer from '@material-ui/core/TableContainer';
+import TableHead from '@material-ui/core/TableHead';
+import TableRow from '@material-ui/core/TableRow';
+import symphony from '@symphony/design-system/theme/symphony';
 import {makeStyles} from '@material-ui/styles';
+import {withStyles} from '@material-ui/core/styles';
+
+const StyledTableCell = withStyles(() => ({
+  head: {
+    backgroundColor: 'white',
+    color: symphony.palette.D500,
+  },
+}))(TableCell);
+
+const StyledTableRow = withStyles(() => ({
+  root: {
+    '&:nth-of-type(odd)': {
+      backgroundColor: '#F5F7FC',
+    },
+  },
+}))(TableRow);
 
 const useStyles = makeStyles(() => ({
-  root: {},
+  root: {
+    width: '100%',
+    boxShadow: symphony.shadows.DP2,
+    marginBottom: '20px',
+  },
+  container: {
+    maxHeight: '100%',
+  },
 }));
 
-type Props = $ReadOnly<{||}>;
-
-const tableColumns = [
-  {
-    key: 'name',
-    title: <Button variant="text">Name</Button>,
-    getSortingValue: row => row.name,
-    render: row => (
-      <Button variant="text" skin={'darkGray'} tooltip={row.name ?? ''}>
-        {row.name}
-      </Button>
-    ),
-  },
-  {
-    key: 'location',
-    title: <Button variant="text">Value 1</Button>,
-    render: row => (
-      <Button
-        variant="text"
-        skin={'darkGray'}
-        tooltip={row.location.name ?? ''}>
-        {row.location.name}
-      </Button>
-    ),
-  },
-];
-
-const data = [
-  {
-    id: '386547056643',
-    key: '386547056643',
-    location: {
-      id: '219043332105',
-      name: 'S17161',
-    },
-    name: 'RNCellDU_Nokia_MLN1_3132331',
-  },
-  {
-    id: '386547056643',
-    key: '386547056643',
-    location: {
-      id: '219043332105',
-      name: 'P10177',
-    },
-    name: 'RNCellDU_Nokia_MLN1_3132332',
-  },
-  {
-    id: '386547056643',
-    key: '386547056643',
-    location: {
-      id: '219043332105',
-      name: 'S17589',
-    },
-    name: 'RNCellDU_Nokia_MLN1_3132333',
-  },
-  {
-    id: '386547056643',
-    key: '386547056643',
-    location: {
-      id: '219043332105',
-      name: 'S19161',
-    },
-    name: 'RNCellDU_Nokia_MLN1_3132334',
-  },
-];
-
-const TableConfigurationParameters = (props: Props) => {
-  const {} = props;
-  const classes = useStyles();
-
-  return (
-    <Grid className={classes.root}>
-      <Grid item xs={12} style={{margin: '20px 0 0 0'}}>
-        <Table data={data} columns={tableColumns} />
-      </Grid>
-    </Grid>
-  );
+const TYPES = {
+  string: 'stringValue',
+  int: 'intValue',
+  float: 'floatValue',
+  enum: 'stringValue',
 };
 
+const TableConfigurationParameters = (props: Props) => {
+  const {
+    ConfigurationParameters,
+    setComparationCurrent,
+    setComparationPrevious,
+    setOnlyValuesChanged,
+    setCurrentVersion,
+    setAllVersion,
+  } = props;
+  const [infoTable, setInfoTable] = useState([]);
+  const [viewValueTwo, setViewValueTwo] = useState(false);
+  const classes = useStyles();
+  const itemsSelected = ConfigurationParameters?.parameters;
+  const itemsCurrent = setCurrentVersion[0]?.parameters;
+  const itemsPrevious = ConfigurationParameters?.previous?.parameters;
+
+  useEffect(() => {
+    let arrayCompare;
+    let firstArray;
+    let arrayTable = [];
+
+    if (setComparationPrevious) {
+      arrayCompare = itemsPrevious;
+    } else {
+      arrayCompare = itemsCurrent;
+    }
+
+    if (arrayCompare?.length <= itemsSelected?.length) {
+      firstArray = itemsSelected;
+    } else {
+      firstArray = arrayCompare;
+    }
+
+    firstArray?.map(function (parameter) {
+      const parameterCurrent = arrayCompare.filter(
+        item => item.id === parameter.id,
+      );
+      const parameterSelected = itemsSelected.filter(
+        item => item.id === parameter.id,
+      );
+
+      const name =
+        parameterCurrent.length > 0
+          ? parameterCurrent[0].parameterType.name
+          : parameterSelected[0].parameterType.name;
+
+      const valueOne =
+        parameterSelected.length > 0
+          ? parameterSelected[0][TYPES[parameterSelected[0].parameterType.type]]
+          : '';
+
+      const valueTwo =
+        parameterCurrent.length > 0
+          ? parameterCurrent[0][TYPES[parameterCurrent[0].parameterType.type]]
+          : '';
+
+      const data = {
+        name: name,
+        valueOne: valueOne,
+        valueTwo: valueTwo,
+      };
+
+      if (setOnlyValuesChanged) {
+        if (valueOne.toString() !== valueTwo.toString()) {
+          arrayTable.push(data);
+        }
+      } else {
+        arrayTable.push(data);
+      }
+    });
+
+    setComparationCurrent || setComparationPrevious
+      ? setViewValueTwo(true)
+      : setViewValueTwo(false);
+
+    setInfoTable(arrayTable);
+  }, [
+    setComparationCurrent,
+    setComparationPrevious,
+    setOnlyValuesChanged,
+    itemsSelected,
+  ]);
+
+  return (
+    <div className={classes.root}>
+      <TableContainer className={classes.container}>
+        <Table stickyHeader aria-label="sticky table">
+          <TableHead>
+            <TableRow>
+              <StyledTableCell>Name</StyledTableCell>
+              <StyledTableCell>Value 1</StyledTableCell>
+
+              {viewValueTwo && <StyledTableCell>Value 2</StyledTableCell>}
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {viewValueTwo
+              ? infoTable?.map((item, index) => (
+                  <StyledTableRow key={index}>
+                    <TableCell>{item?.name}</TableCell>
+                    <TableCell>{item?.valueOne}</TableCell>
+                    <TableCell>{item?.valueTwo}</TableCell>
+                  </StyledTableRow>
+                ))
+              : itemsSelected?.map((item, index) => (
+                  <StyledTableRow key={index}>
+                    <TableCell>{item?.parameterType?.name}</TableCell>
+                    <TableCell>
+                      {item[TYPES[item.parameterType.type]]}
+                    </TableCell>
+                  </StyledTableRow>
+                ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
+    </div>
+  );
+};
 export {TableConfigurationParameters};

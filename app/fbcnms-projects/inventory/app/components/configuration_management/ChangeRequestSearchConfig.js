@@ -43,17 +43,7 @@ const ChangeRequestSearchConfig: Array<EntityConfig> = [
         defaultOperator: 'is_one_of',
       },
     ],
-  },
-  {
-    type: 'locations',
-    label: 'Location',
-    filters: [],
-  },
-  {
-    type: 'properties',
-    label: 'Properties',
-    filters: [],
-  },
+  }
 ];
 
 export {ChangeRequestSearchConfig};

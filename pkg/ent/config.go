@@ -32,6 +32,7 @@ type hooks struct {
 	AlarmFilter                       []ent.Hook
 	AlarmStatus                       []ent.Hook
 	Appointment                       []ent.Hook
+	AutomationActivity                []ent.Hook
 	Block                             []ent.Hook
 	BlockInstance                     []ent.Hook
 	CheckListCategory                 []ent.Hook

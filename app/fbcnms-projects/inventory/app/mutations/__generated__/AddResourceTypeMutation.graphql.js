@@ -15,7 +15,7 @@
 /*::
 import type { ConcreteRequest } from 'relay-runtime';
 export type ResourceTypeBaseTypeKind = "LOGICAL_RESOURCE" | "PHYSICAL_RESOURCE" | "VIRTUAL_RESOURCE" | "%future added value";
-export type ResourceTypeClassKind = "CARD" | "EQUIPMENT" | "PORT" | "RACK" | "SLOT" | "VLAN" | "%future added value";
+export type ResourceTypeClassKind = "CARD" | "EQUIPMENT" | "NETWORK_FUNCTION" | "PORT" | "RACK" | "SLOT" | "VLAN" | "%future added value";
 export type AddResourceTypeInput = {|
   name: string,
   resourceTypeBaseType: ResourceTypeBaseTypeKind,

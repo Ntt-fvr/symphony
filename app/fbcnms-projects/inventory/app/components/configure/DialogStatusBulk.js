@@ -7,7 +7,7 @@
  * @flow strict-local
  * @format
  */
- import type {
+import type {
   AddRequestChangeMutationResponse,
   AddRequestChangeMutationVariables,
 } from '../../mutations/__generated__/AddRequestChangeMutation.graphql';
@@ -129,10 +129,10 @@ const DialogStatus = (props: Props) => {
     infoCSV.pop();
     infoCSV.map(item => {
       const idResource = queryResourceParameter.queryResource.filter(
-        query => query.name === item.resources
+        query => query.name === item.resources,
       );
       const idParameterType = queryResourceParameter.queryConfigurationParameterType.filter(
-        query => query.name === item.parameter
+        query => query.name === item.parameter,
       );
 
       const newValue = item.newValue;

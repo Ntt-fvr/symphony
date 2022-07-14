@@ -58,6 +58,8 @@ const ResourceCardListQuery = graphql`
     queryResource {
       id
       name
+      isDeleted
+      resourceSpecification
       locatedIn
       resourceSpecification
       isDeleted
@@ -72,6 +74,14 @@ const ResourceCardListQuery = graphql`
         node {
           id
           name
+          resourceSpecification {
+            id
+            name
+            vendor {
+              id
+              name
+            }
+          }
         }
       }
     }
@@ -146,6 +156,48 @@ const ResourceCard = (props: Props) => {
     onEditResource(setDataEdit(resources));
   };
 
+  const nameResourceType = new Map(
+    resourceTypes?.resourceSpecifications?.edges.map(data => [
+      data.node.id,
+      data.node.resourceType.name,
+    ]),
+  );
+
+  const nameSpecification = new Map(
+    resourceTypes?.resourceSpecifications?.edges.map(data => [
+      data.node.id,
+      data.node.name,
+    ]),
+  );
+
+  const resourceId = resourceTypes?.queryResource?.map(data => ({
+    items: [
+      {
+        id: data.resourceSpecification,
+        idResource: data.id,
+        nameResource: data.name,
+        locationId: data.locatedIn,
+      },
+    ],
+  }));
+
+  const mapResources = ({items, ...rest}) => ({
+    ...rest,
+    data: items?.map(data =>
+      (nameResourceType.has(data.id), nameSpecification.has(data.id))
+        ? {
+            ...data,
+            nameResourceType: nameResourceType.get(data.id),
+            nameSpecification: nameSpecification.get(data.id),
+          }
+        : data,
+    ),
+  });
+
+  const newArrayDataForm = resourceId
+    ?.map(mapResources)
+    .filter(data => data.data[0].locationId === selectedLocationId);
+
   switch (mode) {
     case 'add':
       return (
@@ -154,6 +206,7 @@ const ResourceCard = (props: Props) => {
           selectedLocationId={selectedLocationId}
           isCompleted={isCompleted}
           closeFormAddEdit={onCancel}
+          mode="add"
         />
       );
     case 'edit':
@@ -163,6 +216,7 @@ const ResourceCard = (props: Props) => {
           selectedLocationId={selectedLocationId}
           isCompleted={isCompleted}
           closeFormAddEdit={onCancel}
+          mode="edit"
         />
       );
     case 'show':
@@ -207,22 +261,28 @@ const ResourceCard = (props: Props) => {
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    {filterDataById
+                    {newArrayDataForm
                       ?.slice(
                         page * rowsPerPage,
                         page * rowsPerPage + rowsPerPage,
                       )
-                      .map((item, index) => (
+                      .flatMap((item, index) => (
                         <TableRow tabIndex={-1} key={index}>
                           <TableCell>
                             <Button
                               variant="text"
-                              onClick={() => onResourceSelected(item.id)}>
-                              <Typography>{item.name}</Typography>
+                              onClick={() =>
+                                onResourceSelected(item.data[0].idResource)
+                              }>
+                              <Typography>
+                                {item.data[0].nameResource}
+                              </Typography>
                             </Button>
                           </TableCell>
-                          <TableCell>specificationFalse</TableCell>
-                          <TableCell>TypeFalse</TableCell>
+                          <TableCell>
+                            {item.data[0].nameSpecification}
+                          </TableCell>
+                          <TableCell>{item.data[0].nameResourceType}</TableCell>
                           <TableCell>
                             <IconButton>
                               <DeleteOutlinedIcon

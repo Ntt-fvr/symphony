@@ -8,6 +8,8 @@
  * @format
  */
 
+import ActionTypesTableDispactcher from './context/ActionTypesTableDispactcher';
+import AddActionTemplateMutation from '../../mutations/AddActionTemplate';
 import Button from '@material-ui/core/Button';
 import CardHeader from '@symphony/design-system/components/Card/CardHeader';
 import Dialog from '@material-ui/core/Dialog';
@@ -18,9 +20,11 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import FormField from '@symphony/design-system/components/FormField/FormField';
 import Grid from '@material-ui/core/Grid';
 import Radio from '@material-ui/core/Radio';
-import React, {useCallback, useState} from 'react';
+import React, {useContext, useState} from 'react';
 import Text from '@symphony/design-system/components/Text';
 import TextField from '@material-ui/core/TextField';
+import UpdateActionTemplateItemMutation from '../../mutations/UpdateActionTemplateItem';
+import UpdateActionTemplateMutation from '../../mutations/UpdateActionTemplate';
 import inventoryTheme from '../../common/theme';
 import {StepperName} from './StepperName';
 import {makeStyles} from '@material-ui/styles';
@@ -62,24 +66,32 @@ const useStyles = makeStyles(() => ({
 
 type Props = $ReadOnly<{|
   open?: boolean,
+  isEdit?: boolean,
+  actionDetails?: {},
   onClose: () => void,
   isDialogSelectDate: boolean,
+  resourceSpecification: string,
 |}>;
 
 const DialogSelectName = (props: Props) => {
-  const {onClose, isDialogSelectDate} = props;
+  const {
+    onClose,
+    isEdit,
+    actionDetails,
+    isDialogSelectDate,
+    resourceSpecification,
+  } = props;
   const [isDialogConfirmChange, setIsDialogConfirmChange] = useState(
     isDialogSelectDate,
   );
+  const [name, setName] = useState(isEdit ? actionDetails?.name : '');
+  const [type, setType] = useState(isEdit ? actionDetails?.type : '');
+  const {dispatch} = useContext(ActionTypesTableDispactcher);
 
   const [activeStep, setActiveStep] = useState(0);
-  const [writeName, setWritename] = useState('');
-  const [checkedHidden, setCheckedHidden] = useState(false);
-  const handleSelectDate = useCallback(clickedDate => {
-    const writeName = clickedDate?.id;
-    setWritename(writeName);
-    setActiveStep(1);
-  }, []);
+  const [checkedHidden, setCheckedHidden] = useState(
+    isEdit ? actionDetails?.type == 'CONFIGURATION_PARAMETER' : false,
+  );
   const handleConfirmDate = () => {
     setActiveStep(2);
   };
@@ -90,11 +102,110 @@ const DialogSelectName = (props: Props) => {
   const handleClickOpenConfirmChange = () => {
     setIsDialogConfirmChange(prev => !prev);
   };
-  const handleChecked = () => {
+  const handleChecked = e => {
+    setType(e.target.value);
+
     setCheckedHidden(prevStateChecked => !prevStateChecked);
   };
-  const nameType = e => {
-    setWritename(e.target.value);
+  const handleName = e => {
+    setName(e.target.value);
+  };
+
+  const saveAction = items => {
+    const templateVariables = {
+      input: {
+        name: name,
+        type: type,
+        resourceSpecifications: resourceSpecification,
+        actionTemplateItems: items
+          .filter(item => !item.isDeleted)
+          .map(i => {
+            return {
+              parameters: i.parameters,
+              value: i.value,
+              isDeleted: i.isDeleted ?? false,
+            };
+          }),
+      },
+    };
+    AddActionTemplateMutation(templateVariables, {
+      onCompleted: templateResponse => {
+        dispatch({
+          type: 'ADD_ACTION_TYPE',
+          value: templateResponse.addActionTemplate.actionTemplate,
+        });
+      },
+    });
+  };
+
+  const updateAction = items => {
+    const savedItems = actionDetails.actionTemplateItems
+      .filter(item => !item.isDeleted)
+      .map(item => item.id);
+    const templateVariables = {
+      input: {
+        filter: {
+          id: actionDetails.id,
+        },
+        set: {
+          name: name,
+          type: type,
+          resourceSpecifications: resourceSpecification,
+          actionTemplateItems: items
+            .filter(item => !savedItems.includes(item.id) && !item.isDeleted)
+            .map(i => {
+              return {
+                parameters: i.parameters,
+                value: i.value,
+                isDeleted: i.isDeleted ?? false,
+              };
+            }),
+        },
+      },
+    };
+
+    const response = {
+      onCompleted: () => {
+        items
+          .filter(item => savedItems.includes(item.id))
+          .map(item => {
+            const updateTemplateItemVariables = {
+              input: {
+                filter: {
+                  id: item.id,
+                },
+                set: {
+                  parameters: item.parameters,
+                  value: item.value,
+                  isDeleted: item.isDeleted ?? false,
+                },
+              },
+            };
+            UpdateActionTemplateItemMutation(updateTemplateItemVariables, {
+              onCompleted: () => {},
+            });
+          });
+
+        dispatch({
+          type: 'UPDATE_ACTION_TYPE_NAME',
+          id: actionDetails.id,
+          name: name,
+        });
+        dispatch({
+          type: 'UPDATE_ACTION_TYPE_ITEMS',
+          id: actionDetails.id,
+          actionTemplateItems: {actionTemplateItems: items},
+        });
+
+        dispatch({
+          type: 'UPDATE_ACTION_TYPE',
+          id: actionDetails.id,
+          value: {value: {stringValue: type}},
+        });
+      },
+    };
+
+    UpdateActionTemplateMutation(templateVariables, response);
   };
 
   const classes = useStyles();
@@ -112,7 +223,7 @@ const DialogSelectName = (props: Props) => {
               <StepperName activeStep={activeStep} />
             </Grid>
             <Grid className={classes.title}>
-              <CardHeader>Name and Type action</CardHeader>
+              <CardHeader>Name and Type action*</CardHeader>
               <Grid item xs={6}>
                 <FormField>
                   <TextField
@@ -122,18 +233,20 @@ const DialogSelectName = (props: Props) => {
                     variant="outlined"
                     name="name"
                     size="small"
-                    onChange={nameType}
+                    value={name}
+                    onChange={handleName}
                   />
                 </FormField>
               </Grid>
               <Grid className={classes.subtitle}>
-                <Text variant={'subtitle2'}>Select Type Action</Text>
+                <Text variant={'subtitle2'}>Select Type Action*</Text>
               </Grid>
               <Grid item xs={12}>
                 <FormControlLabel
                   style={{paddingBottom: '20px'}}
                   checked={checkedHidden}
                   onClick={handleChecked}
+                  value="CONFIGURATION_PARAMETER"
                   control={<Radio color="primary" />}
                   label="Configuration parameter"
                 />
@@ -158,6 +271,7 @@ const DialogSelectName = (props: Props) => {
                 }}
                 className={classes.option}
                 variant="contained"
+                disabled={!(name && type && checkedHidden)}
                 color="primary">
                 Next
               </Button>
@@ -168,6 +282,15 @@ const DialogSelectName = (props: Props) => {
             handleBackStep={handleBack}
             activeStep={activeStep}
             onClose={onClose}
+            isEdit={isEdit}
+            actionDetails={actionDetails}
+            resourceSpecification={resourceSpecification}
+            handleSave={items => {
+              saveAction(items);
+            }}
+            handleUpdate={items => {
+              updateAction(items);
+            }}
             setIsDialogConfirmChange={setIsDialogConfirmChange}
           />
         )}

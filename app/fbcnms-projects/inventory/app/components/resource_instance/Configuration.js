@@ -78,11 +78,15 @@ type Props = $ReadOnly<{||}>;
 const Configuration = (props: Props) => {
   const {cmVersion, resource} = props;
   const [filters, setFilters] = useState([]);
-  const [checkedHidden, setCheckedHidden] = useState(true);
+  const [checkedCurrentChange, setCheckedCurrentChange] = useState(false);
+  const [checkedPreviousChange, setCheckedPreviousChange] = useState(false);
   const [isDialogInformation, setIsDialogInformation] = useState(false);
   const [isDialogSelectDate, setIsDialogSelectDate] = useState(false);
   const [checked, setChecked] = useState(true);
   const [openSimpleChangeRequest, setOpenSimpleChangeRequest] = useState(false);
+  const [configurationParameters, setConfigurationParameters] = useState([]);
+  const [currentVersion, setCurrentVersion] = useState([]);
+  const [AllVersion, setAllCMVersion] = useState([]);
   const classes = useStyles();
 
   const handleClickOpenInformation = () => {
@@ -103,6 +107,12 @@ const Configuration = (props: Props) => {
       />
     );
   }
+
+  const CMSelected = (CMSelected, currentVersion, allVersion) => {
+    setConfigurationParameters(CMSelected);
+    setCurrentVersion(currentVersion);
+    setAllCMVersion(allVersion)
+  };
   return (
     <Grid className={classes.root}>
       <Grid
@@ -169,7 +179,7 @@ const Configuration = (props: Props) => {
         </Grid>
       </Grid>
       <Grid className={classes.timeLineContainer} item md={12}>
-        <TimeLine />
+        <TimeLine CMSelected={CMSelected} />
       </Grid>
       <Grid className={classes.cardTable} item xs={12}>
         <Card className={classes.cardContainer}>
@@ -199,18 +209,24 @@ const Configuration = (props: Props) => {
                 Compare with:
               </Text>
               <FormControlLabel
-                onChange={() => setCheckedHidden(!checkedHidden)}
-                checked={checkedHidden}
+                onChange={() => {
+                  setCheckedPreviousChange(!checkedPreviousChange);
+                  setCheckedCurrentChange(false);
+                }}
+                checked={checkedPreviousChange}
                 value="approved"
                 control={<Radio color="primary" />}
                 label="Previous change"
               />
               <FormControlLabel
-                onChange={() => setCheckedHidden(!checkedHidden)}
-                checked={!checkedHidden}
+                onChange={() => {
+                  setCheckedCurrentChange(!checkedCurrentChange);
+                  setCheckedPreviousChange(false);
+                }}
+                checked={checkedCurrentChange}
                 value="approval"
                 control={<Radio color="primary" />}
-                label="Schedule with approval"
+                label="Current Change"
               />
             </Grid>
             <Grid item xs={6} className={classes.checkSquare}>
@@ -224,7 +240,15 @@ const Configuration = (props: Props) => {
             </Grid>
           </Grid>
           <Grid item xs={12}>
-            <TableConfigurationParameters />
+            <br></br>
+            <TableConfigurationParameters
+              ConfigurationParameters={configurationParameters}
+              setComparationCurrent={checkedCurrentChange}
+              setComparationPrevious={checkedPreviousChange}
+              setOnlyValuesChanged={checked}
+              setCurrentVersion={currentVersion}
+              setAllVersion={AllVersion}
+            />
           </Grid>
         </Card>
       </Grid>

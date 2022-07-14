@@ -94,6 +94,7 @@ const DialogStatus = (props: Props) => {
     parameters,
     resource,
     schedule,
+    'data-testid': dataTestId,
   } = props;
   const enqueueSnackbar = useEnqueueSnackbar();
   const {me} = useMainContext();
@@ -180,90 +181,93 @@ const DialogStatus = (props: Props) => {
 
   const classes = useStyles();
   return (
-    <Dialog
-      maxWidth="sm"
-      open={true}
-      onClose={onClose}
-      fullWidth={true}
-      className={classes.root}>
-      <Card variant={'none'}>
-        <Grid
-          style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            marginBottom: '30px',
-          }}>
-          <Text useEllipsis={true} weight={'bold'} variant={'h6'}>
-            {name}
-          </Text>
-          <IconButton
+    <div data-testid={dataTestId}>
+      <Dialog
+        maxWidth="sm"
+        open={true}
+        onClose={onClose}
+        fullWidth={true}
+        data-testid={dataTestId}
+        className={classes.root}>
+        <Card variant={'none'}>
+          <Grid
             style={{
-              position: 'relative',
-              top: '0px',
-              right: '0px',
-            }}
-            onClick={onClose}
-            size={'small'}>
-            <CloseIcon color="action" />
-          </IconButton>
-        </Grid>
-        <Grid>
-          <Card variant={'message'} className={classes.rootCard}>
-            <Grid container direction="row">
-              <Grid item xs={1}>
-                <InfoOutlinedIcon color={'primary'} />
+              display: 'flex',
+              justifyContent: 'space-between',
+              marginBottom: '30px',
+            }}>
+            <Text useEllipsis={true} weight={'bold'} variant={'h6'}>
+              {name}
+            </Text>
+            <IconButton
+              style={{
+                position: 'relative',
+                top: '0px',
+                right: '0px',
+              }}
+              onClick={onClose}
+              size={'small'}>
+              <CloseIcon color="action" />
+            </IconButton>
+          </Grid>
+          <Grid>
+            <Card variant={'message'} className={classes.rootCard}>
+              <Grid container direction="row">
+                <Grid item xs={1}>
+                  <InfoOutlinedIcon color={'primary'} />
+                </Grid>
+                <Grid item xs={11}>
+                  <CardHeader>Information</CardHeader>
+                  <Text>
+                    You are creating a new Change request in status Submited.
+                    This will launch a flow for its execution. Are you sure?
+                  </Text>{' '}
+                </Grid>
               </Grid>
-              <Grid item xs={11}>
-                <CardHeader>Information</CardHeader>
-                <Text>
-                  You are creating a new Change request in status Submited. This
-                  will launch a flow for its execution. Are you sure?
-                </Text>{' '}
-              </Grid>
-            </Grid>
-          </Card>
-        </Grid>
-        <Grid>
-          <Text
-            style={{
-              margin: '40px 0 25px 0px',
-            }}
-            useEllipsis={true}>
-            Add a description or a justification for this new change request
-            (Optional)
-          </Text>
-        </Grid>
-        <TextField
-          fullWidth
-          multiline
-          rows={2}
-          label="Description"
-          variant="outlined"
-          name="text_out"
-          onChange={e => onChangeDescription(e.target.value)}
-          value={description}
-          className={classes.textarea}
-          inputProps={{maxLength: 200}}
-        />
-        <Grid />
-      </Card>
-      <DialogActions className={classes.dialogActions}>
-        <Button
-          className={classes.option}
-          variant="outlined"
-          color="primary"
-          onClick={handleOnClose}>
-          Cancel
-        </Button>
-        <Button
-          onClick={handleOnSave}
-          className={classes.option}
-          variant="contained"
-          color="primary">
-          Save
-        </Button>
-      </DialogActions>
-    </Dialog>
+            </Card>
+          </Grid>
+          <Grid>
+            <Text
+              style={{
+                margin: '40px 0 25px 0px',
+              }}
+              useEllipsis={true}>
+              Add a description or a justification for this new change request
+              (Optional)
+            </Text>
+          </Grid>
+          <TextField
+            fullWidth
+            multiline
+            rows={2}
+            label="Description"
+            variant="outlined"
+            name="text_out"
+            onChange={e => onChangeDescription(e.target.value)}
+            value={description}
+            className={classes.textarea}
+            inputProps={{maxLength: 200}}
+          />
+          <Grid />
+        </Card>
+        <DialogActions className={classes.dialogActions}>
+          <Button
+            className={classes.option}
+            variant="outlined"
+            color="primary"
+            onClick={handleOnClose}>
+            Cancel
+          </Button>
+          <Button
+            onClick={handleOnSave}
+            className={classes.option}
+            variant="contained"
+            color="primary">
+            Save
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </div>
   );
 };
 

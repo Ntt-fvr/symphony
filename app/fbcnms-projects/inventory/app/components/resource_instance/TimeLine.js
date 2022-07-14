@@ -83,7 +83,8 @@ const sideScroll = (
   }, speed);
 };
 
-const TimeLine = () => {
+const TimeLine = (props: Props) => {
+  const {CMSelected} = props;
   const classes = useStyles();
   const contentWrapper = React.useRef(null);
 
@@ -93,7 +94,7 @@ const TimeLine = () => {
         <Card className={classes.cardContainer}>
           <CardHeader className={classes.cardTitle}>Timeline</CardHeader>
           <div ref={contentWrapper} className={classes.wrapperContentTimeLine}>
-            <StepperTimeLine />
+            <StepperTimeLine CMSelected = {CMSelected} />
           </div>
           <div className={classes.keypad}>
             <IconButton

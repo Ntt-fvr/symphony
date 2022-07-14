@@ -64,7 +64,12 @@ const DEFAULT_PARAM_GENERATED = {
 };
 
 const CardPlusDnD = (props: Props) => {
-  const {parameters, onChange, cmVersionParams} = props;
+  const {
+    parameters,
+    onChange,
+    cmVersionParams,
+    'data-testid': dataTestId,
+  } = props;
 
   const classes = useStyles();
 
@@ -97,13 +102,13 @@ const CardPlusDnD = (props: Props) => {
   const onNewValueChange = (index, param, value) => {
     const oldParams = [...parameters];
 
-    if (param.stringValue !== null) {
+    if (param.parameterType.type === 'string') {
       param.newValue = value;
     }
-    if (param.intValue !== null) {
+    if (param.parameterType.type === 'int') {
       param.newValue = parseInt(value) || null;
     }
-    if (param.floatValue !== null) {
+    if (param.parameterType.type === 'float') {
       param.newValue = parseFloat(value) || null;
     }
 
@@ -122,7 +127,7 @@ const CardPlusDnD = (props: Props) => {
   };
 
   return (
-    <div className={classes.container}>
+    <div className={classes.container} data-testid={dataTestId}>
       <Card margins="none">
         <CardHeader className={classes.cardHeader}>
           Parameters to changed
@@ -154,6 +159,7 @@ const CardPlusDnD = (props: Props) => {
                   <TableCell style={{width: '30%'}} component="div" scope="row">
                     <FormField>
                       <Select
+                        data-testid="parameter-name"
                         placeholder={'Parameter name'}
                         disabled={props.disabled}
                         options={cmParamsOptions}
@@ -205,6 +211,7 @@ const CardPlusDnD = (props: Props) => {
           </Table>
           <FormAction>
             <Button
+              data-testid="add-parameter"
               variant="text"
               onClick={handleAddParameters}
               leftIcon={PlusIcon}>

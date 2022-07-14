@@ -51,7 +51,7 @@ const days = [
 ];
 
 const CardSuggested = (props: Props) => {
-  const {schedule, onSchedule} = props;
+  const {schedule, onSchedule, 'data-testid': dataTestId} = props;
   const classes = useStyles();
 
   const [checkedHidden, setCheckedHidden] = useState(true);
@@ -74,7 +74,7 @@ const CardSuggested = (props: Props) => {
   };
 
   return (
-    <div className={classes.container}>
+    <div className={classes.container} data-testid={dataTestId}>
       <Card margins="none">
         <Grid style={{margin: '0 16px'}}>
           <CardHeader className={classes.cardHeader}>
@@ -88,7 +88,7 @@ const CardSuggested = (props: Props) => {
                 checked={checkedHidden}
                 value="approved"
                 control={<Radio color="primary" />}
-                label="As soon as approved "
+                label="As soon as approved"
               />
               <FormControlLabel
                 onChange={handleOnChangeScheduleType}
@@ -115,6 +115,7 @@ const CardSuggested = (props: Props) => {
                     <TextField
                       required
                       id="outlined-select-family"
+                      label="Day"
                       select
                       style={{
                         padding: '0',
@@ -136,7 +137,7 @@ const CardSuggested = (props: Props) => {
                     <MuiPickersUtilsProvider utils={MomentUtils}>
                       <KeyboardTimePicker
                         keyboardIcon={<AccessTimeIcon />}
-                        label="Masked timepicker"
+                        label="Time"
                         placeholder="08:00 AM"
                         mask="__:__ _M"
                         inputVariant="outlined"

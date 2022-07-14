@@ -59,6 +59,8 @@ const (
 	EdgeFeatures = "features"
 	// EdgeAppointment holds the string denoting the appointment edge name in mutations.
 	EdgeAppointment = "appointment"
+	// EdgeAuthoredFlow holds the string denoting the authored_flow edge name in mutations.
+	EdgeAuthoredFlow = "authored_flow"
 
 	// Table holds the table name of the user in the database.
 	Table = "users"
@@ -128,6 +130,13 @@ const (
 	AppointmentInverseTable = "appointments"
 	// AppointmentColumn is the table column denoting the appointment relation/edge.
 	AppointmentColumn = "user_appointment"
+	// AuthoredFlowTable is the table the holds the authored_flow relation/edge.
+	AuthoredFlowTable = "flows"
+	// AuthoredFlowInverseTable is the table name for the Flow entity.
+	// It exists in this package in order to avoid circular dependency with the "flow" package.
+	AuthoredFlowInverseTable = "flows"
+	// AuthoredFlowColumn is the table column denoting the authored_flow relation/edge.
+	AuthoredFlowColumn = "flow_author"
 )
 
 // Columns holds all SQL columns for user fields.
@@ -146,6 +155,7 @@ var Columns = []string{
 
 // ForeignKeys holds the SQL foreign-keys that are owned by the User type.
 var ForeignKeys = []string{
+	"flow_editor",
 	"organization_user_fk",
 }
 

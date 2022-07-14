@@ -53,11 +53,11 @@ const useStyles = makeStyles(() => ({
 
 export type Props = $ReadOnly<{|
   className?: string,
-  valuesTable: Values,
+  valuesTable?: Values,
 |}>;
 
 const TableDetails = (props: Props) => {
-  const {valuesTable} = props;
+  const {valuesTable, resourceData} = props;
   const classes = useStyles();
   return (
     <div className={classes.root}>
@@ -65,18 +65,32 @@ const TableDetails = (props: Props) => {
         <Table stickyHeader aria-label="sticky table">
           <TableHead>
             <TableRow>
-              <StyledTableCell>Scheduled action</StyledTableCell>
+              <StyledTableCell>Action Type</StyledTableCell>
               <StyledTableCell>Resource Type</StyledTableCell>
               <StyledTableCell>Resource Specification</StyledTableCell>
-              <StyledTableCell>Execution type</StyledTableCell>
+              <StyledTableCell>Execution Type</StyledTableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             <StyledTableRow>
-              <TableCell>{valuesTable.actionTempleate}</TableCell>
-              <TableCell>{valuesTable.resourceType}</TableCell>
-              <TableCell>{valuesTable.resourceSpecification}</TableCell>
-              <TableCell>{valuesTable.executionType}</TableCell>
+              <TableCell>{valuesTable?.template?.name}</TableCell>
+              <TableCell>
+                {
+                  resourceData?.find(
+                    item =>
+                      item.id == valuesTable?.template?.resourceSpecifications,
+                  )?.resourceType?.name
+                }
+              </TableCell>
+              <TableCell>
+                {
+                  resourceData?.find(
+                    item =>
+                      item.id == valuesTable?.template?.resourceSpecifications,
+                  )?.name
+                }
+              </TableCell>
+              <TableCell>{valuesTable?.scheduler?.type}</TableCell>
             </StyledTableRow>
           </TableBody>
         </Table>
