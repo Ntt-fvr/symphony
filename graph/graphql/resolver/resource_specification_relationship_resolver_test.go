@@ -25,7 +25,7 @@ func TestAddRemoveResourceSpecificationRelationshipResolver(t *testing.T) {
 	ctx := viewertest.NewContext(context.Background(), r.client, viewertest.WithRole(user.RoleOwner))
 
 	mr := r.Mutation()
-	_, err := AddResourceSpecificationRelationShipListTest(ctx, t, mr)
+	_, err := AddResourceSpecificationRelationshipListTest(ctx, t, mr)
 	if err != nil {
 		return
 	}
@@ -34,9 +34,11 @@ func TestAddRemoveResourceSpecificationRelationshipResolver(t *testing.T) {
 	RemoveResourceSpecificationRelationshipTest(ctx, t, mr, id1, id2)
 }
 
-func AddResourceSpecificationRelationShipListTest(ctx context.Context, t *testing.T, mr generated.MutationResolver) ([]*ent.ResourceSpecificationRelationship, error) {
+func AddResourceSpecificationRelationshipListTest(ctx context.Context, t *testing.T, mr generated.MutationResolver) ([]*ent.ResourceSpecificationRelationship, error) {
 	resourceType, err := mr.AddResourceType(ctx, models.AddResourceTypeInput{
-		Name: "resource_type_test_2",
+		Name:                 "resource_type_test_2",
+		ResourceTypeClass:    "RACK",
+		ResourceTypeBaseType: "LOGICAL_RESOURCE",
 	})
 	require.NoError(t, err)
 	resourceSpecification, err := mr.AddResourceSpecification(ctx, models.AddResourceSpecificationInput{
@@ -44,12 +46,10 @@ func AddResourceSpecificationRelationShipListTest(ctx context.Context, t *testin
 		ResourceType: resourceType.ID,
 	})
 	require.NoError(t, err)
-	resourceSpecificationRelationShip, err := mr.AddResourceSpecificationRelationShipList(ctx, models.AddResourceSpecificationRelationShipListInput{
-		ResourceSpecification: resourceSpecification.ID,
-		NameList: []*models.ResourceSpecificationRelationShipListInput{
-			{
-				Name: "PORT_1_OLT_PORT_EXT",
-			},
+	resourceSpecificationRelationShip, err := mr.AddResourceSpecificationRelationshipList(ctx, []*models.AddResourceSpecificationRelationshipInput{
+		{
+			Name:                  "resource_specification_relationship_list_1",
+			ResourceSpecification: resourceSpecification.ID,
 		},
 	})
 	require.NoError(t, err)
@@ -59,7 +59,9 @@ func AddResourceSpecificationRelationShipListTest(ctx context.Context, t *testin
 func AddResourceSpecificationRelationshipTest(ctx context.Context, t *testing.T, mr generated.MutationResolver) (int, int, int) {
 
 	resourcetype, err := mr.AddResourceType(ctx, models.AddResourceTypeInput{
-		Name: "my_test_1_resource_type",
+		Name:                 "my_test_1_resource_type",
+		ResourceTypeClass:    "SLOT",
+		ResourceTypeBaseType: "LOGICAL_RESOURCE",
 	})
 	require.NoError(t, err)
 
