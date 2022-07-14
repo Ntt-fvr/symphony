@@ -38,6 +38,9 @@ import {
   bigSize,
   mediumSize,
   originSize,
+  portsBigPosition,
+  portsMediumPosition,
+  portsOriginPosition,
 } from '../../facades/shapes/vertexes/BaseVertext';
 import {
   getInitialBlockSettings,
@@ -174,6 +177,9 @@ export default class BaseBlock implements IBlock {
         case 'bigSizeCoupled':
           this.model.resize(bigSize.resizeWidth, bigSize.resizeHeigth);
           this.model.attr('coupled/width', bigSize.width);
+          this.model.portProp(this.model.getPorts()[2].id, 'attrs/circle', {
+            cx: portsBigPosition.cxRight,
+          });
           break;
 
         case 'mediumSizeCoupled':
@@ -184,6 +190,13 @@ export default class BaseBlock implements IBlock {
           this.model.attr('background/refY2', mediumSize.backgroundY2);
           this.model.attr('label/refY2', mediumSize.labelY2);
           this.model.attr('image/refY2', mediumSize.imageY2);
+          this.model.portProp(this.model.getPorts()[1].id, 'attrs/circle', {
+            cy: portsMediumPosition.cyLeft,
+          });
+          this.model.portProp(this.model.getPorts()[2].id, 'attrs/circle', {
+            cx: portsMediumPosition.cxRight,
+            cy: portsMediumPosition.cyRight,
+          });
           break;
 
         case 'originSizeCoupled':
@@ -194,6 +207,13 @@ export default class BaseBlock implements IBlock {
           this.model.attr('background/refY2', originSize.backgroundY2);
           this.model.attr('label/refY2', originSize.labelY2);
           this.model.attr('image/refY2', originSize.imageY2);
+          this.model.portProp(this.model.getPorts()[1].id, 'attrs/circle', {
+            cy: portsOriginPosition.cyLeft,
+          });
+          this.model.portProp(this.model.getPorts()[2].id, 'attrs/circle', {
+            cx: portsOriginPosition.cxRight,
+            cy: portsOriginPosition.cyRight,
+          });
           break;
 
         default:
@@ -312,6 +332,18 @@ export default class BaseBlock implements IBlock {
     this.updateView();
 
     this.isInGraph = true;
+    if (
+      this.model.attributes.type == ForEachLoopType ||
+      this.model.attributes.type == ParallelType
+    ) {
+      this.model.portProp(this.model.getPorts()[1].id, 'attrs/circle', {
+        cy: portsOriginPosition.cyLeft,
+      });
+      this.model.portProp(this.model.getPorts()[2].id, 'attrs/circle', {
+        cx: portsOriginPosition.cxRight,
+        cy: portsOriginPosition.cyRight,
+      });
+    }
   }
 
   updateView() {
