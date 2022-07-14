@@ -6003,6 +6003,7 @@ type ExitPoint implements Node {
   cid: String
   nextEntryPoints: [EntryPoint!]!
   condition: VariableExpression
+  index: Int
 }
 
 type EntryPoint implements Node {
@@ -6213,6 +6214,7 @@ input EndBlockInput {
 
 input DecisionRouteInput {
   cid: String
+  index: Int
   condition: VariableExpressionInput!
 }
 
@@ -6302,6 +6304,7 @@ input BaseBlockInput {
 input ChoiceBlockInput {
   cid: String!
   entryPoint: EntryPointInput!
+  defaultExitPoint: ExitPointInput
   routes: [DecisionRouteInput!]
   basicDefinitions: BaseBlockInput!
   uiRepresentation: BlockUIRepresentationInput
@@ -6542,6 +6545,7 @@ type FlowInstance implements Node {
   blocks: [BlockInstance!]!
   startDate: Time!
   endDate: Time
+  startParams: [VariableValue!]
 }
 
 input EditFlowInstanceInput {
@@ -8503,6 +8507,17 @@ type WorkOrderStatusChangedPayload
   workOrder: WorkOrder!
 }
 
+type Subscription {
+  workOrderAdded: WorkOrder
+  workOrderDone: WorkOrder
+  workOrderStatusChanged: WorkOrderStatusChangedPayload!
+  flowInstanceDone: FlowInstance!
+  projectAdded: Project
+  projectChanged: Project
+  locationAdded: Location
+  locationChanged: Location
+  AddImage: File
+}
 
 type Counter implements Node {
   id: ID!
