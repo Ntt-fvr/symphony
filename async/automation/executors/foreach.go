@@ -1,7 +1,6 @@
 package executors
 
 import (
-	"context"
 	"errors"
 	"github.com/facebookincubator/symphony/async/automation/celgo"
 	"github.com/facebookincubator/symphony/async/automation/model"
@@ -10,9 +9,9 @@ import (
 
 type ExecutorForEachBlock struct {
 	executorBaseBlock
-	SearchBlock  func(int) *model.IBlock
+	SearchBlock  func(int) *model.BaseBlock
 	ExecuteBlock func(
-		workflow.Context, context.Context, model.IBlock, map[string]interface{}, map[string]interface{},
+		workflow.Context, model.BaseBlock, map[string]interface{}, map[string]interface{},
 	) (*ExecutorResult, error)
 }
 
@@ -25,7 +24,10 @@ func (b *ExecutorForEachBlock) runLogic() error {
 		celgo.StateVariable: stateVariable,
 	}
 
-	forEachBlock := b.iBlock.(*model.ForEachBlock)
+	forEachBlock := b.executorBlock.ForEach
+	if forEachBlock == nil {
+		return configNotFound
+	}
 
 	result, err := celgo.CompileAndEvaluate(forEachBlock.Key, variables)
 	if err != nil {
@@ -41,10 +43,10 @@ func (b *ExecutorForEachBlock) runLogic() error {
 	for _, value := range values {
 		input := value.(map[string]interface{})
 
-		block := b.SearchBlock(forEachBlock.StartBlockID)
-		for block != nil {
+		executorBlock := b.SearchBlock(forEachBlock.StartBlockID)
+		for executorBlock != nil {
 
-			executorResult, err := b.ExecuteBlock(b.WorkflowCtx, b.EntCtx, *block, input, b.state)
+			executorResult, err := b.ExecuteBlock(b.Ctx, *executorBlock, input, b.state)
 			if err != nil {
 				return err
 			}
@@ -55,15 +57,15 @@ func (b *ExecutorForEachBlock) runLogic() error {
 				if nextBlock := executorResult.NextBlock; nextBlock > 0 {
 					automationBlock := b.SearchBlock(nextBlock)
 					if automationBlock != nil {
-						block = automationBlock
+						executorBlock = automationBlock
 					} else {
-						block = nil
+						executorBlock = nil
 					}
 				} else {
-					block = nil
+					executorBlock = nil
 				}
 			} else {
-				block = nil
+				executorBlock = nil
 			}
 		}
 

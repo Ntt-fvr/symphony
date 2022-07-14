@@ -1,13 +1,13 @@
 package flow
 
 import (
-	"context"
 	"errors"
 	"github.com/facebookincubator/symphony/async/automation/cadence/activity"
 	"github.com/facebookincubator/symphony/async/automation/cadence/enum"
 	"github.com/facebookincubator/symphony/async/automation/executors"
 	"github.com/facebookincubator/symphony/async/automation/model"
 	"github.com/facebookincubator/symphony/async/automation/operations"
+	"github.com/facebookincubator/symphony/pkg/ent/block"
 	"github.com/facebookincubator/symphony/pkg/ent/blockinstance"
 	"github.com/facebookincubator/symphony/pkg/ent/flowinstance"
 	"go.uber.org/cadence"
@@ -16,7 +16,7 @@ import (
 )
 
 func AutomationWorkflow(
-	ctx workflow.Context, entCtx context.Context, taskList string, flowInstanceID int,
+	ctx workflow.Context, taskList string, flowInstanceID int,
 ) (map[string]interface{}, error) {
 
 	activityOptions := workflow.ActivityOptions{
@@ -35,23 +35,23 @@ func AutomationWorkflow(
 		workflowID := info.WorkflowExecution.ID
 		runID := info.WorkflowExecution.RunID
 
-		err := operations.UpdateFlowInstance(entCtx, flowInstanceID, workflowID, runID)
+		err := operations.UpdateFlowInstance(flowInstanceID, workflowID, runID)
 		if err != nil {
-			_ = operations.UpdateFlowInstanceStatus(entCtx, flowInstanceID, flowinstance.StatusFailing, true)
+			_ = operations.UpdateFlowInstanceStatus(flowInstanceID, flowinstance.StatusFailing, true)
 			return nil, err
 		}
 	}
 
-	input, blocks, err := operations.GetInputAndBlocks(entCtx, flowInstanceID)
+	input, automationBlocks, err := operations.GetInputAndBlocks(flowInstanceID)
 	if err != nil {
-		_ = operations.UpdateFlowInstanceStatus(entCtx, flowInstanceID, flowinstance.StatusFailing, true)
+		_ = operations.UpdateFlowInstanceStatus(flowInstanceID, flowinstance.StatusFailing, true)
 		return nil, err
 	}
 
-	startBlock := getStartBlock(blocks)
+	startBlock := getStartBlock(automationBlocks)
 	if startBlock != nil {
-		_ = operations.UpdateFlowInstanceStatus(entCtx, flowInstanceID, flowinstance.StatusFailing, true)
-		return nil, errors.New("start block not found")
+		_ = operations.UpdateFlowInstanceStatus(flowInstanceID, flowinstance.StatusFailing, true)
+		return nil, errors.New("start automationBlock not found")
 	}
 
 	flowAction := enum.FlowActionResume
@@ -65,20 +65,20 @@ func AutomationWorkflow(
 	state := make(map[string]interface{})
 
 	ctx = workflow.WithValue(ctx, enum.FlowActionArg, flowAction)
-	ctx = workflow.WithValue(ctx, enum.BlocksArg, blocks)
+	ctx = workflow.WithValue(ctx, enum.BlocksArg, automationBlocks)
 
 	pauseSignalFunction(ctx, flowActionFunction)
 	cancelSignalFunction(ctx, flowActionFunction)
 
 	var output map[string]interface{}
 
-	block := startBlock
+	automationBlock := startBlock
 
-	for block != nil {
+	for automationBlock != nil {
 		switch flowAction {
 		case enum.FlowActionPause:
 			err := operations.UpdateFlowInstanceStatus(
-				entCtx, block.GetFlowInstanceID(), flowinstance.StatusPaused, false,
+				automationBlock.GetFlowInstanceID(), flowinstance.StatusPaused, false,
 			)
 			if err != nil {
 				return nil, err
@@ -89,7 +89,7 @@ func AutomationWorkflow(
 			switch flowAction {
 			case enum.FlowActionCancel:
 				err := operations.UpdateFlowInstanceStatus(
-					entCtx, block.GetFlowInstanceID(), flowinstance.StatusCancelled, true,
+					automationBlock.GetFlowInstanceID(), flowinstance.StatusCancelled, true,
 				)
 				if err != nil {
 					return nil, err
@@ -99,7 +99,7 @@ func AutomationWorkflow(
 			}
 		case enum.FlowActionCancel:
 			err := operations.UpdateFlowInstanceStatus(
-				entCtx, block.GetFlowInstanceID(), flowinstance.StatusCancelled, true,
+				automationBlock.GetFlowInstanceID(), flowinstance.StatusCancelled, true,
 			)
 			if err != nil {
 				return nil, err
@@ -108,17 +108,17 @@ func AutomationWorkflow(
 			return output, cadence.NewCanceledError("Cancel Signal")
 		}
 
-		block.AddAttempts()
+		automationBlock.AddAttempts()
 
-		result, err := executeBlock(ctx, entCtx, block, input, state)
+		result, err := executeBlock(ctx, *automationBlock, input, state)
 
 		if err != nil {
-			if block.GetAttempts() < block.GetMaxAttempts() {
-				// TODO Retry block execution
+			if automationBlock.GetAttempts() < automationBlock.GetMaxAttempts() {
+				// TODO Retry automationBlock execution
 			}
 
 			_ = operations.UpdateBlockStatus(
-				entCtx, block.GetBlockInstanceID(), blockinstance.StatusFailed,
+				automationBlock.GetBlockInstanceID(), blockinstance.StatusFailed,
 				true, nil, err.Error(),
 			)
 			return nil, err
@@ -131,17 +131,17 @@ func AutomationWorkflow(
 			input = output
 
 			if nextBlock := result.NextBlock; nextBlock > 0 {
-				entBlock, exists := blocks[nextBlock]
+				entBlock, exists := automationBlocks[nextBlock]
 				if exists {
-					block = entBlock
+					automationBlock = &entBlock
 				} else {
-					block = nil
+					automationBlock = nil
 				}
 			} else {
-				block = nil
+				automationBlock = nil
 			}
 		} else {
-			block = nil
+			automationBlock = nil
 		}
 	}
 
@@ -149,105 +149,111 @@ func AutomationWorkflow(
 }
 
 func executeBlock(
-	ctx workflow.Context, entCtx context.Context, block model.IBlock, input, state map[string]interface{},
+	ctx workflow.Context, automationBlock model.BaseBlock, input, state map[string]interface{},
 ) (*executors.ExecutorResult, error) {
 
 	blockInstanceID, err := operations.CreateBlockInstance(
-		entCtx, block.GetFlowInstanceID(), block.GetBlockID(), input,
+		automationBlock.GetFlowInstanceID(), automationBlock.GetBlockID(), input,
 	)
 	if err != nil {
 		return nil, err
 	}
 
-	block.SetBlockInstanceID(blockInstanceID)
+	automationBlock.SetBlockInstanceID(blockInstanceID)
 
 	var executorResult *executors.ExecutorResult
 
-	blockInstance := executors.GetBlockInstances(ctx, entCtx, block, input, state, operations.UpdateBlockStatus)
-	var blockInterface interface{} = blockInstance
+	switch automationBlock.BlockType {
+	case block.TypeExecuteFlow, block.TypeForEach, block.TypeParallel,
+		block.TypeTimer, block.TypeWaitForSignal:
 
-	switch blockInterface.(type) {
-	case executors.ExecutorExecuteFlowBlock:
-		executeFlow, ok := blockInstance.(*executors.ExecutorExecuteFlowBlock)
-		if ok {
-			executeFlow.FlowExecutor = flowExecutorFunction
+		blockInstance := executors.GetBlockInstances(
+			ctx, automationBlock, input, state, operations.UpdateBlockStatus,
+		)
 
-			result, err := executeFlow.Execute()
-			if err != nil {
-				return nil, err
-			}
+		switch automationBlock.BlockType {
+		case block.TypeExecuteFlow:
+			executeFlow, ok := blockInstance.(*executors.ExecutorExecuteFlowBlock)
+			if ok {
+				executeFlow.FlowExecutor = flowExecutorFunction
 
-			executorResult = result
-		} else {
-			executorResult = nil
-		}
-	case executors.ExecutorForEachBlock:
-		foreachFlow, ok := blockInstance.(*executors.ExecutorForEachBlock)
-		if ok {
-			automationBlocks, _ := ctx.Value(enum.BlocksArg).(map[int]model.IBlock)
-
-			foreachFlow.SearchBlock = func(blockID int) *model.IBlock {
-				entBlock, exists := automationBlocks[blockID]
-				if exists {
-					return &entBlock
+				result, err := executeFlow.Execute()
+				if err != nil {
+					return nil, err
 				}
-				return nil
+
+				executorResult = result
+			} else {
+				executorResult = nil
 			}
+		case block.TypeForEach:
+			foreachFlow, ok := blockInstance.(*executors.ExecutorForEachBlock)
+			if ok {
+				automationBlocks, _ := ctx.Value(enum.BlocksArg).(map[int]model.BaseBlock)
 
-			foreachFlow.ExecuteBlock = executeBlock
+				foreachFlow.SearchBlock = func(blockID int) *model.BaseBlock {
+					entBlock, exists := automationBlocks[blockID]
+					if exists {
+						return &entBlock
+					}
+					return nil
+				}
 
-			result, err := foreachFlow.Execute()
-			if err != nil {
-				return nil, err
+				foreachFlow.ExecuteBlock = executeBlock
+
+				result, err := foreachFlow.Execute()
+				if err != nil {
+					return nil, err
+				}
+
+				executorResult = result
+			} else {
+				executorResult = nil
 			}
+		case block.TypeParallel:
+			parallelBlock, ok := blockInstance.(*executors.ExecutorParallelBlock)
+			if ok {
+				result, err := parallelBlock.Execute()
+				if err != nil {
+					return nil, err
+				}
 
-			executorResult = result
-		} else {
-			executorResult = nil
-		}
-	case executors.ExecutorParallelBlock:
-		parallelBlock, ok := blockInstance.(*executors.ExecutorParallelBlock)
-		if ok {
-			result, err := parallelBlock.Execute()
-			if err != nil {
-				return nil, err
+				executorResult = result
+			} else {
+				executorResult = nil
 			}
+		case block.TypeTimer:
+			timerFlow, ok := blockInstance.(*executors.ExecutorTimerBlock)
+			if ok {
+				timerFlow.TimerFunction = timerSignalFunction
 
-			executorResult = result
-		} else {
-			executorResult = nil
-		}
-	case executors.ExecutorTimerBlock:
-		timerFlow, ok := blockInstance.(*executors.ExecutorTimerBlock)
-		if ok {
-			timerFlow.TimerFunction = timerSignalFunction
+				result, err := timerFlow.Execute()
+				if err != nil {
+					return nil, err
+				}
 
-			result, err := timerFlow.Execute()
-			if err != nil {
-				return nil, err
+				executorResult = result
+			} else {
+				executorResult = nil
 			}
+		case block.TypeWaitForSignal:
+			waitForSignalFlow, ok := blockInstance.(*executors.ExecutorWaitForSignalBlock)
+			if ok {
+				waitForSignalFlow.WaitForSignalFunction = blockSignalFunction
 
-			executorResult = result
-		} else {
-			executorResult = nil
-		}
-	case executors.ExecutorWaitForSignalBlock:
-		waitForSignalFlow, ok := blockInstance.(*executors.ExecutorWaitForSignalBlock)
-		if ok {
-			waitForSignalFlow.WaitForSignalFunction = blockSignalFunction
+				result, err := waitForSignalFlow.Execute()
+				if err != nil {
+					return nil, err
+				}
 
-			result, err := waitForSignalFlow.Execute()
-			if err != nil {
-				return nil, err
+				executorResult = result
+			} else {
+				executorResult = nil
 			}
-
-			executorResult = result
-		} else {
-			executorResult = nil
 		}
 	default:
 		err := workflow.ExecuteActivity(
-			ctx, activity.ExecuteBlockActivity, entCtx, block, input, state,
+			ctx, activity.ExecuteBlockActivity, automationBlock, input, state,
 		).Get(ctx, &executorResult)
 
 		if err != nil {
@@ -258,10 +264,10 @@ func executeBlock(
 	return executorResult, nil
 }
 
-func getStartBlock(blocks map[int]model.IBlock) model.IBlock {
-	for _, block := range blocks {
-		if _, ok := block.(*model.StartBlock); ok {
-			return block
+func getStartBlock(automationBlocks map[int]model.BaseBlock) *model.BaseBlock {
+	for _, automationBlock := range automationBlocks {
+		if automationBlock.BlockType == block.TypeStart {
+			return &automationBlock
 		}
 	}
 	return nil

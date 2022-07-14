@@ -1,8 +1,8 @@
 package executors
 
 import (
-	"context"
 	"encoding/json"
+	"errors"
 	jsonPatch "github.com/evanphx/json-patch"
 	"github.com/facebookincubator/symphony/async/automation/celgo"
 	"github.com/facebookincubator/symphony/async/automation/model"
@@ -10,6 +10,8 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
 	"go.uber.org/cadence/workflow"
 )
+
+var configNotFound = errors.New("object configuration not found")
 
 type ExecutorResult struct {
 	Output    map[string]interface{}
@@ -34,13 +36,12 @@ type ExecutorGotoBlock struct {
 }
 
 type executorBaseBlock struct {
-	EntCtx               context.Context
-	WorkflowCtx          workflow.Context
-	iBlock               model.IBlock
+	Ctx                  workflow.Context
+	executorBlock        model.BaseBlock
 	input                map[string]interface{}
 	output               map[string]interface{}
 	state                map[string]interface{}
-	updateStatusFunction func(context.Context, int, blockinstance.Status, bool, map[string]interface{}, string) error
+	updateStatusFunction func(int, blockinstance.Status, bool, map[string]interface{}, string) error
 	runLogicFunction     func() error
 }
 
@@ -64,7 +65,7 @@ func (b *executorBaseBlock) updateBlockInstanceStatus(
 	status blockinstance.Status, close bool, failureReason string,
 ) {
 	if b.updateStatusFunction != nil {
-		_ = b.updateStatusFunction(b.EntCtx, b.iBlock.GetBlockInstanceID(), status, close, b.output, failureReason)
+		_ = b.updateStatusFunction(b.executorBlock.GetBlockInstanceID(), status, close, b.output, failureReason)
 	}
 }
 
@@ -97,7 +98,7 @@ func (b *executorBaseBlock) Execute() (*ExecutorResult, error) {
 	blockResult := ExecutorResult{
 		Output:    b.output,
 		State:     b.state,
-		NextBlock: b.iBlock.GetNextBlockID(),
+		NextBlock: b.executorBlock.GetNextBlockID(),
 	}
 
 	b.updateBlockCompleted()
@@ -110,7 +111,7 @@ func (b *executorBaseBlock) runLogic() error {
 }
 
 func (b *executorBaseBlock) executeInputTransformation() error {
-	block := b.iBlock
+	block := b.executorBlock
 	transformations := block.GetTransformations()
 
 	if block.GetInputTransformation() && transformations.Input != nil {
@@ -133,7 +134,7 @@ func (b *executorBaseBlock) executeInputTransformation() error {
 }
 
 func (b *executorBaseBlock) executeOutputTransformation() error {
-	block := b.iBlock
+	block := b.executorBlock
 	transformations := block.GetTransformations()
 
 	if block.GetOutputTransformation() && transformations.Output != nil {

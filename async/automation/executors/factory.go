@@ -1,129 +1,95 @@
 package executors
 
 import (
-	"context"
 	"github.com/facebookincubator/symphony/async/automation/model"
+	"github.com/facebookincubator/symphony/pkg/ent/block"
 	"github.com/facebookincubator/symphony/pkg/ent/blockinstance"
 	"go.uber.org/cadence/workflow"
 )
 
 func GetBlockInstances(
-	ctx workflow.Context, entCtx context.Context,
-	block interface{}, input, state map[string]interface{},
-	updateStatusFunction func(context.Context, int, blockinstance.Status, bool, map[string]interface{}, string) error,
+	ctx workflow.Context, baseBlock model.BaseBlock, input, state map[string]interface{},
+	updateStatusFunction func(int, blockinstance.Status, bool, map[string]interface{}, string) error,
 ) ExecutorBlock {
 
 	var executorBlock ExecutorBlock
 
-	baseBlock := getBaseBlock(ctx, entCtx, input, state, updateStatusFunction)
+	executorBase := createExecutorBase(ctx, baseBlock, input, state, updateStatusFunction)
 
-	switch block.(type) {
-	case model.StartBlock:
-		startBlock := block.(model.StartBlock)
-		baseBlock.iBlock = &startBlock
-
+	switch baseBlock.BlockType {
+	case block.TypeStart:
 		executorStartBlock := ExecutorStartBlock{
-			executorBaseBlock: baseBlock,
+			executorBaseBlock: executorBase,
 		}
 		executorStartBlock.runLogicFunction = executorStartBlock.runLogic
 
 		executorBlock = &executorStartBlock
-	case model.EndBlock:
-		endBlock := block.(model.EndBlock)
-		baseBlock.iBlock = &endBlock
-
+	case block.TypeEnd:
 		executorEndBlock := ExecutorEndBlock{
-			executorBaseBlock: baseBlock,
+			executorBaseBlock: executorBase,
 		}
 		executorEndBlock.runLogicFunction = executorEndBlock.runLogic
 
 		executorBlock = &executorEndBlock
-	case model.GotoBlock:
-		gotoBlock := block.(model.GotoBlock)
-		baseBlock.iBlock = &gotoBlock
-
+	case block.TypeGoTo:
 		executorGotoBlock := ExecutorGotoBlock{
-			executorBaseBlock: baseBlock,
+			executorBaseBlock: executorBase,
 		}
 		executorGotoBlock.runLogicFunction = executorGotoBlock.runLogic
 
 		executorBlock = &executorGotoBlock
-	case model.ChoiceBlock:
-		choiceBlock := block.(model.ChoiceBlock)
-		baseBlock.iBlock = &choiceBlock
-
+	case block.TypeChoice:
 		executorChoiceBlock := ExecutorChoiceBlock{
-			executorBaseBlock: baseBlock,
+			executorBaseBlock: executorBase,
 		}
 		executorChoiceBlock.runLogicFunction = executorChoiceBlock.runLogic
 
 		executorBlock = &executorChoiceBlock
-	case model.ExecuteFlowBlock:
-		executeFlowBlock := block.(model.ExecuteFlowBlock)
-		baseBlock.iBlock = &executeFlowBlock
-
+	case block.TypeExecuteFlow:
 		executorExecuteFlowBlock := ExecutorExecuteFlowBlock{
-			executorBaseBlock: baseBlock,
+			executorBaseBlock: executorBase,
 		}
 		executorExecuteFlowBlock.runLogicFunction = executorExecuteFlowBlock.runLogic
 
 		executorBlock = &executorExecuteFlowBlock
-	case model.ForEachBlock:
-		forEachBlock := block.(model.ForEachBlock)
-		baseBlock.iBlock = &forEachBlock
-
+	case block.TypeForEach:
 		executorForEachBlock := ExecutorForEachBlock{
-			executorBaseBlock: baseBlock,
+			executorBaseBlock: executorBase,
 		}
 		executorForEachBlock.runLogicFunction = executorForEachBlock.runLogic
 
 		executorBlock = &executorForEachBlock
-	case model.InvokeRestAPIBlock:
-		invokeBlock := block.(model.InvokeRestAPIBlock)
-		baseBlock.iBlock = &invokeBlock
-
+	case block.TypeInvokeRestAPI:
 		executorInvokeBlock := ExecutorInvokeRestAPIBlock{
-			executorBaseBlock: baseBlock,
+			executorBaseBlock: executorBase,
 		}
 		executorInvokeBlock.runLogicFunction = executorInvokeBlock.runLogic
 
 		executorBlock = &executorInvokeBlock
-	case model.KafkaBlock:
-		kafkaBlock := block.(model.KafkaBlock)
-		baseBlock.iBlock = &kafkaBlock
-
+	case block.TypeKafka:
 		executorKafkaBlock := ExecutorKafkaBlock{
-			executorBaseBlock: baseBlock,
+			executorBaseBlock: executorBase,
 		}
 		executorKafkaBlock.runLogicFunction = executorKafkaBlock.runLogic
 
 		executorBlock = &executorKafkaBlock
-	case model.ParallelBlock:
-		parallelBlock := block.(model.ParallelBlock)
-		baseBlock.iBlock = &parallelBlock
-
+	case block.TypeParallel:
 		executorParallelBlock := ExecutorParallelBlock{
-			executorBaseBlock: baseBlock,
+			executorBaseBlock: executorBase,
 		}
 		executorParallelBlock.runLogicFunction = executorParallelBlock.runLogic
 
 		executorBlock = &executorParallelBlock
-	case model.TimerBlock:
-		timerBlock := block.(model.TimerBlock)
-		baseBlock.iBlock = &timerBlock
-
+	case block.TypeTimer:
 		executorTimerBlock := ExecutorTimerBlock{
-			executorBaseBlock: baseBlock,
+			executorBaseBlock: executorBase,
 		}
 		executorTimerBlock.runLogicFunction = executorTimerBlock.runLogic
 
 		executorBlock = &executorTimerBlock
-	case model.WaitForSignalBlock:
-		waitForSignalBlock := block.(model.WaitForSignalBlock)
-		baseBlock.iBlock = &waitForSignalBlock
-
+	case block.TypeWaitForSignal:
 		executorWaitForSignalBlock := ExecutorWaitForSignalBlock{
-			executorBaseBlock: baseBlock,
+			executorBaseBlock: executorBase,
 		}
 		executorWaitForSignalBlock.runLogicFunction = executorWaitForSignalBlock.runLogic
 
@@ -133,14 +99,14 @@ func GetBlockInstances(
 	return executorBlock
 }
 
-func getBaseBlock(
-	ctx workflow.Context, entCtx context.Context, input, state map[string]interface{},
-	updateStatusFunction func(context.Context, int, blockinstance.Status, bool, map[string]interface{}, string) error,
+func createExecutorBase(
+	ctx workflow.Context, baseBlock model.BaseBlock, input, state map[string]interface{},
+	updateStatusFunction func(int, blockinstance.Status, bool, map[string]interface{}, string) error,
 ) executorBaseBlock {
 
 	return executorBaseBlock{
-		EntCtx:               entCtx,
-		WorkflowCtx:          ctx,
+		Ctx:                  ctx,
+		executorBlock:        baseBlock,
 		input:                input,
 		state:                state,
 		updateStatusFunction: updateStatusFunction,

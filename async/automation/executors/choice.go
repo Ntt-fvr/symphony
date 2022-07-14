@@ -2,7 +2,6 @@ package executors
 
 import (
 	"github.com/facebookincubator/symphony/async/automation/celgo"
-	"github.com/facebookincubator/symphony/async/automation/model"
 )
 
 type ExecutorChoiceBlock struct {
@@ -18,7 +17,10 @@ func (b *ExecutorChoiceBlock) runLogic() error {
 		celgo.StateVariable: stateVariable,
 	}
 
-	choiceBlock := b.iBlock.(*model.ChoiceBlock)
+	choiceBlock := b.executorBlock.Choice
+	if choiceBlock == nil {
+		return configNotFound
+	}
 
 	for _, rule := range choiceBlock.ChoiceRules {
 		result, err := celgo.CompileAndEvaluate(rule.Condition, variables)
@@ -28,7 +30,7 @@ func (b *ExecutorChoiceBlock) runLogic() error {
 
 		value, ok := result.Value().(bool)
 		if ok && value {
-			b.iBlock.SetNextBlockID(rule.BlockID)
+			b.executorBlock.SetNextBlockID(rule.BlockID)
 			break
 		}
 	}

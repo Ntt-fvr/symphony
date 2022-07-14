@@ -10,6 +10,6 @@ type ExecutorWaitForSignalBlock struct {
 }
 
 func (b *ExecutorWaitForSignalBlock) runLogic() error {
-	b.output = b.WaitForSignalFunction(b.WorkflowCtx, b.input)
+	b.output = b.WaitForSignalFunction(b.Ctx, b.input)
 	return nil
 }

@@ -19,41 +19,35 @@ type BlockTransformations struct {
 	OutputState *BlockTransformationValue
 }
 
-type IBlock interface {
-	GetBlockID() int
-	GetFlowInstanceID() int
-	GetBlockInstanceID() int
-	SetBlockInstanceID(int)
-	GetNextBlockID() int
-	SetNextBlockID(int)
-	GetTransformations() BlockTransformations
-	GetInputTransformation() bool
-	GetInputStateTransformation() bool
-	GetOutputTransformation() bool
-	GetOutputStateTransformation() bool
-	AddAttempts()
-	GetAttempts() int
-	GetMaxAttempts() int
-}
-
 type BaseBlock struct {
-	BlockType                 block.Type
-	BlockID                   int
-	FlowInstanceID            int
-	BlockInstanceID           int
-	NextBlock                 int
-	Attempts                  int
-	MaxAttempts               int
-	BackOffRate               int
-	InputTransformation       bool
-	InputStateTransformation  bool
-	OutputTransformation      bool
-	OutputStateTransformation bool
-	ErrorHandling             bool
-	RetryPolicy               bool
-	RetryInterval             int
-	RetryUnit                 block.RetryUnit
-	Transformations           BlockTransformations
+	BlockType                 block.Type           `json:"blockType,omitempty"`
+	BlockID                   int                  `json:"blockID,omitempty"`
+	FlowInstanceID            int                  `json:"flowInstanceID,omitempty"`
+	BlockInstanceID           int                  `json:"blockInstanceID,omitempty"`
+	NextBlock                 int                  `json:"nextBlock,omitempty"`
+	Attempts                  int                  `json:"attempts,omitempty"`
+	MaxAttempts               int                  `json:"maxAttempts,omitempty"`
+	BackOffRate               int                  `json:"backOffRate,omitempty"`
+	InputTransformation       bool                 `json:"inputTransformation,omitempty"`
+	InputStateTransformation  bool                 `json:"InputStateTransformation,omitempty"`
+	OutputTransformation      bool                 `json:"outputTransformation,omitempty"`
+	OutputStateTransformation bool                 `json:"OutputStateTransformation,omitempty"`
+	ErrorHandling             bool                 `json:"errorHandling,omitempty"`
+	RetryPolicy               bool                 `json:"retryPolicy,omitempty"`
+	RetryInterval             int                  `json:"retryInterval,omitempty"`
+	RetryUnit                 block.RetryUnit      `json:"retryUnit,omitempty"`
+	Transformations           BlockTransformations `json:"transformations,omitempty"`
+	Start                     *StartBlock          `json:"start,omitempty"`
+	End                       *EndBlock            `json:"end,omitempty"`
+	Goto                      *GotoBlock           `json:"goto,omitempty"`
+	Choice                    *ChoiceBlock         `json:"choice,omitempty"`
+	ExecuteFlow               *ExecuteFlowBlock    `json:"executeFlow,omitempty"`
+	ForEach                   *ForEachBlock        `json:"forEach,omitempty"`
+	InvokeRestAPI             *InvokeRestAPIBlock  `json:"invokeRestAPI,omitempty"`
+	Kafka                     *KafkaBlock          `json:"kafka,omitempty"`
+	Parallel                  *ParallelBlock       `json:"parallel,omitempty"`
+	Timer                     *TimerBlock          `json:"timer,omitempty"`
+	WaitForSignal             *WaitForSignalBlock  `json:"waitForSignal,omitempty"`
 }
 
 func (block *BaseBlock) GetBlockID() int {
@@ -113,75 +107,64 @@ func (block *BaseBlock) GetMaxAttempts() int {
 }
 
 type StartBlock struct {
-	BaseBlock
 }
 
 type EndBlock struct {
-	BaseBlock
 }
 
 type GotoBlock struct {
-	BaseBlock
 }
 
 type ChoiceRule struct {
-	BlockID   int
-	Condition string
-	Order     int
+	BlockID   int    `json:"blockID,omitempty"`
+	Condition string `json:"condition,omitempty"`
+	Index     int    `json:"index,omitempty"`
 }
 
 type ChoiceBlock struct {
-	BaseBlock
-	ChoiceRules []ChoiceRule
+	ChoiceRules []ChoiceRule `json:"choiceRules,omitempty"`
 }
 
 type ExecuteFlowBlock struct {
-	BaseBlock
-	FlowID int
+	FlowID int `json:"flowID,omitempty"`
 }
 
 type ForEachBlock struct {
-	BaseBlock
-	Key          string
-	StartBlockID int
+	Key          string `json:"key,omitempty"`
+	StartBlockID int    `json:"startBlockID,omitempty"`
 }
 
 type InvokeRestAPIBlock struct {
-	BaseBlock
-	Timeout int
-	Url     string
-	Body    string
-	Method  block.URLMethod
-	Headers map[string]string
+	Timeout int               `json:"timeout,omitempty"`
+	Url     string            `json:"url,omitempty"`
+	Body    string            `json:"body,omitempty"`
+	Method  block.URLMethod   `json:"method,omitempty"`
+	Headers map[string]string `json:"headers,omitempty"`
 }
 
 type KafkaBlock struct {
-	BaseBlock
-	Topic       string
-	Expression  string
-	Brokers     []string
-	MessageType enum.KafkaMessageType
+	Topic       string                `json:"topic,omitempty"`
+	Expression  string                `json:"expression,omitempty"`
+	Brokers     []string              `json:"brokers,omitempty"`
+	MessageType enum.KafkaMessageType `json:"messageType,omitempty"`
 }
 
 type ParallelBlock struct {
-	BaseBlock
-	Key          string
-	StartBlockID int
+	Key          string `json:"key,omitempty"`
+	StartBlockID int    `json:"startBlockID,omitempty"`
 }
 
 type TimerBlock struct {
-	BaseBlock
-	Seconds          int
-	EnableExpression bool
-	Expression       string
-	SpecificDate     time.Time
-	Behavior         block.TimerBehavior
+	Seconds          int                 `json:"seconds,omitempty"`
+	EnableExpression bool                `json:"enableExpression,omitempty"`
+	Expression       string              `json:"expression,omitempty"`
+	SpecificDate     time.Time           `json:"specificDate,omitempty"`
+	Behavior         block.TimerBehavior `json:"behavior,omitempty"`
 }
 
 type WaitForSignalBlock struct {
-	BaseBlock
-	Blocked      bool
-	CustomFilter string
-	SignalType   block.SignalType
-	SignalModule block.SignalModule
+	Blocked      bool               `json:"blocked,omitempty"`
+	CustomFilter string             `json:"customFilter,omitempty"`
+	SignalType   block.SignalType   `json:"signalType,omitempty"`
+	SignalModule block.SignalModule `json:"signalModule,omitempty"`
 }

@@ -6,7 +6,6 @@ import (
 	"errors"
 	"fmt"
 	"github.com/facebookincubator/symphony/async/automation/celgo"
-	"github.com/facebookincubator/symphony/async/automation/model"
 	"github.com/facebookincubator/symphony/async/automation/util"
 	"io"
 	"io/ioutil"
@@ -24,7 +23,10 @@ type ExecutorInvokeRestAPIBlock struct {
 
 func (b *ExecutorInvokeRestAPIBlock) runLogic() error {
 
-	invokeRestAPIBlock := b.iBlock.(*model.InvokeRestAPIBlock)
+	invokeRestAPIBlock := b.executorBlock.InvokeRestAPI
+	if invokeRestAPIBlock == nil {
+		return configNotFound
+	}
 
 	url, body, err := b.getUrlAndBody()
 	if err != nil {
@@ -81,16 +83,19 @@ func (b *ExecutorInvokeRestAPIBlock) getUrlAndBody() (*string, []byte, error) {
 		celgo.StateVariable: stateVariable,
 	}
 
-	block := b.iBlock.(*model.InvokeRestAPIBlock)
+	invokeRestAPIBlock := b.executorBlock.InvokeRestAPI
+	if invokeRestAPIBlock == nil {
+		return nil, nil, configNotFound
+	}
 
 	var invokeBody string
-	if len(block.Body) > 0 {
-		invokeBody = block.Body
+	if len(invokeRestAPIBlock.Body) > 0 {
+		invokeBody = invokeRestAPIBlock.Body
 	} else {
 		invokeBody = "{}"
 	}
 
-	expression := fmt.Sprintf(`{"%s": %s,"%s": %s}`, urlKey, block.Url, bodyKey, invokeBody)
+	expression := fmt.Sprintf(`{"%s": %s,"%s": %s}`, urlKey, invokeRestAPIBlock.Url, bodyKey, invokeBody)
 
 	result, err := celgo.CompileAndEvaluate(expression, variables)
 	if err != nil {

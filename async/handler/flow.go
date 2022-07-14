@@ -6,7 +6,6 @@ package handler
 
 import (
 	"context"
-	"fmt"
 	"github.com/facebookincubator/symphony/async/automation/cadence/flow"
 	"time"
 
@@ -40,7 +39,6 @@ func (f FlowHandler) Handle(ctx context.Context, _ log.Logger, evt ev.EventObjec
 
 	v := viewer.FromContext(ctx)
 	if !v.Features().Enabled(viewer.FeatureExecuteAutomationFlows) {
-		fmt.Println("FeatureExecuteAutomationFlows disabled")
 		return nil
 	}
 
@@ -53,38 +51,25 @@ func (f FlowHandler) Handle(ctx context.Context, _ log.Logger, evt ev.EventObjec
 	runFlowInput := worker.RunFlowInput{
 		FlowInstanceID: entry.CurrState.ID,
 	}
-	fmt.Println("Automation - FlowInstanceID: ", entry.CurrState.ID)
 
-	/*
-		_, err := f.client.StartWorkflow(
-			ctx, workflowOptions, worker.RunFlowWorkflowName,
-			ctx, worker.TaskListName, runFlowInput,
-		)
-	*/
 	execution, err := f.client.StartWorkflow(
 		ctx, workflowOptions, flow.AutomationWorkflow,
-		ctx, worker.AutomationTaskListName, runFlowInput.FlowInstanceID,
+		worker.AutomationTaskListName, runFlowInput.FlowInstanceID,
 	)
 
 	if err != nil {
-		fmt.Println("Workflow AutomationWorkflow error: ")
-		fmt.Println("-----------------------")
-		fmt.Println(err)
-		fmt.Println("-----------------------")
-		fmt.Println(err.Error())
-		fmt.Println("-----------------------")
-		fmt.Println()
-	} else if execution != nil {
-		fmt.Println()
-		fmt.Printf(
-			"Workflow AutomationWorkflow started!\n"+
-				"Worflow ID: %s\n"+
-				"Run ID: %s",
-			execution.ID, execution.RunID,
-		)
-		fmt.Println()
-	} else {
-		fmt.Println("Workflow Execution is null")
+		return err
 	}
+
+	_, err = ent.FromContext(ctx).FlowInstance.
+		UpdateOneID(runFlowInput.FlowInstanceID).
+		SetBssCode(execution.ID).
+		SetServiceInstanceCode(execution.RunID).
+		Save(ctx)
+
+	if err != nil {
+		return err
+	}
+
 	return err
 }

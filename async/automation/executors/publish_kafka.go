@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"github.com/confluentinc/confluent-kafka-go/kafka"
 	"github.com/facebookincubator/symphony/async/automation/celgo"
-	"github.com/facebookincubator/symphony/async/automation/model"
 	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
 	"strings"
 )
@@ -14,7 +13,10 @@ type ExecutorKafkaBlock struct {
 }
 
 func (b *ExecutorKafkaBlock) runLogic() error {
-	kafkaBlock := b.iBlock.(*model.KafkaBlock)
+	kafkaBlock := b.executorBlock.Kafka
+	if kafkaBlock == nil {
+		return configNotFound
+	}
 
 	brokers := strings.Join(kafkaBlock.Brokers, ";")
 

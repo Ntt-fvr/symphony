@@ -2,7 +2,6 @@ package executors
 
 import (
 	"github.com/facebookincubator/symphony/async/automation/celgo"
-	"github.com/facebookincubator/symphony/async/automation/model"
 	"github.com/facebookincubator/symphony/async/automation/util"
 	"github.com/facebookincubator/symphony/pkg/ent/block"
 	"github.com/google/cel-go/common/types/ref"
@@ -19,7 +18,10 @@ func (b *ExecutorTimerBlock) runLogic() error {
 	var inputVariable, stateVariable ref.Val
 	var variables map[string]interface{}
 
-	timerBlock := b.iBlock.(*model.TimerBlock)
+	timerBlock := b.executorBlock.Timer
+	if timerBlock == nil {
+		return configNotFound
+	}
 
 	if timerBlock.EnableExpression {
 
@@ -63,7 +65,7 @@ func (b *ExecutorTimerBlock) runLogic() error {
 		duration = util.GetDurationFromDateTime(timerBlock.SpecificDate)
 	}
 
-	value := b.TimerFunction(b.WorkflowCtx, duration)
+	value := b.TimerFunction(b.Ctx, duration)
 	if value == nil {
 		b.output = b.input
 		return nil
