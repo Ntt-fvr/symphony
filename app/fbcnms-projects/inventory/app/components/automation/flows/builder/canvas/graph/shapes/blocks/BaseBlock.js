@@ -35,6 +35,11 @@ import {DISPLAY_SETTINGS} from '../../utils/helpers';
 import {PORTS_GROUPS} from '../../facades/shapes/vertexes/BaseVertext';
 import {V} from 'jointjs';
 import {
+  bigSize,
+  mediumSize,
+  originSize,
+} from '../../facades/shapes/vertexes/BaseVertext';
+import {
   getInitialBlockSettings,
   setBlockSettings,
 } from './blockTypes/BaseSettings';
@@ -50,10 +55,6 @@ import {
   initialOutputSettings,
   setOutputSettings,
 } from './blockTypes/OutputSettingsType';
-import {
-  mediumSize,
-  originSize,
-} from '../../facades/shapes/vertexes/BaseVertext';
 
 import {TYPE as ForEachLoopType} from '../../facades/shapes/vertexes/logic/ForEachLoop';
 import {TYPE as ParallelType} from '../../facades/shapes/vertexes/logic/Parallel';
@@ -102,6 +103,7 @@ export interface IBlock {
   +setName: string => void;
   +setParent: string => void;
   +setSize: string => void;
+  +setPosition: (number, number) => void;
   +setSettings: string => void;
   +setInputSettings: string => void;
   +setOutputSettings: string => void;
@@ -169,6 +171,11 @@ export default class BaseBlock implements IBlock {
       this.model.attributes.type == ParallelType
     ) {
       switch (typeSizeCoupled) {
+        case 'bigSizeCoupled':
+          this.model.resize(bigSize.resizeWidth, bigSize.resizeHeigth);
+          this.model.attr('coupled/width', bigSize.width);
+          break;
+
         case 'mediumSizeCoupled':
           this.model.resize(mediumSize.resizeWidth, mediumSize.resizeHeigth);
           this.model.attr('coupled/width', mediumSize.width);
@@ -193,6 +200,10 @@ export default class BaseBlock implements IBlock {
           return;
       }
     }
+  }
+
+  setPosition(positionX: number, positionY: number) {
+    this.model.position(positionX, positionY);
   }
 
   setSettings(settings: string) {

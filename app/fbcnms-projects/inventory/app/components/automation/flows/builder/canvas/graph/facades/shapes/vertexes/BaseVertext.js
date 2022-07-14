@@ -270,3 +270,9 @@ export const mediumSize = {
   resizeWidth: 394,
   resizeHeigth: 344,
 };
+
+export const bigSize = {
+  width: 637,
+  resizeWidth: 594,
+  resizeHeigth: 344,
+};
