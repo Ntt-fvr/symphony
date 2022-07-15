@@ -97,8 +97,9 @@ func TestAddDeleteFlowDraft(t *testing.T) {
 	name := "5G Deployment"
 	description := "Flow used for managing all technical operation around deployment"
 	flowDraft, err := mr.AddFlowDraft(ctx, models.AddFlowDraftInput{
-		Name:        name,
-		Description: &description,
+		Name:                name,
+		Description:         &description,
+		EndParamDefinitions: []*flowschema.VariableDefinition{},
 	})
 	require.NoError(t, err)
 	require.Equal(t, name, flowDraft.Name)
