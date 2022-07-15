@@ -52,24 +52,10 @@ func (f FlowHandler) Handle(ctx context.Context, _ log.Logger, evt ev.EventObjec
 		FlowInstanceID: entry.CurrState.ID,
 	}
 
-	execution, err := f.client.StartWorkflow(
+	_, err := f.client.StartWorkflow(
 		ctx, workflowOptions, flow.AutomationWorkflow,
 		worker.AutomationTaskListName, runFlowInput.FlowInstanceID,
 	)
-
-	if err != nil {
-		return err
-	}
-
-	_, err = ent.FromContext(ctx).FlowInstance.
-		UpdateOneID(runFlowInput.FlowInstanceID).
-		SetBssCode(execution.ID).
-		SetServiceInstanceCode(execution.RunID).
-		Save(ctx)
-
-	if err != nil {
-		return err
-	}
 
 	return err
 }

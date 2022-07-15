@@ -14,18 +14,14 @@ import (
 	"time"
 )
 
-var ctx context.Context
-
-func init() {
-	ctx = context.Background()
-}
-
 func CreateBlockInstance(flowInstanceID int, blockID int, input map[string]interface{}) (int, error) {
 
 	inputJson, err := util.ToJson(input)
 	if err != nil {
 		return 0, err
 	}
+
+	ctx := context.Background()
 
 	blockInstance, err := ent.FromContext(ctx).
 		BlockInstance.
@@ -50,6 +46,8 @@ func UpdateBlockStatus(
 	blockInstanceID int, status blockinstance.Status, close bool,
 	output map[string]interface{}, failureReason string,
 ) error {
+
+	ctx := context.Background()
 
 	query := ent.FromContext(ctx).BlockInstance.
 		UpdateOneID(blockInstanceID).
@@ -79,6 +77,8 @@ func UpdateBlockStatus(
 
 func UpdateFlowInstance(flowInstanceID int, workflowID string, runID string) error {
 
+	ctx := context.Background()
+
 	_, err := ent.FromContext(ctx).FlowInstance.
 		UpdateOneID(flowInstanceID).
 		SetBssCode(workflowID).
@@ -93,6 +93,8 @@ func UpdateFlowInstance(flowInstanceID int, workflowID string, runID string) err
 }
 
 func UpdateFlowInstanceStatus(flowInstanceID int, status flowinstance.Status, close bool) error {
+
+	ctx := context.Background()
 
 	query := ent.FromContext(ctx).FlowInstance.
 		UpdateOneID(flowInstanceID).
@@ -111,6 +113,8 @@ func UpdateFlowInstanceStatus(flowInstanceID int, status flowinstance.Status, cl
 }
 
 func GetInputAndBlocks(flowInstanceID int) (map[string]interface{}, map[int]model.BaseBlock, error) {
+
+	ctx := context.Background()
 
 	flowInstance, err := ent.FromContext(ctx).
 		FlowInstance.
@@ -145,11 +149,11 @@ func GetInputAndBlocks(flowInstanceID int) (map[string]interface{}, map[int]mode
 
 			transformations := getTransformation(templateBlock)
 
-			baseBlock := getBaseBlock(templateBlock, transformations, flowInstanceID)
+			baseBlock := createBaseBlock(templateBlock, transformations, flowInstanceID)
 
 			switch templateBlock.Type {
 			case block.TypeStart:
-				startBlock, err := createStartBlock(templateBlock, baseBlock)
+				startBlock, err := createStartBlock(ctx, templateBlock, baseBlock)
 				if err != nil {
 					return nil, nil, err
 				}
@@ -158,7 +162,7 @@ func GetInputAndBlocks(flowInstanceID int) (map[string]interface{}, map[int]mode
 					blocks[templateBlock.ID] = *startBlock
 				}
 			case block.TypeEnd:
-				endBlock, err := createEndBlock(templateBlock, baseBlock)
+				endBlock, err := createEndBlock(ctx, templateBlock, baseBlock)
 				if err != nil {
 					return nil, nil, err
 				}
@@ -167,7 +171,7 @@ func GetInputAndBlocks(flowInstanceID int) (map[string]interface{}, map[int]mode
 					blocks[templateBlock.ID] = *endBlock
 				}
 			case block.TypeGoTo:
-				gotoBlock, err := createGotoBlock(templateBlock, baseBlock)
+				gotoBlock, err := createGotoBlock(ctx, templateBlock, baseBlock)
 				if err != nil {
 					return nil, nil, err
 				}
@@ -176,7 +180,7 @@ func GetInputAndBlocks(flowInstanceID int) (map[string]interface{}, map[int]mode
 					blocks[templateBlock.ID] = *gotoBlock
 				}
 			case block.TypeChoice:
-				choiceBlock, err := createChoiceBlock(templateBlock, baseBlock)
+				choiceBlock, err := createChoiceBlock(ctx, templateBlock, baseBlock)
 				if err != nil {
 					return nil, nil, err
 				}
@@ -185,7 +189,7 @@ func GetInputAndBlocks(flowInstanceID int) (map[string]interface{}, map[int]mode
 					blocks[templateBlock.ID] = *choiceBlock
 				}
 			case block.TypeExecuteFlow:
-				executeFlowBlock, err := createExecuteFlowBlock(templateBlock, baseBlock)
+				executeFlowBlock, err := createExecuteFlowBlock(ctx, templateBlock, baseBlock)
 				if err != nil {
 					return nil, nil, err
 				}
@@ -194,7 +198,7 @@ func GetInputAndBlocks(flowInstanceID int) (map[string]interface{}, map[int]mode
 					blocks[templateBlock.ID] = *executeFlowBlock
 				}
 			case block.TypeForEach:
-				forEachBlock, err := createForEachBlock(templateBlock, baseBlock)
+				forEachBlock, err := createForEachBlock(ctx, templateBlock, baseBlock)
 				if err != nil {
 					return nil, nil, err
 				}
@@ -203,7 +207,7 @@ func GetInputAndBlocks(flowInstanceID int) (map[string]interface{}, map[int]mode
 					blocks[templateBlock.ID] = *forEachBlock
 				}
 			case block.TypeInvokeRestAPI:
-				invokeBlock, err := createInvokeRestAPIBlock(templateBlock, baseBlock)
+				invokeBlock, err := createInvokeRestAPIBlock(ctx, templateBlock, baseBlock)
 				if err != nil {
 					return nil, nil, err
 				}
@@ -212,7 +216,7 @@ func GetInputAndBlocks(flowInstanceID int) (map[string]interface{}, map[int]mode
 					blocks[templateBlock.ID] = *invokeBlock
 				}
 			case block.TypeKafka:
-				kafkaBlock, err := createKafkaBlock(templateBlock, baseBlock)
+				kafkaBlock, err := createKafkaBlock(ctx, templateBlock, baseBlock)
 				if err != nil {
 					return nil, nil, err
 				}
@@ -221,7 +225,7 @@ func GetInputAndBlocks(flowInstanceID int) (map[string]interface{}, map[int]mode
 					blocks[templateBlock.ID] = *kafkaBlock
 				}
 			case block.TypeParallel:
-				parallelBlock, err := createParallelBlock(templateBlock, baseBlock)
+				parallelBlock, err := createParallelBlock(ctx, templateBlock, baseBlock)
 				if err != nil {
 					return nil, nil, err
 				}
@@ -230,7 +234,7 @@ func GetInputAndBlocks(flowInstanceID int) (map[string]interface{}, map[int]mode
 					blocks[templateBlock.ID] = *parallelBlock
 				}
 			case block.TypeTimer:
-				timerBlock, err := createTimerBlock(templateBlock, baseBlock)
+				timerBlock, err := createTimerBlock(ctx, templateBlock, baseBlock)
 				if err != nil {
 					return nil, nil, err
 				}
@@ -239,7 +243,7 @@ func GetInputAndBlocks(flowInstanceID int) (map[string]interface{}, map[int]mode
 					blocks[templateBlock.ID] = *timerBlock
 				}
 			case block.TypeWaitForSignal:
-				waitForSignalBlock, err := createWaitForSignalBlock(templateBlock, baseBlock)
+				waitForSignalBlock, err := createWaitForSignalBlock(ctx, templateBlock, baseBlock)
 				if err != nil {
 					return nil, nil, err
 				}
@@ -316,7 +320,7 @@ func getTransformation(block *ent.Block) model.BlockTransformations {
 	return transformations
 }
 
-func getBaseBlock(
+func createBaseBlock(
 	templateBlock *ent.Block, transformations model.BlockTransformations, flowInstanceID int,
 ) model.BaseBlock {
 
@@ -379,7 +383,7 @@ func getBaseBlock(
 	}
 }
 
-func getNextBlock(block *ent.Block, baseBlock model.BaseBlock) (model.BaseBlock, error) {
+func getNextBlock(ctx context.Context, block *ent.Block, baseBlock model.BaseBlock) (model.BaseBlock, error) {
 	nextBlockID, err := block.QueryExitPoints().
 		QueryNextEntryPoints().
 		QueryParentBlock().
@@ -394,9 +398,11 @@ func getNextBlock(block *ent.Block, baseBlock model.BaseBlock) (model.BaseBlock,
 	return baseBlock, err
 }
 
-func createStartBlock(templateBlock *ent.Block, baseBlock model.BaseBlock) (*model.BaseBlock, error) {
+func createStartBlock(
+	ctx context.Context, templateBlock *ent.Block, baseBlock model.BaseBlock,
+) (*model.BaseBlock, error) {
 
-	baseBlock, err := getNextBlock(templateBlock, baseBlock)
+	baseBlock, err := getNextBlock(ctx, templateBlock, baseBlock)
 	if err != nil {
 		return nil, err
 	}
@@ -406,14 +412,16 @@ func createStartBlock(templateBlock *ent.Block, baseBlock model.BaseBlock) (*mod
 	return &baseBlock, nil
 }
 
-func createEndBlock(_ *ent.Block, baseBlock model.BaseBlock) (*model.BaseBlock, error) {
+func createEndBlock(_ context.Context, _ *ent.Block, baseBlock model.BaseBlock) (*model.BaseBlock, error) {
 	baseBlock.End = &model.EndBlock{}
 	return &baseBlock, nil
 }
 
-func createGotoBlock(templateBlock *ent.Block, baseBlock model.BaseBlock) (*model.BaseBlock, error) {
+func createGotoBlock(
+	ctx context.Context, templateBlock *ent.Block, baseBlock model.BaseBlock,
+) (*model.BaseBlock, error) {
 
-	baseBlock, err := getNextBlock(templateBlock, baseBlock)
+	baseBlock, err := getNextBlock(ctx, templateBlock, baseBlock)
 	if err != nil {
 		return nil, err
 	}
@@ -423,7 +431,9 @@ func createGotoBlock(templateBlock *ent.Block, baseBlock model.BaseBlock) (*mode
 	return &baseBlock, nil
 }
 
-func createChoiceBlock(templateBlock *ent.Block, baseBlock model.BaseBlock) (*model.BaseBlock, error) {
+func createChoiceBlock(
+	ctx context.Context, templateBlock *ent.Block, baseBlock model.BaseBlock,
+) (*model.BaseBlock, error) {
 
 	exitPoints, err := templateBlock.QueryExitPoints().All(ctx)
 	if err != nil {
@@ -455,9 +465,11 @@ func createChoiceBlock(templateBlock *ent.Block, baseBlock model.BaseBlock) (*mo
 	return &baseBlock, nil
 }
 
-func createExecuteFlowBlock(templateBlock *ent.Block, baseBlock model.BaseBlock) (*model.BaseBlock, error) {
+func createExecuteFlowBlock(
+	ctx context.Context, templateBlock *ent.Block, baseBlock model.BaseBlock,
+) (*model.BaseBlock, error) {
 
-	baseBlock, err := getNextBlock(templateBlock, baseBlock)
+	baseBlock, err := getNextBlock(ctx, templateBlock, baseBlock)
 
 	if err != nil {
 		return nil, err
@@ -478,9 +490,11 @@ func createExecuteFlowBlock(templateBlock *ent.Block, baseBlock model.BaseBlock)
 	return &baseBlock, nil
 }
 
-func createForEachBlock(templateBlock *ent.Block, baseBlock model.BaseBlock) (*model.BaseBlock, error) {
+func createForEachBlock(
+	ctx context.Context, templateBlock *ent.Block, baseBlock model.BaseBlock,
+) (*model.BaseBlock, error) {
 
-	baseBlock, err := getNextBlock(templateBlock, baseBlock)
+	baseBlock, err := getNextBlock(ctx, templateBlock, baseBlock)
 	if err != nil {
 		return nil, err
 	}
@@ -500,9 +514,11 @@ func createForEachBlock(templateBlock *ent.Block, baseBlock model.BaseBlock) (*m
 	return &baseBlock, nil
 }
 
-func createInvokeRestAPIBlock(templateBlock *ent.Block, baseBlock model.BaseBlock) (*model.BaseBlock, error) {
+func createInvokeRestAPIBlock(
+	ctx context.Context, templateBlock *ent.Block, baseBlock model.BaseBlock,
+) (*model.BaseBlock, error) {
 
-	baseBlock, err := getNextBlock(templateBlock, baseBlock)
+	baseBlock, err := getNextBlock(ctx, templateBlock, baseBlock)
 	if err != nil {
 		return nil, err
 	}
@@ -548,9 +564,11 @@ func createInvokeRestAPIBlock(templateBlock *ent.Block, baseBlock model.BaseBloc
 	return &baseBlock, nil
 }
 
-func createKafkaBlock(templateBlock *ent.Block, baseBlock model.BaseBlock) (*model.BaseBlock, error) {
+func createKafkaBlock(
+	ctx context.Context, templateBlock *ent.Block, baseBlock model.BaseBlock,
+) (*model.BaseBlock, error) {
 
-	baseBlock, err := getNextBlock(templateBlock, baseBlock)
+	baseBlock, err := getNextBlock(ctx, templateBlock, baseBlock)
 	if err != nil {
 		return nil, err
 	}
@@ -565,9 +583,11 @@ func createKafkaBlock(templateBlock *ent.Block, baseBlock model.BaseBlock) (*mod
 	return &baseBlock, nil
 }
 
-func createParallelBlock(templateBlock *ent.Block, baseBlock model.BaseBlock) (*model.BaseBlock, error) {
+func createParallelBlock(
+	ctx context.Context, templateBlock *ent.Block, baseBlock model.BaseBlock,
+) (*model.BaseBlock, error) {
 
-	baseBlock, err := getNextBlock(templateBlock, baseBlock)
+	baseBlock, err := getNextBlock(ctx, templateBlock, baseBlock)
 	if err != nil {
 		return nil, err
 	}
@@ -587,9 +607,11 @@ func createParallelBlock(templateBlock *ent.Block, baseBlock model.BaseBlock) (*
 	return &baseBlock, nil
 }
 
-func createTimerBlock(templateBlock *ent.Block, baseBlock model.BaseBlock) (*model.BaseBlock, error) {
+func createTimerBlock(
+	ctx context.Context, templateBlock *ent.Block, baseBlock model.BaseBlock,
+) (*model.BaseBlock, error) {
 
-	baseBlock, err := getNextBlock(templateBlock, baseBlock)
+	baseBlock, err := getNextBlock(ctx, templateBlock, baseBlock)
 
 	if err != nil {
 		return nil, err
@@ -632,9 +654,11 @@ func createTimerBlock(templateBlock *ent.Block, baseBlock model.BaseBlock) (*mod
 	return &baseBlock, nil
 }
 
-func createWaitForSignalBlock(templateBlock *ent.Block, baseBlock model.BaseBlock) (*model.BaseBlock, error) {
+func createWaitForSignalBlock(
+	ctx context.Context, templateBlock *ent.Block, baseBlock model.BaseBlock,
+) (*model.BaseBlock, error) {
 
-	baseBlock, err := getNextBlock(templateBlock, baseBlock)
+	baseBlock, err := getNextBlock(ctx, templateBlock, baseBlock)
 	if err != nil {
 		return nil, err
 	}
