@@ -37,7 +37,10 @@ import {MenuItem} from '@material-ui/core';
 import {camelCase, startCase} from 'lodash';
 import {makeStyles} from '@material-ui/styles';
 import {omit} from 'lodash';
-import {toMutableProperty} from '../context/TableTypeState';
+import {
+  toMutableProperty,
+  toMutablePropertyEdit,
+} from '../context/TableTypeState';
 import {useFormInput} from '../assurance/common/useFormInput';
 import {usePropertyTypesReducer} from '../form/context/property_types/PropertyTypesTableState';
 
@@ -143,20 +146,14 @@ const AddEditResourceInLocation = (props: Props) => {
       },
     });
   }
-  const dataFormEdit = dataformModal.propertyTypes?.map(o => {
-    return {
-      ...o,
-      type: o?.resourcePropertyType,
-    };
-  });
 
   const [propertyTypes, propertyTypesDispatcher] = usePropertyTypesReducer(
     (mode === 'edit'
-      ? dataFormEdit ?? []
-      : dataformModal?.resourcePropertyTypes ?? []
+      ? dataformModal.resourceProperties ?? []
+      : dataformModal.resourcePropertyTypes ?? []
     )
       .filter(Boolean)
-      .map(toMutableProperty),
+      .map(mode === 'edit' ? toMutablePropertyEdit : toMutableProperty),
   );
 
   const spliceProperties = propertyTypes
