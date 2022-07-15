@@ -32,7 +32,7 @@ describe('Suite Test Components /Choice/ : ', () => {
     };
 
     render(<TestComponent />);
-    const text = screen.getByText(/decisionBlock/i);
+    const text = screen.getByText(/choiceBlock/i);
     expect(text).toBeInTheDocument();
   });
 });
