@@ -21,8 +21,8 @@ type Props = $ReadOnly<{|
 export default function OutputSettings({block}: Props) {
   const {outputSettings} = block;
   const strategies = [
-    {name: 'Replace', id: 'replace'},
-    {name: 'Merge', id: 'merge'},
+    {name: 'Replace', id: 'REPLACE'},
+    {name: 'Merge', id: 'MERGE'},
   ];
 
   const additionMethods = [
@@ -34,7 +34,7 @@ export default function OutputSettings({block}: Props) {
     enableOutputTransformation:
       outputSettings.enableOutputTransformation || false,
     outputParamDefinitions: outputSettings.outputParamDefinitions || '',
-    outputTranfStrategy: outputSettings.outputTranfStrategy || '',
+    outputTransfStrategy: outputSettings.outputTransfStrategy || '',
     enableOutputStateTransformation:
       outputSettings.enableOutputStateTransformation || false,
     outputStateParamDefinitions:
@@ -47,7 +47,7 @@ export default function OutputSettings({block}: Props) {
 
   const {
     enableOutputTransformation,
-    outputTranfStrategy,
+    outputTransfStrategy,
     outputParamDefinitions,
     enableOutputStateTransformation,
     outputStateTransfStrategy,
@@ -64,7 +64,7 @@ export default function OutputSettings({block}: Props) {
   useEffect(() => {
     if (enableOutputTransformation === false)
       handleInputChange({
-        target: {name: 'outputTranfStrategy', value: ''},
+        target: {name: 'outputTransfStrategy', value: ''},
       });
   }, [enableOutputTransformation]);
 
@@ -89,10 +89,10 @@ export default function OutputSettings({block}: Props) {
           inputTransformValue={enableOutputTransformation}
           inputTransformName={'enableOutputTransformation'}
           inputTransformLabel={'Transform Output'}
-          inputStrategyValue={outputTranfStrategy}
-          inputStrategyName="outputTranfStrategy"
+          inputStrategyValue={outputTransfStrategy}
+          inputStrategyName={'outputTransfStrategy'}
           inputJsonValue={outputParamDefinitions}
-          inputJsonName="outputParamDefinitions"
+          inputJsonName={'outputParamDefinitions'}
           inputStrategyLabel="Strategy"
           strategies={strategies}
           handleInputChange={handleInputChange}

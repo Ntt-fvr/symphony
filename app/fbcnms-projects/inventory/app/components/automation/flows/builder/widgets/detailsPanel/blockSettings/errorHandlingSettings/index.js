@@ -41,17 +41,17 @@ export default function ErrorHandlingSettings({block}: Props) {
   const {errorSettings} = block;
   const classes = useStyles();
   const unitsPolicy = [
-    {name: 'Seconds', id: 'seconds'},
-    {name: 'Minutes', id: 'minutes'},
-    {name: 'Hours', id: 'hours'},
+    {name: 'Seconds', id: 'SECONDS'},
+    {name: 'Minutes', id: 'MINUTES'},
+    {name: 'Hours', id: 'HOURS'},
   ];
   const [inputValues, handleInputChange] = useForm({
     enableRetryPolicy: errorSettings?.enableRetryPolicy || false,
-    retryInterval: errorSettings?.retryInterval || '',
-    units: errorSettings?.units || '',
-    maxAttemps: errorSettings?.maxAttemps || '',
-    backoffRate: errorSettings?.backoffRate || '',
-    errorCatching: errorSettings?.errorCatching || false,
+    retryInterval: errorSettings?.retryInterval || 0,
+    units: errorSettings?.units || 0,
+    maxAttemps: errorSettings?.maxAttemps || 0,
+    backoffRate: errorSettings?.backoffRate || 0,
+    // errorCatching: errorSettings?.errorCatching || false,
   });
 
   useEffect(() => {
@@ -138,16 +138,17 @@ export default function ErrorHandlingSettings({block}: Props) {
       </Grid>
       <Grid item xs={12} className={classes.formLabel}>
         <FormControlLabel
-          value={errorCatching}
+          // value={errorCatching}
           control={
             <Switch
               title=""
               checked={errorCatching}
-              onChange={value => {
-                handleInputChange({
-                  target: {name: 'errorCatching', value},
-                });
-              }}
+              // Wait Back Fix
+              // onChange={value => {
+              //   handleInputChange({
+              //     target: {name: 'errorCatching', value},
+              //   });
+              // }}
             />
           }
           label={<Typography variant={'body2'}>{'Error Catching'}</Typography>}

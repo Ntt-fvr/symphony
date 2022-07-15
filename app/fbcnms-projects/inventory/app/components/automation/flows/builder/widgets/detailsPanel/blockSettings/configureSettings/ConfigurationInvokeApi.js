@@ -35,10 +35,10 @@ type Props = $ReadOnly<{|
 const ConfigurationInvokeApi = ({block}: Props) => {
   const {settings} = block;
   const urlMethods = [
-    {name: 'GET', id: 'get'},
-    {name: 'POST', id: 'post'},
-    {name: 'PUT', id: 'put'},
-    {name: 'DELETE', id: 'delete'},
+    {name: 'GET', id: 'GET'},
+    {name: 'POST', id: 'POST'},
+    {name: 'PUT', id: 'PUT'},
+    {name: 'DELETE', id: 'DELETE'},
   ];
 
   const [invokeApiSettingsValues, handleInputChange] = useForm({
