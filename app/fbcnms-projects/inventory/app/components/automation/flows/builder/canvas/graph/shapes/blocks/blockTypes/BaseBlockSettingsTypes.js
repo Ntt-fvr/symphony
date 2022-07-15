@@ -42,6 +42,10 @@ export type BaseBlockInputType = $ReadOnly<{|
     xPosition: number,
     yPosition: number,
   |},
+  basicDefinitions: BaseBlockType,
+|}>;
+
+export type BaseBlockType = $ReadOnly<{|
   enableInputTransformation: boolean,
   inputTransfStrategy?: string,
   inputParamDefinitions?: string,
@@ -49,7 +53,7 @@ export type BaseBlockInputType = $ReadOnly<{|
   inputStateTransfStrategy: string,
   inputStateParamDefinitions: string,
   enableOutputTransformation: boolean,
-  outputTranfStrategy?: string,
+  outputTransfStrategy?: string,
   outputParamDefinitions?: string,
   enableOutputStateTransformation: boolean,
   outputStateTransfStrategy: string,

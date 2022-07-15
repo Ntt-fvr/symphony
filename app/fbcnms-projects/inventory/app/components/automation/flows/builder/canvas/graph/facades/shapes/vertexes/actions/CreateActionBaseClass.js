@@ -18,13 +18,15 @@ export type ActionBaseAttributesType = {
   defaultText: string,
   fillColor?: string,
   svgPath: string,
+  type?: string,
 };
 
 export default function CreateActionBaseClass(
   actionBaseAttributes: ActionBaseAttributesType,
 ) {
   const FILL_COLOR = actionBaseAttributes.fillColor ?? '#4856b0';
-  const TYPE = getActionType(actionBaseAttributes.actionName);
+  const TYPE =
+    actionBaseAttributes.type || getActionType(actionBaseAttributes.actionName);
 
   const TOTAL_SIZE = 72;
   const PADDING = 5;

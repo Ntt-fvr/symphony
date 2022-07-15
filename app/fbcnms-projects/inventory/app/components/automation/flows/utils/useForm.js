@@ -20,9 +20,11 @@ export const useForm = (propValues = {}) => {
   };
 
   const handleInputChange = ({target}) => {
+    const value =
+      target.type === 'number' ? parseInt(target.value) : target.value;
     const fieldValuesNew = {
       ...fieldValues,
-      [target.name]: target.value,
+      [target.name]: value,
     };
     setFieldValues(fieldValuesNew);
     updateOnValueChange(fieldValuesNew);

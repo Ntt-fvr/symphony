@@ -12,7 +12,7 @@
 export type OutputSettingsType = {
   enableOutputTransformation: boolean,
   outputParamDefinitions: string,
-  outputTranfStrategy: string,
+  outputTransfStrategy: string,
   enableOutputStateTransformation: boolean,
   outputStateTransfStrategy: string,
   outputStateParamDefinitions: string,
@@ -22,10 +22,10 @@ export type OutputSettingsType = {
 };
 
 export const initialOutputSettings: OutputSettingsType = {
-  enableOutputTransformation: undefined,
-  outputTranfStrategy: undefined,
+  enableOutputTransformation: false,
+  outputTransfStrategy: undefined,
   outputParamDefinitions: undefined,
-  enableOutputStateTransformation: undefined,
+  enableOutputStateTransformation: false,
   outputStateTransfStrategy: undefined,
   outputStateParamDefinitions: undefined,
   addOriginal: undefined,

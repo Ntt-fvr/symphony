@@ -40,10 +40,7 @@ import {
 import {TYPE as ForEachLoopType} from '../builder/canvas/graph/facades/shapes/vertexes/logic/ForEachLoop';
 import {TYPE as GoToType} from '../builder/canvas/graph/facades/shapes/vertexes/logic/GoTo';
 import {InventoryAPIUrls} from '../../../../common/InventoryAPI';
-import {
-  ACTION_TYPE_ID as InvokeApiActionTypeID,
-  TYPE as InvokeApiType,
-} from '../builder/canvas/graph/facades/shapes/vertexes/actions/InvokeRestApi';
+import {TYPE as InvokeApiType} from '../builder/canvas/graph/facades/shapes/vertexes/actions/InvokeRestApi';
 import {LogEvents, ServerLogger} from '../../../../common/LoggingUtils';
 import {TYPE as ManualStartType} from '../builder/canvas/graph/facades/shapes/vertexes/administrative/ManualStart';
 import {
@@ -51,10 +48,7 @@ import {
   TYPE as NetworkActionBlockType,
 } from '../builder/canvas/graph/facades/shapes/vertexes/actions/ExecuteNetworkAction';
 import {TYPE as ParallelType} from '../builder/canvas/graph/facades/shapes/vertexes/logic/Parallel';
-import {
-  TYPE as TimerBlockType,
-  TRIGGER_TYPE_ID as TimerTriggerTypeID,
-} from '../builder/canvas/graph/facades/shapes/vertexes/triggers/Timer';
+import {TYPE as TimerBlockType} from '../builder/canvas/graph/facades/shapes/vertexes/triggers/Timer';
 import {
   TYPE as TriggerStartBlockType,
   TRIGGER_TYPE_ID as TriggerStartTriggerTypeID,
@@ -72,10 +66,7 @@ import {
   ACTION_TYPE_ID as UpdateWorkforceActionTypeID,
   TYPE as UpdateWorkforceBlockType,
 } from '../builder/canvas/graph/facades/shapes/vertexes/actions/UpdateWorkforce';
-import {
-  TYPE as WaitSignalBlockType,
-  TRIGGER_TYPE_ID as WaitSignalTriggerTypeID,
-} from '../builder/canvas/graph/facades/shapes/vertexes/triggers/WaitSignal';
+import {TYPE as WaitSignalBlockType} from '../builder/canvas/graph/facades/shapes/vertexes/triggers/WaitSignal';
 import {
   getActionType,
   getTriggerType,
@@ -88,11 +79,14 @@ import {
   mapConnectorsForSave,
   mapEndBlockForSave,
   mapGoToBlockForSave,
+  mapInvokeRestAPIBlockForSave,
   mapStartBlockForSave,
   mapTimerBlocksForSave,
   mapTriggerBlocksForSave,
   mapTrueFalseBlockForSave,
+  mapWaitForSignalBlocksForSave,
   publishFlow,
+  saveBlockInformation,
   saveFlowDraft,
 } from './flowDataUtils';
 import {useCallback, useContext, useEffect} from 'react';
@@ -155,6 +149,18 @@ const flowQuery = graphql`
                 id
               }
             }
+            ... on WaitForSignalBlock {
+              signalModule
+              customFilter
+              blocked
+              signalType: type
+            }
+            ... on InvokeRestAPIBlock {
+              method
+              url
+              connectionTimeOut
+              body
+            }
           }
           uiRepresentation {
             name
@@ -169,6 +175,30 @@ const flowQuery = graphql`
               yPosition
             }
           }
+          inputParamDefinitions {
+            defaultValue
+          }
+          outputParamDefinitions {
+            defaultValue
+          }
+          enableInputTransformation
+          inputTransfStrategy
+          inputTransformation
+          enableOutputTransformation
+          outputTransfStrategy
+          outputTransformation
+          enableInputStateTransformation
+          inputStateTransfStrategy
+          inputStateTransformation
+          enableOutputStateTransformation
+          outputStateTransfStrategy
+          outputStateTransformation
+          enableErrorHandling
+          enableRetryPolicy
+          retryInterval
+          units
+          maxAttemps
+          backoffRate
         }
         ...FlowHeader_flowDraft
       }
@@ -227,6 +257,8 @@ function FlowDataContextProviderComponent(props: Props) {
             id: block.cid,
             name: block.uiRepresentation?.name ?? '',
           });
+        } else {
+          saveBlockInformation(block, createdBlock);
         }
       });
 
@@ -346,9 +378,9 @@ function FlowDataContextProviderComponent(props: Props) {
         .getBlocksByType(ExecuteFlowType)
         .map(block => mapActionBlocksForSave(block, ExecuteFlowActionTypeID));
 
-      const invokeApiBlocks = flow
+      const invokeRestAPIBlocks = flow
         .getBlocksByType(InvokeApiType)
-        .map(block => mapActionBlocksForSave(block, InvokeApiActionTypeID));
+        .map(block => mapInvokeRestAPIBlockForSave(block));
 
       const networkActionBlocks = flow
         .getBlocksByType(NetworkActionBlockType)
@@ -359,7 +391,6 @@ function FlowDataContextProviderComponent(props: Props) {
         ...updateInventoryBlocks,
         ...updateWorkforceBlocks,
         ...executeFlowBlocks,
-        ...invokeApiBlocks,
         ...networkActionBlocks,
       ];
 
@@ -378,11 +409,11 @@ function FlowDataContextProviderComponent(props: Props) {
 
       const timerBlocks = flow
         .getBlocksByType(TimerBlockType)
-        .map(block => mapTimerBlocksForSave(block, TimerTriggerTypeID));
+        .map(block => mapTimerBlocksForSave(block));
 
       const waitForSignalBlocks = flow
         .getBlocksByType(WaitSignalBlockType)
-        .map(block => mapTriggerBlocksForSave(block, WaitSignalTriggerTypeID));
+        .map(block => mapWaitForSignalBlocksForSave(block));
 
       const endBlocks = flow.getBlocksByType(EndType).map(mapEndBlockForSave);
 
@@ -402,7 +433,7 @@ function FlowDataContextProviderComponent(props: Props) {
         triggerWorkforceBlocks,
         triggerStartBlocks,
         waitForSignalBlocks,
-        actionBlocks,
+        invokeRestAPIBlocks,
       };
 
       for (const key of Object.keys(allFlowDataItems)) {

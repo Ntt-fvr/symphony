@@ -19,10 +19,10 @@ export type InputSettingsType = {
 };
 
 export const initialInputSettings: InputSettingsType = {
-  enableInputTransformation: undefined,
+  enableInputTransformation: false,
   inputTransfStrategy: undefined,
   inputParamDefinitions: undefined,
-  enableInputStateTransformation: undefined,
+  enableInputStateTransformation: false,
   inputStateTransfStrategy: undefined,
   inputStateParamDefinitions: undefined,
 };

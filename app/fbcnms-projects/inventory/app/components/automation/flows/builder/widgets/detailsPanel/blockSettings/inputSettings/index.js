@@ -20,8 +20,8 @@ type Props = $ReadOnly<{|
 
 export default function InputSettings({block}: Props) {
   const strategies = [
-    {name: 'Replace', id: 'replace'},
-    {name: 'Merge', id: 'merge'},
+    {name: 'Replace', id: 'REPLACE'},
+    {name: 'Merge', id: 'MERGE'},
   ];
 
   const {inputSettings} = block;

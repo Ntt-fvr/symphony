@@ -13,10 +13,9 @@ import CreateActionBaseClass from './CreateActionBaseClass';
 import fbt from 'fbt';
 import symphony from '@symphony/design-system/theme/symphony';
 import {IVertexModel, PORTS_GROUPS, getInitObject} from '../BaseVertext';
-import {getActionType} from './utils';
 
 export const ACTION_TYPE_ID = 'invoke_rest_api';
-export const TYPE = getActionType(ACTION_TYPE_ID);
+export const TYPE = 'InvokeRestAPIBlock';
 const FILL_COLOR = symphony.palette.AUTOMATION.BLUE;
 
 const ExecuteFlowBaseClass = CreateActionBaseClass({
@@ -24,6 +23,7 @@ const ExecuteFlowBaseClass = CreateActionBaseClass({
   fillColor: FILL_COLOR,
   svgPath: '/inventory/static/svg/BlockInvokeRestApi.svg',
   defaultText: `${fbt('Invoke REST API', '')}`,
+  type: TYPE,
 });
 
 const TOTAL_SIZE = 72;
