@@ -20,6 +20,64 @@ func init() {
 	ctx = context.Background()
 }
 
+func UpdateFlowInstance(flowInstanceID int, workflowID string, runID string) error {
+
+	contextIsNull := ctx == nil
+
+	fmt.Println()
+	fmt.Printf(
+		"Flow Instance Update Info\n"+
+			"Flow ID: %d\n"+
+			"Workflow ID: %s\n"+
+			"Run ID: %s\n"+
+			"Context Is Null?: %v",
+		flowInstanceID, workflowID, runID, contextIsNull,
+	)
+	fmt.Println()
+
+	_, err := ent.FromContext(ctx).FlowInstance.
+		UpdateOneID(flowInstanceID).
+		SetBssCode(workflowID).
+		SetServiceInstanceCode(runID).
+		Save(ctx)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func UpdateFlowInstanceStatus(flowInstanceID int, status flowinstance.Status, close bool) error {
+
+	contextIsNull := ctx == nil
+
+	fmt.Println()
+	fmt.Printf(
+		"Flow Instance Update Status\n"+
+			"Flow ID: %d\n"+
+			"Status: %s\n"+
+			"Context Is Null?: %v",
+		flowInstanceID, status, contextIsNull,
+	)
+	fmt.Println()
+
+	query := ent.FromContext(ctx).FlowInstance.
+		UpdateOneID(flowInstanceID).
+		SetStatus(status)
+
+	if close {
+		query = query.SetEndDate(time.Now())
+	}
+
+	_, err := query.Save(ctx)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func CreateBlockInstance(flowInstanceID int, blockID int, input map[string]interface{}) (int, error) {
 
 	inputJson, err := util.ToJson(input)
@@ -77,39 +135,6 @@ func UpdateBlockStatus(
 	return nil
 }
 
-func UpdateFlowInstance(flowInstanceID int, workflowID string, runID string) error {
-
-	_, err := ent.FromContext(ctx).FlowInstance.
-		UpdateOneID(flowInstanceID).
-		SetBssCode(workflowID).
-		SetServiceInstanceCode(runID).
-		Save(ctx)
-
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func UpdateFlowInstanceStatus(flowInstanceID int, status flowinstance.Status, close bool) error {
-
-	query := ent.FromContext(ctx).FlowInstance.
-		UpdateOneID(flowInstanceID).
-		SetStatus(status)
-
-	if close {
-		query = query.SetEndDate(time.Now())
-	}
-
-	_, err := query.Save(ctx)
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
 func GetInputAndBlocks(flowInstanceID int) (map[string]interface{}, map[int]model.BaseBlock, error) {
 
 	flowInstance, err := ent.FromContext(ctx).
@@ -145,7 +170,7 @@ func GetInputAndBlocks(flowInstanceID int) (map[string]interface{}, map[int]mode
 
 			transformations := getTransformation(templateBlock)
 
-			baseBlock := getBaseBlock(templateBlock, transformations, flowInstanceID)
+			baseBlock := createBaseBlock(templateBlock, transformations, flowInstanceID)
 
 			switch templateBlock.Type {
 			case block.TypeStart:
@@ -326,7 +351,7 @@ func getTransformation(block *ent.Block) model.BlockTransformations {
 	return transformations
 }
 
-func getBaseBlock(
+func createBaseBlock(
 	templateBlock *ent.Block, transformations model.BlockTransformations, flowInstanceID int,
 ) model.BaseBlock {
 
