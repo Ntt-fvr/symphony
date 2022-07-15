@@ -247,6 +247,16 @@ func GetInputAndBlocks(flowInstanceID int) (map[string]interface{}, map[int]mode
 				if waitForSignalBlock != nil {
 					blocks[templateBlock.ID] = *waitForSignalBlock
 				}
+
+			case "TypeStartWorkOrder":
+				startWorkOrderBlock, err := createStartWorkOrderBlock(templateBlock, baseBlock)
+				if err != nil {
+					return nil, nil, err
+				}
+
+				if startWorkOrderBlock != nil {
+					blocks[templateBlock.ID] = *startWorkOrderBlock
+				}
 			}
 		}
 	}
@@ -645,6 +655,18 @@ func createWaitForSignalBlock(templateBlock *ent.Block, baseBlock model.BaseBloc
 		SignalType:   templateBlock.SignalType,
 		SignalModule: templateBlock.SignalModule,
 	}
+
+	return &baseBlock, nil
+}
+
+func createStartWorkOrderBlock(templateBlock *ent.Block, baseBlock model.BaseBlock) (*model.BaseBlock, error) {
+
+	baseBlock, err := getNextBlock(templateBlock, baseBlock)
+	if err != nil {
+		return nil, err
+	}
+
+	baseBlock.StartWorkOrder = &model.StartWorkOrderBlock{}
 
 	return &baseBlock, nil
 }

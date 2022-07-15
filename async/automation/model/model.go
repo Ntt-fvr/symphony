@@ -48,6 +48,7 @@ type BaseBlock struct {
 	Parallel                  *ParallelBlock       `json:"parallel,omitempty"`
 	Timer                     *TimerBlock          `json:"timer,omitempty"`
 	WaitForSignal             *WaitForSignalBlock  `json:"waitForSignal,omitempty"`
+	StartWorkOrder            *StartWorkOrderBlock `json:"startWorkOrder,omitempty"`
 }
 
 func (block *BaseBlock) GetBlockID() int {
@@ -167,4 +168,7 @@ type WaitForSignalBlock struct {
 	CustomFilter string             `json:"customFilter,omitempty"`
 	SignalType   block.SignalType   `json:"signalType,omitempty"`
 	SignalModule block.SignalModule `json:"signalModule,omitempty"`
+}
+
+type StartWorkOrderBlock struct {
 }
