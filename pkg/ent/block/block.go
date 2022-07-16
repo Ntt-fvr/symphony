@@ -485,11 +485,14 @@ type SignalType string
 
 // SignalType values.
 const (
-	SignalTypeNOTIFICATION SignalType = "NOTIFICATION"
-	SignalTypeWOCREATION   SignalType = "WOCREATION"
-	SignalTypeCRCREATION   SignalType = "CRCREATION"
-	SignalTypeWOUPDATE     SignalType = "WOUPDATE"
-	SignalTypeCRUPDATE     SignalType = "CRUPDATE"
+	SignalTypeWOCREATED  SignalType = "WOCREATED"
+	SignalTypeCRCREATED  SignalType = "CRCREATED"
+	SignalTypePR_CREATED SignalType = "PR_CREATED"
+	SignalTypeMOICREATED SignalType = "MOICREATED"
+	SignalTypeWOUPDATED  SignalType = "WOUPDATED"
+	SignalTypeCRUPDATED  SignalType = "CRUPDATED"
+	SignalTypePR_UPDATED SignalType = "PR_UPDATED"
+	SignalTypeMOIUPDATED SignalType = "MOIUPDATED"
 )
 
 func (st SignalType) String() string {
@@ -499,7 +502,7 @@ func (st SignalType) String() string {
 // SignalTypeValidator is a validator for the "signal_type" field enum values. It is called by the builders before save.
 func SignalTypeValidator(st SignalType) error {
 	switch st {
-	case SignalTypeNOTIFICATION, SignalTypeWOCREATION, SignalTypeCRCREATION, SignalTypeWOUPDATE, SignalTypeCRUPDATE:
+	case SignalTypeWOCREATED, SignalTypeCRCREATED, SignalTypePR_CREATED, SignalTypeMOICREATED, SignalTypeWOUPDATED, SignalTypeCRUPDATED, SignalTypePR_UPDATED, SignalTypeMOIUPDATED:
 		return nil
 	default:
 		return fmt.Errorf("block: invalid enum value for signal_type field: %q", st)
@@ -511,8 +514,10 @@ type SignalModule string
 
 // SignalModule values.
 const (
-	SignalModuleINVENTORY     SignalModule = "INVENTORY"
-	SignalModuleCONFIGURATION SignalModule = "CONFIGURATION"
+	SignalModuleINVENTORY SignalModule = "INVENTORY"
+	SignalModuleCM        SignalModule = "CM"
+	SignalModuleWFM       SignalModule = "WFM"
+	SignalModuleASSURANCE SignalModule = "ASSURANCE"
 )
 
 func (sm SignalModule) String() string {
@@ -522,7 +527,7 @@ func (sm SignalModule) String() string {
 // SignalModuleValidator is a validator for the "signal_module" field enum values. It is called by the builders before save.
 func SignalModuleValidator(sm SignalModule) error {
 	switch sm {
-	case SignalModuleINVENTORY, SignalModuleCONFIGURATION:
+	case SignalModuleINVENTORY, SignalModuleCM, SignalModuleWFM, SignalModuleASSURANCE:
 		return nil
 	default:
 		return fmt.Errorf("block: invalid enum value for signal_module field: %q", sm)

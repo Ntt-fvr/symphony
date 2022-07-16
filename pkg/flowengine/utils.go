@@ -69,11 +69,29 @@ func getOrCreateExitPoint(ctx context.Context, exitPoint *ent.ExitPoint, newBloc
 		if !ent.IsNotFound(err) {
 			return nil, fmt.Errorf("failed to get new exit point: %w", err)
 		}
-		newExitPoint, err = client.ExitPoint.Create().
+
+		mutation := client.Debug().ExitPoint.Create().
 			SetParentBlock(newBlock).
 			SetRole(exitPoint.Role).
-			SetNillableCid(exitPoint.Cid).
-			Save(ctx)
+			SetNillableCid(exitPoint.Cid)
+
+		if newBlock.Type == block.TypeChoice && exitPoint.Role == flowschema.ExitPointRoleChoice {
+			fmt.Println("adicionando la condicion y el index")
+			mutation = mutation.SetCondition(exitPoint.Condition).
+				SetIndex(exitPoint.Index)
+		}
+
+		/*newExitPoint, err = client.Debug().ExitPoint.Create().
+		SetParentBlock(newBlock).
+		SetRole(exitPoint.Role).
+		SetNillableCid(exitPoint.Cid).
+		SetNillableIndex(&exitPoint.Index).
+		Save(ctx)*/
+
+		fmt.Println("la mutacion ejecutada ", mutation)
+
+		newExitPoint, err = mutation.Save(ctx)
+
 		if err != nil {
 			return nil, fmt.Errorf("failed to create new exit point: %w", err)
 		}
@@ -183,9 +201,23 @@ func CopyBlocks(ctx context.Context, blocksQuery *ent.BlockQuery, addToFlow func
 			oldToNewEntryPoint[entryPoint.ID] = newEntryPoint
 		}
 		for _, exitPoint := range blk.Edges.ExitPoints {
+			if blk.Type == block.TypeChoice {
+				fmt.Println("copiando exitpoint de un ", blk.Type)
+				fmt.Println("exitpoint id ", exitPoint.ID)
+				fmt.Println("exitpoint condition ", exitPoint.Condition)
+				fmt.Println("exitpoint index ", exitPoint.Index)
+			}
 			newExitPoint, err := getOrCreateExitPoint(ctx, exitPoint, newBlock)
 			if err != nil {
 				return err
+			}
+			if blk.Type == block.TypeChoice {
+				fmt.Println("nuevo exitpoint de un choice")
+				fmt.Println("exitpoint id ", newExitPoint.ID)
+				fmt.Println("nuevo exitpoint condition ", newExitPoint.Condition)
+				fmt.Println("nuevo exitpoint index ", newExitPoint.Index)
+			} else {
+				fmt.Println("no es bloque choice")
 			}
 			oldToNewExitPoint[exitPoint.ID] = newExitPoint
 		}

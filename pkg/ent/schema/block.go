@@ -180,17 +180,22 @@ func (Block) Fields() []ent.Field {
 
 		field.Enum("signal_type").
 			NamedValues(
-				"NOTIFICATION", "NOTIFICATION",
-				"WOCREATION", "WOCREATION",
-				"CRCREATION", "CRCREATION",
-				"WOUPDATE", "WOUPDATE",
-				"CRUPDATE", "CRUPDATE",
+				"WOCREATED", "WOCREATED",
+				"CRCREATED", "CRCREATED",
+				"PR_CREATED", "PR_CREATED",
+				"MOICREATED", "MOICREATED",
+				"WOUPDATED", "WOUPDATED",
+				"CRUPDATED", "CRUPDATED",
+				"PR_UPDATED", "PR_UPDATED",
+				"MOIUPDATED", "MOIUPDATED",
 			).
 			Optional(),
 		field.Enum("signal_module").
 			NamedValues(
 				"INVENTORY", "INVENTORY",
-				"CONFIGURATION", "CONFIGURATION",
+				"CM", "CM",
+				"WFM", "WFM",
+				"ASSURANCE", "ASSURANCE",
 			).
 			Optional(),
 		field.String("custom_filter").
