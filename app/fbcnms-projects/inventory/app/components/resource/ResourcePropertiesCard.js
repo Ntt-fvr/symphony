@@ -29,7 +29,6 @@ import {ResourceNetworkCard} from './ResourceNetworkCard';
 import {camelCase, startCase} from 'lodash';
 import {graphql} from 'relay-runtime';
 import {makeStyles} from '@material-ui/styles';
-
 const useStyles = makeStyles(theme => ({
   root: {
     height: 'calc(100% - 92px)',
@@ -63,6 +62,7 @@ const ResourceCardListQuery = graphql`
       id
       name
       locatedIn
+      externalId
       resourceSpecification
       isDeleted
       lifecycleStatus
@@ -70,12 +70,37 @@ const ResourceCardListQuery = graphql`
       planningSubStatus
       usageSubStatus
       operationalSubStatus
+      resourceProperties {
+        booleanValue
+        floatValue
+        id
+        intValue
+        latitudeValue
+        longitudeValue
+        rangeFromValue
+        rangeToValue
+        stringValue
+        resourcePropertyType
+      }
     }
     resourceSpecifications {
       edges {
         node {
           id
           name
+          resourcePropertyTypes {
+            id
+            name
+            type
+            stringValue
+            intValue
+            booleanValue
+            floatValue
+            latitudeValue
+            longitudeValue
+            rangeFromValue
+            rangeToValue
+          }
           resourceType {
             id
             name
@@ -121,9 +146,37 @@ const ResourcePropertiesCard = (props: Props) => {
         },
       }}
       render={resourceData => {
+        const getResourceData = resourceData.queryResource[0];
+        const filterSpecificationById = resourceData.resourceSpecifications.edges
+          .map(item => item?.node)
+          .filter(item => item.id === getResourceData.resourceSpecification)
+          .flatMap(item => item.resourcePropertyTypes);
+
+        const propertyResource = getResourceData.resourceProperties.map(
+          item => item,
+        );
+
+        const spliceProperties = filterSpecificationById.map((item, index) => {
+          return {
+            ...propertyResource[index],
+            propertyType: item,
+            name: item.name,
+            type: item.type,
+          };
+        });
+
+        const convertParametersMap = resourceData.queryResource.flatMap(
+          item => {
+            return {
+              ...item,
+              resourceProperties: spliceProperties,
+            };
+          },
+        );
+
         return (
           <div className={classes.root}>
-            {resourceData.queryResource.map(item => (
+            {convertParametersMap.map(item => (
               <>
                 <Grid
                   container

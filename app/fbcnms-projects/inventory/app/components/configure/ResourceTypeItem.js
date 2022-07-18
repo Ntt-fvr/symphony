@@ -8,10 +8,6 @@
  * @format
  */
 
-import React from 'react';
-
-// DESING SYSTEM //
-
 import Accordion from '@material-ui/core/Accordion';
 import AccordionDetails from '@material-ui/core/AccordionDetails';
 import AccordionSummary from '@material-ui/core/AccordionSummary';
@@ -19,6 +15,7 @@ import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutline';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import Grid from '@material-ui/core/Grid';
 import IconButton from '@symphony/design-system/components/IconButton';
+import React from 'react';
 import SettingsIcon from '@material-ui/icons/Settings';
 import Text from '@symphony/design-system/components/Text';
 import {DARK} from '@symphony/design-system/theme/symphony';
@@ -57,34 +54,22 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-type Node = {
-  node: {
-    resourceType: {
-      id: string,
-    },
-  },
-};
-
 type Props = $ReadOnly<{|
   name: string,
-  formValues: {
+  dataForm: {
     id: string,
     name: string,
     resourceTypeClass: string,
     resourceTypeBaseType: string,
+    resourceSpecification: string,
   },
   edit: () => void,
   handleRemove: void => void,
-  resourceDataLenght: Array<Node>,
 |}>;
 
 export default function ResourceTypeItem(props: Props) {
-  const {edit, handleRemove, formValues, resourceDataLenght} = props;
+  const {edit, handleRemove, dataForm} = props;
   const classes = useStyles();
-
-  const filterDataById = resourceDataLenght
-    .map(item => item.node)
-    .filter(rsData => rsData?.resourceType?.id === formValues.id);
 
   const handleDelete = event => {
     event.stopPropagation();
@@ -108,7 +93,7 @@ export default function ResourceTypeItem(props: Props) {
                 aria-label="upload picture"
               />
               <Text useEllipsis={true} weight="bold">
-                {formValues.name}
+                {dataForm.name}
               </Text>
             </Grid>
             <Grid
@@ -117,13 +102,16 @@ export default function ResourceTypeItem(props: Props) {
               container
               alignItems="center"
               className={classes.detailHeader}>
-              {filterDataById.length} Resource specification instances of the
-              type
+              {dataForm.resourceSpecification.length} Resource specification
+              instances of the type
             </Grid>
             <Grid item xs={2} container justify="flex-end" alignItems="center">
               <DeleteOutlinedIcon
                 className={classes.deleteIcon}
-                onClick={handleDelete}
+                disabled="true"
+                onClick={
+                  dataForm.resourceSpecification.length ? null : handleDelete
+                }
               />
               <IconButton icon={EditIcon} onClick={edit} />
             </Grid>
@@ -135,20 +123,20 @@ export default function ResourceTypeItem(props: Props) {
             <Grid item xs={4}>
               <span className={classes.detailHeader}>Resource name: </span>
               <br />
-              <strong>{formValues.name}</strong>
+              <strong>{dataForm.name}</strong>
             </Grid>
             <Grid item xs={4}>
               <span className={classes.detailHeader}>Class: </span>
               <br />
               <strong>
-                {startCase(camelCase(formValues.resourceTypeClass))}
+                {startCase(camelCase(dataForm.resourceTypeClass))}
               </strong>
             </Grid>
             <Grid item xs={4}>
               <span className={classes.detailHeader}>Resource type class:</span>
               <br />
               <strong>
-                {startCase(camelCase(formValues.resourceTypeBaseType))}
+                {startCase(camelCase(dataForm.resourceTypeBaseType))}
               </strong>
             </Grid>
           </Grid>

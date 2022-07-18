@@ -36,6 +36,17 @@ const mutation = graphql`
         typePlanningSubStatus
         usageSubStatus
         operationalSubStatus
+        resourceProperties {
+          booleanValue
+          floatValue
+          intValue
+          latitudeValue
+          longitudeValue
+          rangeFromValue
+          rangeToValue
+          stringValue
+          resourcePropertyType
+        }
       }
     }
   }

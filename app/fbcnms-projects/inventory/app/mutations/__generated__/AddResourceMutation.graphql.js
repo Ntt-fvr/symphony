@@ -261,6 +261,17 @@ export type AddResourceMutationResponse = {|
       +typePlanningSubStatus: ?TypePlanningSubStatus,
       +usageSubStatus: ?UsageSubStatus,
       +operationalSubStatus: ?OperationalSubStatus,
+      +resourceProperties: ?$ReadOnlyArray<?{|
+        +booleanValue: ?boolean,
+        +floatValue: ?number,
+        +intValue: ?number,
+        +latitudeValue: ?number,
+        +longitudeValue: ?number,
+        +rangeFromValue: ?number,
+        +rangeToValue: ?number,
+        +stringValue: ?string,
+        +resourcePropertyType: string,
+      |}>,
     |}>,
   |}
 |};
@@ -288,6 +299,18 @@ mutation AddResourceMutation(
       typePlanningSubStatus
       usageSubStatus
       operationalSubStatus
+      resourceProperties {
+        booleanValue
+        floatValue
+        intValue
+        latitudeValue
+        longitudeValue
+        rangeFromValue
+        rangeToValue
+        stringValue
+        resourcePropertyType
+        id
+      }
       id
     }
   }
@@ -385,6 +408,76 @@ v12 = {
   "kind": "ScalarField",
   "name": "operationalSubStatus",
   "storageKey": null
+},
+v13 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "booleanValue",
+  "storageKey": null
+},
+v14 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "floatValue",
+  "storageKey": null
+},
+v15 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "intValue",
+  "storageKey": null
+},
+v16 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "latitudeValue",
+  "storageKey": null
+},
+v17 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "longitudeValue",
+  "storageKey": null
+},
+v18 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "rangeFromValue",
+  "storageKey": null
+},
+v19 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "rangeToValue",
+  "storageKey": null
+},
+v20 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "stringValue",
+  "storageKey": null
+},
+v21 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "resourcePropertyType",
+  "storageKey": null
+},
+v22 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "id",
+  "storageKey": null
 };
 return {
   "fragment": {
@@ -419,7 +512,27 @@ return {
               (v9/*: any*/),
               (v10/*: any*/),
               (v11/*: any*/),
-              (v12/*: any*/)
+              (v12/*: any*/),
+              {
+                "alias": null,
+                "args": null,
+                "concreteType": "ResourceProperty",
+                "kind": "LinkedField",
+                "name": "resourceProperties",
+                "plural": true,
+                "selections": [
+                  (v13/*: any*/),
+                  (v14/*: any*/),
+                  (v15/*: any*/),
+                  (v16/*: any*/),
+                  (v17/*: any*/),
+                  (v18/*: any*/),
+                  (v19/*: any*/),
+                  (v20/*: any*/),
+                  (v21/*: any*/)
+                ],
+                "storageKey": null
+              }
             ],
             "storageKey": null
           }
@@ -466,10 +579,25 @@ return {
               {
                 "alias": null,
                 "args": null,
-                "kind": "ScalarField",
-                "name": "id",
+                "concreteType": "ResourceProperty",
+                "kind": "LinkedField",
+                "name": "resourceProperties",
+                "plural": true,
+                "selections": [
+                  (v13/*: any*/),
+                  (v14/*: any*/),
+                  (v15/*: any*/),
+                  (v16/*: any*/),
+                  (v17/*: any*/),
+                  (v18/*: any*/),
+                  (v19/*: any*/),
+                  (v20/*: any*/),
+                  (v21/*: any*/),
+                  (v22/*: any*/)
+                ],
                 "storageKey": null
-              }
+              },
+              (v22/*: any*/)
             ],
             "storageKey": null
           }
@@ -479,16 +607,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "f97c2b555a62afe1691b2c8ad4bcef0b",
+    "cacheID": "7c20a95c2ea9f1a73c1a9319d8b5cf91",
     "id": null,
     "metadata": {},
     "name": "AddResourceMutation",
     "operationKind": "mutation",
-    "text": "mutation AddResourceMutation(\n  $input: [AddResourceInput!]!\n) {\n  addResource(input: $input) {\n    numUids\n    resource {\n      name\n      externalId\n      locatedIn\n      resourceSpecification\n      isDeleted\n      lifecycleStatus\n      planningSubStatus\n      typePlanningSubStatus\n      usageSubStatus\n      operationalSubStatus\n      id\n    }\n  }\n}\n"
+    "text": "mutation AddResourceMutation(\n  $input: [AddResourceInput!]!\n) {\n  addResource(input: $input) {\n    numUids\n    resource {\n      name\n      externalId\n      locatedIn\n      resourceSpecification\n      isDeleted\n      lifecycleStatus\n      planningSubStatus\n      typePlanningSubStatus\n      usageSubStatus\n      operationalSubStatus\n      resourceProperties {\n        booleanValue\n        floatValue\n        intValue\n        latitudeValue\n        longitudeValue\n        rangeFromValue\n        rangeToValue\n        stringValue\n        resourcePropertyType\n        id\n      }\n      id\n    }\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = 'eb09b1c2c8c883b2d95c152a01cb2566';
+(node/*: any*/).hash = '05134ea7719f4aa0719f349746952fbd';
 
 module.exports = node;

@@ -8,8 +8,6 @@
  * @format
  */
 
-import React, {useState} from 'react';
-
 import type {AddResourceMutationVariables} from '../../mutations/__generated__/AddResourceMutation.graphql';
 import type {
   LifecycleStatus,
@@ -18,26 +16,33 @@ import type {
   TypePlanningSubStatus,
   UsageSubStatus,
 } from '../../mutations/__generated__/AddResourceMutation.graphql';
+import type {UpdateResourceMutationVariables} from '../../mutations/__generated__/UpdateResourceMutation.graphql';
+import type {UpdateResourcePropertyMutationVariables} from '../../mutations/__generated__/UpdateResourcePropertyMutation.graphql';
 
+import AddEditPropertyList from './AddEditPropertyList';
 import AddResourceMutation from '../../mutations/AddResourceMutation';
 import Button from '@material-ui/core/Button';
 import Card from '@symphony/design-system/components/Card/Card';
 import CardHeader from '@symphony/design-system/components/Card/CardHeader';
-import Event from '@material-ui/icons/Event';
 import Grid from '@material-ui/core/Grid';
-import IconButton from '@material-ui/core/IconButton';
-import InputAdornment from '@material-ui/core/InputAdornment';
-import MomentUtils from '@date-io/moment';
+import PropertyTypesTableDispatcher from '../form/context/property_types/PropertyTypesTableDispatcher';
+import React, {useState} from 'react';
 import SaveDialogConfirm from '../configure/SaveDialogConfirm';
 import TextField from '@material-ui/core/TextField';
+import UpdateResourceMutation from '../../mutations/UpdateResourceMutation';
+import UpdateResourcePropertyMutation from '../../mutations/UpdateResourcePropertyMutation';
 import inventoryTheme from '../../common/theme';
-import moment from 'moment';
 import symphony from '@symphony/design-system/theme/symphony';
-import {DateTimePicker, MuiPickersUtilsProvider} from '@material-ui/pickers';
 import {MenuItem} from '@material-ui/core';
 import {camelCase, startCase} from 'lodash';
 import {makeStyles} from '@material-ui/styles';
+import {omit} from 'lodash';
+import {
+  toMutableProperty,
+  toMutablePropertyEdit,
+} from '../context/TableTypeState';
 import {useFormInput} from '../assurance/common/useFormInput';
+import {usePropertyTypesReducer} from '../form/context/property_types/PropertyTypesTableState';
 
 const useStyles = makeStyles(() => ({
   formField: {
@@ -64,6 +69,10 @@ const useStyles = makeStyles(() => ({
       backgroundColor: 'transparent',
       color: symphony.palette.B600,
     },
+  },
+  input: {
+    display: 'inline-flex',
+    width: '100%',
   },
 }));
 
@@ -119,12 +128,8 @@ const AddEditResourceInLocation = (props: Props) => {
   const classes = useStyles();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [resourceType, setResourceType] = useState<ResourceType>({data: {}});
-  const [slotStartDate, setSlotStartDate] = useState(moment);
-  const [slotEndDate, setSlotEndDate] = useState(moment);
-  const [slotInstallDate, setSlotInstallDate] = useState(moment);
-
   const nameEdit = useFormInput(dataformModal.name);
-  const externalID = useFormInput(dataformModal.externalID);
+  const externalId = useFormInput(dataformModal.externalId);
   const lifecycleStatus = useFormInput(dataformModal.lifecycleStatus);
   const planningSubStatus = useFormInput(dataformModal.planningSubStatus);
   const operationalSubStatus = useFormInput(dataformModal.operationalSubStatus);
@@ -142,6 +147,24 @@ const AddEditResourceInLocation = (props: Props) => {
     });
   }
 
+  const [propertyTypes, propertyTypesDispatcher] = usePropertyTypesReducer(
+    (mode === 'edit'
+      ? dataformModal.resourceProperties ?? []
+      : dataformModal.resourcePropertyTypes ?? []
+    )
+      .filter(Boolean)
+      .map(mode === 'edit' ? toMutablePropertyEdit : toMutableProperty),
+  );
+
+  const spliceProperties = propertyTypes
+    ?.map(o => {
+      return {
+        ...o,
+        resourcePropertyType: o.type,
+      };
+    })
+    .map(o => omit(o, ['name', 'type', 'id', 'propertyType']));
+
   function handleCreateForm() {
     const variables: AddResourceMutationVariables = {
       input: [
@@ -156,6 +179,7 @@ const AddEditResourceInLocation = (props: Props) => {
           planningSubStatus: resourceType.data.planningSubStatus,
           usageSubStatus: resourceType.data.usageSubStatus,
           operationalSubStatus: resourceType.data.operationalSubStatus,
+          resourceProperties: spliceProperties,
         },
       ],
     };
@@ -167,6 +191,51 @@ const AddEditResourceInLocation = (props: Props) => {
       },
     });
   }
+
+  const setDataFormEdit = {
+    externalId: externalId.value,
+    lifecycleStatus: lifecycleStatus.value,
+    typePlanningSubStatus: typePlanningSubStatus.value,
+    planningSubStatus: planningSubStatus.value,
+    usageSubStatus: usageSubStatus.value,
+    operationalSubStatus: operationalSubStatus.value,
+  };
+
+  const setDataValidation =
+    nameEdit.value === dataformModal.name
+      ? {...setDataFormEdit}
+      : {...setDataFormEdit, name: nameEdit.value};
+
+  function handleEditForm() {
+    const variables: UpdateResourceMutationVariables = {
+      input: {
+        filter: {
+          id: dataformModal.id,
+        },
+        set: setDataValidation,
+      },
+    };
+
+    propertyTypes.forEach(e => {
+      const variablesEditpropeties: UpdateResourcePropertyMutationVariables = {
+        input: {
+          filter: {
+            id: Array<string>(e.id),
+          },
+          set: omit(e, ['name', 'type', 'id', 'propertyType']),
+        },
+      };
+      UpdateResourcePropertyMutation(variablesEditpropeties);
+    });
+
+    UpdateResourceMutation(variables, {
+      onCompleted: () => {
+        isCompleted();
+        closeFormAddEdit();
+      },
+    });
+  }
+
   const renderForm = (label, nameCreate, nameEdit) => {
     return mode === 'edit' ? (
       <Grid item xs={6}>
@@ -235,64 +304,6 @@ const AddEditResourceInLocation = (props: Props) => {
     );
   };
 
-  const renderFormPicker = (label, value, setValue) => {
-    return mode === 'edit' ? (
-      <Grid item xs={6}>
-        <MuiPickersUtilsProvider utils={MomentUtils}>
-          <DateTimePicker
-            label={label}
-            variant="inline"
-            inputVariant="outlined"
-            className={classes.formField}
-            style={{
-              width: '-webkit-fill-available',
-              marginBottom: '41px',
-            }}
-            value={value}
-            onChange={setValue}
-            format="yyyy/MM/DD HH:mm a"
-            InputProps={{
-              endAdornment: (
-                <InputAdornment position="end">
-                  <IconButton>
-                    <Event style={{color: '#8895AD'}} />
-                  </IconButton>
-                </InputAdornment>
-              ),
-            }}
-          />
-        </MuiPickersUtilsProvider>
-      </Grid>
-    ) : (
-      <Grid item xs={6}>
-        <MuiPickersUtilsProvider utils={MomentUtils}>
-          <DateTimePicker
-            label={label}
-            variant="inline"
-            inputVariant="outlined"
-            className={classes.formField}
-            style={{
-              width: '-webkit-fill-available',
-              marginBottom: '41px',
-            }}
-            value={value}
-            onChange={setValue}
-            format="yyyy/MM/DD HH:mm a"
-            InputProps={{
-              endAdornment: (
-                <InputAdornment position="end">
-                  <IconButton>
-                    <Event style={{color: '#8895AD'}} />
-                  </IconButton>
-                </InputAdornment>
-              ),
-            }}
-          />
-        </MuiPickersUtilsProvider>
-      </Grid>
-    );
-  };
-
   return (
     <>
       <Grid item xs={12} sm={12} lg={12} xl={12}>
@@ -302,7 +313,7 @@ const AddEditResourceInLocation = (props: Props) => {
           </CardHeader>
           <Grid container>
             {renderForm('Name', 'name', nameEdit)}
-            {renderForm('External ID', 'externalID', externalID)}
+            {renderForm('External ID', 'externalId', externalId)}
             {renderFormSelect(
               'Lifesycle State',
               'lifecycleStatus',
@@ -310,7 +321,8 @@ const AddEditResourceInLocation = (props: Props) => {
               selectListData.lifecycleStatus,
             )}
 
-            {resourceType.data.lifecycleStatus === 'PLANNING'
+            {resourceType.data.lifecycleStatus === 'PLANNING' ||
+            lifecycleStatus.value === 'PLANNING'
               ? renderFormSelect(
                   'Planning Status',
                   'typePlanningSubStatus',
@@ -319,7 +331,8 @@ const AddEditResourceInLocation = (props: Props) => {
                 )
               : null}
 
-            {resourceType.data.lifecycleStatus === 'OPERATING' ? (
+            {resourceType.data.lifecycleStatus === 'OPERATING' ||
+            lifecycleStatus.value === 'OPERATING' ? (
               <>
                 {renderFormSelect(
                   'Administrative Status',
@@ -345,30 +358,11 @@ const AddEditResourceInLocation = (props: Props) => {
             <Grid item xs={12}>
               <CardHeader className={classes.cardHeader}>Properties</CardHeader>
             </Grid>
-            {renderForm('ID', 'id')}
-            {renderForm('Administrative Substate', 'administrativeSubstate')}
-            {renderFormPicker(
-              'In Service Date',
-              slotStartDate,
-              setSlotStartDate,
-            )}
-            {renderFormPicker(
-              'End Service Date',
-              slotStartDate,
-              setSlotStartDate,
-            )}
-            {renderFormPicker(
-              'Out of Service Date',
-              slotEndDate,
-              setSlotEndDate,
-            )}
-            {renderFormPicker(
-              'Install Date',
-              slotInstallDate,
-              setSlotInstallDate,
-            )}
-            {renderForm('Bandwith from', 'bandwithFrom')}
-            {renderForm('Bandwith from', 'bandwithFrom')}
+
+            <PropertyTypesTableDispatcher.Provider
+              value={{dispatch: propertyTypesDispatcher, propertyTypes}}>
+              <AddEditPropertyList propertyTypes={propertyTypes} />
+            </PropertyTypesTableDispatcher.Provider>
           </Grid>
           <Grid
             className={classes.header}
@@ -402,7 +396,7 @@ const AddEditResourceInLocation = (props: Props) => {
         <SaveDialogConfirm
           open={dialogOpen}
           onClose={() => setDialogOpen(false)}
-          saveItem={handleCreateForm}
+          saveItem={mode === 'edit' ? handleEditForm : handleCreateForm}
           resource={''}
           typeAlert={'information'}
           customMessage="The information will be saved and you can find it in the list of resources."

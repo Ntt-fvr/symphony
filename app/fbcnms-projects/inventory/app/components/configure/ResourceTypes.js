@@ -41,6 +41,10 @@ const ResourceTypesQuery = graphql`
           name
           resourceTypeBaseType
           resourceTypeClass
+          resourceSpecification {
+            id
+            name
+          }
         }
       }
     }
@@ -186,8 +190,7 @@ const ResourceTypes = () => {
               handleRemove={() => handleRemove(item.node?.id)}
               edit={() => showEditResourceItemForm({item})}
               isEditing={showEditForm}
-              resourceDataLenght={resourceTypes.resourceSpecifications?.edges}
-              formValues={item.node}
+              dataForm={item.node}
               {...item.node}
             />
           ))}
