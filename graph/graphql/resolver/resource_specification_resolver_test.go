@@ -8,103 +8,109 @@ import (
 	"context"
 	"testing"
 
-	"github.com/facebookincubator/symphony/pkg/ent/user"
-
 	"github.com/facebookincubator/symphony/graph/graphql/generated"
 	"github.com/facebookincubator/symphony/graph/graphql/models"
+	"github.com/facebookincubator/symphony/pkg/ent/user"
 	"github.com/facebookincubator/symphony/pkg/viewer/viewertest"
-
 	"github.com/stretchr/testify/require"
 )
 
-func TestAddRemoveResourceSpecification(t *testing.T) {
+func CreateResourceSpecifications(ctx context.Context, t *testing.T, mr generated.MutationResolver) (int, int, int, int, int) {
+	resourceTypeID_1, resourceTypeID_2, reconciliationRuleID_1, reconciliationRuleID_2 := CreateResourceTypes(ctx, t, mr)
+
+	resourceSpecification_1, err := mr.AddResourceSpecification(ctx, models.AddResourceSpecificationInput{
+		Name:               "ResourceSpecification_1",
+		ReconciliationRule: reconciliationRuleID_1,
+		ResourceType:       resourceTypeID_1,
+		ResourcePropertyTypes: []*models.AddResourcePropertyTypeInput{
+			{
+				Name: "resourcePropertyType1",
+				Type: "bool",
+			},
+		},
+	})
+	require.NoError(t, err)
+
+	return resourceSpecification_1.ID, resourceTypeID_1, resourceTypeID_2, reconciliationRuleID_1, reconciliationRuleID_2
+}
+
+func TestAddResourceSpecification(t *testing.T) {
 	r := newTestResolver(t)
 	defer r.Close()
-	// TODO(T66882071): Remove owner role
+
 	ctx := viewertest.NewContext(context.Background(), r.client, viewertest.WithRole(user.RoleOwner))
 
 	mr := r.Mutation()
-	id1, id2, resourceTypeId1 := AddResourceSpecificationTest(ctx, t, mr)
-	EditResourceSpecificationTest(ctx, t, mr, id1, id2, resourceTypeId1)
-	RemoveResourceSpecificationTest(ctx, t, mr, id1, id2)
-}
-func AddResourceSpecificationTest(ctx context.Context, t *testing.T, mr generated.MutationResolver) (int, int, int) {
-	resourceType1, err := mr.AddResourceType(ctx, models.AddResourceTypeInput{
-		Name:                 "Type_test_1",
-		ResourceTypeClass:    "CARD",
-		ResourceTypeBaseType: "LOGICAL_RESOURCE",
-	})
-	require.NoError(t, err)
-	resourceSpecification1, err := mr.AddResourceSpecification(ctx, models.AddResourceSpecificationInput{
-		Name:         "resourceSpecification_test_1",
-		ResourceType: resourceType1.ID,
+
+	_, resourceTypeID_1, _, reconciliationRuleID_1, _ := CreateResourceSpecifications(ctx, t, mr)
+
+	_, err := mr.AddResourceSpecification(ctx, models.AddResourceSpecificationInput{
+		Name:               "ResourceSpecification_2",
+		ReconciliationRule: reconciliationRuleID_1,
+		ResourceType:       resourceTypeID_1,
 		ResourcePropertyTypes: []*models.AddResourcePropertyTypeInput{
 			{
-				Name: "Property_test_1",
-				Type: "enum",
+				Name: "resourcePropertyType1",
+				Type: "bool",
 			},
 		},
 	})
 	require.NoError(t, err)
 
-	resourceSpecification2, err := mr.AddResourceSpecification(ctx, models.AddResourceSpecificationInput{
-		Name:         "resourceSpecification_test_2",
-		ResourceType: resourceType1.ID,
-		ResourcePropertyTypes: []*models.AddResourcePropertyTypeInput{
-			{
-				Name: "Property_test_2",
-				Type: "enum",
-			},
-		},
-	})
-	require.NoError(t, err)
-	id1, id2 := resourceSpecification1.ID, resourceSpecification2.ID
 	_, err = mr.AddResourceSpecification(ctx, models.AddResourceSpecificationInput{
-		Name:         "resourceSpecification_test_1",
-		ResourceType: resourceType1.ID,
+		Name:               "ResourceSpecification_3",
+		ReconciliationRule: 123,
+		ResourceType:       resourceTypeID_1,
 		ResourcePropertyTypes: []*models.AddResourcePropertyTypeInput{
 			{
-				Name: "Property_test_1",
-				Type: "enum",
+				Name: "resourcePropertyType1",
+				Type: "bool",
 			},
 		},
 	})
 	require.Error(t, err)
-	return id1, id2, resourceType1.ID
+
 }
 
-func EditResourceSpecificationTest(ctx context.Context, t *testing.T, mr generated.MutationResolver, id1 int, id2 int, resourceTypeId1 int) {
+func TestEditResourceSpecification(t *testing.T) {
+	r := newTestResolver(t)
+	defer r.Close()
+
+	ctx := viewertest.NewContext(context.Background(), r.client, viewertest.WithRole(user.RoleOwner))
+
+	mr := r.Mutation()
+
+	resourceSpecificationID_1, resourceTypeID_1, _, reconciliationRuleID_1, _ := CreateResourceSpecifications(ctx, t, mr)
+
 	_, err := mr.EditResourceSpecification(ctx, models.EditResourceSpecificationInput{
-		ID:           id1,
-		Name:         "resourceSpecification_test_1.1",
-		ResourceType: &resourceTypeId1,
-		ResourcePropertyTypes: []*models.AddResourcePropertyTypeInput{
-			{
-				Name: "Property_test_1.1",
-				Type: "enum",
-			},
-		},
+		ID:                 resourceSpecificationID_1,
+		Name:               "ResourceSpecification_1",
+		ReconciliationRule: &reconciliationRuleID_1,
+		ResourceType:       &resourceTypeID_1,
 	})
 	require.NoError(t, err)
+
 	_, err = mr.EditResourceSpecification(ctx, models.EditResourceSpecificationInput{
-		ID:           id2,
-		Name:         "resourceSpecification_test_1.1",
-		ResourceType: &resourceTypeId1,
-		ResourcePropertyTypes: []*models.AddResourcePropertyTypeInput{
-			{
-				Name: "Property_test_1.1",
-				Type: "enum",
-			},
-		},
+		ID:                 123,
+		Name:               "ResourceSpecification_2",
+		ReconciliationRule: &reconciliationRuleID_1,
+		ResourceType:       &resourceTypeID_1,
 	})
 	require.Error(t, err)
 }
+func TestRemoveResourceSpecification(t *testing.T) {
+	r := newTestResolver(t)
+	defer r.Close()
 
-func RemoveResourceSpecificationTest(ctx context.Context, t *testing.T, mr generated.MutationResolver, id1 int, id2 int) {
-	_, err := mr.RemoveResourceSpecification(ctx, id1)
+	ctx := viewertest.NewContext(context.Background(), r.client, viewertest.WithRole(user.RoleOwner))
+
+	mr := r.Mutation()
+
+	resourceSpecificationID_1, _, _, _, _ := CreateResourceSpecifications(ctx, t, mr)
+
+	_, err := mr.RemoveResourceSpecification(ctx, resourceSpecificationID_1)
 	require.NoError(t, err)
-	_, err = mr.RemoveResourceSpecification(ctx, id2)
-	require.NoError(t, err)
-	_, err = mr.RemoveResourceSpecification(ctx, id1)
+	_, err = mr.RemoveResourceSpecification(ctx, resourceSpecificationID_1)
 	require.Error(t, err)
+
 }
