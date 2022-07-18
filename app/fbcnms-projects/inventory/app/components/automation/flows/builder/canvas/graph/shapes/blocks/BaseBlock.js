@@ -32,6 +32,7 @@ import type {WaitSignalSettingsType} from './blockTypes/waitSignal/WaitSignalSet
 
 import BaseConnector from '../connectors/BaseConnector';
 import {DISPLAY_SETTINGS} from '../../utils/helpers';
+import {IsOutputPortChoise} from '../connectors/helper';
 import {PORTS_GROUPS} from '../../facades/shapes/vertexes/BaseVertext';
 import {V} from 'jointjs';
 import {
@@ -285,6 +286,21 @@ export default class BaseBlock implements IBlock {
     target: IBlock,
     model?: ?ILinkModel,
   ) {
+    const outputPort = this.getOutputPorts()[0]?.id;
+    const OutputPortChoise = IsOutputPortChoise(model, outputPort);
+
+    if (OutputPortChoise) {
+      model.labels([
+        {
+          attrs: {
+            text: {
+              text: '  Rules  ',
+            },
+          },
+        },
+      ]);
+    }
+
     const targetPort = target.getInputPort();
     if (targetPort == null) {
       return;
