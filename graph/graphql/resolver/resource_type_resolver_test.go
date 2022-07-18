@@ -12,93 +12,139 @@ import (
 	"github.com/facebookincubator/symphony/graph/graphql/models"
 	"github.com/facebookincubator/symphony/pkg/ent/user"
 	"github.com/facebookincubator/symphony/pkg/viewer/viewertest"
-
 	"github.com/stretchr/testify/require"
 )
 
-func resourceTypeID(ctx context.Context, t *testing.T, mr generated.MutationResolver) (int, int) {
-
-	id1, err := mr.AddResourceType(ctx, models.AddResourceTypeInput{
-		Name:                 "Type_test_1",
-		ResourceTypeClass:    "CARD",
-		ResourceTypeBaseType: "LOGICAL_RESOURCE",
-	})
-	require.NoError(t, err)
-	id2, err := mr.AddResourceType(ctx, models.AddResourceTypeInput{
-		Name:                 "Type_test_2",
-		ResourceTypeClass:    "CARD",
-		ResourceTypeBaseType: "LOGICAL_RESOURCE",
+func CreateFKResourceType(ctx context.Context, t *testing.T, mr generated.MutationResolver) (int, int) {
+	reconciliationRule_1, err := mr.AddReconciliationRule(ctx, models.AddReconciliationRuleInput{
+		Name: "reconciliationRule_1",
 	})
 	require.NoError(t, err)
 
-	return id1.ID, id2.ID
+	reconciliationRule_2, err := mr.AddReconciliationRule(ctx, models.AddReconciliationRuleInput{
+		Name: "reconciliationRule_2",
+	})
+	require.NoError(t, err)
+
+	reconciliationRuleID_1, reconciliationRuleID_2 := reconciliationRule_1.ID, reconciliationRule_2.ID
+	return reconciliationRuleID_1, reconciliationRuleID_2
 }
 
-func TestAddResourceType(t *testing.T) {
+func CreateResourceTypes(ctx context.Context, t *testing.T, mr generated.MutationResolver) (int, int, int, int) {
+	reconciliationRuleID_1, reconciliationRuleID_2 := CreateFKResourceType(ctx, t, mr)
+
+	resourceType_1, err := mr.AddResourceType(ctx, models.AddResourceTypeInput{
+		Name:                 "ResourceType_1",
+		ReconciliationRule:   reconciliationRuleID_1,
+		ResourceTypeBaseType: "LOGICAL_RESOURCE",
+		ResourceTypeClass:    "SLOT",
+	})
+	require.NoError(t, err)
+
+	resourceType_2, err := mr.AddResourceType(ctx, models.AddResourceTypeInput{
+		Name:                 "ResourceType_2",
+		ReconciliationRule:   reconciliationRuleID_2,
+		ResourceTypeBaseType: "LOGICAL_RESOURCE",
+		ResourceTypeClass:    "SLOT",
+	})
+	require.NoError(t, err)
+
+	return resourceType_1.ID, resourceType_2.ID, reconciliationRuleID_1, reconciliationRuleID_2
+}
+
+func TestAddResouceType(t *testing.T) {
 	r := newTestResolver(t)
 	defer r.Close()
-	// TODO(T66882071): Remove owner role
+
 	ctx := viewertest.NewContext(context.Background(), r.client, viewertest.WithRole(user.RoleOwner))
 
 	mr := r.Mutation()
+
+	reconciliationRuleID_1, _ := CreateFKResourceType(ctx, t, mr)
 
 	_, err := mr.AddResourceType(ctx, models.AddResourceTypeInput{
-		Name:                 "Type_test_1",
-		ResourceTypeClass:    "CARD",
+		Name:                 "ResourceType_1",
+		ReconciliationRule:   reconciliationRuleID_1,
+		ResourceTypeBaseType: "enumNoValido",
+		ResourceTypeClass:    "SLOT",
+	})
+	require.Error(t, err)
+
+	_, err = mr.AddResourceType(ctx, models.AddResourceTypeInput{
+		Name:                 "ResourceType_1",
+		ReconciliationRule:   reconciliationRuleID_1,
 		ResourceTypeBaseType: "LOGICAL_RESOURCE",
+		ResourceTypeClass:    "SLOT",
 	})
 	require.NoError(t, err)
+
 	_, err = mr.AddResourceType(ctx, models.AddResourceTypeInput{
-		Name:                 "Type_test_2",
-		ResourceTypeClass:    "CARD",
+		Name:                 "ResourceType_1",
+		ReconciliationRule:   reconciliationRuleID_1,
 		ResourceTypeBaseType: "LOGICAL_RESOURCE",
+		ResourceTypeClass:    "SLOT",
 	})
-	require.NoError(t, err)
+	require.Error(t, err)
+
 	_, err = mr.AddResourceType(ctx, models.AddResourceTypeInput{
-		Name:                 "Type_test_1",
-		ResourceTypeClass:    "CARD",
+		Name:                 "ResourceType_1",
+		ReconciliationRule:   123,
 		ResourceTypeBaseType: "LOGICAL_RESOURCE",
+		ResourceTypeClass:    "SLOT",
 	})
 	require.Error(t, err)
 }
 
-func TestEditResourceType(t *testing.T) {
+func TestEditResouceType(t *testing.T) {
 	r := newTestResolver(t)
 	defer r.Close()
-	// TODO(T66882071): Remove owner role
+
 	ctx := viewertest.NewContext(context.Background(), r.client, viewertest.WithRole(user.RoleOwner))
 
 	mr := r.Mutation()
-	id1, id2 := resourceTypeID(ctx, t, mr)
+
+	resourceType_1, resourceType_2, _, _ := CreateResourceTypes(ctx, t, mr)
+
 	_, err := mr.EditResourceType(ctx, models.EditResourceTypeInput{
-		ID:                   id1,
-		Name:                 "resourceType_test_1.1",
+		ID:                   resourceType_1,
+		Name:                 "ResourceType_1.1",
+		ResourceTypeBaseType: "LOGICAL_RESOURCE",
 		ResourceTypeClass:    "SLOT",
-		ResourceTypeBaseType: "VIRTUAL_RESOURCE",
 	})
 	require.NoError(t, err)
+
 	_, err = mr.EditResourceType(ctx, models.EditResourceTypeInput{
-		ID:                   id2,
-		Name:                 "resourceType_test_1.1",
+		ID:                   123,
+		Name:                 "ResourceType_1",
+		ResourceTypeBaseType: "LOGICAL_RESOURCE",
 		ResourceTypeClass:    "SLOT",
-		ResourceTypeBaseType: "VIRTUAL_RESOURCE",
 	})
 	require.Error(t, err)
+
+	_, err = mr.EditResourceType(ctx, models.EditResourceTypeInput{
+		ID:                   resourceType_2,
+		Name:                 "ResourceType_1.1",
+		ResourceTypeBaseType: "LOGICAL_RESOURCE",
+		ResourceTypeClass:    "SLOT",
+	})
+	require.NoError(t, err)
+
 }
 
 func TestRemoveResourceType(t *testing.T) {
 	r := newTestResolver(t)
 	defer r.Close()
-	// TODO(T66882071): Remove owner role
+
 	ctx := viewertest.NewContext(context.Background(), r.client, viewertest.WithRole(user.RoleOwner))
 
 	mr := r.Mutation()
-	id1, id2 := resourceTypeID(ctx, t, mr)
 
-	_, err := mr.RemoveResourceType(ctx, id1)
+	resourceTypeID_1, resourceTypeID_2, _, _ := CreateResourceTypes(ctx, t, mr)
+
+	_, err := mr.RemoveResourceType(ctx, resourceTypeID_1)
 	require.NoError(t, err)
-	_, err = mr.RemoveResourceType(ctx, id2)
+	_, err = mr.RemoveResourceType(ctx, resourceTypeID_2)
 	require.NoError(t, err)
-	_, err = mr.RemoveResourceType(ctx, id1)
+	_, err = mr.RemoveResourceType(ctx, resourceTypeID_1)
 	require.Error(t, err)
 }
