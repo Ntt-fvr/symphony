@@ -60,6 +60,9 @@ const useStyles = makeStyles(() => ({
   searchBar: {
     flexGrow: 1,
   },
+  inputSearchBar: {
+    height: '100%',
+  },
 }));
 
 const ConfigurationQuery = graphql`
@@ -338,6 +341,7 @@ const ConfigurationsView = () => {
           </FormField>
           <div className={classes.searchBar}>
             <PowerSearchBar
+              className={classes.inputSearchBar}
               placeholder="Configuration"
               filterConfigs={filterConfigs}
               searchConfig={ResourcesSearchConfig}
@@ -350,7 +354,7 @@ const ConfigurationsView = () => {
                 )
               }
               onFiltersChanged={filterChange => filterData(filterChange)}
-              exportPath={'/configurations_views'}
+              // exportPath={'/configurations_views'}
             />
           </div>
         </div>
