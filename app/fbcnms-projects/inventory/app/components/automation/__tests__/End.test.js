@@ -48,7 +48,7 @@ describe('Suite Test Components /End/: ', () => {
   test('AUT-FE-05044 Test setEndSettings', () => {
     const objectTest: EndSettings = getInitialBlockSettings(TYPE);
 
-    expect(objectTest.params).toStrictEqual(null);
+    expect(objectTest.params).toStrictEqual(undefined);
     const setObjectTest: EndSettings = setBlockSettings(TYPE, {
       ...objectTest,
       params: 'testParams',

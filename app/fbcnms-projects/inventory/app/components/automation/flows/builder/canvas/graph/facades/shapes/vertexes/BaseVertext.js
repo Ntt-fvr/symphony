@@ -12,6 +12,7 @@
 import type {
   ExtendedMouseEvent,
   KeyValuePair,
+  PortPosition,
   Position,
   Primitive,
   Size,
@@ -150,6 +151,7 @@ export interface IVertexModel extends IShape {
   +position: (number, number) => void;
   +resize: (number, number) => void;
   +attr: (KeyValuePair | string, ?Primitive) => ?Primitive;
+  +portProp: (KeyValuePair | string, ?Primitive, PortPosition) => ?Primitive;
   +addTo: Graph => void;
   +remove: () => void;
   +getEmbeddedCells: () => $ReadOnlyArray<IVertexModel>;
@@ -269,4 +271,26 @@ export const mediumSize = {
   imageY2: 137,
   resizeWidth: 394,
   resizeHeigth: 344,
+};
+
+export const bigSize = {
+  width: 637,
+  resizeWidth: 594,
+  resizeHeigth: 344,
+};
+
+export const portsOriginPosition = {
+  cyLeft: 58,
+  cxRight: 410,
+  cyRight: -59,
+};
+
+export const portsMediumPosition = {
+  cyLeft: 86,
+  cxRight: 410,
+  cyRight: -86,
+};
+
+export const portsBigPosition = {
+  cxRight: 610,
 };

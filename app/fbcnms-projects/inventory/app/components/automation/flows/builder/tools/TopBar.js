@@ -33,6 +33,7 @@ import {
 } from '../widgets/keyboardShortcuts/KeyboardShortcutsContext';
 import {TYPE as ParallelType} from '../canvas/graph/facades/shapes/vertexes/logic/Parallel';
 import {makeStyles} from '@material-ui/styles';
+import {resizeValidator} from './utils/helpers';
 import {useCopyPaste} from '../widgets/copyPaste/CopyPasteContext';
 import {useEnqueueSnackbar} from '@fbcnms/ui/hooks/useSnackbar';
 import {useFlowData} from '../../data/FlowDataContext';
@@ -134,7 +135,13 @@ function BuilderTopBar() {
       if (isCoupledBlocks) {
         toggleModal();
       } else {
-        return flow.removeBlocks([...selection.selectedElements]);
+        const idParent = selection.selectedElements[0].model.idParent;
+        if (idParent) {
+          flow.removeBlocks([...selection.selectedElements]);
+          resizeValidator(flow, idParent);
+        } else {
+          return flow.removeBlocks([...selection.selectedElements]);
+        }
       }
     }
   }, [flow, selection]);

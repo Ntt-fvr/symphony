@@ -26,6 +26,11 @@ export type Position = $ReadOnly<{|
   y: number,
 |}>;
 
+export type PortPosition = $ReadOnly<{|
+  cx?: number,
+  cy?: number,
+|}>;
+
 export type Size = $ReadOnly<{|
   height: number,
   width: number,
