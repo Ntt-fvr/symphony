@@ -196,6 +196,9 @@ const ConfigurationsView = () => {
 
   const {resourceTypes} = queryTotal;
   const {queryResource} = filterQueryResource;
+  const [resources, setResources] = useState([]);
+
+  console.log('state-resource', resources);
 
   const selectResourceType = ({target}) => {
     setResourceType({
@@ -228,7 +231,57 @@ const ConfigurationsView = () => {
 
   useEffect(() => {
     setResourceTable([...resourceTable, ...columnDinamic]);
+    setResources(queryResource);
   }, [checkingSelects]);
+  console.log('-> ', queryResource);
+  const filterData = filterChange => {
+    console.log('filter-type', filterChange);
+    const filterName = resources?.filter(
+      item => item?.name === filterChange[0]?.stringValue,
+    );
+    const filterId = resources?.filter(
+      item => item?.id === filterChange[0]?.stringValue,
+    );
+    const filterLocation = queryResource?.filter(
+      item => item?.resource?.locatedIn === filterChange[0]?.stringValue,
+    );
+    const filterParameterName = queryResource?.filter(
+      item => item?.resource?.locatedIn === filterChange[0]?.stringValue,
+    );
+    const filterParameterTag = queryResource?.filter(
+      item => item?.resource?.locatedIn === filterChange[0]?.stringValue,
+    );
+    const filterParameterPriority = queryResource?.filter(
+      item => item?.resource?.locatedIn === filterChange[0]?.stringValue,
+    );
+
+    filterChange.length === 0 && setResources(queryResource);
+
+    switch (filterChange[0]?.key) {
+      case 'resource_name':
+        setResources(filterName);
+        break;
+      case 'resource_id':
+        setResources(filterId);
+        break;
+      case 'location_inst_external_id':
+        setResources(filterLocation);
+        break;
+      case 'parameter_selector_name':
+        setResources(filterParameterName);
+        break;
+      case 'parameter_selector_tags':
+        setResources(filterParameterTag);
+        break;
+      case 'parameter_selector_priority':
+        setResources(filterParameterPriority);
+        break;
+
+      default:
+        setResources(queryResource);
+        break;
+    }
+  };
 
   return (
     <Grid className={classes.root} container spacing={0}>
@@ -303,10 +356,7 @@ const ConfigurationsView = () => {
         </div>
       </Grid>
       <Grid item xs={12} style={{margin: '20px 0 0 0'}}>
-        <ConfigurationTable
-          dataConfig={queryResource}
-          dataColumn={resourceTable}
-        />
+        <ConfigurationTable dataConfig={resources} dataColumn={resourceTable} />
       </Grid>
     </Grid>
   );
