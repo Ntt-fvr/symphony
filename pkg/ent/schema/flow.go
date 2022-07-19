@@ -251,7 +251,7 @@ func (FlowInstance) Hooks() []ent.Hook {
 	return []ent.Hook{
 		hooks.DenyCreationOfInstanceOfDisabledFlowHook(),
 		hooks.CopyFlowToFlowExecutionTemplateHook(),
-		hooks.FlowInstanceAutomationActivity(),
+		//hooks.FlowInstanceAutomationActivity(),
 	}
 }
 
