@@ -8,9 +8,9 @@
  * @format
  */
 'use strict';
-
 import type {ILinkModel} from '../../facades/shapes/edges/Link';
 
+import symphony from '@symphony/design-system/theme/symphony';
 import {TYPE as ChoiceType} from '../../facades/shapes/vertexes/logic/Choice';
 
 type Port = {|
@@ -36,3 +36,38 @@ export function IsOutputPortChoise(model: ?ILinkModel, outputPort: string) {
 
   return isOutputPortChoise;
 }
+
+export const RULE_NAME = 'Default Rule';
+
+export const defaultAttrProps = {
+  markup: [
+    {
+      tagName: 'rect',
+      selector: 'background',
+    },
+    {
+      tagName: 'text',
+      selector: 'label',
+    },
+  ],
+  attrs: {
+    label: {
+      text: RULE_NAME,
+      refX2: 0,
+      refY2: -5,
+      fontSize: 12,
+      strokeWidth: 0,
+      fontWeight: 'bold',
+    },
+    background: {
+      fill: symphony.palette.white,
+      refX2: -5,
+      refY2: -10,
+      width: 83,
+      height: 20,
+      ry: 3,
+      rx: 3,
+      strokeWidth: 0,
+    },
+  },
+};

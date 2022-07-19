@@ -61,7 +61,8 @@ export type BlockPortEvent = 'element:magnet:pointerclick';
 export type ConnectorEvent =
   | 'link:mouseover'
   | 'link:pointerdown'
-  | 'link:pointerup';
+  | 'link:pointerup'
+  | 'link:contextmenu';
 
 export type GraphEventsAPI = $ReadOnly<{|
   onGraphEvent: (GraphEvent, GraphEventCallback) => void,
