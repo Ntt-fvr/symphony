@@ -201,8 +201,6 @@ const ConfigurationsView = () => {
   const {queryResource} = filterQueryResource;
   const [resources, setResources] = useState([]);
 
-  console.log('state-resource', resources);
-
   const selectResourceType = ({target}) => {
     setResourceType({
       ...resourceType,
@@ -232,57 +230,64 @@ const ConfigurationsView = () => {
       render: row => renderOption(row, itemParameter),
     })) ?? [];
 
+  const [clearFilter, setClearFilter] = useState(false);
+
   useEffect(() => {
-    setResourceTable([...resourceTable, ...columnDinamic]);
+    setResourceTable([...dataResources, ...columnDinamic]);
     setResources(queryResource);
-  }, [checkingSelects]);
-  console.log('-> ', queryResource);
+  }, [checkingSelects, clearFilter]);
+
   const filterData = filterChange => {
-    console.log('filter-type', filterChange);
-    const filterName = resources?.filter(
-      item => item?.name === filterChange[0]?.stringValue,
-    );
-    const filterId = resources?.filter(
-      item => item?.id === filterChange[0]?.stringValue,
-    );
-    const filterLocation = queryResource?.filter(
-      item => item?.resource?.locatedIn === filterChange[0]?.stringValue,
-    );
-    const filterParameterName = queryResource?.filter(
-      item => item?.resource?.locatedIn === filterChange[0]?.stringValue,
-    );
-    const filterParameterTag = queryResource?.filter(
-      item => item?.resource?.locatedIn === filterChange[0]?.stringValue,
-    );
-    const filterParameterPriority = queryResource?.filter(
-      item => item?.resource?.locatedIn === filterChange[0]?.stringValue,
-    );
+    if (filterChange.length > 0) {
+      const renderOption = (row, itemParameter) => {
+        const parTemp = row?.cmVersions[0]?.parameters?.find(
+          item => item.parameterType.id === itemParameter.parameterType.id,
+        );
+        return parTemp?.stringValue ?? parTemp?.floatValue ?? parTemp?.intValue;
+      };
 
-    filterChange.length === 0 && setResources(queryResource);
+      const columnDinamicFilter =
+        resources[0]?.cmVersions[0]?.parameters?.map(itemParameter => ({
+          key: itemParameter?.id,
+          title: itemParameter?.parameterType?.name,
+          render: row => renderOption(row, itemParameter),
+        })) ?? [];
 
-    switch (filterChange[0]?.key) {
-      case 'resource_name':
-        setResources(filterName);
-        break;
-      case 'resource_id':
-        setResources(filterId);
-        break;
-      case 'location_inst_external_id':
-        setResources(filterLocation);
-        break;
-      case 'parameter_selector_name':
-        setResources(filterParameterName);
-        break;
-      case 'parameter_selector_tags':
-        setResources(filterParameterTag);
-        break;
-      case 'parameter_selector_priority':
-        setResources(filterParameterPriority);
-        break;
+      const filterName = resources?.filter(
+        item => item?.name === filterChange[0]?.stringValue,
+      );
+      const filterId = resources?.filter(
+        item => item?.id === filterChange[0]?.stringValue,
+      );
+      const filterLocation = queryResource?.filter(
+        item => item?.resource?.locatedIn === filterChange[0]?.stringValue,
+      );
+      const filterParameterName = columnDinamicFilter?.filter(
+        item => item?.title === filterChange[0]?.stringValue,
+      );
 
-      default:
-        setResources(queryResource);
-        break;
+      filterChange.length === 0 && setResources(queryResource);
+
+      switch (filterChange[0]?.key) {
+        case 'resource_name':
+          setResources(filterName);
+          break;
+        case 'resource_id':
+          setResources(filterId);
+          break;
+        case 'location_inst_external_id':
+          setResources(filterLocation);
+          break;
+        case 'parameter_selector_name':
+          setResourceTable([...dataResources, ...filterParameterName]);
+          break;
+
+        default:
+          setResources(queryResource);
+          break;
+      }
+    } else {
+      setClearFilter(!clearFilter);
     }
   };
 
