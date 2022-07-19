@@ -653,9 +653,7 @@ func (r mutationResolver) ImportFlowDraft(ctx context.Context, input models.Impo
 		return nil, fmt.Errorf("failed to import blocks: %w", err)
 	}
 	for _, connectorInput := range input.Connectors {
-		fmt.Println("Adicionando connector ", connectorInput)
 		if _, err := r.AddConnector(ctx, input.ID, *connectorInput); err != nil {
-			fmt.Println("fallo el connector ", connectorInput)
 			return nil, fmt.Errorf("failed to add connector: %w", err)
 		}
 	}
