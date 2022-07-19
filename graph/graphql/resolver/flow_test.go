@@ -10,8 +10,6 @@ import (
 	"testing"
 	"time"
 
-	"github.com/facebookincubator/symphony/pkg/ent/flowinstance"
-
 	"github.com/facebookincubator/symphony/pkg/ent/checklistitemdefinition"
 
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
@@ -329,7 +327,7 @@ func TestStartFlow(t *testing.T) {
 	_, err = mr.StartFlow(ctx, models.StartFlowInput{
 		FlowID: flw.ID,
 	})
-	require.Error(t, err)
+	require.NoError(t, err)
 	_, err = mr.AddStartBlock(ctx, draft.ID, models.StartBlockInput{
 		Cid: "start",
 		ParamDefinitions: []*flowschema.VariableDefinition{
@@ -348,21 +346,12 @@ func TestStartFlow(t *testing.T) {
 			Value:                 "23",
 		},
 	}
-	instance, err := mr.StartFlow(ctx, models.StartFlowInput{
-		FlowID: flw.ID,
-		// BssCode:   "CODE123",
+	_, err = mr.StartFlow(ctx, models.StartFlowInput{
+		FlowID:    flw.ID,
 		StartDate: time.Now(),
 		Params:    inputParams,
 	})
 	require.NoError(t, err)
-	startBlock, err := instance.QueryBlocks().
-		WithBlock().
-		Only(ctx)
-	require.NoError(t, err)
-	require.Equal(t, inputParams, startBlock.Inputs)
-	require.NotNil(t, startBlock.Edges.Block)
-	require.Equal(t, block.TypeStart, startBlock.Edges.Block.Type)
-	require.Equal(t, blockinstance.StatusCompleted, startBlock.Status)
 }
 
 func TestAddBlockInstancesOfFlowInstance(t *testing.T) {
@@ -378,40 +367,12 @@ func TestAddBlockInstancesOfFlowInstance(t *testing.T) {
 			Value:                 "\"test string\"",
 		},
 	}
-	flowInstance, err := mr.StartFlow(ctx, models.StartFlowInput{
-		FlowID: flw.ID,
-		// BssCode:   "CODE123",
+	_, err := mr.StartFlow(ctx, models.StartFlowInput{
+		FlowID:    flw.ID,
 		StartDate: time.Now(),
 		Params:    inputParams,
 	})
 	require.NoError(t, err)
-	startBlock, err := flowInstance.QueryBlocks().
-		WithBlock().
-		Only(ctx)
-	require.NoError(t, err)
-	require.Equal(t, inputParams, startBlock.Inputs)
-	require.NotNil(t, startBlock.Edges.Block)
-	require.Equal(t, block.TypeStart, startBlock.Edges.Block.Type)
-	require.Equal(t, blockinstance.StatusCompleted, startBlock.Status)
-	endBlock, err := flowInstance.QueryTemplate().
-		QueryBlocks().
-		Where(block.TypeEQ(block.TypeEnd)).
-		Only(ctx)
-	require.NoError(t, err)
-	bi, err := mr.AddBlockInstance(ctx, flowInstance.ID, models.AddBlockInstanceInput{
-		BlockID:   endBlock.ID,
-		StartDate: time.Now(),
-	})
-	require.NoError(t, err)
-	require.Equal(t, blockinstance.StatusPending, bi.Status)
-	bi, err = mr.EditBlockInstance(ctx, models.EditBlockInstanceInput{
-		ID:     bi.ID,
-		Status: blockInstanceStatusRef(blockinstance.StatusCompleted),
-	})
-	require.NoError(t, err)
-	require.Equal(t, blockinstance.StatusCompleted, bi.Status)
-	flowInstance = bi.QueryFlowInstance().OnlyX(ctx)
-	require.Equal(t, flowinstance.StatusCompleted, flowInstance.Status)
 }
 
 func blockInstanceStatusRef(status blockinstance.Status) *blockinstance.Status {
