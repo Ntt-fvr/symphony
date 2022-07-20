@@ -853,6 +853,38 @@ func (bc *BlockCreate) defaults() {
 		v := block.DefaultUpdateTime()
 		bc.mutation.SetUpdateTime(v)
 	}
+	if _, ok := bc.mutation.EnableInputTransformation(); !ok {
+		v := block.DefaultEnableInputTransformation
+		bc.mutation.SetEnableInputTransformation(v)
+	}
+	if _, ok := bc.mutation.EnableOutputTransformation(); !ok {
+		v := block.DefaultEnableOutputTransformation
+		bc.mutation.SetEnableOutputTransformation(v)
+	}
+	if _, ok := bc.mutation.EnableInputStateTransformation(); !ok {
+		v := block.DefaultEnableInputStateTransformation
+		bc.mutation.SetEnableInputStateTransformation(v)
+	}
+	if _, ok := bc.mutation.EnableOutputStateTransformation(); !ok {
+		v := block.DefaultEnableOutputStateTransformation
+		bc.mutation.SetEnableOutputStateTransformation(v)
+	}
+	if _, ok := bc.mutation.EnableErrorHandling(); !ok {
+		v := block.DefaultEnableErrorHandling
+		bc.mutation.SetEnableErrorHandling(v)
+	}
+	if _, ok := bc.mutation.EnableRetryPolicy(); !ok {
+		v := block.DefaultEnableRetryPolicy
+		bc.mutation.SetEnableRetryPolicy(v)
+	}
+	if _, ok := bc.mutation.EnableTimerExpression(); !ok {
+		v := block.DefaultEnableTimerExpression
+		bc.mutation.SetEnableTimerExpression(v)
+	}
+	if _, ok := bc.mutation.BlockFlow(); !ok {
+		v := block.DefaultBlockFlow
+		bc.mutation.SetBlockFlow(v)
+	}
 }
 
 // check runs all checks and user-defined validators on the builder.

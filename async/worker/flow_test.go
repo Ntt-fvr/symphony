@@ -37,9 +37,8 @@ func (s *FlowTestSuite) SetupTest() {
 	s.env.RegisterActivity(s.factory.CompleteFlowActivity)
 	v := viewer.FromContext(s.ctx)
 	s.env.OnWorkflow(s.factory.RunFlowWorkflow, mock.Anything, mock.Anything).
-		Return(func(ctx workflow.Context, input worker.RunFlowInput) (map[string]interface{}, error) {
-			return s.factory.RunFlowWorkflow(worker.NewWorkflowContext(ctx, v),
-				s.ctx, worker.TaskListName, input, map[string]interface{}{})
+		Return(func(ctx workflow.Context, input worker.RunFlowInput) error {
+			return s.factory.RunFlowWorkflow(worker.NewWorkflowContext(ctx, v), input)
 		})
 }
 

@@ -30,6 +30,8 @@ const (
 	FieldCid = "cid"
 	// FieldCondition holds the string denoting the condition field in the database.
 	FieldCondition = "condition"
+	// FieldIndex holds the string denoting the index field in the database.
+	FieldIndex = "index"
 
 	// EdgeNextEntryPoints holds the string denoting the next_entry_points edge name in mutations.
 	EdgeNextEntryPoints = "next_entry_points"
@@ -60,6 +62,7 @@ var Columns = []string{
 	FieldRole,
 	FieldCid,
 	FieldCondition,
+	FieldIndex,
 }
 
 // ForeignKeys holds the SQL foreign-keys that are owned by the ExitPoint type.

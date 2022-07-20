@@ -656,6 +656,7 @@ func (ChoiceBlock) IsBlockDetails() {}
 type ChoiceBlockInput struct {
 	Cid              string                            `json:"cid"`
 	EntryPoint       *EntryPointInput                  `json:"entryPoint"`
+	DefaultExitPoint *ExitPointInput                   `json:"defaultExitPoint"`
 	Routes           []*DecisionRouteInput             `json:"routes"`
 	BasicDefinitions *BaseBlockInput                   `json:"basicDefinitions"`
 	UIRepresentation *flowschema.BlockUIRepresentation `json:"uiRepresentation"`
@@ -733,8 +734,6 @@ type DecisionBlock struct {
 	Routes           []*DecisionRoute `json:"routes"`
 }
 
-func (DecisionBlock) IsBlockDetails() {}
-
 type DecisionBlockInput struct {
 	Cid              string                            `json:"cid"`
 	Routes           []*DecisionRouteInput             `json:"routes"`
@@ -747,6 +746,7 @@ type DecisionRoute struct {
 
 type DecisionRouteInput struct {
 	Cid       *string                  `json:"cid"`
+	Index     *int                     `json:"index"`
 	Condition *VariableExpressionInput `json:"condition"`
 }
 
@@ -873,6 +873,7 @@ type EditFlowInstanceInput struct {
 	ID                  int                         `json:"id"`
 	ServiceInstanceCode *string                     `json:"serviceInstanceCode"`
 	Status              *flowinstance.Status        `json:"status"`
+	BssCode             *string                     `json:"bssCode"`
 	EndDate             *time.Time                  `json:"endDate"`
 	StartParams         []*flowschema.VariableValue `json:"startParams"`
 }
@@ -1385,17 +1386,15 @@ type ImportFlowDraftInput struct {
 	EndParamDefinitions []*flowschema.VariableDefinition `json:"endParamDefinitions"`
 	StartBlock          *StartBlockInput                 `json:"startBlock"`
 	EndBlocks           []*EndBlockInput                 `json:"endBlocks"`
-	DecisionBlocks      []*DecisionBlockInput            `json:"decisionBlocks"`
 	GotoBlocks          []*GotoBlockInput                `json:"gotoBlocks"`
-	SubflowBlocks       []*SubflowBlockInput             `json:"subflowBlocks"`
 	TriggerBlocks       []*TriggerBlockInput             `json:"triggerBlocks"`
 	ActionBlocks        []*ActionBlockInput              `json:"actionBlocks"`
-	TrueFalseBlocks     []*TrueFalseBlockInput           `json:"trueFalseBlocks"`
 	ChoiceBlocks        []*ChoiceBlockInput              `json:"choiceBlocks"`
 	ExecuteFlowBlocks   []*ExecuteFlowBlockInput         `json:"executeFlowBlocks"`
 	TimerBlocks         []*TimerBlockInput               `json:"timerBlocks"`
 	WaitForSignalBlocks []*WaitForSignalBlockInput       `json:"waitForSignalBlocks"`
 	InvokeRestAPIBlocks []*InvokeRestAPIBlockInput       `json:"invokeRestAPIBlocks"`
+	KafkaBlocks         []*KafkaBlockInput               `json:"kafkaBlocks"`
 	Connectors          []*ConnectorInput                `json:"connectors"`
 }
 
@@ -1856,8 +1855,6 @@ type SubflowBlock struct {
 	ExitPoint  *ent.ExitPoint                   `json:"exitPoint"`
 }
 
-func (SubflowBlock) IsBlockDetails() {}
-
 type SubflowBlockInput struct {
 	Cid              string                            `json:"cid"`
 	FlowID           int                               `json:"flowId"`
@@ -2063,8 +2060,6 @@ type TrueFalseBlock struct {
 	TrueExitPoint  *ent.ExitPoint  `json:"trueExitPoint"`
 	FalseExitPoint *ent.ExitPoint  `json:"falseExitPoint"`
 }
-
-func (TrueFalseBlock) IsBlockDetails() {}
 
 type TrueFalseBlockInput struct {
 	Cid              string                            `json:"cid"`

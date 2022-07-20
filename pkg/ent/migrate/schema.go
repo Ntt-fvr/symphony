@@ -225,8 +225,8 @@ var (
 		{Name: "connection_timeout", Type: field.TypeInt, Nullable: true},
 		{Name: "body", Type: field.TypeString, Nullable: true, Size: 2147483647},
 		{Name: "headers", Type: field.TypeJSON, Nullable: true},
-		{Name: "signal_type", Type: field.TypeEnum, Nullable: true, Enums: []string{"NOTIFICATION", "WOCREATION", "CRCREATION", "WOUPDATE", "CRUPDATE"}},
-		{Name: "signal_module", Type: field.TypeEnum, Nullable: true, Enums: []string{"INVENTORY", "CONFIGURATION"}},
+		{Name: "signal_type", Type: field.TypeEnum, Nullable: true, Enums: []string{"WOCREATED", "CRCREATED", "PR_CREATED", "MOICREATED", "WOUPDATED", "CRUPDATED", "PR_UPDATED", "MOIUPDATED"}},
+		{Name: "signal_module", Type: field.TypeEnum, Nullable: true, Enums: []string{"INVENTORY", "CM", "WFM", "ASSURANCE"}},
 		{Name: "custom_filter", Type: field.TypeString, Nullable: true},
 		{Name: "block_flow", Type: field.TypeBool, Nullable: true},
 		{Name: "kafka_brokers", Type: field.TypeJSON, Nullable: true},
@@ -942,6 +942,7 @@ var (
 		{Name: "role", Type: field.TypeEnum, Enums: []string{"DEFAULT", "DECISION", "TRUE", "FALSE", "CHOICE"}},
 		{Name: "cid", Type: field.TypeString, Nullable: true},
 		{Name: "condition", Type: field.TypeJSON, Nullable: true},
+		{Name: "index", Type: field.TypeInt, Nullable: true},
 		{Name: "block_exit_points", Type: field.TypeInt, Nullable: true},
 	}
 	// ExitPointsTable holds the schema information for the "exit_points" table.
@@ -952,7 +953,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:  "exit_points_blocks_exit_points",
-				Columns: []*schema.Column{ExitPointsColumns[6]},
+				Columns: []*schema.Column{ExitPointsColumns[7]},
 
 				RefColumns: []*schema.Column{BlocksColumns[0]},
 				OnDelete:   schema.SetNull,
@@ -962,7 +963,7 @@ var (
 			{
 				Name:    "exitpoint_cid_block_exit_points",
 				Unique:  true,
-				Columns: []*schema.Column{ExitPointsColumns[4], ExitPointsColumns[6]},
+				Columns: []*schema.Column{ExitPointsColumns[4], ExitPointsColumns[7]},
 			},
 		},
 	}
