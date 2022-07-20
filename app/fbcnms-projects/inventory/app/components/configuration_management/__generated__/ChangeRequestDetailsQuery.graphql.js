@@ -21,7 +21,7 @@ export type ChangeRequestType = "AUTOMATIC" | "MANUAL" | "%future added value";
 export type FilterOperator = "CONTAINS" | "DATE_GREATER_OR_EQUAL_THAN" | "DATE_GREATER_THAN" | "DATE_LESS_OR_EQUAL_THAN" | "DATE_LESS_THAN" | "IS" | "IS_NIL" | "IS_NIL_OR_DATE_GREATER_OR_EQUAL_THAN" | "IS_NOT_ONE_OF" | "IS_ONE_OF" | "%future added value";
 export type ParameterKind = "bool" | "date" | "datetime_local" | "email" | "enum" | "float" | "gps_location" | "int" | "range" | "string" | "%future added value";
 export type ResourceSpecificationFilterType = "ID" | "NAME" | "RESOURCE_TYPE" | "%future added value";
-export type TypeSchedulerConfig = "AS_SOON_AS_APPROVED" | "SCHEDULED_CHANGE" | "%future added value";
+export type TypeSchedulerConfig = "AS_SOON_AS_APPROVED" | "NOT_APPROVAL_REQUIRED" | "SCHEDULED_CHANGE" | "%future added value";
 export type WeekDay = "FRIDAY" | "MONDAY" | "SATURDAY" | "SUNDAY" | "THURSDAY" | "TUESDAY" | "WEDNESDAY" | "%future added value";
 export type ResourceSpecificationFilterInput = {|
   filterType: ResourceSpecificationFilterType,
