@@ -21,7 +21,7 @@ import FormAction from '@symphony/design-system/components/Form/FormAction';
 import FormField from '@symphony/design-system/components/FormField/FormField';
 import IconButton from '@material-ui/core/IconButton';
 import OutlinedInput from '@material-ui/core/OutlinedInput';
-import React, {useRef, useState} from 'react';
+import React, {useState} from 'react';
 import Select from '@material-ui/core/Select';
 import Table from '@material-ui/core/Table';
 import TableCell from '@material-ui/core/TableCell';
@@ -81,7 +81,6 @@ const TableContextForm = ({
 Props) => {
   const classes = useStyles();
   const {dispatch} = useContext(TableTypesDispatcher);
-  const valueItem = useRef('');
   const [selectChip, setSelectChip] = useState([]);
 
   return (
@@ -187,6 +186,7 @@ Props) => {
                               label={'Select  Specifications'}
                               variant="outlined"
                               fullWidth
+                              value={item.resourceSpecification?.id}
                               defaultValue=""
                               onChange={({target}) => {
                                 dispatch({
@@ -196,9 +196,7 @@ Props) => {
                                 });
                               }}>
                               {data.map((item, index) => (
-                                <MenuItem
-                                  key={index}
-                                  value={(valueItem.current = item.id)}>
+                                <MenuItem key={index} value={item.id}>
                                   {item.name}
                                 </MenuItem>
                               ))}

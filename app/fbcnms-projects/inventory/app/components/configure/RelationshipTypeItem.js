@@ -11,7 +11,7 @@
 import type {RelationshipTypeItemQuery} from './__generated__/RelationshipTypeItemQuery.graphql';
 import type {ResourceSpecifications} from './EditResourceTypeItem';
 
-import React from 'react';
+import React, {useEffect} from 'react';
 import RelationshipFormValidation from './RelationshipFormValidation';
 import TableContextForm from '../TableContext';
 import TableTypesDispatcher from '../context/TableTypesDispatcher';
@@ -20,11 +20,8 @@ import {Grid} from '@material-ui/core';
 import {difference} from 'lodash';
 import {graphql} from 'relay-runtime';
 import {makeStyles} from '@material-ui/styles';
-import {
-  toMutableTableType,
-  useTableTypesReducer,
-} from '../context/TableTypeState';
 import {useLazyLoadQuery} from 'react-relay/hooks';
+import {useTableTypesReducer} from '../context/TableTypeState';
 
 const useStyles = makeStyles(() => ({
   relationship: {
@@ -49,9 +46,10 @@ const ResourceSpecificationRelationshipsQuery = graphql`
           resourceSpecificationRelationship {
             id
             name
-          }
-          resourceSpecificationItems {
-            id
+            resourceSpecification {
+              id
+              name
+            }
           }
         }
       }
@@ -120,30 +118,25 @@ export default function RelationshipTypeItem(props: Props) {
       .map(p => p.node)
       .filter(item => item?.resourceType?.resourceTypeClass?.includes(text));
 
-  const dataFormTable = [
-    {
-      id: '',
-      name: '',
-      options: '',
-      resourceSpecification: '',
-    },
-  ];
-  const dimanycMapTable = (dataFormTable ?? [])
-    .filter(Boolean)
-    .map(toMutableTableType);
-
   const [tableTypesSlots, tableTypesDispatcherSlots] = useTableTypesReducer(
-    dimanycMapTable,
+    search('SLOT')[0]?.resourceSpecificationRelationship ?? [],
   );
   const [tableTypesPorts, tableTypesDispatcherPorts] = useTableTypesReducer(
-    dimanycMapTable,
+    search('PORT')[0]?.resourceSpecificationRelationship ?? [],
   );
   const [tableTypesCards, tableTypesDispatcherCards] = useTableTypesReducer(
-    dimanycMapTable,
+    search('CARD')[0]?.resourceSpecificationRelationship ?? [],
   );
 
-  callback(tableTypesPorts);
+  useEffect(() => {
+    callback(unifyData);
+  }, [tableTypesSlots, tableTypesPorts, tableTypesCards]);
 
+  const unifyData = [
+    ...tableTypesSlots,
+    ...tableTypesPorts,
+    ...tableTypesCards,
+  ];
   return (
     <>
       {!dataForm.resourceType?.resourceTypeClass ? null : (
