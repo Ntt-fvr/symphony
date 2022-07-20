@@ -61,8 +61,10 @@ const TableConfigurationParameters = (props: Props) => {
     setOnlyValuesChanged,
     setCurrentVersion,
     setAllVersion,
+    setSearchFilter,
   } = props;
   const [infoTable, setInfoTable] = useState([]);
+  const [previewInfo, setPreviewInfo] = useState([]);
   const [viewValueTwo, setViewValueTwo] = useState(false);
   const classes = useStyles();
   const itemsSelected = ConfigurationParameters?.parameters;
@@ -127,7 +129,7 @@ const TableConfigurationParameters = (props: Props) => {
     setComparationCurrent || setComparationPrevious
       ? setViewValueTwo(true)
       : setViewValueTwo(false);
-
+    setPreviewInfo(arrayTable);
     setInfoTable(arrayTable);
   }, [
     setComparationCurrent,
@@ -135,6 +137,19 @@ const TableConfigurationParameters = (props: Props) => {
     setOnlyValuesChanged,
     itemsSelected,
   ]);
+
+  useEffect(() => {
+    if (setSearchFilter !== '') {
+      const matches = infoTable.filter(element => {
+        if (element.name.indexOf(setSearchFilter) !== -1) {
+          return true;
+        }
+      });
+      setInfoTable(matches);
+    } else {
+      setInfoTable(previewInfo);
+    }
+  }, [setSearchFilter]);
 
   return (
     <div className={classes.root}>

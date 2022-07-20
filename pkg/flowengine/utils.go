@@ -69,11 +69,17 @@ func getOrCreateExitPoint(ctx context.Context, exitPoint *ent.ExitPoint, newBloc
 		if !ent.IsNotFound(err) {
 			return nil, fmt.Errorf("failed to get new exit point: %w", err)
 		}
-		newExitPoint, err = client.ExitPoint.Create().
+		mutation := client.Debug().ExitPoint.Create().
 			SetParentBlock(newBlock).
 			SetRole(exitPoint.Role).
-			SetNillableCid(exitPoint.Cid).
-			Save(ctx)
+			SetNillableCid(exitPoint.Cid)
+
+		if newBlock.Type == block.TypeChoice && exitPoint.Role == flowschema.ExitPointRoleChoice {
+			mutation = mutation.SetCondition(exitPoint.Condition).
+				SetIndex(exitPoint.Index)
+		}
+		newExitPoint, err = mutation.Save(ctx)
+
 		if err != nil {
 			return nil, fmt.Errorf("failed to create new exit point: %w", err)
 		}
