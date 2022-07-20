@@ -10,6 +10,7 @@
 
 import type {FilterConfig} from '../comparison_view/ComparisonViewTypes';
 
+import Button from '@symphony/design-system/components/Button';
 import ConfigureTitle from './common/ConfigureTitle';
 import FormField from '@symphony/design-system/components/FormField/FormField';
 import PowerSearchBar from '../power_search/PowerSearchBar';
@@ -18,12 +19,13 @@ import TextField from '@material-ui/core/TextField';
 import fbt from 'fbt';
 import {ConfigurationTable} from './ConfigurationTable';
 import {Grid} from '@material-ui/core';
-import {MenuItem} from '@material-ui/core';
+import {MenuItem, Tooltip} from '@material-ui/core';
 import {ResourcesSearchConfig} from './ResourcesSearchConfig';
 import {getInitialFilterValue} from '../comparison_view/FilterUtils';
 import {graphql} from 'relay-runtime';
 import {makeStyles} from '@material-ui/styles';
 import {useLazyLoadQuery} from 'react-relay/hooks';
+
 const useStyles = makeStyles(() => ({
   root: {
     flexGrow: '0',
@@ -60,24 +62,42 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-const Configurations = graphql`
-  query ConfigurationsViewQuery(
-    $filter: ResourceFilter
-    $filterBy: [ResourceTypeFilterInput!]
-  ) {
+const ConfigurationQuery = graphql`
+  query ConfigurationsViewQuery {
+    resourceSpecifications {
+      edges {
+        node {
+          id
+          name
+          resourceType {
+            id
+            name
+          }
+        }
+      }
+    }
+    resourceTypes {
+      edges {
+        node {
+          id
+          name
+          resourceSpecification {
+            id
+            name
+          }
+        }
+      }
+    }
+  }
+`;
+const ConfigurationQueryResource = graphql`
+  query ConfigurationsViewResourceQuery($filter: ResourceFilter) {
     queryResource(filter: $filter) {
       id
       name
       locatedIn
       resourceSpecification
       isDeleted
-      lifecycleStatus
-      typePlanningSubStatus
-      planningSubStatus
-      usageSubStatus
-      operationalSubStatus
-      createTime
-      updateTime
       cmVersions {
         id
         createTime
@@ -112,39 +132,38 @@ const Configurations = graphql`
         }
       }
     }
-    resourceTypes(filterBy: $filterBy) {
-      edges {
-        node {
-          id
-          name
-          resourceSpecification {
-            id
-            name
-          }
-        }
-      }
-    }
-    resourceSpecifications {
-      edges {
-        node {
-          id
-          name
-          resourceType {
-            id
-            name
-          }
-        }
-      }
-    }
   }
 `;
 
+const dataResources = [
+  {
+    key: 'resource',
+    title: 'Resource',
+    render: row => (
+      <Button variant="text" tooltip={row?.name ?? ''}>
+        {row?.name}
+      </Button>
+    ),
+  },
+  {
+    key: 'location',
+    title: 'Location',
+    render: row => (
+      <Button variant="text" tooltip={row?.locatedIn ?? ''}>
+        {row?.locatedIn}
+      </Button>
+    ),
+    tooltip: row => row?.locatedIn ?? '',
+  },
+];
+
 const ConfigurationsView = () => {
   const classes = useStyles();
-  const [resSpeci, setResSpeci] = useState({});
+  const [resourceSpecificationOpt, setResourceSpecificationOpt] = useState({});
 
   const [resourceType, setResourceType] = useState({});
   const [checkingSelects, setCheckingSelects] = useState(false);
+  const [resourceTable, setResourceTable] = useState(dataResources);
 
   const filterConfigs = useMemo(
     () =>
@@ -156,112 +175,59 @@ const ConfigurationsView = () => {
   );
 
   const verifyResourceSpecification =
-    Object.entries(resSpeci)?.length === 0
-      ? ''
-      : resSpeci?.resourceSpecification;
+    Object.entries(resourceSpecificationOpt)?.length === 0
+      ? '' ?? null
+      : resourceSpecificationOpt?.resourceSpecification;
 
-  const verifyResourceType =
-    Object.entries(resourceType).length == 0 ? '' : resourceType?.resource_Type;
+  const queryTotal = useLazyLoadQuery<ConfigurationsViewQuery>(
+    ConfigurationQuery,
+  );
 
-  const filterResourceType = useLazyLoadQuery<ConfigurationsViewQuery>(
-    Configurations,
+  const filterQueryResource = useLazyLoadQuery<ConfigurationsViewResourceQuery>(
+    ConfigurationQueryResource,
     {
-      filterBy: [
-        {
-          filterType: 'NAME',
-          operator: 'IS',
-          stringValue: verifyResourceType,
+      filter: {
+        resourceSpecification: {
+          eq: verifyResourceSpecification,
         },
-      ],
+      },
     },
   );
-  const dataQuery = useLazyLoadQuery<ConfigurationsViewQuery>(Configurations, {
-    filter: {
-      resourceSpecification: {
-        eq: verifyResourceSpecification,
-      },
-    },
-    filterBy: [
-      {
-        filterType: 'NAME',
-        operator: 'IS',
-        stringValue: verifyResourceType,
-      },
-    ],
-  });
-  const {queryResource, resourceSpecifications} = dataQuery;
 
-  function selectResourceType({target}) {
+  const {resourceTypes} = queryTotal;
+  const {queryResource} = filterQueryResource;
+
+  const selectResourceType = ({target}) => {
     setResourceType({
       ...resourceType,
-      [target.name]: target.value.trim(),
+      [target.name]: target.value,
     });
-  }
-  function selectResourceType2({target}) {
-    setResSpeci({
-      ...resSpeci,
-      [target.name]: target.value.trim(),
-    });
-    setCheckingSelects(!checkingSelects);
-  }
-
-  const resourceTypesFilters = resourceSpecifications?.edges.map(
-    item => item?.node?.resourceType,
-  );
-  const uniqueResourceType = [
-    ...new Set(resourceTypesFilters?.map(item => item?.name)),
-  ];
-
-  const resourceSpecificationFiltered = filterResourceType?.resourceTypes?.edges?.map(
-    item => item?.node?.resourceSpecification?.map(rs => rs),
-  );
-
-  const filterData = filterChange => {
-    const filterName = queryResource?.filter(
-      item => item?.resource?.name === filterChange[0]?.stringValue,
-    );
-    const filterLocation = queryResource?.filter(
-      item => item?.resource?.locatedIn === filterChange[0]?.stringValue,
-    );
-    const filterParameterName = queryResource?.filter(
-      item => item?.resource?.locatedIn === filterChange[0]?.stringValue,
-    );
-    const filterParameterTag = queryResource?.filter(
-      item => item?.resource?.locatedIn === filterChange[0]?.stringValue,
-    );
-    const filterParameterPriority = queryResource?.filter(
-      item => item?.resource?.locatedIn === filterChange[0]?.stringValue,
-    );
-
-    filterChange.length === 0 && setDataTable(queryResource);
-
-    switch (filterChange[0]?.key) {
-      case 'resource_name':
-        setDataTable(filterName);
-        break;
-      case 'location_inst_external_id':
-        setDataTable(filterLocation);
-        break;
-      case 'parameter_selector_name':
-        setDataTable(filterParameterName);
-        break;
-      case 'parameter_selector_tags':
-        setDataTable(filterParameterTag);
-        break;
-      case 'parameter_selector_priority':
-        setDataTable(filterParameterPriority);
-        break;
-
-      default:
-        setDataTable(queryResource);
-        break;
-    }
   };
 
-  const [dataTable, setDataTable] = useState(queryResource);
+  const selectResourceSpecification = ({target}) => {
+    setResourceSpecificationOpt({
+      ...resourceSpecificationOpt,
+      [target.name]: target.value,
+    });
+    setCheckingSelects(!checkingSelects);
+  };
+
+  const renderOption = (row, itemParameter) => {
+    const parTemp = row?.cmVersions[0]?.parameters?.find(
+      item => item.parameterType.id === itemParameter.parameterType.id,
+    );
+    return parTemp?.stringValue ?? parTemp?.floatValue ?? parTemp?.intValue;
+  };
+
+  const columnDinamic =
+    queryResource[0]?.cmVersions[0]?.parameters?.map(itemParameter => ({
+      key: itemParameter?.id,
+      title: itemParameter?.parameterType?.name,
+      render: row => renderOption(row, itemParameter),
+    })) ?? [];
 
   useEffect(() => {
-    setDataTable(queryResource);
+    setResourceTable([...resourceTable, ...columnDinamic]);
   }, [checkingSelects]);
 
   return (
@@ -290,9 +256,9 @@ const ConfigurationsView = () => {
               <MenuItem value={''} disabled>
                 {'Resource Type'}
               </MenuItem>
-              {uniqueResourceType.map((item, index) => (
-                <MenuItem key={index} value={item}>
-                  {item}
+              {resourceTypes?.edges?.map((item, index) => (
+                <MenuItem key={index} value={item?.node}>
+                  {item?.node?.name}
                 </MenuItem>
               ))}
             </TextField>
@@ -301,18 +267,20 @@ const ConfigurationsView = () => {
               select
               className={classes.selectResourceSpecification}
               label="Resource Specification"
-              onChange={selectResourceType2}
+              onChange={selectResourceSpecification}
               name="resourceSpecification"
               defaultValue=""
               variant="outlined">
               <MenuItem value={''} disabled>
                 {'Resource Specification'}
               </MenuItem>
-              {resourceSpecificationFiltered[0]?.map((item, index) => (
-                <MenuItem key={index} value={item?.id}>
-                  {item.name}
-                </MenuItem>
-              ))}
+              {resourceType?.resource_Type?.resourceSpecification?.map(
+                (item, index) => (
+                  <MenuItem key={index} value={item?.id}>
+                    {item.name}
+                  </MenuItem>
+                ),
+              )}
             </TextField>
           </FormField>
           <div className={classes.searchBar}>
@@ -336,9 +304,8 @@ const ConfigurationsView = () => {
       </Grid>
       <Grid item xs={12} style={{margin: '20px 0 0 0'}}>
         <ConfigurationTable
-          stateChange={checkingSelects}
-          dataConfig={dataTable}
-          selectResourceType2={selectResourceType2}
+          dataConfig={queryResource}
+          dataColumn={resourceTable}
         />
       </Grid>
     </Grid>

@@ -77,6 +77,18 @@ type UsersGroup implements Node {
   policies: [PermissionsPolicy!]!
 }
 
+type Subscription {
+  workOrderAdded: WorkOrder
+  workOrderDone: WorkOrder
+  workOrderStatusChanged: WorkOrderStatusChangedPayload!
+  flowInstanceDone: FlowInstance!
+  projectAdded: Project
+  projectChanged: Project
+  locationAdded: Location
+  locationChanged: Location
+  AddImage: File
+}
+
 type PermissionSettings
   @goModel(
     model: "github.com/facebookincubator/symphony/pkg/authz/models.PermissionSettings"
@@ -5999,7 +6011,7 @@ enum ExitPointRole
     model: "github.com/facebookincubator/symphony/pkg/flowengine/flowschema.ExitPointRole"
   ) {
   DEFAULT
-  DECISION
+  CHOICE
 }
 
 type ExitPoint implements Node {
@@ -6008,6 +6020,7 @@ type ExitPoint implements Node {
   cid: String
   nextEntryPoints: [EntryPoint!]!
   condition: VariableExpression
+  index: Int
 }
 
 type EntryPoint implements Node {
@@ -6142,11 +6155,14 @@ enum SignalType
 @goModel(
   model: "github.com/facebookincubator/symphony/pkg/ent/block.SignalType"
   ){
-  NOTIFICATION
-  WOCREATION
-  CRCREATION
-  WOUPDATE
-  CRUPDATE
+  WOCREATED
+  CRCREATED
+  PR_CREATED
+  MOICREATED
+  WOUPDATED
+  CRUPDATED
+  PR_UPDATED
+  MOIUPDATED
 }
 
 enum SignalModule 
@@ -6154,7 +6170,9 @@ enum SignalModule
   model: "github.com/facebookincubator/symphony/pkg/ent/block.SignalModule"
   ){
   INVENTORY
-  CONFIGURATION
+  CM
+  WFM
+  ASSURANCE
 }
 
 type WaitForSignalBlock {
@@ -6187,12 +6205,12 @@ type KafkaBlock {
 union BlockDetails =
     StartBlock
   | EndBlock
-  | DecisionBlock
+  #| DecisionBlock
   | GotoBlock
-  | SubflowBlock
+  #| SubflowBlock
   | TriggerBlock
   | ActionBlock
-  | TrueFalseBlock
+  #| TrueFalseBlock
   | ChoiceBlock
   | TimerBlock
   | WaitForSignalBlock
@@ -6218,6 +6236,7 @@ input EndBlockInput {
 
 input DecisionRouteInput {
   cid: String
+  index: Int
   condition: VariableExpressionInput!
 }
 
@@ -6307,6 +6326,7 @@ input BaseBlockInput {
 input ChoiceBlockInput {
   cid: String!
   entryPoint: EntryPointInput!
+  defaultExitPoint: ExitPointInput
   routes: [DecisionRouteInput!]
   basicDefinitions: BaseBlockInput!
   uiRepresentation: BlockUIRepresentationInput
@@ -6381,17 +6401,18 @@ input ImportFlowDraftInput {
   endParamDefinitions: [VariableDefinitionInput!]!
   startBlock: StartBlockInput
   endBlocks: [EndBlockInput!]
-  decisionBlocks: [DecisionBlockInput!]
+  #decisionBlocks: [DecisionBlockInput!]
   gotoBlocks: [GotoBlockInput!]
-  subflowBlocks: [SubflowBlockInput!]
+  #subflowBlocks: [SubflowBlockInput!]
   triggerBlocks: [TriggerBlockInput!]
   actionBlocks: [ActionBlockInput!]
-  trueFalseBlocks: [TrueFalseBlockInput!]
+  #trueFalseBlocks: [TrueFalseBlockInput!]
   choiceBlocks: [ChoiceBlockInput!]
   executeFlowBlocks: [ExecuteFlowBlockInput!]
   timerBlocks: [TimerBlockInput!]
   waitForSignalBlocks: [WaitForSignalBlockInput!]
   invokeRestAPIBlocks: [InvokeRestAPIBlockInput!]
+  kafkaBlocks: [KafkaBlockInput!]
   connectors: [ConnectorInput!]
 }
 
@@ -6407,6 +6428,8 @@ enum FlowStatus
   PUBLISHED
   UNPUBLISHED
   ARCHIVED
+  ON_HOLD
+  DRAFT
 }
 
 enum FlowNewInstancesPolicy
@@ -6547,12 +6570,14 @@ type FlowInstance implements Node {
   blocks: [BlockInstance!]!
   startDate: Time!
   endDate: Time
+  startParams: [VariableValue!]
 }
 
 input EditFlowInstanceInput {
   id: ID!
   serviceInstanceCode: String
   status: FlowInstanceStatus
+  bssCode: String
   endDate: Time
   startParams: [VariableValueInput]
 }
@@ -8337,12 +8362,12 @@ type Mutation {
   deletePermissionsPolicy(id: ID!): Boolean!
   addStartBlock(flowDraftId: ID!, input: StartBlockInput!): Block!
   addEndBlock(flowDraftId: ID!, input: EndBlockInput!): Block!
-  addDecisionBlock(flowDraftId: ID!, input: DecisionBlockInput!): Block!
+  #addDecisionBlock(flowDraftId: ID!, input: DecisionBlockInput!): Block!
   addGotoBlock(flowDraftId: ID!, input: GotoBlockInput!): Block!
-  addSubflowBlock(flowDraftId: ID!, input: SubflowBlockInput!): Block!
+  #addSubflowBlock(flowDraftId: ID!, input: SubflowBlockInput!): Block!
   addTriggerBlock(flowDraftId: ID!, input: TriggerBlockInput!): Block!
   addActionBlock(flowDraftId: ID!, input: ActionBlockInput!): Block!
-  addTrueFalseBlock(flowDraftId: ID!, input: TrueFalseBlockInput!): Block!
+  #addTrueFalseBlock(flowDraftId: ID!, input: TrueFalseBlockInput!): Block!
   addChoiceBlock(flowDraftId: ID!, input: ChoiceBlockInput!): Block!
   addExecuteFlowBlock(flowDraftId: ID!, input: ExecuteFlowBlockInput!): Block!
   addTimerBlock(flowDraftId: ID!, input: TimerBlockInput!): Block!
@@ -8509,6 +8534,17 @@ type WorkOrderStatusChangedPayload
   workOrder: WorkOrder!
 }
 
+type Subscription {
+  workOrderAdded: WorkOrder
+  workOrderDone: WorkOrder
+  workOrderStatusChanged: WorkOrderStatusChangedPayload!
+  flowInstanceDone: FlowInstance!
+  projectAdded: Project
+  projectChanged: Project
+  locationAdded: Location
+  locationChanged: Location
+  AddImage: File
+}
 
 type Counter implements Node {
   id: ID!

@@ -3601,6 +3601,7 @@ type Mutation {
   deleteParameter(filter: ParameterFilter!): DeleteParameterPayload
   addConfigurationParameterType(
     input: [AddConfigurationParameterTypeInput!]!
+    upsert: Boolean
   ): AddConfigurationParameterTypePayload
   updateConfigurationParameterType(
     input: UpdateConfigurationParameterTypeInput!
@@ -4481,7 +4482,10 @@ type Query {
     offset: Int
   ): [Parameter]
   aggregateParameter(filter: ParameterFilter): ParameterAggregateResult
-  getConfigurationParameterType(id: ID!): ConfigurationParameterType
+  getConfigurationParameterType(
+    id: ID
+    name: String
+  ): ConfigurationParameterType
   queryConfigurationParameterType(
     filter: ConfigurationParameterTypeFilter
     order: ConfigurationParameterTypeOrder
@@ -5059,6 +5063,7 @@ type ResourceOrderIMAggregateResult {
 input ResourceOrderIMFilter {
   id: [ID!]
   reservationId: StringHashFilter
+  lineId: StringHashFilter
   has: [ResourceOrderIMHasFilter]
   and: [ResourceOrderIMFilter]
   or: [ResourceOrderIMFilter]
@@ -6438,6 +6443,7 @@ enum TypePlanningSubStatus {
 enum TypeSchedulerConfig {
   AS_SOON_AS_APPROVED
   SCHEDULED_CHANGE
+  NOT_APPROVAL_REQUIRED
 }
 
 input UpdateActionExecutionInput {
