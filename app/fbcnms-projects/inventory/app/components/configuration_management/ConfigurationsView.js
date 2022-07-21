@@ -170,7 +170,7 @@ const ConfigurationsView = () => {
   const [resourceTable, setResourceTable] = useState(dataResources);
 
   const locationTypesFilterConfigs = useLocationTypes();
-  console.log('locationTypesFilterConfigs',locationTypesFilterConfigs);
+  console.log('locationTypesFilterConfigs', locationTypesFilterConfigs);
 
   const filterConfigs = useMemo(
     () =>
@@ -242,7 +242,7 @@ const ConfigurationsView = () => {
     setResourceTable([...dataResources, ...columnDinamic]);
     setResources(queryResource);
   }, [checkingSelects, clearFilter]);
-
+  console.log('resources', resources);
   const filterData = filterChange => {
     console.log('filterChange', filterChange);
     if (filterChange.length > 0) {
@@ -273,19 +273,28 @@ const ConfigurationsView = () => {
             );
             setResourceTable([...dataResources, ...filterParameterName]);
             break;
-          /*case 'parameter_selector_name':
-            const filterParameterName = columnDinamic?.filter(
-              item => item?.title === itemfilterChange?.stringValue,
-            );
-            setResourceTable([...dataResources, ...filterParameterName]);
-            break;*/
 
           default:
             setResources(queryResource);
             break;
         }
       });
+      filterChange.map(itemfilterChange => {
+        itemfilterChange.idSet?.map(idLocation => {
+          switch (idLocation) {
+            case idLocation:
+              const filterLocationName = resources?.filter(
+                item => item?.locatedIn === idLocation,
+              );
+              setResources(filterLocationName);
+              console.log(idLocation);
+              break;
 
+            default:
+              break;
+          }
+        });
+      });
       filterChange.length === 0 && setResources(queryResource);
     } else {
       setClearFilter(!clearFilter);
