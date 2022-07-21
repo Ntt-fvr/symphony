@@ -106,7 +106,6 @@
              <DialogShowingContextProvider>
                <GraphSelectionContextProvider>
                  <CopyPasteContextProvider>
-                   <DetailsPanelContextProvider>
                      <FlowBuilderLayout />
                      <AddFlowDialog
                        open={dialogOpen}
@@ -116,7 +115,6 @@
                          history.push(InventoryAPIUrls.flow(flowId));
                        }}
                      />
-                   </DetailsPanelContextProvider>
                  </CopyPasteContextProvider>
                </GraphSelectionContextProvider>
              </DialogShowingContextProvider>

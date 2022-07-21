@@ -49,6 +49,7 @@
  import {useGraph} from '../canvas/graph/graphAPIContext/GraphContext';
  import {useGraphSelection} from '../widgets/selection/GraphSelectionContext';
  import {useReadOnlyMode} from '../widgets/readOnlyModeContext';
+ import FlowInstanceDetails from './FlowInstanceDetails';
  
  const useStyles = makeStyles(() => ({
    root: {
@@ -113,9 +114,6 @@
    },
    publish: {
      backgroundColor: `${GREEN.G600} !important`,
-   },
-   center: {
-     alignSelf: 'center',
    },
    detailsContainer: {
      marginRight: '64px',
@@ -348,97 +346,18 @@
  
  function ViewerTopBar() {
    const classes = useStyles();
-   const [menuOpen, setMenuOpen] = useState(null);
    const dialogShowingContext = useDialogShowingContext();
  
    const hide = useCallback(() => {
      dialogShowingContext.hideDialog();
    }, [dialogShowingContext]);
-   const data = {status: 'PAUSED'};
  
-   const handleClick = event => {
-     setMenuOpen(event.currentTarget);
-   };
- 
-   const handleClose = () => {
-     setMenuOpen(null);
-   };
- 
-   const flowInstanceDetails = (
-     <div>
-       <Grid container spacing={0}>
-         <Grid item container xs={12}>
-           <Grid item xs={5} className={classes.center}>
-             <b>Status</b>
-           </Grid>
-           <Grid item xs={7}>
-             <ButtonFlowStatus
-               className={data.status}
-               skin={toPascalCase(data.status)}>
-               {data.status}
-             </ButtonFlowStatus>
-             <MatIconButton
-               skin={'inherit'}
-               icon={MoreVertIcon}
-               onClick={e => {
-                 e.preventDefault();
-                 handleClick(e);
-               }}
-               disabled={
-                 data.status != 'PAUSED' &&
-                 data.status != 'RUNNING' &&
-                 data.status != 'FAILING'
-               }>
-               <MoreVertIcon />
-             </MatIconButton>
-             <Menu
-               anchorEl={menuOpen}
-               keepMounted
-               open={Boolean(menuOpen)}
-               onClose={() => handleClose()}>
-               <MenuItem onClick={() => handleClose()}>{'Resume'}</MenuItem>
-               <MenuItem
-                 onClick={() => {
-                   handleClose();
-                 }}>
-                 Cancel{' '}
-               </MenuItem>
-             </Menu>
-           </Grid>
-         </Grid>
-         <Grid item container xs={12}>
-           <Grid item xs={6}>
-             <b>Flow template</b>
-           </Grid>
-           <Grid item xs={6}>
-             Flow 1
-           </Grid>
-         </Grid>
-         <Grid item container xs={12}>
-           <Grid item xs={6}>
-             <b>Date created</b>
-           </Grid>
-           <Grid item xs={6}>
-             {''}
-           </Grid>
-         </Grid>
-         <Grid item container xs={12}>
-           <Grid item xs={6}>
-             <b>Author</b>
-           </Grid>
-           <Grid item xs={6}>
-             {''}
-           </Grid>
-         </Grid>
-       </Grid>
-     </div>
-   );
  
    const showdialog = useCallback(() => {
      dialogShowingContext.showDialog(
        {
          title: 'Flow ID',
-         children: flowInstanceDetails,
+         children: (<FlowInstanceDetails />),
          className: classes.detailsContainer,
          showCloseButton: true,
          position: POSITION.right,
@@ -449,7 +368,6 @@
      );
    }, [
      classes.detailsContainer,
-     flowInstanceDetails,
      dialogShowingContext,
      hide,
    ]);
