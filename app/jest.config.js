@@ -53,6 +53,7 @@ module.exports = {
         '<rootDir>/fbcnms-projects/**/app/components/__tests__/*.js',
         '<rootDir>/fbcnms-projects/**/app/components/configuration_management/__tests__/*.js',
         '<rootDir>/fbcnms-projects/**/app/components/configure/__tests__/*.js',
+        '<rootDir>/fbcnms-projects/**/app/components/**/__tests__/*.js',
       ],
       transform: {
         '^.+\\.js$': 'babel-jest',
