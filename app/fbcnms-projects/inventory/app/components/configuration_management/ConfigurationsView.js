@@ -16,6 +16,7 @@ import FormField from '@symphony/design-system/components/FormField/FormField';
 import PowerSearchBar from '../power_search/PowerSearchBar';
 import React, {useEffect, useMemo, useState} from 'react';
 import TextField from '@material-ui/core/TextField';
+import useLocationTypes from '../comparison_view/hooks/locationTypesHook';
 import fbt from 'fbt';
 import {ConfigurationTable} from './ConfigurationTable';
 import {Grid} from '@material-ui/core';
@@ -168,13 +169,18 @@ const ConfigurationsView = () => {
   const [checkingSelects, setCheckingSelects] = useState(false);
   const [resourceTable, setResourceTable] = useState(dataResources);
 
+  const locationTypesFilterConfigs = useLocationTypes();
+  console.log('locationTypesFilterConfigs',locationTypesFilterConfigs);
+
   const filterConfigs = useMemo(
     () =>
-      ResourcesSearchConfig.map(ent => ent.filters).reduce(
-        (allFilters, currentFilter) => allFilters.concat(currentFilter),
-        [],
-      ),
-    [],
+      ResourcesSearchConfig.map(ent => ent.filters)
+        .reduce(
+          (allFilters, currentFilter) => allFilters.concat(currentFilter),
+          [],
+        )
+        .concat(locationTypesFilterConfigs ?? []),
+    [locationTypesFilterConfigs],
   );
 
   const verifyResourceSpecification =
@@ -238,6 +244,7 @@ const ConfigurationsView = () => {
   }, [checkingSelects, clearFilter]);
 
   const filterData = filterChange => {
+    console.log('filterChange', filterChange);
     if (filterChange.length > 0) {
       filterChange.map(itemfilterChange => {
         switch (itemfilterChange?.key) {
@@ -266,6 +273,12 @@ const ConfigurationsView = () => {
             );
             setResourceTable([...dataResources, ...filterParameterName]);
             break;
+          /*case 'parameter_selector_name':
+            const filterParameterName = columnDinamic?.filter(
+              item => item?.title === itemfilterChange?.stringValue,
+            );
+            setResourceTable([...dataResources, ...filterParameterName]);
+            break;*/
 
           default:
             setResources(queryResource);
