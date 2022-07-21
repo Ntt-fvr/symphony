@@ -20,12 +20,14 @@ type Props = $ReadOnly<{|
   block: IBlock,
 |}>;
 
+export const TYPE_LIST = [
+  {name: 'Origin', id: 'ORIGIN'},
+  {name: 'Destination', id: 'DESTINATION'},
+];
+
 const ConfigurationGoTo = ({block}: Props) => {
   const {settings} = block;
-  const types = [
-    {name: 'Origin', id: 'ORIGIN'},
-    {name: 'Destination', id: 'DESTINATION'},
-  ];
+  const types = TYPE_LIST;
 
   const [goToSettingsValues, handleInputChange] = useForm({
     type: settings?.type || '',
@@ -36,6 +38,11 @@ const ConfigurationGoTo = ({block}: Props) => {
 
   useEffect(() => {
     block.setSettings(goToSettingsValues);
+
+    types.find(item => item.id === type)
+      ? block.setPorts(block.settings?.type)
+      : null;
+      
   }, [goToSettingsValues]);
 
   return (
