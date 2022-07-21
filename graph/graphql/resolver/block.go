@@ -122,52 +122,6 @@ func (r blockResolver) Details(ctx context.Context, obj *ent.Block) (models.Bloc
 			Params:     obj.InputParams,
 			EntryPoint: entryPoint,
 		}, nil
-	case block.TypeDecision:
-		var routes []*models.DecisionRoute
-		exitPoints, err := obj.QueryExitPoints().
-			Where(exitpoint.RoleEQ(flowschema.ExitPointRoleDecision)).
-			All(ctx)
-		if err != nil {
-			return nil, fmt.Errorf("failed to query exit points: %w", err)
-		}
-		for _, exitPoint := range exitPoints {
-			routes = append(routes, &models.DecisionRoute{ExitPoint: exitPoint})
-		}
-		return &models.DecisionBlock{
-			EntryPoint:       entryPoint,
-			DefaultExitPoint: exitPoint,
-			Routes:           routes,
-		}, nil
-	case block.TypeTrueFalse:
-		trueExitPoint, err := obj.QueryExitPoints().
-			Where(exitpoint.RoleEQ(flowschema.ExitPointRoleTrue)).
-			Only(ctx)
-		if err != nil {
-			return nil, fmt.Errorf("failed to query true exit point: %w", err)
-		}
-		falseExitPoint, err := obj.QueryExitPoints().
-			Where(exitpoint.RoleEQ(flowschema.ExitPointRoleFalse)).
-			Only(ctx)
-		if err != nil {
-			return nil, fmt.Errorf("failed to query false exit point: %w", err)
-		}
-		return &models.TrueFalseBlock{
-			EntryPoint:     entryPoint,
-			TrueExitPoint:  trueExitPoint,
-			FalseExitPoint: falseExitPoint,
-		}, nil
-	case block.TypeSubFlow:
-		flow, err := obj.QuerySubFlow().
-			Only(ctx)
-		if err != nil {
-			return nil, err
-		}
-		return &models.SubflowBlock{
-			Flow:       flow,
-			Params:     obj.InputParams,
-			EntryPoint: entryPoint,
-			ExitPoint:  exitPoint,
-		}, nil
 	case block.TypeGoTo:
 		gotoBlock, err := obj.QueryGotoBlock().Only(ctx)
 		if err != nil && !ent.IsNotFound(err) {
@@ -473,42 +427,6 @@ func (r mutationResolver) AddEndBlock(ctx context.Context, flowDraftID int, inpu
 		Save(ctx)
 }
 
-func (r mutationResolver) AddDecisionBlock(ctx context.Context, flowDraftID int, input models.DecisionBlockInput) (*ent.Block, error) {
-	mutation := addBlockMutation(ctx, input.Cid, block.TypeDecision, flowDraftID, input.UIRepresentation)
-	b, err := mutation.Save(ctx)
-	if err != nil {
-		return nil, err
-	}
-	client := r.ClientFrom(ctx)
-	for _, route := range input.Routes {
-		if route.Cid != nil {
-			var inputVariables []*models.VariableExpressionInput
-			inputVariables = append(inputVariables, route.Condition)
-			variableExpressions, err := getBlockVariables(ctx, inputVariables, b.ID)
-			if err != nil {
-				return nil, err
-			}
-			if len(variableExpressions) != 1 {
-				return nil, fmt.Errorf("there is not a condition for route %s", *route.Cid)
-			}
-			if _, err := client.ExitPoint.Create().
-				SetRole(flowschema.ExitPointRoleDecision).
-				SetCid(*route.Cid).
-				SetParentBlockID(b.ID).
-				SetCondition(variableExpressions[0]).
-				Save(ctx); err != nil {
-				return nil, fmt.Errorf("failed to create decision exit points: %w", err)
-			}
-		}
-	}
-	return b, nil
-}
-
-func (r mutationResolver) AddTrueFalseBlock(ctx context.Context, flowDraftID int, input models.TrueFalseBlockInput) (*ent.Block, error) {
-	mutation := addBlockMutation(ctx, input.Cid, block.TypeTrueFalse, flowDraftID, input.UIRepresentation)
-	return mutation.Save(ctx)
-}
-
 func (r mutationResolver) AddGotoBlock(ctx context.Context, flowDraftID int, input models.GotoBlockInput) (*ent.Block, error) {
 	mutation := addBlockMutation(ctx, input.Cid, block.TypeGoTo, flowDraftID, input.UIRepresentation)
 	if input.TargetBlockCid != nil {
@@ -519,22 +437,6 @@ func (r mutationResolver) AddGotoBlock(ctx context.Context, flowDraftID int, inp
 		mutation.SetGotoBlock(targetBlockID)
 	}
 	return mutation.
-		Save(ctx)
-}
-
-func (r mutationResolver) AddSubflowBlock(ctx context.Context, flowDraftID int, input models.SubflowBlockInput) (*ent.Block, error) {
-	mutation := addBlockMutation(ctx, input.Cid, block.TypeSubFlow, flowDraftID, input.UIRepresentation)
-	b, err := mutation.SetSubFlowID(input.FlowID).
-		Save(ctx)
-	if err != nil {
-		return nil, err
-	}
-	blockVariables, err := getBlockVariables(ctx, input.Params, b.ID)
-	if err != nil {
-		return nil, err
-	}
-	return b.Update().
-		SetInputParams(blockVariables).
 		Save(ctx)
 }
 
@@ -650,6 +552,7 @@ func getEntryPoint(ctx context.Context, flowDraftID int, blockCid string, ePoint
 func (r mutationResolver) AddConnector(ctx context.Context, flowDraftID int, input models.ConnectorInput) (*models.Connector, error) {
 	exitPoint, err := getExitPoint(ctx, flowDraftID, input.SourceBlockCid, input.SourcePoint)
 	if err != nil {
+		fmt.Println("fallo el getExitPoint")
 		return nil, err
 	}
 	entryPoint, err := getEntryPoint(ctx, flowDraftID, input.TargetBlockCid, input.TargetPoint)
@@ -886,6 +789,7 @@ func (r mutationResolver) AddChoiceBlock(ctx context.Context, flowDraftID int, i
 				SetCid(*route.Cid).
 				SetParentBlockID(b.ID).
 				SetCondition(variableExpressions[0]).
+				SetIndex(*route.Index).
 				Save(ctx); err != nil {
 				return nil, fmt.Errorf("failed to create choice exit points: %w", err)
 			}

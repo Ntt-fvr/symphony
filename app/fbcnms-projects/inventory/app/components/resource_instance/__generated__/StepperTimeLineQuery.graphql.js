@@ -56,6 +56,20 @@ export type StepperTimeLineQueryResponse = {|
         |},
       |}>,
       +createTime: ?any,
+      +previous: ?{|
+        +id: string,
+        +parameters: $ReadOnlyArray<{|
+          +id: string,
+          +stringValue: ?string,
+          +floatValue: ?number,
+          +intValue: ?number,
+          +parameterType: {|
+            +id: string,
+            +name: string,
+            +type: ParameterKind,
+          |},
+        |}>,
+      |},
     |}>,
   |}>
 |};
@@ -90,6 +104,20 @@ query StepperTimeLineQuery(
         }
       }
       createTime
+      previous {
+        id
+        parameters {
+          id
+          stringValue
+          floatValue
+          intValue
+          parameterType {
+            id
+            name
+            type
+          }
+        }
+      }
     }
   }
 }
@@ -117,7 +145,60 @@ v2 = {
   "name": "name",
   "storageKey": null
 },
-v3 = [
+v3 = {
+  "alias": null,
+  "args": null,
+  "concreteType": "Parameter",
+  "kind": "LinkedField",
+  "name": "parameters",
+  "plural": true,
+  "selections": [
+    (v1/*: any*/),
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "stringValue",
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "floatValue",
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "intValue",
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "concreteType": "ConfigurationParameterType",
+      "kind": "LinkedField",
+      "name": "parameterType",
+      "plural": false,
+      "selections": [
+        (v1/*: any*/),
+        (v2/*: any*/),
+        {
+          "alias": null,
+          "args": null,
+          "kind": "ScalarField",
+          "name": "type",
+          "storageKey": null
+        }
+      ],
+      "storageKey": null
+    }
+  ],
+  "storageKey": null
+},
+v4 = [
   {
     "alias": null,
     "args": [
@@ -164,64 +245,25 @@ v3 = [
             "name": "validTo",
             "storageKey": null
           },
-          {
-            "alias": null,
-            "args": null,
-            "concreteType": "Parameter",
-            "kind": "LinkedField",
-            "name": "parameters",
-            "plural": true,
-            "selections": [
-              (v1/*: any*/),
-              {
-                "alias": null,
-                "args": null,
-                "kind": "ScalarField",
-                "name": "stringValue",
-                "storageKey": null
-              },
-              {
-                "alias": null,
-                "args": null,
-                "kind": "ScalarField",
-                "name": "floatValue",
-                "storageKey": null
-              },
-              {
-                "alias": null,
-                "args": null,
-                "kind": "ScalarField",
-                "name": "intValue",
-                "storageKey": null
-              },
-              {
-                "alias": null,
-                "args": null,
-                "concreteType": "ConfigurationParameterType",
-                "kind": "LinkedField",
-                "name": "parameterType",
-                "plural": false,
-                "selections": [
-                  (v1/*: any*/),
-                  (v2/*: any*/),
-                  {
-                    "alias": null,
-                    "args": null,
-                    "kind": "ScalarField",
-                    "name": "type",
-                    "storageKey": null
-                  }
-                ],
-                "storageKey": null
-              }
-            ],
-            "storageKey": null
-          },
+          (v3/*: any*/),
           {
             "alias": null,
             "args": null,
             "kind": "ScalarField",
             "name": "createTime",
+            "storageKey": null
+          },
+          {
+            "alias": null,
+            "args": null,
+            "concreteType": "CMVersion",
+            "kind": "LinkedField",
+            "name": "previous",
+            "plural": false,
+            "selections": [
+              (v1/*: any*/),
+              (v3/*: any*/)
+            ],
             "storageKey": null
           }
         ],
@@ -237,7 +279,7 @@ return {
     "kind": "Fragment",
     "metadata": null,
     "name": "StepperTimeLineQuery",
-    "selections": (v3/*: any*/),
+    "selections": (v4/*: any*/),
     "type": "Query",
     "abstractKey": null
   },
@@ -246,19 +288,19 @@ return {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
     "name": "StepperTimeLineQuery",
-    "selections": (v3/*: any*/)
+    "selections": (v4/*: any*/)
   },
   "params": {
-    "cacheID": "6b98c457694a4d5c35d92d057d96f3fb",
+    "cacheID": "d4845b91211ae7199e5d8504e7520fe7",
     "id": null,
     "metadata": {},
     "name": "StepperTimeLineQuery",
     "operationKind": "query",
-    "text": "query StepperTimeLineQuery(\n  $filter: ResourceFilter\n) {\n  queryResource(filter: $filter) {\n    id\n    name\n    cmVersions {\n      id\n      status\n      validFrom\n      validTo\n      parameters {\n        id\n        stringValue\n        floatValue\n        intValue\n        parameterType {\n          id\n          name\n          type\n        }\n      }\n      createTime\n    }\n  }\n}\n"
+    "text": "query StepperTimeLineQuery(\n  $filter: ResourceFilter\n) {\n  queryResource(filter: $filter) {\n    id\n    name\n    cmVersions {\n      id\n      status\n      validFrom\n      validTo\n      parameters {\n        id\n        stringValue\n        floatValue\n        intValue\n        parameterType {\n          id\n          name\n          type\n        }\n      }\n      createTime\n      previous {\n        id\n        parameters {\n          id\n          stringValue\n          floatValue\n          intValue\n          parameterType {\n            id\n            name\n            type\n          }\n        }\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = 'b45d27db1e3fe99421d75374031f8663';
+(node/*: any*/).hash = '97533b5f3541d8351a1c4bfca2195fe5';
 
 module.exports = node;

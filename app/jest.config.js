@@ -26,7 +26,7 @@ module.exports = {
       name: 'server',
       testEnvironment: 'node',
       testMatch: [
-        '<rootDir>/__tests__/*.js',
+        //'<rootDir>/__tests__/*.js',
         '<rootDir>/fbcnms-projects/**/server/**/__tests__/*.js',
         '<rootDir>/fbcnms-projects/platform-server/**/__tests__/*.js',
         // run app/server shared tests in both node and jsdom environments
@@ -50,9 +50,9 @@ module.exports = {
       testEnvironment: 'jsdom',
       setupFilesAfterEnv: ['<rootDir>/setupTest.js'],
       testMatch: [
-        '<rootDir>/fbcnms-projects/**/app/**/__tests__/*.js',
-        // run app/server shared tests in both node and jsdom environments
-        '<rootDir>/fbcnms-projects/**/shared/**/__tests__/*.js',
+        '<rootDir>/fbcnms-projects/**/app/components/__tests__/*.js',
+        '<rootDir>/fbcnms-projects/**/app/components/configuration_management/__tests__/*.js',
+        '<rootDir>/fbcnms-projects/**/app/components/configure/__tests__/*.js',
       ],
       transform: {
         '^.+\\.js$': 'babel-jest',
