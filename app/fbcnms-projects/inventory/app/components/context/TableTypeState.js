@@ -64,6 +64,8 @@ export const toMutableProperty = (immutablePropertyType: T): T => ({
   longitudeValue: immutablePropertyType.longitudeValue,
   rangeFromValue: immutablePropertyType.rangeFromValue,
   rangeToValue: immutablePropertyType.rangeToValue,
+  isMandatory: immutablePropertyType.isMandatory,
+  isInstanceProperty: immutablePropertyType.isInstanceProperty,
   propertyType: {
     ...immutablePropertyType,
   },
@@ -81,6 +83,8 @@ export const toMutablePropertyEdit = (immutablePropertyType: T): T => ({
   longitudeValue: immutablePropertyType.longitudeValue,
   rangeFromValue: immutablePropertyType.rangeFromValue,
   rangeToValue: immutablePropertyType.rangeToValue,
+  isMandatory: immutablePropertyType.isMandatory,
+  isInstanceProperty: immutablePropertyType.isInstanceProperty,
   propertyType: immutablePropertyType.propertyType,
 });
 

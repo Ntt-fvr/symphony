@@ -36,6 +36,8 @@ const AddEditPropertyList = ({propertyTypes}: Props) => {
       {propertyTypes.map(property => (
         <Grid key={property.id} className={classes.inputMargin} item xs={6}>
           <PropertyValueInput
+            required={!!property.propertyType.isMandatory}
+            disabled={!property.propertyType.isInstanceProperty}
             label={property.name}
             className={classes.input}
             inputType="Property"
