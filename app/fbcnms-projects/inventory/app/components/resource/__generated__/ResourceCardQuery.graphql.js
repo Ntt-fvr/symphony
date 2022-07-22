@@ -54,6 +54,8 @@ export type ResourceCardQueryResponse = {|
             +longitudeValue: ?number,
             +rangeFromValue: ?number,
             +rangeToValue: ?number,
+            +isMandatory: ?boolean,
+            +isInstanceProperty: ?boolean,
           |}>,
         |}>,
       |}
@@ -113,6 +115,8 @@ query ResourceCardQuery {
             longitudeValue
             rangeFromValue
             rangeToValue
+            isMandatory
+            isInstanceProperty
           }
         }
       }
@@ -326,6 +330,20 @@ v2 = [
                         "kind": "ScalarField",
                         "name": "rangeToValue",
                         "storageKey": null
+                      },
+                      {
+                        "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
+                        "name": "isMandatory",
+                        "storageKey": null
+                      },
+                      {
+                        "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
+                        "name": "isInstanceProperty",
+                        "storageKey": null
                       }
                     ],
                     "storageKey": null
@@ -409,16 +427,16 @@ return {
     "selections": (v2/*: any*/)
   },
   "params": {
-    "cacheID": "96c35afe3981e0eb5bab576ad0ab19bf",
+    "cacheID": "aa18e598865b719dba0a6a6114d1adcc",
     "id": null,
     "metadata": {},
     "name": "ResourceCardQuery",
     "operationKind": "query",
-    "text": "query ResourceCardQuery {\n  queryResource {\n    id\n    name\n    locatedIn\n    resourceSpecification\n    isDeleted\n    lifecycleStatus\n    typePlanningSubStatus\n    planningSubStatus\n    usageSubStatus\n    operationalSubStatus\n  }\n  resourceTypes {\n    edges {\n      node {\n        id\n        name\n        resourceSpecification {\n          id\n          name\n          resourcePropertyTypes {\n            id\n            name\n            type\n            stringValue\n            intValue\n            booleanValue\n            floatValue\n            latitudeValue\n            longitudeValue\n            rangeFromValue\n            rangeToValue\n          }\n        }\n      }\n    }\n  }\n  resourceSpecifications {\n    edges {\n      node {\n        id\n        name\n        resourceType {\n          id\n          name\n        }\n      }\n    }\n  }\n}\n"
+    "text": "query ResourceCardQuery {\n  queryResource {\n    id\n    name\n    locatedIn\n    resourceSpecification\n    isDeleted\n    lifecycleStatus\n    typePlanningSubStatus\n    planningSubStatus\n    usageSubStatus\n    operationalSubStatus\n  }\n  resourceTypes {\n    edges {\n      node {\n        id\n        name\n        resourceSpecification {\n          id\n          name\n          resourcePropertyTypes {\n            id\n            name\n            type\n            stringValue\n            intValue\n            booleanValue\n            floatValue\n            latitudeValue\n            longitudeValue\n            rangeFromValue\n            rangeToValue\n            isMandatory\n            isInstanceProperty\n          }\n        }\n      }\n    }\n  }\n  resourceSpecifications {\n    edges {\n      node {\n        id\n        name\n        resourceType {\n          id\n          name\n        }\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = '6167170c1d2d1f007b44c99d5c9585cf';
+(node/*: any*/).hash = 'b2390069086e745940e8b827cad17b74';
 
 module.exports = node;

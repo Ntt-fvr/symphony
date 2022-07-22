@@ -23,7 +23,7 @@ export type LifecycleStatus = "INSTALLING" | "OPERATING" | "PLANNING" | "RETIRIN
 export type OperationalSubStatus = "NOT_WORKING" | "WORKING" | "%future added value";
 export type ParameterKind = "bool" | "date" | "datetime_local" | "email" | "enum" | "float" | "gps_location" | "int" | "range" | "string" | "%future added value";
 export type PlanningSubStatus = "ACTIVATED" | "DESACTIVATED" | "%future added value";
-export type ResourcePropertyHasFilter = "booleanValue" | "createTime" | "floatValue" | "intValue" | "latitudeValue" | "longitudeValue" | "rangeFromValue" | "rangeToValue" | "rawValue" | "resource" | "resourcePropertyType" | "stringValue" | "updateTime" | "%future added value";
+export type ResourcePropertyHasFilter = "booleanValue" | "createTime" | "floatValue" | "intValue" | "isInstanceProperty" | "isMandatory" | "latitudeValue" | "longitudeValue" | "rangeFromValue" | "rangeToValue" | "rawValue" | "resource" | "resourcePropertyType" | "stringValue" | "updateTime" | "%future added value";
 export type TypePlanningSubStatus = "DESIGNED" | "FEASIBILITY_CHECKED" | "ORDERED" | "PROPOSED" | "%future added value";
 export type UsageSubStatus = "ASSIGNED" | "AVAILABLE" | "NO_AVAILABLE" | "RESERVED" | "TERMINATING" | "%future added value";
 export type VersionStatus = "CURRENT" | "REPLACED" | "%future added value";
@@ -54,6 +54,8 @@ export type ResourcePropertyPatch = {|
   createTime?: ?any,
   floatValue?: ?number,
   intValue?: ?number,
+  isInstanceProperty?: ?boolean,
+  isMandatory?: ?boolean,
   latitudeValue?: ?number,
   longitudeValue?: ?number,
   rangeFromValue?: ?number,
@@ -244,6 +246,8 @@ export type ResourcePropertyRef = {|
   floatValue?: ?number,
   id?: ?string,
   intValue?: ?number,
+  isInstanceProperty?: ?boolean,
+  isMandatory?: ?boolean,
   latitudeValue?: ?number,
   longitudeValue?: ?number,
   rangeFromValue?: ?number,
