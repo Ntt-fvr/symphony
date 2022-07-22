@@ -1769,6 +1769,11 @@ input PropertyTypeInput
   propertyTypeValues: [AddPropertyTypeValueInput]
 }
 
+input EditPropertyTypeInput {
+    id: ID!
+    isDeleted: Boolean!
+  }
+
 input EditIsListableInput {
   id: ID!
   isListable: Boolean!
@@ -8503,6 +8508,7 @@ type Mutation {
   addPropertyTypeValue(input: AddPropertyTypeValueInput!): PropertyTypeValue!
   editPropertyTypeValue(input: EditPropertyTypeValueInput!): PropertyTypeValue!
   removePropertyTypeValue(id: ID!): ID!
+  editPropertyType(input: EditPropertyTypeInput!): PropertyType!
 }
 
 """

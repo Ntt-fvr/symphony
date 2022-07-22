@@ -25,7 +25,7 @@ const FILL_COLOR = '#2ABBA7';
 
 const TOTAL_SIZE = 72;
 const PADDING = 5;
-const BORDER = 6;
+const BORDER = 4;
 
 const INNER_SIZE = TOTAL_SIZE - 2 * PADDING;
 const RADIUS = INNER_SIZE / 2;
@@ -80,7 +80,8 @@ const ManualStartBaseClass = jointJS.dia.Element.define(
   markup,
 );
 
-export default class ManualStart extends ManualStartBaseClass
+export default class ManualStart
+  extends ManualStartBaseClass
   implements IVertexModel {
   constructor(id?: string) {
     super(

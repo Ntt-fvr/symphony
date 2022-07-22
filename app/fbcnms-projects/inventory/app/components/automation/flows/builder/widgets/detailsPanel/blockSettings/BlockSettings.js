@@ -11,37 +11,30 @@
 import type {IBlock} from '../../../canvas/graph/shapes/blocks/BaseBlock';
 
 import * as React from 'react';
-import FormFieldTextInput from '../../../../../../admin/userManagement/utils/FormFieldTextInput';
-import fbt from 'fbt';
-import {makeStyles} from '@material-ui/styles';
-
+import ConfigureSettings from './configureSettings/index';
+import Tabs from '../inputs/Tabs';
+import {Box} from '@material-ui/core';
+import {getAllowedTabs} from './helpers';
+import {useMemo} from 'react';
 type Props = $ReadOnly<{|
   block: IBlock,
 |}>;
 
-const useStyles = makeStyles(() => ({
-  root: {
-    width: '100%',
-    display: 'flex',
-    flexDirection: 'column',
-  },
-  title: {
-    marginBottom: '27px',
-  },
-}));
 export default function BlockSettings(props: Props) {
   const {block} = props;
-  const classes = useStyles();
+  const allowedTabs = useMemo(() => getAllowedTabs(block.type, block), [block]);
+  const tabs = [
+    {
+      label: 'Configurations',
+      index: 0,
+      view: <ConfigureSettings block={block} />,
+    },
+    ...allowedTabs,
+  ];
 
   return (
-    <div className={classes.root}>
-      <FormFieldTextInput
-        label={`${fbt('Block Name', '')}`}
-        value={block.name}
-        onValueChanged={name => {
-          block.setName(name);
-        }}
-      />
-    </div>
+    <Box py={1} px={0}>
+      <Tabs tabs={tabs} scrollable={false} />
+    </Box>
   );
 }

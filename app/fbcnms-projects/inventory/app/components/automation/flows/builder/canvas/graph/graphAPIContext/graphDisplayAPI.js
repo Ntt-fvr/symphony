@@ -18,10 +18,13 @@ export type GraphDisplayAPI = $ReadOnly<{|
   zoomIn: () => void,
   zoomOut: () => void,
   zoomFit: () => void,
+  zoomScroll: () => void,
   move: Position => void,
   reset: () => void,
   setPaperInteractionLocked: boolean => void,
   paperInteractionIsLocked: () => boolean,
+  showGrid: () => void,
+  hiddenGrid: () => void,
 |}>;
 
 export default function graphDisplayAPIProvider(
@@ -30,19 +33,25 @@ export default function graphDisplayAPIProvider(
   const zoomIn = paperZoomIn.bind(flowWrapper);
   const zoomOut = paperZoomOut.bind(flowWrapper);
   const zoomFit = paperZoomFit.bind(flowWrapper);
+  const zoomScroll = paperZoomScroll.bind(flowWrapper);
   const move = paperMove.bind(flowWrapper);
   const reset = paperReset.bind(flowWrapper);
   const setPaperInteractionLocked = paperSetLocked.bind(flowWrapper);
   const paperInteractionIsLocked = interactionIsLocked.bind(flowWrapper);
+  const showGrid = paperShowGrid.bind(flowWrapper);
+  const hiddenGrid = paperHiddenGrid.bind(flowWrapper);
 
   return {
     zoomIn,
     zoomOut,
     zoomFit,
+    zoomScroll,
     move,
     reset,
     setPaperInteractionLocked,
     paperInteractionIsLocked,
+    showGrid,
+    hiddenGrid,
   };
 }
 
@@ -103,6 +112,10 @@ function paperZoomFit() {
   };
 }
 
+function paperZoomScroll(event) {
+  event.deltaY < 0 ? paperZoom.call(this) : paperZoom.call(this, -1);
+}
+
 function paperMove(translation: Position | 0) {
   if (this.current == null) {
     return;
@@ -140,4 +153,20 @@ function paperSetLocked(locked: boolean) {
 
 function interactionIsLocked() {
   return this.current?.paperIsLocked === true;
+}
+
+function paperShowGrid() {
+  paperGrid.call(this, true);
+}
+
+function paperHiddenGrid() {
+  paperGrid.call(this, false);
+}
+
+function paperGrid(isShow: boolean) {
+  if (this.current == null) {
+    return;
+  }
+  const flow: FlowWrapper = this.current;
+  !isShow ? flow.paper.setGridSize(30) : flow.paper.setGridSize(1);
 }

@@ -48,6 +48,7 @@ import SnackbarItem from '@fbcnms/ui/components/SnackbarItem';
 import TextField from '@material-ui/core/TextField';
 import TextInput from '@symphony/design-system/components/Input/TextInput';
 import nullthrows from '@fbcnms/util/nullthrows';
+import useFeatureFlag from '@fbcnms/ui/context/useFeatureFlag';
 import {FormContextProvider} from '../../common/FormContext';
 import {LogEvents, ServerLogger} from '../../common/LoggingUtils';
 import {MuiPickersUtilsProvider} from '@material-ui/pickers';
@@ -237,6 +238,8 @@ const AddWorkOrderCard = (props: Props) => {
   const classes = useStyles();
   const {statusValues, closedStatus} = useStatusValues();
 
+  const featureFlagFilters = useFeatureFlag('scheduling_filter_dates');
+
   const [loading, setLoading] = useState<boolean>(false);
 
   const {
@@ -342,7 +345,7 @@ const AddWorkOrderCard = (props: Props) => {
         workOrderTypeId,
         organizationFk: organizationFk?.id,
         assigneeId: assignedTo?.id,
-        ownerId: owner?.id,
+        ownerId: owner?.id || null,
         projectId: project?.id,
         status,
         priority,
@@ -571,15 +574,17 @@ const AddWorkOrderCard = (props: Props) => {
                             />
                           </FormField>
                         </Grid>
-                        <Grid item xs={12} sm={6} lg={4} xl={4}>
-                          <FormField label="Scheduled at">
-                            <TextInput
-                              type="date"
-                              className={classes.gridInput}
-                              disabled
-                            />
-                          </FormField>
-                        </Grid>
+                        {featureFlagFilters && (
+                          <Grid item xs={12} sm={6} lg={4} xl={4}>
+                            <FormField label="Scheduled at">
+                              <TextInput
+                                type="date"
+                                className={classes.gridInput}
+                                disabled
+                              />
+                            </FormField>
+                          </Grid>
+                        )}
                         {workOrder.properties
                           .filter(property => !property.propertyType.isDeleted)
                           .map((property, index) => (

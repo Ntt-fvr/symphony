@@ -10,9 +10,14 @@
 
 import GoToIcon from './GoToIcon';
 import React from 'react';
-import fbt from 'fbt';
 import {BasePresentation} from '../BasePresentation';
+import {Typography} from '@material-ui/core';
 
 export default function GoToPresentation() {
-  return <BasePresentation icon={GoToIcon} text={fbt('Go to', '')} />;
+  return (
+    <BasePresentation
+      icon={GoToIcon}
+      text={<Typography variant="caption">Go to</Typography>}
+    />
+  );
 }

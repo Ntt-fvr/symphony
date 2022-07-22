@@ -11,12 +11,13 @@
 
 import CreateActionBaseClass from './CreateActionBaseClass';
 import fbt from 'fbt';
+import symphony from '@symphony/design-system/theme/symphony';
 import {IVertexModel, getInitObject} from '../BaseVertext';
 import {getActionType} from './utils';
 
 export const ACTION_TYPE_ID = 'update_inventory';
 export const TYPE = getActionType(ACTION_TYPE_ID);
-const FILL_COLOR = '#4856b0';
+const FILL_COLOR = symphony.palette.AUTOMATION.BLUE;
 
 const CreateWorkorderBaseClass = CreateActionBaseClass({
   actionName: ACTION_TYPE_ID,
@@ -26,13 +27,13 @@ const CreateWorkorderBaseClass = CreateActionBaseClass({
 });
 
 const TOTAL_SIZE = 72;
-const PADDING = 5;
 
-export default class CreateWorkorder extends CreateWorkorderBaseClass
+export default class CreateWorkorder
+  extends CreateWorkorderBaseClass
   implements IVertexModel {
   constructor(id?: string) {
     super(getInitObject(FILL_COLOR, {}, id));
-    this.resize(TOTAL_SIZE, TOTAL_SIZE - 2 * PADDING);
+    this.resize(TOTAL_SIZE, TOTAL_SIZE);
   }
 }
 

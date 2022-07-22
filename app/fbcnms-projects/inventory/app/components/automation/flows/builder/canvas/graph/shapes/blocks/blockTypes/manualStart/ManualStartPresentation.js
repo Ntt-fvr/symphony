@@ -10,9 +10,14 @@
 
 import * as React from 'react';
 import ManualStartIcon from './ManualStartIcon';
-import fbt from 'fbt';
 import {BasePresentation} from '../BasePresentation';
+import {Typography} from '@material-ui/core';
 
 export default function ManualStartPresentation() {
-  return <BasePresentation icon={ManualStartIcon} text={fbt('Start', '')} />;
+  return (
+    <BasePresentation
+      icon={ManualStartIcon}
+      text={<Typography variant="caption">Start</Typography>}
+    />
+  );
 }
