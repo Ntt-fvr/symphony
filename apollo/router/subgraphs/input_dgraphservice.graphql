@@ -97,6 +97,8 @@ type ResourceProperty implements DefaultConfig{
   rawValue: String
   resource: Resource @hasInverse(field: resourceProperties)
   resourcePropertyType: String! @search(by: [hash])
+  isMandatory: Boolean
+  isInstanceProperty: Boolean
 }
 enum VersionStatus{
   CURRENT
