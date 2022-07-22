@@ -170,7 +170,6 @@ const ConfigurationsView = () => {
   const [resourceTable, setResourceTable] = useState(dataResources);
 
   const locationTypesFilterConfigs = useLocationTypes();
-  console.log('locationTypesFilterConfigs', locationTypesFilterConfigs);
 
   const filterConfigs = useMemo(
     () =>
@@ -242,63 +241,55 @@ const ConfigurationsView = () => {
     setResourceTable([...dataResources, ...columnDinamic]);
     setResources(queryResource);
   }, [checkingSelects, clearFilter]);
-  console.log('resources', resources);
+
   const filterData = filterChange => {
-    console.log('filterChange', filterChange);
-    if (filterChange.length > 0) {
-      filterChange.map(itemfilterChange => {
-        switch (itemfilterChange?.key) {
-          case 'resource_name':
-            const filterName = resources?.filter(
-              item => item?.name === itemfilterChange?.stringValue,
-            );
-            setResources(filterName);
-            break;
-          case 'resource_id':
-            const filterId = resources?.filter(
-              item => item?.id === itemfilterChange?.stringValue,
-            );
-            setResources(filterId);
-            break;
-          case 'location_inst_external_id':
-            const filterLocation = queryResource?.filter(
-              item =>
-                item?.resource?.locatedIn === itemfilterChange?.stringValue,
-            );
-            setResources(filterLocation);
-            break;
-          case 'parameter_selector_name':
-            const filterParameterName = columnDinamic?.filter(
-              item => item?.title === itemfilterChange?.stringValue,
-            );
-            setResourceTable([...dataResources, ...filterParameterName]);
-            break;
+    const searchLocations = (item, idSet) => {
+      const locationById = idSet?.find(id => id === item.locatedIn);
+      return locationById;
+    };
 
-          default:
-            setResources(queryResource);
-            break;
-        }
-      });
-      filterChange.map(itemfilterChange => {
-        itemfilterChange.idSet?.map(idLocation => {
-          switch (idLocation) {
-            case idLocation:
-              const filterLocationName = resources?.filter(
-                item => item?.locatedIn === idLocation,
-              );
-              setResources(filterLocationName);
-              console.log(idLocation);
-              break;
+    filterChange.length > 0
+      ? filterChange.map(itemfilterChange => {
+          if (itemfilterChange.name === 'location_inst') {
+            const filterLocationName = resources?.filter(item =>
+              searchLocations(item, itemfilterChange.idSet),
+            );
+            setResources(filterLocationName);
+          } else {
+            switch (itemfilterChange?.key) {
+              case 'resource_name':
+                const filterName = resources?.filter(
+                  item => item?.name === itemfilterChange?.stringValue,
+                );
+                setResources(filterName);
+                break;
+              case 'resource_id':
+                const filterId = resources?.filter(
+                  item => item?.id === itemfilterChange?.stringValue,
+                );
+                setResources(filterId);
+                break;
+              case 'location_inst_external_id':
+                const filterLocation = queryResource?.filter(
+                  item =>
+                    item?.resource?.locatedIn === itemfilterChange?.stringValue,
+                );
+                setResources(filterLocation);
+                break;
+              case 'parameter_selector_name':
+                const filterParameterName = columnDinamic?.filter(
+                  item => item?.title === itemfilterChange?.stringValue,
+                );
+                setResourceTable([...dataResources, ...filterParameterName]);
+                break;
 
-            default:
-              break;
+              default:
+                setResources(queryResource);
+                break;
+            }
           }
-        });
-      });
-      filterChange.length === 0 && setResources(queryResource);
-    } else {
-      setClearFilter(!clearFilter);
-    }
+        })
+      : setClearFilter(!clearFilter);
   };
 
   return (
