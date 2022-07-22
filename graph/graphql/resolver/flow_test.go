@@ -86,6 +86,140 @@ func prepareBasicFlow(ctx context.Context, t *testing.T, mr generated.MutationRe
 	return flw
 }
 
+func prepareComplexFlow(ctx context.Context, t *testing.T, mr generated.MutationResolver, name string,
+	startUIRepresentation *flowschema.BlockUIRepresentation, endUIRepresentation *flowschema.BlockUIRepresentation) (*ent.Flow, *ent.Flow) {
+	draft, err := mr.AddFlowDraft(ctx, models.AddFlowDraftInput{
+		Name: name,
+		EndParamDefinitions: []*flowschema.VariableDefinition{
+			{
+				Key:  "param",
+				Type: enum.VariableTypeString,
+			},
+		},
+	})
+	require.NoError(t, err)
+
+	choiceUI := &flowschema.BlockUIRepresentation{
+		Name:      "CHOICE",
+		XPosition: 40,
+		YPosition: 40,
+	}
+
+	startBlock, err := mr.AddStartBlock(ctx, draft.ID, models.StartBlockInput{
+		Cid: "start",
+		ParamDefinitions: []*flowschema.VariableDefinition{
+			{
+				Key:  "start_param",
+				Type: enum.VariableTypeString,
+			},
+		},
+		UIRepresentation: startUIRepresentation,
+	})
+	require.NoError(t, err)
+	endBlockGoTo, err := mr.AddEndBlock(ctx, draft.ID, models.EndBlockInput{
+		Cid: "endGoTo",
+		Params: []*models.VariableExpressionInput{
+			{
+				Type:                  enum.VariableDefinition,
+				VariableDefinitionKey: refString("param"),
+				Expression:            "${b_0}",
+				BlockVariables: []*models.BlockVariableInput{
+					{
+						Type:                  enum.VariableDefinition,
+						BlockCid:              startBlock.Cid,
+						VariableDefinitionKey: refString("start_param"),
+					},
+				},
+			},
+		},
+		UIRepresentation: endUIRepresentation,
+	})
+	require.NoError(t, err)
+	choiceBlock, err := mr.AddChoiceBlock(ctx, draft.ID, models.ChoiceBlockInput{
+		Cid: "choice",
+		EntryPoint: &models.EntryPointInput{
+			Cid: &startBlock.Cid,
+		},
+		DefaultExitPoint: &models.ExitPointInput{
+			Cid: &endBlockGoTo.Cid,
+		},
+		Routes: []*models.DecisionRouteInput{
+			&models.DecisionRouteInput{},
+		},
+		BasicDefinitions: &models.BaseBlockInput{},
+		UIRepresentation: choiceUI,
+	})
+	require.NoError(t, err)
+	endBlockExecuteFlow, err := mr.AddEndBlock(ctx, draft.ID, models.EndBlockInput{
+		Cid: "end",
+		Params: []*models.VariableExpressionInput{
+			{
+				Type:                  enum.VariableDefinition,
+				VariableDefinitionKey: refString("param"),
+				Expression:            "${b_0}",
+				BlockVariables: []*models.BlockVariableInput{
+					{
+						Type:                  enum.VariableDefinition,
+						BlockCid:              startBlock.Cid,
+						VariableDefinitionKey: refString("start_param"),
+					},
+				},
+			},
+		},
+		UIRepresentation: endUIRepresentation,
+	})
+	require.NoError(t, err)
+	subFlow := prepareBasicFlow(ctx, t, mr, "subFlow", nil, nil)
+	executeFlow, err := mr.AddExecuteFlowBlock(ctx, draft.ID, models.ExecuteFlowBlockInput{
+		Cid: "execute",
+		EntryPoint: &models.EntryPointInput{
+			Cid: &choiceBlock.Cid,
+		},
+		ExitPoint: &models.ExitPointInput{
+			Cid: &endBlockExecuteFlow.Cid,
+		},
+		Flow:   subFlow.ID,
+		Params: []*models.VariableExpressionInput{},
+		UIRepresentation: &flowschema.BlockUIRepresentation{
+			Name:      "SUB_FLOW",
+			XPosition: 60,
+			YPosition: 60,
+		},
+	})
+	require.NoError(t, err)
+
+	_, err = mr.AddConnector(ctx, draft.ID, models.ConnectorInput{
+		SourceBlockCid: startBlock.Cid,
+		TargetBlockCid: choiceBlock.Cid,
+	})
+
+	_, err = mr.AddConnector(ctx, draft.ID, models.ConnectorInput{
+		SourceBlockCid: startBlock.Cid,
+		TargetBlockCid: choiceBlock.Cid,
+	})
+	_, err = mr.AddConnector(ctx, draft.ID, models.ConnectorInput{
+		SourceBlockCid: choiceBlock.Cid,
+		TargetBlockCid: endBlockGoTo.Cid,
+	})
+	_, err = mr.AddConnector(ctx, draft.ID, models.ConnectorInput{
+		SourceBlockCid: choiceBlock.Cid,
+		TargetBlockCid: executeFlow.Cid,
+	})
+	_, err = mr.AddConnector(ctx, draft.ID, models.ConnectorInput{
+		SourceBlockCid: executeFlow.Cid,
+		TargetBlockCid: endBlockExecuteFlow.Cid,
+	})
+	require.NoError(t, err)
+
+	flw, err := mr.PublishFlow(ctx, models.PublishFlowInput{
+		FlowDraftID:         draft.ID,
+		FlowInstancesPolicy: flow.NewInstancesPolicyEnabled,
+	})
+	require.NoError(t, err)
+
+	return flw, subFlow
+}
+
 func TestAddDeleteFlowDraft(t *testing.T) {
 	r := newTestResolver(t)
 	defer r.Close()
@@ -196,8 +330,7 @@ func TestCreateDraftFromExistingFlowAndPublish(t *testing.T) {
 	defer r.Close()
 	ctx := viewertest.NewContext(context.Background(), r.client)
 	mr, qr, br, ver, bvr := r.Mutation(), r.Query(), r.Block(), r.VariableExpression(), r.BlockVariable()
-	subFlow := prepareBasicFlow(ctx, t, mr, "Subflow", nil, nil)
-	mainFlow := prepareBasicFlow(ctx, t, mr, "Main",
+	mainFlow, subFlow := prepareComplexFlow(ctx, t, mr, "Main",
 		&flowschema.BlockUIRepresentation{
 			Name:      "Start",
 			XPosition: 20,
@@ -208,7 +341,6 @@ func TestCreateDraftFromExistingFlowAndPublish(t *testing.T) {
 			XPosition: 30,
 			YPosition: 30,
 		})
-
 	firstDraft, err := r.client.Flow.QueryDraft(mainFlow).Only(ctx)
 	require.NoError(t, err)
 	err = r.client.FlowDraft.DeleteOne(firstDraft).Exec(ctx)
@@ -242,15 +374,15 @@ func TestCreateDraftFromExistingFlowAndPublish(t *testing.T) {
 			},
 		},
 		UIRepresentation: &flowschema.BlockUIRepresentation{
-			Name:      "Subflow",
-			XPosition: 40,
-			YPosition: 40,
+			Name:      "SUB_FLOW",
+			XPosition: 60,
+			YPosition: 60,
 		},
 	})
 	require.NoError(t, err)
 	blks, err := draft.QueryBlocks().All(ctx)
 	require.NoError(t, err)
-	require.Len(t, blks, 3)
+	require.Len(t, blks, 6)
 	for _, blk := range blks {
 		switch blk.Type {
 		case block.TypeStart:
@@ -261,15 +393,19 @@ func TestCreateDraftFromExistingFlowAndPublish(t *testing.T) {
 			require.Equal(t, "End", blk.UIRepresentation.Name)
 			require.Equal(t, 30, blk.UIRepresentation.XPosition)
 			require.Equal(t, 30, blk.UIRepresentation.YPosition)
-		case block.TypeSubFlow:
-			require.Equal(t, "Subflow", blk.UIRepresentation.Name)
+		case block.TypeChoice:
+			require.Equal(t, "CHOICE", blk.UIRepresentation.Name)
 			require.Equal(t, 40, blk.UIRepresentation.XPosition)
 			require.Equal(t, 40, blk.UIRepresentation.YPosition)
+		case block.TypeSubFlow:
+			require.Equal(t, "SUB_FLOW", blk.UIRepresentation.Name)
+			require.Equal(t, 60, blk.UIRepresentation.XPosition)
+			require.Equal(t, 60, blk.UIRepresentation.YPosition)
 		}
 	}
 	blks, err = mainFlow.QueryBlocks().All(ctx)
 	require.NoError(t, err)
-	require.Len(t, blks, 2)
+	require.Len(t, blks, 5)
 	startWithNext, err := draft.QueryBlocks().
 		Where(block.TypeEQ(block.TypeStart)).
 		WithExitPoints(func(query *ent.ExitPointQuery) {
@@ -281,10 +417,9 @@ func TestCreateDraftFromExistingFlowAndPublish(t *testing.T) {
 	require.Len(t, startWithNext.Edges.ExitPoints[0].Edges.NextEntryPoints, 1)
 
 	endBlock, err := draft.QueryBlocks().
-		Where(block.TypeEQ(block.TypeEnd)).
-		Only(ctx)
+		Where(block.TypeEQ(block.TypeEnd)).All(ctx)
 	require.NoError(t, err)
-	details, err := br.Details(ctx, endBlock)
+	details, err := br.Details(ctx, endBlock[0])
 	require.NoError(t, err)
 	params := details.(*models.EndBlock).Params
 	require.Len(t, params, 1)
@@ -304,7 +439,7 @@ func TestCreateDraftFromExistingFlowAndPublish(t *testing.T) {
 	require.Equal(t, "New name", flw.Name)
 	blks, err = flw.QueryBlocks().All(ctx)
 	require.NoError(t, err)
-	require.Len(t, blks, 3)
+	require.Len(t, blks, 6)
 	_, err = qr.Node(ctx, draft.ID)
 	require.NoError(t, err)
 }
@@ -350,6 +485,22 @@ func TestStartFlow(t *testing.T) {
 		FlowID:    flw.ID,
 		StartDate: time.Now(),
 		Params:    inputParams,
+	})
+	require.NoError(t, err)
+}
+
+func TestStartComplexFlow(t *testing.T) {
+	r := newTestResolver(t)
+	defer r.Close()
+	ctx := viewertest.NewContext(context.Background(), r.client)
+	mr := r.Mutation()
+
+	flw, _ := prepareComplexFlow(ctx, t, mr, "complexFlow", nil, nil)
+
+	_, err := mr.StartFlow(ctx, models.StartFlowInput{
+		FlowID:    flw.ID,
+		StartDate: time.Now(),
+		Params:    []*flowschema.VariableValue{},
 	})
 	require.NoError(t, err)
 }
