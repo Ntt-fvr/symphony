@@ -51,7 +51,12 @@ import {
   initialOutputSettings,
   setOutputSettings,
 } from './blockTypes/OutputSettingsType';
-import {resizeBlock, setOutput, setIntput} from './utils/helpers';
+import {
+  initialPositionPort,
+  resizeBlock,
+  setOutput,
+  setIntput,
+} from './utils/helpers';
 import {TYPE_LIST} from '../../../../widgets/detailsPanel/blockSettings/configureSettings/ConfigurationGoTo.js';
 
 import {TYPE as ForEachLoopType} from '../../facades/shapes/vertexes/logic/ForEachLoop';
@@ -170,11 +175,11 @@ export default class BaseBlock implements IBlock {
 
   setPorts(type: string) {
     if (type === TYPE_LIST[0].id) {
-      setOutput(this);
+      setOutput(this, TYPE_LIST[0].name);
     }
 
     if (type === TYPE_LIST[1].id) {
-      setIntput(this);
+      setIntput(this, TYPE_LIST[1].name);
     }
   }
 
@@ -301,13 +306,7 @@ export default class BaseBlock implements IBlock {
       this.model.attributes.type == ForEachLoopType ||
       this.model.attributes.type == ParallelType
     ) {
-      this.model.portProp(this.model.getPorts()[1].id, 'attrs/circle', {
-        cy: portsOriginPosition.cyLeft,
-      });
-      this.model.portProp(this.model.getPorts()[2].id, 'attrs/circle', {
-        cx: portsOriginPosition.cxRight,
-        cy: portsOriginPosition.cyRight,
-      });
+      initialPositionPort(this);
     }
   }
 

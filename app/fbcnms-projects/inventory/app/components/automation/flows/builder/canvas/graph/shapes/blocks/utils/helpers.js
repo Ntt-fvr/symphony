@@ -10,6 +10,7 @@
 'use strict';
 
 import {IBlock} from '../BaseBlock';
+import symphony from '@symphony/design-system/theme/symphony';
 
 import {TYPE as ForEachLoopType} from '../../../facades/shapes/vertexes/logic/ForEachLoop';
 import {TYPE as ParallelType} from '../../../facades/shapes/vertexes/logic/Parallel';
@@ -23,11 +24,27 @@ import {
   portsOriginPosition,
 } from '../../../facades/shapes/vertexes/BaseVertext';
 
+const FILL_COLOR = symphony.palette.AUTOMATION.VIOLET;
+const BACKGROUND_FILL = symphony.palette.white;
 const INPUT = 'input';
 const OUTPUT = 'output';
-const IMAGE_INTPUTX = 19;
+const IMAGE_INPUTX = 19;
 const IMAGE_OUTPUTX = -60;
 const TRANSFORM_IMAGE_OUTPUT = 'transform: scaleX(-1)';
+const INPUT_WIDTH = 90;
+const INPUT_REFX2 = -4;
+const OUTPUT_WIDTH = 125;
+const OUTPUT_REFX2 = -22;
+
+export function initialPositionPort(block: IBlock) {
+  block.model.portProp(block.model.getPorts()[1].id, 'attrs/circle', {
+    cy: portsOriginPosition.cyLeft,
+  });
+  block.model.portProp(block.model.getPorts()[2].id, 'attrs/circle', {
+    cx: portsOriginPosition.cxRight,
+    cy: portsOriginPosition.cyRight,
+  });
+}
 
 export function resizeBlock(typeSizeCoupled: string, block: IBlock) {
   if (
@@ -84,7 +101,7 @@ export function resizeBlock(typeSizeCoupled: string, block: IBlock) {
   }
 }
 
-export function setOutput(block: IBlock) {
+export function setOutput(block: IBlock, type: string) {
   const newPort = getPort(OUTPUT);
   if (
     block.model?.getPorts().length < 2 &&
@@ -95,10 +112,13 @@ export function setOutput(block: IBlock) {
     block.model?.addPort(newPort);
     block.model.attr('image/style', TRANSFORM_IMAGE_OUTPUT);
     block.model.attr('image/x', IMAGE_OUTPUTX);
+    block.model.attr('label/text', `Go to (${type})`);
+    block.model.attr('background/width', OUTPUT_WIDTH);
+    block.model.attr('background/refX2', OUTPUT_REFX2);
   }
 }
 
-export function setIntput(block: IBlock) {
+export function setIntput(block: IBlock, type: string) {
   const newPort = getPort(INPUT);
   if (
     block.model?.getPorts().length < 2 &&
@@ -108,7 +128,10 @@ export function setIntput(block: IBlock) {
     block.model?.removePort(port[0]?.id);
     block.model?.addPort(newPort);
     block.model.attr('image/style', '');
-    block.model.attr('image/x', IMAGE_INTPUTX);
+    block.model.attr('image/x', IMAGE_INPUTX);
+    block.model.attr('label/text', `Go to (${type})`);
+    block.model.attr('background/width', INPUT_WIDTH);
+    block.model.attr('background/refX2', INPUT_REFX2);
   }
 }
 
@@ -116,12 +139,12 @@ function getPort(typePort) {
   if (typePort === OUTPUT) {
     return {
       group: typePort,
-      markup: `<circle r="7" cx="0" cy="0" stroke-width="4" stroke="#9360F7" fill="white" magnet="true"/>`,
+      markup: `<circle r="7" cx="0" cy="0" stroke-width="4" stroke="${FILL_COLOR}" fill="${BACKGROUND_FILL}" magnet="true"/>`,
     };
   } else {
     return {
       group: typePort,
-      markup: `<circle r="7" cx="9" cy="0" stroke-width="4" stroke="#9360F7" fill="white" magnet="true"/>`,
+      markup: `<circle r="7" cx="9" cy="0" stroke-width="4" stroke="${FILL_COLOR}" fill="${BACKGROUND_FILL}" magnet="true"/>`,
     };
   }
 }

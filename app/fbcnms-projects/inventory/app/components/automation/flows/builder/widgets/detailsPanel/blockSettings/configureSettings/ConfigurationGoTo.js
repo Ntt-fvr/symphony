@@ -21,8 +21,8 @@ type Props = $ReadOnly<{|
 |}>;
 
 export const TYPE_LIST = [
-  {name: 'Origin', id: 'ORIGIN'},
   {name: 'Destination', id: 'DESTINATION'},
+  {name: 'Origin', id: 'ORIGIN'},
 ];
 
 const ConfigurationGoTo = ({block}: Props) => {
