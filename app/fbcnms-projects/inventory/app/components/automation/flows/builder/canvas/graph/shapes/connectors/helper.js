@@ -37,7 +37,7 @@ export function IsOutputPortChoise(model: ?ILinkModel, outputPort: string) {
   return isOutputPortChoise;
 }
 
-export const RULE_NAME = 'Default Rule';
+export const RULE_NAME = 'Default';
 
 export const defaultAttrProps = {
   markup: [
@@ -60,10 +60,10 @@ export const defaultAttrProps = {
       fontWeight: 'bold',
     },
     background: {
-      fill: symphony.palette.white,
+      fill: '#FFF5DC',
       refX2: -5,
       refY2: -10,
-      width: 83,
+      width: 53,
       height: 20,
       ry: 3,
       rx: 3,

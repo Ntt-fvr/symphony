@@ -58,9 +58,9 @@ export default function MenuRules() {
         anchorPosition={
           menu !== null ? {top: menu.mouseY, left: menu.mouseX} : undefined
         }>
-        <MenuItem onClick={handleClose}>Rule 1</MenuItem>
-        <MenuItem onClick={handleClose}>Rule 2</MenuItem>
-        <MenuItem onClick={handleClose}>Rule 3</MenuItem>
+        <MenuItem onClick={handleClose}>Rule #1</MenuItem>
+        <MenuItem onClick={handleClose}>Rule #2</MenuItem>
+        <MenuItem onClick={handleClose}>Rule #3</MenuItem>
         <MenuItem onClick={handleClose}>{RULE_NAME}</MenuItem>
       </Menu>
     </>
