@@ -7,6 +7,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import {Grid} from '@material-ui/core';
 import {IconButton as MatIconButton} from '@material-ui/core';
 import {makeStyles} from '@material-ui/styles';
+import {FlowStatus} from '../../../common/FlowStatusEnums'
 
 
 const useStyles = makeStyles(() => ({ 
@@ -23,7 +24,7 @@ const toPascalCase = name => {
 export default function FlowInstanceDetails(){
   const classes = useStyles();
   const [menuOpen, setMenuOpen] = useState(null);
-  const data ={status:"PAUSED"}
+  const data ={status: FlowStatus.paused}
    const handleClick = event => {
     setMenuOpen(event.currentTarget);
   };
@@ -53,9 +54,9 @@ export default function FlowInstanceDetails(){
                     handleClick(e);
                   }}
                   disabled={
-                    data.status != 'PAUSED' &&
-                    data.status != 'RUNNING' &&
-                    data.status != 'FAILING'
+                    data.status != FlowStatus.paused &&
+                    data.status != FlowStatus.running &&
+                    data.status != FlowStatus.failing
                   }>
                   <MoreVertIcon />
                 </MatIconButton>

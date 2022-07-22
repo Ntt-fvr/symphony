@@ -37,6 +37,7 @@
  import {getInitialFilterValue} from '../comparison_view/FilterUtils';
  import {makeStyles} from '@material-ui/core/styles';
  import {useTheme} from '@material-ui/core/styles';
+ import {FlowStatus} from './common/FlowStatusEnums'
  
  const toPascalCase = name => {
    return name?.replace(/(\w)(\w*)/g, function (g0, g1, g2) {
@@ -435,9 +436,9 @@
                        aria-label={row.id}
                        onClick={e => handleTaggle(e.currentTarget, row.id)}
                        disabled={
-                         row.status != 'PAUSED' &&
-                         row.status != 'RUNNING' &&
-                         row.status != 'FAILING'
+                         row.status != FlowStatus.paused &&
+                         row.status != FlowStatus.running &&
+                         row.status != FlowStatus.failing
                        }>
                        <MoreVertIcon />
                      </IconButton>
@@ -456,14 +457,14 @@
                            updateFlow({
                              status:
                                e.target.textContent == 'Pause'
-                                 ? 'PAUSED'
-                                 : 'RUNNING',
+                                 ? FlowStatus.paused
+                                 : FlowStatus.running,
                              id: row.id,
                            });
                          }}>
-                         {row.status === 'PAUSED'
+                         {row.status === FlowStatus.paused
                            ? 'Resume'
-                           : row.status === 'RUNNING'
+                           : row.status === FlowStatus.running
                            ? 'Pause'
                            : 'Retry'}
                        </MenuItem>
