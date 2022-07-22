@@ -217,6 +217,7 @@ func (r blockResolver) Details(ctx context.Context, obj *ent.Block) (models.Bloc
 
 		return &models.InvokeRestAPIBlock{
 			EntryPoint: entryPoint,
+			ExitPoint:  exitPoint,
 			URL:        url,
 			Method:     method,
 			Headers:    obj.Headers,
@@ -235,7 +236,6 @@ func (r blockResolver) Details(ctx context.Context, obj *ent.Block) (models.Bloc
 			ExitPoint:  exitPoint,
 			EntryPoint: entryPoint,
 			Params:     obj.InputParams,
-			//Flow:       flow.ID(),
 		}, nil
 	case block.TypeWaitForSignal:
 		return &models.WaitForSignalBlock{
@@ -552,7 +552,6 @@ func getEntryPoint(ctx context.Context, flowDraftID int, blockCid string, ePoint
 func (r mutationResolver) AddConnector(ctx context.Context, flowDraftID int, input models.ConnectorInput) (*models.Connector, error) {
 	exitPoint, err := getExitPoint(ctx, flowDraftID, input.SourceBlockCid, input.SourcePoint)
 	if err != nil {
-		fmt.Println("fallo el getExitPoint")
 		return nil, err
 	}
 	entryPoint, err := getEntryPoint(ctx, flowDraftID, input.TargetBlockCid, input.TargetPoint)

@@ -6554,6 +6554,7 @@ type FlowInstance implements Node {
   startDate: Time!
   endDate: Time
   startParams: [VariableValue!]
+  incompletion_reason: String
 }
 
 input EditFlowInstanceInput {
