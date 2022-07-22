@@ -16,6 +16,7 @@ import FormField from '@symphony/design-system/components/FormField/FormField';
 import PowerSearchBar from '../power_search/PowerSearchBar';
 import React, {useEffect, useMemo, useState} from 'react';
 import TextField from '@material-ui/core/TextField';
+import useLocationTypes from '../comparison_view/hooks/locationTypesHook';
 import fbt from 'fbt';
 import {ConfigurationTable} from './ConfigurationTable';
 import {Grid} from '@material-ui/core';
@@ -168,13 +169,17 @@ const ConfigurationsView = () => {
   const [checkingSelects, setCheckingSelects] = useState(false);
   const [resourceTable, setResourceTable] = useState(dataResources);
 
+  const locationTypesFilterConfigs = useLocationTypes();
+
   const filterConfigs = useMemo(
     () =>
-      ResourcesSearchConfig.map(ent => ent.filters).reduce(
-        (allFilters, currentFilter) => allFilters.concat(currentFilter),
-        [],
-      ),
-    [],
+      ResourcesSearchConfig.map(ent => ent.filters)
+        .reduce(
+          (allFilters, currentFilter) => allFilters.concat(currentFilter),
+          [],
+        )
+        .concat(locationTypesFilterConfigs ?? []),
+    [locationTypesFilterConfigs],
   );
 
   const verifyResourceSpecification =
@@ -238,45 +243,53 @@ const ConfigurationsView = () => {
   }, [checkingSelects, clearFilter]);
 
   const filterData = filterChange => {
-    if (filterChange.length > 0) {
-      filterChange.map(itemfilterChange => {
-        switch (itemfilterChange?.key) {
-          case 'resource_name':
-            const filterName = resources?.filter(
-              item => item?.name === itemfilterChange?.stringValue,
-            );
-            setResources(filterName);
-            break;
-          case 'resource_id':
-            const filterId = resources?.filter(
-              item => item?.id === itemfilterChange?.stringValue,
-            );
-            setResources(filterId);
-            break;
-          case 'location_inst_external_id':
-            const filterLocation = queryResource?.filter(
-              item =>
-                item?.resource?.locatedIn === itemfilterChange?.stringValue,
-            );
-            setResources(filterLocation);
-            break;
-          case 'parameter_selector_name':
-            const filterParameterName = columnDinamic?.filter(
-              item => item?.title === itemfilterChange?.stringValue,
-            );
-            setResourceTable([...dataResources, ...filterParameterName]);
-            break;
+    const searchLocations = (item, idSet) => {
+      const locationById = idSet?.find(id => id === item.locatedIn);
+      return locationById;
+    };
 
-          default:
-            setResources(queryResource);
-            break;
-        }
-      });
+    filterChange.length > 0
+      ? filterChange.map(itemfilterChange => {
+          if (itemfilterChange.name === 'location_inst') {
+            const filterLocationName = resources?.filter(item =>
+              searchLocations(item, itemfilterChange.idSet),
+            );
+            setResources(filterLocationName);
+          } else {
+            switch (itemfilterChange?.key) {
+              case 'resource_name':
+                const filterName = resources?.filter(
+                  item => item?.name === itemfilterChange?.stringValue,
+                );
+                setResources(filterName);
+                break;
+              case 'resource_id':
+                const filterId = resources?.filter(
+                  item => item?.id === itemfilterChange?.stringValue,
+                );
+                setResources(filterId);
+                break;
+              case 'location_inst_external_id':
+                const filterLocation = queryResource?.filter(
+                  item =>
+                    item?.resource?.locatedIn === itemfilterChange?.stringValue,
+                );
+                setResources(filterLocation);
+                break;
+              case 'parameter_selector_name':
+                const filterParameterName = columnDinamic?.filter(
+                  item => item?.title === itemfilterChange?.stringValue,
+                );
+                setResourceTable([...dataResources, ...filterParameterName]);
+                break;
 
-      filterChange.length === 0 && setResources(queryResource);
-    } else {
-      setClearFilter(!clearFilter);
-    }
+              default:
+                setResources(queryResource);
+                break;
+            }
+          }
+        })
+      : setClearFilter(!clearFilter);
   };
 
   return (
