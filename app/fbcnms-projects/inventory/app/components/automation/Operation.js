@@ -222,53 +222,12 @@
      tooltip: row => row.error ?? '',
    },
  ];
- const data = [
-   {
-     id: '386547056643',
-     key: '386547056643',
-     status: 'PAUSED',
-     template: {name: 'RNCellDU_Nokia_MLN1_3132331'},
-     startDate: '22-02-2022 - 10:22:00',
-     author: 'Sleep',
-     error: '',
-     options: false,
-   },
-   {
-     id: '386547056644',
-     key: '386547056644',
-     status: 'FAILING',
-     template: {name: 'RNCellDU_Nokia_MLN1_3132331'},
-     startDate: '22-02-2022 - 10:22:00',
-     author: 'Sleep',
-     error: '',
-     options: false,
-   },
-   {
-     id: '386547056645',
-     key: '386547056645',
-     status: 'RUNNING',
-     template: {name: 'RNCellDU_Nokia_MLN1_3132331'},
-     startDate: '22-02-2022 - 10:22:00',
-     author: 'Sleep',
-     error: '',
-     options: false,
-   },
-   {
-     id: '386547056646',
-     key: '386547056646',
-     status: 'CANCELED',
-     template: {name: 'RNCellDU_Nokia_MLN1_3132331'},
-     startDate: '22-02-2022 - 10:22:00',
-     author: 'Sleep',
-     error: '',
-     options: false,
-   },
- ];
+
  export const PROJECTS_PAGE_SIZE = 5;
  
  const Operation = () => {
    const classes = useStyles();
-   const [datarows, setDatarows] = useState(data);
+   const [datarows, setDatarows] = useState([]);
    const [open, setOpen] = React.useState(false);
    const [filters, setFilters] = React.useState([]);
    const [selectedFlow, setSelectedFlow] = React.useState(null);
@@ -489,7 +448,7 @@
                });
              },
              pageSize: PROJECTS_PAGE_SIZE,
-             totalRowsCount: data.length,
+             totalRowsCount: datarows.length,
            }}
          />
        </Grid>
