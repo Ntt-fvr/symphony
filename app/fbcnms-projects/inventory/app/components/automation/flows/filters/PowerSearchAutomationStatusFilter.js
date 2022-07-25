@@ -11,9 +11,10 @@
 import type {FilterProps} from '../comparison_view/ComparisonViewTypes';
 
 import * as React from 'react';
-import MutipleSelectInput from '../comparison_view/MutipleSelectInput';
-import PowerSearchFilter from '../comparison_view/PowerSearchFilter';
-import {statusAutomationValues} from '../../common/FilterTypes';
+import MutipleSelectInput from '../../../comparison_view/MutipleSelectInput';
+import PowerSearchFilter from '../../../comparison_view/PowerSearchFilter';
+
+import { statusAutomationValues } from '../../../../common/FilterTypes';
 
 const PowerSearchAutomationStatusFilter = (props: FilterProps) => {
   const {

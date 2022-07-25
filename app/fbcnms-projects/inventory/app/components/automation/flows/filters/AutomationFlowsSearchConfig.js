@@ -12,7 +12,8 @@ import type {EntityConfig} from '../../../comparison_view/ComparisonViewTypes';
 
 import PowerSearchAutomationStatusFilter from './PowerSearchAutomationStatusFilter';
 import PowerSearchAutomationAuthorFilter from './PowerSearchAutomationAuthorFilter';
-import PowerSearchAutomationDateFilter from './PowerSearchAutomationDateFIlter';
+import PowerSearchAutomationDateFilter from './PowerSearchAutomationDateFilter';
+
 
 const AutomationFlowsSearchConfig: Array<EntityConfig> = [
   {

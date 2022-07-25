@@ -10,9 +10,8 @@
 
 import type {FilterProps} from '../comparison_view/ComparisonViewTypes';
 
-import PowerSearchFilter from '../comparison_view/PowerSearchFilter';
+import PowerSearchFilter from '../../../comparison_view/PowerSearchFilter';
 import MomentUtils from '@date-io/moment';
-import moment from 'moment';
 import {DatePicker, MuiPickersUtilsProvider} from '@material-ui/pickers';
 import {InputAdornment} from '@material-ui/core';
 import IconButton from '@material-ui/core/IconButton';

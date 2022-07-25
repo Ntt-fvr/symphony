@@ -21,7 +21,7 @@ import {
 
 import useLocationTypes from '../../../comparison_view/hooks/locationTypesHook';
 import usePropertyFilters from '../../../comparison_view/hooks/propertiesHook';
-import {AutomationFlowsSearchConfig} from '../../AutomationFlowsSearchConfig';
+import { AutomationFlowsSearchConfig } from '../filters/AutomationFlowsSearchConfig';
 import PowerSearchBar from '../../../power_search/PowerSearchBar';
 import moment from 'moment';
 
@@ -68,12 +68,6 @@ function AutomationFlowsList(props: Props) {
   const filterData = filters => {
     const arrayFilters = [];
     const data = {};
-    const dataModify = flows.map(item => {
-      delete item.writable;
-      return {
-        ...item,
-      };
-    });
 
     const filterRepeat = filters.filter(
       item => item.name === filters[filters.length - 1].name,
@@ -86,6 +80,13 @@ function AutomationFlowsList(props: Props) {
     if (filterRepeat.length == 2) {
       filtersWithoutRepeating.push(filterRepeat[1]);
     }
+
+    const dataModify = flows.map(item => {
+      delete item.writable;
+      return {
+        ...item,
+      };
+    });
 
     dataModify.map(function (filter) {
       filter.authorId = filter.author.id;
