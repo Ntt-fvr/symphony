@@ -124,9 +124,10 @@ function paperOnBlockEvent(event: BlockEvent, handler: BlockEventCallback) {
   });
 
   this.current?.graph.on('change:embeds', element => {
+    const BIG_SIZE_COUPLED = 'bigSizeCoupled';
     const MEDIUM_SIZE_COUPLED = 'mediumSizeCoupled';
-    const ORIGIN_SIZE_COUPLED = 'originSizeCoupled';
     const BLOCK_LIMIT = 4;
+    const BLOCK_LIMIT_BIG = 6;
 
     const blockList = [...this.current?.blocks]
       .flat()
@@ -138,11 +139,15 @@ function paperOnBlockEvent(event: BlockEvent, handler: BlockEventCallback) {
 
     const blockParent = blockList.find(block => block.model.id === element.id);
 
-    if (childrenBlocksList.length > BLOCK_LIMIT) {
+    if (
+      childrenBlocksList.length > BLOCK_LIMIT &&
+      childrenBlocksList.length < BLOCK_LIMIT_BIG
+    ) {
       blockParent?.setSize(MEDIUM_SIZE_COUPLED);
     }
-    if (childrenBlocksList.length < BLOCK_LIMIT) {
-      blockParent?.setSize(ORIGIN_SIZE_COUPLED);
+
+    if (childrenBlocksList.length > BLOCK_LIMIT_BIG) {
+      blockParent?.setSize(BIG_SIZE_COUPLED);
     }
   });
 }

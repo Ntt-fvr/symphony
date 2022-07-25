@@ -2811,7 +2811,7 @@ func (ep *ExitPoint) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
 		ID:     ep.ID,
 		Type:   "ExitPoint",
-		Fields: make([]*Field, 5),
+		Fields: make([]*Field, 6),
 		Edges:  make([]*Edge, 2),
 	}
 	var buf []byte
@@ -2853,6 +2853,14 @@ func (ep *ExitPoint) Node(ctx context.Context) (node *Node, err error) {
 	node.Fields[4] = &Field{
 		Type:  "*flowschema.VariableExpression",
 		Name:  "condition",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(ep.Index); err != nil {
+		return nil, err
+	}
+	node.Fields[5] = &Field{
+		Type:  "int",
+		Name:  "index",
 		Value: string(buf),
 	}
 	node.Edges[0] = &Edge{

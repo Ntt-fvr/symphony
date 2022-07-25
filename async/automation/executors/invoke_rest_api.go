@@ -1,4 +1,4 @@
-package blocks
+package executors
 
 import (
 	"bytes"
@@ -6,7 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/facebookincubator/symphony/async/automation/celgo"
-	"github.com/facebookincubator/symphony/async/automation/executors/util"
+	"github.com/facebookincubator/symphony/async/automation/util"
 	"io"
 	"io/ioutil"
 	"net/http"
@@ -17,47 +17,17 @@ const (
 	bodyKey = "body"
 )
 
-type InvokeRestAPIBlock struct {
-	baseBlock
-	timeout int
-	url     string
-	method  string
-	body    string
-	headers map[string]string
+type ExecutorInvokeRestAPIBlock struct {
+	executorBaseBlock
 }
 
-func (b *InvokeRestAPIBlock) Execute() (*ExecutorResult, error) {
-	b.updateBlockInProgress()
+func (b *ExecutorInvokeRestAPIBlock) runLogic() error {
 
-	err := b.executeInputTransformation()
-	if err != nil {
-		b.updateBlockFailed()
-		return nil, err
+	invokeRestAPIBlock := b.executorBlock.InvokeRestAPI
+	if invokeRestAPIBlock == nil {
+		return configNotFound
 	}
 
-	err = b.runLogic()
-	if err != nil {
-		b.updateBlockFailed()
-		return nil, err
-	}
-
-	err = b.executeOutputTransformation()
-	if err != nil {
-		b.updateBlockFailed()
-		return nil, err
-	}
-
-	blockResult := ExecutorResult{
-		Output:    b.output,
-		State:     b.state,
-		NextBlock: b.nextBlock,
-	}
-
-	b.updateBlockCompleted()
-	return &blockResult, nil
-}
-
-func (b *InvokeRestAPIBlock) runLogic() error {
 	url, body, err := b.getUrlAndBody()
 	if err != nil {
 		return err
@@ -67,21 +37,21 @@ func (b *InvokeRestAPIBlock) runLogic() error {
 		return errors.New("undefined url")
 	}
 
-	request, err := http.NewRequest(b.method, *url, bytes.NewBuffer(body))
+	request, err := http.NewRequest(string(invokeRestAPIBlock.Method), *url, bytes.NewBuffer(body))
 	if err != nil {
 		return err
 	}
 
-	if b.headers != nil {
-		for key, value := range b.headers {
+	if invokeRestAPIBlock.Headers != nil {
+		for key, value := range invokeRestAPIBlock.Headers {
 			request.Header.Add(key, value)
 		}
 	}
 
 	client := &http.Client{}
 
-	if b.timeout > 0 {
-		client.Timeout = util.GetDurationFromSeconds(b.timeout)
+	if invokeRestAPIBlock.Timeout > 0 {
+		client.Timeout = util.GetDurationFromSeconds(invokeRestAPIBlock.Timeout)
 	}
 
 	response, err := client.Do(request)
@@ -104,7 +74,7 @@ func (b *InvokeRestAPIBlock) runLogic() error {
 	return nil
 }
 
-func (b *InvokeRestAPIBlock) getUrlAndBody() (*string, []byte, error) {
+func (b *ExecutorInvokeRestAPIBlock) getUrlAndBody() (*string, []byte, error) {
 	inputVariable := celgo.ConvertToValue(b.input)
 	stateVariable := celgo.ConvertToValue(b.state)
 
@@ -113,14 +83,19 @@ func (b *InvokeRestAPIBlock) getUrlAndBody() (*string, []byte, error) {
 		celgo.StateVariable: stateVariable,
 	}
 
+	invokeRestAPIBlock := b.executorBlock.InvokeRestAPI
+	if invokeRestAPIBlock == nil {
+		return nil, nil, configNotFound
+	}
+
 	var invokeBody string
-	if len(b.body) > 0 {
-		invokeBody = b.body
+	if len(invokeRestAPIBlock.Body) > 0 {
+		invokeBody = invokeRestAPIBlock.Body
 	} else {
 		invokeBody = "{}"
 	}
 
-	expression := fmt.Sprintf(`{"%s": %s,"%s": %s}`, urlKey, b.url, bodyKey, invokeBody)
+	expression := fmt.Sprintf(`{"%s": %s,"%s": %s}`, urlKey, invokeRestAPIBlock.Url, bodyKey, invokeBody)
 
 	result, err := celgo.CompileAndEvaluate(expression, variables)
 	if err != nil {

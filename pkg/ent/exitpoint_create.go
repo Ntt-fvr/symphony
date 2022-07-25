@@ -81,6 +81,20 @@ func (epc *ExitPointCreate) SetCondition(fe *flowschema.VariableExpression) *Exi
 	return epc
 }
 
+// SetIndex sets the index field.
+func (epc *ExitPointCreate) SetIndex(i int) *ExitPointCreate {
+	epc.mutation.SetIndex(i)
+	return epc
+}
+
+// SetNillableIndex sets the index field if the given value is not nil.
+func (epc *ExitPointCreate) SetNillableIndex(i *int) *ExitPointCreate {
+	if i != nil {
+		epc.SetIndex(*i)
+	}
+	return epc
+}
+
 // AddNextEntryPointIDs adds the next_entry_points edge to EntryPoint by ids.
 func (epc *ExitPointCreate) AddNextEntryPointIDs(ids ...int) *ExitPointCreate {
 	epc.mutation.AddNextEntryPointIDs(ids...)
@@ -254,6 +268,14 @@ func (epc *ExitPointCreate) createSpec() (*ExitPoint, *sqlgraph.CreateSpec) {
 			Column: exitpoint.FieldCondition,
 		})
 		_node.Condition = value
+	}
+	if value, ok := epc.mutation.Index(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: exitpoint.FieldIndex,
+		})
+		_node.Index = value
 	}
 	if nodes := epc.mutation.NextEntryPointsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

@@ -160,7 +160,7 @@ export default class Parallel
       getInitObject(
         FILL_COLOR,
         {
-          [PORTS_GROUPS.OUTPUT]: {count: 1},
+          [PORTS_GROUPS.OUTPUT]: {count: 2},
         },
         HORIZONTAL_PORT_LEFT_ALIN,
         HORIZONTAL_PORT_RIGHT_ALIN,

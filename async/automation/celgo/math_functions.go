@@ -1,13 +1,11 @@
 package celgo
 
 import (
+	"github.com/google/cel-go/cel"
 	"math"
 
-	"github.com/google/cel-go/checker/decls"
 	"github.com/google/cel-go/common/types"
 	"github.com/google/cel-go/common/types/ref"
-	"github.com/google/cel-go/interpreter/functions"
-	exprpb "google.golang.org/genproto/googleapis/api/expr/v1alpha1"
 )
 
 const (
@@ -46,484 +44,380 @@ const (
 	MathHypot       = "function_math_hypot"
 )
 
-func mathGlobalFunctions() []*exprpb.Decl {
-	return []*exprpb.Decl{
-		decls.NewFunction("math.abs",
-			decls.NewOverload(
-				MathAbs,
-				[]*exprpb.Type{decls.Dyn},
-				decls.Double,
+func mathGlobalFunctions() []cel.EnvOption {
+	return []cel.EnvOption{
+		cel.Function("math.abs",
+			cel.Overload(MathAbs,
+				[]*cel.Type{cel.DynType}, cel.DoubleType,
+				cel.UnaryBinding(
+					func(value ref.Val) ref.Val {
+						x := getDouble(value)
+						return types.Double(math.Abs(x))
+					},
+				),
 			),
 		),
-		decls.NewFunction("math.acos",
-			decls.NewOverload(
-				MathACos,
-				[]*exprpb.Type{decls.Dyn},
-				decls.Double,
+		cel.Function("math.acos",
+			cel.Overload(MathACos,
+				[]*cel.Type{cel.DynType}, cel.DoubleType,
+				cel.UnaryBinding(
+					func(value ref.Val) ref.Val {
+						x := getDouble(value)
+						return types.Double(math.Acos(x))
+					},
+				),
 			),
 		),
-		decls.NewFunction("math.acosh",
-			decls.NewOverload(
-				MathArcCosHyper,
-				[]*exprpb.Type{decls.Dyn},
-				decls.Double,
+		cel.Function("math.acosh",
+			cel.Overload(MathArcCosHyper,
+				[]*cel.Type{cel.DynType}, cel.DoubleType,
+				cel.UnaryBinding(
+					func(value ref.Val) ref.Val {
+						x := getDouble(value)
+						return types.Double(math.Acosh(x))
+					},
+				),
 			),
 		),
-		decls.NewFunction("math.cos",
-			decls.NewOverload(
-				MathCos,
-				[]*exprpb.Type{decls.Dyn},
-				decls.Double,
+		cel.Function("math.cos",
+			cel.Overload(MathCos,
+				[]*cel.Type{cel.DynType}, cel.DoubleType,
+				cel.UnaryBinding(
+					func(value ref.Val) ref.Val {
+						x := getDouble(value)
+						return types.Double(math.Cos(x))
+					},
+				),
 			),
 		),
-		decls.NewFunction("math.cosh",
-			decls.NewOverload(
-				MathCosHyper,
-				[]*exprpb.Type{decls.Dyn},
-				decls.Double,
+		cel.Function("math.cosh",
+			cel.Overload(MathCosHyper,
+				[]*cel.Type{cel.DynType}, cel.DoubleType,
+				cel.UnaryBinding(
+					func(value ref.Val) ref.Val {
+						x := getDouble(value)
+						return types.Double(math.Cosh(x))
+					},
+				),
 			),
 		),
-		decls.NewFunction("math.asin",
-			decls.NewOverload(
-				MathArcSin,
-				[]*exprpb.Type{decls.Dyn},
-				decls.Double,
+		cel.Function("math.asin",
+			cel.Overload(MathArcSin,
+				[]*cel.Type{cel.DynType}, cel.DoubleType,
+				cel.UnaryBinding(
+					func(value ref.Val) ref.Val {
+						x := getDouble(value)
+						return types.Double(math.Asin(x))
+					},
+				),
 			),
 		),
-		decls.NewFunction("math.asinh",
-			decls.NewOverload(
-				MathArcSinHyper,
-				[]*exprpb.Type{decls.Dyn},
-				decls.Double,
+		cel.Function("math.asinh",
+			cel.Overload(MathArcSinHyper,
+				[]*cel.Type{cel.DynType}, cel.DoubleType,
+				cel.UnaryBinding(
+					func(value ref.Val) ref.Val {
+						x := getDouble(value)
+						return types.Double(math.Asinh(x))
+					},
+				),
 			),
 		),
-		decls.NewFunction("math.sin",
-			decls.NewOverload(
-				MathSin,
-				[]*exprpb.Type{decls.Dyn},
-				decls.Double,
+		cel.Function("math.sin",
+			cel.Overload(MathSin,
+				[]*cel.Type{cel.DynType}, cel.DoubleType,
+				cel.UnaryBinding(
+					func(value ref.Val) ref.Val {
+						x := getDouble(value)
+						return types.Double(math.Sin(x))
+					},
+				),
 			),
 		),
-		decls.NewFunction("math.sinh",
-			decls.NewOverload(
-				MathSinHyper,
-				[]*exprpb.Type{decls.Dyn},
-				decls.Double,
+		cel.Function("math.sinh",
+			cel.Overload(MathSinHyper,
+				[]*cel.Type{cel.DynType}, cel.DoubleType,
+				cel.UnaryBinding(
+					func(value ref.Val) ref.Val {
+						x := getDouble(value)
+						return types.Double(math.Sinh(x))
+					},
+				),
 			),
 		),
-		decls.NewFunction("math.atan",
-			decls.NewOverload(
-				MathArcTan,
-				[]*exprpb.Type{decls.Dyn},
-				decls.Double,
+		cel.Function("math.atan",
+			cel.Overload(MathArcTan,
+				[]*cel.Type{cel.DynType}, cel.DoubleType,
+				cel.UnaryBinding(
+					func(value ref.Val) ref.Val {
+						x := getDouble(value)
+						return types.Double(math.Atan(x))
+					},
+				),
 			),
 		),
-		decls.NewFunction("math.atanh",
-			decls.NewOverload(
-				MathArcTanHyper,
-				[]*exprpb.Type{decls.Dyn},
-				decls.Double,
+		cel.Function("math.atanh",
+			cel.Overload(MathArcTanHyper,
+				[]*cel.Type{cel.DynType}, cel.DoubleType,
+				cel.UnaryBinding(
+					func(value ref.Val) ref.Val {
+						x := getDouble(value)
+						return types.Double(math.Atanh(x))
+					},
+				),
 			),
 		),
-		decls.NewFunction("math.tan",
-			decls.NewOverload(
-				MathTan,
-				[]*exprpb.Type{decls.Dyn},
-				decls.Double,
+		cel.Function("math.tan",
+			cel.Overload(MathTan,
+				[]*cel.Type{cel.DynType}, cel.DoubleType,
+				cel.UnaryBinding(
+					func(value ref.Val) ref.Val {
+						x := getDouble(value)
+						return types.Double(math.Tan(x))
+					},
+				),
 			),
 		),
-		decls.NewFunction("math.tanh",
-			decls.NewOverload(
-				MathTanHyper,
-				[]*exprpb.Type{decls.Dyn},
-				decls.Double,
+		cel.Function("math.tanh",
+			cel.Overload(MathTanHyper,
+				[]*cel.Type{cel.DynType}, cel.DoubleType,
+				cel.UnaryBinding(
+					func(value ref.Val) ref.Val {
+						x := getDouble(value)
+						return types.Double(math.Atanh(x))
+					},
+				),
 			),
 		),
-		decls.NewFunction("math.cbrt",
-			decls.NewOverload(
-				MathCbrt,
-				[]*exprpb.Type{decls.Dyn},
-				decls.Double,
+		cel.Function("math.cbrt",
+			cel.Overload(MathCbrt,
+				[]*cel.Type{cel.DynType}, cel.DoubleType,
+				cel.UnaryBinding(
+					func(value ref.Val) ref.Val {
+						x := getDouble(value)
+						return types.Double(math.Cbrt(x))
+					},
+				),
 			),
 		),
-		decls.NewFunction("math.sqrt",
-			decls.NewOverload(
-				MathSqrt,
-				[]*exprpb.Type{decls.Dyn},
-				decls.Double,
+		cel.Function("math.sqrt",
+			cel.Overload(MathSqrt,
+				[]*cel.Type{cel.DynType}, cel.DoubleType,
+				cel.UnaryBinding(
+					func(value ref.Val) ref.Val {
+						x := getDouble(value)
+						return types.Double(math.Sqrt(x))
+					},
+				),
 			),
 		),
-		decls.NewFunction("math.ceil",
-			decls.NewOverload(
-				MathCeil,
-				[]*exprpb.Type{decls.Dyn},
-				decls.Double,
+		cel.Function("math.ceil",
+			cel.Overload(MathCeil,
+				[]*cel.Type{cel.DynType}, cel.DoubleType,
+				cel.UnaryBinding(
+					func(value ref.Val) ref.Val {
+						x := getDouble(value)
+						return types.Double(math.Ceil(x))
+					},
+				),
 			),
 		),
-		decls.NewFunction("math.floor",
-			decls.NewOverload(
-				MathFloor,
-				[]*exprpb.Type{decls.Dyn},
-				decls.Double,
+		cel.Function("math.floor",
+			cel.Overload(MathFloor,
+				[]*cel.Type{cel.DynType}, cel.DoubleType,
+				cel.UnaryBinding(
+					func(value ref.Val) ref.Val {
+						x := getDouble(value)
+						return types.Double(math.Floor(x))
+					},
+				),
 			),
 		),
-		decls.NewFunction("math.round",
-			decls.NewOverload(
-				MathRound,
-				[]*exprpb.Type{decls.Dyn},
-				decls.Double,
+		cel.Function("math.round",
+			cel.Overload(MathRound,
+				[]*cel.Type{cel.DynType}, cel.DoubleType,
+				cel.UnaryBinding(
+					func(value ref.Val) ref.Val {
+						x := getDouble(value)
+						return types.Double(math.Round(x))
+					},
+				),
 			),
 		),
-		decls.NewFunction("math.trunc",
-			decls.NewOverload(
-				MathTrunc,
-				[]*exprpb.Type{decls.Dyn},
-				decls.Double,
+		cel.Function("math.trunc",
+			cel.Overload(MathTrunc,
+				[]*cel.Type{cel.DynType}, cel.DoubleType,
+				cel.UnaryBinding(
+					func(value ref.Val) ref.Val {
+						x := getDouble(value)
+						return types.Double(math.Trunc(x))
+					},
+				),
 			),
 		),
-		decls.NewFunction("math.exp",
-			decls.NewOverload(
-				MathExp,
-				[]*exprpb.Type{decls.Dyn},
-				decls.Double,
+		cel.Function("math.exp",
+			cel.Overload(MathExp,
+				[]*cel.Type{cel.DynType}, cel.DoubleType,
+				cel.UnaryBinding(
+					func(value ref.Val) ref.Val {
+						x := getDouble(value)
+						return types.Double(math.Exp(x))
+					},
+				),
 			),
 		),
-		decls.NewFunction("math.exp2",
-			decls.NewOverload(
-				MathExp2,
-				[]*exprpb.Type{decls.Dyn},
-				decls.Double,
+		cel.Function("math.exp2",
+			cel.Overload(MathExp2,
+				[]*cel.Type{cel.DynType}, cel.DoubleType,
+				cel.UnaryBinding(
+					func(value ref.Val) ref.Val {
+						x := getDouble(value)
+						return types.Double(math.Exp2(x))
+					},
+				),
 			),
 		),
-		decls.NewFunction("math.expm1",
-			decls.NewOverload(
-				MathExpm1,
-				[]*exprpb.Type{decls.Dyn},
-				decls.Double,
+		cel.Function("math.expm1",
+			cel.Overload(MathExpm1,
+				[]*cel.Type{cel.DynType}, cel.DoubleType,
+				cel.UnaryBinding(
+					func(value ref.Val) ref.Val {
+						x := getDouble(value)
+						return types.Double(math.Expm1(x))
+					},
+				),
 			),
 		),
-		decls.NewFunction("math.log",
-			decls.NewOverload(
-				MathLog,
-				[]*exprpb.Type{decls.Dyn},
-				decls.Double,
+		cel.Function("math.log",
+			cel.Overload(MathLog,
+				[]*cel.Type{cel.DynType}, cel.DoubleType,
+				cel.UnaryBinding(
+					func(value ref.Val) ref.Val {
+						x := getDouble(value)
+						return types.Double(math.Log(x))
+					},
+				),
 			),
 		),
-		decls.NewFunction("math.log10",
-			decls.NewOverload(
-				MathLog10,
-				[]*exprpb.Type{decls.Dyn},
-				decls.Double,
+		cel.Function("math.log10",
+			cel.Overload(MathLog10,
+				[]*cel.Type{cel.DynType}, cel.DoubleType,
+				cel.UnaryBinding(
+					func(value ref.Val) ref.Val {
+						x := getDouble(value)
+						return types.Double(math.Log10(x))
+					},
+				),
 			),
 		),
-		decls.NewFunction("math.log1p",
-			decls.NewOverload(
-				MathLog1p,
-				[]*exprpb.Type{decls.Dyn},
-				decls.Double,
+		cel.Function("math.log1p",
+			cel.Overload(MathLog1p,
+				[]*cel.Type{cel.DynType}, cel.DoubleType,
+				cel.UnaryBinding(
+					func(value ref.Val) ref.Val {
+						x := getDouble(value)
+						return types.Double(math.Log1p(x))
+					},
+				),
 			),
 		),
-		decls.NewFunction("math.log2",
-			decls.NewOverload(
-				MathLog2,
-				[]*exprpb.Type{decls.Dyn},
-				decls.Double,
+		cel.Function("math.log2",
+			cel.Overload(MathLog2,
+				[]*cel.Type{cel.DynType}, cel.DoubleType,
+				cel.UnaryBinding(
+					func(value ref.Val) ref.Val {
+						x := getDouble(value)
+						return types.Double(math.Log2(x))
+					},
+				),
 			),
 		),
-		decls.NewFunction("math.pow10",
-			decls.NewOverload(
-				MathPow10,
-				[]*exprpb.Type{decls.Int},
-				decls.Double,
+		cel.Function("math.pow10",
+			cel.Overload(MathPow10,
+				[]*cel.Type{cel.IntType}, cel.DoubleType,
+				cel.UnaryBinding(
+					func(value ref.Val) ref.Val {
+						switch v := value.Value(); v.(type) {
+						case int64:
+							return types.Double(math.Pow10(int(v.(int64))))
+						}
+						return value
+					},
+				),
 			),
 		),
-		decls.NewFunction("math.pow",
-			decls.NewOverload(
-				MathPow,
-				[]*exprpb.Type{decls.Dyn, decls.Dyn},
-				decls.Double,
+		cel.Function("math.pow",
+			cel.Overload(MathPow,
+				[]*cel.Type{cel.DynType, cel.DynType}, cel.DoubleType,
+				cel.BinaryBinding(
+					func(value1, value2 ref.Val) ref.Val {
+						x := getDouble(value1)
+						y := getDouble(value2)
+						return types.Double(math.Pow(x, y))
+					},
+				),
 			),
 		),
-		decls.NewFunction("math.max",
-			decls.NewOverload(
-				MathMax,
-				[]*exprpb.Type{decls.Dyn, decls.Dyn},
-				decls.Double,
+		cel.Function("math.max",
+			cel.Overload(MathMax,
+				[]*cel.Type{cel.DynType, cel.DynType}, cel.DoubleType,
+				cel.BinaryBinding(
+					func(value1, value2 ref.Val) ref.Val {
+						x := getDouble(value1)
+						y := getDouble(value2)
+						return types.Double(math.Max(x, y))
+					},
+				),
 			),
 		),
-		decls.NewFunction("math.min",
-			decls.NewOverload(
-				MathMin,
-				[]*exprpb.Type{decls.Dyn, decls.Dyn},
-				decls.Double,
+		cel.Function("math.min",
+			cel.Overload(MathMin,
+				[]*cel.Type{cel.DynType, cel.DynType}, cel.DoubleType,
+				cel.BinaryBinding(
+					func(value1, value2 ref.Val) ref.Val {
+						x := getDouble(value1)
+						y := getDouble(value2)
+						return types.Double(math.Min(x, y))
+					},
+				),
 			),
 		),
-		decls.NewFunction("math.mod",
-			decls.NewOverload(
-				MathMod,
-				[]*exprpb.Type{decls.Dyn, decls.Dyn},
-				decls.Double,
+		cel.Function("math.mod",
+			cel.Overload(MathMod,
+				[]*cel.Type{cel.DynType, cel.DynType}, cel.DoubleType,
+				cel.BinaryBinding(
+					func(value1, value2 ref.Val) ref.Val {
+						x := getDouble(value1)
+						y := getDouble(value2)
+						return types.Double(math.Mod(x, y))
+					},
+				),
 			),
 		),
-		decls.NewFunction("math.remainder",
-			decls.NewOverload(
-				MathRemainder,
-				[]*exprpb.Type{decls.Dyn, decls.Dyn},
-				decls.Double,
+		cel.Function("math.remainder",
+			cel.Overload(MathRemainder,
+				[]*cel.Type{cel.DynType, cel.DynType}, cel.DoubleType,
+				cel.BinaryBinding(
+					func(value1, value2 ref.Val) ref.Val {
+						x := getDouble(value1)
+						y := getDouble(value2)
+						return types.Double(math.Remainder(x, y))
+					},
+				),
 			),
 		),
-		decls.NewFunction("math.hypot",
-			decls.NewOverload(
-				MathHypot,
-				[]*exprpb.Type{decls.Dyn, decls.Dyn},
-				decls.Double,
+		cel.Function("math.hypot",
+			cel.Overload(MathHypot,
+				[]*cel.Type{cel.DynType, cel.DynType}, cel.DoubleType,
+				cel.BinaryBinding(
+					func(value1, value2 ref.Val) ref.Val {
+						x := getDouble(value1)
+						y := getDouble(value2)
+						return types.Double(math.Hypot(x, y))
+					},
+				),
 			),
 		),
-	}
-}
-
-func mathGlobalFunctionsImpl() []*functions.Overload {
-	return []*functions.Overload{
-		{
-			Operator: MathAbs,
-			Unary: func(value ref.Val) ref.Val {
-				x := getDouble(value)
-				return types.Double(math.Abs(x))
-			},
-		},
-		{
-			Operator: MathACos,
-			Unary: func(value ref.Val) ref.Val {
-				x := getDouble(value)
-				return types.Double(math.Acos(x))
-			},
-		},
-		{
-			Operator: MathArcCosHyper,
-			Unary: func(value ref.Val) ref.Val {
-				x := getDouble(value)
-				return types.Double(math.Acosh(x))
-			},
-		},
-		{
-			Operator: MathCos,
-			Unary: func(value ref.Val) ref.Val {
-				x := getDouble(value)
-				return types.Double(math.Cos(x))
-			},
-		},
-		{
-			Operator: MathCosHyper,
-			Unary: func(value ref.Val) ref.Val {
-				x := getDouble(value)
-				return types.Double(math.Cosh(x))
-			},
-		},
-		{
-			Operator: MathArcSin,
-			Unary: func(value ref.Val) ref.Val {
-				x := getDouble(value)
-				return types.Double(math.Asin(x))
-			},
-		},
-		{
-			Operator: MathArcSinHyper,
-			Unary: func(value ref.Val) ref.Val {
-				x := getDouble(value)
-				return types.Double(math.Asinh(x))
-			},
-		},
-		{
-			Operator: MathSin,
-			Unary: func(value ref.Val) ref.Val {
-				x := getDouble(value)
-				return types.Double(math.Sin(x))
-			},
-		},
-		{
-			Operator: MathSinHyper,
-			Unary: func(value ref.Val) ref.Val {
-				x := getDouble(value)
-				return types.Double(math.Sinh(x))
-			},
-		},
-		{
-			Operator: MathArcTan,
-			Unary: func(value ref.Val) ref.Val {
-				x := getDouble(value)
-				return types.Double(math.Atan(x))
-			},
-		},
-		{
-			Operator: MathArcTanHyper,
-			Unary: func(value ref.Val) ref.Val {
-				x := getDouble(value)
-				return types.Double(math.Atanh(x))
-			},
-		},
-		{
-			Operator: MathTan,
-			Unary: func(value ref.Val) ref.Val {
-				x := getDouble(value)
-				return types.Double(math.Tan(x))
-			},
-		},
-		{
-			Operator: MathTanHyper,
-			Unary: func(value ref.Val) ref.Val {
-				x := getDouble(value)
-				return types.Double(math.Atanh(x))
-			},
-		},
-		{
-			Operator: MathCbrt,
-			Unary: func(value ref.Val) ref.Val {
-				x := getDouble(value)
-				return types.Double(math.Cbrt(x))
-			},
-		},
-		{
-			Operator: MathSqrt,
-			Unary: func(value ref.Val) ref.Val {
-				x := getDouble(value)
-				return types.Double(math.Sqrt(x))
-			},
-		},
-		{
-			Operator: MathCeil,
-			Unary: func(value ref.Val) ref.Val {
-				x := getDouble(value)
-				return types.Double(math.Ceil(x))
-			},
-		},
-		{
-			Operator: MathFloor,
-			Unary: func(value ref.Val) ref.Val {
-				x := getDouble(value)
-				return types.Double(math.Floor(x))
-			},
-		},
-		{
-			Operator: MathRound,
-			Unary: func(value ref.Val) ref.Val {
-				x := getDouble(value)
-				return types.Double(math.Round(x))
-			},
-		},
-		{
-			Operator: MathTrunc,
-			Unary: func(value ref.Val) ref.Val {
-				x := getDouble(value)
-				return types.Double(math.Trunc(x))
-			},
-		},
-		{
-			Operator: MathExp,
-			Unary: func(value ref.Val) ref.Val {
-				x := getDouble(value)
-				return types.Double(math.Exp(x))
-			},
-		},
-		{
-			Operator: MathExp2,
-			Unary: func(value ref.Val) ref.Val {
-				x := getDouble(value)
-				return types.Double(math.Exp2(x))
-			},
-		},
-		{
-			Operator: MathExpm1,
-			Unary: func(value ref.Val) ref.Val {
-				x := getDouble(value)
-				return types.Double(math.Expm1(x))
-			},
-		},
-		{
-			Operator: MathLog,
-			Unary: func(value ref.Val) ref.Val {
-				x := getDouble(value)
-				return types.Double(math.Log(x))
-			},
-		},
-		{
-			Operator: MathLog10,
-			Unary: func(value ref.Val) ref.Val {
-				x := getDouble(value)
-				return types.Double(math.Log10(x))
-			},
-		},
-		{
-			Operator: MathLog1p,
-			Unary: func(value ref.Val) ref.Val {
-				x := getDouble(value)
-				return types.Double(math.Log1p(x))
-			},
-		},
-		{
-			Operator: MathLog2,
-			Unary: func(value ref.Val) ref.Val {
-				x := getDouble(value)
-				return types.Double(math.Log2(x))
-			},
-		},
-		{
-			Operator: MathPow10,
-			Unary: func(value ref.Val) ref.Val {
-				switch v := value.Value(); v.(type) {
-				case int64:
-					return types.Double(math.Pow10(int(v.(int64))))
-				}
-				return value
-			},
-		},
-		{
-			Operator: MathPow,
-			Binary: func(value1, value2 ref.Val) ref.Val {
-				x := getDouble(value1)
-				y := getDouble(value2)
-				return types.Double(math.Pow(x, y))
-			},
-		},
-		{
-			Operator: MathMax,
-			Binary: func(value1, value2 ref.Val) ref.Val {
-				x := getDouble(value1)
-				y := getDouble(value2)
-				return types.Double(math.Max(x, y))
-			},
-		},
-		{
-			Operator: MathMin,
-			Binary: func(value1, value2 ref.Val) ref.Val {
-				x := getDouble(value1)
-				y := getDouble(value2)
-				return types.Double(math.Min(x, y))
-			},
-		},
-		{
-			Operator: MathMod,
-			Binary: func(value1, value2 ref.Val) ref.Val {
-				x := getDouble(value1)
-				y := getDouble(value2)
-				return types.Double(math.Mod(x, y))
-			},
-		},
-		{
-			Operator: MathRemainder,
-			Binary: func(value1, value2 ref.Val) ref.Val {
-				x := getDouble(value1)
-				y := getDouble(value2)
-				return types.Double(math.Remainder(x, y))
-			},
-		},
-		{
-			Operator: MathHypot,
-			Binary: func(value1, value2 ref.Val) ref.Val {
-				x := getDouble(value1)
-				y := getDouble(value2)
-				return types.Double(math.Hypot(x, y))
-			},
-		},
 	}
 }
 

@@ -73,15 +73,8 @@ const NewCommentInput = (props: Props) => {
     setComposedComment('');
   };
 
-  const handleVerify = () => {
-    console.log('Verify ReCaptcha');
-  };
-
   return (
     <div className={classNames(className, classes.newCommentBox)}>
-      <GoogleReCaptchaProvider
-        language="en-US"
-        reCaptchaKey={process.env.RECAPTCHA_KEY}>
         <FormField>
           <TextInput
             className={classes.newCommentInput}
@@ -93,8 +86,6 @@ const NewCommentInput = (props: Props) => {
             value={composedCommentText}
           />
         </FormField>
-        <GoogleReCaptcha onVerify={handleVerify} />
-      </GoogleReCaptchaProvider>
     </div>
   );
 };

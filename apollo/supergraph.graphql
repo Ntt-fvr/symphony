@@ -1,7 +1,7 @@
 
 schema
-@core(feature: "https://specs.apollo.dev/core/v0.2"),
-@core(feature: "https://specs.apollo.dev/join/v0.1", for: EXECUTION)
+  @core(feature: "https://specs.apollo.dev/core/v0.2"),
+  @core(feature: "https://specs.apollo.dev/join/v0.1", for: EXECUTION)
 {
   query: Query
   mutation: Mutation
@@ -1898,6 +1898,10 @@ enum AppointmentStatus {
   CANCELED
 }
 
+input ArchiveFlowInput {
+  flowID: ID!
+}
+
 type AssurancePolicy {
   read: BasicPermissionRule!
   templates: CUD!
@@ -1989,7 +1993,7 @@ type Block implements Node {
   units: RetryUnit
 }
 
-union BlockDetails = ActionBlock | ChoiceBlock | DecisionBlock | EndBlock | ExecuteFlowBlock | ForEachBlock | GotoBlock | InvokeRestAPIBlock | KafkaBlock | ParallelBlock | StartBlock | SubflowBlock | TimerBlock | TriggerBlock | TrueFalseBlock | WaitForSignalBlock
+union BlockDetails = ActionBlock | ChoiceBlock | EndBlock | ExecuteFlowBlock | ForEachBlock | GotoBlock | InvokeRestAPIBlock | KafkaBlock | ParallelBlock | StartBlock | TimerBlock | TriggerBlock | WaitForSignalBlock
 
 type BlockInstance implements Node {
   block: Block!
@@ -2810,6 +2814,7 @@ type ChoiceBlock {
 input ChoiceBlockInput {
   basicDefinitions: BaseBlockInput!
   cid: String!
+  defaultExitPoint: ExitPointInput
   entryPoint: EntryPointInput!
   routes: [DecisionRouteInput!]
   uiRepresentation: BlockUIRepresentationInput
@@ -3435,6 +3440,7 @@ type DecisionRoute {
 input DecisionRouteInput {
   cid: String
   condition: VariableExpressionInput!
+  index: Int
 }
 
 interface DefaultConfig {
@@ -3887,6 +3893,12 @@ enum DomainOrderField {
   UPDATED_AT
 }
 
+input DuplicateFlowInput {
+  description: String
+  flowID: ID!
+  name: String!
+}
+
 type Edge {
   ids: [ID!]!
   name: String!
@@ -3999,6 +4011,7 @@ input EditEventSeverityInput {
 }
 
 input EditFlowInstanceInput {
+  bssCode: String
   endDate: Time
   id: ID!
   serviceInstanceCode: String
@@ -4712,6 +4725,7 @@ type ExitPoint implements Node {
   cid: String
   condition: VariableExpression
   id: ID!
+  index: Int
   nextEntryPoints: [EntryPoint!]!
   parentBlock: Block!
 }
@@ -4722,7 +4736,7 @@ input ExitPointInput {
 }
 
 enum ExitPointRole {
-  DECISION
+  CHOICE
   DEFAULT
 }
 
@@ -5140,8 +5154,10 @@ type FlowInstance implements Node {
   bssCode: String
   endDate: Time
   id: ID!
+  incompletion_reason: String
   serviceInstanceCode: String
   startDate: Time!
+  startParams: [VariableValue!]
   status: FlowInstanceStatus!
   template: FlowExecutionTemplate!
 }
@@ -5224,6 +5240,8 @@ enum FlowNewInstancesPolicy {
 
 enum FlowStatus {
   ARCHIVED
+  DRAFT
+  ON_HOLD
   PUBLISHED
   UNPUBLISHED
 }
@@ -5437,7 +5455,6 @@ input ImportFlowDraftInput {
   actionBlocks: [ActionBlockInput!]
   choiceBlocks: [ChoiceBlockInput!]
   connectors: [ConnectorInput!]
-  decisionBlocks: [DecisionBlockInput!]
   description: String
   endBlocks: [EndBlockInput!]
   endParamDefinitions: [VariableDefinitionInput!]!
@@ -5445,12 +5462,11 @@ input ImportFlowDraftInput {
   gotoBlocks: [GotoBlockInput!]
   id: ID!
   invokeRestAPIBlocks: [InvokeRestAPIBlockInput!]
+  kafkaBlocks: [KafkaBlockInput!]
   name: String!
   startBlock: StartBlockInput
-  subflowBlocks: [SubflowBlockInput!]
   timerBlocks: [TimerBlockInput!]
   triggerBlocks: [TriggerBlockInput!]
-  trueFalseBlocks: [TrueFalseBlockInput!]
   waitForSignalBlocks: [WaitForSignalBlockInput!]
 }
 
@@ -6424,7 +6440,6 @@ type Mutation {
   addCounterFormula(input: AddCounterFormulaInput!): CounterFormula! @join__field(graph: SYMPHONY)
   addCounterFormulaList(input: AddCounterFormulaListInput!): [CounterFormula!]! @join__field(graph: SYMPHONY)
   addCustomer(input: AddCustomerInput!): Customer! @join__field(graph: SYMPHONY)
-  addDecisionBlock(flowDraftId: ID!, input: DecisionBlockInput!): Block! @join__field(graph: SYMPHONY)
   addDomain(input: AddDomainInput!): Domain! @join__field(graph: SYMPHONY)
   addEndBlock(flowDraftId: ID!, input: EndBlockInput!): Block! @join__field(graph: SYMPHONY)
   addEquipment(input: AddEquipmentInput!): Equipment! @join__field(graph: SYMPHONY)
@@ -6511,13 +6526,11 @@ type Mutation {
   ): ServiceType! @join__field(graph: SYMPHONY)
   addStartBlock(flowDraftId: ID!, input: StartBlockInput!): Block! @join__field(graph: SYMPHONY)
   addStatusNumericPool(input: [AddStatusNumericPoolInput!]!): AddStatusNumericPoolPayload @join__field(graph: DGRAPHSERVICE)
-  addSubflowBlock(flowDraftId: ID!, input: SubflowBlockInput!): Block! @join__field(graph: SYMPHONY)
   addSubscriber(input: [AddSubscriberInput!]!): AddSubscriberPayload @join__field(graph: DGRAPHSERVICE)
   addTech(input: AddTechInput!): Tech! @join__field(graph: SYMPHONY)
   addThreshold(input: AddThresholdInput!): Threshold! @join__field(graph: SYMPHONY)
   addTimerBlock(flowDraftId: ID!, input: TimerBlockInput!): Block! @join__field(graph: SYMPHONY)
   addTriggerBlock(flowDraftId: ID!, input: TriggerBlockInput!): Block! @join__field(graph: SYMPHONY)
-  addTrueFalseBlock(flowDraftId: ID!, input: TrueFalseBlockInput!): Block! @join__field(graph: SYMPHONY)
   addUsersGroup(input: AddUsersGroupInput!): UsersGroup! @join__field(graph: SYMPHONY)
   addVendor(input: AddVendorInput!): Vendor! @join__field(graph: SYMPHONY)
   addWaitForSignalBlock(flowDraftId: ID!, input: WaitForSignalBlockInput!): Block! @join__field(graph: SYMPHONY)
@@ -6531,6 +6544,7 @@ type Mutation {
   addWorkOrder(input: AddWorkOrderInput!): WorkOrder! @join__field(graph: SYMPHONY)
   addWorkOrderType(input: AddWorkOrderTypeInput!): WorkOrderType! @join__field(graph: SYMPHONY)
   addWorkerType(input: AddWorkerTypeInput!): WorkerType! @join__field(graph: SYMPHONY)
+  archiveFlow(input: ArchiveFlowInput!): Flow! @join__field(graph: SYMPHONY)
   createProject(input: AddProjectInput!): Project! @join__field(graph: SYMPHONY)
   createProjectType(input: AddProjectTypeInput!): ProjectType! @join__field(graph: SYMPHONY)
   createSurvey(data: SurveyCreateData!): ID! @join__field(graph: SYMPHONY)
@@ -6596,6 +6610,7 @@ type Mutation {
   deleteStatusNumericPool(filter: StatusNumericPoolFilter!): DeleteStatusNumericPoolPayload @join__field(graph: DGRAPHSERVICE)
   deleteSubscriber(filter: SubscriberFilter!): DeleteSubscriberPayload @join__field(graph: DGRAPHSERVICE)
   deleteUsersGroup(id: ID!): Boolean! @join__field(graph: SYMPHONY)
+  duplicateFlow(input: DuplicateFlowInput!): Flow! @join__field(graph: SYMPHONY)
   editAlarmFilter(input: EditAlarmFilterInput!): AlarmFilter! @join__field(graph: SYMPHONY)
   editAlarmStatus(input: EditAlarmStatusInput!): AlarmStatus! @join__field(graph: SYMPHONY)
   editAppointment(input: EditAppointmentInput!): Appointment! @join__field(graph: SYMPHONY)
@@ -9516,6 +9531,7 @@ input ResourceOrderIMFilter {
   and: [ResourceOrderIMFilter]
   has: [ResourceOrderIMHasFilter]
   id: [ID!]
+  lineId: StringHashFilter
   not: ResourceOrderIMFilter
   or: [ResourceOrderIMFilter]
   reservationId: StringHashFilter
@@ -11351,16 +11367,21 @@ input ServiceTypeEditData {
 }
 
 enum SignalModule {
-  CONFIGURATION
+  ASSURANCE
+  CM
   INVENTORY
+  WFM
 }
 
 enum SignalType {
-  CRCREATION
-  CRUPDATE
-  NOTIFICATION
-  WOCREATION
-  WOUPDATE
+  CRCREATED
+  CRUPDATED
+  MOICREATED
+  MOIUPDATED
+  PR_CREATED
+  PR_UPDATED
+  WOCREATED
+  WOUPDATED
 }
 
 input SlotFilterInput {
@@ -12019,6 +12040,7 @@ enum TypePlanningSubStatus {
 
 enum TypeSchedulerConfig {
   AS_SOON_AS_APPROVED
+  NOT_APPROVAL_REQUIRED
   SCHEDULED_CHANGE
 }
 
@@ -13311,6 +13333,6 @@ enum core__Purpose {
 scalar join__FieldSet
 
 enum join__Graph {
-  DGRAPHSERVICE @join__graph(name: "dgraphservice" url: "http://alpha:8080/graphql")
-  SYMPHONY @join__graph(name: "symphony" url: "http://graph/query")
+  DGRAPHSERVICE @join__graph(name: "dgraphservice" url: "http://dgraph-dgraph-alpha.dgraph.svc.cluster.local:8080/graphql")
+  SYMPHONY @join__graph(name: "symphony" url: "http://symphony-graph/query")
 }
