@@ -80,8 +80,6 @@ export default function AutomationFlowsView(_props: Props) {
     return flowsData.map(p => p.node).filter(Boolean);
   }, [data]);
 
-  console.log(flows);
-
   const hasFlows = flows.length > 0;
   const header = useMemo(
     () => ({
