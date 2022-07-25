@@ -20,7 +20,7 @@ import {TESTING_PURPOSES} from '../builder/FlowBuilder';
 import {graphql} from 'relay-runtime';
 import {makeStyles} from '@material-ui/styles';
 import {useLazyLoadQuery} from 'react-relay/hooks';
-import {useMemo} from 'react';
+import {useMemo, createContext, useContext, useReducer} from 'react';
 import {useRouter} from '@fbcnms/ui/hooks';
 
 const useStyles = makeStyles(_theme => ({
@@ -40,6 +40,11 @@ const flowsQuery = graphql`
 `;
 
 type Props = $ReadOnly<{||}>;
+
+export function flowListContext () {
+  return createContext({});
+} 
+
 
 export const AUTOMATION_FLOWS_VIEW_HEADER = `${fbt('Automation Flows', '')}`;
 export const CreateNewFlowButton = (
