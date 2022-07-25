@@ -32,16 +32,9 @@ import type {WaitSignalSettingsType} from './blockTypes/waitSignal/WaitSignalSet
 
 import BaseConnector from '../connectors/BaseConnector';
 import {DISPLAY_SETTINGS} from '../../utils/helpers';
+import {IsOutputPortChoise, defaultAttrProps} from '../connectors/helper';
 import {PORTS_GROUPS} from '../../facades/shapes/vertexes/BaseVertext';
 import {V} from 'jointjs';
-import {
-  bigSize,
-  mediumSize,
-  originSize,
-  portsBigPosition,
-  portsMediumPosition,
-  portsOriginPosition,
-} from '../../facades/shapes/vertexes/BaseVertext';
 import {
   getInitialBlockSettings,
   setBlockSettings,
@@ -58,6 +51,13 @@ import {
   initialOutputSettings,
   setOutputSettings,
 } from './blockTypes/OutputSettingsType';
+import {
+  initialPositionPort,
+  resizeBlock,
+  setOutput,
+  setIntput,
+} from './utils/helpers';
+import {TYPE_LIST} from '../../../../widgets/detailsPanel/blockSettings/configureSettings/ConfigurationGoTo.js';
 
 import {TYPE as ForEachLoopType} from '../../facades/shapes/vertexes/logic/ForEachLoop';
 import {TYPE as ParallelType} from '../../facades/shapes/vertexes/logic/Parallel';
@@ -107,6 +107,7 @@ export interface IBlock {
   +setParent: string => void;
   +setSize: string => void;
   +setPosition: (number, number) => void;
+  +setPorts: string => void;
   +setSettings: string => void;
   +setInputSettings: string => void;
   +setOutputSettings: string => void;
@@ -169,56 +170,16 @@ export default class BaseBlock implements IBlock {
   }
 
   setSize(typeSizeCoupled: string) {
-    if (
-      this.model.attributes.type == ForEachLoopType ||
-      this.model.attributes.type == ParallelType
-    ) {
-      switch (typeSizeCoupled) {
-        case 'bigSizeCoupled':
-          this.model.resize(bigSize.resizeWidth, bigSize.resizeHeigth);
-          this.model.attr('coupled/width', bigSize.width);
-          this.model.portProp(this.model.getPorts()[2].id, 'attrs/circle', {
-            cx: portsBigPosition.cxRight,
-          });
-          break;
+    resizeBlock(typeSizeCoupled, this);
+  }
 
-        case 'mediumSizeCoupled':
-          this.model.resize(mediumSize.resizeWidth, mediumSize.resizeHeigth);
-          this.model.attr('coupled/width', mediumSize.width);
-          this.model.attr('coupled/height', mediumSize.height);
-          this.model.attr('body/refY2', mediumSize.bodyY2);
-          this.model.attr('background/refY2', mediumSize.backgroundY2);
-          this.model.attr('label/refY2', mediumSize.labelY2);
-          this.model.attr('image/refY2', mediumSize.imageY2);
-          this.model.portProp(this.model.getPorts()[1].id, 'attrs/circle', {
-            cy: portsMediumPosition.cyLeft,
-          });
-          this.model.portProp(this.model.getPorts()[2].id, 'attrs/circle', {
-            cx: portsMediumPosition.cxRight,
-            cy: portsMediumPosition.cyRight,
-          });
-          break;
+  setPorts(type: string) {
+    if (type === TYPE_LIST[0].id) {
+      setOutput(this, TYPE_LIST[0].name);
+    }
 
-        case 'originSizeCoupled':
-          this.model.resize(originSize.resizeWidth, originSize.resizeHeigth);
-          this.model.attr('coupled/width', originSize.width);
-          this.model.attr('coupled/height', originSize.height);
-          this.model.attr('body/refY2', originSize.bodyY2);
-          this.model.attr('background/refY2', originSize.backgroundY2);
-          this.model.attr('label/refY2', originSize.labelY2);
-          this.model.attr('image/refY2', originSize.imageY2);
-          this.model.portProp(this.model.getPorts()[1].id, 'attrs/circle', {
-            cy: portsOriginPosition.cyLeft,
-          });
-          this.model.portProp(this.model.getPorts()[2].id, 'attrs/circle', {
-            cx: portsOriginPosition.cxRight,
-            cy: portsOriginPosition.cyRight,
-          });
-          break;
-
-        default:
-          return;
-      }
+    if (type === TYPE_LIST[1].id) {
+      setIntput(this, TYPE_LIST[1].name);
     }
   }
 
@@ -285,6 +246,15 @@ export default class BaseBlock implements IBlock {
     target: IBlock,
     model?: ?ILinkModel,
   ) {
+    const outputPort = this.getOutputPorts()[0]?.id;
+    const outputPortChoice = IsOutputPortChoise(model, outputPort);
+
+    if (outputPortChoice) {
+      model.appendLabel({
+        ...defaultAttrProps,
+      });
+    }
+
     const targetPort = target.getInputPort();
     if (targetPort == null) {
       return;
@@ -336,13 +306,7 @@ export default class BaseBlock implements IBlock {
       this.model.attributes.type == ForEachLoopType ||
       this.model.attributes.type == ParallelType
     ) {
-      this.model.portProp(this.model.getPorts()[1].id, 'attrs/circle', {
-        cy: portsOriginPosition.cyLeft,
-      });
-      this.model.portProp(this.model.getPorts()[2].id, 'attrs/circle', {
-        cx: portsOriginPosition.cxRight,
-        cy: portsOriginPosition.cyRight,
-      });
+      initialPositionPort(this);
     }
   }
 

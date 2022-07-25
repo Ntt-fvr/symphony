@@ -14,6 +14,7 @@ import BottomBar from './tools/BottomBar';
 import Canvas from './canvas/Canvas';
 import FlowHeader from './tools/FlowHeader';
 import LeftBar from './tools/blocksBar/LeftBar';
+import MenuRules from './tools/blocksBar/MenuRules';
 import React, {useEffect, useMemo, useState} from 'react';
 import TopBar from './tools/TopBar';
 import usePaperGrab from './widgets/navigation/usePaperGrab';
@@ -144,6 +145,7 @@ function FlowBuilderLayout() {
         <TopBar />
         <Canvas />
         <LeftBar />
+        <MenuRules />
         <BottomBar />
       </div>
     </div>
