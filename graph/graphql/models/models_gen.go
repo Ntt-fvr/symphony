@@ -573,6 +573,10 @@ type AlarmStatusInput struct {
 	Name string `json:"name"`
 }
 
+type ArchiveFlowInput struct {
+	FlowID int `json:"flowID"`
+}
+
 type BaseBlockInput struct {
 	EnableInputTransformation       bool                 `json:"enableInputTransformation"`
 	InputTransfStrategy             *enum.TransfStrategy `json:"inputTransfStrategy"`
@@ -762,6 +766,12 @@ type DomainFilterInput struct {
 type DomainInput struct {
 	ID   int    `json:"id"`
 	Name string `json:"name"`
+}
+
+type DuplicateFlowInput struct {
+	FlowID      int     `json:"flowID"`
+	Name        string  `json:"name"`
+	Description *string `json:"description"`
 }
 
 type EditAlarmFilterInput struct {

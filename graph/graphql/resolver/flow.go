@@ -714,3 +714,57 @@ func (r flowResolver) Editor(ctx context.Context, obj *ent.Flow) (*ent.User, err
 	e, err := obj.QueryEditor().Only(ctx)
 	return e, err
 }
+
+func (r mutationResolver) ArchiveFlow(ctx context.Context, input models.ArchiveFlowInput) (*ent.Flow, error) {
+	var err error
+	client := r.ClientFrom(ctx)
+
+	f, err := client.Flow.Get(ctx, input.FlowID)
+	if err != nil {
+		return nil, fmt.Errorf("flow not found: %w", err)
+	}
+
+	_, err = client.Flow.UpdateOne(f).SetStatus(flow.StatusArchived).
+		SetNewInstancesPolicy(flow.NewInstancesPolicyDisabled).Save(ctx)
+
+	if err != nil {
+		return nil, fmt.Errorf("failed to update flow: %w", err)
+	}
+
+	return f, nil
+}
+
+func (r mutationResolver) DuplicateFlow(ctx context.Context, input models.DuplicateFlowInput) (*ent.Flow, error) {
+
+	var err error
+	client := r.ClientFrom(ctx)
+
+	f, err := client.Flow.Get(ctx, input.FlowID)
+	if err != nil {
+		return nil, fmt.Errorf("flow not found: %w", err)
+	}
+
+	v, ok := viewer.FromContext(ctx).(*viewer.UserViewer)
+	if !ok {
+		return nil, gqlerror.Errorf("could not be executed in automation")
+	}
+	// editor, last edited, creation date
+	newFlow, err := client.Flow.Create().SetName(input.Name).
+		SetNillableDescription(input.Description).
+		SetStatus(flow.DefaultStatus).
+		SetAuthor(v.User()).
+		SetCreationDate(time.Now()).
+		Save(ctx)
+
+	blockQuery := client.Block.Query().
+		Where(block.HasFlowWith(flow.ID(f.ID)))
+	setFlowBlocks := func(b *ent.BlockCreate) {
+		b.SetFlow(newFlow)
+	}
+	if err := flowengine.CopyBlocks(ctx, blockQuery, setFlowBlocks); err != nil {
+		return nil, err
+	}
+
+	return newFlow, nil
+
+}

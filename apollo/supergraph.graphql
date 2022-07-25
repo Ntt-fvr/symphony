@@ -1898,6 +1898,10 @@ enum AppointmentStatus {
   CANCELED
 }
 
+input ArchiveFlowInput {
+  flowID: ID!
+}
+
 type AssurancePolicy {
   read: BasicPermissionRule!
   templates: CUD!
@@ -3889,6 +3893,12 @@ enum DomainOrderField {
   UPDATED_AT
 }
 
+input DuplicateFlowInput {
+  description: String
+  flowID: ID!
+  name: String!
+}
+
 type Edge {
   ids: [ID!]!
   name: String!
@@ -5144,6 +5154,7 @@ type FlowInstance implements Node {
   bssCode: String
   endDate: Time
   id: ID!
+  incompletion_reason: String
   serviceInstanceCode: String
   startDate: Time!
   startParams: [VariableValue!]
@@ -6533,6 +6544,7 @@ type Mutation {
   addWorkOrder(input: AddWorkOrderInput!): WorkOrder! @join__field(graph: SYMPHONY)
   addWorkOrderType(input: AddWorkOrderTypeInput!): WorkOrderType! @join__field(graph: SYMPHONY)
   addWorkerType(input: AddWorkerTypeInput!): WorkerType! @join__field(graph: SYMPHONY)
+  archiveFlow(input: ArchiveFlowInput!): Flow! @join__field(graph: SYMPHONY)
   createProject(input: AddProjectInput!): Project! @join__field(graph: SYMPHONY)
   createProjectType(input: AddProjectTypeInput!): ProjectType! @join__field(graph: SYMPHONY)
   createSurvey(data: SurveyCreateData!): ID! @join__field(graph: SYMPHONY)
@@ -6598,6 +6610,7 @@ type Mutation {
   deleteStatusNumericPool(filter: StatusNumericPoolFilter!): DeleteStatusNumericPoolPayload @join__field(graph: DGRAPHSERVICE)
   deleteSubscriber(filter: SubscriberFilter!): DeleteSubscriberPayload @join__field(graph: DGRAPHSERVICE)
   deleteUsersGroup(id: ID!): Boolean! @join__field(graph: SYMPHONY)
+  duplicateFlow(input: DuplicateFlowInput!): Flow! @join__field(graph: SYMPHONY)
   editAlarmFilter(input: EditAlarmFilterInput!): AlarmFilter! @join__field(graph: SYMPHONY)
   editAlarmStatus(input: EditAlarmStatusInput!): AlarmStatus! @join__field(graph: SYMPHONY)
   editAppointment(input: EditAppointmentInput!): Appointment! @join__field(graph: SYMPHONY)
@@ -13320,6 +13333,6 @@ enum core__Purpose {
 scalar join__FieldSet
 
 enum join__Graph {
-  DGRAPHSERVICE @join__graph(name: "dgraphservice" url: "http://alpha:8080/graphql")
-  SYMPHONY @join__graph(name: "symphony" url: "http://graph/query")
+  DGRAPHSERVICE @join__graph(name: "dgraphservice" url: "http://dgraph-dgraph-alpha.dgraph.svc.cluster.local:8080/graphql")
+  SYMPHONY @join__graph(name: "symphony" url: "http://symphony-graph/query")
 }
