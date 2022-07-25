@@ -30,11 +30,11 @@ export function IsOutputPortChoise(model: ?ILinkModel, outputPort: string) {
       .flat(),
   ).flat();
 
-  const isOutputPortChoise = choicePortsList.find(
+  const isOutputPortChoice = choicePortsList.find(
     port => port.id === outputPort,
   );
 
-  return isOutputPortChoise;
+  return isOutputPortChoice;
 }
 
 export const RULE_NAME = 'Default';

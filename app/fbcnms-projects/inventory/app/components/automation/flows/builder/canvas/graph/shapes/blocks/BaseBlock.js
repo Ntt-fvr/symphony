@@ -247,9 +247,9 @@ export default class BaseBlock implements IBlock {
     model?: ?ILinkModel,
   ) {
     const outputPort = this.getOutputPorts()[0]?.id;
-    const OutputPortChoise = IsOutputPortChoise(model, outputPort);
+    const outputPortChoice = IsOutputPortChoise(model, outputPort);
 
-    if (OutputPortChoise) {
+    if (outputPortChoice) {
       model.appendLabel({
         ...defaultAttrProps,
       });
