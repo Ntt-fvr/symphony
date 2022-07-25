@@ -25,7 +25,7 @@ const FILL_COLOR = '#d03346';
 
 const TOTAL_SIZE = 72;
 const PADDING = 5;
-const BORDER = 6;
+const BORDER = 4;
 
 const INNER_SIZE = TOTAL_SIZE - 2 * PADDING;
 const RADIUS = INNER_SIZE / 2;

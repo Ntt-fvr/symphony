@@ -1051,6 +1051,11 @@ type EditPropertyCategoryInput struct {
 	ParameterCatalogID int    `json:"parameterCatalogId"`
 }
 
+type EditPropertyTypeInput struct {
+	ID        int  `json:"id"`
+	IsDeleted bool `json:"isDeleted"`
+}
+
 type EditPropertyTypeValueInput struct {
 	ID        *int   `json:"id"`
 	Name      string `json:"name"`

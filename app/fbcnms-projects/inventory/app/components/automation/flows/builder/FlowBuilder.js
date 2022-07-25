@@ -8,11 +8,12 @@
  * @format
  */
 
-import AddFlowDialog from '../view/AddFlowDialog';
+import AddFlowDialog from '../view/dialogs/AddFlowDialog';
 import BlocksBar from './tools/blocksBar/BlocksBar';
 import BottomBar from './tools/BottomBar';
 import Canvas from './canvas/Canvas';
 import FlowHeader from './tools/FlowHeader';
+import LeftBar from './tools/blocksBar/LeftBar';
 import React, {useEffect, useMemo, useState} from 'react';
 import TopBar from './tools/TopBar';
 import usePaperGrab from './widgets/navigation/usePaperGrab';
@@ -37,6 +38,9 @@ const useStyles = makeStyles(() => ({
     display: 'flex',
     flexGrow: 1,
     userSelect: 'none',
+    '& g.joint-element:hover': {
+      stroke: '#3A71EA',
+    },
   },
   workspace: {
     position: 'relative',
@@ -139,6 +143,7 @@ function FlowBuilderLayout() {
       <div className={classes.workspace}>
         <TopBar />
         <Canvas />
+        <LeftBar />
         <BottomBar />
       </div>
     </div>

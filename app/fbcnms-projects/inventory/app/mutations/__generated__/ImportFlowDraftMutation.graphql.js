@@ -16,11 +16,12 @@
 import type { ConcreteRequest } from 'relay-runtime';
 export type ActionTypeId = "update_inventory" | "update_workforce" | "work_order" | "worker" | "%future added value";
 export type EntryPointRole = "DEFAULT" | "%future added value";
-export type ExitPointRole = "DECISION" | "DEFAULT" | "%future added value";
+export type ExitPointRole = "CHOICE" | "DEFAULT" | "%future added value";
 export type GoToType = "DESTINATION" | "ORIGIN" | "%future added value";
+export type KafkaMessageType = "EXPRESSION" | "INPUT" | "STATE" | "%future added value";
 export type RetryUnit = "HOURS" | "MINUTES" | "SECONDS" | "%future added value";
-export type SignalModule = "CONFIGURATION" | "INVENTORY" | "%future added value";
-export type SignalType = "CRCREATION" | "CRUPDATE" | "NOTIFICATION" | "WOCREATION" | "WOUPDATE" | "%future added value";
+export type SignalModule = "ASSURANCE" | "CM" | "INVENTORY" | "WFM" | "%future added value";
+export type SignalType = "CRCREATED" | "CRUPDATED" | "MOICREATED" | "MOIUPDATED" | "PR_CREATED" | "PR_UPDATED" | "WOCREATED" | "WOUPDATED" | "%future added value";
 export type TimerBehavior = "FIXED_INTERVAL" | "SPECIFIC_DATETIME" | "%future added value";
 export type TransfStrategy = "MERGE" | "REPLACE" | "%future added value";
 export type TriggerTypeId = "work_order" | "%future added value";
@@ -31,7 +32,6 @@ export type ImportFlowDraftInput = {|
   actionBlocks?: ?$ReadOnlyArray<ActionBlockInput>,
   choiceBlocks?: ?$ReadOnlyArray<ChoiceBlockInput>,
   connectors?: ?$ReadOnlyArray<ConnectorInput>,
-  decisionBlocks?: ?$ReadOnlyArray<DecisionBlockInput>,
   description?: ?string,
   endBlocks?: ?$ReadOnlyArray<EndBlockInput>,
   endParamDefinitions: $ReadOnlyArray<VariableDefinitionInput>,
@@ -39,12 +39,11 @@ export type ImportFlowDraftInput = {|
   gotoBlocks?: ?$ReadOnlyArray<GotoBlockInput>,
   id: string,
   invokeRestAPIBlocks?: ?$ReadOnlyArray<InvokeRestAPIBlockInput>,
+  kafkaBlocks?: ?$ReadOnlyArray<KafkaBlockInput>,
   name: string,
   startBlock?: ?StartBlockInput,
-  subflowBlocks?: ?$ReadOnlyArray<SubflowBlockInput>,
   timerBlocks?: ?$ReadOnlyArray<TimerBlockInput>,
   triggerBlocks?: ?$ReadOnlyArray<TriggerBlockInput>,
-  trueFalseBlocks?: ?$ReadOnlyArray<TrueFalseBlockInput>,
   waitForSignalBlocks?: ?$ReadOnlyArray<WaitForSignalBlockInput>,
 |};
 export type ActionBlockInput = {|
@@ -75,6 +74,7 @@ export type BlockUIRepresentationInput = {|
 export type ChoiceBlockInput = {|
   basicDefinitions: BaseBlockInput,
   cid: string,
+  defaultExitPoint?: ?ExitPointInput,
   entryPoint: EntryPointInput,
   routes?: ?$ReadOnlyArray<DecisionRouteInput>,
   uiRepresentation?: ?BlockUIRepresentationInput,
@@ -99,6 +99,10 @@ export type BaseBlockInput = {|
   retryInterval?: ?number,
   units?: ?RetryUnit,
 |};
+export type ExitPointInput = {|
+  cid?: ?string,
+  role?: ?ExitPointRole,
+|};
 export type EntryPointInput = {|
   cid?: ?string,
   role?: ?EntryPointRole,
@@ -106,21 +110,13 @@ export type EntryPointInput = {|
 export type DecisionRouteInput = {|
   cid?: ?string,
   condition: VariableExpressionInput,
+  index?: ?number,
 |};
 export type ConnectorInput = {|
   sourceBlockCid: string,
   sourcePoint?: ?ExitPointInput,
   targetBlockCid: string,
   targetPoint?: ?EntryPointInput,
-|};
-export type ExitPointInput = {|
-  cid?: ?string,
-  role?: ?ExitPointRole,
-|};
-export type DecisionBlockInput = {|
-  cid: string,
-  routes?: ?$ReadOnlyArray<DecisionRouteInput>,
-  uiRepresentation?: ?BlockUIRepresentationInput,
 |};
 export type EndBlockInput = {|
   cid: string,
@@ -167,15 +163,20 @@ export type VariableValueInput = {|
   value: string,
   variableDefinitionKey: string,
 |};
+export type KafkaBlockInput = {|
+  basicDefinitions: BaseBlockInput,
+  brokers?: ?$ReadOnlyArray<string>,
+  cid: string,
+  entryPoint: EntryPointInput,
+  exitPoint: ExitPointInput,
+  message: string,
+  topic: string,
+  type: KafkaMessageType,
+  uiRepresentation?: ?BlockUIRepresentationInput,
+|};
 export type StartBlockInput = {|
   cid: string,
   paramDefinitions: $ReadOnlyArray<VariableDefinitionInput>,
-  uiRepresentation?: ?BlockUIRepresentationInput,
-|};
-export type SubflowBlockInput = {|
-  cid: string,
-  flowId: string,
-  params: $ReadOnlyArray<VariableExpressionInput>,
   uiRepresentation?: ?BlockUIRepresentationInput,
 |};
 export type TimerBlockInput = {|
@@ -194,10 +195,6 @@ export type TriggerBlockInput = {|
   cid: string,
   params: $ReadOnlyArray<VariableExpressionInput>,
   triggerType: TriggerTypeId,
-  uiRepresentation?: ?BlockUIRepresentationInput,
-|};
-export type TrueFalseBlockInput = {|
-  cid: string,
   uiRepresentation?: ?BlockUIRepresentationInput,
 |};
 export type WaitForSignalBlockInput = {|

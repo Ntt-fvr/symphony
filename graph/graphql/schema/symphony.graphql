@@ -77,6 +77,18 @@ type UsersGroup implements Node {
   policies: [PermissionsPolicy!]!
 }
 
+type Subscription {
+  workOrderAdded: WorkOrder
+  workOrderDone: WorkOrder
+  workOrderStatusChanged: WorkOrderStatusChangedPayload!
+  flowInstanceDone: FlowInstance!
+  projectAdded: Project
+  projectChanged: Project
+  locationAdded: Location
+  locationChanged: Location
+  AddImage: File
+}
+
 type PermissionSettings
   @goModel(
     model: "github.com/facebookincubator/symphony/pkg/authz/models.PermissionSettings"
@@ -1756,6 +1768,11 @@ input PropertyTypeInput
   dependencePropertyTypes: [PropertyTypeInput]
   propertyTypeValues: [AddPropertyTypeValueInput]
 }
+
+input EditPropertyTypeInput {
+    id: ID!
+    isDeleted: Boolean!
+  }
 
 input EditIsListableInput {
   id: ID!
@@ -8504,6 +8521,7 @@ type Mutation {
   addPropertyTypeValue(input: AddPropertyTypeValueInput!): PropertyTypeValue!
   editPropertyTypeValue(input: EditPropertyTypeValueInput!): PropertyTypeValue!
   removePropertyTypeValue(id: ID!): ID!
+  editPropertyType(input: EditPropertyTypeInput!): PropertyType!
 }
 
 """

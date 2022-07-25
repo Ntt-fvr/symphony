@@ -26,17 +26,33 @@ import * as React from 'react';
 import BaseBlock from '../builder/canvas/graph/shapes/blocks/BaseBlock.js';
 import fbt from 'fbt';
 import withInventoryErrorBoundary from '../../../../common/withInventoryErrorBoundary';
+import {TYPE as ChoiceType} from '../builder/canvas/graph/facades/shapes/vertexes/logic/Choice';
 import {
   ACTION_TYPE_ID as CreateWorkorderActionTypeID,
   TYPE as CreateWorkorderType,
 } from '../builder/canvas/graph/facades/shapes/vertexes/actions/CreateWorkorder';
-import {TYPE as DecisionType} from '../builder/canvas/graph/facades/shapes/vertexes/logic/Decision';
 import {TYPE as EndType} from '../builder/canvas/graph/facades/shapes/vertexes/administrative/End';
 import {Events} from '../builder/canvas/graph/facades/Helpers.js';
+import {
+  ACTION_TYPE_ID as ExecuteFlowActionTypeID,
+  TYPE as ExecuteFlowType,
+} from '../builder/canvas/graph/facades/shapes/vertexes/actions/ExecuteFlow';
+import {TYPE as ForEachLoopType} from '../builder/canvas/graph/facades/shapes/vertexes/logic/ForEachLoop';
 import {TYPE as GoToType} from '../builder/canvas/graph/facades/shapes/vertexes/logic/GoTo';
 import {InventoryAPIUrls} from '../../../../common/InventoryAPI';
+import {TYPE as InvokeApiType} from '../builder/canvas/graph/facades/shapes/vertexes/actions/InvokeRestApi';
 import {LogEvents, ServerLogger} from '../../../../common/LoggingUtils';
 import {TYPE as ManualStartType} from '../builder/canvas/graph/facades/shapes/vertexes/administrative/ManualStart';
+import {
+  ACTION_TYPE_ID as NetworkActionActionTypeID,
+  TYPE as NetworkActionBlockType,
+} from '../builder/canvas/graph/facades/shapes/vertexes/actions/ExecuteNetworkAction';
+import {TYPE as ParallelType} from '../builder/canvas/graph/facades/shapes/vertexes/logic/Parallel';
+import {TYPE as TimerBlockType} from '../builder/canvas/graph/facades/shapes/vertexes/triggers/Timer';
+import {
+  TYPE as TriggerStartBlockType,
+  TRIGGER_TYPE_ID as TriggerStartTriggerTypeID,
+} from '../builder/canvas/graph/facades/shapes/vertexes/triggers/TriggerStart';
 import {
   TYPE as TriggerWorkforceBlockType,
   TRIGGER_TYPE_ID as TriggerWorkforceTriggerTypeID,
@@ -50,6 +66,7 @@ import {
   ACTION_TYPE_ID as UpdateWorkforceActionTypeID,
   TYPE as UpdateWorkforceBlockType,
 } from '../builder/canvas/graph/facades/shapes/vertexes/actions/UpdateWorkforce';
+import {TYPE as WaitSignalBlockType} from '../builder/canvas/graph/facades/shapes/vertexes/triggers/WaitSignal';
 import {
   getActionType,
   getTriggerType,
@@ -58,14 +75,18 @@ import {graphql} from 'react-relay';
 import {
   hasMeaningfulChanges,
   mapActionBlocksForSave,
+  mapChoiceBlockForSave,
   mapConnectorsForSave,
-  mapDecisionBlockForSave,
   mapEndBlockForSave,
   mapGoToBlockForSave,
+  mapInvokeRestAPIBlockForSave,
   mapStartBlockForSave,
+  mapTimerBlocksForSave,
   mapTriggerBlocksForSave,
   mapTrueFalseBlockForSave,
+  mapWaitForSignalBlocksForSave,
   publishFlow,
+  saveBlockInformation,
   saveFlowDraft,
 } from './flowDataUtils';
 import {useCallback, useContext, useEffect} from 'react';
@@ -88,6 +109,7 @@ type FlowSettingsUpdateType = ?{
 export type FlowDataContextType = $ReadOnly<{|
   flowDraft: FlowDraftResponse,
   hasChanges: boolean,
+  hasPublish: boolean,
   save: (
     flowSettingsUpdate?: FlowSettingsUpdateType,
   ) => Promise<ImportFlowDraftMutationResponse>,
@@ -97,6 +119,7 @@ export type FlowDataContextType = $ReadOnly<{|
 const FlowDataContextDefaults = {
   flowDraft: null,
   hasChanges: false,
+  hasPublish: false,
   save: () => Promise.reject(),
   publish: () => Promise.reject(),
 };
@@ -126,6 +149,18 @@ const flowQuery = graphql`
                 id
               }
             }
+            ... on WaitForSignalBlock {
+              signalModule
+              customFilter
+              blocked
+              signalType: type
+            }
+            ... on InvokeRestAPIBlock {
+              method
+              url
+              connectionTimeOut
+              body
+            }
           }
           uiRepresentation {
             name
@@ -140,6 +175,30 @@ const flowQuery = graphql`
               yPosition
             }
           }
+          inputParamDefinitions {
+            defaultValue
+          }
+          outputParamDefinitions {
+            defaultValue
+          }
+          enableInputTransformation
+          inputTransfStrategy
+          inputTransformation
+          enableOutputTransformation
+          outputTransfStrategy
+          outputTransformation
+          enableInputStateTransformation
+          inputStateTransfStrategy
+          inputStateTransformation
+          enableOutputStateTransformation
+          outputStateTransfStrategy
+          outputStateTransformation
+          enableErrorHandling
+          enableRetryPolicy
+          retryInterval
+          units
+          maxAttemps
+          backoffRate
         }
         ...FlowHeader_flowDraft
       }
@@ -154,6 +213,7 @@ type Props = $ReadOnly<{|
 function FlowDataContextProviderComponent(props: Props) {
   const {flowId} = props;
   const [hasChanges, setHasChanges] = useState(false);
+  const [hasPublish, setHasPublish] = useState(false);
   const {flowDraft} = useLazyLoadQuery<FlowDataContext_FlowDraftQuery>(
     flowQuery,
     {
@@ -197,6 +257,8 @@ function FlowDataContextProviderComponent(props: Props) {
             id: block.cid,
             name: block.uiRepresentation?.name ?? '',
           });
+        } else {
+          saveBlockInformation(block, createdBlock);
         }
       });
 
@@ -253,6 +315,7 @@ function FlowDataContextProviderComponent(props: Props) {
         return;
       }
       setHasChanges(true);
+      setHasPublish(false);
     });
   }, [flow, flowDraft, loadBlocksIntoGraph, loadConnectorsIntoGraph]);
 
@@ -279,14 +342,20 @@ function FlowDataContextProviderComponent(props: Props) {
       const startBlocks = flow
         .getBlocksByType(ManualStartType)
         .map(mapStartBlockForSave);
-      const decisionBlocks = flow
-        .getBlocksByType(DecisionType)
-        .map(mapDecisionBlockForSave);
+      const choiceBlocks = flow
+        .getBlocksByType(ChoiceType)
+        .map(mapChoiceBlockForSave);
       const gotoBlocks = flow
         .getBlocksByType(GoToType)
         .map(mapGoToBlockForSave);
       const trueFalseBlocks = flow
         .getBlocksByType(TrueFalseType)
+        .map(mapTrueFalseBlockForSave);
+      const parallelBlocks = flow
+        .getBlocksByType(ParallelType)
+        .map(mapTrueFalseBlockForSave);
+      const forEachBlocks = flow
+        .getBlocksByType(ForEachLoopType)
         .map(mapTrueFalseBlockForSave);
 
       // Action Blocks
@@ -305,11 +374,24 @@ function FlowDataContextProviderComponent(props: Props) {
         .map(block =>
           mapActionBlocksForSave(block, CreateWorkorderActionTypeID),
         );
+      const executeFlowBlocks = flow
+        .getBlocksByType(ExecuteFlowType)
+        .map(block => mapActionBlocksForSave(block, ExecuteFlowActionTypeID));
+
+      const invokeRestAPIBlocks = flow
+        .getBlocksByType(InvokeApiType)
+        .map(block => mapInvokeRestAPIBlockForSave(block));
+
+      const networkActionBlocks = flow
+        .getBlocksByType(NetworkActionBlockType)
+        .map(block => mapActionBlocksForSave(block, NetworkActionActionTypeID));
 
       const actionBlocks = [
         ...createWorkOrderBlocks,
         ...updateInventoryBlocks,
         ...updateWorkforceBlocks,
+        ...executeFlowBlocks,
+        ...networkActionBlocks,
       ];
 
       // TriggerBlocks
@@ -319,39 +401,45 @@ function FlowDataContextProviderComponent(props: Props) {
           mapTriggerBlocksForSave(block, TriggerWorkforceTriggerTypeID),
         );
 
-      const triggerBlocks = [...triggerWorkforceBlocks];
+      const triggerStartBlocks = flow
+        .getBlocksByType(TriggerStartBlockType)
+        .map(block =>
+          mapTriggerBlocksForSave(block, TriggerStartTriggerTypeID),
+        );
+
+      const timerBlocks = flow
+        .getBlocksByType(TimerBlockType)
+        .map(block => mapTimerBlocksForSave(block));
+
+      const waitForSignalBlocks = flow
+        .getBlocksByType(WaitSignalBlockType)
+        .map(block => mapWaitForSignalBlocksForSave(block));
+
       const endBlocks = flow.getBlocksByType(EndType).map(mapEndBlockForSave);
 
       if (startBlocks.length > 0) {
         flowData.startBlock = startBlocks[0];
       }
 
-      if (endBlocks.length > 0) {
-        flowData.endBlocks = endBlocks;
-      }
+      const allFlowDataItems = {
+        endBlocks,
+        gotoBlocks,
+        choiceBlocks,
+        timerBlocks,
+        trueFalseBlocks,
+        parallelBlocks,
+        forEachBlocks,
+        connectors,
+        triggerWorkforceBlocks,
+        triggerStartBlocks,
+        waitForSignalBlocks,
+        invokeRestAPIBlocks,
+      };
 
-      if (actionBlocks.length > 0) {
-        flowData.actionBlocks = actionBlocks;
-      }
-
-      if (triggerBlocks.length > 0) {
-        flowData.triggerBlocks = triggerBlocks;
-      }
-
-      if (decisionBlocks.length > 0) {
-        flowData.decisionBlocks = decisionBlocks;
-      }
-
-      if (gotoBlocks.length > 0) {
-        flowData.gotoBlocks = gotoBlocks;
-      }
-
-      if (trueFalseBlocks.length > 0) {
-        flowData.trueFalseBlocks = trueFalseBlocks;
-      }
-
-      if (connectors.length > 0) {
-        flowData.connectors = connectors;
+      for (const key of Object.keys(allFlowDataItems)) {
+        if (allFlowDataItems[key].length > 0) {
+          flowData[key] = allFlowDataItems[key];
+        }
       }
 
       const savePromise = saveFlowDraft(flowData);
@@ -371,11 +459,17 @@ function FlowDataContextProviderComponent(props: Props) {
       flowDraftID: flowDraft.id ?? '',
       flowInstancesPolicy: 'ENABLED',
     };
-    return publishFlow(flowData);
+
+    const publishPromise = publishFlow(flowData);
+
+    publishPromise.then(() => setHasPublish(true));
+
+    return publishPromise;
   }, [flowDraft]);
 
   return (
-    <FlowDataContext.Provider value={{flowDraft, hasChanges, save, publish}}>
+    <FlowDataContext.Provider
+      value={{flowDraft, hasChanges, hasPublish, save, publish}}>
       {props.children}
     </FlowDataContext.Provider>
   );

@@ -9531,6 +9531,7 @@ input ResourceOrderIMFilter {
   and: [ResourceOrderIMFilter]
   has: [ResourceOrderIMHasFilter]
   id: [ID!]
+  lineId: StringHashFilter
   not: ResourceOrderIMFilter
   or: [ResourceOrderIMFilter]
   reservationId: StringHashFilter
@@ -12039,6 +12040,7 @@ enum TypePlanningSubStatus {
 
 enum TypeSchedulerConfig {
   AS_SOON_AS_APPROVED
+  NOT_APPROVAL_REQUIRED
   SCHEDULED_CHANGE
 }
 

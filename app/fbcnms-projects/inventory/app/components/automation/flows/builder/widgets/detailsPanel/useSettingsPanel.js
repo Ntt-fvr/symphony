@@ -15,6 +15,7 @@ import FlowTitle from './flowSettings/FlowTitle';
 import SelectionSettings from './selectionSettings/SelectionSettings';
 import fbt from 'fbt';
 import {FormContextProvider} from '../../../../../../common/FormContext';
+import {Grid, Typography} from '@material-ui/core';
 import {makeStyles} from '@material-ui/styles';
 import {useDialogShowingContext} from '@symphony/design-system/components/Dialog/DialogShowingContext';
 import {useEffect} from 'react';
@@ -47,7 +48,13 @@ export default function useSettingsPanel(): SettingsPanelType {
   });
 
   const singleSelectionDetails = () => ({
-    title: 'Block Settings',
+    title: (
+      <Grid item xs zeroMinWidth>
+        <Typography variant={'h6'} noWrap>
+          {selection.selectedElements[0]?.name || 'Block Settings'}
+        </Typography>
+      </Grid>
+    ),
     children: <BlockSettings block={selection.selectedElements[0]} />,
   });
 

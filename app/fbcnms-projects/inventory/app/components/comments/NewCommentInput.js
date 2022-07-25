@@ -18,6 +18,10 @@ import FormField from '@symphony/design-system/components/FormField/FormField';
 import React, {useState} from 'react';
 import TextInput from '@symphony/design-system/components/Input/TextInput';
 import classNames from 'classnames';
+import {
+  GoogleReCaptcha,
+  GoogleReCaptchaProvider,
+} from 'react-google-recaptcha-v3';
 import {makeStyles} from '@material-ui/styles';
 
 type Props = $ReadOnly<{|
@@ -71,17 +75,17 @@ const NewCommentInput = (props: Props) => {
 
   return (
     <div className={classNames(className, classes.newCommentBox)}>
-      <FormField>
-        <TextInput
-          className={classes.newCommentInput}
-          type="string"
-          placeholder="Write a comment..."
-          hint="Press Enter to send"
-          onChange={({target}) => setComposedComment(target.value)}
-          onEnterPressed={onSubmit}
-          value={composedCommentText}
-        />
-      </FormField>
+        <FormField>
+          <TextInput
+            className={classes.newCommentInput}
+            type="string"
+            placeholder="Write a comment..."
+            hint="Press Enter to send"
+            onChange={({target}) => setComposedComment(target.value)}
+            onEnterPressed={onSubmit}
+            value={composedCommentText}
+          />
+        </FormField>
     </div>
   );
 };

@@ -71,6 +71,13 @@ const useStyles = makeStyles(() => ({
     justifyContent: 'flex-start',
     alignItems: 'center',
   },
+  filter: {
+    borderRadius: '4px',
+    margin: '13px',
+  },
+  inputFilter: {
+    border: '0',
+  },
 }));
 
 type Props = $ReadOnly<{||}>;
@@ -78,13 +85,16 @@ type Props = $ReadOnly<{||}>;
 const Configuration = (props: Props) => {
   const {cmVersion, resource} = props;
   const [filters, setFilters] = useState([]);
-  const [checkedHidden, setCheckedHidden] = useState(true);
+  const [checkedCurrentChange, setCheckedCurrentChange] = useState(false);
+  const [checkedPreviousChange, setCheckedPreviousChange] = useState(false);
   const [isDialogInformation, setIsDialogInformation] = useState(false);
   const [isDialogSelectDate, setIsDialogSelectDate] = useState(false);
   const [checked, setChecked] = useState(true);
   const [openSimpleChangeRequest, setOpenSimpleChangeRequest] = useState(false);
   const [configurationParameters, setConfigurationParameters] = useState([]);
   const [currentVersion, setCurrentVersion] = useState([]);
+  const [AllVersion, setAllCMVersion] = useState([]);
+  const [searchFilter, setSearchFilter] = useState('');
   const classes = useStyles();
 
   const handleClickOpenInformation = () => {
@@ -106,10 +116,17 @@ const Configuration = (props: Props) => {
     );
   }
 
-  const CMSelected = (CMSelected, currentVersion) => {
+  const valueSearchFilter = ({target}) => {
+    setSearchFilter(target.value);
+  };
+
+  const CMSelected = (CMSelected, currentVersion, allVersion) => {
     setConfigurationParameters(CMSelected);
     setCurrentVersion(currentVersion);
+    setAllCMVersion(allVersion);
   };
+
+  console.log(searchFilter);
   return (
     <Grid className={classes.root}>
       <Grid
@@ -184,16 +201,14 @@ const Configuration = (props: Props) => {
           <Grid item xs={12}>
             <div className={classes.bar}>
               <div className={classes.searchBar}>
-                <PowerSearchBar
-                  className={classes.searchInput}
-                  placeholder="Configuration parameters"
-                  getSelectedFilter={filters => setFilters(filters)}
-                  onFiltersChanged={filters => setFilters(filters)}
-                  filterConfigs={[]}
-                  searchConfig={[]}
-                  exportPath={'/configurations_types'}
-                  entity={'SERVICE'}
-                />
+                <div className={classes.filter}>
+                  <input
+                    name="searchFilter"
+                    onChange={valueSearchFilter}
+                    placeholder="Filter..."
+                    className={classes.inputFilter}
+                  />
+                </div>
               </div>
             </div>
           </Grid>
@@ -206,18 +221,24 @@ const Configuration = (props: Props) => {
                 Compare with:
               </Text>
               <FormControlLabel
-                onChange={() => setCheckedHidden(!checkedHidden)}
-                checked={checkedHidden}
+                onChange={() => {
+                  setCheckedPreviousChange(!checkedPreviousChange);
+                  setCheckedCurrentChange(false);
+                }}
+                checked={checkedPreviousChange}
                 value="approved"
                 control={<Radio color="primary" />}
                 label="Previous change"
               />
               <FormControlLabel
-                onChange={() => setCheckedHidden(!checkedHidden)}
-                checked={!checkedHidden}
+                onChange={() => {
+                  setCheckedCurrentChange(!checkedCurrentChange);
+                  setCheckedPreviousChange(false);
+                }}
+                checked={checkedCurrentChange}
                 value="approval"
                 control={<Radio color="primary" />}
-                label="Schedule with approval"
+                label="Current Change"
               />
             </Grid>
             <Grid item xs={6} className={classes.checkSquare}>
@@ -234,8 +255,12 @@ const Configuration = (props: Props) => {
             <br></br>
             <TableConfigurationParameters
               ConfigurationParameters={configurationParameters}
-              setComparationCurrent={checked}
+              setComparationCurrent={checkedCurrentChange}
+              setComparationPrevious={checkedPreviousChange}
+              setOnlyValuesChanged={checked}
               setCurrentVersion={currentVersion}
+              setAllVersion={AllVersion}
+              setSearchFilter={searchFilter}
             />
           </Grid>
         </Card>

@@ -10,7 +10,7 @@
 'use strict';
 
 import * as jointJS from 'jointjs';
-import {VERTEX_COMMON_DISPLAY} from '../BaseVertext';
+import {BIG_VERTEX_COMMON_DISPLAY} from '../BaseVertext';
 import {getActionType} from './utils';
 
 export type ActionBaseAttributesType = {
@@ -18,17 +18,19 @@ export type ActionBaseAttributesType = {
   defaultText: string,
   fillColor?: string,
   svgPath: string,
+  type?: string,
 };
 
 export default function CreateActionBaseClass(
   actionBaseAttributes: ActionBaseAttributesType,
 ) {
   const FILL_COLOR = actionBaseAttributes.fillColor ?? '#4856b0';
-  const TYPE = getActionType(actionBaseAttributes.actionName);
+  const TYPE =
+    actionBaseAttributes.type || getActionType(actionBaseAttributes.actionName);
 
   const TOTAL_SIZE = 72;
   const PADDING = 5;
-  const BORDER = 6;
+  const BORDER = 4;
   const BORDER_RADIUS = 16;
 
   const INNER_SIZE = TOTAL_SIZE - 2 * PADDING;
@@ -40,9 +42,9 @@ export default function CreateActionBaseClass(
 
   const defaultProperties = {
     attrs: {
-      ...VERTEX_COMMON_DISPLAY.attrs,
+      ...BIG_VERTEX_COMMON_DISPLAY.attrs,
       body: {
-        ...VERTEX_COMMON_DISPLAY.defaultAttrProps,
+        ...BIG_VERTEX_COMMON_DISPLAY.defaultAttrProps,
         strokeWidth: BORDER,
         fill: FILL_COLOR,
         rx: BORDER_RADIUS,
@@ -52,7 +54,7 @@ export default function CreateActionBaseClass(
         refX2: 9,
       },
       image: {
-        ...VERTEX_COMMON_DISPLAY.defaultAttrProps,
+        ...BIG_VERTEX_COMMON_DISPLAY.defaultAttrProps,
         xlinkHref: actionBaseAttributes.svgPath,
         width: IMAGE_SIZE,
         height: IMAGE_SIZE,
@@ -67,7 +69,7 @@ export default function CreateActionBaseClass(
 
   const markup = {
     markup: [
-      ...VERTEX_COMMON_DISPLAY.markup,
+      ...BIG_VERTEX_COMMON_DISPLAY.markup,
       {
         tagName: 'rect',
         selector: 'body',
