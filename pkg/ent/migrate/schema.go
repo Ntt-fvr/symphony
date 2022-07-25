@@ -1186,7 +1186,7 @@ var (
 		{Name: "name", Type: field.TypeString},
 		{Name: "description", Type: field.TypeString, Nullable: true},
 		{Name: "end_param_definitions", Type: field.TypeJSON, Nullable: true},
-		{Name: "status", Type: field.TypeEnum, Enums: []string{"PUBLISHED", "UNPUBLISHED", "ARCHIVED", "ON_HOLD"}, Default: "UNPUBLISHED"},
+		{Name: "status", Type: field.TypeEnum, Enums: []string{"PUBLISHED", "DRAFT", "ARCHIVED", "ON_HOLD"}, Default: "DRAFT"},
 		{Name: "new_instances_policy", Type: field.TypeEnum, Enums: []string{"ENABLED", "DISABLED"}, Default: "DISABLED"},
 		{Name: "creation_date", Type: field.TypeTime},
 		{Name: "flow_author", Type: field.TypeInt, Nullable: true},

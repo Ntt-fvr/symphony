@@ -6571,6 +6571,7 @@ type FlowInstance implements Node {
   startDate: Time!
   endDate: Time
   startParams: [VariableValue!]
+  incompletion_reason: String
 }
 
 input EditFlowInstanceInput {
@@ -6592,6 +6593,16 @@ input AddFlowDraftInput {
 input PublishFlowInput {
   flowDraftID: ID!
   flowInstancesPolicy: FlowNewInstancesPolicy!
+}
+
+input ArchiveFlowInput {
+  flowID: ID!
+}
+
+input DuplicateFlowInput {
+  flowID: ID!
+  name: String!
+  description: String
 }
 
 input VariableValueInput
@@ -8380,6 +8391,8 @@ type Mutation {
   deleteConnector(flowDraftId: ID!, input: ConnectorInput!): Boolean!
   addFlowDraft(input: AddFlowDraftInput!): FlowDraft!
   publishFlow(input: PublishFlowInput!): Flow!
+  archiveFlow(input: ArchiveFlowInput!): Flow!
+  duplicateFlow(input: DuplicateFlowInput!): Flow!
   deleteFlowDraft(id: ID!): Boolean!
   importFlowDraft(input: ImportFlowDraftInput!): FlowDraft!
   startFlow(input: StartFlowInput!): FlowInstance!
