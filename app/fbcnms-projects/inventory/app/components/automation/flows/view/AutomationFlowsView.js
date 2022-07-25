@@ -32,6 +32,24 @@ const flowsQuery = graphql`
     flows(first: 500) @connection(key: "AutomationFlowsView_flows") {
       edges {
         node {
+          id
+          name
+          description
+          status
+          newInstancesPolicy
+          draft {
+            id
+            sameAsFlow
+          }
+          creationDate
+          updateTime
+          author {
+            id
+            firstName
+            email
+          }
+          runningInstances
+          failedInstances
           ...AutomationFlowsList_flows
         }
       }
@@ -61,6 +79,8 @@ export default function AutomationFlowsView(_props: Props) {
     const flowsData = data.flows?.edges || [];
     return flowsData.map(p => p.node).filter(Boolean);
   }, [data]);
+
+  console.log(flows);
 
   const hasFlows = flows.length > 0;
   const header = useMemo(

@@ -22,6 +22,7 @@ import symphony from '@symphony/design-system/theme/symphony';
 import {InventoryAPIUrls} from '../../../../common/InventoryAPI';
 import {createFragmentContainer, graphql} from 'react-relay';
 import {makeStyles} from '@material-ui/styles';
+import moment from 'moment';
 
 export const FLOW_STATUSES = {
   UNPUBLISHED: {
@@ -153,15 +154,19 @@ type Props = $ReadOnly<{|
 |}>;
 
 function AutomationFlowCard(props: Props) {
-  const {id, name, description, status, newInstancesPolicy, draft} = props.flow;
+  const {
+    id,
+    name,
+    description,
+    status,
+    draft,
+    author,
+    creationDate,
+    updateTime,
+    runningInstances,
+    failedInstances,
+  } = props.flow;
   const hasDraft = draft ? !draft.sameAsFlow : false;
-
-  // TODO: when available get these from the AutomationFlowCard_flow
-  const runningInstances = 1;
-  const failingInstances = 1;
-  const createdBy = 'Julian Huerta';
-  const lastEditor = 'Adriana Lorenzano';
-  const creationDate = '14/03/2022 - 09:35:20';
 
   const classes = useStyles();
   const editFlowUrl = draft
@@ -236,7 +241,7 @@ function AutomationFlowCard(props: Props) {
             <InfoIcon />
           </Tooltip>
         </div>
-        {failingInstances === 0 ? (
+        {failedInstances === 0 ? (
           <Text variant="body1" color="gray" className={classes.noneInstance}>
             <fbt desc="">None</fbt>
           </Text>
@@ -251,18 +256,18 @@ function AutomationFlowCard(props: Props) {
       </div>
       <div className={classes.runningInstancesContainer}>
         <Text variant="body1" color="gray" className={classes.smallText}>
-          Author: {createdBy}
+          Author: {author.firstName} {author.lastName}
         </Text>
         <Text variant="body1" color="gray" className={classes.smallText}>
-          Last editor: {lastEditor}
+          Last editor: {author.firstName} {author.lastName}
         </Text>
       </div>
       <div className={classes.runningInstancesContainer}>
         <Text variant="body1" color="gray" className={classes.smallText}>
-          Creation date: {creationDate}
+          Creation date: {moment(creationDate).format('YYYY-MM-DD')}
         </Text>
         <Text variant="body1" color="gray" className={classes.smallText}>
-          Edit date: {creationDate}
+          Edit date: {moment(updateTime).format('YYYY-MM-DD')}
         </Text>
       </div>
     </div>
@@ -281,6 +286,15 @@ export default createFragmentContainer(AutomationFlowCard, {
         id
         sameAsFlow
       }
+      creationDate
+      updateTime
+      author {
+        id
+        firstName
+        email
+      }
+      runningInstances
+      failedInstances
     }
   `,
 });

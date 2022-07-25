@@ -42,6 +42,24 @@ export const priorityValues = [
   },
 ];
 
+export const statusAutomationValues = [
+  {
+    key: 'published',
+    value: 'PUBLISHED',
+    label: 'Published',
+  },
+  {
+    key: 'unpublished',
+    value: 'UNPUBLISHED',
+    label: 'Unpublished',
+  },
+  {
+    key: 'draft',
+    value: 'DRAFT',
+    label: 'Draft',
+  },
+];
+
 export const statusChangeRequestValues = [
   {
     key: 'cancelled',
@@ -87,8 +105,8 @@ export const statusChangeRequestValues = [
     key: 'successful_with_warnings',
     value: 'SUCCESSFUL_WITH_WARNINGS',
     label: 'Successful_with_warnings',
-  }
-]
+  },
+];
 
 export const sourceChangeRequestValues = [
   {
@@ -111,8 +129,7 @@ export const sourceChangeRequestValues = [
     value: 'WORKFLOW',
     label: 'workflow',
   },
-
-]
+];
 
 export const prioritySortingValues = {
   URGENT: 0,

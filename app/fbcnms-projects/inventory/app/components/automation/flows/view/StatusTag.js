@@ -13,6 +13,7 @@ import * as React from 'react';
 import Text from '@symphony/design-system/components/Text';
 import classNames from 'classnames';
 import {FLOW_STATUSES} from './AutomationFlowCard';
+import {PauseCircleOutline} from '@material-ui/icons';
 import {makeStyles} from '@material-ui/styles';
 
 const useStyles = makeStyles(() => ({
@@ -20,6 +21,8 @@ const useStyles = makeStyles(() => ({
     borderRadius: '4px',
     display: 'inline-block',
     padding: '2px 8px',
+    display: 'flex',
+    gap: '5px',
   },
 }));
 
@@ -41,6 +44,7 @@ const StatusTag = (props: StatusTagProps) => {
         color: FLOW_STATUSES[status].color,
       }}>
       {FLOW_STATUSES[status].label}
+      <PauseCircleOutline />
     </Text>
   );
 };
