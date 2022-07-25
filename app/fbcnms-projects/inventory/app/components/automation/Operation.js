@@ -36,7 +36,6 @@
  import {fetchQuery, graphql} from 'relay-runtime';
  import {getInitialFilterValue} from '../comparison_view/FilterUtils';
  import {makeStyles} from '@material-ui/core/styles';
- import {useTheme} from '@material-ui/core/styles';
  import {FlowStatus} from './common/FlowStatusEnums'
  
  const toPascalCase = name => {
@@ -308,9 +307,6 @@
      ]);
    };
  
-   const theme = useTheme();
-   const fullScreen = useMediaQuery(theme.breakpoints.down('sm'));
- 
    const handleClickOpen = () => {
      setOpen(true);
    };
@@ -454,7 +450,7 @@
        </Grid>
        <div>
          <Dialog
-           fullScreen={fullScreen}
+           fullScreen={false}
            open={open}
            onClose={handleClose}
            aria-labelledby="responsive-dialog-title">
