@@ -154,6 +154,7 @@ export interface IVertexModel extends IShape {
   +portProp: (KeyValuePair | string, ?Primitive, PortPosition) => ?Primitive;
   +addTo: Graph => void;
   +remove: () => void;
+  +removePort: string => void;
   +getEmbeddedCells: () => $ReadOnlyArray<IVertexModel>;
   +embed: IVertexModel => void;
   +unembed: IVertexModel => void;
