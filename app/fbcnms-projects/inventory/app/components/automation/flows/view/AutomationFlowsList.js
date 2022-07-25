@@ -92,7 +92,10 @@ function AutomationFlowsList(props: Props) {
       filter.creationDate = moment(filter.creationDate).format('YYYY-MM-DD');
     });
 
-    filters.map(function (filter) {
+    const arrayFilterSelected =
+      filterRepeat.length == 2 ? filtersWithoutRepeating : filters;
+
+    arrayFilterSelected.map(function (filter) {
       if (filter.name == 'authorId') {
         data[filter.name] = item => filter.idSet.includes(item[filter.name]);
       } else {
@@ -103,9 +106,6 @@ function AutomationFlowsList(props: Props) {
       arrayFilters.push(data[filter.name]);
     });
     const result = dataModify.filter(item => arrayFilters.every(f => f(item)));
-
-    const arrayFilterSelected =
-      filterRepeat.length == 2 ? filtersWithoutRepeating : filters;
 
     setFlowsAutomation(result);
     setFilters(arrayFilterSelected);
