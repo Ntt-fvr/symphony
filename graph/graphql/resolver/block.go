@@ -550,7 +550,22 @@ func getEntryPoint(ctx context.Context, flowDraftID int, blockCid string, ePoint
 }
 
 func (r mutationResolver) AddConnector(ctx context.Context, flowDraftID int, input models.ConnectorInput) (*models.Connector, error) {
-	exitPoint, err := getExitPoint(ctx, flowDraftID, input.SourceBlockCid, input.SourcePoint)
+	var ePoint *models.ExitPointInput
+	blk, err := r.ClientFrom(ctx).Block.Query().
+		Where(block.HasFlowDraftWith(flowdraft.ID(flowDraftID)), block.CidEQ(input.SourceBlockCid)).Only(ctx)
+
+	if err != nil {
+		return nil, err
+	}
+
+	if blk != nil && blk.Type == block.TypeChoice {
+		ePoint = &models.ExitPointInput{Cid: &input.TargetBlockCid}
+	}
+
+	if input.SourcePoint != nil {
+		ePoint = input.SourcePoint
+	}
+	exitPoint, err := getExitPoint(ctx, flowDraftID, input.SourceBlockCid, ePoint)
 	if err != nil {
 		return nil, err
 	}

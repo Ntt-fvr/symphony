@@ -142,13 +142,13 @@ var (
 // Status defines the type for the status enum field.
 type Status string
 
-// StatusDraf is the default Status.
-const DefaultStatus = StatusDraf
+// StatusDraft is the default Status.
+const DefaultStatus = StatusDraft
 
 // Status values.
 const (
 	StatusPublished Status = "PUBLISHED"
-	StatusDraf      Status = "DRAFT"
+	StatusDraft     Status = "DRAFT"
 	StatusArchived  Status = "ARCHIVED"
 	StatusOn_Hold   Status = "ON_HOLD"
 )
@@ -160,7 +160,7 @@ func (s Status) String() string {
 // StatusValidator is a validator for the "status" field enum values. It is called by the builders before save.
 func StatusValidator(s Status) error {
 	switch s {
-	case StatusPublished, StatusDraf, StatusArchived, StatusOn_Hold:
+	case StatusPublished, StatusDraft, StatusArchived, StatusOn_Hold:
 		return nil
 	default:
 		return fmt.Errorf("flow: invalid enum value for status field: %q", s)
