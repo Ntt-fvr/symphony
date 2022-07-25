@@ -74,7 +74,19 @@ function AutomationFlowsList(props: Props) {
         ...item,
       };
     });
-    
+
+    const filterRepeat = filters.filter(
+      item => item.name === filters[filters.length - 1].name,
+    );
+
+    let filtersWithoutRepeating = filters.filter(
+      item => item.name !== filters[filters.length - 1].name,
+    );
+
+    if (filterRepeat.length == 2) {
+      filtersWithoutRepeating.push(filterRepeat[1]);
+    }
+
     dataModify.map(function (filter) {
       filter.authorId = filter.author.id;
       filter.creationDate = moment(filter.creationDate).format('YYYY-MM-DD');
@@ -82,10 +94,8 @@ function AutomationFlowsList(props: Props) {
 
     filters.map(function (filter) {
       if (filter.name == 'authorId') {
-        console.log(filter.name);
         data[filter.name] = item => filter.idSet.includes(item[filter.name]);
       } else {
-        console.log(filter);
         data[filter.name] = item =>
           filter.stringSet.includes(item[filter.name]);
       }
@@ -94,8 +104,11 @@ function AutomationFlowsList(props: Props) {
     });
     const result = dataModify.filter(item => arrayFilters.every(f => f(item)));
 
+    const arrayFilterSelected =
+      filterRepeat.length == 2 ? filtersWithoutRepeating : filters;
+
     setFlowsAutomation(result);
-    setFilters(filters);
+    setFilters(filterRepeat.length == 2 ? filtersWithoutRepeating : filters);
   };
 
   return flows.length > 0 ? (

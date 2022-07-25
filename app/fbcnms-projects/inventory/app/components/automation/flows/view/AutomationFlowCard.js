@@ -22,6 +22,10 @@ import symphony from '@symphony/design-system/theme/symphony';
 import {InventoryAPIUrls} from '../../../../common/InventoryAPI';
 import {createFragmentContainer, graphql} from 'react-relay';
 import {makeStyles} from '@material-ui/styles';
+import {PauseCircleOutline} from '@material-ui/icons';
+import CheckCircleOutlineOutlined from '@material-ui/icons/CheckCircleOutlineOutlined';
+import {AllInbox} from '@material-ui/icons';
+import {DriveFileRenameOutline} from '@material-ui/icons';
 import moment from 'moment';
 
 export const FLOW_STATUSES = {
@@ -30,18 +34,35 @@ export const FLOW_STATUSES = {
     label: fbt('Unpublished', ''),
     backgroundColor: symphony.palette.D50,
     color: symphony.palette.secondary,
+    icon: <PauseCircleOutline />,
   },
   PUBLISHED: {
     key: 'PUBLISHED',
     label: fbt('Published', ''),
     backgroundColor: symphony.palette.G600,
     color: symphony.palette.white,
+    icon: <CheckCircleOutlineOutlined />,
   },
   ARCHIVED: {
     key: 'ARCHIVED',
     label: fbt('Archived', ''),
-    backgroundColor: symphony.palette.D700,
+    backgroundColor: symphony.palette.gray,
     color: symphony.palette.white,
+    icon: <AllInbox />,
+  },
+  ON_HOLD: {
+    key: 'ON_HOLD',
+    label: fbt('On Hold', ''),
+    backgroundColor: symphony.palette.Y600,
+    color: symphony.palette.secondary,
+    icon: <PauseCircleOutline />,
+  },
+  DRAFT: {
+    key: 'DRAFT',
+    label: fbt('Draft', ''),
+    backgroundColor: symphony.palette.B50,
+    color: symphony.palette.secondary,
+    icon: <DriveFileRenameOutline />,
   },
   // eslint-disable-next-line relay/no-future-added-value
   '%future added value': {
@@ -185,7 +206,7 @@ function AutomationFlowCard(props: Props) {
           </Link>
           <div className={classes.statusContainer}>
             <div className={classes.statuses}>
-              <StatusTag status={status} />
+              <StatusTag status={status} hasDraft={hasDraft} />
               {hasDraft && status !== FLOW_STATUSES.UNPUBLISHED.key ? (
                 <Text
                   variant="caption"
@@ -256,18 +277,18 @@ function AutomationFlowCard(props: Props) {
       </div>
       <div className={classes.runningInstancesContainer}>
         <Text variant="body1" color="gray" className={classes.smallText}>
-          Author: {author.firstName} {author.lastName}
+          {`Author: ${author.firstName} ${author.lastName}`}
         </Text>
         <Text variant="body1" color="gray" className={classes.smallText}>
-          Last editor: {author.firstName} {author.lastName}
+          {`Last editor: ${author.firstName} ${author.lastName}`}
         </Text>
       </div>
       <div className={classes.runningInstancesContainer}>
         <Text variant="body1" color="gray" className={classes.smallText}>
-          Creation date: {moment(creationDate).format('YYYY-MM-DD')}
+          {`Creation date: ${moment(creationDate).format('YYYY-MM-DD')}`}
         </Text>
         <Text variant="body1" color="gray" className={classes.smallText}>
-          Edit date: {moment(updateTime).format('YYYY-MM-DD')}
+          {` Edit date: ${moment(updateTime).format('YYYY-MM-DD')}`}
         </Text>
       </div>
     </div>
