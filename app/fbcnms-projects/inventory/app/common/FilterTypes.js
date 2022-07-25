@@ -58,6 +58,16 @@ export const statusAutomationValues = [
     value: 'DRAFT',
     label: 'Draft',
   },
+  {
+    key: 'on_hold',
+    value: 'ON_HOLD',
+    label: 'On Hold',
+  },
+  {
+    key: 'archived',
+    value: 'ARCHIVED',
+    label: 'Archived',
+  },
 ];
 
 export const statusChangeRequestValues = [

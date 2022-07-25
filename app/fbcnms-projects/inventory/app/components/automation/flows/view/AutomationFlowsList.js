@@ -79,7 +79,7 @@ function AutomationFlowsList(props: Props) {
       item => item.name === filters[filters.length - 1].name,
     );
 
-    let filtersWithoutRepeating = filters.filter(
+    const filtersWithoutRepeating = filters.filter(
       item => item.name !== filters[filters.length - 1].name,
     );
 
@@ -108,7 +108,7 @@ function AutomationFlowsList(props: Props) {
       filterRepeat.length == 2 ? filtersWithoutRepeating : filters;
 
     setFlowsAutomation(result);
-    setFilters(filterRepeat.length == 2 ? filtersWithoutRepeating : filters);
+    setFilters(arrayFilterSelected);
   };
 
   return flows.length > 0 ? (
