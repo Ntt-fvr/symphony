@@ -9,17 +9,22 @@
  */
 
 import AddIcon from '@material-ui/icons/Add';
+import Alert from '@material-ui/lab/Alert';
+import Button from '@material-ui/core/Button';
 import FilterCenterFocusIcon from '@material-ui/icons/FilterCenterFocus';
 import IconButton from '@symphony/design-system/components/IconButton';
 import React, {useEffect} from 'react';
 import RemoveIcon from '@material-ui/icons/Remove';
+import Snackbar from '@material-ui/core/Snackbar';
 import ToolsBar from './ToolsBar';
 import Tooltip from '../widgets/detailsPanel/inputs/Tooltip';
 import usePaperGrab from '../widgets/navigation/usePaperGrab';
 import {BLUE, DARK} from '@symphony/design-system/theme/symphony';
+import {FlowStatus} from '../../../common/FlowStatusEnums';
 import {PanToolsIcon} from '@symphony/design-system/icons';
 import {makeStyles} from '@material-ui/styles';
 import {useGraph} from '../canvas/graph/graphAPIContext/GraphContext';
+import {useFlowData} from '../../data/FlowDataContext';
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -55,11 +60,15 @@ const useStyles = makeStyles(() => ({
     color: BLUE.B600 + ' !important',
     fill: BLUE.B600 + ' !important',
   },
+  warning: {
+    marginBottom: 8,
+  },
 }));
 
 export default function BottomBar() {
   const classes = useStyles();
   const flow = useGraph();
+  const flowData = useFlowData();
   const [isOnGrabMode, handleOnGrabMode] = usePaperGrab();
 
   useEffect(() => {
@@ -68,40 +77,70 @@ export default function BottomBar() {
   }, []);
 
   return (
-    <ToolsBar className={classes.root}>
-      <Tooltip tooltip={'Zoom Out'}>
-        <IconButton
-          className={classes.buttonOut}
-          skin={'regular'}
-          onClick={() => flow.zoomOut()}
-          icon={RemoveIcon}
-        />
-      </Tooltip>
-      <Tooltip tooltip={'Zoom In'}>
-        <IconButton
-          className={classes.buttonIn}
-          skin={'regular'}
-          onClick={() => flow.zoomIn()}
-          icon={AddIcon}
-        />
-      </Tooltip>
-      <Tooltip tooltip={'Zoom Fit'}>
-        <IconButton
-          skin={'regular'}
-          onClick={() => flow.zoomFit()}
-          icon={FilterCenterFocusIcon}
-        />
-      </Tooltip>
-      <Tooltip tooltip={'Pan Toll'}>
-        <IconButton
-          className={isOnGrabMode ? classes.blue : null}
-          skin={'regular'}
-          onClick={() =>
-            isOnGrabMode ? handleOnGrabMode(true) : handleOnGrabMode(false)
-          }
-          icon={PanToolsIcon}
-        />
-      </Tooltip>
-    </ToolsBar>
+    <div>
+      <ToolsBar className={classes.root}>
+        <Tooltip tooltip={'Zoom Out'}>
+          <IconButton
+            className={classes.buttonOut}
+            skin={'regular'}
+            onClick={() => flow.zoomOut()}
+            icon={RemoveIcon}
+          />
+        </Tooltip>
+        <Tooltip tooltip={'Zoom In'}>
+          <IconButton
+            className={classes.buttonIn}
+            skin={'regular'}
+            onClick={() => flow.zoomIn()}
+            icon={AddIcon}
+          />
+        </Tooltip>
+        <Tooltip tooltip={'Zoom Fit'}>
+          <IconButton
+            skin={'regular'}
+            onClick={() => flow.zoomFit()}
+            icon={FilterCenterFocusIcon}
+          />
+        </Tooltip>
+        <Tooltip tooltip={'Pan Toll'}>
+          <IconButton
+            className={isOnGrabMode ? classes.blue : null}
+            skin={'regular'}
+            onClick={() =>
+              isOnGrabMode ? handleOnGrabMode(true) : handleOnGrabMode(false)
+            }
+            icon={PanToolsIcon}
+          />
+        </Tooltip>
+      </ToolsBar>
+      <Snackbar
+        anchorOrigin={{vertical: 'bottom', horizontal: 'center'}}
+        open={flowData.currentStatus == FlowStatus.failing}>
+        <Alert
+          severity="warning"
+          action={
+            <div>
+              <Button
+                color="inherit"
+                size="small"
+                onClick={() => {
+                  flowData.updateInstance({status: FlowStatus.canceled});
+                }}>
+                <b>Cancel</b>
+              </Button>
+              <Button
+                color="inherit"
+                size="small"
+                onClick={() => {
+                  flowData.updateInstance({status: FlowStatus.running});
+                }}>
+                <b>Retry</b>
+              </Button>
+            </div>
+          }>
+          {flowData.flowDraft.incompletion_reason}
+        </Alert>
+      </Snackbar>
+    </div>
   );
 }

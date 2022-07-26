@@ -53,6 +53,7 @@
            id
            status
            startDate
+           incompletion_reason
            template {
              name
            }
@@ -72,7 +73,7 @@
            id
            status
            startDate
- 
+           incompletion_reason
            template {
              name
            }
@@ -218,7 +219,7 @@
    {
      key: 'error',
      title: 'Error',
-     render: row => row.error ?? '',
+     render: row => row.incompletion_reason ?? '',
      tooltip: row => row.error ?? '',
    },
  ];
@@ -390,6 +391,7 @@
                    <>
                      <IconButton
                        aria-label={row.id}
+                       color="secondary"
                        onClick={e => handleTaggle(e.currentTarget, row.id)}
                        disabled={
                          row.status != FlowStatus.paused &&

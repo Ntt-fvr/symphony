@@ -75,6 +75,7 @@ export type OperationFilterQueryResponse = {|
         +id: string,
         +status: FlowInstanceStatus,
         +startDate: any,
+        +incompletion_reason: ?string,
         +template: {|
           +name: string
         |},
@@ -101,6 +102,7 @@ query OperationFilterQuery(
         id
         status
         startDate
+        incompletion_reason
         template {
           name
           id
@@ -153,17 +155,24 @@ v5 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "name",
+  "name": "incompletion_reason",
   "storageKey": null
 },
 v6 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "bssCode",
+  "name": "name",
   "storageKey": null
 },
 v7 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "bssCode",
+  "storageKey": null
+},
+v8 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
@@ -204,6 +213,7 @@ return {
                   (v2/*: any*/),
                   (v3/*: any*/),
                   (v4/*: any*/),
+                  (v5/*: any*/),
                   {
                     "alias": null,
                     "args": null,
@@ -212,12 +222,12 @@ return {
                     "name": "template",
                     "plural": false,
                     "selections": [
-                      (v5/*: any*/)
+                      (v6/*: any*/)
                     ],
                     "storageKey": null
                   },
-                  (v6/*: any*/),
-                  (v7/*: any*/)
+                  (v7/*: any*/),
+                  (v8/*: any*/)
                 ],
                 "storageKey": null
               }
@@ -264,6 +274,7 @@ return {
                   (v2/*: any*/),
                   (v3/*: any*/),
                   (v4/*: any*/),
+                  (v5/*: any*/),
                   {
                     "alias": null,
                     "args": null,
@@ -272,13 +283,13 @@ return {
                     "name": "template",
                     "plural": false,
                     "selections": [
-                      (v5/*: any*/),
+                      (v6/*: any*/),
                       (v2/*: any*/)
                     ],
                     "storageKey": null
                   },
-                  (v6/*: any*/),
-                  (v7/*: any*/)
+                  (v7/*: any*/),
+                  (v8/*: any*/)
                 ],
                 "storageKey": null
               }
@@ -291,16 +302,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "1ac4e6f64f5caec57e7dfdb855081d37",
+    "cacheID": "cfaeca407634b27d58c7ce4d29601823",
     "id": null,
     "metadata": {},
     "name": "OperationFilterQuery",
     "operationKind": "query",
-    "text": "query OperationFilterQuery(\n  $filterBy: [FlowInstanceFilterInput!]\n) {\n  flowInstances(filterBy: $filterBy) {\n    edges {\n      node {\n        id\n        status\n        startDate\n        template {\n          name\n          id\n        }\n        bssCode\n        serviceInstanceCode\n      }\n    }\n  }\n}\n"
+    "text": "query OperationFilterQuery(\n  $filterBy: [FlowInstanceFilterInput!]\n) {\n  flowInstances(filterBy: $filterBy) {\n    edges {\n      node {\n        id\n        status\n        startDate\n        incompletion_reason\n        template {\n          name\n          id\n        }\n        bssCode\n        serviceInstanceCode\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = '1c4f049f03f872090223e39752905b30';
+(node/*: any*/).hash = '4be67e062822ea51b0c987fd0d889e6e';
 
 module.exports = node;

@@ -88,6 +88,7 @@ import {
   publishFlow,
   saveBlockInformation,
   saveFlowDraft,
+  updateFlowInstance,
 } from './flowDataUtils';
 import {useCallback, useContext, useEffect} from 'react';
 import {useEnqueueSnackbar} from '@fbcnms/ui/hooks/useSnackbar';
@@ -253,6 +254,7 @@ function FlowDataContextProviderComponent(props: Props) {
   const {flowId,isReadOnly} = props;
   const [hasChanges, setHasChanges] = useState(false);
   const [hasPublish, setHasPublish] = useState(false);
+  const [currentStatus, setCurrentStatus] = useState('');
   const {flowDraft} = useLazyLoadQuery<FlowDataContext_FlowDraftQuery|any>(
     isReadOnly?flowInstanceQuery: flowQuery,
     {
@@ -349,6 +351,10 @@ function FlowDataContextProviderComponent(props: Props) {
     loadConnectorsIntoGraph(blocks);
 
     isLoaded.current = true;
+
+    if(isReadOnly){
+      setCurrentStatus(flowDraft.status);
+    }
 
     return flow.onGraphEvent(Events.Graph.OnChange, shape => {
       if (!hasMeaningfulChanges(shape)) {
@@ -507,9 +513,26 @@ function FlowDataContextProviderComponent(props: Props) {
     return publishPromise;
   }, [flowDraft]);
 
+  const updateInstance = useCallback(inputData => {
+    const flowData = {
+      input:{
+        id: flowDraft.id ?? '',
+        status: inputData.status,
+      }
+    };
+
+    const updateInstancePromise = updateFlowInstance(flowData);
+
+    updateInstancePromise.then(data => {
+      setCurrentStatus(data.editFlowInstance.status);
+    });
+
+    return updateInstancePromise;
+  }, [flowDraft]);
+
   return (
     <FlowDataContext.Provider
-      value={{flowDraft, hasChanges, hasPublish, save, publish}}>
+      value={{flowDraft, hasChanges, hasPublish,currentStatus,updateInstance, save, publish}}>
       {props.children}
     </FlowDataContext.Provider>
   );

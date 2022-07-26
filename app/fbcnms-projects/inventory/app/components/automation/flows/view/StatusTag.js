@@ -37,10 +37,10 @@ const StatusTag = (props: StatusTagProps) => {
       variant="body2"
       className={classNames(classes.statusTag, className)}
       style={{
-        backgroundColor: FLOW_STATUSES[status].backgroundColor,
-        color: FLOW_STATUSES[status].color,
+        backgroundColor: FLOW_STATUSES[status]?.backgroundColor,
+        color: FLOW_STATUSES[status]?.color,
       }}>
-      {FLOW_STATUSES[status].label}
+      {FLOW_STATUSES[status]?.label}
     </Text>
   );
 };

@@ -8,7 +8,7 @@
  * @format
  */
 
-import React, {useState, useCallback} from 'react';
+import React, {useState} from 'react';
 import Button from '@symphony/design-system/components/Button';
 import ButtonFlowStatus from '../../../common/ButtonFlowStatus';
 import CloseIcon from '@material-ui/icons/Close';
@@ -26,9 +26,7 @@ import {FlowStatus} from '../../../common/FlowStatusEnums';
 import Paper from '@material-ui/core/Paper';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
 import {useFlowData} from '../../data/FlowDataContext';
-import UpdateFlowInstanceMutation from '../../../../../mutations/UpdateFlowInstance';
 import moment from 'moment';
- 
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -76,10 +74,13 @@ const useStyles = makeStyles(theme => ({
     backgroundColor: '#e3f2fd',
     border: '1.5px solid #2196f3',
   },
+  fullWidth: {
+    width: '100%',
+  },
 }));
 
 const toPascalCase = name => {
-  return name.replace(/(\w)(\w*)/g, function (g0, g1, g2) {
+  return name?.replace(/(\w)(\w*)/g, function (g0, g1, g2) {
     return g1.toUpperCase() + g2.toLowerCase();
   });
 };
@@ -89,7 +90,6 @@ export default function FlowInstanceDetails() {
   const [dialogOpen, setDialogOpen] = React.useState(false);
   const flowData = useFlowData();
   const data = flowData.flowDraft;
-  const [currentStatus, setCurrentStatus] = useState(flowData.flowDraft.status);
 
   const handleClick = event => {
     setMenuOpen(event.currentTarget);
@@ -104,21 +104,6 @@ export default function FlowInstanceDetails() {
     setDialogOpen(false);
   };
 
-  const updateFlow = useCallback(
-    inputData => {
-      const variables = {
-        input: {
-          id: flowData.flowDraft.id,
-          status: inputData.status,
-        },
-      };
-      UpdateFlowInstanceMutation(variables, {
-        onCompleted: (data) => {setCurrentStatus(data.editFlowInstance.status)},
-      });
-    },
-    [flowData],
-  );
-
   return (
     <div className={classes.root}>
       <Grid container spacing={0}>
@@ -126,21 +111,22 @@ export default function FlowInstanceDetails() {
           <Grid item xs={5} className={classes.center}>
             <b>Status</b>
           </Grid>
-          <Grid item xs={7}>
+          <Grid item>
             <ButtonFlowStatus
-              className={currentStatus}
-              skin={toPascalCase(currentStatus)}>
-              {currentStatus}
+              className={flowData.currentStatus}
+              skin={toPascalCase(flowData.currentStatus)}>
+              {flowData.currentStatus}
             </ButtonFlowStatus>
             <MatIconButton
               onClick={e => {
                 e.preventDefault();
                 handleClick(e);
               }}
+              color="secondary"
               disabled={
-                currentStatus != FlowStatus.paused &&
-                currentStatus != FlowStatus.running &&
-                currentStatus != FlowStatus.failing
+                flowData.currentStatus != FlowStatus.paused &&
+                flowData.currentStatus != FlowStatus.running &&
+                flowData.currentStatus != FlowStatus.failing
               }>
               <MoreVertIcon />
             </MatIconButton>
@@ -152,16 +138,16 @@ export default function FlowInstanceDetails() {
               <MenuItem
                 onClick={e => {
                   handleClose();
-                  updateFlow({
+                  flowData.updateInstance({
                     status:
                       e.target.textContent == 'Pause'
                         ? FlowStatus.paused
-                        : FlowStatus.running
+                        : FlowStatus.running,
                   });
                 }}>
-                {currentStatus === FlowStatus.paused
+                {flowData.currentStatus === FlowStatus.paused
                   ? 'Resume'
-                  : currentStatus === FlowStatus.running
+                  : flowData.currentStatus === FlowStatus.running
                   ? 'Pause'
                   : 'Retry'}
               </MenuItem>
@@ -175,6 +161,7 @@ export default function FlowInstanceDetails() {
             </Menu>
           </Grid>
         </Grid>
+        <hr className={classes.fullWidth} />
         <Grid item container xs={12}>
           <Grid item xs={6}>
             <b>Flow template</b>
@@ -250,7 +237,7 @@ export default function FlowInstanceDetails() {
                 className={classes.margin}
                 onClick={() => {
                   handleClose();
-                  updateFlow({status: FlowStatus.canceled});
+                  flowData.updateInstance({status: FlowStatus.canceled});
                 }}>
                 Continue
               </Button>

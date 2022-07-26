@@ -39,6 +39,9 @@ const useStyles = makeStyles(() => ({
   options: {
     transform: 'translate(0px, 40px) scale(1) rotate(-90deg)',
   },
+  instanceDetails: {
+    transform: 'translate(0px, 100px) scale(1) rotate(-90deg)',
+  },
 }));
 
 export default function LeftBar(props) {
@@ -60,8 +63,8 @@ export default function LeftBar(props) {
         }}
         children={
           open ? (
-            <Typography variant={'subtitle1'} className={classes.options}>
-              {'Options'}
+            <Typography variant={'subtitle1'} className={isReadOnly? classes.instanceDetails : classes.options}>
+              {isReadOnly?'Instance Details':'Options'}
             </Typography>
           ) : (
             dialogDetails.children

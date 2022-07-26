@@ -23,6 +23,7 @@ export type OperationQueryResponse = {|
         +id: string,
         +status: FlowInstanceStatus,
         +startDate: any,
+        +incompletion_reason: ?string,
         +template: {|
           +name: string
         |},
@@ -47,6 +48,7 @@ query OperationQuery {
         id
         status
         startDate
+        incompletion_reason
         template {
           name
           id
@@ -85,17 +87,24 @@ v3 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "name",
+  "name": "incompletion_reason",
   "storageKey": null
 },
 v4 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "bssCode",
+  "name": "name",
   "storageKey": null
 },
 v5 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "bssCode",
+  "storageKey": null
+},
+v6 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
@@ -136,6 +145,7 @@ return {
                   (v0/*: any*/),
                   (v1/*: any*/),
                   (v2/*: any*/),
+                  (v3/*: any*/),
                   {
                     "alias": null,
                     "args": null,
@@ -144,12 +154,12 @@ return {
                     "name": "template",
                     "plural": false,
                     "selections": [
-                      (v3/*: any*/)
+                      (v4/*: any*/)
                     ],
                     "storageKey": null
                   },
-                  (v4/*: any*/),
-                  (v5/*: any*/)
+                  (v5/*: any*/),
+                  (v6/*: any*/)
                 ],
                 "storageKey": null
               }
@@ -196,6 +206,7 @@ return {
                   (v0/*: any*/),
                   (v1/*: any*/),
                   (v2/*: any*/),
+                  (v3/*: any*/),
                   {
                     "alias": null,
                     "args": null,
@@ -204,13 +215,13 @@ return {
                     "name": "template",
                     "plural": false,
                     "selections": [
-                      (v3/*: any*/),
+                      (v4/*: any*/),
                       (v0/*: any*/)
                     ],
                     "storageKey": null
                   },
-                  (v4/*: any*/),
-                  (v5/*: any*/)
+                  (v5/*: any*/),
+                  (v6/*: any*/)
                 ],
                 "storageKey": null
               }
@@ -223,16 +234,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "730ef35f85fcb969e133f28dfbc26847",
+    "cacheID": "ce69d80739b93d3c8a890c223796d2c1",
     "id": null,
     "metadata": {},
     "name": "OperationQuery",
     "operationKind": "query",
-    "text": "query OperationQuery {\n  flowInstances {\n    edges {\n      node {\n        id\n        status\n        startDate\n        template {\n          name\n          id\n        }\n        bssCode\n        serviceInstanceCode\n      }\n    }\n  }\n}\n"
+    "text": "query OperationQuery {\n  flowInstances {\n    edges {\n      node {\n        id\n        status\n        startDate\n        incompletion_reason\n        template {\n          name\n          id\n        }\n        bssCode\n        serviceInstanceCode\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = 'b634a71fdb4c4d9bfc5eaa05a523186c';
+(node/*: any*/).hash = '4cd223cca6dba11743a5b247df9b7df6';
 
 module.exports = node;
