@@ -11,74 +11,32 @@ import type {ConfigurationExecuteFlowQuery} from './__generated__/ConfigurationE
 
 import type {IBlock} from '../../../../canvas/graph/shapes/blocks/BaseBlock';
 
-import React, {useMemo} from 'react';
+import React, {useMemo, useState} from 'react';
 import Select from '../../inputs/Select';
 import {Grid} from '@material-ui/core';
 import {useEffect} from 'react';
 import {useForm} from '../../../../../utils/useForm';
 import {graphql} from 'relay-runtime';
 import {useLazyLoadQuery} from 'react-relay/hooks';
-import {flowListContext} from ''
+import {useFlows} from '../../../../../view/AutomationFlowsView';
 
 type Props = $ReadOnly<{|
   block: IBlock,
 |}>;
 
-
-
-
-const flowsQuery = graphql`
-  query ConfigurationExecuteFlowQuery {
-    flows(first: 500) @connection(key: "AutomationFlowsView_flows") {
-      edges {
-        node {
-          id
-          name
-          description
-          status
-          newInstancesPolicy
-          draft {
-            id
-            sameAsFlow
-          }
-          creationDate
-          updateTime
-          author {
-            id
-            firstName
-            email
-          }
-          runningInstances
-          failedInstances
-          ...AutomationFlowsList_flows
-        }
-      }
-    }
-  }
-`;
-
-
 const ConfigurationExecuteFlow = ({block}: Props) => {
-  const data = useLazyLoadQuery<ConfigurationExecuteFlowQuery>(flowsQuery, {});
-  console.log(data)
-  const flowsx = useMemo(() => {
-    const flowsData = data.flows?.edges || [];
-    return flowsData.map(p => p.node).filter(Boolean);
-  }, [data]);
-
-  console.log('pp', flowsx)
-
   const {settings} = block;
-  const flows = [
-    {name: 'Flow 1', id: 'flow1'},
-    {name: 'Flow 1', id: 'flow2'},
-  ];
-
   const [executeFlowSettingsValues, handleInputChange] = useForm({
     flow: settings?.flow || '',
   });
 
   const {flow} = executeFlowSettingsValues;
+
+  const flows = useFlows();
+  const flowsPublished = useMemo(() => {
+    const flowsData = flows?.map(p => p.node) || [];
+    return flowsData.filter(node => node.status === 'PUBLISHED');
+  }, [flows]);
 
   useEffect(() => {
     block.setSettings(executeFlowSettingsValues);
@@ -91,7 +49,7 @@ const ConfigurationExecuteFlow = ({block}: Props) => {
         name={'flow'}
         value={flow}
         onChange={handleInputChange}
-        items={flows}
+        items={flowsPublished}
       />
     </Grid>
   );

@@ -15,12 +15,16 @@
 /*::
 import type { ConcreteRequest } from 'relay-runtime';
 type AutomationFlowsList_flows$ref = any;
+export type FlowStatus = "ARCHIVED" | "DRAFT" | "ON_HOLD" | "PUBLISHED" | "UNPUBLISHED" | "%future added value";
 export type AutomationFlowsViewQueryVariables = {||};
 export type AutomationFlowsViewQueryResponse = {|
   +flows: {|
     +edges: ?$ReadOnlyArray<{|
       +node: ?{|
-        +$fragmentRefs: AutomationFlowsList_flows$ref
+        +id: string,
+        +name: string,
+        +status: FlowStatus,
+        +$fragmentRefs: AutomationFlowsList_flows$ref,
       |}
     |}>
   |}
@@ -37,8 +41,10 @@ query AutomationFlowsViewQuery {
   flows(first: 500) {
     edges {
       node {
-        ...AutomationFlowsList_flows
         id
+        name
+        status
+        ...AutomationFlowsList_flows
         __typename
       }
       cursor
@@ -73,17 +79,38 @@ var v0 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "__typename",
+  "name": "id",
   "storageKey": null
 },
 v1 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "cursor",
+  "name": "name",
   "storageKey": null
 },
 v2 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "status",
+  "storageKey": null
+},
+v3 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "__typename",
+  "storageKey": null
+},
+v4 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "cursor",
+  "storageKey": null
+},
+v5 = {
   "alias": null,
   "args": null,
   "concreteType": "PageInfo",
@@ -108,20 +135,13 @@ v2 = {
   ],
   "storageKey": null
 },
-v3 = [
+v6 = [
   {
     "kind": "Literal",
     "name": "first",
     "value": 500
   }
-],
-v4 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "id",
-  "storageKey": null
-};
+];
 return {
   "fragment": {
     "argumentDefinitions": [],
@@ -154,6 +174,9 @@ return {
                 "plural": false,
                 "selections": [
                   (v0/*: any*/),
+                  (v1/*: any*/),
+                  (v2/*: any*/),
+                  (v3/*: any*/),
                   {
                     "args": null,
                     "kind": "FragmentSpread",
@@ -162,11 +185,11 @@ return {
                 ],
                 "storageKey": null
               },
-              (v1/*: any*/)
+              (v4/*: any*/)
             ],
             "storageKey": null
           },
-          (v2/*: any*/)
+          (v5/*: any*/)
         ],
         "storageKey": null
       }
@@ -182,7 +205,7 @@ return {
     "selections": [
       {
         "alias": null,
-        "args": (v3/*: any*/),
+        "args": (v6/*: any*/),
         "concreteType": "FlowConnection",
         "kind": "LinkedField",
         "name": "flows",
@@ -204,26 +227,14 @@ return {
                 "name": "node",
                 "plural": false,
                 "selections": [
-                  (v4/*: any*/),
-                  {
-                    "alias": null,
-                    "args": null,
-                    "kind": "ScalarField",
-                    "name": "name",
-                    "storageKey": null
-                  },
+                  (v0/*: any*/),
+                  (v1/*: any*/),
+                  (v2/*: any*/),
                   {
                     "alias": null,
                     "args": null,
                     "kind": "ScalarField",
                     "name": "description",
-                    "storageKey": null
-                  },
-                  {
-                    "alias": null,
-                    "args": null,
-                    "kind": "ScalarField",
-                    "name": "status",
                     "storageKey": null
                   },
                   {
@@ -241,7 +252,7 @@ return {
                     "name": "draft",
                     "plural": false,
                     "selections": [
-                      (v4/*: any*/),
+                      (v0/*: any*/),
                       {
                         "alias": null,
                         "args": null,
@@ -252,21 +263,21 @@ return {
                     ],
                     "storageKey": null
                   },
-                  (v0/*: any*/)
+                  (v3/*: any*/)
                 ],
                 "storageKey": null
               },
-              (v1/*: any*/)
+              (v4/*: any*/)
             ],
             "storageKey": null
           },
-          (v2/*: any*/)
+          (v5/*: any*/)
         ],
         "storageKey": "flows(first:500)"
       },
       {
         "alias": null,
-        "args": (v3/*: any*/),
+        "args": (v6/*: any*/),
         "filters": null,
         "handle": "connection",
         "key": "AutomationFlowsView_flows",
@@ -276,7 +287,7 @@ return {
     ]
   },
   "params": {
-    "cacheID": "a147cc066edfd7705b241be339a964e5",
+    "cacheID": "8e4cae9fa29aabe3157c709325d7b911",
     "id": null,
     "metadata": {
       "connection": [
@@ -292,11 +303,11 @@ return {
     },
     "name": "AutomationFlowsViewQuery",
     "operationKind": "query",
-    "text": "query AutomationFlowsViewQuery {\n  flows(first: 500) {\n    edges {\n      node {\n        ...AutomationFlowsList_flows\n        id\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n}\n\nfragment AutomationFlowCard_flow on Flow {\n  id\n  name\n  description\n  status\n  newInstancesPolicy\n  draft {\n    id\n    sameAsFlow\n  }\n}\n\nfragment AutomationFlowsList_flows on Flow {\n  id\n  ...AutomationFlowCard_flow\n}\n"
+    "text": "query AutomationFlowsViewQuery {\n  flows(first: 500) {\n    edges {\n      node {\n        id\n        name\n        status\n        ...AutomationFlowsList_flows\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n}\n\nfragment AutomationFlowCard_flow on Flow {\n  id\n  name\n  description\n  status\n  newInstancesPolicy\n  draft {\n    id\n    sameAsFlow\n  }\n}\n\nfragment AutomationFlowsList_flows on Flow {\n  id\n  ...AutomationFlowCard_flow\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = '3df60d6c8a5b5100e28110cb39f3354c';
+(node/*: any*/).hash = '5a7c63a016b5eef8d418ab8a362625b5';
 
 module.exports = node;
