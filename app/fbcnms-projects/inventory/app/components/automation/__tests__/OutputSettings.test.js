@@ -16,7 +16,7 @@ import {
 describe('Suite Test OutputSettings: ', () => {
   test('AUT-FE-05057 Test OutputSettings', () => {
     expect(initialOutputSettings.enableOutputTransformation).toStrictEqual(
-      undefined,
+      false,
     );
     expect(initialOutputSettings.outputParamDefinitions).toStrictEqual(
       undefined,
