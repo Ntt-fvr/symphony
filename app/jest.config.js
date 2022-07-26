@@ -22,21 +22,21 @@ module.exports = {
   coverageReporters: ['json', 'html', 'lcov'],
   modulePathIgnorePatterns: [],
   projects: [
-    // {
-    //   name: 'server',
-    //   testEnvironment: 'node',
-    //   testMatch: [
-    //     //'<rootDir>/__tests__/*.js',
-    //     '<rootDir>/fbcnms-projects/**/server/**/__tests__/*.js',
-    //     '<rootDir>/fbcnms-projects/platform-server/**/__tests__/*.js',
-    //     // run app/server shared tests in both node and jsdom environments
-    //     '<rootDir>/fbcnms-projects/**/shared/**/__tests__/*.js',
-    //   ],
-    //   transform: {
-    //     '^.+\\.js$': 'babel-jest',
-    //   },
-    //   transformIgnorePatterns: ['/node_modules/(?!@fbcnms)'],
-    // },
+    {
+      name: 'server',
+      testEnvironment: 'node',
+      testMatch: [
+        //'<rootDir>/__tests__/*.js',
+        '<rootDir>/fbcnms-projects/**/server/**/__tests__/*.js',
+        '<rootDir>/fbcnms-projects/platform-server/**/__tests__/*.js',
+        // run app/server shared tests in both node and jsdom environments
+        '<rootDir>/fbcnms-projects/**/shared/**/__tests__/*.js',
+      ],
+      transform: {
+        '^.+\\.js$': 'babel-jest',
+      },
+      transformIgnorePatterns: ['/node_modules/(?!@fbcnms)'],
+    },
     {
       moduleNameMapper: {
         '\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$':
