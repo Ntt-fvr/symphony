@@ -61,7 +61,6 @@ export function resizeBlock(typeSizeCoupled: string, block: IBlock) {
         break;
 
       case 'mediumSizeCoupled':
-        console.log(block.model);
         block.model.resize(mediumSize.resizeWidth, mediumSize.resizeHeigth);
         block.model.attr('coupled/width', mediumSize.width);
         block.model.attr('coupled/height', mediumSize.height);

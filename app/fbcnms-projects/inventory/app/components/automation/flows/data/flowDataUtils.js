@@ -324,10 +324,7 @@ export const saveBlockInformation = (
     maxAttemps: blockFormQuery.maxAttemps,
     backoffRate: blockFormQuery.backoffRate,
   });
-  console.log(
-    'outputStateParamDefinitions',
-    blockFormQuery.outputStateParamDefinitions,
-  );
+ 
   const {__typename, ...configurationParameters} = blockFormQuery.details;
   createdBlock.setSettings(configurationParameters);
 };
