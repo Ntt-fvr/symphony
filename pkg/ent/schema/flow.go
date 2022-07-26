@@ -66,10 +66,10 @@ func (Flow) Fields() []ent.Field {
 		field.Enum("status").
 			NamedValues(
 				"Published", "PUBLISHED",
-				"Unpublished", "UNPUBLISHED",
+				"Draft", "DRAFT",
 				"Archived", "ARCHIVED",
 				"On_Hold", "ON_HOLD",
-			).Default("UNPUBLISHED"),
+			).Default("DRAFT"),
 		field.Enum("newInstancesPolicy").
 			NamedValues(
 				"Enabled", "ENABLED",

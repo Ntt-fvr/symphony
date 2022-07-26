@@ -108,7 +108,7 @@ func TestAddDeleteFlowDraft(t *testing.T) {
 	require.NoError(t, err)
 	require.Equal(t, flowEdge.Name, flowDraft.Name)
 	require.Equal(t, *flowEdge.Description, *flowDraft.Description)
-	require.Equal(t, flow.StatusUnpublished, flowEdge.Status)
+	require.Equal(t, flow.StatusDraft, flowEdge.Status)
 	require.Equal(t, flow.NewInstancesPolicyDisabled, flowEdge.NewInstancesPolicy)
 
 	node, err := qr.Node(ctx, flowDraft.ID)

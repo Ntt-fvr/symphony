@@ -12,6 +12,7 @@
  import BlocksBar from './tools/blocksBar/BlocksBar';
  import BottomBar from './tools/BottomBar';
  import Canvas from './canvas/Canvas';
+ import MenuRules from './tools/blocksBar/MenuRules';
  import FlowHeader from './tools/FlowHeader';
  import LeftBar from './tools/blocksBar/LeftBar';
  import React, {useEffect, useMemo, useState} from 'react';
@@ -143,6 +144,7 @@
          <TopBar />
          <Canvas />
          <LeftBar isReadOnly={isReadOnly}/>
+        <MenuRules />
          <BottomBar />
        </div>
      </div>

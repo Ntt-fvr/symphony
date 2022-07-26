@@ -12,8 +12,6 @@ import type {EntityConfig} from '../comparison_view/ComparisonViewTypes';
 
 import PowerSearchExternalIDFilter from '../comparison_view/PowerSearchExternalIDFilter';
 import PowerSearchParameterSelectorNameFilter from './power_search_bar/parameter_selector/PowerSearchParameterSelectorNameFilter';
-import PowerSearchParameterSelectorPriorityFilter from './power_search_bar/parameter_selector/PowerSearchParameterSelectorPriorityFilter';
-import PowerSearchParameterSelectorTagFilter from './power_search_bar/parameter_selector/PowerSearchParameterSelectorTagFilter';
 import PowerSearchResourceIdFilter from './power_search_bar/resource/PowerSearchResourceIdFilter';
 import PowerSearchResourceNameFilter from './power_search_bar/resource/PowerSearchResourceNameFilter';
 
@@ -26,7 +24,7 @@ const ResourcesSearchConfig: Array<EntityConfig> = [
         key: 'resource_name',
         name: 'resource_name',
         entityType: 'resource',
-        label: 'Name',
+        label: 'Resource',
         component: PowerSearchResourceNameFilter,
         defaultOperator: 'contains',
       },
@@ -62,24 +60,8 @@ const ResourcesSearchConfig: Array<EntityConfig> = [
         key: 'parameter_selector_name',
         name: 'parameter_selector_name',
         entityType: 'parameter_selector',
-        label: 'Name',
+        label: 'Parameter',
         component: PowerSearchParameterSelectorNameFilter,
-        defaultOperator: 'contains',
-      },
-      {
-        key: 'parameter_selector_tags',
-        name: 'parameter_selector_tags',
-        entityType: 'parameter_selector',
-        label: 'Tags',
-        component: PowerSearchParameterSelectorTagFilter,
-        defaultOperator: 'contains',
-      },
-      {
-        key: 'parameter_selector_priority',
-        name: 'parameter_selector_priority',
-        entityType: 'parameter_selector',
-        label: 'Priority',
-        component: PowerSearchParameterSelectorPriorityFilter,
         defaultOperator: 'contains',
       },
     ],

@@ -16,6 +16,7 @@ import FormField from '@symphony/design-system/components/FormField/FormField';
 import PowerSearchBar from '../power_search/PowerSearchBar';
 import React, {useEffect, useMemo, useState} from 'react';
 import TextField from '@material-ui/core/TextField';
+import useLocationTypes from '../comparison_view/hooks/locationTypesHook';
 import fbt from 'fbt';
 import {ConfigurationTable} from './ConfigurationTable';
 import {Grid} from '@material-ui/core';
@@ -59,6 +60,9 @@ const useStyles = makeStyles(() => ({
   },
   searchBar: {
     flexGrow: 1,
+  },
+  inputSearchBar: {
+    height: '100%',
   },
 }));
 
@@ -165,13 +169,17 @@ const ConfigurationsView = () => {
   const [checkingSelects, setCheckingSelects] = useState(false);
   const [resourceTable, setResourceTable] = useState(dataResources);
 
+  const locationTypesFilterConfigs = useLocationTypes();
+
   const filterConfigs = useMemo(
     () =>
-      ResourcesSearchConfig.map(ent => ent.filters).reduce(
-        (allFilters, currentFilter) => allFilters.concat(currentFilter),
-        [],
-      ),
-    [],
+      ResourcesSearchConfig.map(ent => ent.filters)
+        .reduce(
+          (allFilters, currentFilter) => allFilters.concat(currentFilter),
+          [],
+        )
+        .concat(locationTypesFilterConfigs ?? []),
+    [locationTypesFilterConfigs],
   );
 
   const verifyResourceSpecification =
@@ -196,6 +204,7 @@ const ConfigurationsView = () => {
 
   const {resourceTypes} = queryTotal;
   const {queryResource} = filterQueryResource;
+  const [resources, setResources] = useState([]);
 
   const selectResourceType = ({target}) => {
     setResourceType({
@@ -226,9 +235,62 @@ const ConfigurationsView = () => {
       render: row => renderOption(row, itemParameter),
     })) ?? [];
 
+  const [clearFilter, setClearFilter] = useState(false);
+
   useEffect(() => {
-    setResourceTable([...resourceTable, ...columnDinamic]);
-  }, [checkingSelects]);
+    setResourceTable([...dataResources, ...columnDinamic]);
+    setResources(queryResource);
+  }, [checkingSelects, clearFilter]);
+
+  const filterData = filterChange => {
+    const searchLocations = (item, idSet) => {
+      const locationById = idSet?.find(id => id === item.locatedIn);
+      return locationById;
+    };
+
+    filterChange.length > 0
+      ? filterChange.map(itemfilterChange => {
+          if (itemfilterChange.name === 'location_inst') {
+            const filterLocationName = resources?.filter(item =>
+              searchLocations(item, itemfilterChange.idSet),
+            );
+            setResources(filterLocationName);
+          } else {
+            switch (itemfilterChange?.key) {
+              case 'resource_name':
+                const filterName = resources?.filter(
+                  item => item?.name === itemfilterChange?.stringValue,
+                );
+                setResources(filterName);
+                break;
+              case 'resource_id':
+                const filterId = resources?.filter(
+                  item => item?.id === itemfilterChange?.stringValue,
+                );
+                setResources(filterId);
+                break;
+              case 'location_inst_external_id':
+                const filterLocation = queryResource?.filter(
+                  item =>
+                    item?.resource?.locatedIn === itemfilterChange?.stringValue,
+                );
+                setResources(filterLocation);
+                break;
+              case 'parameter_selector_name':
+                const filterParameterName = columnDinamic?.filter(
+                  item => item?.title === itemfilterChange?.stringValue,
+                );
+                setResourceTable([...dataResources, ...filterParameterName]);
+                break;
+
+              default:
+                setResources(queryResource);
+                break;
+            }
+          }
+        })
+      : setClearFilter(!clearFilter);
+  };
 
   return (
     <Grid className={classes.root} container spacing={0}>
@@ -285,6 +347,7 @@ const ConfigurationsView = () => {
           </FormField>
           <div className={classes.searchBar}>
             <PowerSearchBar
+              className={classes.inputSearchBar}
               placeholder="Configuration"
               filterConfigs={filterConfigs}
               searchConfig={ResourcesSearchConfig}
@@ -297,16 +360,12 @@ const ConfigurationsView = () => {
                 )
               }
               onFiltersChanged={filterChange => filterData(filterChange)}
-              exportPath={'/configurations_views'}
             />
           </div>
         </div>
       </Grid>
       <Grid item xs={12} style={{margin: '20px 0 0 0'}}>
-        <ConfigurationTable
-          dataConfig={queryResource}
-          dataColumn={resourceTable}
-        />
+        <ConfigurationTable dataConfig={resources} dataColumn={resourceTable} />
       </Grid>
     </Grid>
   );
