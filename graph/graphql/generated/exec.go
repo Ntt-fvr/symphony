@@ -1278,7 +1278,7 @@ type ComplexityRoot struct {
 		EditReportFilter                         func(childComplexity int, input models.EditReportFilterInput) int
 		EditResourceSpecification                func(childComplexity int, input models.EditResourceSpecificationInput) int
 		EditResourceSpecificationItems           func(childComplexity int, input models.EditResourceSpecificationItemsInput) int
-		EditResourceSpecificationRelationship    func(childComplexity int, input models.EditResourceSpecificationRelationshipInput) int
+		EditResourceSpecificationRelationship    func(childComplexity int, input []*models.EditResourceSpecificationRelationshipInput) int
 		EditResourceType                         func(childComplexity int, input models.EditResourceTypeInput) int
 		EditResourceTypeRelationship             func(childComplexity int, input models.EditResourceTypeRelationshipInput) int
 		EditRule                                 func(childComplexity int, input models.EditRuleInput) int
@@ -2816,7 +2816,7 @@ type MutationResolver interface {
 	EditIsListable(ctx context.Context, input models.EditIsListableInput) (*ent.PropertyType, error)
 	AddResourceSpecificationRelationshipList(ctx context.Context, input []*models.AddResourceSpecificationRelationshipInput) ([]*ent.ResourceSpecificationRelationship, error)
 	AddResourceSpecificationRelationship(ctx context.Context, input models.AddResourceSpecificationRelationshipInput) (*ent.ResourceSpecificationRelationship, error)
-	EditResourceSpecificationRelationship(ctx context.Context, input models.EditResourceSpecificationRelationshipInput) (*ent.ResourceSpecificationRelationship, error)
+	EditResourceSpecificationRelationship(ctx context.Context, input []*models.EditResourceSpecificationRelationshipInput) ([]*ent.ResourceSpecificationRelationship, error)
 	RemoveResourceSpecificationRelationship(ctx context.Context, id int) (int, error)
 	AddResourceSpecificationItems(ctx context.Context, input models.AddResourceSpecificationItemsInput) (*ent.ResourceSpecificationItems, error)
 	EditResourceSpecificationItems(ctx context.Context, input models.EditResourceSpecificationItemsInput) (*ent.ResourceSpecificationItems, error)
@@ -8772,7 +8772,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.EditResourceSpecificationRelationship(childComplexity, args["input"].(models.EditResourceSpecificationRelationshipInput)), true
+		return e.complexity.Mutation.EditResourceSpecificationRelationship(childComplexity, args["input"].([]*models.EditResourceSpecificationRelationshipInput)), true
 
 	case "Mutation.editResourceType":
 		if e.complexity.Mutation.EditResourceType == nil {
@@ -23322,7 +23322,7 @@ type Mutation {
   editIsListable(input: EditIsListableInput!): PropertyType!
   addResourceSpecificationRelationshipList(input: [AddResourceSpecificationRelationshipInput!]!):[ResourceSpecificationRelationship!]!
   addResourceSpecificationRelationship(input: AddResourceSpecificationRelationshipInput!): ResourceSpecificationRelationship!
-  editResourceSpecificationRelationship(input: EditResourceSpecificationRelationshipInput!): ResourceSpecificationRelationship!
+  editResourceSpecificationRelationship(input: [EditResourceSpecificationRelationshipInput!]!): [ResourceSpecificationRelationship!]!
   removeResourceSpecificationRelationship(id: ID!): ID!
   addResourceSpecificationItems(input: AddResourceSpecificationItemsInput!): ResourceSpecificationItems!
   editResourceSpecificationItems(input: EditResourceSpecificationItemsInput!): ResourceSpecificationItems!
@@ -24688,9 +24688,10 @@ input AddResourceSpecificationRelationshipInput {
 }
 
 input EditResourceSpecificationRelationshipInput {
-  id: ID!
+  id: ID
   name: String!
   resourceSpecification: ID
+  resourceSpecificationList: [ID]
 }
 
 enum ResourceSpecificationRelationshipFilterType {
@@ -27344,10 +27345,10 @@ func (ec *executionContext) field_Mutation_editResourceSpecificationItems_args(c
 func (ec *executionContext) field_Mutation_editResourceSpecificationRelationship_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 models.EditResourceSpecificationRelationshipInput
+	var arg0 []*models.EditResourceSpecificationRelationshipInput
 	if tmp, ok := rawArgs["input"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
-		arg0, err = ec.unmarshalNEditResourceSpecificationRelationshipInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐEditResourceSpecificationRelationshipInput(ctx, tmp)
+		arg0, err = ec.unmarshalNEditResourceSpecificationRelationshipInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐEditResourceSpecificationRelationshipInputᚄ(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -63224,7 +63225,7 @@ func (ec *executionContext) _Mutation_editResourceSpecificationRelationship(ctx 
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().EditResourceSpecificationRelationship(rctx, args["input"].(models.EditResourceSpecificationRelationshipInput))
+		return ec.resolvers.Mutation().EditResourceSpecificationRelationship(rctx, args["input"].([]*models.EditResourceSpecificationRelationshipInput))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -63236,9 +63237,9 @@ func (ec *executionContext) _Mutation_editResourceSpecificationRelationship(ctx 
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*ent.ResourceSpecificationRelationship)
+	res := resTmp.([]*ent.ResourceSpecificationRelationship)
 	fc.Result = res
-	return ec.marshalNResourceSpecificationRelationship2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐResourceSpecificationRelationship(ctx, field.Selections, res)
+	return ec.marshalNResourceSpecificationRelationship2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐResourceSpecificationRelationshipᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Mutation_removeResourceSpecificationRelationship(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -96457,7 +96458,7 @@ func (ec *executionContext) unmarshalInputEditResourceSpecificationRelationshipI
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
-			it.ID, err = ec.unmarshalNID2int(ctx, v)
+			it.ID, err = ec.unmarshalOID2ᚖint(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -96474,6 +96475,14 @@ func (ec *executionContext) unmarshalInputEditResourceSpecificationRelationshipI
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("resourceSpecification"))
 			it.ResourceSpecification, err = ec.unmarshalOID2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "resourceSpecificationList":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("resourceSpecificationList"))
+			it.ResourceSpecificationList, err = ec.unmarshalOID2ᚕᚖint(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -122563,9 +122572,30 @@ func (ec *executionContext) unmarshalNEditResourceSpecificationItemsInput2github
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) unmarshalNEditResourceSpecificationRelationshipInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐEditResourceSpecificationRelationshipInput(ctx context.Context, v interface{}) (models.EditResourceSpecificationRelationshipInput, error) {
+func (ec *executionContext) unmarshalNEditResourceSpecificationRelationshipInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐEditResourceSpecificationRelationshipInputᚄ(ctx context.Context, v interface{}) ([]*models.EditResourceSpecificationRelationshipInput, error) {
+	var vSlice []interface{}
+	if v != nil {
+		if tmp1, ok := v.([]interface{}); ok {
+			vSlice = tmp1
+		} else {
+			vSlice = []interface{}{v}
+		}
+	}
+	var err error
+	res := make([]*models.EditResourceSpecificationRelationshipInput, len(vSlice))
+	for i := range vSlice {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
+		res[i], err = ec.unmarshalNEditResourceSpecificationRelationshipInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐEditResourceSpecificationRelationshipInput(ctx, vSlice[i])
+		if err != nil {
+			return nil, err
+		}
+	}
+	return res, nil
+}
+
+func (ec *executionContext) unmarshalNEditResourceSpecificationRelationshipInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐEditResourceSpecificationRelationshipInput(ctx context.Context, v interface{}) (*models.EditResourceSpecificationRelationshipInput, error) {
 	res, err := ec.unmarshalInputEditResourceSpecificationRelationshipInput(ctx, v)
-	return res, graphql.ErrorOnPath(ctx, err)
+	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
 func (ec *executionContext) unmarshalNEditResourceTypeInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐEditResourceTypeInput(ctx context.Context, v interface{}) (models.EditResourceTypeInput, error) {
