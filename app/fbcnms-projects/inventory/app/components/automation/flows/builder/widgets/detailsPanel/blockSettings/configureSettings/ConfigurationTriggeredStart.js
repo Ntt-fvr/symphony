@@ -12,9 +12,10 @@ import type {IBlock} from '../../../../canvas/graph/shapes/blocks/BaseBlock';
 
 import * as React from 'react';
 import CodeEditor from '../../inputs/CodeEditor';
-import TextField from '../../inputs/TextField';
+import Select from '../../inputs/Select';
 import {Grid} from '@material-ui/core';
 import {makeStyles} from '@material-ui/core/styles';
+import {signalModules, signalTypes} from '../helpers';
 import {useEffect} from 'react';
 import {useForm} from '../../../../../utils/useForm';
 
@@ -51,21 +52,21 @@ const ConfigurationTriggeredStart = ({block}: Props) => {
   return (
     <>
       <Grid item xs={12} className={classes.grid}>
-        <TextField
+        <Select
           label={'Signal Module'}
-          type={'text'}
           name={'signalModule'}
           value={signalModule}
-          handleInputChange={handleInputChange}
+          onChange={handleInputChange}
+          items={signalModules}
         />
       </Grid>
       <Grid item xs={12} className={classes.grid}>
-        <TextField
+        <Select
           label={'Signal Type'}
-          type={'text'}
           name={'signalType'}
           value={signalType}
-          handleInputChange={handleInputChange}
+          onChange={handleInputChange}
+          items={signalTypes}
         />
       </Grid>
       <Grid item xs={12} className={classes.gridCodeEditor}>

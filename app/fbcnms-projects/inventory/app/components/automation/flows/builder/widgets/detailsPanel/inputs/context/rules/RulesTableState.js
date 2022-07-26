@@ -17,16 +17,12 @@ import {useReducer} from 'react';
 
 export type RulesTableState = Array<RuleType>;
 
-export const getInitialRule = (
-  index: number,
-  isDefault: boolean,
-): RuleType => ({
+export const getInitialRule = (index: number): RuleType => ({
   id: generateTempId(),
   name: '',
   index: index,
   rule: '',
   isDeleted: false,
-  isDefault,
 });
 
 export const useRulesReducer = (initialRules: Array<RuleType>) => {

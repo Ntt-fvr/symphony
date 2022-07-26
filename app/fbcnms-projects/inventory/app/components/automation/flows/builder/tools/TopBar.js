@@ -239,16 +239,6 @@ function BuilderTopBar() {
               icon={GridIcon}
             />
           </Tooltip>
-          <Tooltip tooltip={'Undo'}>
-            <IconButton
-              className={classes.marginLeft}
-              skin={'inherit'}
-              icon={UndoIcon}
-            />
-          </Tooltip>
-          <Tooltip tooltip={'Redo'}>
-            <IconButton tooltip={'Redo'} skin={'inherit'} icon={RedoIcon} />
-          </Tooltip>
         </div>
         <div className={classes.left}>
           {copyPaste.allowDuplicate && (

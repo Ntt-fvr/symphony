@@ -69,7 +69,7 @@ const RulesList = (props: Props) => {
           }
         }}>
         {rules
-          .filter(rule => !rule.isDeleted && !rule.isDefault)
+          .filter(rule => !rule.isDeleted)
           .sort(sortByIndex)
           .map(rule => (
             <DraggableTableRow
@@ -79,15 +79,6 @@ const RulesList = (props: Props) => {
               className={classes.draggableTableRow}>
               <Rule rule={rule} label={'Name rule'} />
             </DraggableTableRow>
-          ))}
-        {rules
-          .filter(rule => !!rule.isDefault)
-          .map(rule => (
-            <TableRow component="div" id={rule.id} key={rule.id}>
-              <TableCell colSpan={2} className={classes.tableCell}>
-                <Rule rule={rule} label={'Default Rule'} />
-              </TableCell>
-            </TableRow>
           ))}
       </DroppableTableBody>
     </div>
