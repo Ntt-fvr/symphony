@@ -35,7 +35,22 @@ const flowsQuery = graphql`
         node {
           id
           name
+          description
           status
+          newInstancesPolicy
+          draft {
+            id
+            sameAsFlow
+          }
+          creationDate
+          updateTime
+          author {
+            id
+            firstName
+            email
+          }
+          runningInstances
+          failedInstances
           ...AutomationFlowsList_flows
         }
       }
@@ -79,13 +94,7 @@ export default function AutomationFlowsView(_props: Props) {
       subtitle: <fbt desc="">Create and manage Automation Flows</fbt>,
       actionButtons: hasFlows
         ? [
-            <Button
-              key="1"
-              onClick={() => {
-                history.push(`flow/?flowId=${TESTING_PURPOSES}`);
-              }}>
-              <fbt desc="">Go to Flow Builder</fbt>
-            </Button>,
+            
             CreateNewFlowButton,
           ]
         : [],
