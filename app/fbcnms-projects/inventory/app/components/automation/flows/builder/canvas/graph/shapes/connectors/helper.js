@@ -10,7 +10,6 @@
 'use strict';
 import type {ILinkModel} from '../../facades/shapes/edges/Link';
 
-import symphony from '@symphony/design-system/theme/symphony';
 import {TYPE as ChoiceType} from '../../facades/shapes/vertexes/logic/Choice';
 
 type Port = {|
@@ -19,18 +18,18 @@ type Port = {|
 |};
 
 export function IsOutputPortChoise(model: ?ILinkModel, outputPort: string) {
-  const ChoiceBlockList: Array<string> = model.collection.models.filter(
+  const ChoiceBlockList: Array<string> = model?.collection.models.filter(
     block => block.attributes.type === ChoiceType,
   );
 
-  const choicePortsList: Array<Port> = ChoiceBlockList.map(block =>
+  const choicePortsList: Array<Port> = ChoiceBlockList?.map(block =>
     block
       .getPorts()
       .filter(port => port.group === 'output')
       .flat(),
   ).flat();
 
-  const isOutputPortChoice = choicePortsList.find(
+  const isOutputPortChoice = choicePortsList?.find(
     port => port.id === outputPort,
   );
 

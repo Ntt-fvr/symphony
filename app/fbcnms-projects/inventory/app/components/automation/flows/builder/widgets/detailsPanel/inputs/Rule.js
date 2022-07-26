@@ -88,22 +88,20 @@ const Rule = (props: Props) => {
             }
           />
         </FormField>
-        {!rule.isDefault && (
-          <TableCell align="center" component="div" className={classes.row}>
-            <FormAction>
-              <IconButton
-                skin="primary"
-                icon={DeleteIcon}
-                onClick={() =>
-                  dispatch({
-                    type: 'DELETE_RULE',
-                    id: rule.id,
-                  })
-                }
-              />
-            </FormAction>
-          </TableCell>
-        )}
+        <TableCell align="center" component="div" className={classes.row}>
+          <FormAction>
+            <IconButton
+              skin="primary"
+              icon={DeleteIcon}
+              onClick={() =>
+                dispatch({
+                  type: 'DELETE_RULE',
+                  id: rule.id,
+                })
+              }
+            />
+          </FormAction>
+        </TableCell>
       </AccordionSummary>
       <AccordionDetails className={classes.accordionDetails}>
         <CodeEditor

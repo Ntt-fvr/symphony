@@ -15,7 +15,6 @@ export type TimerSettingsType = $ReadOnly<{|
   specificDatetime: string,
   enableExpressionL: boolean,
   expression: string,
-  exitPoint: string,
 |}>;
 
 export const initialTimerSettings: TimerSettingsType = {
@@ -24,7 +23,6 @@ export const initialTimerSettings: TimerSettingsType = {
   specificDatetime: null,
   enableExpressionL: null,
   expression: null,
-  exitPoint: null,
 };
 
 export const setTimerSettings: TimerSettingsType = (
