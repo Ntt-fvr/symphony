@@ -57,7 +57,10 @@ export const toMutableProperty = (immutablePropertyType: T): T => ({
   type: immutablePropertyType.type,
   name: immutablePropertyType.name,
   booleanValue: immutablePropertyType.booleanValue,
-  stringValue: immutablePropertyType.stringValue,
+  stringValue:
+    immutablePropertyType.type !== 'enum'
+      ? immutablePropertyType.stringValue
+      : '',
   intValue: immutablePropertyType.intValue,
   floatValue: immutablePropertyType.floatValue,
   latitudeValue: immutablePropertyType.latitudeValue,
