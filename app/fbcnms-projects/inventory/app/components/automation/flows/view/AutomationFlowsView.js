@@ -20,8 +20,9 @@ import {TESTING_PURPOSES} from '../builder/FlowBuilder';
 import {graphql} from 'relay-runtime';
 import {makeStyles} from '@material-ui/styles';
 import {useLazyLoadQuery} from 'react-relay/hooks';
-import {useMemo} from 'react';
-import {useRouter} from '@fbcnms/ui/hooks';
+import {useMemo, createContext, useContext, useReducer} from 'react';
+import {useRouter, useGraphQL} from '@fbcnms/ui/hooks';
+import RelayEnvironment from '../../../../common/RelayEnvironment';
 
 const useStyles = makeStyles(_theme => ({
   root: {},
@@ -56,6 +57,12 @@ const flowsQuery = graphql`
     }
   }
 `;
+
+export const useFlows = () => {
+  const flowsResponse = useGraphQL(RelayEnvironment, flowsQuery, {});
+  if (flowsResponse.response === null) return;
+  return flowsResponse.response.flows?.edges
+};
 
 type Props = $ReadOnly<{||}>;
 

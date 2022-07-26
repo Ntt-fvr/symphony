@@ -35,7 +35,6 @@ type StatusTagProps = $ReadOnly<{|
 const StatusTag = (props: StatusTagProps) => {
   const {status, hasDraft, className} = props;
   const classes = useStyles();
-  console.log();
 
   return (
     <Text

@@ -162,9 +162,9 @@ export default class ForEachLoop
         {
           [PORTS_GROUPS.OUTPUT]: {count: 2},
         },
+        id ? id : undefined,
         HORIZONTAL_PORT_LEFT_ALIN,
         HORIZONTAL_PORT_RIGHT_ALIN,
-        id ? id : undefined,
         POSITION_PORT,
       ),
     );

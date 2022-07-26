@@ -7,14 +7,18 @@
  * @flow
  * @format
  */
+import type {ConfigurationExecuteFlowQuery} from './__generated__/ConfigurationExecuteFlowQuery.graphql';
 
 import type {IBlock} from '../../../../canvas/graph/shapes/blocks/BaseBlock';
 
-import * as React from 'react';
+import React, {useMemo, useState} from 'react';
 import Select from '../../inputs/Select';
 import {Grid} from '@material-ui/core';
 import {useEffect} from 'react';
 import {useForm} from '../../../../../utils/useForm';
+import {graphql} from 'relay-runtime';
+import {useLazyLoadQuery} from 'react-relay/hooks';
+import {useFlows} from '../../../../../view/AutomationFlowsView';
 
 type Props = $ReadOnly<{|
   block: IBlock,
@@ -22,16 +26,17 @@ type Props = $ReadOnly<{|
 
 const ConfigurationExecuteFlow = ({block}: Props) => {
   const {settings} = block;
-  const flows = [
-    {name: 'Flow 1', id: 'flow1'},
-    {name: 'Flow 1', id: 'flow2'},
-  ];
-
   const [executeFlowSettingsValues, handleInputChange] = useForm({
     flow: settings?.flow || '',
   });
 
   const {flow} = executeFlowSettingsValues;
+
+  const flows = useFlows();
+  const flowsPublished = useMemo(() => {
+    const flowsData = flows?.map(p => p.node) || [];
+    return flowsData.filter(node => node.status === 'PUBLISHED');
+  }, [flows]);
 
   useEffect(() => {
     block.setSettings(executeFlowSettingsValues);
@@ -44,7 +49,7 @@ const ConfigurationExecuteFlow = ({block}: Props) => {
         name={'flow'}
         value={flow}
         onChange={handleInputChange}
-        items={flows}
+        items={flowsPublished}
       />
     </Grid>
   );

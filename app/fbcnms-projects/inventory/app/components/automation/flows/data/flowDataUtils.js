@@ -248,7 +248,7 @@ export function mapEndBlockForSave(block: IBlock): EndBlockInputType {
   const {params} = block.settings;
   return {
     cid: block.id,
-    params: {type: 'VariableDefinition', expression: 'a', blockVariables: []},
+    params: {type: 'VariableDefinition',   "variableDefinitionKey": "test", expression: 'a', blockVariables: []},
     uiRepresentation: {
       name: block.name,
       xPosition: Math.floor(block.model.attributes.position.x),
@@ -324,10 +324,7 @@ export const saveBlockInformation = (
     maxAttemps: blockFormQuery.maxAttemps,
     backoffRate: blockFormQuery.backoffRate,
   });
-  console.log(
-    'outputStateParamDefinitions',
-    blockFormQuery.outputStateParamDefinitions,
-  );
+ 
   const {__typename, ...configurationParameters} = blockFormQuery.details;
   createdBlock.setSettings(configurationParameters);
 };
