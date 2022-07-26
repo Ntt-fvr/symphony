@@ -53,7 +53,7 @@ export default function useSettingsPanel(): SettingsPanelType {
   });
 
   const readOnlyDetails = () =>({
-    title: <FlowTitle className={classes.title} />,
+    title: <FlowTitle className={classes.title} isReadOnly={readOnly}/>,
     children: <FlowInstanceDetails />
   })
 

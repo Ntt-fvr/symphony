@@ -102,7 +102,7 @@
        <GraphContextProvider>
          <KeyboardShortcutsContextProvider>
            <FlowDataContextProvider
-             flowId={isNewFlowDraft || isOnPlayground ? null : flowId}>
+             flowId={isNewFlowDraft || isOnPlayground ? null : flowId} isReadOnly={readOnly == 'true'}>
              <DialogShowingContextProvider>
                <GraphSelectionContextProvider>
                  <CopyPasteContextProvider>
@@ -142,7 +142,7 @@
        <div className={classes.workspace}>
          <TopBar />
          <Canvas />
-         <LeftBar />
+         <LeftBar isReadOnly={isReadOnly}/>
          <BottomBar />
        </div>
      </div>

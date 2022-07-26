@@ -32,7 +32,8 @@ export type UpdateFlowInstanceMutationVariables = {|
 |};
 export type UpdateFlowInstanceMutationResponse = {|
   +editFlowInstance: {|
-    +id: string
+    +id: string,
+    +status: FlowInstanceStatus,
   |}
 |};
 export type UpdateFlowInstanceMutation = {|
@@ -48,6 +49,7 @@ mutation UpdateFlowInstanceMutation(
 ) {
   editFlowInstance(input: $input) {
     id
+    status
   }
 }
 */
@@ -81,6 +83,13 @@ v1 = [
         "kind": "ScalarField",
         "name": "id",
         "storageKey": null
+      },
+      {
+        "alias": null,
+        "args": null,
+        "kind": "ScalarField",
+        "name": "status",
+        "storageKey": null
       }
     ],
     "storageKey": null
@@ -104,16 +113,16 @@ return {
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "3f04fa5844b8c6f378080e0becfec269",
+    "cacheID": "beee80293751729e818fb0c51a11973e",
     "id": null,
     "metadata": {},
     "name": "UpdateFlowInstanceMutation",
     "operationKind": "mutation",
-    "text": "mutation UpdateFlowInstanceMutation(\n  $input: EditFlowInstanceInput\n) {\n  editFlowInstance(input: $input) {\n    id\n  }\n}\n"
+    "text": "mutation UpdateFlowInstanceMutation(\n  $input: EditFlowInstanceInput\n) {\n  editFlowInstance(input: $input) {\n    id\n    status\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = 'a3331eba42bcffa996d6db85422be646';
+(node/*: any*/).hash = '6e22381d1bb2ef3d404c59e5f2cd2122';
 
 module.exports = node;

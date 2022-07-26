@@ -36,7 +36,8 @@
  import {fetchQuery, graphql} from 'relay-runtime';
  import {getInitialFilterValue} from '../comparison_view/FilterUtils';
  import {makeStyles} from '@material-ui/core/styles';
- import {FlowStatus} from './common/FlowStatusEnums'
+ import {FlowStatus} from './common/FlowStatusEnums';
+ import moment from 'moment';
  
  const toPascalCase = name => {
    return name?.replace(/(\w)(\w*)/g, function (g0, g1, g2) {
@@ -181,7 +182,7 @@
      render: row => (
        <Button
          variant="text"
-         onClick={() => window.open(InventoryAPIUrls.flow('158913789952', true))}
+         onClick={() => window.open(InventoryAPIUrls.flow(row.id, true))}
          tooltip={row.id ?? ''}>
          {row.id}
        </Button>
@@ -205,7 +206,7 @@
    {
      key: 'createdDate',
      title: 'Created Date',
-     render: row => row.startDate ?? '',
+     render: row => moment(row.startDate).format('MM/DD/YY-HH:MM:SS')?? '',
      tooltip: row => row.startDate ?? '',
    },
    {
@@ -498,7 +499,7 @@
                  className={classes.margin}
                  onClick={() => {
                    handleClose();
-                   updateFlow({status: 'CANCELED'});
+                   updateFlow({status: FlowStatus.canceled});
                  }}>
                  Continue
                </Button>

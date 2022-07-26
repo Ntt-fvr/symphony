@@ -25,6 +25,7 @@
     mutation UpdateFlowInstanceMutation($input: EditFlowInstanceInput) {
       editFlowInstance(input: $input) {
         id
+        status
       }
     }
   `;

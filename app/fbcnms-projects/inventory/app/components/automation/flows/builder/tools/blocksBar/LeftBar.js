@@ -41,13 +41,14 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-export default function LeftBar() {
+export default function LeftBar(props) {
   const classes = useStyles();
   const dialogDetails = useSettingsPanel();
   const [open, setOpen] = useState(true);
+  const {isReadOnly} = props;
 
   return (
-    <div className={open ? classes.root : classes.root1}>
+    <div className={isReadOnly ? open ? classes.root : classes.root1:classes.root}>
       <Sidebar
         drawerWidth={330}
         smallWidth={40}

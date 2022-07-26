@@ -205,21 +205,61 @@ const flowQuery = graphql`
     }
   }
 `;
+
+const flowInstanceQuery = graphql`
+  query FlowDataContext_FlowInstanceQuery($flowId: ID!) {
+    flowDraft: node(id: $flowId) {
+      ... on FlowInstance {
+        id
+        status
+        startDate
+        template {
+          id
+          name
+          description
+          blocks {
+            cid
+            details {
+              __typename
+            }
+            uiRepresentation {
+              name
+              xPosition
+              yPosition
+            }
+            nextBlocks {
+              cid
+              uiRepresentation {
+                name
+                xPosition
+                yPosition
+              }
+              id
+            }
+            id
+          }
+        }
+      }
+    }
+  }
+`;
 type Props = $ReadOnly<{|
   flowId: ?string,
   children: React.Node,
+  isReadOnly: ?boolean,
 |}>;
 
 function FlowDataContextProviderComponent(props: Props) {
-  const {flowId} = props;
+  const {flowId,isReadOnly} = props;
   const [hasChanges, setHasChanges] = useState(false);
   const [hasPublish, setHasPublish] = useState(false);
-  const {flowDraft} = useLazyLoadQuery<FlowDataContext_FlowDraftQuery>(
-    flowQuery,
+  const {flowDraft} = useLazyLoadQuery<FlowDataContext_FlowDraftQuery|any>(
+    isReadOnly?flowInstanceQuery: flowQuery,
     {
       flowId: flowId ?? '',
     },
   );
+
 
   const enqueueSnackbar = useEnqueueSnackbar();
   const handleError = useCallback(
@@ -300,11 +340,11 @@ function FlowDataContextProviderComponent(props: Props) {
 
     flow.clearGraph();
 
-    if (flowDraft?.blocks == null) {
+    if (flowDraft?.blocks == null && flowDraft?.template?.blocks == null) {
       return;
     }
 
-    const blocks = [...flowDraft.blocks];
+    const blocks = isReadOnly?[...flowDraft.template.blocks]: [...flowDraft.blocks];
     loadBlocksIntoGraph(blocks);
     loadConnectorsIntoGraph(blocks);
 
@@ -326,7 +366,7 @@ function FlowDataContextProviderComponent(props: Props) {
       }
 
       const flowData: ImportFlowDraftInput = {
-        id: flowDraft.id ?? '',
+        id: isReadOnly? flowDraft.template.id : flowDraft.id ?? '',
         name:
           flowSettingsUpdate?.name != null
             ? flowSettingsUpdate.name

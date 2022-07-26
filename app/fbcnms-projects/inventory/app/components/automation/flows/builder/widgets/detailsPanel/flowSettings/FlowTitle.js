@@ -32,10 +32,11 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-export default function FlowTitle() {
+export default function FlowTitle(props) {
   const classes = useStyles();
   const flowData = useFlowData();
   const dialogShowingContext = useDialogShowingContext();
+  const {isReadOnly} = props;
 
   const hide = useCallback(() => {
     dialogShowingContext.hideDialog();
@@ -67,7 +68,9 @@ export default function FlowTitle() {
     <div className={classes.root}>
       <Grid item xs zeroMinWidth>
         <Typography variant={'h6'} noWrap>
-          {flowData.flowDraft?.name ?? null}
+          {isReadOnly
+            ? flowData.flowDraft?.template?.name
+            : flowData.flowDraft?.name}
         </Typography>
       </Grid>
       <FormAction hideOnEditLocks={true}>
