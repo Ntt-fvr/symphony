@@ -111,31 +111,48 @@ func (r mutationResolver) RemoveResourceSpecificationRelationship(ctx context.Co
 	return id, nil
 }
 
-func (r mutationResolver) EditResourceSpecificationRelationship(ctx context.Context, input models.EditResourceSpecificationRelationshipInput) (*ent.ResourceSpecificationRelationship, error) {
-	client := r.ClientFrom(ctx)
-	et, err := client.ResourceSpecificationRelationship.Get(ctx, input.ID)
-	if err != nil {
-		if ent.IsNotFound(err) {
-			return nil, gqlerror.Errorf("has ocurred error on proces: %v", err)
-		}
-		return nil, errors.Wrapf(err, "has ocurred error on proces: %v", err)
-	}
-	var resourcespecification, err3 = et.Resourcespecification(ctx)
-	if err3 != nil {
-		return nil, errors.Wrap(err3, "has ocurred error on proces: %v")
-	}
-
-	if input.Name != et.Name || input.ResourceSpecification != &resourcespecification.ID {
-		if et, err = client.ResourceSpecificationRelationship.
-			UpdateOne(et).
-			SetName(input.Name).
-			SetNillableResourcespecificationID(input.ResourceSpecification).
-			Save(ctx); err != nil {
-			if ent.IsConstraintError(err) {
-				return nil, gqlerror.Errorf("has ocurred error on proces: %v", err)
+func (r mutationResolver) EditResourceSpecificationRelationship(ctx context.Context, inputs []*models.EditResourceSpecificationRelationshipInput) ([]*ent.ResourceSpecificationRelationship, error) {
+	var resourceSpecificationRs []*ent.ResourceSpecificationRelationship
+	for _, input := range inputs {
+		if input.ID == nil {
+			input_agregar := models.AddResourceSpecificationRelationshipInput{
+				Name:                      input.Name,
+				ResourceSpecification:     *input.ResourceSpecification,
+				ResourceSpecificationList: input.ResourceSpecificationList,
 			}
-			return nil, errors.Wrap(err, "has ocurred error on proces: %v")
+			resource_rs, err := r.AddResourceSpecificationRelationship(ctx, input_agregar)
+			if err != nil {
+				return nil, fmt.Errorf("has ocurred error on proces: %v", err)
+			}
+			resourceSpecificationRs = append(resourceSpecificationRs, resource_rs)
+		} else {
+			client := r.ClientFrom(ctx)
+			et, err := client.ResourceSpecificationRelationship.Get(ctx, *input.ID)
+			if err != nil {
+				if ent.IsNotFound(err) {
+					return nil, gqlerror.Errorf("has ocurred error on proces: %v", err)
+				}
+				return nil, errors.Wrapf(err, "has ocurred error on proces: %v", err)
+			}
+			var resourcespecification, err3 = et.Resourcespecification(ctx)
+			if err3 != nil {
+				return nil, errors.Wrap(err3, "has ocurred error on proces: %v")
+			}
+
+			if input.Name != et.Name || input.ResourceSpecification != &resourcespecification.ID {
+				if et, err = client.ResourceSpecificationRelationship.
+					UpdateOne(et).
+					SetName(input.Name).
+					SetNillableResourcespecificationID(input.ResourceSpecification).
+					Save(ctx); err != nil {
+					if ent.IsConstraintError(err) {
+						return nil, gqlerror.Errorf("has ocurred error on proces: %v", err)
+					}
+					return nil, errors.Wrap(err, "has ocurred error on proces: %v")
+				}
+			}
+			resourceSpecificationRs = append(resourceSpecificationRs, et)
 		}
 	}
-	return et, nil
+	return resourceSpecificationRs, nil
 }
