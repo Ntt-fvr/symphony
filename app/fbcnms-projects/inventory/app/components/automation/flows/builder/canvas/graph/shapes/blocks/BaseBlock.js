@@ -29,6 +29,7 @@ import type {ManualStartSettingsType} from './blockTypes/manualStart/ManualStart
 import type {OutputSettingsType} from './blockTypes/OutputSettingsType';
 import type {TimerSettingsType} from './blockTypes/timer/TimerSettingsType';
 import type {WaitSignalSettingsType} from './blockTypes/waitSignal/WaitSignalSettingsType';
+import type {PublishToKafkaSettingsType} from './blockTypes/publishToKafka/PublishToKafkaSettings';
 
 import BaseConnector from '../connectors/BaseConnector';
 import {DISPLAY_SETTINGS} from '../../utils/helpers';
@@ -84,7 +85,8 @@ type settingsTypes =
   | ManualStartSettingsType
   | EndSettings
   | InvokeRestApiSettingsType
-  | ExecuteFlowSettingsType;
+  | ExecuteFlowSettingsType
+  | PublishToKafkaSettingsType;
 
 export interface IBlock {
   +id: string;
