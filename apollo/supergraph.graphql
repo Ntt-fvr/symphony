@@ -4129,9 +4129,10 @@ input EditResourceSpecificationItemsInput {
 }
 
 input EditResourceSpecificationRelationshipInput {
-  id: ID!
+  id: ID
   name: String!
   resourceSpecification: ID
+  resourceSpecificationList: [ID]
 }
 
 input EditResourceTypeInput {
@@ -6455,7 +6456,7 @@ type Mutation {
   editReportFilter(input: EditReportFilterInput!): ReportFilter! @join__field(graph: SYMPHONY)
   editResourceSpecification(input: EditResourceSpecificationInput!): ResourceSpecification! @join__field(graph: SYMPHONY)
   editResourceSpecificationItems(input: EditResourceSpecificationItemsInput!): ResourceSpecificationItems! @join__field(graph: SYMPHONY)
-  editResourceSpecificationRelationship(input: EditResourceSpecificationRelationshipInput!): ResourceSpecificationRelationship! @join__field(graph: SYMPHONY)
+  editResourceSpecificationRelationship(input: [EditResourceSpecificationRelationshipInput!]!): [ResourceSpecificationRelationship!]! @join__field(graph: SYMPHONY)
   editResourceType(input: EditResourceTypeInput!): ResourceType! @join__field(graph: SYMPHONY)
   editResourceTypeRelationship(input: EditResourceTypeRelationshipInput!): ResourceTypeRelationship! @join__field(graph: SYMPHONY)
   editRule(input: EditRuleInput!): Rule! @join__field(graph: SYMPHONY)
@@ -13033,6 +13034,6 @@ enum core__Purpose {
 scalar join__FieldSet
 
 enum join__Graph {
-  DGRAPHSERVICE @join__graph(name: "dgraphservice" url: "http://alpha:8080/graphql")
+  DGRAPHSERVICE @join__graph(name: "dgraphservice" url: "http://dgraph-dgraph-alpha.dgraph.svc.cluster.local:8080/graphql")
   SYMPHONY @join__graph(name: "symphony" url: "http://graph/query")
 }
