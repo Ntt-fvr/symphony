@@ -14,9 +14,9 @@ import * as React from 'react';
 import CodeEditor from '../../inputs/CodeEditor';
 import Select from '../../inputs/Select';
 import Switch from '../../inputs/Switch';
-import TextField from '../../inputs/TextField';
 import {Grid} from '@material-ui/core';
 import {makeStyles} from '@material-ui/core/styles';
+import {signalModules, signalTypes} from '../helpers';
 import {useEffect} from 'react';
 import {useForm} from '../../../../../utils/useForm';
 
@@ -50,10 +50,6 @@ const ConfigurationWaitForSignal = ({block}: Props) => {
     customFilter,
   } = waitForSignalSettingsValues;
 
-  const signalTypes = [
-    {name: 'WOCreation', id: 'WOCREATION'},
-    {name: 'InvUpdate', id: 'CRUPDATE'},
-  ];
   useEffect(() => {
     block.setSettings(waitForSignalSettingsValues);
   }, [waitForSignalSettingsValues]);
@@ -63,20 +59,12 @@ const ConfigurationWaitForSignal = ({block}: Props) => {
   return (
     <>
       <Grid item xs={12} className={classes.grid}>
-        <TextField
+        <Select
           label={'Signal Module'}
-          type={'text'}
           name={'signalModule'}
           value={signalModule}
-          handleInputChange={handleInputChange}
-        />
-      </Grid>
-      <Grid item xs={12} className={classes.grid}>
-        <Switch
-          label={'Block flow until reception'}
-          name={'blocked'}
-          value={blocked}
-          handleInputChange={handleInputChange}
+          onChange={handleInputChange}
+          items={signalModules}
         />
       </Grid>
       <Grid item xs={12} className={classes.grid}>
@@ -95,6 +83,14 @@ const ConfigurationWaitForSignal = ({block}: Props) => {
           value={customFilter}
           name={'customFilter'}
           onChange={handleInputChange}
+        />
+      </Grid>
+      <Grid item xs={12} className={classes.grid}>
+        <Switch
+          label={'Block flow until reception'}
+          name={'blocked'}
+          value={blocked}
+          handleInputChange={handleInputChange}
         />
       </Grid>
     </>

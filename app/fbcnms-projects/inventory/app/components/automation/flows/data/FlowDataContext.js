@@ -162,6 +162,13 @@ const flowQuery = graphql`
               connectionTimeOut
               body
             }
+            ... on TimerBlock {
+              seconds
+              datetime
+              expression
+              enableExpressionL
+              behavior
+            }
           }
           uiRepresentation {
             name
@@ -432,14 +439,6 @@ function FlowDataContextProviderComponent(props: Props) {
         .getBlocksByType(NetworkActionBlockType)
         .map(block => mapActionBlocksForSave(block, NetworkActionActionTypeID));
 
-      const actionBlocks = [
-        ...createWorkOrderBlocks,
-        ...updateInventoryBlocks,
-        ...updateWorkforceBlocks,
-        ...executeFlowBlocks,
-        ...networkActionBlocks,
-      ];
-
       // TriggerBlocks
       const triggerWorkforceBlocks = flow
         .getBlocksByType(TriggerWorkforceBlockType)
@@ -572,15 +571,7 @@ export type WithFlowData<T: {+$refType: FragmentReference}> = {
 export default FlowDataContext;
 
 function createBlock(block, flow) {
-  let blockType = block.details.__typename;
-
-  if (block.details.actionType) {
-    blockType = getActionType(block.details.actionType.id);
-  }
-
-  if (block.details.triggerType) {
-    blockType = getTriggerType(block.details.triggerType.id);
-  }
+  const blockType = block.details.__typename;
 
   return flow.addBlock(blockType, {
     id: block.cid,

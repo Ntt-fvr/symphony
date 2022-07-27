@@ -216,9 +216,9 @@ export function getInitObject(
     input?: PortsGroupInitValue,
     output?: PortsGroupInitValue,
   },
+  id?: ?string,
   horizontalPortLeftAlign?: number,
   horizontalPortRightAlign?: number,
-  id?: ?string,
   position?: string,
 ): InitObjectType {
   const inputPorts = getPortsArray(ports?.input, PORTS_GROUPS.INPUT);

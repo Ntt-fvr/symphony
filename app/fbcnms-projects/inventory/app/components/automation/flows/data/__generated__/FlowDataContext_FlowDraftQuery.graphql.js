@@ -19,6 +19,7 @@ export type ActionTypeId = "update_inventory" | "update_workforce" | "work_order
 export type RetryUnit = "HOURS" | "MINUTES" | "SECONDS" | "%future added value";
 export type SignalModule = "ASSURANCE" | "CM" | "INVENTORY" | "WFM" | "%future added value";
 export type SignalType = "CRCREATED" | "CRUPDATED" | "MOICREATED" | "MOIUPDATED" | "PR_CREATED" | "PR_UPDATED" | "WOCREATED" | "WOUPDATED" | "%future added value";
+export type TimerBehavior = "FIXED_INTERVAL" | "SPECIFIC_DATETIME" | "%future added value";
 export type TransfStrategy = "MERGE" | "REPLACE" | "%future added value";
 export type TriggerTypeId = "work_order" | "%future added value";
 export type UrlMethod = "DELETE" | "GET" | "PATCH" | "POST" | "PUT" | "%future added value";
@@ -54,6 +55,13 @@ export type FlowDataContext_FlowDraftQueryResponse = {|
         +url: string,
         +connectionTimeOut: number,
         +body: string,
+      |} | {|
+        +__typename: "TimerBlock",
+        +seconds: ?number,
+        +datetime: ?any,
+        +expression: ?string,
+        +enableExpressionL: ?boolean,
+        +behavior: TimerBehavior,
       |} | {|
         // This will never be '%other', but we need some
         // value in case none of the concrete values match.
@@ -142,6 +150,13 @@ query FlowDataContext_FlowDraftQuery(
             url
             connectionTimeOut
             body
+          }
+          ... on TimerBlock {
+            seconds
+            datetime
+            expression
+            enableExpressionL
+            behavior
           }
         }
         uiRepresentation {
@@ -359,6 +374,48 @@ v8 = {
         }
       ],
       "type": "InvokeRestAPIBlock",
+      "abstractKey": null
+    },
+    {
+      "kind": "InlineFragment",
+      "selections": [
+        {
+          "alias": null,
+          "args": null,
+          "kind": "ScalarField",
+          "name": "seconds",
+          "storageKey": null
+        },
+        {
+          "alias": null,
+          "args": null,
+          "kind": "ScalarField",
+          "name": "datetime",
+          "storageKey": null
+        },
+        {
+          "alias": null,
+          "args": null,
+          "kind": "ScalarField",
+          "name": "expression",
+          "storageKey": null
+        },
+        {
+          "alias": null,
+          "args": null,
+          "kind": "ScalarField",
+          "name": "enableExpressionL",
+          "storageKey": null
+        },
+        {
+          "alias": null,
+          "args": null,
+          "kind": "ScalarField",
+          "name": "behavior",
+          "storageKey": null
+        }
+      ],
+      "type": "TimerBlock",
       "abstractKey": null
     }
   ],
@@ -709,16 +766,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "90412350b20731f27e2d6e1c69f07cd4",
+    "cacheID": "1c73b62bba56e8d59cfe72f46b3c6c49",
     "id": null,
     "metadata": {},
     "name": "FlowDataContext_FlowDraftQuery",
     "operationKind": "query",
-    "text": "query FlowDataContext_FlowDraftQuery(\n  $flowId: ID!\n) {\n  flowDraft: node(id: $flowId) {\n    __typename\n    ... on FlowDraft {\n      id\n      name\n      description\n      blocks {\n        cid\n        details {\n          __typename\n          ... on ActionBlock {\n            actionType {\n              id\n            }\n          }\n          ... on TriggerBlock {\n            triggerType {\n              id\n            }\n          }\n          ... on WaitForSignalBlock {\n            signalModule\n            customFilter\n            blocked\n            signalType: type\n          }\n          ... on InvokeRestAPIBlock {\n            method\n            url\n            connectionTimeOut\n            body\n          }\n        }\n        uiRepresentation {\n          name\n          xPosition\n          yPosition\n        }\n        nextBlocks {\n          cid\n          uiRepresentation {\n            name\n            xPosition\n            yPosition\n          }\n          id\n        }\n        inputParamDefinitions {\n          defaultValue\n        }\n        outputParamDefinitions {\n          defaultValue\n        }\n        enableInputTransformation\n        inputTransfStrategy\n        inputTransformation\n        enableOutputTransformation\n        outputTransfStrategy\n        outputTransformation\n        enableInputStateTransformation\n        inputStateTransfStrategy\n        inputStateTransformation\n        enableOutputStateTransformation\n        outputStateTransfStrategy\n        outputStateTransformation\n        enableErrorHandling\n        enableRetryPolicy\n        retryInterval\n        units\n        maxAttemps\n        backoffRate\n        id\n      }\n      ...FlowHeader_flowDraft\n    }\n    id\n  }\n}\n\nfragment FlowHeader_flowDraft on FlowDraft {\n  name\n}\n"
+    "text": "query FlowDataContext_FlowDraftQuery(\n  $flowId: ID!\n) {\n  flowDraft: node(id: $flowId) {\n    __typename\n    ... on FlowDraft {\n      id\n      name\n      description\n      blocks {\n        cid\n        details {\n          __typename\n          ... on ActionBlock {\n            actionType {\n              id\n            }\n          }\n          ... on TriggerBlock {\n            triggerType {\n              id\n            }\n          }\n          ... on WaitForSignalBlock {\n            signalModule\n            customFilter\n            blocked\n            signalType: type\n          }\n          ... on InvokeRestAPIBlock {\n            method\n            url\n            connectionTimeOut\n            body\n          }\n          ... on TimerBlock {\n            seconds\n            datetime\n            expression\n            enableExpressionL\n            behavior\n          }\n        }\n        uiRepresentation {\n          name\n          xPosition\n          yPosition\n        }\n        nextBlocks {\n          cid\n          uiRepresentation {\n            name\n            xPosition\n            yPosition\n          }\n          id\n        }\n        inputParamDefinitions {\n          defaultValue\n        }\n        outputParamDefinitions {\n          defaultValue\n        }\n        enableInputTransformation\n        inputTransfStrategy\n        inputTransformation\n        enableOutputTransformation\n        outputTransfStrategy\n        outputTransformation\n        enableInputStateTransformation\n        inputStateTransfStrategy\n        inputStateTransformation\n        enableOutputStateTransformation\n        outputStateTransfStrategy\n        outputStateTransformation\n        enableErrorHandling\n        enableRetryPolicy\n        retryInterval\n        units\n        maxAttemps\n        backoffRate\n        id\n      }\n      ...FlowHeader_flowDraft\n    }\n    id\n  }\n}\n\nfragment FlowHeader_flowDraft on FlowDraft {\n  name\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = '73c3233482e8f0cbad6b1353cb494fd0';
+(node/*: any*/).hash = '7367a227b922d2ce1bb777898b2992e7';
 
 module.exports = node;

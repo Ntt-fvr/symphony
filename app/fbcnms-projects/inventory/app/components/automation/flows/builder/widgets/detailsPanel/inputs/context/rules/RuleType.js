@@ -14,5 +14,4 @@ export type RuleType = {|
   index?: ?number,
   rule?: ?string,
   isDeleted?: ?boolean,
-  isDefault?: ?boolean,
 |};

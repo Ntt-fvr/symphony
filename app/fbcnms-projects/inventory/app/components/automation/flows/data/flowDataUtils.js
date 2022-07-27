@@ -240,9 +240,9 @@ export function mapTimerBlocksForSave(block: IBlock) {
     specificDatetime: specificDatetime,
     enableExpressionL: enableExpressionL,
     expression: expression,
-    exitPoint: exitPoint,
+    exitPoint: POINT_EXAMPLE,
+    entryPoint: POINT_EXAMPLE,
     params: VARIABLE_EXPRESSION_EXAMPLE,
-    entryPoint: null,
     uiRepresentation: {
       name: block.name,
       xPosition: Math.floor(block.model.attributes.position.x),
@@ -271,7 +271,7 @@ export function mapEndBlockForSave(block: IBlock): EndBlockInputType {
   const {params} = block.settings;
   return {
     cid: block.id,
-    params: {type: 'VariableDefinition', expression: 'a', blockVariables: []},
+    params: [],
     uiRepresentation: {
       name: block.name,
       xPosition: Math.floor(block.model.attributes.position.x),
@@ -347,10 +347,6 @@ export const saveBlockInformation = (
     maxAttemps: blockFormQuery.maxAttemps,
     backoffRate: blockFormQuery.backoffRate,
   });
-  console.log(
-    'outputStateParamDefinitions',
-    blockFormQuery.outputStateParamDefinitions,
-  );
   const {__typename, ...configurationParameters} = blockFormQuery.details;
   createdBlock.setSettings(configurationParameters);
 };

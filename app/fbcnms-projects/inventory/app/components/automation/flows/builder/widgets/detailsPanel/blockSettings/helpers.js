@@ -32,6 +32,24 @@ import {TYPE as UpdateInventoryType} from '../../../../builder/canvas/graph/faca
 import {TYPE as UpdateWorkforceType} from '../../../../builder/canvas/graph/facades/shapes/vertexes/actions/UpdateWorkforce';
 import {TYPE as WaitSignalType} from '../../../../builder/canvas/graph/facades/shapes/vertexes/triggers/WaitSignal';
 
+export const signalTypes = [
+  {name: 'WOCREATED', id: 'WOCREATED'},
+  {name: 'CRCREATED', id: 'CRCREATED'},
+  {name: 'PR_CREATED', id: 'PR_CREATED'},
+  {name: 'MOICREATED', id: 'MOICREATED'},
+  {name: 'WOUPDATED', id: 'WOUPDATED'},
+  {name: 'CRUPDATED', id: 'CRUPDATED'},
+  {name: 'PR_UPDATED', id: 'PR_UPDATED'},
+  {name: 'MOIUPDATED', id: 'MOIUPDATED'},
+];
+
+export const signalModules = [
+  {name: 'Inventory', id: 'INVENTORY'},
+  {name: 'Configuration Management', id: 'CM'},
+  {name: 'Workforce Management', id: 'WFM'},
+  {name: 'Assurance', id: 'ASSURANCE'},
+];
+
 export const INPUT_TYPE = 'input_tab';
 export const OUTPUT_TYPE = 'output_tab';
 export const ERROR_TYPE = 'error_tab';

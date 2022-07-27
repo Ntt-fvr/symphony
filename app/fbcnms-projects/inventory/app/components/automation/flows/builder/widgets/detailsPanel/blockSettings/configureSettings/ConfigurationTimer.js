@@ -31,7 +31,7 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-const FIXED_INTERVAL = 'fixed_interval';
+const FIXED_INTERVAL = 'FIXED_INTERVAL';
 
 type Props = $ReadOnly<{|
   block: IBlock,
@@ -40,8 +40,8 @@ type Props = $ReadOnly<{|
 const ConfigurationTimer = ({block}: Props) => {
   const {settings} = block;
   const behaviors = [
-    {name: 'Fixed Interval', id: 'fixed_interval'},
-    {name: 'Specific date and time', id: 'date_time'},
+    {name: 'Fixed Interval', id: 'FIXED_INTERVAL'},
+    {name: 'Specific date and time', id: 'SPECIFIC_DATETIME'},
   ];
   const dateTimeValues = [
     {name: 'Date', id: 'date'},
@@ -52,11 +52,10 @@ const ConfigurationTimer = ({block}: Props) => {
     handleInputChange,
     handleAllInputChange,
   ] = useForm({
-    behavior: settings.behavior || 'fixed_interval',
-    specificDatetime: settings.specificDatetime || 'date',
+    behavior: settings.behavior || 'FIXED_INTERVAL',
+    specificDatetime: settings.specificDatetime || '2019-10-12T07:20:50.52Z',
     enableExpressionL: settings.enableExpressionL || false,
     expression: settings.expression || 'null',
-    exitPoint: settings.exitPoint || false,
     seconds: settings.seconds || 0,
   });
 
@@ -72,16 +71,14 @@ const ConfigurationTimer = ({block}: Props) => {
     seconds,
     specificDatetime,
     expression,
-    exitPoint,
   } = timerSettingsValues;
 
   useEffect(() => {
     if (timerSettingsValues.behavior) {
       const copy = Object.assign({}, timerSettingsValues);
       copy['seconds'] = 0;
-      copy['specificDatetime'] = 'date';
+      copy['specificDatetime'] = '2019-10-12T07:20:50.52Z';
       copy['expression'] = '';
-      copy['seconds'] = '';
       handleAllInputChange(copy);
     }
   }, [behavior]);
@@ -153,15 +150,6 @@ const ConfigurationTimer = ({block}: Props) => {
           </Grid>
         </>
       )}
-
-      <Grid item xs={12} className={classes.grid}>
-        <Switch
-          label={'Link to change timer signal'}
-          name={'exitPoint'}
-          value={exitPoint}
-          handleInputChange={handleInputChange}
-        />
-      </Grid>
     </>
   );
 };
