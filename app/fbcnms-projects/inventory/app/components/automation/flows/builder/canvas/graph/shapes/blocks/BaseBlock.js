@@ -29,6 +29,7 @@ import type {ManualStartSettingsType} from './blockTypes/manualStart/ManualStart
 import type {OutputSettingsType} from './blockTypes/OutputSettingsType';
 import type {TimerSettingsType} from './blockTypes/timer/TimerSettingsType';
 import type {WaitSignalSettingsType} from './blockTypes/waitSignal/WaitSignalSettingsType';
+import type {PublishToKafkaSettingsType} from './blockTypes/publishToKafka/PublishToKafkaSettings';
 
 import BaseConnector from '../connectors/BaseConnector';
 import {DISPLAY_SETTINGS} from '../../utils/helpers';
@@ -84,7 +85,8 @@ type settingsTypes =
   | ManualStartSettingsType
   | EndSettings
   | InvokeRestApiSettingsType
-  | ExecuteFlowSettingsType;
+  | ExecuteFlowSettingsType
+  | PublishToKafkaSettingsType;
 
 export interface IBlock {
   +id: string;
@@ -246,15 +248,6 @@ export default class BaseBlock implements IBlock {
     target: IBlock,
     model?: ?ILinkModel,
   ) {
-    const outputPort = this.getOutputPorts()[0]?.id;
-    const outputPortChoice = model !== undefined ? IsOutputPortChoise(model, outputPort): false;
-
-    if (outputPortChoice) {
-      model.appendLabel({
-        ...defaultAttrProps,
-      });
-    }
-
     const targetPort = target.getInputPort();
     if (targetPort == null) {
       return;
@@ -285,6 +278,19 @@ export default class BaseBlock implements IBlock {
       model,
       this.isInGraph,
     );
+
+    connector.model?.connector('rounded');
+    connector.model?.attr('line/targetMarker', {type: 'path', d: ''});
+    const outputPort = this.getOutputPorts()[0]?.id;
+    const outputPortChoice =
+      connector.model !== undefined
+        ? IsOutputPortChoise(connector.model, outputPort)
+        : false;
+    if (outputPortChoice) {
+      connector.model.appendLabel({
+        ...defaultAttrProps,
+      });
+    }
 
     this.outConnectors[index] = connector;
 
