@@ -246,15 +246,6 @@ export default class BaseBlock implements IBlock {
     target: IBlock,
     model?: ?ILinkModel,
   ) {
-    const outputPort = this.getOutputPorts()[0]?.id;
-    const outputPortChoice = model !== undefined ? IsOutputPortChoise(model, outputPort): false;
-
-    if (outputPortChoice) {
-      model.appendLabel({
-        ...defaultAttrProps,
-      });
-    }
-
     const targetPort = target.getInputPort();
     if (targetPort == null) {
       return;
@@ -285,6 +276,19 @@ export default class BaseBlock implements IBlock {
       model,
       this.isInGraph,
     );
+
+    connector.model?.connector('rounded');
+    connector.model?.attr('line/targetMarker', {type: 'path', d: ''});
+    const outputPort = this.getOutputPorts()[0]?.id;
+    const outputPortChoice =
+      connector.model !== undefined
+        ? IsOutputPortChoise(connector.model, outputPort)
+        : false;
+    if (outputPortChoice) {
+      connector.model.appendLabel({
+        ...defaultAttrProps,
+      });
+    }
 
     this.outConnectors[index] = connector;
 

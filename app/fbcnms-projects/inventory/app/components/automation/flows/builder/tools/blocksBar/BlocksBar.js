@@ -80,7 +80,7 @@ export default function BlocksBar(props: Props) {
     () => [
       new ManualStartBlockType(flow),
       new EndBlockType(flow),
-      new TriggerStartBlockType(flow),
+      //new TriggerStartBlockType(flow),
       new Timer(flow),
       // new ForEachLoop(flow),
       new ChoiceBlockType(flow),
@@ -99,7 +99,7 @@ export default function BlocksBar(props: Props) {
       new ExecuteFlowBlockType(flow),
       new WaitSignalBlockType(flow),
       new InvokeRestApiBlockType(flow),
-      new ExecuteNetworkActionBlockType(flow),
+      //new ExecuteNetworkActionBlockType(flow),
     ],
     [flow],
   );
