@@ -86,7 +86,7 @@ const WorkOrderSaveButton = (props: Props) => {
         name,
         description,
         organizationFk: organizationFk?.id || null,
-        ownerId: owner.id,
+        ownerId: owner?.id || null,
         installDate: installDate ? installDate.toString() : null,
         status,
         priority,

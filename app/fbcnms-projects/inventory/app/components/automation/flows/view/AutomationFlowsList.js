@@ -32,11 +32,13 @@ function AutomationFlowsList(props: Props) {
   const classes = useStyles();
 
   return flows.length > 0 ? (
-    <div className={classes.flowsList}>
-      {flows.map(flow => (
-        <AutomationFlowCard key={flow.id} flow={flow} />
-      ))}
-    </div>
+    <>
+      <div className={classes.flowsList}>
+        {flows.map(flow => (
+          <AutomationFlowCard key={flow.id} flow={flow} />
+        ))}
+      </div>
+    </>
   ) : null;
 }
 

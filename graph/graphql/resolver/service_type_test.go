@@ -6,6 +6,7 @@ package resolver_test
 
 import (
 	"context"
+	"fmt"
 	"testing"
 
 	"github.com/AlekSi/pointer"

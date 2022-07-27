@@ -52,10 +52,13 @@ import (
 // 	return resourceSpecificationRelationShip, nil
 // }
 
+
 func AddResourceSpecificationRelationshipTest(ctx context.Context, t *testing.T, mr generated.MutationResolver) (int, int, int) {
 
 	resourcetype, err := mr.AddResourceType(ctx, models.AddResourceTypeInput{
-		Name: "my_test_1_resource_type",
+		Name:                 "my_test_1_resource_type",
+		ResourceTypeClass:    "SLOT",
+		ResourceTypeBaseType: "LOGICAL_RESOURCE",
 	})
 	require.NoError(t, err)
 

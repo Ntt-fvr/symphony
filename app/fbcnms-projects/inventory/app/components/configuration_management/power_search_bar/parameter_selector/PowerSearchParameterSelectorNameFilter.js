@@ -22,7 +22,7 @@ const PowerSearchParameterSelectorNameFilter = props => {
   } = props;
   return (
     <PowerSearchFilter
-      name="Name"
+      name="Parameter"
       operator={value.operator}
       editMode={editMode}
       value={value.stringValue}

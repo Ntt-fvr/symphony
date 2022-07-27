@@ -10,39 +10,57 @@
 
 import * as React from 'react';
 import BlocksCategory from './BlocksCategory';
+import ChoiceBlockType from '../../canvas/graph/shapes/blocks/blockTypes/choice/ChoiceBlockType';
 import CreateWorkorderBlockType from '../../canvas/graph/shapes/blocks/blockTypes/createWorkorder/CreateWorkorderBlockType';
-import DecisionBlockType from '../../canvas/graph/shapes/blocks/blockTypes/decision/DecisionBlockType';
 import EndBlockType from '../../canvas/graph/shapes/blocks/blockTypes/end/EndBlockType';
+import ExecuteFlowBlockType from '../../canvas/graph/shapes/blocks/blockTypes/executeFlow/ExecuteFlowBlockType';
+import ExecuteNetworkActionBlockType from '../../canvas/graph/shapes/blocks/blockTypes/executeNetworkAction/ExecuteNetworkActionBlockType';
+import ForEachLoop from '../../canvas/graph/shapes/blocks/blockTypes/forEachLoop/ForEachLoopBlockType';
 import GoToBlockType from '../../canvas/graph/shapes/blocks/blockTypes/goTo/GoToBlockType';
+import InvokeRestApiBlockType from '../../canvas/graph/shapes/blocks/blockTypes/invokeRestApi/InvokeRestApiBlockType';
 import ManualStartBlockType from '../../canvas/graph/shapes/blocks/blockTypes/manualStart/ManualStartBlockType';
-import SideBar from '@symphony/design-system/components/View/SideBar';
+import ParallelBlockType from '../../canvas/graph/shapes/blocks/blockTypes/parallel/ParallelBlockType';
+import Timer from '../../canvas/graph/shapes/blocks/blockTypes/timer/TimerBlockType';
+import TriggerStartBlockType from '../../canvas/graph/shapes/blocks/blockTypes/triggerStart/TriggerStartBlockType';
 import TriggerWorkforceBlockType from '../../canvas/graph/shapes/blocks/blockTypes/triggerWorkforce/TriggerWorkforceBlockType';
-import TrueFalseBlockType from '../../canvas/graph/shapes/blocks/blockTypes/trueFalse/TrueFalseBlockType';
 import UpdateInventoryBlockType from '../../canvas/graph/shapes/blocks/blockTypes/updateInventory/UpdateInventoryBlockType';
 import UpdateWorkforceBlockType from '../../canvas/graph/shapes/blocks/blockTypes/updateWorkforce/UpdateWorkforceBlockType';
+import WaitSignalBlockType from '../../canvas/graph/shapes/blocks/blockTypes/waitSignal/WaitSignalBlockType';
+import {BackFlow} from '@symphony/design-system/icons';
+
+import ListItemIcon from '@material-ui/core/ListItemIcon';
+import Sidebar from '../../widgets/detailsPanel/inputs/Sidebar';
 import fbt from 'fbt';
+import {DARK} from '@symphony/design-system/theme/symphony';
+import {
+  Grid,
+  List,
+  ListItem,
+  ListItemText,
+  Typography,
+} from '@material-ui/core';
 import {makeStyles} from '@material-ui/styles';
 import {useGraph} from '../../canvas/graph/graphAPIContext/GraphContext';
-import {useMemo, useState} from 'react';
-
-const COLLAPSED_WIDTH = '80px';
+import {useMemo} from 'react';
+import {useRouter} from '@fbcnms/ui/hooks';
+const drawerWidth = 240;
 
 const useStyles = makeStyles(() => ({
-  header: {
-    display: 'flex',
-    alignItems: 'center',
+  root: {
+    '& div[class*="toolbar"]': {
+      borderBottom: `1px solid ${DARK.D100}`,
+    },
   },
-  name: {
-    marginLeft: '22px',
-  },
-  collapsed: {
-    width: COLLAPSED_WIDTH,
-    minWidth: COLLAPSED_WIDTH,
-    maxWidth: COLLAPSED_WIDTH,
-    flexBasis: COLLAPSED_WIDTH,
-  },
-  logo: {
-    display: 'flex',
+  list: {
+    '& .MuiListItemIcon-root': {
+      minWidth: 0,
+      paddingRight: 8,
+    },
+    '& .MuiListItem-root': {
+      paddingTop: 12,
+      paddingBottom: 12,
+      borderBottom: `1px solid ${DARK.D100}`,
+    },
   },
 }));
 
@@ -51,69 +69,105 @@ type Props = $ReadOnly<{|
 |}>;
 
 export default function BlocksBar(props: Props) {
+  const classes = useStyles();
   const {title} = props;
   const flow = useGraph();
-  const classes = useStyles();
-  const [collapsed, setCollapsed] = useState(false);
+  const {history} = useRouter();
 
-  const administrativeTypes = useMemo(
-    () => [new ManualStartBlockType(flow), new EndBlockType(flow)],
-    [flow],
-  );
+  const [sidebarOpened, setSidebarOpened] = React.useState(false);
 
-  const actionTypes = useMemo(
+  const flowTypes = useMemo(
     () => [
-      new CreateWorkorderBlockType(flow),
-      new UpdateInventoryBlockType(flow),
-      new UpdateWorkforceBlockType(flow),
-      ,
-    ],
-    [flow],
-  );
-
-  const triggerTypes = useMemo(() => [new TriggerWorkforceBlockType(flow)], [
-    flow,
-  ]);
-
-  const logicTypes = useMemo(
-    () => [
-      new TrueFalseBlockType(flow),
-      new DecisionBlockType(flow),
+      new ManualStartBlockType(flow),
+      new EndBlockType(flow),
+      new TriggerStartBlockType(flow),
+      new Timer(flow),
+      new ForEachLoop(flow),
+      new ChoiceBlockType(flow),
+      new ParallelBlockType(flow),
       new GoToBlockType(flow),
     ],
     [flow],
   );
 
-  const callback = collapsed => {
-    setCollapsed(collapsed);
+  const inventoryTypes = useMemo(() => [new UpdateInventoryBlockType(flow)], [
+    flow,
+  ]);
+
+  const general = useMemo(
+    () => [
+      new ExecuteFlowBlockType(flow),
+      new WaitSignalBlockType(flow),
+      new InvokeRestApiBlockType(flow),
+      new ExecuteNetworkActionBlockType(flow),
+    ],
+    [flow],
+  );
+
+  const workforceTypes = useMemo(
+    () => [
+      new TriggerWorkforceBlockType(flow),
+      new CreateWorkorderBlockType(flow),
+      new UpdateWorkforceBlockType(flow),
+    ],
+    [flow],
+  );
+
+  const listBlocksCategory = [
+    {header: fbt('Flow', ''), blockTypes: flowTypes},
+    {header: fbt('General', ''), blockTypes: general},
+    // Comment to hide indesign blocks
+    // {header: fbt('Workforce', ''), blockTypes: workforceTypes},
+    // {header: fbt('Inventory', ''), blockTypes: inventoryTypes},
+    // {header: fbt('Configuration mgmt', ''), blockTypes: null},
+    // {header: fbt('Pm', ''), blockTypes: null},
+    // {header: fbt('FM', ''), blockTypes: null},
+    // {header: fbt('SOM', ''), blockTypes: null},
+  ];
+
+  const ListBlocksCategory = () => {
+    return listBlocksCategory.map(({header, blockTypes}) => {
+      return (
+        <BlocksCategory key={header} header={header} blockTypes={blockTypes} />
+      );
+    });
   };
 
   return (
-    <SideBar
-      header={title}
-      collapsible={true}
-      collapseCallback={callback}
-      className={collapsed ? classes.collapsed : ''}>
-      <BlocksCategory
-        collapsed={collapsed}
-        header={fbt('Events', '')}
-        blockTypes={administrativeTypes}
+    <div className={classes.root}>
+      <Sidebar
+        drawerWidth={drawerWidth}
+        title={title}
+        openDefault={false}
+        collapsed={value => setSidebarOpened(value)}
+        children={
+          <div>
+            <List disablePadding className={classes.list}>
+              <ListItem
+                button
+                onClick={() => {
+                  history.push('/automation/flows');
+                }}>
+                <ListItemIcon>
+                  <BackFlow />
+                </ListItemIcon>
+                {!sidebarOpened && (
+                  <ListItemText
+                    primary={
+                      <Grid item xs zeroMinWidth>
+                        <Typography variant={'caption'} noWrap>
+                          {'Back to flows catalog'}
+                        </Typography>
+                      </Grid>
+                    }
+                  />
+                )}
+              </ListItem>
+            </List>
+            {ListBlocksCategory()}
+          </div>
+        }
       />
-      <BlocksCategory
-        collapsed={collapsed}
-        header={fbt('Triggers', '')}
-        blockTypes={triggerTypes}
-      />
-      <BlocksCategory
-        collapsed={collapsed}
-        header={fbt('Actions', '')}
-        blockTypes={actionTypes}
-      />
-      <BlocksCategory
-        collapsed={collapsed}
-        header={fbt('Logic', '')}
-        blockTypes={logicTypes}
-      />
-    </SideBar>
+    </div>
   );
 }

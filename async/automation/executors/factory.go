@@ -94,13 +94,13 @@ func GetBlockInstances(
 		executorWaitForSignalBlock.runLogicFunction = executorWaitForSignalBlock.runLogic
 
 		executorBlock = &executorWaitForSignalBlock
-	case "TypeStartWorkOrder":
+		/*case "TypeStartWorkOrder":
 		executorStartWorkOrderBlock := ExecutorStartWorkOrderBlock{
 			executorBaseBlock: executorBase,
 		}
 		executorStartWorkOrderBlock.runLogicFunction = executorStartWorkOrderBlock.runLogic
 
-		executorBlock = &executorStartWorkOrderBlock
+		executorBlock = &executorStartWorkOrderBlock*/
 
 	}
 

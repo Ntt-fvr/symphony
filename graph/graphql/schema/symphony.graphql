@@ -77,6 +77,18 @@ type UsersGroup implements Node {
   policies: [PermissionsPolicy!]!
 }
 
+type Subscription {
+  workOrderAdded: WorkOrder
+  workOrderDone: WorkOrder
+  workOrderStatusChanged: WorkOrderStatusChangedPayload!
+  flowInstanceDone: FlowInstance!
+  projectAdded: Project
+  projectChanged: Project
+  locationAdded: Location
+  locationChanged: Location
+  AddImage: File
+}
+
 type PermissionSettings
   @goModel(
     model: "github.com/facebookincubator/symphony/pkg/authz/models.PermissionSettings"
@@ -1756,6 +1768,11 @@ input PropertyTypeInput
   dependencePropertyTypes: [PropertyTypeInput]
   propertyTypeValues: [AddPropertyTypeValueInput]
 }
+
+input EditPropertyTypeInput {
+    id: ID!
+    isDeleted: Boolean!
+  }
 
 input EditIsListableInput {
   id: ID!
@@ -5994,7 +6011,7 @@ enum ExitPointRole
     model: "github.com/facebookincubator/symphony/pkg/flowengine/flowschema.ExitPointRole"
   ) {
   DEFAULT
-  DECISION
+  CHOICE
 }
 
 type ExitPoint implements Node {
@@ -6138,11 +6155,14 @@ enum SignalType
 @goModel(
   model: "github.com/facebookincubator/symphony/pkg/ent/block.SignalType"
   ){
-  NOTIFICATION
-  WOCREATION
-  CRCREATION
-  WOUPDATE
-  CRUPDATE
+  WOCREATED
+  CRCREATED
+  PR_CREATED
+  MOICREATED
+  WOUPDATED
+  CRUPDATED
+  PR_UPDATED
+  MOIUPDATED
 }
 
 enum SignalModule 
@@ -6150,7 +6170,9 @@ enum SignalModule
   model: "github.com/facebookincubator/symphony/pkg/ent/block.SignalModule"
   ){
   INVENTORY
-  CONFIGURATION
+  CM
+  WFM
+  ASSURANCE
 }
 
 type WaitForSignalBlock {
@@ -6183,12 +6205,12 @@ type KafkaBlock {
 union BlockDetails =
     StartBlock
   | EndBlock
-  | DecisionBlock
+  #| DecisionBlock
   | GotoBlock
-  | SubflowBlock
+  #| SubflowBlock
   | TriggerBlock
   | ActionBlock
-  | TrueFalseBlock
+  #| TrueFalseBlock
   | ChoiceBlock
   | TimerBlock
   | WaitForSignalBlock
@@ -6379,17 +6401,18 @@ input ImportFlowDraftInput {
   endParamDefinitions: [VariableDefinitionInput!]!
   startBlock: StartBlockInput
   endBlocks: [EndBlockInput!]
-  decisionBlocks: [DecisionBlockInput!]
+  #decisionBlocks: [DecisionBlockInput!]
   gotoBlocks: [GotoBlockInput!]
-  subflowBlocks: [SubflowBlockInput!]
+  #subflowBlocks: [SubflowBlockInput!]
   triggerBlocks: [TriggerBlockInput!]
   actionBlocks: [ActionBlockInput!]
-  trueFalseBlocks: [TrueFalseBlockInput!]
+  #trueFalseBlocks: [TrueFalseBlockInput!]
   choiceBlocks: [ChoiceBlockInput!]
   executeFlowBlocks: [ExecuteFlowBlockInput!]
   timerBlocks: [TimerBlockInput!]
   waitForSignalBlocks: [WaitForSignalBlockInput!]
   invokeRestAPIBlocks: [InvokeRestAPIBlockInput!]
+  kafkaBlocks: [KafkaBlockInput!]
   connectors: [ConnectorInput!]
 }
 
@@ -6405,6 +6428,8 @@ enum FlowStatus
   PUBLISHED
   UNPUBLISHED
   ARCHIVED
+  ON_HOLD
+  DRAFT
 }
 
 enum FlowNewInstancesPolicy
@@ -6546,12 +6571,14 @@ type FlowInstance implements Node {
   startDate: Time!
   endDate: Time
   startParams: [VariableValue!]
+  incompletion_reason: String
 }
 
 input EditFlowInstanceInput {
   id: ID!
   serviceInstanceCode: String
   status: FlowInstanceStatus
+  bssCode: String
   endDate: Time
   startParams: [VariableValueInput]
 }
@@ -6566,6 +6593,16 @@ input AddFlowDraftInput {
 input PublishFlowInput {
   flowDraftID: ID!
   flowInstancesPolicy: FlowNewInstancesPolicy!
+}
+
+input ArchiveFlowInput {
+  flowID: ID!
+}
+
+input DuplicateFlowInput {
+  flowID: ID!
+  name: String!
+  description: String
 }
 
 input VariableValueInput
@@ -8336,12 +8373,12 @@ type Mutation {
   deletePermissionsPolicy(id: ID!): Boolean!
   addStartBlock(flowDraftId: ID!, input: StartBlockInput!): Block!
   addEndBlock(flowDraftId: ID!, input: EndBlockInput!): Block!
-  addDecisionBlock(flowDraftId: ID!, input: DecisionBlockInput!): Block!
+  #addDecisionBlock(flowDraftId: ID!, input: DecisionBlockInput!): Block!
   addGotoBlock(flowDraftId: ID!, input: GotoBlockInput!): Block!
-  addSubflowBlock(flowDraftId: ID!, input: SubflowBlockInput!): Block!
+  #addSubflowBlock(flowDraftId: ID!, input: SubflowBlockInput!): Block!
   addTriggerBlock(flowDraftId: ID!, input: TriggerBlockInput!): Block!
   addActionBlock(flowDraftId: ID!, input: ActionBlockInput!): Block!
-  addTrueFalseBlock(flowDraftId: ID!, input: TrueFalseBlockInput!): Block!
+  #addTrueFalseBlock(flowDraftId: ID!, input: TrueFalseBlockInput!): Block!
   addChoiceBlock(flowDraftId: ID!, input: ChoiceBlockInput!): Block!
   addExecuteFlowBlock(flowDraftId: ID!, input: ExecuteFlowBlockInput!): Block!
   addTimerBlock(flowDraftId: ID!, input: TimerBlockInput!): Block!
@@ -8354,6 +8391,8 @@ type Mutation {
   deleteConnector(flowDraftId: ID!, input: ConnectorInput!): Boolean!
   addFlowDraft(input: AddFlowDraftInput!): FlowDraft!
   publishFlow(input: PublishFlowInput!): Flow!
+  archiveFlow(input: ArchiveFlowInput!): Flow!
+  duplicateFlow(input: DuplicateFlowInput!): Flow!
   deleteFlowDraft(id: ID!): Boolean!
   importFlowDraft(input: ImportFlowDraftInput!): FlowDraft!
   startFlow(input: StartFlowInput!): FlowInstance!
@@ -8482,6 +8521,7 @@ type Mutation {
   addPropertyTypeValue(input: AddPropertyTypeValueInput!): PropertyTypeValue!
   editPropertyTypeValue(input: EditPropertyTypeValueInput!): PropertyTypeValue!
   removePropertyTypeValue(id: ID!): ID!
+  editPropertyType(input: EditPropertyTypeInput!): PropertyType!
 }
 
 """
