@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
+//go:build wireinject
 // +build wireinject
 
 package main
@@ -63,12 +64,16 @@ func NewApplication(ctx context.Context, flags *cliFlags) (*application, func(),
 			"TenantMaxConn",
 		),
 		ev.ProvideEmitter,
+		ev.ProvideAutomationEmitter,
 		wire.Bind(
 			new(ev.EmitterFactory),
 			new(ev.TopicFactory),
 		),
+		provideAutomationEmitterFactory,
 		ev.ProvideReceiver,
+		//ev.ProvideAutomationReceiver,
 		provideReceiverFactory,
+		//provideAutomationReceiverFactory,
 		wire.InterfaceValue(
 			new(ev.EventObject),
 			event.LogEntry{},
@@ -129,6 +134,14 @@ func provideViews() []*view.View {
 
 func provideReceiverFactory(flags *cliFlags) ev.ReceiverFactory {
 	return flags.EventSubURL
+}
+
+func provideAutomationReceiverFactory(flags *cliFlags) ev.AutomationReceiverFactory {
+	return flags.AutomationSubURL
+}
+
+func provideAutomationEmitterFactory(flags *cliFlags) ev.AutomationEmitterFactory {
+	return flags.AutomationPubURL
 }
 
 func newBucket(ctx context.Context, flags *cliFlags) (*blob.Bucket, func(), error) {
