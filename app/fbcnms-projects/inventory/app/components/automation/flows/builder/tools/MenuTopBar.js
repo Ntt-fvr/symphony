@@ -121,6 +121,7 @@ type Props = $ReadOnly<{|
 |}>;
 
 export default function CustomizedMenus({
+  idFlow,
   icon,
   name,
   description,
@@ -201,6 +202,7 @@ export default function CustomizedMenus({
       </StyledMenu>
       {activeModal === 'archive' && (
         <ArchiveDeleteDialog
+          idFlow={idFlow}
           icon={<ArchiveOutlinedIcon />}
           openModal={() => handleCLoseModal()}
           isOpen={openModal}
@@ -220,6 +222,7 @@ export default function CustomizedMenus({
       )}
       {activeModal === 'delete' && (
         <ArchiveDeleteDialog
+          idFlow={idFlow}
           icon={<ReportProblemOutlinedIcon />}
           openModal={() => handleCLoseModal()}
           isOpen={openModal}
@@ -238,6 +241,7 @@ export default function CustomizedMenus({
       )}
       {activeModal === 'edit' && (
         <EditFlowDialog
+          idFlow={idFlow}
           isOpen={openModal}
           openModal={() => handleCLoseModal()}
           text={editText}
@@ -247,6 +251,7 @@ export default function CustomizedMenus({
       )}
       {activeModal === 'duplicate' && (
         <EditFlowDialog
+          idFlow={idFlow}
           isOpen={openModal}
           openModal={() => handleCLoseModal()}
           text={duplicateText}
