@@ -59,9 +59,9 @@ interface DefaultConfig {
 }
 
 type Resource implements DefaultConfig{
-  name: String! @id @search(by: [hash])
+  name: String! @search(by: [hash])
   available: Boolean
-  externalId: String @search(by: [hash])
+  externalId: String @id @search(by: [hash]) 
   lifecycleStatus: LifecycleStatus
   typePlanningSubStatus: TypePlanningSubStatus
   planningSubStatus: PlanningSubStatus
