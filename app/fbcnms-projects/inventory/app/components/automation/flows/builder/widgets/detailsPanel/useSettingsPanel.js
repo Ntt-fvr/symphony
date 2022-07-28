@@ -23,6 +23,7 @@ import {useFormAlertsContext} from '@symphony/design-system/components/Form/Form
 import {useGraphSelection} from '../selection/GraphSelectionContext';
 import {useKeyboardShortcuts} from '../keyboardShortcuts/KeyboardShortcutsContext';
 import {useReadOnlyMode} from '../readOnlyModeContext';
+import FlowInstanceDetails from '../../tools/FlowInstanceDetails';
 
 type SettingsPanelType = $ReadOnly<{|
   title: React.Node,
@@ -39,6 +40,7 @@ export default function useSettingsPanel(): SettingsPanelType {
   const classes = useStyles();
   const selection = useGraphSelection();
   const selectionCount = selection.selectedElements.length;
+  const {isReadOnly} = useReadOnlyMode();
 
   const keyboardShortcutsContext = useKeyboardShortcuts();
 
@@ -46,6 +48,11 @@ export default function useSettingsPanel(): SettingsPanelType {
     title: <FlowTitle className={classes.title} />,
     children: <FlowSettings />,
   });
+
+  const readOnlyDetails = () =>({
+    title: <FlowTitle className={classes.title} isReadOnly={isReadOnly}/>,
+    children: <FlowInstanceDetails />
+  })
 
   const singleSelectionDetails = () => ({
     title: (
@@ -63,8 +70,8 @@ export default function useSettingsPanel(): SettingsPanelType {
     children: <SelectionSettings selection={selection} />,
   });
 
-  const details =
-    selectionCount === 0
+  const details = isReadOnly ? readOnlyDetails():
+    selectionCount === 0 
       ? noSelectionDetails()
       : selectionCount === 1
       ? singleSelectionDetails()

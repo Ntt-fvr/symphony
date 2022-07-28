@@ -44,7 +44,8 @@ const StatusTag = (props: StatusTagProps) => {
         color: FLOW_STATUSES[status]?.color,
       }}>
       {FLOW_STATUSES[status]?.label}
-      {hasDraft && status !== FLOW_STATUSES.UNPUBLISHED.key ? (
+      {hasDraft && status !== FLOW_STATUSES?.UNPUBLISHED?.key ? (
+
         <DriveFileRenameOutline />
       ) : (
         FLOW_STATUSES[status]?.icon

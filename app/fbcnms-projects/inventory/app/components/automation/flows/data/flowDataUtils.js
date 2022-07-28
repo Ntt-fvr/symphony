@@ -27,6 +27,10 @@ import type {
   PublishFlowInput,
   PublishFlowMutationResponse,
 } from '../../../../mutations/__generated__/PublishFlowMutation.graphql';
+import type {
+  UpdateFlowInstanceMutationVariables,
+  UpdateFlowInstanceMutationResponse,
+} from '../../../../mutations/__generated__/UpdateFlowInstanceMutation.graphql';
 import type {StartBlockInputType} from '../builder/canvas/graph/shapes/blocks/blockTypes/manualStart/ManualStartSettingsType';
 import type {TrueFalseBlockInputType} from '../builder/canvas/graph/shapes/blocks/blockTypes/trueFalse/TrueFalseSettings';
 
@@ -36,6 +40,7 @@ import {TYPE as TriggerWorkforce} from '../builder/canvas/graph/facades/shapes/v
 import BaseBlock from '../builder/canvas/graph/shapes/blocks/BaseBlock';
 import ImportFlowDraftMutation from '../../../../mutations/ImportFlowDraft';
 import PublishFlowMutation from '../../../../mutations/PublishFlowMutation';
+import UpdateFlowInstanceMutation from '../../../../mutations/UpdateFlowInstance';
 import {getGraphError} from '../../../../common/EntUtils';
 import {isLasso} from '../builder/canvas/graph/facades/shapes/vertexes/helpers/Lasso';
 
@@ -85,6 +90,24 @@ export function publishFlow(
       },
     };
     PublishFlowMutation({input}, callbacks);
+  });
+}
+export function updateFlowInstance(
+  input: UpdateFlowInstanceMutationVariables,
+): Promise<UpdateFlowInstanceMutationResponse> {
+  return new Promise<UpdateFlowInstanceMutationResponse>((resolve, reject) => {
+    const callbacks: MutationCallbacks<UpdateFlowInstanceMutationResponse> = {
+      onCompleted: (response, errors) => {
+        if (errors && errors[0]) {
+          reject(getGraphError(errors[0]));
+        }
+        resolve(response);
+      },
+      onError: error => {
+        reject(getGraphError(error));
+      },
+    };
+    UpdateFlowInstanceMutation(input, callbacks);
   });
 }
 
@@ -294,6 +317,7 @@ export function hasMeaningfulChanges(shape: IShape): boolean {
 export const saveBlockInformation = (
   blockFormQuery,
   createdBlock: BaseBlock,
+  isFailed:?boolean,
 ) => {
   createdBlock.setInputSettings({
     enableInputTransformation: blockFormQuery.enableInputTransformation,
@@ -326,4 +350,5 @@ export const saveBlockInformation = (
   });
   const {__typename, ...configurationParameters} = blockFormQuery.details;
   createdBlock.setSettings(configurationParameters);
+  createdBlock.setFailed(isFailed);
 };
