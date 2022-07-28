@@ -756,15 +756,21 @@ func (r mutationResolver) DuplicateFlow(ctx context.Context, input models.Duplic
 		SetCreationDate(time.Now()).
 		Save(ctx)
 
+	if err != nil {
+		return nil, fmt.Errorf("failed to duplicate flow: %w", err)
+	}
+
 	blockQuery := client.Block.Query().
 		Where(block.HasFlowWith(flow.ID(f.ID)))
 	setFlowBlocks := func(b *ent.BlockCreate) {
 		b.SetFlow(newFlow)
 	}
-	if err := flowengine.CopyBlocks(ctx, blockQuery, setFlowBlocks); err != nil {
-		return nil, err
+	count, _ := f.QueryBlocks().Count(ctx)
+	if count > 0 {
+		if err := flowengine.CopyBlocks(ctx, blockQuery, setFlowBlocks); err != nil {
+			return nil, err
+		}
 	}
-
 	return newFlow, nil
 
 }

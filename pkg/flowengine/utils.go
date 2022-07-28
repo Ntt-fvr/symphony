@@ -57,7 +57,7 @@ func getOrCreateExitPoint(ctx context.Context, exitPoint *ent.ExitPoint, newBloc
 		exitpoint.HasParentBlockWith(block.ID(newBlock.ID)),
 		exitpoint.RoleEQ(exitPoint.Role),
 	}
-	if exitPoint.Cid != nil {
+	if exitPoint.Cid != nil && exitPoint.Role != flowschema.ExitPointRoleDefault {
 		predicates = append(predicates, exitpoint.Cid(*exitPoint.Cid))
 	} else {
 		predicates = append(predicates, exitpoint.CidIsNil())
@@ -83,6 +83,8 @@ func getOrCreateExitPoint(ctx context.Context, exitPoint *ent.ExitPoint, newBloc
 		if err != nil {
 			return nil, fmt.Errorf("failed to create new exit point: %w", err)
 		}
+	} else {
+		newExitPoint.Update().SetNillableCid(exitPoint.Cid).SaveX(ctx)
 	}
 	return newExitPoint, nil
 }

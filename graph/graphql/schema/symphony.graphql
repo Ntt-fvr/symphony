@@ -8373,12 +8373,9 @@ type Mutation {
   deletePermissionsPolicy(id: ID!): Boolean!
   addStartBlock(flowDraftId: ID!, input: StartBlockInput!): Block!
   addEndBlock(flowDraftId: ID!, input: EndBlockInput!): Block!
-  #addDecisionBlock(flowDraftId: ID!, input: DecisionBlockInput!): Block!
   addGotoBlock(flowDraftId: ID!, input: GotoBlockInput!): Block!
-  #addSubflowBlock(flowDraftId: ID!, input: SubflowBlockInput!): Block!
   addTriggerBlock(flowDraftId: ID!, input: TriggerBlockInput!): Block!
   addActionBlock(flowDraftId: ID!, input: ActionBlockInput!): Block!
-  #addTrueFalseBlock(flowDraftId: ID!, input: TrueFalseBlockInput!): Block!
   addChoiceBlock(flowDraftId: ID!, input: ChoiceBlockInput!): Block!
   addExecuteFlowBlock(flowDraftId: ID!, input: ExecuteFlowBlockInput!): Block!
   addTimerBlock(flowDraftId: ID!, input: TimerBlockInput!): Block!
@@ -8545,18 +8542,6 @@ type WorkOrderStatusChangedPayload
   The work order of which status was modified.
   """
   workOrder: WorkOrder!
-}
-
-type Subscription {
-  workOrderAdded: WorkOrder
-  workOrderDone: WorkOrder
-  workOrderStatusChanged: WorkOrderStatusChangedPayload!
-  flowInstanceDone: FlowInstance!
-  projectAdded: Project
-  projectChanged: Project
-  locationAdded: Location
-  locationChanged: Location
-  AddImage: File
 }
 
 type Counter implements Node {
