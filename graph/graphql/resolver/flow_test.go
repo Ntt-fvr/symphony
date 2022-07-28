@@ -10,8 +10,6 @@ import (
 	"testing"
 	"time"
 
-	"github.com/facebookincubator/symphony/pkg/ent/checklistitemdefinition"
-
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
 	pkgmodels "github.com/facebookincubator/symphony/pkg/exporter/models"
 
@@ -330,7 +328,7 @@ func TestCreateDraftFromExistingFlowAndPublish(t *testing.T) {
 	defer r.Close()
 	ctx := viewertest.NewContext(context.Background(), r.client)
 	mr, qr, br, ver, bvr := r.Mutation(), r.Query(), r.Block(), r.VariableExpression(), r.BlockVariable()
-	mainFlow, subFlow := prepareComplexFlow(ctx, t, mr, "Main",
+	mainFlow, _ := prepareComplexFlow(ctx, t, mr, "Main",
 		&flowschema.BlockUIRepresentation{
 			Name:      "Start",
 			XPosition: 20,
@@ -363,22 +361,6 @@ func TestCreateDraftFromExistingFlowAndPublish(t *testing.T) {
 	foundFlow, err := qr.Node(ctx, mainFlow.ID)
 	require.NoError(t, err)
 	require.Equal(t, "Main", foundFlow.(*ent.Flow).Name)
-	_, err = mr.AddSubflowBlock(ctx, draft.ID, models.SubflowBlockInput{
-		Cid:    "blackbox",
-		FlowID: subFlow.ID,
-		Params: []*models.VariableExpressionInput{
-			{
-				Type:                  enum.VariableDefinition,
-				VariableDefinitionKey: refString("start_param"),
-				Expression:            "\"Start\"",
-			},
-		},
-		UIRepresentation: &flowschema.BlockUIRepresentation{
-			Name:      "SUB_FLOW",
-			XPosition: 60,
-			YPosition: 60,
-		},
-	})
 	require.NoError(t, err)
 	blks, err := draft.QueryBlocks().All(ctx)
 	require.NoError(t, err)
@@ -575,7 +557,6 @@ func TestImportEmptyFlow(t *testing.T) {
 	woType, err := mr.AddWorkOrderType(ctx, models.AddWorkOrderTypeInput{Name: "SiteSurvey", Properties: propTypeInputs, CheckListCategories: clcInputs})
 	require.NoError(t, err)
 	propertyTypeID := woType.QueryPropertyTypes().Where(propertytype.Name("str_prop")).OnlyIDX(ctx)
-	checkListItemID := woType.QueryCheckListCategoryDefinitions().QueryCheckListItemDefinitions().Where(checklistitemdefinition.Title("Foo")).OnlyIDX(ctx)
 	wkType, err := mr.AddWorkerType(ctx, models.AddWorkerTypeInput{Name: "worker", PropertyTypes: propTypeInputs})
 	require.NoError(t, err)
 	propertyTypeWkID := wkType.QueryPropertyTypes().Where(propertytype.Name("str_prop")).OnlyIDX(ctx)
@@ -616,23 +597,6 @@ func TestImportEmptyFlow(t *testing.T) {
 			TargetBlockCid: "shortcut",
 		},
 	}
-	condition1 := models.VariableExpressionInput{
-		Type:                  enum.DecisionDefinition,
-		VariableDefinitionKey: refString("param"),
-		Expression:            "${b_0}",
-		BlockVariables: []*models.BlockVariableInput{
-			{
-				Type:           enum.PropertyTypeDefinition,
-				BlockCid:       "wo",
-				PropertyTypeID: refInt(propertyTypeID),
-			},
-			{
-				Type:                      enum.ChekListItemDefinition,
-				BlockCid:                  "wo",
-				CheckListItemDefinitionID: refInt(checkListItemID),
-			},
-		},
-	}
 	newDraft, err := mr.ImportFlowDraft(ctx, models.ImportFlowDraftInput{
 		ID:                  draft.ID,
 		Name:                newName,
@@ -657,21 +621,6 @@ func TestImportEmptyFlow(t *testing.T) {
 								VariableDefinitionKey: refString("param"),
 							},
 						},
-					},
-				},
-			},
-		},
-		DecisionBlocks: []*models.DecisionBlockInput{
-			{
-				Cid: "decision1",
-				Routes: []*models.DecisionRouteInput{
-					{
-						Cid:       pointer.ToString("true"),
-						Condition: &condition1,
-					},
-					{
-						Cid:       pointer.ToString("false"),
-						Condition: &condition1,
 					},
 				},
 			},
@@ -737,11 +686,6 @@ func TestImportEmptyFlow(t *testing.T) {
 			{
 				Cid:            "shortcut",
 				TargetBlockCid: pointer.ToString("end"),
-			},
-		},
-		TrueFalseBlocks: []*models.TrueFalseBlockInput{
-			{
-				Cid: "trueFalse",
 			},
 		},
 		Connectors: connectorInputs,
@@ -1001,4 +945,50 @@ func TestBadImports(t *testing.T) {
 		})
 		require.Error(t, err)
 	})
+}
+
+func TestArchiveFlow(t *testing.T) {
+	r := newTestResolver(t)
+	defer r.Close()
+	ctx := viewertest.NewContext(context.Background(), r.client)
+	mr := r.Mutation()
+	basicFlow := prepareBasicFlow(ctx, t, mr, "flow", nil, nil)
+	_, err := mr.ArchiveFlow(ctx, models.ArchiveFlowInput{
+		FlowID: basicFlow.ID,
+	})
+	require.NoError(t, err)
+	flowInstance, err := mr.StartFlow(ctx, models.StartFlowInput{
+		FlowID: basicFlow.ID,
+		// BssCode: "CODE123",
+		StartDate: time.Now(),
+		Params:    []*flowschema.VariableValue{},
+	})
+	endBlock, err := flowInstance.QueryTemplate().
+		QueryBlocks().
+		Where(block.TypeEQ(block.TypeEnd)).
+		Only(ctx)
+	_, err = mr.AddBlockInstance(ctx, flowInstance.ID, models.AddBlockInstanceInput{
+		BlockID:   endBlock.ID,
+		StartDate: time.Now(),
+	})
+	require.Error(t, err)
+}
+
+func TestDuplicateFlow(t *testing.T) {
+	r := newTestResolver(t)
+	defer r.Close()
+	ctx := viewertest.NewContext(context.Background(), r.client)
+	mr := r.Mutation()
+	basicFlow := prepareBasicFlow(ctx, t, mr, "flow", nil, nil)
+	duplicatedFlow, err := mr.DuplicateFlow(ctx, models.DuplicateFlowInput{
+		FlowID: basicFlow.ID,
+	})
+	require.NoError(t, err)
+	blks, err := basicFlow.QueryBlocks().All(ctx)
+	require.NoError(t, err)
+	require.Len(t, blks, 3)
+	duplicatedBlks, err := duplicatedFlow.QueryBlocks().All(ctx)
+	require.NoError(t, err)
+	require.EqualValues(t, blks, duplicatedBlks, nil)
+	require.Len(t, duplicatedBlks, 3)
 }

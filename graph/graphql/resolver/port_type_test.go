@@ -6,7 +6,6 @@ package resolver_test
 
 import (
 	"context"
-	"fmt"
 	"testing"
 
 	"github.com/AlekSi/pointer"
@@ -242,7 +241,6 @@ func TestEditEquipmentPortTypeWithLinkProperties(t *testing.T) {
 	})
 	require.NoError(t, err)
 	require.Equal(t, portType.Name, newType.Name, "successfully edited EquipmentPort type name")
-
 
 	strProp = newType.QueryLinkPropertyTypes().Where(propertytype.TypeEQ(propertytype.TypeString)).OnlyX(ctx)
 	require.Equal(t, "str_prop_new", strProp.Name, "successfully edited prop type name")
