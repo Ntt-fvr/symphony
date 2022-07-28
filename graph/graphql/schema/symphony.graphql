@@ -6651,6 +6651,7 @@ input AddFlowDraftInput {
 input PublishFlowInput {
   flowDraftID: ID!
   flowInstancesPolicy: FlowNewInstancesPolicy!
+  cmType: FlowCMType
 }
 
 input ArchiveFlowInput {
