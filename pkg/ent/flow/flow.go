@@ -201,8 +201,9 @@ type CmType string
 
 // CmType values.
 const (
-	CmTypeInitialConfig CmType = "INITIAL_CONFIG"
-	CmTypeGeneralCr     CmType = "GENERAL_CR"
+	CmTypeInitialConfig  CmType = "INITIAL_CONFIG"
+	CmTypeGeneralCr      CmType = "GENERAL_CR"
+	CmTypeSyncParameters CmType = "SYNC_PARAMETERS"
 )
 
 func (ct CmType) String() string {
@@ -212,7 +213,7 @@ func (ct CmType) String() string {
 // CmTypeValidator is a validator for the "cm_type" field enum values. It is called by the builders before save.
 func CmTypeValidator(ct CmType) error {
 	switch ct {
-	case CmTypeInitialConfig, CmTypeGeneralCr:
+	case CmTypeInitialConfig, CmTypeGeneralCr, CmTypeSyncParameters:
 		return nil
 	default:
 		return fmt.Errorf("flow: invalid enum value for cm_type field: %q", ct)

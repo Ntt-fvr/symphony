@@ -4998,6 +4998,7 @@ type Flow implements Node {
 enum FlowCMType {
   GENERAL_CM
   INITIAL_CONFIG
+  SYNC_PARAMETERS
 }
 
 """A connection to a list of Flows."""
