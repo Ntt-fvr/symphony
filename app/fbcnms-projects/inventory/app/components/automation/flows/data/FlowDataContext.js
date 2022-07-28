@@ -221,11 +221,13 @@ const flowInstanceQuery = graphql`
         id
         status
         startDate
+        incompletion_reason
         template {
           id
           name
           description
           blocks {
+            id
             cid
             details {
               __typename
@@ -247,6 +249,11 @@ const flowInstanceQuery = graphql`
             id
           }
         }
+        blocks {
+          failure_reason
+          status
+          id
+        }
       }
     }
   }
@@ -258,17 +265,16 @@ type Props = $ReadOnly<{|
 |}>;
 
 function FlowDataContextProviderComponent(props: Props) {
-  const {flowId,isReadOnly} = props;
+  const {flowId, isReadOnly} = props;
   const [hasChanges, setHasChanges] = useState(false);
   const [hasPublish, setHasPublish] = useState(false);
   const [currentStatus, setCurrentStatus] = useState('');
-  const {flowDraft} = useLazyLoadQuery<FlowDataContext_FlowDraftQuery|any>(
-    isReadOnly?flowInstanceQuery: flowQuery,
+  const {flowDraft} = useLazyLoadQuery<FlowDataContext_FlowDraftQuery | any>(
+    isReadOnly ? flowInstanceQuery : flowQuery,
     {
       flowId: flowId ?? '',
     },
   );
-
 
   const enqueueSnackbar = useEnqueueSnackbar();
   const handleError = useCallback(
@@ -307,7 +313,8 @@ function FlowDataContextProviderComponent(props: Props) {
             name: block.uiRepresentation?.name ?? '',
           });
         } else {
-          saveBlockInformation(block, createdBlock);
+          const isFailed = checkFailed(block);
+          saveBlockInformation(block, createdBlock, isFailed);
         }
       });
 
@@ -324,6 +331,17 @@ function FlowDataContextProviderComponent(props: Props) {
     },
     [flow, enqueueSnackbar],
   );
+
+  const checkFailed = block => {
+    if (isReadOnly) {
+      const blockStatus =
+        flowDraft.blocks?.length > 0
+          ? flowDraft.blocks?.find(i => i.id == block.id).status
+          : block.details.__typename.toLowerCase().includes('choice');
+      return flowDraft.status == 'FAILING' && blockStatus;
+    }
+    return false;
+  };
 
   const loadConnectorsIntoGraph = useCallback(
     blocks => {
@@ -353,13 +371,15 @@ function FlowDataContextProviderComponent(props: Props) {
       return;
     }
 
-    const blocks = isReadOnly?[...flowDraft.template.blocks]: [...flowDraft.blocks];
+    const blocks = isReadOnly
+      ? [...flowDraft.template.blocks]
+      : [...flowDraft.blocks];
     loadBlocksIntoGraph(blocks);
     loadConnectorsIntoGraph(blocks);
 
     isLoaded.current = true;
 
-    if(isReadOnly){
+    if (isReadOnly) {
       setCurrentStatus(flowDraft.status);
     }
 
@@ -379,7 +399,7 @@ function FlowDataContextProviderComponent(props: Props) {
       }
 
       const flowData: ImportFlowDraftInput = {
-        id: isReadOnly? flowDraft.template.id : flowDraft.id ?? '',
+        id: isReadOnly ? flowDraft.template.id : flowDraft.id ?? '',
         name:
           flowSettingsUpdate?.name != null
             ? flowSettingsUpdate.name
@@ -512,26 +532,37 @@ function FlowDataContextProviderComponent(props: Props) {
     return publishPromise;
   }, [flowDraft]);
 
-  const updateInstance = useCallback(inputData => {
-    const flowData = {
-      input:{
-        id: flowDraft.id ?? '',
-        status: inputData.status,
-      }
-    };
+  const updateInstance = useCallback(
+    inputData => {
+      const flowData = {
+        input: {
+          id: flowDraft.id ?? '',
+          status: inputData.status,
+        },
+      };
 
-    const updateInstancePromise = updateFlowInstance(flowData);
+      const updateInstancePromise = updateFlowInstance(flowData);
 
-    updateInstancePromise.then(data => {
-      setCurrentStatus(data.editFlowInstance.status);
-    });
+      updateInstancePromise.then(data => {
+        setCurrentStatus(data.editFlowInstance.status);
+      });
 
-    return updateInstancePromise;
-  }, [flowDraft]);
+      return updateInstancePromise;
+    },
+    [flowDraft],
+  );
 
   return (
     <FlowDataContext.Provider
-      value={{flowDraft, hasChanges, hasPublish,currentStatus,updateInstance, save, publish}}>
+      value={{
+        flowDraft,
+        hasChanges,
+        hasPublish,
+        currentStatus,
+        updateInstance,
+        save,
+        publish,
+      }}>
       {props.children}
     </FlowDataContext.Provider>
   );

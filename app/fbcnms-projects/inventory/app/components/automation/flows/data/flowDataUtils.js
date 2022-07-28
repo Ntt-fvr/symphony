@@ -317,6 +317,7 @@ export function hasMeaningfulChanges(shape: IShape): boolean {
 export const saveBlockInformation = (
   blockFormQuery,
   createdBlock: BaseBlock,
+  isFailed:?boolean,
 ) => {
   createdBlock.setInputSettings({
     enableInputTransformation: blockFormQuery.enableInputTransformation,
@@ -349,4 +350,5 @@ export const saveBlockInformation = (
   });
   const {__typename, ...configurationParameters} = blockFormQuery.details;
   createdBlock.setSettings(configurationParameters);
+  createdBlock.setFailed(isFailed);
 };

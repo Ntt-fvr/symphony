@@ -183,7 +183,7 @@
      render: row => (
        <Button
          variant="text"
-         onClick={() => window.open(InventoryAPIUrls.flow(row.id, true))}
+         onClick={() => window.open(InventoryAPIUrls.flowinstance(row.id))}
          tooltip={row.id ?? ''}>
          {row.id}
        </Button>

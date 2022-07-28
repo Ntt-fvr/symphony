@@ -20,6 +20,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import MenuTopBar from './MenuTopBar';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
+import Popover from '@material-ui/core/Popover';
 import React, {useCallback, useState} from 'react';
 import Strings from '@fbcnms/strings/Strings';
 import ToolsBar from './ToolsBar';
@@ -34,6 +35,7 @@ import {
   UndoIcon,
 } from '@symphony/design-system/icons';
 import {TYPE as ForEachLoopType} from '../canvas/graph/facades/shapes/vertexes/logic/ForEachLoop';
+import {FlowLogsTable} from './FlowLogs';
 import {Grid} from '@material-ui/core';
 import {IconButton as MatIconButton} from '@material-ui/core';
 import {POSITION} from '@symphony/design-system/components/Dialog/DialogFrame';
@@ -57,6 +59,13 @@ const useStyles = makeStyles(() => ({
     justifyContent: 'space-between',
     flexWrap: 'wrap',
     zIndex: 1,
+  },
+  fullWidth:{
+    backgroundColor: BLUE.B600,
+    color:'white',
+    width: '100%',
+    margin: '0',
+    padding: '10px',
   },
   iconroot: {
     '& div[class*="textVariant"]': {
@@ -353,23 +362,56 @@ function ViewerTopBar() {
   const classes = useStyles();
   const selection = useGraphSelection();
   const selectionCount = selection.selectedElements.length;
+  const [anchorEl, setAnchorEl] = React.useState(null);
+
+  const handleClick = event => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const open = Boolean(anchorEl);
+  const id = open ? 'simple-popover' : undefined;
 
   return (
     <ToolsBar className={classes.root}>
       <div className={classes.left}>
-      <div className={classes.iconroot}>
+        <div className={classes.iconroot}>
           <Tooltip tooltip={``}>
             <IconButton skin={'inherit'} icon={ArrowBackIcon} />
           </Tooltip>
         </div>
         <div className={classes.iconroot}>
-          <Tooltip tooltip={`View ${selectionCount == 0? 'Workflow' : 'Block'} Logs`}>
-            <IconButton skin={'inherit'} icon={ListAltIcon} />
+          <Tooltip
+            tooltip={`View ${selectionCount == 0 ? 'Workflow' : 'Block'} Logs`}>
+            <IconButton
+              skin={'inherit'}
+              icon={ListAltIcon}
+              onClick={handleClick}
+            />
           </Tooltip>
+          <Popover
+            id={id}
+            open={open}
+            anchorEl={anchorEl}
+            onClose={handleClose}
+            anchorOrigin={{
+              vertical: 'top',
+              horizontal: 'left',
+            }}
+            transformOrigin={{
+              vertical: 'top',
+              horizontal: 'left',
+            }}>
+            <h4 className={classes.fullWidth}> {`${selectionCount == 0 ? 'Workflow' : 'Block'} Log`} </h4>
+            <FlowLogsTable />
+          </Popover>
         </div>
       </div>
       <div className={classes.right}>
-        <Tooltip tooltip={'Edit flow status'}>
+        <Tooltip tooltip={'Edit flow data'}>
           <Button
             onClick={e => {
               e.preventDefault();

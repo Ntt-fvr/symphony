@@ -50,24 +50,18 @@
    return [
      <NavListItem
        key={1}
-       label={fbt('Instances Flows', '')}
-       path={relativeUrl('/search')}
-       icon={<WorkIcon />}
-     />,
-     <NavListItem
-       key={2}
        label={fbt('Automation Flows', '')}
        path={relativeUrl('/flows')}
        icon={<AutomationFlowsIcon />}
      />,
      <NavListItem
-       key={3}
+       key={2}
        label={fbt('Operation', '')}
        path={relativeUrl('/operation')}
        icon={<OperationsIcon />}
      />,
      <NavListItem
-       key={4}
+       key={3}
        label="Templates"
        path={relativeUrl('/configure')}
        icon={<AssignmentIcon />}
@@ -79,18 +73,16 @@
  }
  
  const FLOW_BUILDER_PATH = '/flow/';
+ const FLOW_INSTANCE_PATH = '/flowinstance/';
  
  function NavRoutes() {
    const relativeUrl = useRelativeUrl();
    return (
      <Switch>
-       <Route
-         path={relativeUrl('/search')}
-         component={AutomationFlowInstances}
-       />
        <Route path={relativeUrl('/flows')} component={AutomationFlowsView} />
        <Route path={relativeUrl('/operation')} component={Operation} />
        <Route path={relativeUrl(FLOW_BUILDER_PATH)} component={FlowBuilder} />
+       <Route path={relativeUrl(FLOW_INSTANCE_PATH)} component={FlowBuilder} />
        <Route path={relativeUrl('/configure')} component={AutomationConfigure} />
        <Redirect to={relativeUrl('/flows')} />
      </Switch>
@@ -102,7 +94,7 @@
    const {tabs, user, ssoEnabled} = useContext(AppContext);
  
    const location = useLocation();
-   const shouldHideAppSideBar = location.pathname.includes(FLOW_BUILDER_PATH);
+   const shouldHideAppSideBar = location.pathname.includes(FLOW_BUILDER_PATH) || location.pathname.includes(FLOW_INSTANCE_PATH);
  
    return (
      <div className={classes.root}>

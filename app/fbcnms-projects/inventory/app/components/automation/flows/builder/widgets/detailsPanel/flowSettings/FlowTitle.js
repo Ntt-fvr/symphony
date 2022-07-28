@@ -69,7 +69,7 @@ export default function FlowTitle(props) {
       <Grid item xs zeroMinWidth>
         <Typography variant={'h6'} noWrap>
           {isReadOnly
-            ? flowData.flowDraft?.template?.name
+            ? flowData.flowDraft?.id
             : flowData.flowDraft?.name}
         </Typography>
       </Grid>

@@ -24,7 +24,6 @@ import {useGraphSelection} from '../selection/GraphSelectionContext';
 import {useKeyboardShortcuts} from '../keyboardShortcuts/KeyboardShortcutsContext';
 import {useReadOnlyMode} from '../readOnlyModeContext';
 import FlowInstanceDetails from '../../tools/FlowInstanceDetails';
-import {useLocation} from 'react-router-dom';
 
 type SettingsPanelType = $ReadOnly<{|
   title: React.Node,
@@ -40,10 +39,8 @@ const useStyles = makeStyles(() => ({
 export default function useSettingsPanel(): SettingsPanelType {
   const classes = useStyles();
   const selection = useGraphSelection();
-  const selectionCount = selection.selectedElements.length;   
-  const location = useLocation();
-  const queryParams = new URLSearchParams(location.search);
-  const readOnly = queryParams.get('readOnly');
+  const selectionCount = selection.selectedElements.length;
+  const {isReadOnly} = useReadOnlyMode();
 
   const keyboardShortcutsContext = useKeyboardShortcuts();
 
@@ -53,7 +50,7 @@ export default function useSettingsPanel(): SettingsPanelType {
   });
 
   const readOnlyDetails = () =>({
-    title: <FlowTitle className={classes.title} isReadOnly={readOnly}/>,
+    title: <FlowTitle className={classes.title} isReadOnly={isReadOnly}/>,
     children: <FlowInstanceDetails />
   })
 
@@ -73,7 +70,7 @@ export default function useSettingsPanel(): SettingsPanelType {
     children: <SelectionSettings selection={selection} />,
   });
 
-  const details = readOnly == 'true' ? readOnlyDetails():
+  const details = isReadOnly ? readOnlyDetails():
     selectionCount === 0 
       ? noSelectionDetails()
       : selectionCount === 1

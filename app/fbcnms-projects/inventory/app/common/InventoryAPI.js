@@ -27,14 +27,15 @@
    workorder: (workorderId: ?string) =>
      `/workorders/search${!!workorderId ? `?workorder=${workorderId}` : ''}`,
    flows: () => '/automation/flows',
-   flow: (flowId: ?string, readOnly: boolean = false) =>
+   flow: (flowId: ?string) =>
      `/automation/flow/?flowId=${
        !!flowId ? flowId : NEW_FLOW_PARAM
-     }&&readOnly=${readOnly}`,
-   flowinstance: (flowinstanceId: ?string) =>
-     `/automation/search${
-       !!flowinstanceId ? `?flowinstance=${flowinstanceId}` : ''
      }`,
+   flowinstance: (flowId: ?string) =>
+     `/automation/flowinstance/?flowId=${
+       !!flowId ? flowId : NEW_FLOW_PARAM
+     }`,
+
    search: POWER_SEARCH,
  };
  

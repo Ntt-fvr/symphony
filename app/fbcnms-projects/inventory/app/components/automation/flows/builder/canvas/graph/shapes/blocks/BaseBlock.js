@@ -75,6 +75,14 @@ const selectionHighlighting = {
     },
   },
 };
+const failedHighlighting = {
+  highlighter: {
+    name: 'addClass',
+    options: {
+      className: DISPLAY_SETTINGS.classes.failed,
+    },
+  },
+};
 
 type settingsTypes =
   | WaitSignalSettingsType
@@ -207,12 +215,23 @@ export default class BaseBlock implements IBlock {
     this.isSelected = true;
 
     this.view.highlight(undefined, selectionHighlighting);
+    this.view.unhighlight(undefined, failedHighlighting);
+  }
+
+  setFailed(failed) {
+    if (failed) {
+      this.failed = true;
+      this.view.highlight(undefined, failedHighlighting);
+    }
   }
 
   deselect() {
     this.isSelected = false;
 
     this.view.unhighlight(undefined, selectionHighlighting);
+    if(this.failed){
+      this.view.highlight(undefined, failedHighlighting);
+    }
   }
 
   getPorts(): $ReadOnlyArray<VertexPort> {
@@ -247,7 +266,8 @@ export default class BaseBlock implements IBlock {
     model?: ?ILinkModel,
   ) {
     const outputPort = this.getOutputPorts()[0]?.id;
-    const outputPortChoice = model !== undefined ? IsOutputPortChoise(model, outputPort): false;
+    const outputPortChoice =
+      model !== undefined ? IsOutputPortChoise(model, outputPort) : false;
 
     if (outputPortChoice) {
       model.appendLabel({

@@ -84,7 +84,7 @@ export default function FlowBuilder() {
   const history = useHistory();
   const queryParams = new URLSearchParams(location.search);
   const flowId = queryParams.get('flowId');
-  const readOnly = queryParams.get('readOnly');
+  const readOnly = location.pathname.includes('flowinstance');
 
   const isNewFlowDraft = flowId?.startsWith(NEW_FLOW_PARAM) || false;
   const isOnPlayground = flowId?.startsWith(TESTING_PURPOSES) || false;
@@ -99,12 +99,12 @@ export default function FlowBuilder() {
   }, [isNewFlowDraft, isOnPlayground]);
 
   return (
-    <ReadOnlyModeContextProvider isReadOnly={readOnly == 'true'}>
+    <ReadOnlyModeContextProvider isReadOnly={readOnly}>
       <GraphContextProvider>
         <KeyboardShortcutsContextProvider>
           <FlowDataContextProvider
             flowId={isNewFlowDraft || isOnPlayground ? null : flowId}
-            isReadOnly={readOnly == 'true'}>
+            isReadOnly={readOnly}>
             <DialogShowingContextProvider>
               <GraphSelectionContextProvider>
                 <CopyPasteContextProvider>

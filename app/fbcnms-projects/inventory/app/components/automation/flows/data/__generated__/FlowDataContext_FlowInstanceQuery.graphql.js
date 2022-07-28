@@ -14,6 +14,7 @@
 
 /*::
 import type { ConcreteRequest } from 'relay-runtime';
+export type BlockInstanceStatus = "COMPLETED" | "FAILED" | "IN_PROGRESS" | "PENDING" | "WAITING" | "%future added value";
 export type FlowInstanceStatus = "CANCELED" | "CLOSED" | "COMPLETED" | "FAILED" | "FAILING" | "PAUSED" | "RUNNING" | "%future added value";
 export type FlowDataContext_FlowInstanceQueryVariables = {|
   flowId: string
@@ -23,11 +24,13 @@ export type FlowDataContext_FlowInstanceQueryResponse = {|
     +id?: string,
     +status?: FlowInstanceStatus,
     +startDate?: any,
+    +incompletion_reason?: ?string,
     +template?: {|
       +id: string,
       +name: string,
       +description: ?string,
       +blocks: $ReadOnlyArray<{|
+        +id: string,
         +cid: string,
         +details: {|
           +__typename: string
@@ -46,9 +49,13 @@ export type FlowDataContext_FlowInstanceQueryResponse = {|
           |},
           +id: string,
         |}>,
-        +id: string,
       |}>,
     |},
+    +blocks?: $ReadOnlyArray<{|
+      +failure_reason: ?string,
+      +status: BlockInstanceStatus,
+      +id: string,
+    |}>,
   |}
 |};
 export type FlowDataContext_FlowInstanceQuery = {|
@@ -68,11 +75,13 @@ query FlowDataContext_FlowInstanceQuery(
       id
       status
       startDate
+      incompletion_reason
       template {
         id
         name
         description
         blocks {
+          id
           cid
           details {
             __typename
@@ -91,8 +100,12 @@ query FlowDataContext_FlowInstanceQuery(
             }
             id
           }
-          id
         }
+      }
+      blocks {
+        failure_reason
+        status
+        id
       }
     }
     id
@@ -140,24 +153,31 @@ v5 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "name",
+  "name": "incompletion_reason",
   "storageKey": null
 },
 v6 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "cid",
+  "name": "name",
   "storageKey": null
 },
 v7 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "__typename",
+  "name": "cid",
   "storageKey": null
 },
 v8 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "__typename",
+  "storageKey": null
+},
+v9 = {
   "alias": null,
   "args": null,
   "concreteType": "BlockUIRepresentation",
@@ -165,7 +185,7 @@ v8 = {
   "name": "uiRepresentation",
   "plural": false,
   "selections": [
-    (v5/*: any*/),
+    (v6/*: any*/),
     {
       "alias": null,
       "args": null,
@@ -183,7 +203,7 @@ v8 = {
   ],
   "storageKey": null
 },
-v9 = {
+v10 = {
   "alias": null,
   "args": null,
   "concreteType": "FlowExecutionTemplate",
@@ -192,7 +212,7 @@ v9 = {
   "plural": false,
   "selections": [
     (v2/*: any*/),
-    (v5/*: any*/),
+    (v6/*: any*/),
     {
       "alias": null,
       "args": null,
@@ -208,7 +228,8 @@ v9 = {
       "name": "blocks",
       "plural": true,
       "selections": [
-        (v6/*: any*/),
+        (v2/*: any*/),
+        (v7/*: any*/),
         {
           "alias": null,
           "args": null,
@@ -217,11 +238,11 @@ v9 = {
           "name": "details",
           "plural": false,
           "selections": [
-            (v7/*: any*/)
+            (v8/*: any*/)
           ],
           "storageKey": null
         },
-        (v8/*: any*/),
+        (v9/*: any*/),
         {
           "alias": null,
           "args": null,
@@ -230,16 +251,35 @@ v9 = {
           "name": "nextBlocks",
           "plural": true,
           "selections": [
-            (v6/*: any*/),
-            (v8/*: any*/),
+            (v7/*: any*/),
+            (v9/*: any*/),
             (v2/*: any*/)
           ],
           "storageKey": null
-        },
-        (v2/*: any*/)
+        }
       ],
       "storageKey": null
     }
+  ],
+  "storageKey": null
+},
+v11 = {
+  "alias": null,
+  "args": null,
+  "concreteType": "BlockInstance",
+  "kind": "LinkedField",
+  "name": "blocks",
+  "plural": true,
+  "selections": [
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "failure_reason",
+      "storageKey": null
+    },
+    (v3/*: any*/),
+    (v2/*: any*/)
   ],
   "storageKey": null
 };
@@ -264,7 +304,9 @@ return {
               (v2/*: any*/),
               (v3/*: any*/),
               (v4/*: any*/),
-              (v9/*: any*/)
+              (v5/*: any*/),
+              (v10/*: any*/),
+              (v11/*: any*/)
             ],
             "type": "FlowInstance",
             "abstractKey": null
@@ -290,14 +332,16 @@ return {
         "name": "node",
         "plural": false,
         "selections": [
-          (v7/*: any*/),
+          (v8/*: any*/),
           (v2/*: any*/),
           {
             "kind": "InlineFragment",
             "selections": [
               (v3/*: any*/),
               (v4/*: any*/),
-              (v9/*: any*/)
+              (v5/*: any*/),
+              (v10/*: any*/),
+              (v11/*: any*/)
             ],
             "type": "FlowInstance",
             "abstractKey": null
@@ -308,16 +352,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "70b9dd639c075e40f61093233d94867f",
+    "cacheID": "53faeccd4ca601e46ab13a1fc117b86a",
     "id": null,
     "metadata": {},
     "name": "FlowDataContext_FlowInstanceQuery",
     "operationKind": "query",
-    "text": "query FlowDataContext_FlowInstanceQuery(\n  $flowId: ID!\n) {\n  flowDraft: node(id: $flowId) {\n    __typename\n    ... on FlowInstance {\n      id\n      status\n      startDate\n      template {\n        id\n        name\n        description\n        blocks {\n          cid\n          details {\n            __typename\n          }\n          uiRepresentation {\n            name\n            xPosition\n            yPosition\n          }\n          nextBlocks {\n            cid\n            uiRepresentation {\n              name\n              xPosition\n              yPosition\n            }\n            id\n          }\n          id\n        }\n      }\n    }\n    id\n  }\n}\n"
+    "text": "query FlowDataContext_FlowInstanceQuery(\n  $flowId: ID!\n) {\n  flowDraft: node(id: $flowId) {\n    __typename\n    ... on FlowInstance {\n      id\n      status\n      startDate\n      incompletion_reason\n      template {\n        id\n        name\n        description\n        blocks {\n          id\n          cid\n          details {\n            __typename\n          }\n          uiRepresentation {\n            name\n            xPosition\n            yPosition\n          }\n          nextBlocks {\n            cid\n            uiRepresentation {\n              name\n              xPosition\n              yPosition\n            }\n            id\n          }\n        }\n      }\n      blocks {\n        failure_reason\n        status\n        id\n      }\n    }\n    id\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = '3b3a3df20665d4442ab31837f7f05c37';
+(node/*: any*/).hash = '6af0fe0edf7b903ccc7a7c5d50b89d74';
 
 module.exports = node;

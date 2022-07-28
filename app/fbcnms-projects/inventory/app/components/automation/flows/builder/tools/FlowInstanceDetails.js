@@ -11,20 +11,14 @@
 import React, {useState} from 'react';
 import Button from '@symphony/design-system/components/Button';
 import ButtonFlowStatus from '../../../common/ButtonFlowStatus';
-import CloseIcon from '@material-ui/icons/Close';
+import CancelFlowInstanceDialog from '../../view/dialogs/CancelFlowInstanceDialog';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import Menu from '@material-ui/core/Menu';
-import Dialog from '@material-ui/core/Dialog';
-import DialogActions from '@material-ui/core/DialogActions';
-import InfoIcon from '@material-ui/icons/Info';
-import DialogContent from '@material-ui/core/DialogContent';
 import MenuItem from '@material-ui/core/MenuItem';
-import {Grid, Typography} from '@material-ui/core';
+import {Grid} from '@material-ui/core';
 import {IconButton as MatIconButton} from '@material-ui/core';
 import {makeStyles} from '@material-ui/styles';
 import {FlowStatus} from '../../../common/FlowStatusEnums';
-import Paper from '@material-ui/core/Paper';
-import useMediaQuery from '@material-ui/core/useMediaQuery';
 import {useFlowData} from '../../data/FlowDataContext';
 import moment from 'moment';
 
@@ -187,64 +181,10 @@ export default function FlowInstanceDetails() {
           </Grid>
         </Grid>
       </Grid>
-      <div>
-        <Dialog
-          fullScreen={false}
-          open={dialogOpen}
-          onClose={handleClose}
-          aria-labelledby="responsive-dialog-title">
-          <DialogContent>
-            <MatIconButton
-              aria-label="close"
-              className={classes.closeButton}
-              onClick={handleClose}>
-              <CloseIcon />
-            </MatIconButton>
-            <br />
-
-            <div className={classes.root}>
-              <Paper className={classes.paper}>
-                <Grid container wrap="nowrap" spacing={2}>
-                  <Grid item>
-                    <InfoIcon />
-                  </Grid>
-                  <Grid item xs>
-                    <Typography>
-                      <Typography className={classes.typeText}>
-                        Cancel flow
-                      </Typography>
-                      This action is irreversible, the flow will go into a
-                      "Cancelled" state and cannot be executed again.
-                    </Typography>
-                  </Grid>
-                </Grid>
-              </Paper>
-            </div>
-          </DialogContent>
-          <DialogActions className={classes.dialogAction}>
-            <div className={classes.root1}>
-              <Button
-                variant="outlined"
-                className={classes.cancelButton}
-                onClick={handleClose}>
-                <Typography>Cancel</Typography>
-              </Button>
-            </div>
-            <div>
-              <Button
-                variant="contained"
-                color="primary"
-                className={classes.margin}
-                onClick={() => {
-                  handleClose();
-                  flowData.updateInstance({status: FlowStatus.canceled});
-                }}>
-                Continue
-              </Button>
-            </div>
-          </DialogActions>
-        </Dialog>
-      </div>
+      <CancelFlowInstanceDialog
+        dialogOpen={dialogOpen}
+        handleClose={handleClose}
+      />
     </div>
   );
 }

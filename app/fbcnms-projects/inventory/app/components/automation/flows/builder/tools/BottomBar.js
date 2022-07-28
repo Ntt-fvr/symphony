@@ -11,6 +11,7 @@
 import AddIcon from '@material-ui/icons/Add';
 import Alert from '@material-ui/lab/Alert';
 import Button from '@material-ui/core/Button';
+import CancelFlowInstanceDialog from '../../view/dialogs/CancelFlowInstanceDialog';
 import FilterCenterFocusIcon from '@material-ui/icons/FilterCenterFocus';
 import IconButton from '@symphony/design-system/components/IconButton';
 import React, {useEffect} from 'react';
@@ -70,6 +71,15 @@ export default function BottomBar() {
   const flow = useGraph();
   const flowData = useFlowData();
   const [isOnGrabMode, handleOnGrabMode] = usePaperGrab();
+  const [dialogOpen, setDialogOpen] = React.useState(false);
+
+  const handleClickOpen = () => {
+    setDialogOpen(true);
+  };
+
+  const handleClose = () => {
+    setDialogOpen(false);
+  };
 
   useEffect(() => {
     const canvas = document.getElementById('graphContainer');
@@ -123,9 +133,7 @@ export default function BottomBar() {
               <Button
                 color="inherit"
                 size="small"
-                onClick={() => {
-                  flowData.updateInstance({status: FlowStatus.canceled});
-                }}>
+                onClick={() => handleClickOpen()}>
                 <b>Cancel</b>
               </Button>
               <Button
@@ -138,9 +146,13 @@ export default function BottomBar() {
               </Button>
             </div>
           }>
-          {flowData.flowDraft.incompletion_reason}
+          {flowData?.flowDraft?.incompletion_reason != '' ? flowData?.flowDraft?.incompletion_reason : 'Flow instance is failing'}
         </Alert>
       </Snackbar>
+      <CancelFlowInstanceDialog
+        dialogOpen={dialogOpen}
+        handleClose={handleClose}
+      />
     </div>
   );
 }
