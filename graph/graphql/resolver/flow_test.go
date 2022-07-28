@@ -364,7 +364,7 @@ func TestCreateDraftFromExistingFlowAndPublish(t *testing.T) {
 	require.NoError(t, err)
 	blks, err := draft.QueryBlocks().All(ctx)
 	require.NoError(t, err)
-	require.Len(t, blks, 6)
+	require.Len(t, blks, 5)
 	for _, blk := range blks {
 		switch blk.Type {
 		case block.TypeStart:
@@ -421,7 +421,7 @@ func TestCreateDraftFromExistingFlowAndPublish(t *testing.T) {
 	require.Equal(t, "New name", flw.Name)
 	blks, err = flw.QueryBlocks().All(ctx)
 	require.NoError(t, err)
-	require.Len(t, blks, 6)
+	require.Len(t, blks, 5)
 	_, err = qr.Node(ctx, draft.ID)
 	require.NoError(t, err)
 }
@@ -533,7 +533,6 @@ func TestImportEmptyFlow(t *testing.T) {
 			Type: enum.VariableTypeInt,
 		},
 	}
-
 	indexValue := 1
 	clcInputs := []*models.CheckListCategoryDefinitionInput{
 		{
@@ -548,7 +547,6 @@ func TestImportEmptyFlow(t *testing.T) {
 			},
 		},
 	}
-
 	strPropType := pkgmodels.PropertyTypeInput{
 		Name: "str_prop",
 		Type: "string",
@@ -561,7 +559,6 @@ func TestImportEmptyFlow(t *testing.T) {
 	require.NoError(t, err)
 	propertyTypeWkID := wkType.QueryPropertyTypes().Where(propertytype.Name("str_prop")).OnlyIDX(ctx)
 	owner := viewer.FromContext(ctx).(*viewer.UserViewer).User()
-	trueRole := flowschema.ExitPointRoleTrue
 	connectorInputs := []*models.ConnectorInput{
 		{
 			SourceBlockCid: "start",
@@ -569,27 +566,6 @@ func TestImportEmptyFlow(t *testing.T) {
 		},
 		{
 			SourceBlockCid: "wo",
-			TargetBlockCid: "decision1",
-		},
-		{
-			SourceBlockCid: "decision1",
-			SourcePoint: &models.ExitPointInput{
-				Cid: pointer.ToString("false"),
-			},
-			TargetBlockCid: "end",
-		},
-		{
-			SourceBlockCid: "decision1",
-			SourcePoint: &models.ExitPointInput{
-				Cid: pointer.ToString("true"),
-			},
-			TargetBlockCid: "trueFalse",
-		},
-		{
-			SourceBlockCid: "trueFalse",
-			SourcePoint: &models.ExitPointInput{
-				Role: &trueRole,
-			},
 			TargetBlockCid: "end",
 		},
 		{
@@ -696,27 +672,12 @@ func TestImportEmptyFlow(t *testing.T) {
 	require.Equal(t, paramDefinitions, newDraft.EndParamDefinitions)
 	blocks, err := newDraft.QueryBlocks().All(ctx)
 	require.NoError(t, err)
-	require.Len(t, blocks, 8)
+	require.Len(t, blocks, 6)
 	for _, blk := range blocks {
 		switch blk.Type {
 		case block.TypeStart:
 			require.Equal(t, "start", blk.Cid)
 			require.Equal(t, paramDefinitions, blk.StartParamDefinitions)
-		case block.TypeDecision:
-			require.Equal(t, "decision1", blk.Cid)
-			exitPoints := blk.QueryExitPoints().AllX(ctx)
-			require.Len(t, exitPoints, 3)
-			for _, exitPoint := range exitPoints {
-				switch exitPoint.Role {
-				case flowschema.ExitPointRoleDecision:
-					require.Equal(t, enum.PropertyTypeDefinition, exitPoint.Condition.BlockVariables[0].Type)
-					require.Equal(t, enum.ChekListItemDefinition, exitPoint.Condition.BlockVariables[1].Type)
-				case flowschema.ExitPointRoleDefault:
-					require.Empty(t, exitPoint.Condition)
-				default:
-					t.Fatalf("exit point role not found: %v", exitPoint.Role)
-				}
-			}
 		case block.TypeAction:
 			if blk.Cid == "wk" {
 				require.Equal(t, flowschema.ActionTypeWorker, *blk.ActionType)
@@ -756,7 +717,7 @@ func TestImportEmptyFlow(t *testing.T) {
 	}
 	connectors, err := fdr.Connectors(ctx, newDraft)
 	require.NoError(t, err)
-	require.Len(t, connectors, 6)
+	require.Len(t, connectors, 3)
 	for _, connector := range connectors {
 		sourceBlock, err := connector.Source.QueryParentBlock().Only(ctx)
 		require.NoError(t, err)
@@ -766,6 +727,7 @@ func TestImportEmptyFlow(t *testing.T) {
 		for _, connectorInput := range connectorInputs {
 			if sourceBlock.Cid == connectorInput.SourceBlockCid && targetBlock.Cid == connectorInput.TargetBlockCid {
 				found = true
+				break
 			}
 		}
 		if !found {
@@ -957,19 +919,10 @@ func TestArchiveFlow(t *testing.T) {
 		FlowID: basicFlow.ID,
 	})
 	require.NoError(t, err)
-	flowInstance, err := mr.StartFlow(ctx, models.StartFlowInput{
-		FlowID: basicFlow.ID,
-		// BssCode: "CODE123",
+	_, err = mr.StartFlow(ctx, models.StartFlowInput{
+		FlowID:    basicFlow.ID,
 		StartDate: time.Now(),
 		Params:    []*flowschema.VariableValue{},
-	})
-	endBlock, err := flowInstance.QueryTemplate().
-		QueryBlocks().
-		Where(block.TypeEQ(block.TypeEnd)).
-		Only(ctx)
-	_, err = mr.AddBlockInstance(ctx, flowInstance.ID, models.AddBlockInstanceInput{
-		BlockID:   endBlock.ID,
-		StartDate: time.Now(),
 	})
 	require.Error(t, err)
 }
@@ -982,13 +935,13 @@ func TestDuplicateFlow(t *testing.T) {
 	basicFlow := prepareBasicFlow(ctx, t, mr, "flow", nil, nil)
 	duplicatedFlow, err := mr.DuplicateFlow(ctx, models.DuplicateFlowInput{
 		FlowID: basicFlow.ID,
+		Name:   "duplicateFlow",
 	})
 	require.NoError(t, err)
 	blks, err := basicFlow.QueryBlocks().All(ctx)
 	require.NoError(t, err)
-	require.Len(t, blks, 3)
+	require.Len(t, blks, 2)
 	duplicatedBlks, err := duplicatedFlow.QueryBlocks().All(ctx)
 	require.NoError(t, err)
-	require.EqualValues(t, blks, duplicatedBlks, nil)
-	require.Len(t, duplicatedBlks, 3)
+	require.Len(t, duplicatedBlks, 2)
 }
