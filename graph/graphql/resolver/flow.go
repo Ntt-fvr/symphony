@@ -149,6 +149,7 @@ func (r mutationResolver) PublishFlow(ctx context.Context, input models.PublishF
 		SetEndParamDefinitions(flowDraft.EndParamDefinitions).
 		SetStatus(flow.StatusPublished).
 		SetNewInstancesPolicy(input.FlowInstancesPolicy).
+		SetCmType(input.CmType).
 		ClearBlocks().
 		Save(ctx)
 	if err != nil {

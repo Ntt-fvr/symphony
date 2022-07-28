@@ -1652,6 +1652,7 @@ type PropertyTypeValueFilterInput struct {
 type PublishFlowInput struct {
 	FlowDraftID         int                     `json:"flowDraftID"`
 	FlowInstancesPolicy flow.NewInstancesPolicy `json:"flowInstancesPolicy"`
+	CmType              *flow.CmType            `json:"cmType"`
 }
 
 type PythonPackage struct {
