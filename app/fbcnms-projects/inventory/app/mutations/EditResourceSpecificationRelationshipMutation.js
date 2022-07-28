@@ -9,10 +9,10 @@
  */
 
 import type {
-  AddResourceSpecificationRelationshipListMutation,
-  AddResourceSpecificationRelationshipListMutationResponse,
-  AddResourceSpecificationRelationshipListMutationVariables,
-} from './__generated__/AddResourceSpecificationRelationshipListMutation.graphql';
+  EditResourceSpecificationRelationshipMutation,
+  EditResourceSpecificationRelationshipMutationResponse,
+  EditResourceSpecificationRelationshipMutationVariables,
+} from './__generated__/EditResourceSpecificationRelationshipMutation.graphql';
 
 import type {MutationCallbacks} from './MutationCallbacks.js';
 
@@ -22,10 +22,10 @@ import RelayEnvironment from '../common/RelayEnvironment.js';
 import {commitMutation, graphql} from 'react-relay';
 
 const mutation = graphql`
-  mutation AddResourceSpecificationRelationshipListMutation(
-    $input: [AddResourceSpecificationRelationshipInput!]!
+  mutation EditResourceSpecificationRelationshipMutation(
+    $input: [EditResourceSpecificationRelationshipInput!]!
   ) {
-    addResourceSpecificationRelationshipList(input: $input) {
+    editResourceSpecificationRelationship(input: $input) {
       id
       name
       resourceSpecification {
@@ -37,12 +37,12 @@ const mutation = graphql`
 `;
 
 export default (
-  variables: AddResourceSpecificationRelationshipListMutationVariables,
-  callbacks?: MutationCallbacks<AddResourceSpecificationRelationshipListMutationResponse>,
+  variables: EditResourceSpecificationRelationshipMutationVariables,
+  callbacks?: MutationCallbacks<EditResourceSpecificationRelationshipMutationResponse>,
   updater?: SelectorStoreUpdater,
 ) => {
   const {onCompleted, onError} = callbacks ? callbacks : {};
-  commitMutation<AddResourceSpecificationRelationshipListMutation>(
+  commitMutation<EditResourceSpecificationRelationshipMutation>(
     RelayEnvironment,
     {
       mutation,

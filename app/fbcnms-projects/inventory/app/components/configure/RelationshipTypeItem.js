@@ -73,6 +73,21 @@ const ResourceSpecificationRelationshipsQuery = graphql`
         }
       }
     }
+    resourceSpecificationRelationships {
+      edges {
+        node {
+          id
+          name
+          resourceSpecification {
+            id
+            name
+            resourceType {
+              resourceTypeClass
+            }
+          }
+        }
+      }
+    }
   }
 `;
 
@@ -94,6 +109,11 @@ export default function RelationshipTypeItem(props: Props) {
           operator: 'IS_ONE_OF',
           idSet: [dataForm?.resourceType?.id || dataForm?.id],
         },
+        {
+          filterType: 'RESOURCE_RELATIONSHIP_TYPE',
+          operator: 'IS',
+          typeValue: 'BELONGS_TO',
+        },
       ],
     },
   );
@@ -114,18 +134,35 @@ export default function RelationshipTypeItem(props: Props) {
   ];
 
   const search = text =>
+    response.resourceSpecificationRelationships?.edges
+      .map(item => item.node)
+      .filter(item =>
+        item?.resourceSpecification.resourceType?.resourceTypeClass?.includes(
+          text,
+        ),
+      );
+
+  const searchSpecification = text =>
     response.resourceSpecifications?.edges
       .map(p => p.node)
       .filter(item => item?.resourceType?.resourceTypeClass?.includes(text));
 
+  const spliceItems = searchClass =>
+    searchClass?.map(item => {
+      return {
+        ...item,
+        resourceSpecification: item?.resourceSpecification.id,
+      };
+    });
+
   const [tableTypesSlots, tableTypesDispatcherSlots] = useTableTypesReducer(
-    search('SLOT')[0]?.resourceSpecificationRelationship ?? [],
+    spliceItems(search('SLOT') ?? []),
   );
   const [tableTypesPorts, tableTypesDispatcherPorts] = useTableTypesReducer(
-    search('PORT')[0]?.resourceSpecificationRelationship ?? [],
+    spliceItems(search('PORT') ?? []),
   );
   const [tableTypesCards, tableTypesDispatcherCards] = useTableTypesReducer(
-    search('CARD')[0]?.resourceSpecificationRelationship ?? [],
+    spliceItems(search('CARD') ?? []),
   );
 
   useEffect(() => {
@@ -137,73 +174,49 @@ export default function RelationshipTypeItem(props: Props) {
     ...tableTypesPorts,
     ...tableTypesCards,
   ];
+
   return (
     <>
-      {!dataForm.resourceType?.resourceTypeClass ? null : (
-        <>
-          {getdataAllRelationShips.includes('CARD') && (
-            <>
-              <Grid className={classes.relationship} item xs={12}>
-                <Text weight={'bold'} variant={'h6'}>
-                  Relationship types definition
-                </Text>
-              </Grid>
-              <TableTypesDispatcher.Provider
-                value={{dispatch: tableTypesDispatcherCards, tableTypesCards}}>
-                <TableContextForm
-                  data={search('CARD')}
-                  nameCard="Cards"
-                  selectMultiple
-                  tableTypes={tableTypesCards}
-                />
-              </TableTypesDispatcher.Provider>
-            </>
-          )}
-          {getdataAllRelationShips.includes('PORT') && (
-            <>
-              <Grid className={classes.relationship} item xs={12}>
-                <Text weight={'bold'} variant={'h6'}>
-                  Relationship types definition
-                </Text>
-              </Grid>
-              <TableTypesDispatcher.Provider
-                value={{dispatch: tableTypesDispatcherPorts, tableTypesPorts}}>
-                <TableContextForm
-                  data={search('PORT')}
-                  nameCard="Ports"
-                  tableTypes={tableTypesPorts}
-                />
-              </TableTypesDispatcher.Provider>
-            </>
-          )}
-          {getdataAllRelationShips.includes('SLOT') && (
-            <>
-              <Grid className={classes.relationship} item xs={12}>
-                <Text weight={'bold'} variant={'h6'}>
-                  Relationship types definition
-                </Text>
-              </Grid>
-              <TableTypesDispatcher.Provider
-                value={{dispatch: tableTypesDispatcherSlots, tableTypesSlots}}>
-                <TableContextForm
-                  data={search('SLOT')}
-                  nameCard="Slots"
-                  tableTypes={tableTypesSlots}
-                />
-              </TableTypesDispatcher.Provider>
-            </>
-          )}
-          {getdataAllRelationShips.includes('VLA') && (
-            <>
-              <Grid className={classes.relationship} item xs={12}>
-                <Text weight={'bold'} variant={'h6'}>
-                  Relationship types definition
-                </Text>
-              </Grid>
-              <RelationshipFormValidation nameForm="Vlan" />
-            </>
-          )}
-        </>
+      {!getdataAllRelationShips.length ? null : (
+        <Grid className={classes.relationship} item xs={12}>
+          <Text weight={'bold'} variant={'h6'}>
+            Relationship types definition
+          </Text>
+        </Grid>
+      )}
+      {getdataAllRelationShips.includes('CARD') && (
+        <TableTypesDispatcher.Provider
+          value={{dispatch: tableTypesDispatcherCards, tableTypesCards}}>
+          <TableContextForm
+            data={searchSpecification('CARD')}
+            nameCard="Cards"
+            selectMultiple
+            tableTypes={tableTypesCards}
+          />
+        </TableTypesDispatcher.Provider>
+      )}
+      {getdataAllRelationShips.includes('PORT') && (
+        <TableTypesDispatcher.Provider
+          value={{dispatch: tableTypesDispatcherPorts, tableTypesPorts}}>
+          <TableContextForm
+            data={searchSpecification('PORT')}
+            nameCard="Ports"
+            tableTypes={tableTypesPorts}
+          />
+        </TableTypesDispatcher.Provider>
+      )}
+      {getdataAllRelationShips.includes('SLOT') && (
+        <TableTypesDispatcher.Provider
+          value={{dispatch: tableTypesDispatcherSlots, tableTypesSlots}}>
+          <TableContextForm
+            data={searchSpecification('SLOT')}
+            nameCard="Slots"
+            tableTypes={tableTypesSlots}
+          />
+        </TableTypesDispatcher.Provider>
+      )}
+      {getdataAllRelationShips.includes('VLA') && (
+        <RelationshipFormValidation nameForm="Vlan" />
       )}
     </>
   );

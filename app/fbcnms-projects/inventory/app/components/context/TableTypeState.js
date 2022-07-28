@@ -13,7 +13,6 @@ export type TableType = {|
   name: string,
   index?: ?number,
   isDeleted?: ?boolean,
-  options?: string,
   resourceSpecification?: string,
 |};
 
@@ -25,10 +24,9 @@ import {isTempId} from '../../common/EntUtils';
 import {useReducer} from 'react';
 export type TableState = Array<TableType>;
 
-export const getInitialTableType = (index: number): TableType => ({
+export const getInitialTableType = (): TableType => ({
   id: generateTempId(),
   name: '',
-  index: index,
   resourceSpecification: '',
 });
 

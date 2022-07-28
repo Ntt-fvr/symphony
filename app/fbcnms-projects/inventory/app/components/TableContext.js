@@ -163,6 +163,7 @@ Props) => {
                               onChange={({target}) =>
                                 dispatch({
                                   type: 'UPDATE_PROPERTY_TYPE_NAME',
+                                  ...item,
                                   id: item.id,
                                   name: target.value,
                                 })
@@ -170,6 +171,7 @@ Props) => {
                               onBlur={() =>
                                 dispatch({
                                   type: 'UPDATE_PROPERTY_TYPE_NAME',
+                                  ...item,
                                   id: item.id,
                                   name: item.name.trim(),
                                 })
@@ -186,7 +188,7 @@ Props) => {
                               label={'Select  Specifications'}
                               variant="outlined"
                               fullWidth
-                              value={item.resourceSpecification?.id}
+                              value={item.resourceSpecification ?? ''}
                               defaultValue=""
                               onChange={({target}) => {
                                 dispatch({

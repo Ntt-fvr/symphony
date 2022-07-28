@@ -9,17 +9,17 @@
  */
 
 import type {AddResourceSpecificationMutationVariables} from '../../mutations/__generated__/AddResourceSpecificationMutation.graphql';
-import type {AddResourceSpecificationRelationshipListMutationVariables} from '../../mutations/__generated__/AddResourceSpecificationRelationshipListMutation.graphql';
 import type {EditResourceSpecificationMutationVariables} from '../../mutations/__generated__/EditResourceSpecificationMutation.graphql';
+import type {EditResourceSpecificationRelationshipMutationVariables} from '../../mutations/__generated__/EditResourceSpecificationRelationshipMutation.graphql';
 import type {ResourceSpecifications} from './EditResourceTypeItem';
 
 import AddResourceSpecificationMutation from '../../mutations/AddResourceSpecificationMutation';
-import AddResourceSpecificationRelationshipListMutation from '../../mutations/AddResourceSpecificationRelationshipListMutation';
 import Button from '@material-ui/core/Button';
 import Card from '@symphony/design-system/components/Card/Card';
 import CardHeader from '@symphony/design-system/components/Card/CardHeader';
 import ConfigureTitleSubItem from '../assurance/common/ConfigureTitleSubItem';
 import EditResourceSpecificationMutation from '../../mutations/EditResourceSpecificationMutation';
+import EditResourceSpecificationRelationshipMutation from '../../mutations/EditResourceSpecificationRelationshipMutation';
 import ExpandingPanel from '@fbcnms/ui/components/ExpandingPanel';
 import ExperimentalPropertyTypesTable from '../form/ExperimentalPropertyTypesTable';
 import Grid from '@material-ui/core/Grid';
@@ -91,6 +91,7 @@ export const AddEditResourceSpecification = (props: Props) => {
     filterData,
     vendorData,
   } = props;
+  const classes = useStyles();
   const [dialogSaveForm, setDialogSaveForm] = useState(false);
   const [dialogCancelForm, setDialogCancelForm] = useState(false);
   const [dataCallback, setDataCallback] = useState();
@@ -98,7 +99,6 @@ export const AddEditResourceSpecification = (props: Props) => {
   const callback = data => {
     setDataCallback(data);
   };
-  const classes = useStyles();
 
   const [
     resourceSpecification,
@@ -195,16 +195,19 @@ export const AddEditResourceSpecification = (props: Props) => {
       },
     });
 
-    const variablesPort: AddResourceSpecificationRelationshipListMutationVariables = {
+    const variablesPort: EditResourceSpecificationRelationshipMutationVariables = {
       input: convertTableTypeToMutationInput(dataCallback),
     };
-    AddResourceSpecificationRelationshipListMutation(variablesPort, {
+    EditResourceSpecificationRelationshipMutation(variablesPort, {
       onCompleted: () => {
         isCompleted();
       },
     });
   }
-
+  console.log(
+    'hola soy convertTableTypeToMutationInput(dataCallback),',
+    convertTableTypeToMutationInput(dataCallback),
+  );
   return (
     <div className={classes.root}>
       <Grid
