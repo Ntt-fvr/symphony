@@ -1188,6 +1188,7 @@ var (
 		{Name: "end_param_definitions", Type: field.TypeJSON, Nullable: true},
 		{Name: "status", Type: field.TypeEnum, Enums: []string{"PUBLISHED", "DRAFT", "ARCHIVED", "ON_HOLD"}, Default: "DRAFT"},
 		{Name: "new_instances_policy", Type: field.TypeEnum, Enums: []string{"ENABLED", "DISABLED"}, Default: "DISABLED"},
+		{Name: "cm_type", Type: field.TypeEnum, Enums: []string{"INITIAL_CONFIG", "GENERAL_CR", "SYNC_PARAMETERS"}},
 		{Name: "creation_date", Type: field.TypeTime},
 		{Name: "flow_author", Type: field.TypeInt, Nullable: true},
 	}
@@ -1199,7 +1200,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:  "flows_users_author",
-				Columns: []*schema.Column{FlowsColumns[9]},
+				Columns: []*schema.Column{FlowsColumns[10]},
 
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.SetNull,

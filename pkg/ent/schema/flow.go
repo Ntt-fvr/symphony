@@ -75,6 +75,11 @@ func (Flow) Fields() []ent.Field {
 				"Enabled", "ENABLED",
 				"Disabled", "DISABLED",
 			).Default("DISABLED"),
+		field.Enum("cm_type").NamedValues(
+			"initial_config", "INITIAL_CONFIG",
+			"general_cr", "GENERAL_CR",
+			"sync_parameters", "SYNC_PARAMETERS",
+		).Annotations(entgql.OrderField("CM_TYPE")),
 		field.Time("creation_date").
 			Annotations(
 				entgql.OrderField("CREATED_AT"),

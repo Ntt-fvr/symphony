@@ -630,6 +630,54 @@ func NewInstancesPolicyNotIn(vs ...NewInstancesPolicy) predicate.Flow {
 	})
 }
 
+// CmTypeEQ applies the EQ predicate on the "cm_type" field.
+func CmTypeEQ(v CmType) predicate.Flow {
+	return predicate.Flow(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldCmType), v))
+	})
+}
+
+// CmTypeNEQ applies the NEQ predicate on the "cm_type" field.
+func CmTypeNEQ(v CmType) predicate.Flow {
+	return predicate.Flow(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldCmType), v))
+	})
+}
+
+// CmTypeIn applies the In predicate on the "cm_type" field.
+func CmTypeIn(vs ...CmType) predicate.Flow {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Flow(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.In(s.C(FieldCmType), v...))
+	})
+}
+
+// CmTypeNotIn applies the NotIn predicate on the "cm_type" field.
+func CmTypeNotIn(vs ...CmType) predicate.Flow {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Flow(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.NotIn(s.C(FieldCmType), v...))
+	})
+}
+
 // CreationDateEQ applies the EQ predicate on the "creation_date" field.
 func CreationDateEQ(v time.Time) predicate.Flow {
 	return predicate.Flow(func(s *sql.Selector) {
