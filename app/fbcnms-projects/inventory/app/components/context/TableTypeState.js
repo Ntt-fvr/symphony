@@ -9,11 +9,11 @@
  */
 
 export type TableType = {|
-  id: string,
+  id?: ?string,
   name: string,
   index?: ?number,
   isDeleted?: ?boolean,
-  resourceSpecification?: string,
+  resourceSpecification?: ?string,
 |};
 
 import type {TableDispatcherActionType} from './TableDispatcherActionType';

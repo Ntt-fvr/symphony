@@ -82,6 +82,7 @@ Props) => {
   const classes = useStyles();
   const {dispatch} = useContext(TableTypesDispatcher);
   const [selectChip, setSelectChip] = useState([]);
+  const lengthR = tableTypes.filter(o => o.name.length !== 0);
 
   return (
     <div className={classes.root}>
@@ -90,7 +91,9 @@ Props) => {
           expandIcon={<ExpandMoreIcon />}
           aria-controls="panel1a-content"
           id="panel1a-header">
-          <Typography>{nameCard} Definitions</Typography>
+          <Typography color="primary">
+            {nameCard} Definitions: {lengthR.length} Relationships
+          </Typography>
         </AccordionSummary>
         <AccordionDetails>
           <Grid item container xs>
@@ -154,7 +157,7 @@ Props) => {
                           <FormField>
                             <TextField
                               className={classes.formField}
-                              label={`Select ${nameCard} Specifications `}
+                              label={`${nameCard} Name `}
                               variant="outlined"
                               autoComplete="off"
                               defaultValue=""
@@ -185,7 +188,7 @@ Props) => {
                               className={classes.formField}
                               required
                               select
-                              label={'Select  Specifications'}
+                              label={`Select ${nameCard} Specifications`}
                               variant="outlined"
                               fullWidth
                               value={item.resourceSpecification ?? ''}

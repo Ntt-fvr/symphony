@@ -189,7 +189,7 @@ export default function RelationshipTypeItem(props: Props) {
           value={{dispatch: tableTypesDispatcherCards, tableTypesCards}}>
           <TableContextForm
             data={searchSpecification('CARD')}
-            nameCard="Cards"
+            nameCard="Card"
             selectMultiple
             tableTypes={tableTypesCards}
           />
@@ -200,7 +200,7 @@ export default function RelationshipTypeItem(props: Props) {
           value={{dispatch: tableTypesDispatcherPorts, tableTypesPorts}}>
           <TableContextForm
             data={searchSpecification('PORT')}
-            nameCard="Ports"
+            nameCard="Port"
             tableTypes={tableTypesPorts}
           />
         </TableTypesDispatcher.Provider>
@@ -210,7 +210,7 @@ export default function RelationshipTypeItem(props: Props) {
           value={{dispatch: tableTypesDispatcherSlots, tableTypesSlots}}>
           <TableContextForm
             data={searchSpecification('SLOT')}
-            nameCard="Slots"
+            nameCard="Slot"
             tableTypes={tableTypesSlots}
           />
         </TableTypesDispatcher.Provider>

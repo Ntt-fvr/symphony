@@ -195,19 +195,16 @@ export const AddEditResourceSpecification = (props: Props) => {
       },
     });
 
-    const variablesPort: EditResourceSpecificationRelationshipMutationVariables = {
+    const relationshipItems: EditResourceSpecificationRelationshipMutationVariables = {
       input: convertTableTypeToMutationInput(dataCallback),
     };
-    EditResourceSpecificationRelationshipMutation(variablesPort, {
+    EditResourceSpecificationRelationshipMutation(relationshipItems, {
       onCompleted: () => {
         isCompleted();
       },
     });
   }
-  console.log(
-    'hola soy convertTableTypeToMutationInput(dataCallback),',
-    convertTableTypeToMutationInput(dataCallback),
-  );
+
   return (
     <div className={classes.root}>
       <Grid
