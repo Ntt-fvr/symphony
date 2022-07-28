@@ -31710,6 +31710,7 @@ type FlowMutation struct {
 	end_param_definitions *[]*flowschema.VariableDefinition
 	status                *flow.Status
 	newInstancesPolicy    *flow.NewInstancesPolicy
+	cm_type               *flow.CmType
 	creation_date         *time.Time
 	clearedFields         map[string]struct{}
 	blocks                map[int]struct{}
@@ -32094,6 +32095,43 @@ func (m *FlowMutation) ResetNewInstancesPolicy() {
 	m.newInstancesPolicy = nil
 }
 
+// SetCmType sets the cm_type field.
+func (m *FlowMutation) SetCmType(ft flow.CmType) {
+	m.cm_type = &ft
+}
+
+// CmType returns the cm_type value in the mutation.
+func (m *FlowMutation) CmType() (r flow.CmType, exists bool) {
+	v := m.cm_type
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCmType returns the old cm_type value of the Flow.
+// If the Flow object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *FlowMutation) OldCmType(ctx context.Context) (v flow.CmType, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldCmType is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldCmType requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCmType: %w", err)
+	}
+	return oldValue.CmType, nil
+}
+
+// ResetCmType reset all changes of the "cm_type" field.
+func (m *FlowMutation) ResetCmType() {
+	m.cm_type = nil
+}
+
 // SetCreationDate sets the creation_date field.
 func (m *FlowMutation) SetCreationDate(t time.Time) {
 	m.creation_date = &t
@@ -32382,7 +32420,7 @@ func (m *FlowMutation) Type() string {
 // this mutation. Note that, in order to get all numeric
 // fields that were in/decremented, call AddedFields().
 func (m *FlowMutation) Fields() []string {
-	fields := make([]string, 0, 8)
+	fields := make([]string, 0, 9)
 	if m.create_time != nil {
 		fields = append(fields, flow.FieldCreateTime)
 	}
@@ -32403,6 +32441,9 @@ func (m *FlowMutation) Fields() []string {
 	}
 	if m.newInstancesPolicy != nil {
 		fields = append(fields, flow.FieldNewInstancesPolicy)
+	}
+	if m.cm_type != nil {
+		fields = append(fields, flow.FieldCmType)
 	}
 	if m.creation_date != nil {
 		fields = append(fields, flow.FieldCreationDate)
@@ -32429,6 +32470,8 @@ func (m *FlowMutation) Field(name string) (ent.Value, bool) {
 		return m.Status()
 	case flow.FieldNewInstancesPolicy:
 		return m.NewInstancesPolicy()
+	case flow.FieldCmType:
+		return m.CmType()
 	case flow.FieldCreationDate:
 		return m.CreationDate()
 	}
@@ -32454,6 +32497,8 @@ func (m *FlowMutation) OldField(ctx context.Context, name string) (ent.Value, er
 		return m.OldStatus(ctx)
 	case flow.FieldNewInstancesPolicy:
 		return m.OldNewInstancesPolicy(ctx)
+	case flow.FieldCmType:
+		return m.OldCmType(ctx)
 	case flow.FieldCreationDate:
 		return m.OldCreationDate(ctx)
 	}
@@ -32513,6 +32558,13 @@ func (m *FlowMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetNewInstancesPolicy(v)
+		return nil
+	case flow.FieldCmType:
+		v, ok := value.(flow.CmType)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCmType(v)
 		return nil
 	case flow.FieldCreationDate:
 		v, ok := value.(time.Time)
@@ -32606,6 +32658,9 @@ func (m *FlowMutation) ResetField(name string) error {
 		return nil
 	case flow.FieldNewInstancesPolicy:
 		m.ResetNewInstancesPolicy()
+		return nil
+	case flow.FieldCmType:
+		m.ResetCmType()
 		return nil
 	case flow.FieldCreationDate:
 		m.ResetCreationDate()

@@ -209,20 +209,6 @@ func (r queryResolver) FlowDrafts(
 		Paginate(ctx, after, first, before, last)
 }
 
-func (r queryResolver) Flows(
-	ctx context.Context,
-	after *ent.Cursor, first *int,
-	before *ent.Cursor, last *int,
-	name *string,
-) (*ent.FlowConnection, error) {
-	var predicates []predicate.Flow
-	if name != nil {
-		predicates = append(predicates, flow.NameEQ(*name))
-	}
-	return r.ClientFrom(ctx).Flow.Query().Where(flow.Or(predicates...)).
-		Paginate(ctx, after, first, before, last)
-}
-
 func (r queryResolver) FlowInstances(
 	ctx context.Context,
 	after *ent.Cursor, first *int,

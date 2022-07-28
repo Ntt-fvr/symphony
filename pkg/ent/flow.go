@@ -38,6 +38,8 @@ type Flow struct {
 	Status flow.Status `json:"status,omitempty"`
 	// NewInstancesPolicy holds the value of the "newInstancesPolicy" field.
 	NewInstancesPolicy flow.NewInstancesPolicy `json:"newInstancesPolicy,omitempty"`
+	// CmType holds the value of the "cm_type" field.
+	CmType flow.CmType `json:"cm_type,omitempty"`
 	// CreationDate holds the value of the "creation_date" field.
 	CreationDate time.Time `json:"creation_date,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
@@ -129,6 +131,7 @@ func (*Flow) scanValues() []interface{} {
 		&[]byte{},         // end_param_definitions
 		&sql.NullString{}, // status
 		&sql.NullString{}, // newInstancesPolicy
+		&sql.NullString{}, // cm_type
 		&sql.NullTime{},   // creation_date
 	}
 }
@@ -191,12 +194,17 @@ func (f *Flow) assignValues(values ...interface{}) error {
 	} else if value.Valid {
 		f.NewInstancesPolicy = flow.NewInstancesPolicy(value.String)
 	}
-	if value, ok := values[7].(*sql.NullTime); !ok {
-		return fmt.Errorf("unexpected type %T for field creation_date", values[7])
+	if value, ok := values[7].(*sql.NullString); !ok {
+		return fmt.Errorf("unexpected type %T for field cm_type", values[7])
+	} else if value.Valid {
+		f.CmType = flow.CmType(value.String)
+	}
+	if value, ok := values[8].(*sql.NullTime); !ok {
+		return fmt.Errorf("unexpected type %T for field creation_date", values[8])
 	} else if value.Valid {
 		f.CreationDate = value.Time
 	}
-	values = values[8:]
+	values = values[9:]
 	if len(values) == len(flow.ForeignKeys) {
 		if value, ok := values[0].(*sql.NullInt64); !ok {
 			return fmt.Errorf("unexpected type %T for edge-field flow_author", value)
@@ -272,6 +280,8 @@ func (f *Flow) String() string {
 	builder.WriteString(fmt.Sprintf("%v", f.Status))
 	builder.WriteString(", newInstancesPolicy=")
 	builder.WriteString(fmt.Sprintf("%v", f.NewInstancesPolicy))
+	builder.WriteString(", cm_type=")
+	builder.WriteString(fmt.Sprintf("%v", f.CmType))
 	builder.WriteString(", creation_date=")
 	builder.WriteString(f.CreationDate.Format(time.ANSIC))
 	builder.WriteByte(')')

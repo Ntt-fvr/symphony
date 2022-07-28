@@ -1380,6 +1380,23 @@ func (r queryResolver) PropertyTypeValues(
 		)
 }
 
+func (r queryResolver) Flows(
+	ctx context.Context,
+	after *ent.Cursor, first *int,
+	before *ent.Cursor, last *int,
+	orderBy *ent.FlowOrder,
+	filterBy []*models.FlowFilterInput,
+) (*ent.FlowConnection, error) {
+	return r.ClientFrom(ctx).Flow.Query().
+		Paginate(ctx, after, first, before, last,
+			ent.WithFlowOrder(orderBy),
+			ent.WithFlowFilter(
+				func(query *ent.FlowQuery) (*ent.FlowQuery, error) {
+					return resolverutil.FlowsFilter(query, filterBy)
+				},
+			))
+}
+
 func (r queryResolver) PropertiesByCategories(ctx context.Context, filterBy []*pkgmodels.PropertiesByCategoryFilterInput) ([]*models.PropertiesByCategories, error) {
 	client := r.ClientFrom(ctx)
 	var (

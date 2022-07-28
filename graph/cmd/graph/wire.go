@@ -2,7 +2,8 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-//+build wireinject
+//go:build wireinject
+// +build wireinject
 
 package main
 
@@ -76,6 +77,8 @@ func newApplication(ctx context.Context, flags *cliFlags) (*application, func(),
 			new(graphhttp.Config),
 			"*",
 		),
+		ev.ProvideAutomationEmitter,
+		provideAutomationEmitterFactory,
 	)
 	return nil, nil, nil
 }
@@ -102,4 +105,8 @@ func provideViews() []*view.View {
 	views = append(views, ocpubsub.DefaultViews...)
 	views = append(views, ev.OpenCensusViews...)
 	return views
+}
+
+func provideAutomationEmitterFactory(flags *cliFlags) ev.AutomationEmitterFactory {
+	return flags.AutomationPubURL
 }

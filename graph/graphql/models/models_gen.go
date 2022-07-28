@@ -1329,6 +1329,17 @@ type FileInput struct {
 	Annotation       *string    `json:"annotation"`
 }
 
+type FlowFilterInput struct {
+	FilterType  FlowFilterType      `json:"filterType"`
+	Operator    enum.FilterOperator `json:"operator"`
+	StringValue *string             `json:"stringValue"`
+	CmType      *flow.CmType        `json:"cmType"`
+	IDSet       []int               `json:"idSet"`
+	StringSet   []string            `json:"stringSet"`
+	TimeValue   *time.Time          `json:"timeValue"`
+	MaxDepth    *int                `json:"maxDepth"`
+}
+
 type FlowInstanceFilterInput struct {
 	FilterType    FlowInstanceFilterType    `json:"filterType"`
 	Operator      enum.FilterOperator       `json:"operator"`
@@ -2545,6 +2556,47 @@ func (e *FilterEntity) UnmarshalGQL(v interface{}) error {
 }
 
 func (e FilterEntity) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+type FlowFilterType string
+
+const (
+	FlowFilterTypeFlowName   FlowFilterType = "FLOW_NAME"
+	FlowFilterTypeFlowCmType FlowFilterType = "FLOW_CM_TYPE"
+)
+
+var AllFlowFilterType = []FlowFilterType{
+	FlowFilterTypeFlowName,
+	FlowFilterTypeFlowCmType,
+}
+
+func (e FlowFilterType) IsValid() bool {
+	switch e {
+	case FlowFilterTypeFlowName, FlowFilterTypeFlowCmType:
+		return true
+	}
+	return false
+}
+
+func (e FlowFilterType) String() string {
+	return string(e)
+}
+
+func (e *FlowFilterType) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = FlowFilterType(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid FlowFilterType", str)
+	}
+	return nil
+}
+
+func (e FlowFilterType) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 

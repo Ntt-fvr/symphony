@@ -4676,6 +4676,38 @@ type ResourceTypeEdge {
   cursor: Cursor!
 }
 
+enum FlowOrderField {
+  """
+  Order Flow by name.
+  """
+  NAME
+
+  """
+  Order Flow by CMType.
+  """
+  CM_TYPE
+
+  """
+  Order Flow by creation time.
+  """
+  CREATED_AT
+}
+
+"""
+Ordering options for ResourceType connections.
+"""
+input FlowOrder {
+  """
+  The ordering direction.
+  """
+  direction: OrderDirection!
+
+  """
+  The field to order ResourceType by.
+  """
+  field: FlowOrderField
+}
+
 """
 Properties by which ResourceTypeRelationship connections can be ordered.
 """
@@ -6440,6 +6472,14 @@ enum FlowNewInstancesPolicy
   DISABLED
 }
 
+enum FlowCMType
+  @goModel(
+    model: "github.com/facebookincubator/symphony/pkg/ent/flow.CmType"
+  ){
+    INITIAL_CONFIG
+    GENERAL_CM 
+  }
+
 type Flow implements Node {
   id: ID!
   name: String!
@@ -6447,6 +6487,7 @@ type Flow implements Node {
   endParamDefinitions: [VariableDefinition!]!
   status: FlowStatus!
   newInstancesPolicy: FlowNewInstancesPolicy!
+  cmType: FlowCMType
   blocks: [Block!]!
   connectors: [Connector!]!
   draft: FlowDraft
@@ -6456,6 +6497,23 @@ type Flow implements Node {
   creationDate: Time!
   editor: User!
   updateTime: Time!
+}
+
+enum FlowFilterType {
+  FLOW_NAME
+  FLOW_CM_TYPE
+}
+
+
+input FlowFilterInput {
+  filterType: FlowFilterType!
+  operator: FilterOperator!
+  stringValue: String
+  cmType: FlowCMType
+  idSet: [ID!]
+  stringSet: [String!]
+  timeValue: Time
+  maxDepth: Int = 5
 }
 
 type FlowDraft implements Node {
@@ -7013,16 +7071,7 @@ type Query {
     """
     name: String
   ): FlowDraftConnection!
-  flows(
-    after: Cursor
-    first: Int @numberValue(min: 0)
-    before: Cursor
-    last: Int @numberValue(min: 0)
-    """
-    Filter flows by case sensitive name.
-    """
-    name: String
-  ): FlowConnection!
+  
   flowInstances(
     after: Cursor
     first: Int @numberValue(min: 0)
@@ -7072,6 +7121,22 @@ type Query {
     """
     filterBy: [CounterFilterInput!]
   ): CounterConnection!
+
+  flows(
+
+    after: Cursor
+    
+    first: Int @numberValue(min: 0)
+    
+    before: Cursor
+    
+    last: Int @numberValue(min: 0)
+    
+    orderBy: FlowOrder
+    
+    filterBy: [FlowFilterInput!]
+  
+  ): FlowConnection!
   
   """
   A list of kpis.
