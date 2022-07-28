@@ -218,6 +218,7 @@ function AutomationFlowCard(props: Props) {
             </div>
             <div className={classes.insideContainer}>
               <CustomizedMenus
+                idFlow={id}
                 icon={MoreVertIcon}
                 name={name}
                 description={description}

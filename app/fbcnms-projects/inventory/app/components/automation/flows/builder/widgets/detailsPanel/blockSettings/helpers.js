@@ -31,6 +31,7 @@ import {TYPE as TrueFalseType} from '../../../../builder/canvas/graph/facades/sh
 import {TYPE as UpdateInventoryType} from '../../../../builder/canvas/graph/facades/shapes/vertexes/actions/UpdateInventory';
 import {TYPE as UpdateWorkforceType} from '../../../../builder/canvas/graph/facades/shapes/vertexes/actions/UpdateWorkforce';
 import {TYPE as WaitSignalType} from '../../../../builder/canvas/graph/facades/shapes/vertexes/triggers/WaitSignal';
+import {TYPE as PublishToKafkaType} from '../../../../builder/canvas/graph/facades/shapes/vertexes/actions/PublishToKafka';
 
 export const signalTypes = [
   {name: 'WOCREATED', id: 'WOCREATED'},
@@ -50,6 +51,12 @@ export const signalModules = [
   {name: 'Assurance', id: 'ASSURANCE'},
 ];
 
+export const messageTypes = [
+  {name: 'Input', id: 'INPUT'},
+  {name: 'State', id: 'STATE'},
+  {name: 'Expression', id: 'EXPRESSION'},
+];
+
 export const INPUT_TYPE = 'input_tab';
 export const OUTPUT_TYPE = 'output_tab';
 export const ERROR_TYPE = 'error_tab';
@@ -67,6 +74,7 @@ const blocksTabs: Array<BlockTabs> = [
   {type: InvokeRestApiType, allowedTabs: [INPUT_TYPE, OUTPUT_TYPE, ERROR_TYPE]},
   {type: UpdateInventoryType, allowedTabs: [OUTPUT_TYPE, ERROR_TYPE]},
   {type: UpdateWorkforceType, allowedTabs: [OUTPUT_TYPE, ERROR_TYPE]},
+  {type: PublishToKafkaType, allowedTabs: [INPUT_TYPE, OUTPUT_TYPE]},
   // Administrative
   {type: ManualStartType, allowedTabs: []},
   {type: EndType, allowedTabs: []},

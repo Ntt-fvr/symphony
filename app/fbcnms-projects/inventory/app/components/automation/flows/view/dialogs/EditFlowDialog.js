@@ -95,7 +95,7 @@ const EditFlowDialog = ({
     flowDescription: description,
   });
 
-  const {flowName, flowDescription} = configurationsValues;
+  
 
   if (!isOpen) return null;
 
