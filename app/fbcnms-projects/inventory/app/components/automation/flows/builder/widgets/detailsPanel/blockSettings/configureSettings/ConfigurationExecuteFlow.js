@@ -26,9 +26,10 @@ type Props = $ReadOnly<{|
 
 const ConfigurationExecuteFlow = ({block}: Props) => {
   const {settings} = block;
+  const control = block.id;
   const [executeFlowSettingsValues, handleInputChange] = useForm({
     flow: settings?.flow || '',
-  });
+  },control);
 
   const {flow} = executeFlowSettingsValues;
 

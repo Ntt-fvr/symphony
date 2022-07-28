@@ -34,6 +34,7 @@ type Props = $ReadOnly<{|
 
 const ConfigurationInvokeApi = ({block}: Props) => {
   const {settings} = block;
+  const control = block.id;
   const urlMethods = [
     {name: 'GET', id: 'GET'},
     {name: 'POST', id: 'POST'},
@@ -47,7 +48,7 @@ const ConfigurationInvokeApi = ({block}: Props) => {
     url: settings?.url || '',
     headers: settings?.headers || '',
     body: settings?.body || '',
-  });
+  },control);
 
   const {
     method,

@@ -38,12 +38,16 @@ type Props = $ReadOnly<{|
 const ConfigurationPublishToKafka = ({block}: Props) => {
   const EXPRESSION = 'EXPRESSION';
   const {settings} = block;
-  const [publishToKafkaSettingsValues, handleInputChange] = useForm({
-    messageType: settings.messageType || '',
-    brokers: settings.brokers || '',
-    topic: settings.topic || '',
-    message: settings.message || '',
-  });
+  const control = block.id;
+  const [publishToKafkaSettingsValues, handleInputChange] = useForm(
+    {
+      messageType: settings.messageType || '',
+      brokers: settings.brokers || '',
+      topic: settings.topic || '',
+      message: settings.message || '',
+    },
+    control,
+  );
 
   const {messageType, brokers, topic, message} = publishToKafkaSettingsValues;
 
@@ -62,6 +66,7 @@ const ConfigurationPublishToKafka = ({block}: Props) => {
           value={brokers}
           name={'brokers'}
           onChange={handleInputChange}
+          helperText={'The field must be separated by “,”'}
         />
       </Grid>
       <Grid item xs={12} className={classes.grid}>
