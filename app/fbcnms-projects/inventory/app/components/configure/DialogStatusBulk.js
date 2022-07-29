@@ -114,7 +114,6 @@ const DATE_FORMAT = 'YYYY-MM-DD[T]HH:mm:ss';
 
 const DialogStatus = (props: Props) => {
   const {onClose, name, onClick, schedule, infoCSV, origin} = props;
-  console.log(origin);
   const enqueueSnackbar = useEnqueueSnackbar();
   const {me} = useMainContext();
   const [description, setDescription] = useState('');
@@ -232,7 +231,6 @@ const DialogStatus = (props: Props) => {
           };
           FlowStartMutation(variables, {
             onCompleted: () => {
-              onClick();
             },
           });
         }
@@ -241,6 +239,7 @@ const DialogStatus = (props: Props) => {
         _enqueueError(getGraphError(error));
       },
     };
+    onClick();
 
     AddRequestChangeMutation(variables, callbacks);
   };
