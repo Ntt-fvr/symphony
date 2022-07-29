@@ -16,6 +16,7 @@
 import type { ConcreteRequest } from 'relay-runtime';
 type FlowHeader_flowDraft$ref = any;
 export type ActionTypeId = "update_inventory" | "update_workforce" | "work_order" | "worker" | "%future added value";
+export type KafkaMessageType = "EXPRESSION" | "INPUT" | "STATE" | "%future added value";
 export type RetryUnit = "HOURS" | "MINUTES" | "SECONDS" | "%future added value";
 export type SignalModule = "ASSURANCE" | "CM" | "INVENTORY" | "WFM" | "%future added value";
 export type SignalType = "CRCREATED" | "CRUPDATED" | "MOICREATED" | "MOIUPDATED" | "PR_CREATED" | "PR_UPDATED" | "WOCREATED" | "WOUPDATED" | "%future added value";
@@ -55,6 +56,12 @@ export type FlowDataContext_FlowDraftQueryResponse = {|
         +url: string,
         +connectionTimeOut: number,
         +body: string,
+      |} | {|
+        +__typename: "KafkaBlock",
+        +brokers: ?$ReadOnlyArray<string>,
+        +topic: string,
+        +message: string,
+        +messageType: KafkaMessageType,
       |} | {|
         +__typename: "TimerBlock",
         +seconds: ?number,
@@ -150,6 +157,12 @@ query FlowDataContext_FlowDraftQuery(
             url
             connectionTimeOut
             body
+          }
+          ... on KafkaBlock {
+            brokers
+            topic
+            message
+            messageType: type
           }
           ... on TimerBlock {
             seconds
@@ -374,6 +387,41 @@ v8 = {
         }
       ],
       "type": "InvokeRestAPIBlock",
+      "abstractKey": null
+    },
+    {
+      "kind": "InlineFragment",
+      "selections": [
+        {
+          "alias": null,
+          "args": null,
+          "kind": "ScalarField",
+          "name": "brokers",
+          "storageKey": null
+        },
+        {
+          "alias": null,
+          "args": null,
+          "kind": "ScalarField",
+          "name": "topic",
+          "storageKey": null
+        },
+        {
+          "alias": null,
+          "args": null,
+          "kind": "ScalarField",
+          "name": "message",
+          "storageKey": null
+        },
+        {
+          "alias": "messageType",
+          "args": null,
+          "kind": "ScalarField",
+          "name": "type",
+          "storageKey": null
+        }
+      ],
+      "type": "KafkaBlock",
       "abstractKey": null
     },
     {
@@ -766,16 +814,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "1c73b62bba56e8d59cfe72f46b3c6c49",
+    "cacheID": "b91caa9c3913567f9dea809dc0fb1e6e",
     "id": null,
     "metadata": {},
     "name": "FlowDataContext_FlowDraftQuery",
     "operationKind": "query",
-    "text": "query FlowDataContext_FlowDraftQuery(\n  $flowId: ID!\n) {\n  flowDraft: node(id: $flowId) {\n    __typename\n    ... on FlowDraft {\n      id\n      name\n      description\n      blocks {\n        cid\n        details {\n          __typename\n          ... on ActionBlock {\n            actionType {\n              id\n            }\n          }\n          ... on TriggerBlock {\n            triggerType {\n              id\n            }\n          }\n          ... on WaitForSignalBlock {\n            signalModule\n            customFilter\n            blocked\n            signalType: type\n          }\n          ... on InvokeRestAPIBlock {\n            method\n            url\n            connectionTimeOut\n            body\n          }\n          ... on TimerBlock {\n            seconds\n            datetime\n            expression\n            enableExpressionL\n            behavior\n          }\n        }\n        uiRepresentation {\n          name\n          xPosition\n          yPosition\n        }\n        nextBlocks {\n          cid\n          uiRepresentation {\n            name\n            xPosition\n            yPosition\n          }\n          id\n        }\n        inputParamDefinitions {\n          defaultValue\n        }\n        outputParamDefinitions {\n          defaultValue\n        }\n        enableInputTransformation\n        inputTransfStrategy\n        inputTransformation\n        enableOutputTransformation\n        outputTransfStrategy\n        outputTransformation\n        enableInputStateTransformation\n        inputStateTransfStrategy\n        inputStateTransformation\n        enableOutputStateTransformation\n        outputStateTransfStrategy\n        outputStateTransformation\n        enableErrorHandling\n        enableRetryPolicy\n        retryInterval\n        units\n        maxAttemps\n        backoffRate\n        id\n      }\n      ...FlowHeader_flowDraft\n    }\n    id\n  }\n}\n\nfragment FlowHeader_flowDraft on FlowDraft {\n  name\n}\n"
+    "text": "query FlowDataContext_FlowDraftQuery(\n  $flowId: ID!\n) {\n  flowDraft: node(id: $flowId) {\n    __typename\n    ... on FlowDraft {\n      id\n      name\n      description\n      blocks {\n        cid\n        details {\n          __typename\n          ... on ActionBlock {\n            actionType {\n              id\n            }\n          }\n          ... on TriggerBlock {\n            triggerType {\n              id\n            }\n          }\n          ... on WaitForSignalBlock {\n            signalModule\n            customFilter\n            blocked\n            signalType: type\n          }\n          ... on InvokeRestAPIBlock {\n            method\n            url\n            connectionTimeOut\n            body\n          }\n          ... on KafkaBlock {\n            brokers\n            topic\n            message\n            messageType: type\n          }\n          ... on TimerBlock {\n            seconds\n            datetime\n            expression\n            enableExpressionL\n            behavior\n          }\n        }\n        uiRepresentation {\n          name\n          xPosition\n          yPosition\n        }\n        nextBlocks {\n          cid\n          uiRepresentation {\n            name\n            xPosition\n            yPosition\n          }\n          id\n        }\n        inputParamDefinitions {\n          defaultValue\n        }\n        outputParamDefinitions {\n          defaultValue\n        }\n        enableInputTransformation\n        inputTransfStrategy\n        inputTransformation\n        enableOutputTransformation\n        outputTransfStrategy\n        outputTransformation\n        enableInputStateTransformation\n        inputStateTransfStrategy\n        inputStateTransformation\n        enableOutputStateTransformation\n        outputStateTransfStrategy\n        outputStateTransformation\n        enableErrorHandling\n        enableRetryPolicy\n        retryInterval\n        units\n        maxAttemps\n        backoffRate\n        id\n      }\n      ...FlowHeader_flowDraft\n    }\n    id\n  }\n}\n\nfragment FlowHeader_flowDraft on FlowDraft {\n  name\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = '7367a227b922d2ce1bb777898b2992e7';
+(node/*: any*/).hash = 'e185d5631d37e5e9aeb29e4a3108ddce';
 
 module.exports = node;

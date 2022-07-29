@@ -14,7 +14,7 @@ import fbt from 'fbt';
 import symphony from '@symphony/design-system/theme/symphony';
 import {IVertexModel, PORTS_GROUPS, getInitObject} from '../BaseVertext';
 
-export const TYPE = 'PublishToKafkaBlocks';
+export const TYPE = 'KafkaBlock';
 const FILL_COLOR = symphony.palette.AUTOMATION.BLUE;
 
 const ExecuteFlowBaseClass = CreateActionBaseClass({

@@ -14,10 +14,8 @@ import fbt from 'fbt';
 import symphony from '@symphony/design-system/theme/symphony';
 import {BIG_VERTEX_COMMON_DISPLAY, getInitObject} from '../BaseVertext';
 import {IVertexModel, PORTS_GROUPS} from '../BaseVertext';
-import {getTriggerType} from '../actions/utils';
 
-export const TRIGGER_TYPE_ID = 'wait-signal';
-export const TYPE = getTriggerType(TRIGGER_TYPE_ID);
+export const TYPE = 'WaitForSignalBlock';
 
 const FILL_COLOR = symphony.palette.AUTOMATION.ORANGE;
 const TOTAL_SIZE = 72;
