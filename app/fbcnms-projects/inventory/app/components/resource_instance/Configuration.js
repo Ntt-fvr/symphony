@@ -126,7 +126,6 @@ const Configuration = (props: Props) => {
     setAllCMVersion(allVersion);
   };
 
-
   return (
     <Grid className={classes.root}>
       <Grid
