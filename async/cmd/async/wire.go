@@ -136,6 +136,7 @@ func provideReceiverFactory(flags *cliFlags) ev.ReceiverFactory {
 	return flags.EventSubURL
 }
 
+/*
 func provideAutomationReceiverFactory(flags *cliFlags) ev.AutomationReceiverFactory {
 	return flags.AutomationSubURL
 }
@@ -143,6 +144,7 @@ func provideAutomationReceiverFactory(flags *cliFlags) ev.AutomationReceiverFact
 func provideAutomationEmitterFactory(flags *cliFlags) ev.AutomationEmitterFactory {
 	return flags.AutomationPubURL
 }
+*/
 
 func newBucket(ctx context.Context, flags *cliFlags) (*blob.Bucket, func(), error) {
 	bucket, err := blob.OpenBucket(ctx, flags.ExportBucketURL.String())

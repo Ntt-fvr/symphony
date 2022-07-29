@@ -126,7 +126,7 @@ const Configuration = (props: Props) => {
     setAllCMVersion(allVersion);
   };
 
-  console.log(searchFilter);
+
   return (
     <Grid className={classes.root}>
       <Grid

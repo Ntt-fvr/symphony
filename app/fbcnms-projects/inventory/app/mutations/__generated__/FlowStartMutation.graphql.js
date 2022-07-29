@@ -14,36 +14,37 @@
 
 /*::
 import type { ConcreteRequest } from 'relay-runtime';
-export type FlowCMType = "GENERAL_CM" | "INITIAL_CONFIG" | "SYNC_PARAMETERS" | "%future added value";
-export type FlowNewInstancesPolicy = "DISABLED" | "ENABLED" | "%future added value";
-export type PublishFlowInput = {|
-  cmType?: ?FlowCMType,
-  flowDraftID: string,
-  flowInstancesPolicy: FlowNewInstancesPolicy,
+export type StartFlowInput = {|
+  bssCode?: ?string,
+  flowID: string,
+  params: $ReadOnlyArray<?VariableValueInput>,
+  startDate: any,
 |};
-export type PublishFlowMutationVariables = {|
-  input: PublishFlowInput
+export type VariableValueInput = {|
+  value: string,
+  variableDefinitionKey: string,
 |};
-export type PublishFlowMutationResponse = {|
-  +publishFlow: {|
-    +id: string,
-    +name: string,
+export type FlowStartMutationVariables = {|
+  input: StartFlowInput
+|};
+export type FlowStartMutationResponse = {|
+  +startFlow: {|
+    +id: string
   |}
 |};
-export type PublishFlowMutation = {|
-  variables: PublishFlowMutationVariables,
-  response: PublishFlowMutationResponse,
+export type FlowStartMutation = {|
+  variables: FlowStartMutationVariables,
+  response: FlowStartMutationResponse,
 |};
 */
 
 
 /*
-mutation PublishFlowMutation(
-  $input: PublishFlowInput!
+mutation FlowStartMutation(
+  $input: StartFlowInput!
 ) {
-  publishFlow(input: $input) {
+  startFlow(input: $input) {
     id
-    name
   }
 }
 */
@@ -66,9 +67,9 @@ v1 = [
         "variableName": "input"
       }
     ],
-    "concreteType": "Flow",
+    "concreteType": "FlowInstance",
     "kind": "LinkedField",
-    "name": "publishFlow",
+    "name": "startFlow",
     "plural": false,
     "selections": [
       {
@@ -76,13 +77,6 @@ v1 = [
         "args": null,
         "kind": "ScalarField",
         "name": "id",
-        "storageKey": null
-      },
-      {
-        "alias": null,
-        "args": null,
-        "kind": "ScalarField",
-        "name": "name",
         "storageKey": null
       }
     ],
@@ -94,7 +88,7 @@ return {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Fragment",
     "metadata": null,
-    "name": "PublishFlowMutation",
+    "name": "FlowStartMutation",
     "selections": (v1/*: any*/),
     "type": "Mutation",
     "abstractKey": null
@@ -103,20 +97,20 @@ return {
   "operation": {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
-    "name": "PublishFlowMutation",
+    "name": "FlowStartMutation",
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "b48567581247ac15a7c3531caefab684",
+    "cacheID": "8a9dfe1b31fcdd68a0ac6b3d09e9841c",
     "id": null,
     "metadata": {},
-    "name": "PublishFlowMutation",
+    "name": "FlowStartMutation",
     "operationKind": "mutation",
-    "text": "mutation PublishFlowMutation(\n  $input: PublishFlowInput!\n) {\n  publishFlow(input: $input) {\n    id\n    name\n  }\n}\n"
+    "text": "mutation FlowStartMutation(\n  $input: StartFlowInput!\n) {\n  startFlow(input: $input) {\n    id\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = '531e331e0c960ecf64fbf8c429a9c686';
+(node/*: any*/).hash = '27fe9af3615e4923a86d1e4d8d599a80';
 
 module.exports = node;
