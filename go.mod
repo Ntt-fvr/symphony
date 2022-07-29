@@ -13,6 +13,7 @@ require (
 	github.com/Azure/go-autorest/autorest/adal v0.9.20 // indirect
 	github.com/DATA-DOG/go-sqlmock v1.5.0
 	github.com/HdrHistogram/hdrhistogram-go v1.0.1 // indirect
+	github.com/Khan/genqlient v0.5.0
 	github.com/Masterminds/squirrel v1.5.0
 	github.com/NYTimes/gziphandler v1.1.1
 	github.com/VividCortex/mysqlerr v0.0.0-20200629151747-c28746d985dd
@@ -23,12 +24,12 @@ require (
 	github.com/badoux/checkmail v1.2.1
 	github.com/cenkalti/backoff/v4 v4.1.0
 	github.com/cespare/xxhash/v2 v2.1.2 // indirect
-	github.com/confluentinc/confluent-kafka-go v1.9.0
+	github.com/confluentinc/confluent-kafka-go v1.9.1
 	github.com/evanphx/json-patch v0.5.2
 	github.com/facebook/ent v0.5.2-0.20201207120713-86b9d850ee78
 	github.com/facebookincubator/ent-contrib v0.0.0-20201210145028-3c4e794cc516
+	github.com/gin-gonic/gin v1.8.1
 	github.com/go-sql-driver/mysql v1.6.0
-	github.com/golang/snappy v0.0.4 // indirect
 	github.com/google/addlicense v1.0.0
 	github.com/google/cel-go v0.12.0
 	github.com/google/uuid v1.3.0
@@ -36,7 +37,6 @@ require (
 	github.com/gorilla/mux v1.8.0
 	github.com/gorilla/websocket v1.5.0
 	github.com/hashicorp/go-multierror v1.1.1
-	github.com/kr/pretty v0.3.0 // indirect
 	github.com/mattn/go-sqlite3 v2.0.3+incompatible
 	github.com/opentracing/opentracing-go v1.2.0
 	github.com/pborman/uuid v1.2.1 // indirect
@@ -48,8 +48,9 @@ require (
 	github.com/scylladb/go-set v1.0.2
 	github.com/shurcooL/graphql v0.0.0-20200928012149-18c5c3165e3a
 	github.com/sirupsen/logrus v1.8.1 // indirect
+	github.com/spf13/viper v1.7.0
 	github.com/stretchr/testify v1.8.0
-	github.com/uber-go/tally v3.3.17+incompatible // indirect
+	github.com/uber-go/tally v3.3.17+incompatible
 	github.com/uber/jaeger-client-go v2.25.0+incompatible
 	github.com/uber/jaeger-lib v2.4.0+incompatible // indirect
 	github.com/uber/tchannel-go v1.20.1 // indirect
@@ -62,7 +63,7 @@ require (
 	go.uber.org/zap v1.21.0
 	gocloud.dev v0.25.0
 	gocloud.dev/pubsub/natspubsub v0.21.0
-	golang.org/x/net v0.0.0-20220617184016-355a448f1bc9
+	golang.org/x/net v0.0.0-20220708220712-1185a9018129
 	golang.org/x/sync v0.0.0-20220601150217-0de741cfad7f
 	golang.org/x/text v0.3.7
 	honnef.co/go/tools v0.0.1-2020.1.6 // indirect

@@ -100,6 +100,19 @@ services:
     healthcheck: *healthcheck
     restart: on-failure
 
+  automation:
+    build:
+      <<: *buildctx
+      dockerfile: automation/Dockerfile
+    env_file:
+      - conf/cadence_client.env
+    networks:
+      - private
+    depends_on:
+      - cadence
+    healthcheck: *healthcheck
+    restart: on-failure
+
   migrate-graph:
     build:
       <<: *buildctx

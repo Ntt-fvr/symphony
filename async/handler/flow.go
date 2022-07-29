@@ -6,10 +6,6 @@ package handler
 
 import (
 	"context"
-	"github.com/facebookincubator/symphony/async/automation/cadence/flow"
-	"time"
-
-	"github.com/facebookincubator/symphony/async/worker"
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ev"
 	"github.com/facebookincubator/symphony/pkg/event"
@@ -42,20 +38,13 @@ func (f FlowHandler) Handle(ctx context.Context, _ log.Logger, evt ev.EventObjec
 		return nil
 	}
 
-	workflowOptions := client.StartWorkflowOptions{
-		ID:                           worker.GetGlobalWorkflowID(ctx, entry.CurrState.ID),
-		TaskList:                     worker.AutomationTaskListName,
-		ExecutionStartToCloseTimeout: 365 * 24 * time.Hour,
-	}
+	/*
+		runFlowInput := worker.RunFlowInput{
+			FlowInstanceID: entry.CurrState.ID,
+		}
+	*/
 
-	runFlowInput := worker.RunFlowInput{
-		FlowInstanceID: entry.CurrState.ID,
-	}
+	//TODO call automation api
 
-	_, err := f.client.StartWorkflow(
-		ctx, workflowOptions, flow.AutomationWorkflow,
-		worker.AutomationTaskListName, runFlowInput.FlowInstanceID,
-	)
-
-	return err
+	return nil
 }
