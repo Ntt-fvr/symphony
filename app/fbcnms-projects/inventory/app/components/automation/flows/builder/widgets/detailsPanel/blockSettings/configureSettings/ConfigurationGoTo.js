@@ -27,12 +27,13 @@ export const TYPE_LIST = [
 
 const ConfigurationGoTo = ({block}: Props) => {
   const {settings} = block;
-  const control = block.id;
   const types = TYPE_LIST;
   const [goToSettingsValues, handleInputChange] = useForm({
     type: settings?.type || '',
     targetBlockCid: settings?.targetBlockCid || '',
-  },control);
+  },
+    block.id
+  );
 
   const {type} = goToSettingsValues;
 

@@ -18,10 +18,9 @@ type Props = $ReadOnly<{|
 |}>;
 
 const BlockNameInput = ({block}: Props) => {
-  const control = block.id;
   const [inputValues, handleInputChange] = useForm(
     {name: block.name,},
-    control,
+    block.id,
   );
   const {name} = inputValues;
 

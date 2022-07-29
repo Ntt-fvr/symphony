@@ -38,7 +38,6 @@ type Props = $ReadOnly<{|
 const ConfigurationPublishToKafka = ({block}: Props) => {
   const EXPRESSION = 'EXPRESSION';
   const {settings} = block;
-  const control = block.id;
   const [publishToKafkaSettingsValues, handleInputChange] = useForm(
     {
       messageType: settings.messageType || '',
@@ -46,7 +45,7 @@ const ConfigurationPublishToKafka = ({block}: Props) => {
       topic: settings.topic || '',
       message: settings.message || '',
     },
-    control,
+    block.id,
   );
 
   const {messageType, brokers, topic, message} = publishToKafkaSettingsValues;

@@ -39,7 +39,6 @@ type Props = $ReadOnly<{|
 
 const ConfigurationTimer = ({block}: Props) => {
   const {settings} = block;
-  const control = block.id;
   const behaviors = [
     {name: 'Fixed Interval', id: 'FIXED_INTERVAL'},
     {name: 'Specific date and time', id: 'SPECIFIC_DATETIME'},
@@ -58,7 +57,9 @@ const ConfigurationTimer = ({block}: Props) => {
     enableExpressionL: settings.enableExpressionL || false,
     expression: settings.expression || 'null',
     seconds: settings.seconds || 0,
-  },control);
+  },
+    block.id
+  );
 
   const classes = useStyles();
 

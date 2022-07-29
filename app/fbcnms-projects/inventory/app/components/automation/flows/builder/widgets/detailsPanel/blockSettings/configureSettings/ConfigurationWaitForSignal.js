@@ -36,13 +36,14 @@ type Props = $ReadOnly<{|
 
 const ConfigurationWaitForSignal = ({block}: Props) => {
   const {settings} = block;
-  const control = block.id;
   const [waitForSignalSettingsValues, handleInputChange] = useForm({
     signalModule: settings?.signalModule || '',
     blocked: settings?.blocked || false,
     signalType: settings?.signalType || '',
     customFilter: settings?.customFilter || '',
-  },control);
+  },
+    block.id
+  );
 
   const {
     signalModule,
