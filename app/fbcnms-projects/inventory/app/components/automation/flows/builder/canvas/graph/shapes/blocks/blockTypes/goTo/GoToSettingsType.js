@@ -19,12 +19,10 @@ export type GoToBlockInputType = {
 
 export type GoToSettingsType = $ReadOnly<{|
   type: string,
-  targetBlockCid: string,
 |}>;
 
 export const initialGoToSettings: GoToSettingsType = {
-  type: undefined,
-  targetBlockCid: undefined,
+  type: 'ORIGIN',
 };
 
 export const setGoToSettings: GoToSettingsType = (

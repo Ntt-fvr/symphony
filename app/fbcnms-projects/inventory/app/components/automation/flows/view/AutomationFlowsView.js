@@ -20,8 +20,9 @@ import {TESTING_PURPOSES} from '../builder/FlowBuilder';
 import {graphql} from 'relay-runtime';
 import {makeStyles} from '@material-ui/styles';
 import {useLazyLoadQuery} from 'react-relay/hooks';
-import {useMemo} from 'react';
-import {useRouter} from '@fbcnms/ui/hooks';
+import {useMemo, createContext, useContext, useReducer} from 'react';
+import {useRouter, useGraphQL} from '@fbcnms/ui/hooks';
+import RelayEnvironment from '../../../../common/RelayEnvironment';
 
 const useStyles = makeStyles(_theme => ({
   root: {},
@@ -32,12 +33,36 @@ const flowsQuery = graphql`
     flows(first: 500) @connection(key: "AutomationFlowsView_flows") {
       edges {
         node {
+          id
+          name
+          description
+          status
+          newInstancesPolicy
+          draft {
+            id
+            sameAsFlow
+          }
+          creationDate
+          updateTime
+          author {
+            id
+            firstName
+            email
+          }
+          runningInstances
+          failedInstances
           ...AutomationFlowsList_flows
         }
       }
     }
   }
 `;
+
+export const useFlows = () => {
+  const flowsResponse = useGraphQL(RelayEnvironment, flowsQuery, {});
+  if (flowsResponse.response === null) return;
+  return flowsResponse.response.flows?.edges
+};
 
 type Props = $ReadOnly<{||}>;
 
@@ -69,13 +94,7 @@ export default function AutomationFlowsView(_props: Props) {
       subtitle: <fbt desc="">Create and manage Automation Flows</fbt>,
       actionButtons: hasFlows
         ? [
-            <Button
-              key="1"
-              onClick={() => {
-                history.push(`flow/?flowId=${TESTING_PURPOSES}`);
-              }}>
-              <fbt desc="">Go to Flow Builder</fbt>
-            </Button>,
+            
             CreateNewFlowButton,
           ]
         : [],

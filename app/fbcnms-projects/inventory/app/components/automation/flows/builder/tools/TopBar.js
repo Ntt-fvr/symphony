@@ -7,12 +7,20 @@
  * @flow
  * @format
  */
+
 import Button from '@symphony/design-system/components/Button';
+import ButtonFlowStatus from '../../../common/ButtonFlowStatus';
 import DeleteOutlineIcon from '@material-ui/icons/DeleteOutline';
 import DialogModal from '../../view/dialogs/DialogModal';
 import FlowHeader from './FlowHeader';
 import IconButton from '@symphony/design-system/components/IconButton';
+import ListAltIcon from '@material-ui/icons/ListAlt';
+import Menu from '@material-ui/core/Menu';
+import MenuItem from '@material-ui/core/MenuItem';
 import MenuTopBar from './MenuTopBar';
+import MoreVertIcon from '@material-ui/icons/MoreVert';
+import ArrowBackIcon from '@material-ui/icons/ArrowBack';
+import Popover from '@material-ui/core/Popover';
 import React, {useCallback, useState} from 'react';
 import Strings from '@fbcnms/strings/Strings';
 import ToolsBar from './ToolsBar';
@@ -27,6 +35,10 @@ import {
   UndoIcon,
 } from '@symphony/design-system/icons';
 import {TYPE as ForEachLoopType} from '../canvas/graph/facades/shapes/vertexes/logic/ForEachLoop';
+import {FlowLogsTable} from './FlowLogs';
+import {Grid} from '@material-ui/core';
+import {IconButton as MatIconButton} from '@material-ui/core';
+import {POSITION} from '@symphony/design-system/components/Dialog/DialogFrame';
 import {
   PREDICATES,
   useKeyboardShortcut,
@@ -47,6 +59,34 @@ const useStyles = makeStyles(() => ({
     justifyContent: 'space-between',
     flexWrap: 'wrap',
     zIndex: 1,
+  },
+  fullWidth:{
+    backgroundColor: BLUE.B600,
+    color:'white',
+    width: '100%',
+    margin: '0',
+    padding: '10px',
+  },
+  iconroot: {
+    '& div[class*="textVariant"]': {
+      minHeight: 36,
+      minWidth: 36,
+      background:
+        'linear-gradient(180deg, #FFFFFF 0%, rgba(255, 255, 255, 0) 100%), #FFFFFF',
+      borderRadius: 4,
+      color: DARK.D900,
+      fill: DARK.D900,
+      '&:hover': {
+        color: BLUE.B600,
+        fill: BLUE.B600,
+        '& svg': {
+          color: BLUE.B600,
+        },
+      },
+    },
+    '& span[class*="buttonText"]': {
+      padding: 4,
+    },
   },
   right: {
     display: 'flex',
@@ -104,6 +144,12 @@ const useStyles = makeStyles(() => ({
   },
   publish: {
     backgroundColor: `${GREEN.G600} !important`,
+  },
+  detailsContainer: {
+    marginRight: '64px',
+    marginLeft: '65px',
+    marginTop: '64px',
+    marginBottom: '250px',
   },
 }));
 
@@ -186,7 +232,7 @@ function BuilderTopBar() {
           variant: 'success',
         });
       })
-      .catch(error => {
+      .catch(() => {
         enqueueSnackbar(
           `${fbt(
             'There was an error when trying to save the flow draft.',
@@ -238,16 +284,6 @@ function BuilderTopBar() {
               onClick={() => handleShowGrid()}
               icon={GridIcon}
             />
-          </Tooltip>
-          <Tooltip tooltip={'Undo'}>
-            <IconButton
-              className={classes.marginLeft}
-              skin={'inherit'}
-              icon={UndoIcon}
-            />
-          </Tooltip>
-          <Tooltip tooltip={'Redo'}>
-            <IconButton tooltip={'Redo'} skin={'inherit'} icon={RedoIcon} />
           </Tooltip>
         </div>
         <div className={classes.left}>
@@ -324,13 +360,66 @@ function BuilderTopBar() {
 
 function ViewerTopBar() {
   const classes = useStyles();
+  const selection = useGraphSelection();
+  const selectionCount = selection.selectedElements.length;
+  const [anchorEl, setAnchorEl] = React.useState(null);
+
+  const handleClick = event => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const open = Boolean(anchorEl);
+  const id = open ? 'simple-popover' : undefined;
 
   return (
     <ToolsBar className={classes.root}>
       <div className={classes.left}>
-        <FlowHeader />
+        <div className={classes.iconroot}>
+          <Tooltip tooltip={``}>
+            <IconButton skin={'inherit'} icon={ArrowBackIcon} />
+          </Tooltip>
+        </div>
+        <div className={classes.iconroot}>
+          <Tooltip
+            tooltip={`View ${selectionCount == 0 ? 'Workflow' : 'Block'} Logs`}>
+            <IconButton
+              skin={'inherit'}
+              icon={ListAltIcon}
+              onClick={handleClick}
+            />
+          </Tooltip>
+          <Popover
+            id={id}
+            open={open}
+            anchorEl={anchorEl}
+            onClose={handleClose}
+            anchorOrigin={{
+              vertical: 'top',
+              horizontal: 'left',
+            }}
+            transformOrigin={{
+              vertical: 'top',
+              horizontal: 'left',
+            }}>
+            <h4 className={classes.fullWidth}> {`${selectionCount == 0 ? 'Workflow' : 'Block'} Log`} </h4>
+            <FlowLogsTable />
+          </Popover>
+        </div>
       </div>
-      <div className={classes.center} />
+      <div className={classes.right}>
+        <Tooltip tooltip={'Edit flow data'}>
+          <Button
+            onClick={e => {
+              e.preventDefault();
+            }}>
+            {'Edit Flow'}
+          </Button>
+        </Tooltip>
+      </div>
     </ToolsBar>
   );
 }

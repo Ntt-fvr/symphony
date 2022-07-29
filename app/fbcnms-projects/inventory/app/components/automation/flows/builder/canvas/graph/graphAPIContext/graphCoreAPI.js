@@ -220,7 +220,8 @@ function graphRemoveConnector(connector: IConnector) {
 }
 
 function graphAddConnector(source: IBlock, target: IBlock) {
-  const connector = source.addConnector(null, target);
+  const sourcePort = source.getOutputPorts()[0]?.id;
+  const connector = source.addConnector(sourcePort, target);
 
   if (connector == null || this.current == null) {
     return;

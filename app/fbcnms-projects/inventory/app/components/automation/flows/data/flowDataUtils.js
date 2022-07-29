@@ -29,13 +29,15 @@ import type {
 } from '../../../../mutations/__generated__/PublishFlowMutation.graphql';
 import type {StartBlockInputType} from '../builder/canvas/graph/shapes/blocks/blockTypes/manualStart/ManualStartSettingsType';
 import type {TrueFalseBlockInputType} from '../builder/canvas/graph/shapes/blocks/blockTypes/trueFalse/TrueFalseSettings';
-
-import {TYPE as TriggerStart} from '../builder/canvas/graph/facades/shapes/vertexes/triggers/TriggerStart';
-import {TYPE as TriggerWorkforce} from '../builder/canvas/graph/facades/shapes/vertexes/triggers/TriggerWorkforce';
+import type {
+  UpdateFlowInstanceMutationResponse,
+  UpdateFlowInstanceMutationVariables,
+} from '../../../../mutations/__generated__/UpdateFlowInstanceMutation.graphql';
 
 import BaseBlock from '../builder/canvas/graph/shapes/blocks/BaseBlock';
 import ImportFlowDraftMutation from '../../../../mutations/ImportFlowDraft';
 import PublishFlowMutation from '../../../../mutations/PublishFlowMutation';
+import UpdateFlowInstanceMutation from '../../../../mutations/UpdateFlowInstance';
 import {getGraphError} from '../../../../common/EntUtils';
 import {isLasso} from '../builder/canvas/graph/facades/shapes/vertexes/helpers/Lasso';
 
@@ -87,6 +89,24 @@ export function publishFlow(
     PublishFlowMutation({input}, callbacks);
   });
 }
+export function updateFlowInstance(
+  input: UpdateFlowInstanceMutationVariables,
+): Promise<UpdateFlowInstanceMutationResponse> {
+  return new Promise<UpdateFlowInstanceMutationResponse>((resolve, reject) => {
+    const callbacks: MutationCallbacks<UpdateFlowInstanceMutationResponse> = {
+      onCompleted: (response, errors) => {
+        if (errors && errors[0]) {
+          reject(getGraphError(errors[0]));
+        }
+        resolve(response);
+      },
+      onError: error => {
+        reject(getGraphError(error));
+      },
+    };
+    UpdateFlowInstanceMutation(input, callbacks);
+  });
+}
 
 function mapBaseBlockInformation(block: IBlock) {
   const {inputSettings, outputSettings, errorSettings} = block;
@@ -104,16 +124,42 @@ function mapBaseBlockInformation(block: IBlock) {
 }
 
 export function mapStartBlockForSave(block: IBlock): StartBlockInputType {
-  const {paramDefinitions} = block.settings;
   return {
     cid: block.id,
-    // TODO AVeriguar
-    paramDefinitions: {key: 'prueba', type: 'STRING', choices: ['1']},
+    paramDefinitions: {key: 'param', type: 'STRING'},
     uiRepresentation: {
       name: block.name,
       xPosition: Math.floor(block.model.attributes.position.x),
       yPosition: Math.floor(block.model.attributes.position.y),
     },
+  };
+}
+
+export function mapEndBlockForSave(block: IBlock): EndBlockInputType {
+  return {
+    cid: block.id,
+    params: [],
+    uiRepresentation: {
+      name: block.name,
+      xPosition: Math.floor(block.model.attributes.position.x),
+      yPosition: Math.floor(block.model.attributes.position.y),
+    },
+  };
+}
+
+export function mapTriggerBlocksForSave(block: IBlock) {
+  const {signalType, signalModule, customFilter, blocked} = block.settings;
+
+  return {
+    ...mapBlockForSave(block),
+    type: signalType,
+    signalModule: 'CONFIGURATION',
+    customFilter: customFilter,
+    blocked: blocked,
+    entryPoint: POINT_EXAMPLE,
+    exitPoint: POINT_EXAMPLE,
+    basicDefinitions: mapBaseBlockInformation(block),
+    params: VARIABLE_EXPRESSION_EXAMPLE,
   };
 }
 
@@ -166,7 +212,7 @@ export function mapInvokeRestAPIBlockForSave(
 }
 
 export function mapGoToBlockForSave(block: IBlock): GoToBlockInputType {
-  const {type, targetBlockCid} = block.settings;
+  const {type} = block.settings;
   return {
     cid: block.id,
     uiRepresentation: {
@@ -174,7 +220,6 @@ export function mapGoToBlockForSave(block: IBlock): GoToBlockInputType {
       xPosition: Math.floor(block.model.attributes.position.x),
       yPosition: Math.floor(block.model.attributes.position.y),
     },
-    targetBlockCid: targetBlockCid,
     type: type,
   };
 }
@@ -189,15 +234,18 @@ export function mapActionBlocksForSave(
   };
 }
 
-export function mapTriggerBlocksForSave(block: IBlock) {
-  switch (block.model.attributes.type) {
-    case TriggerStart:
-      return {};
-    case TriggerWorkforce:
-      return {};
-    default:
-      return;
-  }
+export function mapExecuteFlowBlocksForSave(
+  block: IBlock,
+): ExecuteFlowBlockInputType {
+  const {flow} = block.settings;
+  return {
+    ...mapBlockForSave(block),
+    flow: flow,
+    basicDefinitions: mapBaseBlockInformation(block),
+    entryPoint: POINT_EXAMPLE,
+    exitPoint: POINT_EXAMPLE,
+    params: VARIABLE_EXPRESSION_EXAMPLE,
+  };
 }
 
 export function mapTimerBlocksForSave(block: IBlock) {
@@ -217,9 +265,9 @@ export function mapTimerBlocksForSave(block: IBlock) {
     specificDatetime: specificDatetime,
     enableExpressionL: enableExpressionL,
     expression: expression,
-    exitPoint: exitPoint,
+    exitPoint: POINT_EXAMPLE,
+    entryPoint: POINT_EXAMPLE,
     params: VARIABLE_EXPRESSION_EXAMPLE,
-    entryPoint: null,
     uiRepresentation: {
       name: block.name,
       xPosition: Math.floor(block.model.attributes.position.x),
@@ -234,7 +282,7 @@ export function mapWaitForSignalBlocksForSave(block: IBlock) {
   return {
     ...mapBlockForSave(block),
     type: signalType,
-    signalModule: 'CONFIGURATION',
+    signalModule: signalModule,
     customFilter: customFilter,
     blocked: blocked,
     entryPoint: POINT_EXAMPLE,
@@ -244,16 +292,17 @@ export function mapWaitForSignalBlocksForSave(block: IBlock) {
   };
 }
 
-export function mapEndBlockForSave(block: IBlock): EndBlockInputType {
-  const {params} = block.settings;
+export function mapPublishKafkaBlocksForSave(block: IBlock) {
+  const {messageType, brokers, topic, message} = block.settings;
   return {
-    cid: block.id,
-    params: {type: 'VariableDefinition', expression: 'a', blockVariables: []},
-    uiRepresentation: {
-      name: block.name,
-      xPosition: Math.floor(block.model.attributes.position.x),
-      yPosition: Math.floor(block.model.attributes.position.y),
-    },
+    ...mapBlockForSave(block),
+    type: messageType,
+    brokers: brokers.split(','),
+    topic: topic,
+    message: message,
+    entryPoint: POINT_EXAMPLE,
+    exitPoint: POINT_EXAMPLE,
+    basicDefinitions: mapBaseBlockInformation(block),
   };
 }
 
@@ -294,6 +343,7 @@ export function hasMeaningfulChanges(shape: IShape): boolean {
 export const saveBlockInformation = (
   blockFormQuery,
   createdBlock: BaseBlock,
+  isFailed: ?boolean,
 ) => {
   createdBlock.setInputSettings({
     enableInputTransformation: blockFormQuery.enableInputTransformation,
@@ -324,10 +374,7 @@ export const saveBlockInformation = (
     maxAttemps: blockFormQuery.maxAttemps,
     backoffRate: blockFormQuery.backoffRate,
   });
-  console.log(
-    'outputStateParamDefinitions',
-    blockFormQuery.outputStateParamDefinitions,
-  );
   const {__typename, ...configurationParameters} = blockFormQuery.details;
   createdBlock.setSettings(configurationParameters);
+  createdBlock.setFailed(isFailed);
 };

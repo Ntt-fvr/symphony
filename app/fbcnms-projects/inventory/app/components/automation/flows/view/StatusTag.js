@@ -12,14 +12,17 @@ import type {FlowStatus} from './__generated__/AutomationFlowCard_flow.graphql';
 import * as React from 'react';
 import Text from '@symphony/design-system/components/Text';
 import classNames from 'classnames';
+import {DriveFileRenameOutline} from '@material-ui/icons';
 import {FLOW_STATUSES} from './AutomationFlowCard';
 import {makeStyles} from '@material-ui/styles';
 
 const useStyles = makeStyles(() => ({
   statusTag: {
     borderRadius: '4px',
-    display: 'inline-block',
     padding: '2px 8px',
+    display: 'flex',
+    gap: '5px',
+    alignItems: 'center',
   },
 }));
 
@@ -29,7 +32,7 @@ type StatusTagProps = $ReadOnly<{|
 |}>;
 
 const StatusTag = (props: StatusTagProps) => {
-  const {status, className} = props;
+  const {status, hasDraft, className} = props;
   const classes = useStyles();
 
   return (
@@ -37,10 +40,16 @@ const StatusTag = (props: StatusTagProps) => {
       variant="body2"
       className={classNames(classes.statusTag, className)}
       style={{
-        backgroundColor: FLOW_STATUSES[status].backgroundColor,
-        color: FLOW_STATUSES[status].color,
+        backgroundColor: FLOW_STATUSES[status]?.backgroundColor,
+        color: FLOW_STATUSES[status]?.color,
       }}>
-      {FLOW_STATUSES[status].label}
+      {FLOW_STATUSES[status]?.label}
+      {hasDraft && status !== FLOW_STATUSES?.UNPUBLISHED?.key ? (
+
+        <DriveFileRenameOutline />
+      ) : (
+        FLOW_STATUSES[status]?.icon
+      )}
     </Text>
   );
 };

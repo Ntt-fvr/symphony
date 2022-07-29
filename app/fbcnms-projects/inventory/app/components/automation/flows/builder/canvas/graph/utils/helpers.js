@@ -45,6 +45,9 @@ export const {classes} = jss
       isSelected: {
         stroke: symphony.palette.primary,
       },
+      failed: {
+        stroke: 'red',
+      }
     },
     {link: true},
   )

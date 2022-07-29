@@ -90,12 +90,11 @@ export default class Choice extends ChoiceBaseClass implements IVertexModel {
       getInitObject(
         FILL_COLOR,
         {
-          [PORTS_GROUPS.OUTPUT]: {count: 2},
+          [PORTS_GROUPS.OUTPUT]: {count: 1},
         },
         id ? id : undefined,
       ),
     );
-    // super();
     this.resize(TOTAL_SIZE, TOTAL_SIZE);
   }
 }

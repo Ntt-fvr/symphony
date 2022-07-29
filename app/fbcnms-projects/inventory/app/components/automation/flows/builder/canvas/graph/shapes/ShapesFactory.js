@@ -65,6 +65,9 @@ import WaitSignal, {
 import Worker, {
   TYPE as WorkerType,
 } from '../facades/shapes/vertexes/actions/Worker';
+import PublishToKafka, {
+  TYPE as PublishToKafkaType,
+} from '../facades/shapes/vertexes/actions/PublishToKafka';
 import nullthrows from '@fbcnms/util/nullthrows';
 import {getCellType} from '../facades/shapes/BaseShape';
 
@@ -80,6 +83,7 @@ const VERTEXES = {
   [ExecuteFlowType]: ExecuteFlow,
   [InvokeRestApiType]: InvokeRestApi,
   [ExecuteNetworkActionType]: ExecuteNetworkAction,
+  [PublishToKafkaType]: PublishToKafka,
   // Triggers
   [TimerType]: Timer,
   [TriggerWorkforceType]: TriggerWorkforce,

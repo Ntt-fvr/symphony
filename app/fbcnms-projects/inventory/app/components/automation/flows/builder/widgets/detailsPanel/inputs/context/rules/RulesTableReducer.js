@@ -20,7 +20,7 @@ import {RulesTableState, getInitialRule} from './RulesTableState';
 
 export function getInitialRulesState(rules: Array<RuleType>): RulesTableState {
   return rules.length === 0
-    ? [getInitialRule(0, true)]
+    ? [getInitialRule(0)]
     : rules.slice().map(p => ({...p}));
 }
 
@@ -43,7 +43,7 @@ export function rulesTableReducer(
 ): RulesTableState {
   switch (action.type) {
     case 'ADD_PROPERTY_TYPE':
-      return [...state, getInitialRule(state.length, false)];
+      return [...state, getInitialRule(state.length)];
     case 'DELETE_RULE':
       return editRule(state, action.id, rule => ({
         ...rule,

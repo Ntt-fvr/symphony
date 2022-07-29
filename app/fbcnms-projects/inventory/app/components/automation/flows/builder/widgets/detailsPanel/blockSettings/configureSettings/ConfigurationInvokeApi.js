@@ -47,7 +47,9 @@ const ConfigurationInvokeApi = ({block}: Props) => {
     url: settings?.url || '',
     headers: settings?.headers || '',
     body: settings?.body || '',
-  });
+  },
+    block.id
+  );
 
   const {
     method,
