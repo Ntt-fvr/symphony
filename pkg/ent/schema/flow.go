@@ -69,12 +69,18 @@ func (Flow) Fields() []ent.Field {
 				"Draft", "DRAFT",
 				"Archived", "ARCHIVED",
 				"On_Hold", "ON_HOLD",
+				"Deleted", "DELETED",
 			).Default("DRAFT"),
 		field.Enum("newInstancesPolicy").
 			NamedValues(
 				"Enabled", "ENABLED",
 				"Disabled", "DISABLED",
 			).Default("DISABLED"),
+		field.Enum("cm_type").NamedValues(
+			"initial_config", "INITIAL_CONFIG",
+			"general_cr", "GENERAL_CR",
+			"sync_parameters", "SYNC_PARAMETERS",
+		).Annotations(entgql.OrderField("CM_TYPE")),
 		field.Time("creation_date").
 			Annotations(
 				entgql.OrderField("CREATED_AT"),

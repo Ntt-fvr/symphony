@@ -97,6 +97,18 @@ const (
 	FieldBody = "body"
 	// FieldHeaders holds the string denoting the headers field in the database.
 	FieldHeaders = "headers"
+	// FieldAuthType holds the string denoting the auth_type field in the database.
+	FieldAuthType = "auth_type"
+	// FieldUser holds the string denoting the user field in the database.
+	FieldUser = "user"
+	// FieldPassword holds the string denoting the password field in the database.
+	FieldPassword = "password"
+	// FieldClientID holds the string denoting the client_id field in the database.
+	FieldClientID = "client_id"
+	// FieldClientSecret holds the string denoting the client_secret field in the database.
+	FieldClientSecret = "client_secret"
+	// FieldOidcURL holds the string denoting the oidc_url field in the database.
+	FieldOidcURL = "oidc_url"
 	// FieldSignalType holds the string denoting the signal_type field in the database.
 	FieldSignalType = "signal_type"
 	// FieldSignalModule holds the string denoting the signal_module field in the database.
@@ -238,6 +250,12 @@ var Columns = []string{
 	FieldConnectionTimeout,
 	FieldBody,
 	FieldHeaders,
+	FieldAuthType,
+	FieldUser,
+	FieldPassword,
+	FieldClientID,
+	FieldClientSecret,
+	FieldOidcURL,
 	FieldSignalType,
 	FieldSignalModule,
 	FieldCustomFilter,
@@ -480,6 +498,29 @@ func URLMethodValidator(um URLMethod) error {
 	}
 }
 
+// AuthType defines the type for the auth_type enum field.
+type AuthType string
+
+// AuthType values.
+const (
+	AuthTypeBasic AuthType = "BASIC"
+	AuthTypeOIDC  AuthType = "OIDC"
+)
+
+func (at AuthType) String() string {
+	return string(at)
+}
+
+// AuthTypeValidator is a validator for the "auth_type" field enum values. It is called by the builders before save.
+func AuthTypeValidator(at AuthType) error {
+	switch at {
+	case AuthTypeBasic, AuthTypeOIDC:
+		return nil
+	default:
+		return fmt.Errorf("block: invalid enum value for auth_type field: %q", at)
+	}
+}
+
 // SignalType defines the type for the signal_type enum field.
 type SignalType string
 
@@ -654,6 +695,24 @@ func (um *URLMethod) UnmarshalGQL(val interface{}) error {
 	*um = URLMethod(str)
 	if err := URLMethodValidator(*um); err != nil {
 		return fmt.Errorf("%s is not a valid URLMethod", str)
+	}
+	return nil
+}
+
+// MarshalGQL implements graphql.Marshaler interface.
+func (at AuthType) MarshalGQL(w io.Writer) {
+	io.WriteString(w, strconv.Quote(at.String()))
+}
+
+// UnmarshalGQL implements graphql.Unmarshaler interface.
+func (at *AuthType) UnmarshalGQL(val interface{}) error {
+	str, ok := val.(string)
+	if !ok {
+		return fmt.Errorf("enum %T must be a string", val)
+	}
+	*at = AuthType(str)
+	if err := AuthTypeValidator(*at); err != nil {
+		return fmt.Errorf("%s is not a valid AuthType", str)
 	}
 	return nil
 }

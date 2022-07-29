@@ -225,6 +225,12 @@ var (
 		{Name: "connection_timeout", Type: field.TypeInt, Nullable: true},
 		{Name: "body", Type: field.TypeString, Nullable: true, Size: 2147483647},
 		{Name: "headers", Type: field.TypeJSON, Nullable: true},
+		{Name: "auth_type", Type: field.TypeEnum, Nullable: true, Enums: []string{"BASIC", "OIDC"}},
+		{Name: "user", Type: field.TypeString, Nullable: true},
+		{Name: "password", Type: field.TypeString, Nullable: true},
+		{Name: "client_id", Type: field.TypeString, Nullable: true},
+		{Name: "client_secret", Type: field.TypeString, Nullable: true},
+		{Name: "oidc_url", Type: field.TypeString, Nullable: true},
 		{Name: "signal_type", Type: field.TypeEnum, Nullable: true, Enums: []string{"WOCREATED", "CRCREATED", "PR_CREATED", "MOICREATED", "WOUPDATED", "CRUPDATED", "PR_UPDATED", "MOIUPDATED"}},
 		{Name: "signal_module", Type: field.TypeEnum, Nullable: true, Enums: []string{"INVENTORY", "CM", "WFM", "ASSURANCE"}},
 		{Name: "custom_filter", Type: field.TypeString, Nullable: true},
@@ -249,35 +255,35 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:  "blocks_flows_sub_flow",
-				Columns: []*schema.Column{BlocksColumns[48]},
+				Columns: []*schema.Column{BlocksColumns[54]},
 
 				RefColumns: []*schema.Column{FlowsColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
 				Symbol:  "blocks_blocks_goto_block",
-				Columns: []*schema.Column{BlocksColumns[49]},
+				Columns: []*schema.Column{BlocksColumns[55]},
 
 				RefColumns: []*schema.Column{BlocksColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
 				Symbol:  "blocks_flows_blocks",
-				Columns: []*schema.Column{BlocksColumns[50]},
+				Columns: []*schema.Column{BlocksColumns[56]},
 
 				RefColumns: []*schema.Column{FlowsColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
 				Symbol:  "blocks_flow_drafts_blocks",
-				Columns: []*schema.Column{BlocksColumns[51]},
+				Columns: []*schema.Column{BlocksColumns[57]},
 
 				RefColumns: []*schema.Column{FlowDraftsColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
 				Symbol:  "blocks_flow_execution_templates_blocks",
-				Columns: []*schema.Column{BlocksColumns[52]},
+				Columns: []*schema.Column{BlocksColumns[58]},
 
 				RefColumns: []*schema.Column{FlowExecutionTemplatesColumns[0]},
 				OnDelete:   schema.SetNull,
@@ -287,17 +293,17 @@ var (
 			{
 				Name:    "block_cid_flow_draft_blocks",
 				Unique:  true,
-				Columns: []*schema.Column{BlocksColumns[3], BlocksColumns[51]},
+				Columns: []*schema.Column{BlocksColumns[3], BlocksColumns[57]},
 			},
 			{
 				Name:    "block_cid_flow_blocks",
 				Unique:  true,
-				Columns: []*schema.Column{BlocksColumns[3], BlocksColumns[50]},
+				Columns: []*schema.Column{BlocksColumns[3], BlocksColumns[56]},
 			},
 			{
 				Name:    "block_cid_flow_execution_template_blocks",
 				Unique:  true,
-				Columns: []*schema.Column{BlocksColumns[3], BlocksColumns[52]},
+				Columns: []*schema.Column{BlocksColumns[3], BlocksColumns[58]},
 			},
 		},
 	}
@@ -1186,8 +1192,9 @@ var (
 		{Name: "name", Type: field.TypeString},
 		{Name: "description", Type: field.TypeString, Nullable: true},
 		{Name: "end_param_definitions", Type: field.TypeJSON, Nullable: true},
-		{Name: "status", Type: field.TypeEnum, Enums: []string{"PUBLISHED", "DRAFT", "ARCHIVED", "ON_HOLD"}, Default: "DRAFT"},
+		{Name: "status", Type: field.TypeEnum, Enums: []string{"PUBLISHED", "DRAFT", "ARCHIVED", "ON_HOLD", "DELETED"}, Default: "DRAFT"},
 		{Name: "new_instances_policy", Type: field.TypeEnum, Enums: []string{"ENABLED", "DISABLED"}, Default: "DISABLED"},
+		{Name: "cm_type", Type: field.TypeEnum, Enums: []string{"INITIAL_CONFIG", "GENERAL_CR", "SYNC_PARAMETERS"}},
 		{Name: "creation_date", Type: field.TypeTime},
 		{Name: "flow_author", Type: field.TypeInt, Nullable: true},
 	}
@@ -1199,7 +1206,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:  "flows_users_author",
-				Columns: []*schema.Column{FlowsColumns[9]},
+				Columns: []*schema.Column{FlowsColumns[10]},
 
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.SetNull,

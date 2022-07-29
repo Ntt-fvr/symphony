@@ -502,6 +502,90 @@ func (bc *BlockCreate) SetHeaders(fv []*flowschema.VariableValue) *BlockCreate {
 	return bc
 }
 
+// SetAuthType sets the auth_type field.
+func (bc *BlockCreate) SetAuthType(bt block.AuthType) *BlockCreate {
+	bc.mutation.SetAuthType(bt)
+	return bc
+}
+
+// SetNillableAuthType sets the auth_type field if the given value is not nil.
+func (bc *BlockCreate) SetNillableAuthType(bt *block.AuthType) *BlockCreate {
+	if bt != nil {
+		bc.SetAuthType(*bt)
+	}
+	return bc
+}
+
+// SetUser sets the user field.
+func (bc *BlockCreate) SetUser(s string) *BlockCreate {
+	bc.mutation.SetUser(s)
+	return bc
+}
+
+// SetNillableUser sets the user field if the given value is not nil.
+func (bc *BlockCreate) SetNillableUser(s *string) *BlockCreate {
+	if s != nil {
+		bc.SetUser(*s)
+	}
+	return bc
+}
+
+// SetPassword sets the password field.
+func (bc *BlockCreate) SetPassword(s string) *BlockCreate {
+	bc.mutation.SetPassword(s)
+	return bc
+}
+
+// SetNillablePassword sets the password field if the given value is not nil.
+func (bc *BlockCreate) SetNillablePassword(s *string) *BlockCreate {
+	if s != nil {
+		bc.SetPassword(*s)
+	}
+	return bc
+}
+
+// SetClientID sets the client_id field.
+func (bc *BlockCreate) SetClientID(s string) *BlockCreate {
+	bc.mutation.SetClientID(s)
+	return bc
+}
+
+// SetNillableClientID sets the client_id field if the given value is not nil.
+func (bc *BlockCreate) SetNillableClientID(s *string) *BlockCreate {
+	if s != nil {
+		bc.SetClientID(*s)
+	}
+	return bc
+}
+
+// SetClientSecret sets the client_secret field.
+func (bc *BlockCreate) SetClientSecret(s string) *BlockCreate {
+	bc.mutation.SetClientSecret(s)
+	return bc
+}
+
+// SetNillableClientSecret sets the client_secret field if the given value is not nil.
+func (bc *BlockCreate) SetNillableClientSecret(s *string) *BlockCreate {
+	if s != nil {
+		bc.SetClientSecret(*s)
+	}
+	return bc
+}
+
+// SetOidcURL sets the oidc_url field.
+func (bc *BlockCreate) SetOidcURL(s string) *BlockCreate {
+	bc.mutation.SetOidcURL(s)
+	return bc
+}
+
+// SetNillableOidcURL sets the oidc_url field if the given value is not nil.
+func (bc *BlockCreate) SetNillableOidcURL(s *string) *BlockCreate {
+	if s != nil {
+		bc.SetOidcURL(*s)
+	}
+	return bc
+}
+
 // SetSignalType sets the signal_type field.
 func (bc *BlockCreate) SetSignalType(bt block.SignalType) *BlockCreate {
 	bc.mutation.SetSignalType(bt)
@@ -956,6 +1040,11 @@ func (bc *BlockCreate) check() error {
 			return &ValidationError{Name: "url_method", err: fmt.Errorf("ent: validator failed for field \"url_method\": %w", err)}
 		}
 	}
+	if v, ok := bc.mutation.AuthType(); ok {
+		if err := block.AuthTypeValidator(v); err != nil {
+			return &ValidationError{Name: "auth_type", err: fmt.Errorf("ent: validator failed for field \"auth_type\": %w", err)}
+		}
+	}
 	if v, ok := bc.mutation.SignalType(); ok {
 		if err := block.SignalTypeValidator(v); err != nil {
 			return &ValidationError{Name: "signal_type", err: fmt.Errorf("ent: validator failed for field \"signal_type\": %w", err)}
@@ -1293,6 +1382,54 @@ func (bc *BlockCreate) createSpec() (*Block, *sqlgraph.CreateSpec) {
 			Column: block.FieldHeaders,
 		})
 		_node.Headers = value
+	}
+	if value, ok := bc.mutation.AuthType(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeEnum,
+			Value:  value,
+			Column: block.FieldAuthType,
+		})
+		_node.AuthType = value
+	}
+	if value, ok := bc.mutation.User(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: block.FieldUser,
+		})
+		_node.User = value
+	}
+	if value, ok := bc.mutation.Password(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: block.FieldPassword,
+		})
+		_node.Password = value
+	}
+	if value, ok := bc.mutation.ClientID(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: block.FieldClientID,
+		})
+		_node.ClientID = value
+	}
+	if value, ok := bc.mutation.ClientSecret(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: block.FieldClientSecret,
+		})
+		_node.ClientSecret = value
+	}
+	if value, ok := bc.mutation.OidcURL(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: block.FieldOidcURL,
+		})
+		_node.OidcURL = value
 	}
 	if value, ok := bc.mutation.SignalType(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{

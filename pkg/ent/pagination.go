@@ -8957,6 +8957,16 @@ func (f *FlowQuery) Paginate(
 }
 
 var (
+	// FlowOrderFieldCmType orders Flow by cm_type.
+	FlowOrderFieldCmType = &FlowOrderField{
+		field: flow.FieldCmType,
+		toCursor: func(f *Flow) Cursor {
+			return Cursor{
+				ID:    f.ID,
+				Value: f.CmType,
+			}
+		},
+	}
 	// FlowOrderFieldCreationDate orders Flow by creation_date.
 	FlowOrderFieldCreationDate = &FlowOrderField{
 		field: flow.FieldCreationDate,
@@ -8973,6 +8983,8 @@ var (
 func (f FlowOrderField) String() string {
 	var str string
 	switch f.field {
+	case flow.FieldCmType:
+		str = "CM_TYPE"
 	case flow.FieldCreationDate:
 		str = "CREATED_AT"
 	}
@@ -8991,6 +9003,8 @@ func (f *FlowOrderField) UnmarshalGQL(v interface{}) error {
 		return fmt.Errorf("FlowOrderField %T must be a string", v)
 	}
 	switch str {
+	case "CM_TYPE":
+		*f = *FlowOrderFieldCmType
 	case "CREATED_AT":
 		*f = *FlowOrderFieldCreationDate
 	default:

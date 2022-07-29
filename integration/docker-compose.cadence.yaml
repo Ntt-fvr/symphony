@@ -11,8 +11,8 @@ services:
       - "CADENCE_TCHANNEL_PEERS=cadence:7933"
     ports:
       - 8088:8088
-    networks:
-      - private
-      - public
+    #networks:
+    #  - private
+    #  - public
     depends_on:
       - cadence

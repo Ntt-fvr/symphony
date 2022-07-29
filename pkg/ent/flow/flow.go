@@ -34,6 +34,8 @@ const (
 	FieldStatus = "status"
 	// FieldNewInstancesPolicy holds the string denoting the newinstancespolicy field in the database.
 	FieldNewInstancesPolicy = "new_instances_policy"
+	// FieldCmType holds the string denoting the cm_type field in the database.
+	FieldCmType = "cm_type"
 	// FieldCreationDate holds the string denoting the creation_date field in the database.
 	FieldCreationDate = "creation_date"
 
@@ -97,6 +99,7 @@ var Columns = []string{
 	FieldEndParamDefinitions,
 	FieldStatus,
 	FieldNewInstancesPolicy,
+	FieldCmType,
 	FieldCreationDate,
 }
 
@@ -151,6 +154,7 @@ const (
 	StatusDraft     Status = "DRAFT"
 	StatusArchived  Status = "ARCHIVED"
 	StatusOn_Hold   Status = "ON_HOLD"
+	StatusDeleted   Status = "DELETED"
 )
 
 func (s Status) String() string {
@@ -160,7 +164,7 @@ func (s Status) String() string {
 // StatusValidator is a validator for the "status" field enum values. It is called by the builders before save.
 func StatusValidator(s Status) error {
 	switch s {
-	case StatusPublished, StatusDraft, StatusArchived, StatusOn_Hold:
+	case StatusPublished, StatusDraft, StatusArchived, StatusOn_Hold, StatusDeleted:
 		return nil
 	default:
 		return fmt.Errorf("flow: invalid enum value for status field: %q", s)
@@ -190,6 +194,30 @@ func NewInstancesPolicyValidator(nip NewInstancesPolicy) error {
 		return nil
 	default:
 		return fmt.Errorf("flow: invalid enum value for newInstancesPolicy field: %q", nip)
+	}
+}
+
+// CmType defines the type for the cm_type enum field.
+type CmType string
+
+// CmType values.
+const (
+	CmTypeInitialConfig  CmType = "INITIAL_CONFIG"
+	CmTypeGeneralCr      CmType = "GENERAL_CR"
+	CmTypeSyncParameters CmType = "SYNC_PARAMETERS"
+)
+
+func (ct CmType) String() string {
+	return string(ct)
+}
+
+// CmTypeValidator is a validator for the "cm_type" field enum values. It is called by the builders before save.
+func CmTypeValidator(ct CmType) error {
+	switch ct {
+	case CmTypeInitialConfig, CmTypeGeneralCr, CmTypeSyncParameters:
+		return nil
+	default:
+		return fmt.Errorf("flow: invalid enum value for cm_type field: %q", ct)
 	}
 }
 
@@ -225,6 +253,24 @@ func (nip *NewInstancesPolicy) UnmarshalGQL(val interface{}) error {
 	*nip = NewInstancesPolicy(str)
 	if err := NewInstancesPolicyValidator(*nip); err != nil {
 		return fmt.Errorf("%s is not a valid NewInstancesPolicy", str)
+	}
+	return nil
+}
+
+// MarshalGQL implements graphql.Marshaler interface.
+func (ct CmType) MarshalGQL(w io.Writer) {
+	io.WriteString(w, strconv.Quote(ct.String()))
+}
+
+// UnmarshalGQL implements graphql.Unmarshaler interface.
+func (ct *CmType) UnmarshalGQL(val interface{}) error {
+	str, ok := val.(string)
+	if !ok {
+		return fmt.Errorf("enum %T must be a string", val)
+	}
+	*ct = CmType(str)
+	if err := CmTypeValidator(*ct); err != nil {
+		return fmt.Errorf("%s is not a valid CmType", str)
 	}
 	return nil
 }

@@ -177,6 +177,22 @@ func (Block) Fields() []ent.Field {
 			Nillable(),
 		field.JSON("headers", []*flowschema.VariableValue{}).
 			Optional(),
+		field.Enum("auth_type").
+			NamedValues(
+				"Basic", "BASIC",
+				"OIDC", "OIDC",
+			).
+			Optional(),
+		field.String("user").
+			Optional(),
+		field.String("password").
+			Optional(),
+		field.String("client_id").
+			Optional(),
+		field.String("client_secret").
+			Optional(),
+		field.String("oidc_url").
+			Optional(),
 
 		field.Enum("signal_type").
 			NamedValues(
