@@ -69,6 +69,7 @@ func (Flow) Fields() []ent.Field {
 				"Draft", "DRAFT",
 				"Archived", "ARCHIVED",
 				"On_Hold", "ON_HOLD",
+				"Deleted", "DELETED",
 			).Default("DRAFT"),
 		field.Enum("newInstancesPolicy").
 			NamedValues(

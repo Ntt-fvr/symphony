@@ -53,17 +53,9 @@ func newApplication(ctx context.Context, flags *cliFlags) (*application, func(),
 		cleanup()
 		return nil, nil, err
 	}
-	automationEmitterFactory := provideAutomationEmitterFactory(flags)
-	automationEmitter, cleanup3, err := ev.ProvideAutomationEmitter(ctx, automationEmitterFactory)
-	if err != nil {
-		cleanup2()
-		cleanup()
-		return nil, nil, err
-	}
 	eventer := &event.Eventer{
-		Logger:            logger,
-		Emitter:           emitter,
-		AutomationEmitter: automationEmitter,
+		Logger:  logger,
+		Emitter: emitter,
 	}
 	factory := triggers.NewFactory()
 	actionsFactory := actions.NewFactory()
@@ -87,9 +79,8 @@ func newApplication(ctx context.Context, flags *cliFlags) (*application, func(),
 		Telemetry:       telemetryConfig,
 		HealthChecks:    v,
 	}
-	server, cleanup4, err := graphhttp.NewServer(graphhttpConfig)
+	server, cleanup3, err := graphhttp.NewServer(graphhttpConfig)
 	if err != nil {
-		cleanup3()
 		cleanup2()
 		cleanup()
 		return nil, nil, err
@@ -97,7 +88,6 @@ func newApplication(ctx context.Context, flags *cliFlags) (*application, func(),
 	string2 := flags.ListenAddress
 	viewExporter, err := telemetry.ProvideViewExporter(telemetryConfig)
 	if err != nil {
-		cleanup4()
 		cleanup3()
 		cleanup2()
 		cleanup()
@@ -119,7 +109,6 @@ func newApplication(ctx context.Context, flags *cliFlags) (*application, func(),
 		metricsAddr: addr,
 	}
 	return mainApplication, func() {
-		cleanup4()
 		cleanup3()
 		cleanup2()
 		cleanup()

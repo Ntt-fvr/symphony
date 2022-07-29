@@ -154,7 +154,13 @@ func CopyBlocks(ctx context.Context, blocksQuery *ent.BlockQuery, addToFlow func
 				SetConnectionTimeout(*blk.ConnectionTimeout).
 				SetHeaders(blk.Headers).
 				SetURL(*blk.URL).
-				SetURLMethod(*blk.URLMethod)
+				SetURLMethod(*blk.URLMethod).
+				SetAuthType(blk.AuthType).
+				SetNillableUser(&blk.User).
+				SetNillablePassword(&blk.Password).
+				SetNillableClientID(&blk.ClientID).
+				SetNillableClientSecret(&blk.ClientSecret).
+				SetNillableOidcURL(&blk.OidcURL)
 		case block.TypeTimer:
 			blockCreate = blockCreate.SetEnableTimerExpression(*blk.EnableTimerExpression).
 				SetTimerExpression(*blk.TimerExpression).

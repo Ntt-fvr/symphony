@@ -154,6 +154,7 @@ const (
 	StatusDraft     Status = "DRAFT"
 	StatusArchived  Status = "ARCHIVED"
 	StatusOn_Hold   Status = "ON_HOLD"
+	StatusDeleted   Status = "DELETED"
 )
 
 func (s Status) String() string {
@@ -163,7 +164,7 @@ func (s Status) String() string {
 // StatusValidator is a validator for the "status" field enum values. It is called by the builders before save.
 func StatusValidator(s Status) error {
 	switch s {
-	case StatusPublished, StatusDraft, StatusArchived, StatusOn_Hold:
+	case StatusPublished, StatusDraft, StatusArchived, StatusOn_Hold, StatusDeleted:
 		return nil
 	default:
 		return fmt.Errorf("flow: invalid enum value for status field: %q", s)

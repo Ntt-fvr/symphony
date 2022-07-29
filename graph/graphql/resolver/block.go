@@ -216,12 +216,18 @@ func (r blockResolver) Details(ctx context.Context, obj *ent.Block) (models.Bloc
 		}
 
 		return &models.InvokeRestAPIBlock{
-			EntryPoint: entryPoint,
-			ExitPoint:  exitPoint,
-			URL:        url,
-			Method:     method,
-			Headers:    obj.Headers,
-			Body:       body,
+			EntryPoint:   entryPoint,
+			ExitPoint:    exitPoint,
+			URL:          url,
+			Method:       method,
+			Headers:      obj.Headers,
+			Body:         body,
+			AuthType:     &obj.AuthType,
+			User:         &obj.User,
+			Password:     &obj.Password,
+			ClientID:     &obj.ClientID,
+			ClientSecret: &obj.ClientSecret,
+			OidcURL:      &obj.OidcURL,
 		}, nil
 	case block.TypeTimer:
 		return &models.TimerBlock{
@@ -867,13 +873,33 @@ func (r mutationResolver) AddInvokeRestAPIBlock(ctx context.Context, flowDraftID
 		return nil, err
 	}
 
-	return b.Update().
+	details := b.Update().
 		SetBody(input.Body).
 		SetConnectionTimeout(input.ConnectionTimeOut).
 		SetHeaders(input.Headers).
 		SetURL(input.URL).
-		SetURLMethod(block.URLMethod(input.Method)).
-		Save(ctx)
+		SetURLMethod(block.URLMethod(input.Method))
+
+	if input.AuthType != nil {
+		details = details.SetAuthType(block.AuthType(*input.AuthType))
+	}
+	if input.User != nil {
+		details = details.SetNillableUser(input.User)
+	}
+	if input.Password != nil {
+		details = details.SetNillablePassword(input.Password)
+	}
+	if input.ClientID != nil {
+		details = details.SetNillableClientID(input.ClientID)
+	}
+	if input.ClientSecret != nil {
+		details = details.SetNillableClientSecret(input.ClientSecret)
+	}
+	if input.OidcURL != nil {
+		details = details.SetNillableOidcURL(input.OidcURL)
+	}
+
+	return details.Save(ctx)
 
 }
 

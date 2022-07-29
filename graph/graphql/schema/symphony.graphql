@@ -6161,6 +6161,14 @@ enum UrlMethod
   PATCH
 }
 
+enum  AuthType
+@goModel(
+  model: "github.com/facebookincubator/symphony/pkg/ent/block.AuthType"
+  ) {
+  Basic
+  ODIC
+}
+
 type InvokeRestAPIBlock {
   entryPoint: EntryPoint!
   method: UrlMethod!
@@ -6168,6 +6176,12 @@ type InvokeRestAPIBlock {
   connectionTimeOut: Int!
   body: String!
   headers: [VariableValue!]!
+  authType: AuthType
+  user: String
+  password: String
+  clientId: String
+  clientSecret: String
+  oidcUrl: String
   exitPoint: ExitPoint!
 }
 
@@ -6399,6 +6413,12 @@ input InvokeRestAPIBlockInput {
   connectionTimeOut: Int!
   body: String!
   headers: [VariableValueInput]!
+  authType: AuthType
+  user: String
+  password: String
+  clientId: String
+  clientSecret: String
+  oidcUrl: String
   basicDefinitions: BaseBlockInput!
   params: [VariableExpressionInput!]!
   uiRepresentation: BlockUIRepresentationInput
@@ -6458,10 +6478,10 @@ input EditBlockInput {
 enum FlowStatus
   @goModel(model: "github.com/facebookincubator/symphony/pkg/ent/flow.Status") {
   PUBLISHED
-  UNPUBLISHED
   ARCHIVED
   ON_HOLD
   DRAFT
+  DELETED
 }
 
 enum FlowNewInstancesPolicy

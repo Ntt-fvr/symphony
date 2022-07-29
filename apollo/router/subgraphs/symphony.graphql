@@ -1757,6 +1757,11 @@ input PropertyTypeInput
   propertyTypeValues: [AddPropertyTypeValueInput]
 }
 
+input EditPropertyTypeInput {
+    id: ID!
+    isDeleted: Boolean!
+  }
+
 input EditIsListableInput {
   id: ID!
   isListable: Boolean!
@@ -4664,15 +4669,18 @@ enum FlowOrderField {
   Order Flow by name.
   """
   NAME
+
   """
   Order Flow by CMType.
   """
   CM_TYPE
+
   """
   Order Flow by creation time.
   """
   CREATED_AT
 }
+
 """
 Ordering options for ResourceType connections.
 """
@@ -4681,6 +4689,7 @@ input FlowOrder {
   The ordering direction.
   """
   direction: OrderDirection!
+
   """
   The field to order ResourceType by.
   """
@@ -6140,6 +6149,14 @@ enum UrlMethod
   PATCH
 }
 
+enum  AuthType
+@goModel(
+  model: "github.com/facebookincubator/symphony/pkg/ent/block.AuthType"
+  ) {
+  Basic
+  ODIC
+}
+
 type InvokeRestAPIBlock {
   entryPoint: EntryPoint!
   method: UrlMethod!
@@ -6147,6 +6164,12 @@ type InvokeRestAPIBlock {
   connectionTimeOut: Int!
   body: String!
   headers: [VariableValue!]!
+  authType: AuthType
+  user: String
+  password: String
+  clientId: String
+  clientSecret: String
+  oidcUrl: String
   exitPoint: ExitPoint!
 }
 
@@ -6378,6 +6401,12 @@ input InvokeRestAPIBlockInput {
   connectionTimeOut: Int!
   body: String!
   headers: [VariableValueInput]!
+  authType: AuthType
+  user: String
+  password: String
+  clientId: String
+  clientSecret: String
+  oidcUrl: String
   basicDefinitions: BaseBlockInput!
   params: [VariableExpressionInput!]!
   uiRepresentation: BlockUIRepresentationInput
@@ -6437,10 +6466,10 @@ input EditBlockInput {
 enum FlowStatus
   @goModel(model: "github.com/facebookincubator/symphony/pkg/ent/flow.Status") {
   PUBLISHED
-  UNPUBLISHED
   ARCHIVED
   ON_HOLD
   DRAFT
+  DELETED
 }
 
 enum FlowNewInstancesPolicy
@@ -6467,8 +6496,8 @@ type Flow implements Node {
   endParamDefinitions: [VariableDefinition!]!
   status: FlowStatus!
   newInstancesPolicy: FlowNewInstancesPolicy!
-  blocks: [Block!]!
   cmType: FlowCMType
+  blocks: [Block!]!
   connectors: [Connector!]!
   draft: FlowDraft
   runningInstances: Int!
@@ -6483,6 +6512,8 @@ enum FlowFilterType {
   FLOW_NAME
   FLOW_CM_TYPE
 }
+
+
 input FlowFilterInput {
   filterType: FlowFilterType!
   operator: FilterOperator!
@@ -7050,20 +7081,7 @@ type Query {
     """
     name: String
   ): FlowDraftConnection!
-  flows(
-    after: Cursor
-    
-    first: Int @numberValue(min: 0)
-    
-    before: Cursor
-    
-    last: Int @numberValue(min: 0)
-    
-    orderBy: FlowOrder
-    
-    filterBy: [FlowFilterInput!]
   
-  ): FlowConnection!
   flowInstances(
     after: Cursor
     first: Int @numberValue(min: 0)
@@ -7113,6 +7131,22 @@ type Query {
     """
     filterBy: [CounterFilterInput!]
   ): CounterConnection!
+
+  flows(
+
+    after: Cursor
+    
+    first: Int @numberValue(min: 0)
+    
+    before: Cursor
+    
+    last: Int @numberValue(min: 0)
+    
+    orderBy: FlowOrder
+    
+    filterBy: [FlowFilterInput!]
+  
+  ): FlowConnection!
   
   """
   A list of kpis.
@@ -8414,12 +8448,9 @@ type Mutation {
   deletePermissionsPolicy(id: ID!): Boolean!
   addStartBlock(flowDraftId: ID!, input: StartBlockInput!): Block!
   addEndBlock(flowDraftId: ID!, input: EndBlockInput!): Block!
-  #addDecisionBlock(flowDraftId: ID!, input: DecisionBlockInput!): Block!
   addGotoBlock(flowDraftId: ID!, input: GotoBlockInput!): Block!
-  #addSubflowBlock(flowDraftId: ID!, input: SubflowBlockInput!): Block!
   addTriggerBlock(flowDraftId: ID!, input: TriggerBlockInput!): Block!
   addActionBlock(flowDraftId: ID!, input: ActionBlockInput!): Block!
-  #addTrueFalseBlock(flowDraftId: ID!, input: TrueFalseBlockInput!): Block!
   addChoiceBlock(flowDraftId: ID!, input: ChoiceBlockInput!): Block!
   addExecuteFlowBlock(flowDraftId: ID!, input: ExecuteFlowBlockInput!): Block!
   addTimerBlock(flowDraftId: ID!, input: TimerBlockInput!): Block!
@@ -8562,6 +8593,7 @@ type Mutation {
   addPropertyTypeValue(input: AddPropertyTypeValueInput!): PropertyTypeValue!
   editPropertyTypeValue(input: EditPropertyTypeValueInput!): PropertyTypeValue!
   removePropertyTypeValue(id: ID!): ID!
+  editPropertyType(input: EditPropertyTypeInput!): PropertyType!
 }
 
 """

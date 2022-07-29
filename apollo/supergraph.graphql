@@ -1919,6 +1919,11 @@ input AuthRule {
   rule: String
 }
 
+enum AuthType {
+  Basic
+  ODIC
+}
+
 type AutomationPolicy {
   read: BasicPermissionRule!
   templates: CUD!
@@ -4182,6 +4187,11 @@ input EditPropertyCategoryInput {
   parameterCatalogId: ID!
 }
 
+input EditPropertyTypeInput {
+  id: ID!
+  isDeleted: Boolean!
+}
+
 input EditPropertyTypeValueInput {
   id: ID
   isDeleted: Boolean
@@ -5283,10 +5293,10 @@ enum FlowOrderField {
 
 enum FlowStatus {
   ARCHIVED
+  DELETED
   DRAFT
   ON_HOLD
   PUBLISHED
-  UNPUBLISHED
 }
 
 type ForEachBlock {
@@ -5575,27 +5585,39 @@ input InventoryPolicyInput {
 }
 
 type InvokeRestAPIBlock {
+  authType: AuthType
   body: String!
+  clientId: String
+  clientSecret: String
   connectionTimeOut: Int!
   entryPoint: EntryPoint!
   exitPoint: ExitPoint!
   headers: [VariableValue!]!
   method: UrlMethod!
+  oidcUrl: String
+  password: String
   url: String!
+  user: String
 }
 
 input InvokeRestAPIBlockInput {
+  authType: AuthType
   basicDefinitions: BaseBlockInput!
   body: String!
   cid: String!
+  clientId: String
+  clientSecret: String
   connectionTimeOut: Int!
   entryPoint: EntryPointInput!
   exitPoint: ExitPointInput!
   headers: [VariableValueInput]!
   method: UrlMethod!
+  oidcUrl: String
   params: [VariableExpressionInput!]!
+  password: String
   uiRepresentation: BlockUIRepresentationInput
   url: String!
+  user: String
 }
 
 type KafkaBlock {
@@ -6702,6 +6724,7 @@ type Mutation {
   editProject(input: EditProjectInput!): Project! @join__field(graph: SYMPHONY)
   editProjectType(input: EditProjectTypeInput!): ProjectType! @join__field(graph: SYMPHONY)
   editPropertyCategories(propertyCategories: [EditPropertyCategoryInput]): [PropertyCategory!] @join__field(graph: SYMPHONY)
+  editPropertyType(input: EditPropertyTypeInput!): PropertyType! @join__field(graph: SYMPHONY)
   editPropertyTypeValue(input: EditPropertyTypeValueInput!): PropertyTypeValue! @join__field(graph: SYMPHONY)
   editRecommendations(input: EditRecommendationsInput!): Recommendations! @join__field(graph: SYMPHONY)
   editRecommendationsCategory(input: EditRecommendationsCategoryInput!): RecommendationsCategory! @join__field(graph: SYMPHONY)

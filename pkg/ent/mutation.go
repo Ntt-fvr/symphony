@@ -4027,6 +4027,12 @@ type BlockMutation struct {
 	addconnection_timeout              *int
 	body                               *string
 	headers                            *[]*flowschema.VariableValue
+	auth_type                          *block.AuthType
+	user                               *string
+	password                           *string
+	client_id                          *string
+	client_secret                      *string
+	oidc_url                           *string
 	signal_type                        *block.SignalType
 	signal_module                      *block.SignalModule
 	custom_filter                      *string
@@ -6047,6 +6053,306 @@ func (m *BlockMutation) ResetHeaders() {
 	delete(m.clearedFields, block.FieldHeaders)
 }
 
+// SetAuthType sets the auth_type field.
+func (m *BlockMutation) SetAuthType(bt block.AuthType) {
+	m.auth_type = &bt
+}
+
+// AuthType returns the auth_type value in the mutation.
+func (m *BlockMutation) AuthType() (r block.AuthType, exists bool) {
+	v := m.auth_type
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldAuthType returns the old auth_type value of the Block.
+// If the Block object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *BlockMutation) OldAuthType(ctx context.Context) (v block.AuthType, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldAuthType is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldAuthType requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldAuthType: %w", err)
+	}
+	return oldValue.AuthType, nil
+}
+
+// ClearAuthType clears the value of auth_type.
+func (m *BlockMutation) ClearAuthType() {
+	m.auth_type = nil
+	m.clearedFields[block.FieldAuthType] = struct{}{}
+}
+
+// AuthTypeCleared returns if the field auth_type was cleared in this mutation.
+func (m *BlockMutation) AuthTypeCleared() bool {
+	_, ok := m.clearedFields[block.FieldAuthType]
+	return ok
+}
+
+// ResetAuthType reset all changes of the "auth_type" field.
+func (m *BlockMutation) ResetAuthType() {
+	m.auth_type = nil
+	delete(m.clearedFields, block.FieldAuthType)
+}
+
+// SetUser sets the user field.
+func (m *BlockMutation) SetUser(s string) {
+	m.user = &s
+}
+
+// User returns the user value in the mutation.
+func (m *BlockMutation) User() (r string, exists bool) {
+	v := m.user
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUser returns the old user value of the Block.
+// If the Block object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *BlockMutation) OldUser(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldUser is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldUser requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUser: %w", err)
+	}
+	return oldValue.User, nil
+}
+
+// ClearUser clears the value of user.
+func (m *BlockMutation) ClearUser() {
+	m.user = nil
+	m.clearedFields[block.FieldUser] = struct{}{}
+}
+
+// UserCleared returns if the field user was cleared in this mutation.
+func (m *BlockMutation) UserCleared() bool {
+	_, ok := m.clearedFields[block.FieldUser]
+	return ok
+}
+
+// ResetUser reset all changes of the "user" field.
+func (m *BlockMutation) ResetUser() {
+	m.user = nil
+	delete(m.clearedFields, block.FieldUser)
+}
+
+// SetPassword sets the password field.
+func (m *BlockMutation) SetPassword(s string) {
+	m.password = &s
+}
+
+// Password returns the password value in the mutation.
+func (m *BlockMutation) Password() (r string, exists bool) {
+	v := m.password
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldPassword returns the old password value of the Block.
+// If the Block object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *BlockMutation) OldPassword(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldPassword is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldPassword requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldPassword: %w", err)
+	}
+	return oldValue.Password, nil
+}
+
+// ClearPassword clears the value of password.
+func (m *BlockMutation) ClearPassword() {
+	m.password = nil
+	m.clearedFields[block.FieldPassword] = struct{}{}
+}
+
+// PasswordCleared returns if the field password was cleared in this mutation.
+func (m *BlockMutation) PasswordCleared() bool {
+	_, ok := m.clearedFields[block.FieldPassword]
+	return ok
+}
+
+// ResetPassword reset all changes of the "password" field.
+func (m *BlockMutation) ResetPassword() {
+	m.password = nil
+	delete(m.clearedFields, block.FieldPassword)
+}
+
+// SetClientID sets the client_id field.
+func (m *BlockMutation) SetClientID(s string) {
+	m.client_id = &s
+}
+
+// ClientID returns the client_id value in the mutation.
+func (m *BlockMutation) ClientID() (r string, exists bool) {
+	v := m.client_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldClientID returns the old client_id value of the Block.
+// If the Block object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *BlockMutation) OldClientID(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldClientID is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldClientID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldClientID: %w", err)
+	}
+	return oldValue.ClientID, nil
+}
+
+// ClearClientID clears the value of client_id.
+func (m *BlockMutation) ClearClientID() {
+	m.client_id = nil
+	m.clearedFields[block.FieldClientID] = struct{}{}
+}
+
+// ClientIDCleared returns if the field client_id was cleared in this mutation.
+func (m *BlockMutation) ClientIDCleared() bool {
+	_, ok := m.clearedFields[block.FieldClientID]
+	return ok
+}
+
+// ResetClientID reset all changes of the "client_id" field.
+func (m *BlockMutation) ResetClientID() {
+	m.client_id = nil
+	delete(m.clearedFields, block.FieldClientID)
+}
+
+// SetClientSecret sets the client_secret field.
+func (m *BlockMutation) SetClientSecret(s string) {
+	m.client_secret = &s
+}
+
+// ClientSecret returns the client_secret value in the mutation.
+func (m *BlockMutation) ClientSecret() (r string, exists bool) {
+	v := m.client_secret
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldClientSecret returns the old client_secret value of the Block.
+// If the Block object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *BlockMutation) OldClientSecret(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldClientSecret is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldClientSecret requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldClientSecret: %w", err)
+	}
+	return oldValue.ClientSecret, nil
+}
+
+// ClearClientSecret clears the value of client_secret.
+func (m *BlockMutation) ClearClientSecret() {
+	m.client_secret = nil
+	m.clearedFields[block.FieldClientSecret] = struct{}{}
+}
+
+// ClientSecretCleared returns if the field client_secret was cleared in this mutation.
+func (m *BlockMutation) ClientSecretCleared() bool {
+	_, ok := m.clearedFields[block.FieldClientSecret]
+	return ok
+}
+
+// ResetClientSecret reset all changes of the "client_secret" field.
+func (m *BlockMutation) ResetClientSecret() {
+	m.client_secret = nil
+	delete(m.clearedFields, block.FieldClientSecret)
+}
+
+// SetOidcURL sets the oidc_url field.
+func (m *BlockMutation) SetOidcURL(s string) {
+	m.oidc_url = &s
+}
+
+// OidcURL returns the oidc_url value in the mutation.
+func (m *BlockMutation) OidcURL() (r string, exists bool) {
+	v := m.oidc_url
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldOidcURL returns the old oidc_url value of the Block.
+// If the Block object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *BlockMutation) OldOidcURL(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldOidcURL is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldOidcURL requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldOidcURL: %w", err)
+	}
+	return oldValue.OidcURL, nil
+}
+
+// ClearOidcURL clears the value of oidc_url.
+func (m *BlockMutation) ClearOidcURL() {
+	m.oidc_url = nil
+	m.clearedFields[block.FieldOidcURL] = struct{}{}
+}
+
+// OidcURLCleared returns if the field oidc_url was cleared in this mutation.
+func (m *BlockMutation) OidcURLCleared() bool {
+	_, ok := m.clearedFields[block.FieldOidcURL]
+	return ok
+}
+
+// ResetOidcURL reset all changes of the "oidc_url" field.
+func (m *BlockMutation) ResetOidcURL() {
+	m.oidc_url = nil
+	delete(m.clearedFields, block.FieldOidcURL)
+}
+
 // SetSignalType sets the signal_type field.
 func (m *BlockMutation) SetSignalType(bt block.SignalType) {
 	m.signal_type = &bt
@@ -6975,7 +7281,7 @@ func (m *BlockMutation) Type() string {
 // this mutation. Note that, in order to get all numeric
 // fields that were in/decremented, call AddedFields().
 func (m *BlockMutation) Fields() []string {
-	fields := make([]string, 0, 47)
+	fields := make([]string, 0, 53)
 	if m.create_time != nil {
 		fields = append(fields, block.FieldCreateTime)
 	}
@@ -7086,6 +7392,24 @@ func (m *BlockMutation) Fields() []string {
 	}
 	if m.headers != nil {
 		fields = append(fields, block.FieldHeaders)
+	}
+	if m.auth_type != nil {
+		fields = append(fields, block.FieldAuthType)
+	}
+	if m.user != nil {
+		fields = append(fields, block.FieldUser)
+	}
+	if m.password != nil {
+		fields = append(fields, block.FieldPassword)
+	}
+	if m.client_id != nil {
+		fields = append(fields, block.FieldClientID)
+	}
+	if m.client_secret != nil {
+		fields = append(fields, block.FieldClientSecret)
+	}
+	if m.oidc_url != nil {
+		fields = append(fields, block.FieldOidcURL)
 	}
 	if m.signal_type != nil {
 		fields = append(fields, block.FieldSignalType)
@@ -7199,6 +7523,18 @@ func (m *BlockMutation) Field(name string) (ent.Value, bool) {
 		return m.Body()
 	case block.FieldHeaders:
 		return m.Headers()
+	case block.FieldAuthType:
+		return m.AuthType()
+	case block.FieldUser:
+		return m.User()
+	case block.FieldPassword:
+		return m.Password()
+	case block.FieldClientID:
+		return m.ClientID()
+	case block.FieldClientSecret:
+		return m.ClientSecret()
+	case block.FieldOidcURL:
+		return m.OidcURL()
 	case block.FieldSignalType:
 		return m.SignalType()
 	case block.FieldSignalModule:
@@ -7302,6 +7638,18 @@ func (m *BlockMutation) OldField(ctx context.Context, name string) (ent.Value, e
 		return m.OldBody(ctx)
 	case block.FieldHeaders:
 		return m.OldHeaders(ctx)
+	case block.FieldAuthType:
+		return m.OldAuthType(ctx)
+	case block.FieldUser:
+		return m.OldUser(ctx)
+	case block.FieldPassword:
+		return m.OldPassword(ctx)
+	case block.FieldClientID:
+		return m.OldClientID(ctx)
+	case block.FieldClientSecret:
+		return m.OldClientSecret(ctx)
+	case block.FieldOidcURL:
+		return m.OldOidcURL(ctx)
 	case block.FieldSignalType:
 		return m.OldSignalType(ctx)
 	case block.FieldSignalModule:
@@ -7590,6 +7938,48 @@ func (m *BlockMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetHeaders(v)
 		return nil
+	case block.FieldAuthType:
+		v, ok := value.(block.AuthType)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetAuthType(v)
+		return nil
+	case block.FieldUser:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUser(v)
+		return nil
+	case block.FieldPassword:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetPassword(v)
+		return nil
+	case block.FieldClientID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetClientID(v)
+		return nil
+	case block.FieldClientSecret:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetClientSecret(v)
+		return nil
+	case block.FieldOidcURL:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetOidcURL(v)
+		return nil
 	case block.FieldSignalType:
 		v, ok := value.(block.SignalType)
 		if !ok {
@@ -7864,6 +8254,24 @@ func (m *BlockMutation) ClearedFields() []string {
 	if m.FieldCleared(block.FieldHeaders) {
 		fields = append(fields, block.FieldHeaders)
 	}
+	if m.FieldCleared(block.FieldAuthType) {
+		fields = append(fields, block.FieldAuthType)
+	}
+	if m.FieldCleared(block.FieldUser) {
+		fields = append(fields, block.FieldUser)
+	}
+	if m.FieldCleared(block.FieldPassword) {
+		fields = append(fields, block.FieldPassword)
+	}
+	if m.FieldCleared(block.FieldClientID) {
+		fields = append(fields, block.FieldClientID)
+	}
+	if m.FieldCleared(block.FieldClientSecret) {
+		fields = append(fields, block.FieldClientSecret)
+	}
+	if m.FieldCleared(block.FieldOidcURL) {
+		fields = append(fields, block.FieldOidcURL)
+	}
 	if m.FieldCleared(block.FieldSignalType) {
 		fields = append(fields, block.FieldSignalType)
 	}
@@ -8006,6 +8414,24 @@ func (m *BlockMutation) ClearField(name string) error {
 		return nil
 	case block.FieldHeaders:
 		m.ClearHeaders()
+		return nil
+	case block.FieldAuthType:
+		m.ClearAuthType()
+		return nil
+	case block.FieldUser:
+		m.ClearUser()
+		return nil
+	case block.FieldPassword:
+		m.ClearPassword()
+		return nil
+	case block.FieldClientID:
+		m.ClearClientID()
+		return nil
+	case block.FieldClientSecret:
+		m.ClearClientSecret()
+		return nil
+	case block.FieldOidcURL:
+		m.ClearOidcURL()
 		return nil
 	case block.FieldSignalType:
 		m.ClearSignalType()
@@ -8156,6 +8582,24 @@ func (m *BlockMutation) ResetField(name string) error {
 		return nil
 	case block.FieldHeaders:
 		m.ResetHeaders()
+		return nil
+	case block.FieldAuthType:
+		m.ResetAuthType()
+		return nil
+	case block.FieldUser:
+		m.ResetUser()
+		return nil
+	case block.FieldPassword:
+		m.ResetPassword()
+		return nil
+	case block.FieldClientID:
+		m.ResetClientID()
+		return nil
+	case block.FieldClientSecret:
+		m.ResetClientSecret()
+		return nil
+	case block.FieldOidcURL:
+		m.ResetOidcURL()
 		return nil
 	case block.FieldSignalType:
 		m.ResetSignalType()

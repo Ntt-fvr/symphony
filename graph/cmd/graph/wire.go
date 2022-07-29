@@ -77,8 +77,8 @@ func newApplication(ctx context.Context, flags *cliFlags) (*application, func(),
 			new(graphhttp.Config),
 			"*",
 		),
-		ev.ProvideAutomationEmitter,
-		provideAutomationEmitterFactory,
+		//ev.ProvideAutomationEmitter,
+		//provideAutomationEmitterFactory,
 	)
 	return nil, nil, nil
 }

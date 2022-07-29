@@ -16,9 +16,9 @@ import (
 
 // Eventer generates events from mutations.
 type Eventer struct {
-	Logger            log.Logger
-	Emitter           ev.Emitter
-	AutomationEmitter ev.AutomationEmitter
+	Logger  log.Logger
+	Emitter ev.Emitter
+	// AutomationEmitter ev.AutomationEmitter
 }
 
 // HookTo hooks eventer to ent client.
@@ -66,6 +66,7 @@ func (e *Eventer) emit(ctx context.Context, name string, obj interface{}) {
 	}
 }
 
+/*
 func (e *Eventer) automationEmit(ctx context.Context, name string, obj interface{}) {
 	current := viewer.FromContext(ctx)
 	event := &ev.Event{
@@ -100,3 +101,4 @@ func (e *Eventer) automationEmit(ctx context.Context, name string, obj interface
 		emit()
 	}
 }
+*/

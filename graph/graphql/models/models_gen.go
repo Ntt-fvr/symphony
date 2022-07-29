@@ -1431,6 +1431,12 @@ type InvokeRestAPIBlock struct {
 	ConnectionTimeOut int                         `json:"connectionTimeOut"`
 	Body              string                      `json:"body"`
 	Headers           []*flowschema.VariableValue `json:"headers"`
+	AuthType          *block.AuthType             `json:"authType"`
+	User              *string                     `json:"user"`
+	Password          *string                     `json:"password"`
+	ClientID          *string                     `json:"clientId"`
+	ClientSecret      *string                     `json:"clientSecret"`
+	OidcURL           *string                     `json:"oidcUrl"`
 	ExitPoint         *ent.ExitPoint              `json:"exitPoint"`
 }
 
@@ -1445,6 +1451,12 @@ type InvokeRestAPIBlockInput struct {
 	ConnectionTimeOut int                               `json:"connectionTimeOut"`
 	Body              string                            `json:"body"`
 	Headers           []*flowschema.VariableValue       `json:"headers"`
+	AuthType          *block.AuthType                   `json:"authType"`
+	User              *string                           `json:"user"`
+	Password          *string                           `json:"password"`
+	ClientID          *string                           `json:"clientId"`
+	ClientSecret      *string                           `json:"clientSecret"`
+	OidcURL           *string                           `json:"oidcUrl"`
 	BasicDefinitions  *BaseBlockInput                   `json:"basicDefinitions"`
 	Params            []*VariableExpressionInput        `json:"params"`
 	UIRepresentation  *flowschema.BlockUIRepresentation `json:"uiRepresentation"`

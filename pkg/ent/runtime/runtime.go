@@ -313,7 +313,7 @@ func init() {
 	// block.DefaultEnableTimerExpression holds the default value on creation for the enable_timer_expression field.
 	block.DefaultEnableTimerExpression = blockDescEnableTimerExpression.Default.(bool)
 	// blockDescBlockFlow is the schema descriptor for block_flow field.
-	blockDescBlockFlow := blockFields[38].Descriptor()
+	blockDescBlockFlow := blockFields[44].Descriptor()
 	// block.DefaultBlockFlow holds the default value on creation for the block_flow field.
 	block.DefaultBlockFlow = blockDescBlockFlow.Default.(bool)
 	blockinstanceMixin := schema.BlockInstance{}.Mixin()
