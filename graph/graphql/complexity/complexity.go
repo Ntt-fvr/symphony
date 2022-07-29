@@ -67,9 +67,7 @@ func New() (complexity generated.ComplexityRoot) {
 	complexity.Query.FlowDrafts = func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, _ *string) int {
 		return PaginationComplexity(childComplexity, after, first, before, last)
 	}
-	complexity.Query.Flows = func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, _ *string) int {
-		return PaginationComplexity(childComplexity, after, first, before, last)
-	}
+
 	complexity.Query.FlowInstances = func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, _ *ent.FlowInstanceOrder, _ []*models.FlowInstanceFilterInput) int {
 		return PaginationComplexity(childComplexity, after, first, before, last)
 	}
@@ -134,6 +132,9 @@ func New() (complexity generated.ComplexityRoot) {
 		return PaginationComplexity(childComplexity, after, first, before, last)
 	}
 	complexity.Query.Kqis = func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, _ *ent.KqiOrder, _ []*models.KqiFilterInput) int {
+		return PaginationComplexity(childComplexity, after, first, before, last)
+	}
+	complexity.Query.Flows = func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, _ *ent.FlowOrder, _ []*models.FlowFilterInput) int {
 		return PaginationComplexity(childComplexity, after, first, before, last)
 	}
 	complexity.Query.KqiCategories = func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, _ *ent.KqiCategoryOrder, _ []*models.KqiCategoryFilterInput) int {

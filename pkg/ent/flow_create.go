@@ -111,6 +111,12 @@ func (fc *FlowCreate) SetNillableNewInstancesPolicy(fip *flow.NewInstancesPolicy
 	return fc
 }
 
+// SetCmType sets the cm_type field.
+func (fc *FlowCreate) SetCmType(ft flow.CmType) *FlowCreate {
+	fc.mutation.SetCmType(ft)
+	return fc
+}
+
 // SetCreationDate sets the creation_date field.
 func (fc *FlowCreate) SetCreationDate(t time.Time) *FlowCreate {
 	fc.mutation.SetCreationDate(t)
@@ -294,6 +300,14 @@ func (fc *FlowCreate) check() error {
 			return &ValidationError{Name: "newInstancesPolicy", err: fmt.Errorf("ent: validator failed for field \"newInstancesPolicy\": %w", err)}
 		}
 	}
+	if _, ok := fc.mutation.CmType(); !ok {
+		return &ValidationError{Name: "cm_type", err: errors.New("ent: missing required field \"cm_type\"")}
+	}
+	if v, ok := fc.mutation.CmType(); ok {
+		if err := flow.CmTypeValidator(v); err != nil {
+			return &ValidationError{Name: "cm_type", err: fmt.Errorf("ent: validator failed for field \"cm_type\": %w", err)}
+		}
+	}
 	if _, ok := fc.mutation.CreationDate(); !ok {
 		return &ValidationError{Name: "creation_date", err: errors.New("ent: missing required field \"creation_date\"")}
 	}
@@ -382,6 +396,14 @@ func (fc *FlowCreate) createSpec() (*Flow, *sqlgraph.CreateSpec) {
 			Column: flow.FieldNewInstancesPolicy,
 		})
 		_node.NewInstancesPolicy = value
+	}
+	if value, ok := fc.mutation.CmType(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeEnum,
+			Value:  value,
+			Column: flow.FieldCmType,
+		})
+		_node.CmType = value
 	}
 	if value, ok := fc.mutation.CreationDate(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{

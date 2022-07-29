@@ -103,6 +103,12 @@ func (fu *FlowUpdate) SetNillableNewInstancesPolicy(fip *flow.NewInstancesPolicy
 	return fu
 }
 
+// SetCmType sets the cm_type field.
+func (fu *FlowUpdate) SetCmType(ft flow.CmType) *FlowUpdate {
+	fu.mutation.SetCmType(ft)
+	return fu
+}
+
 // SetCreationDate sets the creation_date field.
 func (fu *FlowUpdate) SetCreationDate(t time.Time) *FlowUpdate {
 	fu.mutation.SetCreationDate(t)
@@ -347,6 +353,11 @@ func (fu *FlowUpdate) check() error {
 			return &ValidationError{Name: "newInstancesPolicy", err: fmt.Errorf("ent: validator failed for field \"newInstancesPolicy\": %w", err)}
 		}
 	}
+	if v, ok := fu.mutation.CmType(); ok {
+		if err := flow.CmTypeValidator(v); err != nil {
+			return &ValidationError{Name: "cm_type", err: fmt.Errorf("ent: validator failed for field \"cm_type\": %w", err)}
+		}
+	}
 	if _, ok := fu.mutation.AuthorID(); fu.mutation.AuthorCleared() && !ok {
 		return errors.New("ent: clearing a required unique edge \"author\"")
 	}
@@ -423,6 +434,13 @@ func (fu *FlowUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Type:   field.TypeEnum,
 			Value:  value,
 			Column: flow.FieldNewInstancesPolicy,
+		})
+	}
+	if value, ok := fu.mutation.CmType(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeEnum,
+			Value:  value,
+			Column: flow.FieldCmType,
 		})
 	}
 	if value, ok := fu.mutation.CreationDate(); ok {
@@ -748,6 +766,12 @@ func (fuo *FlowUpdateOne) SetNillableNewInstancesPolicy(fip *flow.NewInstancesPo
 	return fuo
 }
 
+// SetCmType sets the cm_type field.
+func (fuo *FlowUpdateOne) SetCmType(ft flow.CmType) *FlowUpdateOne {
+	fuo.mutation.SetCmType(ft)
+	return fuo
+}
+
 // SetCreationDate sets the creation_date field.
 func (fuo *FlowUpdateOne) SetCreationDate(t time.Time) *FlowUpdateOne {
 	fuo.mutation.SetCreationDate(t)
@@ -992,6 +1016,11 @@ func (fuo *FlowUpdateOne) check() error {
 			return &ValidationError{Name: "newInstancesPolicy", err: fmt.Errorf("ent: validator failed for field \"newInstancesPolicy\": %w", err)}
 		}
 	}
+	if v, ok := fuo.mutation.CmType(); ok {
+		if err := flow.CmTypeValidator(v); err != nil {
+			return &ValidationError{Name: "cm_type", err: fmt.Errorf("ent: validator failed for field \"cm_type\": %w", err)}
+		}
+	}
 	if _, ok := fuo.mutation.AuthorID(); fuo.mutation.AuthorCleared() && !ok {
 		return errors.New("ent: clearing a required unique edge \"author\"")
 	}
@@ -1066,6 +1095,13 @@ func (fuo *FlowUpdateOne) sqlSave(ctx context.Context) (_node *Flow, err error) 
 			Type:   field.TypeEnum,
 			Value:  value,
 			Column: flow.FieldNewInstancesPolicy,
+		})
+	}
+	if value, ok := fuo.mutation.CmType(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeEnum,
+			Value:  value,
+			Column: flow.FieldCmType,
 		})
 	}
 	if value, ok := fuo.mutation.CreationDate(); ok {

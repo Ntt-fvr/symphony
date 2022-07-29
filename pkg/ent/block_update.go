@@ -714,6 +714,126 @@ func (bu *BlockUpdate) ClearHeaders() *BlockUpdate {
 	return bu
 }
 
+// SetAuthType sets the auth_type field.
+func (bu *BlockUpdate) SetAuthType(bt block.AuthType) *BlockUpdate {
+	bu.mutation.SetAuthType(bt)
+	return bu
+}
+
+// SetNillableAuthType sets the auth_type field if the given value is not nil.
+func (bu *BlockUpdate) SetNillableAuthType(bt *block.AuthType) *BlockUpdate {
+	if bt != nil {
+		bu.SetAuthType(*bt)
+	}
+	return bu
+}
+
+// ClearAuthType clears the value of auth_type.
+func (bu *BlockUpdate) ClearAuthType() *BlockUpdate {
+	bu.mutation.ClearAuthType()
+	return bu
+}
+
+// SetUser sets the user field.
+func (bu *BlockUpdate) SetUser(s string) *BlockUpdate {
+	bu.mutation.SetUser(s)
+	return bu
+}
+
+// SetNillableUser sets the user field if the given value is not nil.
+func (bu *BlockUpdate) SetNillableUser(s *string) *BlockUpdate {
+	if s != nil {
+		bu.SetUser(*s)
+	}
+	return bu
+}
+
+// ClearUser clears the value of user.
+func (bu *BlockUpdate) ClearUser() *BlockUpdate {
+	bu.mutation.ClearUser()
+	return bu
+}
+
+// SetPassword sets the password field.
+func (bu *BlockUpdate) SetPassword(s string) *BlockUpdate {
+	bu.mutation.SetPassword(s)
+	return bu
+}
+
+// SetNillablePassword sets the password field if the given value is not nil.
+func (bu *BlockUpdate) SetNillablePassword(s *string) *BlockUpdate {
+	if s != nil {
+		bu.SetPassword(*s)
+	}
+	return bu
+}
+
+// ClearPassword clears the value of password.
+func (bu *BlockUpdate) ClearPassword() *BlockUpdate {
+	bu.mutation.ClearPassword()
+	return bu
+}
+
+// SetClientID sets the client_id field.
+func (bu *BlockUpdate) SetClientID(s string) *BlockUpdate {
+	bu.mutation.SetClientID(s)
+	return bu
+}
+
+// SetNillableClientID sets the client_id field if the given value is not nil.
+func (bu *BlockUpdate) SetNillableClientID(s *string) *BlockUpdate {
+	if s != nil {
+		bu.SetClientID(*s)
+	}
+	return bu
+}
+
+// ClearClientID clears the value of client_id.
+func (bu *BlockUpdate) ClearClientID() *BlockUpdate {
+	bu.mutation.ClearClientID()
+	return bu
+}
+
+// SetClientSecret sets the client_secret field.
+func (bu *BlockUpdate) SetClientSecret(s string) *BlockUpdate {
+	bu.mutation.SetClientSecret(s)
+	return bu
+}
+
+// SetNillableClientSecret sets the client_secret field if the given value is not nil.
+func (bu *BlockUpdate) SetNillableClientSecret(s *string) *BlockUpdate {
+	if s != nil {
+		bu.SetClientSecret(*s)
+	}
+	return bu
+}
+
+// ClearClientSecret clears the value of client_secret.
+func (bu *BlockUpdate) ClearClientSecret() *BlockUpdate {
+	bu.mutation.ClearClientSecret()
+	return bu
+}
+
+// SetOidcURL sets the oidc_url field.
+func (bu *BlockUpdate) SetOidcURL(s string) *BlockUpdate {
+	bu.mutation.SetOidcURL(s)
+	return bu
+}
+
+// SetNillableOidcURL sets the oidc_url field if the given value is not nil.
+func (bu *BlockUpdate) SetNillableOidcURL(s *string) *BlockUpdate {
+	if s != nil {
+		bu.SetOidcURL(*s)
+	}
+	return bu
+}
+
+// ClearOidcURL clears the value of oidc_url.
+func (bu *BlockUpdate) ClearOidcURL() *BlockUpdate {
+	bu.mutation.ClearOidcURL()
+	return bu
+}
+
 // SetSignalType sets the signal_type field.
 func (bu *BlockUpdate) SetSignalType(bt block.SignalType) *BlockUpdate {
 	bu.mutation.SetSignalType(bt)
@@ -1299,6 +1419,11 @@ func (bu *BlockUpdate) check() error {
 			return &ValidationError{Name: "url_method", err: fmt.Errorf("ent: validator failed for field \"url_method\": %w", err)}
 		}
 	}
+	if v, ok := bu.mutation.AuthType(); ok {
+		if err := block.AuthTypeValidator(v); err != nil {
+			return &ValidationError{Name: "auth_type", err: fmt.Errorf("ent: validator failed for field \"auth_type\": %w", err)}
+		}
+	}
 	if v, ok := bu.mutation.SignalType(); ok {
 		if err := block.SignalTypeValidator(v); err != nil {
 			return &ValidationError{Name: "signal_type", err: fmt.Errorf("ent: validator failed for field \"signal_type\": %w", err)}
@@ -1818,6 +1943,84 @@ func (bu *BlockUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeJSON,
 			Column: block.FieldHeaders,
+		})
+	}
+	if value, ok := bu.mutation.AuthType(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeEnum,
+			Value:  value,
+			Column: block.FieldAuthType,
+		})
+	}
+	if bu.mutation.AuthTypeCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeEnum,
+			Column: block.FieldAuthType,
+		})
+	}
+	if value, ok := bu.mutation.User(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: block.FieldUser,
+		})
+	}
+	if bu.mutation.UserCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Column: block.FieldUser,
+		})
+	}
+	if value, ok := bu.mutation.Password(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: block.FieldPassword,
+		})
+	}
+	if bu.mutation.PasswordCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Column: block.FieldPassword,
+		})
+	}
+	if value, ok := bu.mutation.ClientID(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: block.FieldClientID,
+		})
+	}
+	if bu.mutation.ClientIDCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Column: block.FieldClientID,
+		})
+	}
+	if value, ok := bu.mutation.ClientSecret(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: block.FieldClientSecret,
+		})
+	}
+	if bu.mutation.ClientSecretCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Column: block.FieldClientSecret,
+		})
+	}
+	if value, ok := bu.mutation.OidcURL(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: block.FieldOidcURL,
+		})
+	}
+	if bu.mutation.OidcURLCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Column: block.FieldOidcURL,
 		})
 	}
 	if value, ok := bu.mutation.SignalType(); ok {
@@ -3022,6 +3225,126 @@ func (buo *BlockUpdateOne) ClearHeaders() *BlockUpdateOne {
 	return buo
 }
 
+// SetAuthType sets the auth_type field.
+func (buo *BlockUpdateOne) SetAuthType(bt block.AuthType) *BlockUpdateOne {
+	buo.mutation.SetAuthType(bt)
+	return buo
+}
+
+// SetNillableAuthType sets the auth_type field if the given value is not nil.
+func (buo *BlockUpdateOne) SetNillableAuthType(bt *block.AuthType) *BlockUpdateOne {
+	if bt != nil {
+		buo.SetAuthType(*bt)
+	}
+	return buo
+}
+
+// ClearAuthType clears the value of auth_type.
+func (buo *BlockUpdateOne) ClearAuthType() *BlockUpdateOne {
+	buo.mutation.ClearAuthType()
+	return buo
+}
+
+// SetUser sets the user field.
+func (buo *BlockUpdateOne) SetUser(s string) *BlockUpdateOne {
+	buo.mutation.SetUser(s)
+	return buo
+}
+
+// SetNillableUser sets the user field if the given value is not nil.
+func (buo *BlockUpdateOne) SetNillableUser(s *string) *BlockUpdateOne {
+	if s != nil {
+		buo.SetUser(*s)
+	}
+	return buo
+}
+
+// ClearUser clears the value of user.
+func (buo *BlockUpdateOne) ClearUser() *BlockUpdateOne {
+	buo.mutation.ClearUser()
+	return buo
+}
+
+// SetPassword sets the password field.
+func (buo *BlockUpdateOne) SetPassword(s string) *BlockUpdateOne {
+	buo.mutation.SetPassword(s)
+	return buo
+}
+
+// SetNillablePassword sets the password field if the given value is not nil.
+func (buo *BlockUpdateOne) SetNillablePassword(s *string) *BlockUpdateOne {
+	if s != nil {
+		buo.SetPassword(*s)
+	}
+	return buo
+}
+
+// ClearPassword clears the value of password.
+func (buo *BlockUpdateOne) ClearPassword() *BlockUpdateOne {
+	buo.mutation.ClearPassword()
+	return buo
+}
+
+// SetClientID sets the client_id field.
+func (buo *BlockUpdateOne) SetClientID(s string) *BlockUpdateOne {
+	buo.mutation.SetClientID(s)
+	return buo
+}
+
+// SetNillableClientID sets the client_id field if the given value is not nil.
+func (buo *BlockUpdateOne) SetNillableClientID(s *string) *BlockUpdateOne {
+	if s != nil {
+		buo.SetClientID(*s)
+	}
+	return buo
+}
+
+// ClearClientID clears the value of client_id.
+func (buo *BlockUpdateOne) ClearClientID() *BlockUpdateOne {
+	buo.mutation.ClearClientID()
+	return buo
+}
+
+// SetClientSecret sets the client_secret field.
+func (buo *BlockUpdateOne) SetClientSecret(s string) *BlockUpdateOne {
+	buo.mutation.SetClientSecret(s)
+	return buo
+}
+
+// SetNillableClientSecret sets the client_secret field if the given value is not nil.
+func (buo *BlockUpdateOne) SetNillableClientSecret(s *string) *BlockUpdateOne {
+	if s != nil {
+		buo.SetClientSecret(*s)
+	}
+	return buo
+}
+
+// ClearClientSecret clears the value of client_secret.
+func (buo *BlockUpdateOne) ClearClientSecret() *BlockUpdateOne {
+	buo.mutation.ClearClientSecret()
+	return buo
+}
+
+// SetOidcURL sets the oidc_url field.
+func (buo *BlockUpdateOne) SetOidcURL(s string) *BlockUpdateOne {
+	buo.mutation.SetOidcURL(s)
+	return buo
+}
+
+// SetNillableOidcURL sets the oidc_url field if the given value is not nil.
+func (buo *BlockUpdateOne) SetNillableOidcURL(s *string) *BlockUpdateOne {
+	if s != nil {
+		buo.SetOidcURL(*s)
+	}
+	return buo
+}
+
+// ClearOidcURL clears the value of oidc_url.
+func (buo *BlockUpdateOne) ClearOidcURL() *BlockUpdateOne {
+	buo.mutation.ClearOidcURL()
+	return buo
+}
+
 // SetSignalType sets the signal_type field.
 func (buo *BlockUpdateOne) SetSignalType(bt block.SignalType) *BlockUpdateOne {
 	buo.mutation.SetSignalType(bt)
@@ -3607,6 +3930,11 @@ func (buo *BlockUpdateOne) check() error {
 			return &ValidationError{Name: "url_method", err: fmt.Errorf("ent: validator failed for field \"url_method\": %w", err)}
 		}
 	}
+	if v, ok := buo.mutation.AuthType(); ok {
+		if err := block.AuthTypeValidator(v); err != nil {
+			return &ValidationError{Name: "auth_type", err: fmt.Errorf("ent: validator failed for field \"auth_type\": %w", err)}
+		}
+	}
 	if v, ok := buo.mutation.SignalType(); ok {
 		if err := block.SignalTypeValidator(v); err != nil {
 			return &ValidationError{Name: "signal_type", err: fmt.Errorf("ent: validator failed for field \"signal_type\": %w", err)}
@@ -4124,6 +4452,84 @@ func (buo *BlockUpdateOne) sqlSave(ctx context.Context) (_node *Block, err error
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeJSON,
 			Column: block.FieldHeaders,
+		})
+	}
+	if value, ok := buo.mutation.AuthType(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeEnum,
+			Value:  value,
+			Column: block.FieldAuthType,
+		})
+	}
+	if buo.mutation.AuthTypeCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeEnum,
+			Column: block.FieldAuthType,
+		})
+	}
+	if value, ok := buo.mutation.User(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: block.FieldUser,
+		})
+	}
+	if buo.mutation.UserCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Column: block.FieldUser,
+		})
+	}
+	if value, ok := buo.mutation.Password(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: block.FieldPassword,
+		})
+	}
+	if buo.mutation.PasswordCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Column: block.FieldPassword,
+		})
+	}
+	if value, ok := buo.mutation.ClientID(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: block.FieldClientID,
+		})
+	}
+	if buo.mutation.ClientIDCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Column: block.FieldClientID,
+		})
+	}
+	if value, ok := buo.mutation.ClientSecret(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: block.FieldClientSecret,
+		})
+	}
+	if buo.mutation.ClientSecretCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Column: block.FieldClientSecret,
+		})
+	}
+	if value, ok := buo.mutation.OidcURL(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: block.FieldOidcURL,
+		})
+	}
+	if buo.mutation.OidcURLCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Column: block.FieldOidcURL,
 		})
 	}
 	if value, ok := buo.mutation.SignalType(); ok {
