@@ -38,7 +38,7 @@ type Props = $ReadOnly<{|
 |}>;
 
 const CodeEditor = (props: Props) => {
-  const {mode, onChange, title, value, name, isRuleExpression = false} = props;
+  const {mode, onChange, title, value, name, helperText, isRuleExpression = false} = props;
   const classes = useStyles();
 
   const changeEditorValue = newValue => {
@@ -77,6 +77,11 @@ const CodeEditor = (props: Props) => {
           }}
         />
       </div>
+        {
+          helperText ? 
+          <span className={classes.span}>{helperText}</span>
+          :null
+        }
     </div>
   );
 };

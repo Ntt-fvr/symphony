@@ -28,7 +28,7 @@ const ConfigurationExecuteFlow = ({block}: Props) => {
   const {settings} = block;
   const [executeFlowSettingsValues, handleInputChange] = useForm({
     flow: settings?.flow || '',
-  });
+  }, block.id);
 
   const {flow} = executeFlowSettingsValues;
 

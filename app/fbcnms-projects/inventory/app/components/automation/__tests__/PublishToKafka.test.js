@@ -47,7 +47,6 @@ describe('Suite Test Components /publishToKafka/: ', () => {
     const objectTest: PublishToKafkaSettingsType = getInitialBlockSettings(
       TYPE,
     );
-    console.log(objectTest);
 
     expect(objectTest.messageType).toStrictEqual(undefined);
     expect(objectTest.brokers).toStrictEqual(undefined);

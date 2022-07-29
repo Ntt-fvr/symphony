@@ -41,7 +41,9 @@ const ConfigurationWaitForSignal = ({block}: Props) => {
     blocked: settings?.blocked || false,
     signalType: settings?.signalType || '',
     customFilter: settings?.customFilter || '',
-  });
+  },
+    block.id
+  );
 
   const {
     signalModule,

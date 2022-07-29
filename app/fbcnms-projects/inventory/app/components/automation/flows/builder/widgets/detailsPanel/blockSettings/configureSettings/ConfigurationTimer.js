@@ -57,7 +57,9 @@ const ConfigurationTimer = ({block}: Props) => {
     enableExpressionL: settings.enableExpressionL || false,
     expression: settings.expression || 'null',
     seconds: settings.seconds || 0,
-  });
+  },
+    block.id
+  );
 
   const classes = useStyles();
 
