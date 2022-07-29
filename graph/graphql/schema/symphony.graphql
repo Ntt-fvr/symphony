@@ -6497,7 +6497,7 @@ enum FlowCMType
     model: "github.com/facebookincubator/symphony/pkg/ent/flow.CmType"
   ){
     INITIAL_CONFIG
-    GENERAL_CM
+    GENERAL_CR
     SYNC_PARAMETERS
   }
 
