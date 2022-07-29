@@ -24,6 +24,7 @@ import {TYPE as GoToType} from '../../../../builder/canvas/graph/facades/shapes/
 import {TYPE as InvokeRestApiType} from '../../../../builder/canvas/graph/facades/shapes/vertexes/actions/InvokeRestApi';
 import {TYPE as ManualStartType} from '../../../../builder/canvas/graph/facades/shapes/vertexes/administrative/ManualStart';
 import {TYPE as ParallelType} from '../../../../builder/canvas/graph/facades/shapes/vertexes/logic/Parallel';
+import {TYPE as PublishToKafkaType} from '../../../../builder/canvas/graph/facades/shapes/vertexes/actions/PublishToKafka';
 import {TYPE as TimerType} from '../../../../builder/canvas/graph/facades/shapes/vertexes/triggers/Timer';
 import {TYPE as TriggerStartType} from '../../../../builder/canvas/graph/facades/shapes/vertexes/triggers/TriggerStart';
 import {TYPE as TriggerWorkforceType} from '../../../../builder/canvas/graph/facades/shapes/vertexes/triggers/TriggerWorkforce';
@@ -31,17 +32,16 @@ import {TYPE as TrueFalseType} from '../../../../builder/canvas/graph/facades/sh
 import {TYPE as UpdateInventoryType} from '../../../../builder/canvas/graph/facades/shapes/vertexes/actions/UpdateInventory';
 import {TYPE as UpdateWorkforceType} from '../../../../builder/canvas/graph/facades/shapes/vertexes/actions/UpdateWorkforce';
 import {TYPE as WaitSignalType} from '../../../../builder/canvas/graph/facades/shapes/vertexes/triggers/WaitSignal';
-import {TYPE as PublishToKafkaType} from '../../../../builder/canvas/graph/facades/shapes/vertexes/actions/PublishToKafka';
 
 export const signalTypes = [
-  {name: 'WOCREATED', id: 'WOCREATED'},
-  {name: 'CRCREATED', id: 'CRCREATED'},
-  {name: 'PR_CREATED', id: 'PR_CREATED'},
-  {name: 'MOICREATED', id: 'MOICREATED'},
-  {name: 'WOUPDATED', id: 'WOUPDATED'},
-  {name: 'CRUPDATED', id: 'CRUPDATED'},
-  {name: 'PR_UPDATED', id: 'PR_UPDATED'},
-  {name: 'MOIUPDATED', id: 'MOIUPDATED'},
+  {name: 'WO Created', id: 'WOCREATED'},
+  {name: 'CR Created', id: 'CRCREATED'},
+  {name: 'PR Created', id: 'PR_CREATED'},
+  {name: 'MOI Created', id: 'MOICREATED'},
+  {name: 'WO Updated', id: 'WOUPDATED'},
+  {name: 'CR Updated', id: 'CRUPDATED'},
+  {name: 'PR Updated', id: 'PR_UPDATED'},
+  {name: 'MOI Updated', id: 'MOIUPDATED'},
 ];
 
 export const signalModules = [

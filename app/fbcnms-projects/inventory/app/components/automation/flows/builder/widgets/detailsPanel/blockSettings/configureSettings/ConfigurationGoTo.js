@@ -28,11 +28,11 @@ export const TYPE_LIST = [
 const ConfigurationGoTo = ({block}: Props) => {
   const {settings} = block;
   const types = TYPE_LIST;
-  const [goToSettingsValues, handleInputChange] = useForm({
-    type: settings?.type || '',
-    targetBlockCid: settings?.targetBlockCid || '',
-  },
-    block.id
+  const [goToSettingsValues, handleInputChange] = useForm(
+    {
+      type: settings?.type || 'ORIGIN',
+    },
+    block.id,
   );
 
   const {type} = goToSettingsValues;
@@ -43,7 +43,6 @@ const ConfigurationGoTo = ({block}: Props) => {
     types.find(item => item.id === type)
       ? block.setPorts(block.settings?.type)
       : null;
-      
   }, [goToSettingsValues]);
 
   return (

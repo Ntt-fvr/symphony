@@ -48,6 +48,7 @@ import {
   TYPE as NetworkActionBlockType,
 } from '../builder/canvas/graph/facades/shapes/vertexes/actions/ExecuteNetworkAction';
 import {TYPE as ParallelType} from '../builder/canvas/graph/facades/shapes/vertexes/logic/Parallel';
+import {TYPE as PublishKafkaBlockType} from '../builder/canvas/graph/facades/shapes/vertexes/actions/PublishToKafka';
 import {TYPE as TimerBlockType} from '../builder/canvas/graph/facades/shapes/vertexes/triggers/Timer';
 import {
   TYPE as TriggerStartBlockType,
@@ -67,10 +68,7 @@ import {
   TYPE as UpdateWorkforceBlockType,
 } from '../builder/canvas/graph/facades/shapes/vertexes/actions/UpdateWorkforce';
 import {TYPE as WaitSignalBlockType} from '../builder/canvas/graph/facades/shapes/vertexes/triggers/WaitSignal';
-import {
-  getActionType,
-  getTriggerType,
-} from '../builder/canvas/graph/facades/shapes/vertexes/actions/utils';
+
 import {graphql} from 'react-relay';
 import {
   hasMeaningfulChanges,
@@ -78,8 +76,11 @@ import {
   mapChoiceBlockForSave,
   mapConnectorsForSave,
   mapEndBlockForSave,
+  mapExcecuteFlowBlocksForSave,
+  mapExecuteFlowBlocksForSave,
   mapGoToBlockForSave,
   mapInvokeRestAPIBlockForSave,
+  mapPublishKafkaBlocksForSave,
   mapStartBlockForSave,
   mapTimerBlocksForSave,
   mapTriggerBlocksForSave,
@@ -161,6 +162,12 @@ const flowQuery = graphql`
               url
               connectionTimeOut
               body
+            }
+            ... on KafkaBlock {
+              brokers
+              topic
+              message
+              messageType: type
             }
             ... on TimerBlock {
               seconds
@@ -449,7 +456,9 @@ function FlowDataContextProviderComponent(props: Props) {
         );
       const executeFlowBlocks = flow
         .getBlocksByType(ExecuteFlowType)
-        .map(block => mapActionBlocksForSave(block, ExecuteFlowActionTypeID));
+        .map(block =>
+          mapExecuteFlowBlocksForSave(block, ExecuteFlowActionTypeID),
+        );
 
       const invokeRestAPIBlocks = flow
         .getBlocksByType(InvokeApiType)
@@ -480,6 +489,10 @@ function FlowDataContextProviderComponent(props: Props) {
         .getBlocksByType(WaitSignalBlockType)
         .map(block => mapWaitForSignalBlocksForSave(block));
 
+      const kafkaBlocks = flow
+        .getBlocksByType(PublishKafkaBlockType)
+        .map(block => mapPublishKafkaBlocksForSave(block));
+
       const endBlocks = flow.getBlocksByType(EndType).map(mapEndBlockForSave);
 
       if (startBlocks.length > 0) {
@@ -499,6 +512,8 @@ function FlowDataContextProviderComponent(props: Props) {
         triggerStartBlocks,
         waitForSignalBlocks,
         invokeRestAPIBlocks,
+        kafkaBlocks,
+        executeFlowBlocks,
       };
 
       for (const key of Object.keys(allFlowDataItems)) {

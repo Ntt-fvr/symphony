@@ -26,5 +26,7 @@ export const initialPublishToKafkaSettings: PublishToKafkaSettingsType = {
 export const setPublishToKafkaSettings: PublishToKafkaSettingsType = (
   newPublishToKafkaSettings: PublishToKafkaSettingsType,
 ) => {
-  return newPublishToKafkaSettings;
+  const {brokers} = newPublishToKafkaSettings;
+  const newBrokers = Array.isArray(brokers) ? brokers.toString() : brokers;
+  return {...newPublishToKafkaSettings, brokers: newBrokers};
 };

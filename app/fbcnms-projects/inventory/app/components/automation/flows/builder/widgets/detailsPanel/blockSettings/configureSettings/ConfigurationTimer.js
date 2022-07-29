@@ -12,9 +12,12 @@ import type {IBlock} from '../../../../canvas/graph/shapes/blocks/BaseBlock';
 
 import * as React from 'react';
 import CodeEditor from '../../inputs/CodeEditor';
+import FormField from '@symphony/design-system/components/FormField/FormField';
+import MomentUtils from '@date-io/moment';
 import Select from '../../inputs/Select';
 import Switch from '../../inputs/Switch';
 import TextField from '../../inputs/TextField';
+import {DateTimePicker, MuiPickersUtilsProvider} from '@material-ui/pickers';
 import {Grid} from '@material-ui/core';
 import {makeStyles} from '@material-ui/core/styles';
 import {useEffect} from 'react';
@@ -43,22 +46,19 @@ const ConfigurationTimer = ({block}: Props) => {
     {name: 'Fixed Interval', id: 'FIXED_INTERVAL'},
     {name: 'Specific date and time', id: 'SPECIFIC_DATETIME'},
   ];
-  const dateTimeValues = [
-    {name: 'Date', id: 'date'},
-    {name: 'Time and Timezone?', id: 'time_and_timezone'},
-  ];
   const [
     timerSettingsValues,
     handleInputChange,
     handleAllInputChange,
-  ] = useForm({
-    behavior: settings.behavior || 'FIXED_INTERVAL',
-    specificDatetime: settings.specificDatetime || '2019-10-12T07:20:50.52Z',
-    enableExpressionL: settings.enableExpressionL || false,
-    expression: settings.expression || 'null',
-    seconds: settings.seconds || 0,
-  },
-    block.id
+  ] = useForm(
+    {
+      behavior: settings.behavior || 'FIXED_INTERVAL',
+      specificDatetime: settings.specificDatetime || null,
+      enableExpressionL: settings.enableExpressionL || false,
+      expression: settings.expression || null,
+      seconds: settings.seconds || null,
+    },
+    block.id,
   );
 
   const classes = useStyles();
@@ -66,6 +66,15 @@ const ConfigurationTimer = ({block}: Props) => {
   useEffect(() => {
     block.setSettings(timerSettingsValues);
   }, [timerSettingsValues]);
+
+  const changeSpecificDateTime = dateTime => {
+    handleInputChange({
+      target: {
+        name: 'specificDatetime',
+        value: dateTime.toISOString(),
+      },
+    });
+  };
 
   const {
     behavior,
@@ -76,14 +85,19 @@ const ConfigurationTimer = ({block}: Props) => {
   } = timerSettingsValues;
 
   useEffect(() => {
-    if (timerSettingsValues.behavior) {
+    if (
+      settings.behavior &&
+      timerSettingsValues.behavior &&
+      (timerSettingsValues.behavior !== settings.behavior ||
+        timerSettingsValues.enableExpressionL !== settings.enableExpressionL)
+    ) {
       const copy = Object.assign({}, timerSettingsValues);
-      copy['seconds'] = 0;
-      copy['specificDatetime'] = '2019-10-12T07:20:50.52Z';
-      copy['expression'] = '';
+      copy['seconds'] = null;
+      copy['specificDatetime'] = null;
+      copy['expression'] = null;
       handleAllInputChange(copy);
     }
-  }, [behavior]);
+  }, [behavior, enableExpressionL]);
 
   return (
     <>
@@ -96,26 +110,40 @@ const ConfigurationTimer = ({block}: Props) => {
           items={behaviors}
         />
       </Grid>
-
-      {behavior === FIXED_INTERVAL && (
+      <Grid item xs={12} className={classes.grid}>
+        <Switch
+          label={'Expression Language'}
+          name={'enableExpressionL'}
+          value={enableExpressionL}
+          handleInputChange={handleInputChange}
+        />
+      </Grid>
+      {enableExpressionL && (
+        <Grid item xs={12} className={classes.gridCodeEditor}>
+          <CodeEditor
+            mode="javascript"
+            value={expression}
+            name={'expression'}
+            onChange={handleInputChange}
+            title={'Expression Language'}
+          />
+        </Grid>
+      )}
+      {!enableExpressionL && (
         <>
-          <Grid item xs={12} className={classes.grid}>
-            <Switch
-              label={'Expression Language'}
-              name={'enableExpressionL'}
-              value={enableExpressionL}
-              handleInputChange={handleInputChange}
-            />
-          </Grid>
-          {enableExpressionL ? (
-            <Grid item xs={12} className={classes.gridCodeEditor}>
-              <CodeEditor
-                mode="javascript"
-                value={expression}
-                name={'expression'}
-                onChange={handleInputChange}
-                title={'Expression Language'}
-              />
+          {behavior !== FIXED_INTERVAL ? (
+            <Grid item xs={12} className={classes.grid}>
+              <FormField label="Time slot start">
+                <MuiPickersUtilsProvider utils={MomentUtils}>
+                  <DateTimePicker
+                    variant="inline"
+                    inputVariant="outlined"
+                    value={specificDatetime}
+                    onChange={changeSpecificDateTime}
+                    onClose={changeSpecificDateTime}
+                  />
+                </MuiPickersUtilsProvider>
+              </FormField>
             </Grid>
           ) : (
             <Grid item xs={12} className={classes.grid}>
@@ -128,28 +156,6 @@ const ConfigurationTimer = ({block}: Props) => {
               />
             </Grid>
           )}
-        </>
-      )}
-      {behavior && behavior !== FIXED_INTERVAL && (
-        <>
-          <Grid item xs={12} className={classes.grid}>
-            <Select
-              label={'Date and Time'}
-              name={'specificDatetime'}
-              value={specificDatetime}
-              onChange={handleInputChange}
-              items={dateTimeValues}
-            />
-          </Grid>
-          <Grid item xs={12} className={classes.gridCodeEditor}>
-            <CodeEditor
-              mode="javascript"
-              value={expression}
-              name={'expression'}
-              onChange={handleInputChange}
-              title={'Expression Language'}
-            />
-          </Grid>
         </>
       )}
     </>

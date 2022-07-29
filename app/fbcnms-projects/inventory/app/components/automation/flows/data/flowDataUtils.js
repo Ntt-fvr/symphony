@@ -27,15 +27,12 @@ import type {
   PublishFlowInput,
   PublishFlowMutationResponse,
 } from '../../../../mutations/__generated__/PublishFlowMutation.graphql';
-import type {
-  UpdateFlowInstanceMutationVariables,
-  UpdateFlowInstanceMutationResponse,
-} from '../../../../mutations/__generated__/UpdateFlowInstanceMutation.graphql';
 import type {StartBlockInputType} from '../builder/canvas/graph/shapes/blocks/blockTypes/manualStart/ManualStartSettingsType';
 import type {TrueFalseBlockInputType} from '../builder/canvas/graph/shapes/blocks/blockTypes/trueFalse/TrueFalseSettings';
-
-import {TYPE as TriggerStart} from '../builder/canvas/graph/facades/shapes/vertexes/triggers/TriggerStart';
-import {TYPE as TriggerWorkforce} from '../builder/canvas/graph/facades/shapes/vertexes/triggers/TriggerWorkforce';
+import type {
+  UpdateFlowInstanceMutationResponse,
+  UpdateFlowInstanceMutationVariables,
+} from '../../../../mutations/__generated__/UpdateFlowInstanceMutation.graphql';
 
 import BaseBlock from '../builder/canvas/graph/shapes/blocks/BaseBlock';
 import ImportFlowDraftMutation from '../../../../mutations/ImportFlowDraft';
@@ -127,16 +124,42 @@ function mapBaseBlockInformation(block: IBlock) {
 }
 
 export function mapStartBlockForSave(block: IBlock): StartBlockInputType {
-  const {paramDefinitions} = block.settings;
   return {
     cid: block.id,
-    // TODO AVeriguar
-    paramDefinitions: {key: 'prueba', type: 'STRING', choices: ['1']},
+    paramDefinitions: {key: 'param', type: 'STRING'},
     uiRepresentation: {
       name: block.name,
       xPosition: Math.floor(block.model.attributes.position.x),
       yPosition: Math.floor(block.model.attributes.position.y),
     },
+  };
+}
+
+export function mapEndBlockForSave(block: IBlock): EndBlockInputType {
+  return {
+    cid: block.id,
+    params: [],
+    uiRepresentation: {
+      name: block.name,
+      xPosition: Math.floor(block.model.attributes.position.x),
+      yPosition: Math.floor(block.model.attributes.position.y),
+    },
+  };
+}
+
+export function mapTriggerBlocksForSave(block: IBlock) {
+  const {signalType, signalModule, customFilter, blocked} = block.settings;
+
+  return {
+    ...mapBlockForSave(block),
+    type: signalType,
+    signalModule: 'CONFIGURATION',
+    customFilter: customFilter,
+    blocked: blocked,
+    entryPoint: POINT_EXAMPLE,
+    exitPoint: POINT_EXAMPLE,
+    basicDefinitions: mapBaseBlockInformation(block),
+    params: VARIABLE_EXPRESSION_EXAMPLE,
   };
 }
 
@@ -189,7 +212,7 @@ export function mapInvokeRestAPIBlockForSave(
 }
 
 export function mapGoToBlockForSave(block: IBlock): GoToBlockInputType {
-  const {type, targetBlockCid} = block.settings;
+  const {type} = block.settings;
   return {
     cid: block.id,
     uiRepresentation: {
@@ -197,7 +220,6 @@ export function mapGoToBlockForSave(block: IBlock): GoToBlockInputType {
       xPosition: Math.floor(block.model.attributes.position.x),
       yPosition: Math.floor(block.model.attributes.position.y),
     },
-    targetBlockCid: targetBlockCid,
     type: type,
   };
 }
@@ -212,15 +234,18 @@ export function mapActionBlocksForSave(
   };
 }
 
-export function mapTriggerBlocksForSave(block: IBlock) {
-  switch (block.model.attributes.type) {
-    case TriggerStart:
-      return {};
-    case TriggerWorkforce:
-      return {};
-    default:
-      return;
-  }
+export function mapExecuteFlowBlocksForSave(
+  block: IBlock,
+): ExecuteFlowBlockInputType {
+  const {flow} = block.settings;
+  return {
+    ...mapBlockForSave(block),
+    flow: flow,
+    basicDefinitions: mapBaseBlockInformation(block),
+    entryPoint: POINT_EXAMPLE,
+    exitPoint: POINT_EXAMPLE,
+    params: VARIABLE_EXPRESSION_EXAMPLE,
+  };
 }
 
 export function mapTimerBlocksForSave(block: IBlock) {
@@ -257,7 +282,7 @@ export function mapWaitForSignalBlocksForSave(block: IBlock) {
   return {
     ...mapBlockForSave(block),
     type: signalType,
-    signalModule: 'CONFIGURATION',
+    signalModule: signalModule,
     customFilter: customFilter,
     blocked: blocked,
     entryPoint: POINT_EXAMPLE,
@@ -267,16 +292,17 @@ export function mapWaitForSignalBlocksForSave(block: IBlock) {
   };
 }
 
-export function mapEndBlockForSave(block: IBlock): EndBlockInputType {
-  const {params} = block.settings;
+export function mapPublishKafkaBlocksForSave(block: IBlock) {
+  const {messageType, brokers, topic, message} = block.settings;
   return {
-    cid: block.id,
-    params: [],
-    uiRepresentation: {
-      name: block.name,
-      xPosition: Math.floor(block.model.attributes.position.x),
-      yPosition: Math.floor(block.model.attributes.position.y),
-    },
+    ...mapBlockForSave(block),
+    type: messageType,
+    brokers: brokers.split(','),
+    topic: topic,
+    message: message,
+    entryPoint: POINT_EXAMPLE,
+    exitPoint: POINT_EXAMPLE,
+    basicDefinitions: mapBaseBlockInformation(block),
   };
 }
 
@@ -317,7 +343,7 @@ export function hasMeaningfulChanges(shape: IShape): boolean {
 export const saveBlockInformation = (
   blockFormQuery,
   createdBlock: BaseBlock,
-  isFailed:?boolean,
+  isFailed: ?boolean,
 ) => {
   createdBlock.setInputSettings({
     enableInputTransformation: blockFormQuery.enableInputTransformation,
