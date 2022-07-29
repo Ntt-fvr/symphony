@@ -117,6 +117,14 @@ func (fc *FlowCreate) SetCmType(ft flow.CmType) *FlowCreate {
 	return fc
 }
 
+// SetNillableCmType sets the cm_type field if the given value is not nil.
+func (fc *FlowCreate) SetNillableCmType(ft *flow.CmType) *FlowCreate {
+	if ft != nil {
+		fc.SetCmType(*ft)
+	}
+	return fc
+}
+
 // SetCreationDate sets the creation_date field.
 func (fc *FlowCreate) SetCreationDate(t time.Time) *FlowCreate {
 	fc.mutation.SetCreationDate(t)
@@ -265,6 +273,10 @@ func (fc *FlowCreate) defaults() {
 	if _, ok := fc.mutation.NewInstancesPolicy(); !ok {
 		v := flow.DefaultNewInstancesPolicy
 		fc.mutation.SetNewInstancesPolicy(v)
+	}
+	if _, ok := fc.mutation.CmType(); !ok {
+		v := flow.DefaultCmType
+		fc.mutation.SetCmType(v)
 	}
 }
 

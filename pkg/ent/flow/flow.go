@@ -200,6 +200,9 @@ func NewInstancesPolicyValidator(nip NewInstancesPolicy) error {
 // CmType defines the type for the cm_type enum field.
 type CmType string
 
+// CmTypeInitialConfig is the default CmType.
+const DefaultCmType = CmTypeInitialConfig
+
 // CmType values.
 const (
 	CmTypeInitialConfig  CmType = "INITIAL_CONFIG"
