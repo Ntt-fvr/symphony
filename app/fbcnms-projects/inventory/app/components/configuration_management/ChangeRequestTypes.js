@@ -30,6 +30,7 @@ import {
 import {fetchQuery, graphql} from 'relay-runtime';
 import {makeStyles} from '@material-ui/styles';
 import {useMemo} from 'react';
+import { SubdirectoryArrowRightOutlined } from '@material-ui/icons';
 
 export const PROJECTS_PAGE_SIZE = 10;
 const useStyles = makeStyles(() => ({
@@ -111,6 +112,7 @@ const ChangeRequestTypes = () => {
   const [changeRequest, setChangeRequest] = useState([]);
   const [infoCSV, setinfoCSV] = useState([]);
   const [nameFile, setNameFile] = useState('');
+  const [origin, setOrigin] = useState('');
   const classes = useStyles();
 
   const locationTypesFilterConfigs = useLocationTypes();
@@ -227,10 +229,11 @@ const ChangeRequestTypes = () => {
   const handleOpenDetails = () => {
     setOpenDetails(prevStateDetails => !prevStateDetails);
   };
-  const bulk = (infoCSV, nameFile) => {
+  const bulk = (infoCSV, nameFile, origin) => {
     setOpenBulkRequest(prevStateBulk => !prevStateBulk);
     setinfoCSV(infoCSV);
     setNameFile(nameFile);
+    setOrigin(origin)
   };
   if (openDetails) {
     return (
@@ -249,6 +252,7 @@ const ChangeRequestTypes = () => {
         }}
         infoCSV={infoCSV}
         nameFile={nameFile}
+        origin={origin}
       />
     );
   }
