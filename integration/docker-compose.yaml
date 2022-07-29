@@ -30,8 +30,6 @@ services:
     restart: on-failure
 
   inventory:
-    env_file:
-      ../app/fbcnms-projects/inventory/.env
     build:
       context: ../app
       dockerfile: fbcnms-projects/inventory/Dockerfile

@@ -80,7 +80,7 @@ func (Flow) Fields() []ent.Field {
 			"initial_config", "INITIAL_CONFIG",
 			"general_cr", "GENERAL_CR",
 			"sync_parameters", "SYNC_PARAMETERS",
-		).Annotations(entgql.OrderField("CM_TYPE")),
+		).Default("INITIAL_CONFIG").Annotations(entgql.OrderField("CM_TYPE")),
 		field.Time("creation_date").
 			Annotations(
 				entgql.OrderField("CREATED_AT"),
