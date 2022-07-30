@@ -103,7 +103,7 @@ services:
       <<: *buildctx
       dockerfile: automation/Dockerfile
     env_file:
-      - conf/cadence_client.env
+      - conf/automation.env
     networks:
       - private
     depends_on:

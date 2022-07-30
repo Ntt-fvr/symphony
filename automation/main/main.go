@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"github.com/facebookincubator/symphony/automation/cadence/domain"
 	"github.com/facebookincubator/symphony/automation/cadence/worker"
 	"github.com/facebookincubator/symphony/automation/config"
@@ -11,6 +12,8 @@ import (
 func main() {
 	var appConfig config.AppConfig
 	appConfig.Setup()
+
+	fmt.Println(appConfig)
 
 	executors.Setup(appConfig.GraphQL)
 
