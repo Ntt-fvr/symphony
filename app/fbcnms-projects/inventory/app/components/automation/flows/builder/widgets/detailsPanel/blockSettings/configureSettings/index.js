@@ -21,6 +21,7 @@ import ConfigurationParallel from './ConfigurationParallel';
 import ConfigurationTimer from './ConfigurationTimer';
 import ConfigurationTriggeredStart from './ConfigurationTriggeredStart';
 import ConfigurationWaitForSignal from './ConfigurationWaitForSignal';
+import ConfigurationPublishToKafka from './ConfigurationPublishToKafka';
 import {TYPE as ChoiceType} from '../../../../canvas/graph/facades/shapes/vertexes/logic/Choice';
 import {TYPE as ExecuteFlowType} from '../../../../../../flows/builder/canvas/graph/facades/shapes/vertexes/actions/ExecuteFlow';
 import {TYPE as ExecuteNetworkActionType} from '../../../../../../flows/builder/canvas/graph/facades/shapes/vertexes/actions/ExecuteNetworkAction';
@@ -32,6 +33,7 @@ import {TYPE as Parallel} from '../../../../../../flows/builder/canvas/graph/fac
 import {TYPE as TimerType} from '../../../../../../flows/builder/canvas/graph/facades/shapes/vertexes/triggers/Timer';
 import {TYPE as TriggerStartType} from '../../../../../../flows/builder/canvas/graph/facades/shapes/vertexes/triggers/TriggerStart';
 import {TYPE as WaitSignalType} from '../../../../../../flows/builder/canvas/graph/facades/shapes/vertexes/triggers/WaitSignal';
+import {TYPE as PublishToKafkaType} from '../../../../../../flows/builder/canvas/graph/facades/shapes/vertexes/actions/PublishToKafka';
 import {makeStyles} from '@material-ui/core/styles';
 
 const useStyles = makeStyles(() => ({
@@ -82,6 +84,8 @@ const ConfigureSettings = ({block}: Props) => {
         return <ConfigurationParallel block={block} />;
       case ChoiceType:
         return <ConfigurationChoice block={block} />;
+      case PublishToKafkaType:
+        return <ConfigurationPublishToKafka block={block} />;
       default:
         return '';
     }

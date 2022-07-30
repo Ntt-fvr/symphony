@@ -1,10 +1,11 @@
 package celgo
 
 import (
+	"reflect"
+
 	"github.com/google/cel-go/cel"
 	"github.com/google/cel-go/common/types"
 	"github.com/google/cel-go/common/types/ref"
-	"reflect"
 )
 
 var programs = map[string]cel.Program{}

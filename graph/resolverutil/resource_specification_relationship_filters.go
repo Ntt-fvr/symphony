@@ -32,13 +32,9 @@ func resourceSpecificationRelationshipNameFilter(q *ent.ResourceSpecificationRel
 }
 
 func resourceSpecificationFilterResourceSR(q *ent.ResourceSpecificationRelationshipQuery, filter *models.ResourceSpecificationRelationshipFilterInput) (*ent.ResourceSpecificationRelationshipQuery, error) {
-
 	if filter.Operator == enum.FilterOperatorIsOneOf && filter.IDSet != nil {
-
 		return q.Where(resourcespecificationrelationship.HasResourcespecificationWith(resourcespecification.IDIn(filter.IDSet...))), nil
-
 	}
 
 	return nil, errors.Errorf("operation is not supported: %s", filter.Operator)
-
 }

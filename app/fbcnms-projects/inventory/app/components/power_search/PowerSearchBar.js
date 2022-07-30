@@ -82,6 +82,9 @@ const useStyles = makeStyles(theme => ({
     fontWeight: 'bold',
     pointerEvents: 'none',
   },
+  export:{
+    paddingLeft:'5px',
+  },
 }));
 
 type Props = $ReadOnly<{|
@@ -257,15 +260,17 @@ const PowerSearchBar = (props: Props) => {
               {footer}
             </Text>
           )}
-          {savedSearch && entity && entity !== 'PROJECT' && (
+          {savedSearch && entity && entity !== 'PROJECT' && entity !== 'SERVICE' && (
             <FilterBookmark filters={filterValues} entity={entity} />
           )}
           {exportPath && (
+            <div className={classes.export}>
             <CSVFileExport
               title="Export"
               exportPath={exportPath}
               filters={filterValues}
             />
+            </div>
           )}
         </div>
       </div>

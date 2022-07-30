@@ -16,10 +16,10 @@ import {
 describe('Suite Test InputSettings: ', () => {
   test('AUT-FE-05058 Test InputSettings', () => {
     expect(initialInputSettings.enableInputTransformation).toStrictEqual(
-      undefined,
+      false,
     );
     expect(initialInputSettings.enableInputStateTransformation).toStrictEqual(
-      undefined,
+      false,
     );
     const setInitialInputSettings = setInputSettings({
       ...initialInputSettings,
@@ -30,6 +30,6 @@ describe('Suite Test InputSettings: ', () => {
     );
     expect(
       setInitialInputSettings.enableInputStateTransformation,
-    ).toStrictEqual(undefined);
+    ).toStrictEqual(false);
   });
 });

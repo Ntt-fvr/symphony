@@ -39,7 +39,7 @@ describe('Suite Test Components /InvokeRestApi/: ', () => {
     };
 
     render(<TestComponent />);
-    const text = screen.getByText(/actionBlock.invoke/i);
+    const text = screen.getByText(/invokeRestAPIBlock/i);
     expect(text).toBeInTheDocument();
   });
 

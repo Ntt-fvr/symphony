@@ -20,7 +20,7 @@ type resourceSpecificationRelationshipResolver struct{}
 func (r resourceSpecificationRelationshipResolver) ResourceSpecification(ctx context.Context, resourceSpecificationRelationship *ent.ResourceSpecificationRelationship) (*ent.ResourceSpecification, error) {
 	variable, err := resourceSpecificationRelationship.Resourcespecification(ctx)
 	if err != nil {
-		return nil, fmt.Errorf("has ocurred error on proces: %v", err)
+		return nil, fmt.Errorf("has occurred error on process: %v", err)
 	}
 	return variable, nil
 }
@@ -28,7 +28,7 @@ func (r resourceSpecificationRelationshipResolver) ResourceSpecification(ctx con
 func (r resourceSpecificationRelationshipResolver) ResourceSpecificationItems(ctx context.Context, resourceSpecificationRelationship *ent.ResourceSpecificationRelationship) ([]*ent.ResourceSpecificationItems, error) {
 	variable, err := resourceSpecificationRelationship.ResourceSr(ctx)
 	if err != nil {
-		return nil, fmt.Errorf("has ocurred error on proces: %v", err)
+		return nil, fmt.Errorf("has occurred error on process: %v", err)
 	}
 	return variable, nil
 }
@@ -55,7 +55,7 @@ func (r mutationResolver) AddResourceSpecificationRelationshipList(ctx context.C
 				}
 				_, err := r.AddResourceSpecificationItems(ctx, inputItem)
 				if err != nil {
-					return nil, fmt.Errorf("has ocurred error on proces: %v", err)
+					return nil, fmt.Errorf("has occurred error on process: %v", err)
 				}
 			}
 		}
@@ -74,9 +74,9 @@ func (r mutationResolver) AddResourceSpecificationRelationship(ctx context.Conte
 		Save(ctx)
 	if err != nil {
 		if ent.IsConstraintError(err) {
-			return nil, gqlerror.Errorf("has ocurred error on proces: %v", err)
+			return nil, gqlerror.Errorf("has occurred error on process: %v", err)
 		}
-		return nil, fmt.Errorf("has ocurred error on proces: %v", err)
+		return nil, fmt.Errorf("has occurred error on process: %v", err)
 	}
 	if len(input.ResourceSpecificationList) > 0 {
 		for _, RSL := range input.ResourceSpecificationList {
@@ -86,7 +86,7 @@ func (r mutationResolver) AddResourceSpecificationRelationship(ctx context.Conte
 			}
 			_, err := r.AddResourceSpecificationItems(ctx, inputItem)
 			if err != nil {
-				return nil, fmt.Errorf("has ocurred error on proces: %v", err)
+				return nil, fmt.Errorf("has occurred error on process: %v", err)
 			}
 		}
 	}
@@ -101,12 +101,12 @@ func (r mutationResolver) RemoveResourceSpecificationRelationship(ctx context.Co
 		).
 		Only(ctx)
 	if err != nil {
-		return id, errors.Wrapf(err, "has ocurred error on proces: %v", err)
+		return id, errors.Wrapf(err, "has occurred error on process: %v", err)
 	}
 	//TODO: borrar o editar los edges relacionados
 
 	if err := client.ResourceSpecificationRelationship.DeleteOne(t).Exec(ctx); err != nil {
-		return id, errors.Wrap(err, "has ocurred error on proces: %v")
+		return id, errors.Wrap(err, "has occurred error on process: %v")
 	}
 	return id, nil
 }
@@ -116,13 +116,13 @@ func (r mutationResolver) EditResourceSpecificationRelationship(ctx context.Cont
 	et, err := client.ResourceSpecificationRelationship.Get(ctx, input.ID)
 	if err != nil {
 		if ent.IsNotFound(err) {
-			return nil, gqlerror.Errorf("has ocurred error on proces: %v", err)
+			return nil, gqlerror.Errorf("has occurred error on process: %v", err)
 		}
-		return nil, errors.Wrapf(err, "has ocurred error on proces: %v", err)
+		return nil, errors.Wrapf(err, "has occurred error on process: %v", err)
 	}
 	var resourcespecification, err3 = et.Resourcespecification(ctx)
 	if err3 != nil {
-		return nil, errors.Wrap(err3, "has ocurred error on proces: %v")
+		return nil, errors.Wrap(err3, "has occurred error on process: %v")
 	}
 
 	if input.Name != et.Name || input.ResourceSpecification != &resourcespecification.ID {
@@ -132,9 +132,9 @@ func (r mutationResolver) EditResourceSpecificationRelationship(ctx context.Cont
 			SetNillableResourcespecificationID(input.ResourceSpecification).
 			Save(ctx); err != nil {
 			if ent.IsConstraintError(err) {
-				return nil, gqlerror.Errorf("has ocurred error on proces: %v", err)
+				return nil, gqlerror.Errorf("has occurred error on process: %v", err)
 			}
-			return nil, errors.Wrap(err, "has ocurred error on proces: %v")
+			return nil, errors.Wrap(err, "has occurred error on process: %v")
 		}
 	}
 	return et, nil

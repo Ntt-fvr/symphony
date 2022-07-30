@@ -15,6 +15,7 @@
 /*::
 import type { ConcreteRequest } from 'relay-runtime';
 export type ActionTypeId = "update_inventory" | "update_workforce" | "work_order" | "worker" | "%future added value";
+export type AuthType = "Basic" | "ODIC" | "%future added value";
 export type EntryPointRole = "DEFAULT" | "%future added value";
 export type ExitPointRole = "CHOICE" | "DEFAULT" | "%future added value";
 export type GoToType = "DESTINATION" | "ORIGIN" | "%future added value";
@@ -147,17 +148,23 @@ export type GotoBlockInput = {|
   uiRepresentation?: ?BlockUIRepresentationInput,
 |};
 export type InvokeRestAPIBlockInput = {|
+  authType?: ?AuthType,
   basicDefinitions: BaseBlockInput,
   body: string,
   cid: string,
+  clientId?: ?string,
+  clientSecret?: ?string,
   connectionTimeOut: number,
   entryPoint: EntryPointInput,
   exitPoint: ExitPointInput,
   headers: $ReadOnlyArray<?VariableValueInput>,
   method: UrlMethod,
+  oidcUrl?: ?string,
   params: $ReadOnlyArray<VariableExpressionInput>,
+  password?: ?string,
   uiRepresentation?: ?BlockUIRepresentationInput,
   url: string,
+  user?: ?string,
 |};
 export type VariableValueInput = {|
   value: string,

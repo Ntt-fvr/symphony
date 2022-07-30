@@ -29,19 +29,13 @@ import type {ManualStartSettingsType} from './blockTypes/manualStart/ManualStart
 import type {OutputSettingsType} from './blockTypes/OutputSettingsType';
 import type {TimerSettingsType} from './blockTypes/timer/TimerSettingsType';
 import type {WaitSignalSettingsType} from './blockTypes/waitSignal/WaitSignalSettingsType';
+import type {PublishToKafkaSettingsType} from './blockTypes/publishToKafka/PublishToKafkaSettings';
 
 import BaseConnector from '../connectors/BaseConnector';
 import {DISPLAY_SETTINGS} from '../../utils/helpers';
+import {IsOutputPortChoise, defaultAttrProps} from '../connectors/helper';
 import {PORTS_GROUPS} from '../../facades/shapes/vertexes/BaseVertext';
 import {V} from 'jointjs';
-import {
-  bigSize,
-  mediumSize,
-  originSize,
-  portsBigPosition,
-  portsMediumPosition,
-  portsOriginPosition,
-} from '../../facades/shapes/vertexes/BaseVertext';
 import {
   getInitialBlockSettings,
   setBlockSettings,
@@ -58,6 +52,13 @@ import {
   initialOutputSettings,
   setOutputSettings,
 } from './blockTypes/OutputSettingsType';
+import {
+  initialPositionPort,
+  resizeBlock,
+  setOutput,
+  setIntput,
+} from './utils/helpers';
+import {TYPE_LIST} from '../../../../widgets/detailsPanel/blockSettings/configureSettings/ConfigurationGoTo.js';
 
 import {TYPE as ForEachLoopType} from '../../facades/shapes/vertexes/logic/ForEachLoop';
 import {TYPE as ParallelType} from '../../facades/shapes/vertexes/logic/Parallel';
@@ -75,6 +76,14 @@ const selectionHighlighting = {
     },
   },
 };
+const failedHighlighting = {
+  highlighter: {
+    name: 'addClass',
+    options: {
+      className: DISPLAY_SETTINGS.classes.failed,
+    },
+  },
+};
 
 type settingsTypes =
   | WaitSignalSettingsType
@@ -84,7 +93,8 @@ type settingsTypes =
   | ManualStartSettingsType
   | EndSettings
   | InvokeRestApiSettingsType
-  | ExecuteFlowSettingsType;
+  | ExecuteFlowSettingsType
+  | PublishToKafkaSettingsType;
 
 export interface IBlock {
   +id: string;
@@ -107,6 +117,7 @@ export interface IBlock {
   +setParent: string => void;
   +setSize: string => void;
   +setPosition: (number, number) => void;
+  +setPorts: string => void;
   +setSettings: string => void;
   +setInputSettings: string => void;
   +setOutputSettings: string => void;
@@ -169,56 +180,16 @@ export default class BaseBlock implements IBlock {
   }
 
   setSize(typeSizeCoupled: string) {
-    if (
-      this.model.attributes.type == ForEachLoopType ||
-      this.model.attributes.type == ParallelType
-    ) {
-      switch (typeSizeCoupled) {
-        case 'bigSizeCoupled':
-          this.model.resize(bigSize.resizeWidth, bigSize.resizeHeigth);
-          this.model.attr('coupled/width', bigSize.width);
-          this.model.portProp(this.model.getPorts()[2].id, 'attrs/circle', {
-            cx: portsBigPosition.cxRight,
-          });
-          break;
+    resizeBlock(typeSizeCoupled, this);
+  }
 
-        case 'mediumSizeCoupled':
-          this.model.resize(mediumSize.resizeWidth, mediumSize.resizeHeigth);
-          this.model.attr('coupled/width', mediumSize.width);
-          this.model.attr('coupled/height', mediumSize.height);
-          this.model.attr('body/refY2', mediumSize.bodyY2);
-          this.model.attr('background/refY2', mediumSize.backgroundY2);
-          this.model.attr('label/refY2', mediumSize.labelY2);
-          this.model.attr('image/refY2', mediumSize.imageY2);
-          this.model.portProp(this.model.getPorts()[1].id, 'attrs/circle', {
-            cy: portsMediumPosition.cyLeft,
-          });
-          this.model.portProp(this.model.getPorts()[2].id, 'attrs/circle', {
-            cx: portsMediumPosition.cxRight,
-            cy: portsMediumPosition.cyRight,
-          });
-          break;
+  setPorts(type: string) {
+    if (type === TYPE_LIST[0].id) {
+      setOutput(this, TYPE_LIST[0].name);
+    }
 
-        case 'originSizeCoupled':
-          this.model.resize(originSize.resizeWidth, originSize.resizeHeigth);
-          this.model.attr('coupled/width', originSize.width);
-          this.model.attr('coupled/height', originSize.height);
-          this.model.attr('body/refY2', originSize.bodyY2);
-          this.model.attr('background/refY2', originSize.backgroundY2);
-          this.model.attr('label/refY2', originSize.labelY2);
-          this.model.attr('image/refY2', originSize.imageY2);
-          this.model.portProp(this.model.getPorts()[1].id, 'attrs/circle', {
-            cy: portsOriginPosition.cyLeft,
-          });
-          this.model.portProp(this.model.getPorts()[2].id, 'attrs/circle', {
-            cx: portsOriginPosition.cxRight,
-            cy: portsOriginPosition.cyRight,
-          });
-          break;
-
-        default:
-          return;
-      }
+    if (type === TYPE_LIST[1].id) {
+      setIntput(this, TYPE_LIST[1].name);
     }
   }
 
@@ -246,12 +217,23 @@ export default class BaseBlock implements IBlock {
     this.isSelected = true;
 
     this.view.highlight(undefined, selectionHighlighting);
+    this.view.unhighlight(undefined, failedHighlighting);
+  }
+
+  setFailed(failed) {
+    if (failed) {
+      this.failed = true;
+      this.view.highlight(undefined, failedHighlighting);
+    }
   }
 
   deselect() {
     this.isSelected = false;
 
     this.view.unhighlight(undefined, selectionHighlighting);
+    if(this.failed){
+      this.view.highlight(undefined, failedHighlighting);
+    }
   }
 
   getPorts(): $ReadOnlyArray<VertexPort> {
@@ -285,6 +267,7 @@ export default class BaseBlock implements IBlock {
     target: IBlock,
     model?: ?ILinkModel,
   ) {
+
     const targetPort = target.getInputPort();
     if (targetPort == null) {
       return;
@@ -316,6 +299,19 @@ export default class BaseBlock implements IBlock {
       this.isInGraph,
     );
 
+    connector.model?.connector('rounded');
+    connector.model?.attr('line/targetMarker', {type: 'path', d: ''});
+    const outputPort = this.getOutputPorts()[0]?.id;
+    const outputPortChoice =
+      connector.model !== undefined
+        ? IsOutputPortChoise(connector.model, outputPort)
+        : false;
+    if (outputPortChoice) {
+      connector.model.appendLabel({
+        ...defaultAttrProps,
+      });
+    }
+
     this.outConnectors[index] = connector;
 
     return connector;
@@ -336,13 +332,7 @@ export default class BaseBlock implements IBlock {
       this.model.attributes.type == ForEachLoopType ||
       this.model.attributes.type == ParallelType
     ) {
-      this.model.portProp(this.model.getPorts()[1].id, 'attrs/circle', {
-        cy: portsOriginPosition.cyLeft,
-      });
-      this.model.portProp(this.model.getPorts()[2].id, 'attrs/circle', {
-        cx: portsOriginPosition.cxRight,
-        cy: portsOriginPosition.cyRight,
-      });
+      initialPositionPort(this);
     }
   }
 
