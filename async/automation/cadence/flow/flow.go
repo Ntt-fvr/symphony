@@ -2,6 +2,8 @@ package flow
 
 import (
 	"errors"
+	"time"
+
 	"github.com/facebookincubator/symphony/async/automation/cadence/activity"
 	"github.com/facebookincubator/symphony/async/automation/cadence/enum"
 	"github.com/facebookincubator/symphony/async/automation/executors"
@@ -12,13 +14,11 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/flowinstance"
 	"go.uber.org/cadence"
 	"go.uber.org/cadence/workflow"
-	"time"
 )
 
 func AutomationWorkflow(
 	ctx workflow.Context, taskList string, flowInstanceID int,
 ) (map[string]interface{}, error) {
-
 	activityOptions := workflow.ActivityOptions{
 		TaskList:               taskList,
 		ScheduleToCloseTimeout: time.Second * 180,
@@ -151,7 +151,6 @@ func AutomationWorkflow(
 func executeBlock(
 	ctx workflow.Context, automationBlock model.BaseBlock, input, state map[string]interface{},
 ) (*executors.ExecutorResult, error) {
-
 	blockInstanceID, err := operations.CreateBlockInstance(
 		automationBlock.GetFlowInstanceID(), automationBlock.GetBlockID(), input,
 	)

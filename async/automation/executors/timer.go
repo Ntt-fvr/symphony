@@ -1,12 +1,13 @@
 package executors
 
 import (
+	"time"
+
 	"github.com/facebookincubator/symphony/async/automation/celgo"
 	"github.com/facebookincubator/symphony/async/automation/util"
 	"github.com/facebookincubator/symphony/pkg/ent/block"
 	"github.com/google/cel-go/common/types/ref"
 	"go.uber.org/cadence/workflow"
-	"time"
 )
 
 type ExecutorTimerBlock struct {
@@ -24,7 +25,6 @@ func (b *ExecutorTimerBlock) runLogic() error {
 	}
 
 	if timerBlock.EnableExpression {
-
 		inputVariable = celgo.ConvertToValue(b.input)
 		stateVariable = celgo.ConvertToValue(b.state)
 
@@ -32,7 +32,6 @@ func (b *ExecutorTimerBlock) runLogic() error {
 			celgo.InputVariable: inputVariable,
 			celgo.StateVariable: stateVariable,
 		}
-
 	}
 
 	var duration time.Duration

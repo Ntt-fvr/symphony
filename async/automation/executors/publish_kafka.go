@@ -2,10 +2,11 @@ package executors
 
 import (
 	"encoding/json"
+	"strings"
+
 	"github.com/confluentinc/confluent-kafka-go/kafka"
 	"github.com/facebookincubator/symphony/async/automation/celgo"
 	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
-	"strings"
 )
 
 type ExecutorKafkaBlock struct {

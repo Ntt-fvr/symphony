@@ -23,25 +23,23 @@ type resourceSpecificationResolver struct{}
 func (resourceSpecificationResolver) ResourceType(ctx context.Context, resourceSpecification *ent.ResourceSpecification) (*ent.ResourceType, error) {
 	variable, err := resourceSpecification.Resourcetype(ctx)
 	if err != nil {
-		return nil, fmt.Errorf("has ocurred error on proces: %v", err)
+		return nil, fmt.Errorf("has occurred error on process: %v", err)
 	}
 	return variable, nil
-
 }
 
 func (resourceSpecificationResolver) ResourcePropertyTypes(ctx context.Context, resourceSpecification *ent.ResourceSpecification) ([]*ent.ResourcePropertyType, error) {
 	variable, err := resourceSpecification.ResourcePropertyType(ctx)
 	if err != nil {
-		return nil, fmt.Errorf("has ocurred error on proces: %v", err)
+		return nil, fmt.Errorf("has occurred error on process: %v", err)
 	}
 
 	return variable, nil
-
 }
 func (r resourceSpecificationResolver) ResourceSpecificationRelationship(ctx context.Context, resourceSpecification *ent.ResourceSpecification) ([]*ent.ResourceSpecificationRelationship, error) {
 	variable, err := resourceSpecification.ResourceSpecification(ctx)
 	if err != nil {
-		return nil, fmt.Errorf("has ocurred error on proces: %v", err)
+		return nil, fmt.Errorf("has occurred error on process: %v", err)
 	}
 
 	return variable, nil
@@ -50,7 +48,7 @@ func (r resourceSpecificationResolver) ResourceSpecificationRelationship(ctx con
 func (r resourceSpecificationResolver) ResourceSpecificationItems(ctx context.Context, resourceSpecification *ent.ResourceSpecification) ([]*ent.ResourceSpecificationItems, error) {
 	variable, err := resourceSpecification.ResourceSpecificationItems(ctx)
 	if err != nil {
-		return nil, fmt.Errorf("has ocurred error on proces: %v", err)
+		return nil, fmt.Errorf("has occurred error on process: %v", err)
 	}
 	return variable, nil
 }
@@ -58,14 +56,12 @@ func (r resourceSpecificationResolver) ResourceSpecificationItems(ctx context.Co
 func (resourceSpecificationResolver) Vendor(ctx context.Context, resourceSpecification *ent.ResourceSpecification) (*ent.Vendor, error) {
 	variable, err := resourceSpecification.Vendor(ctx)
 	if err != nil {
-		return nil, fmt.Errorf("has ocurred error on proces: %v", err)
+		return nil, fmt.Errorf("has occurred error on process: %v", err)
 	}
 	return variable, nil
-
 }
 
 func (r mutationResolver) AddResourceSpecification(ctx context.Context, input models.AddResourceSpecificationInput) (*ent.ResourceSpecification, error) {
-
 	client := r.ClientFrom(ctx)
 	typ, err := client.
 		ResourceSpecification.Create().
@@ -76,9 +72,9 @@ func (r mutationResolver) AddResourceSpecification(ctx context.Context, input mo
 		Save(ctx)
 	if err != nil {
 		if ent.IsConstraintError(err) {
-			return nil, gqlerror.Errorf("has ocurred error on proces: %v", err)
+			return nil, gqlerror.Errorf("has occurred error on process: %v", err)
 		}
-		return nil, fmt.Errorf("has ocurred error on proces: %v", err)
+		return nil, fmt.Errorf("has occurred error on process: %v", err)
 	}
 	if err := r.AddResourcePropertyType(ctx, func(ptc *ent.ResourcePropertyTypeCreate) {
 		ptc.SetResourceSpecificationID(typ.ID)
@@ -99,7 +95,7 @@ func (r mutationResolver) RemoveResourceSpecification(ctx context.Context, id in
 	}
 	for _, resourcePropertyType := range resourcePropertyTypes {
 		if _, err := r.RemoveResourcePropertyType(ctx, resourcePropertyType.ID); err != nil {
-			logger.Error("cannot delete resouce property type of resouce specification", zap.Error(err))
+			logger.Error("cannot delete resource property type of resource specification", zap.Error(err))
 			return id, fmt.Errorf("deleting resource property type: %w", err)
 		}
 	}
@@ -122,13 +118,13 @@ func (r mutationResolver) EditResourceSpecification(ctx context.Context, input m
 	et, err := client.ResourceSpecification.Get(ctx, input.ID)
 	if err != nil {
 		if ent.IsNotFound(err) {
-			return nil, gqlerror.Errorf("has ocurred error on proces: %v", err)
+			return nil, gqlerror.Errorf("has occurred error on process: %v", err)
 		}
-		return nil, errors.Wrapf(err, "has ocurred error on proces: %v", err)
+		return nil, errors.Wrapf(err, "has occurred error on process: %v", err)
 	}
 	var resourcetype, err1 = et.Resourcetype(ctx)
 	if err1 != nil {
-		return nil, errors.Wrap(err1, "has ocurred error on proces: %v")
+		return nil, errors.Wrap(err1, "has occurred error on process: %v")
 	}
 
 	var vendor, err2 = et.Vendor(ctx)
@@ -143,9 +139,9 @@ func (r mutationResolver) EditResourceSpecification(ctx context.Context, input m
 			SetNillableResourcetypeID(input.ResourceType).
 			Save(ctx); err != nil {
 			if ent.IsConstraintError(err) {
-				return nil, gqlerror.Errorf("has ocurred error on proces: %v", err)
+				return nil, gqlerror.Errorf("has occurred error on process: %v", err)
 			}
-			return nil, errors.Wrap(err, "has ocurred error on proces: %v")
+			return nil, errors.Wrap(err, "has occurred error on process: %v")
 		}
 	}
 	for _, resourceProperty := range input.ResourcePropertyTypes {

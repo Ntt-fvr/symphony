@@ -6,8 +6,9 @@ package handler
 
 import (
 	"context"
-	"github.com/facebookincubator/symphony/async/automation/cadence/flow"
 	"time"
+
+	"github.com/facebookincubator/symphony/async/automation/cadence/flow"
 
 	"github.com/facebookincubator/symphony/async/worker"
 	"github.com/facebookincubator/symphony/pkg/ent"

@@ -817,7 +817,6 @@ func (r mutationResolver) AddChoiceBlock(ctx context.Context, flowDraftID int, i
 	}
 
 	if input.DefaultExitPoint != nil {
-
 		dExitPoint, err := b.QueryExitPoints().Where(exitpoint.RoleEQ(flowschema.ExitPointRoleDefault), exitpoint.CidIsNil()).Only(ctx)
 		if err != nil {
 			return nil, err
@@ -900,7 +899,6 @@ func (r mutationResolver) AddInvokeRestAPIBlock(ctx context.Context, flowDraftID
 	}
 
 	return details.Save(ctx)
-
 }
 
 func (r mutationResolver) AddWaitForSignalBlock(ctx context.Context, flowDraftID int, input models.WaitForSignalBlockInput) (*ent.Block, error) {
