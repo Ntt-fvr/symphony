@@ -107,6 +107,8 @@ func provideViews() []*view.View {
 	return views
 }
 
+/*
 func provideAutomationEmitterFactory(flags *cliFlags) ev.AutomationEmitterFactory {
 	return flags.AutomationPubURL
 }
+*/
