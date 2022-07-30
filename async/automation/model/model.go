@@ -1,10 +1,11 @@
 package model
 
 import (
+	"time"
+
 	"github.com/facebookincubator/symphony/async/automation/celgo"
 	"github.com/facebookincubator/symphony/pkg/ent/block"
 	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
-	"time"
 )
 
 type BlockTransformationValue struct {

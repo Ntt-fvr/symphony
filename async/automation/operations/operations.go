@@ -4,6 +4,8 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"time"
+
 	"github.com/facebookincubator/symphony/async/automation/celgo"
 	"github.com/facebookincubator/symphony/async/automation/model"
 	"github.com/facebookincubator/symphony/async/automation/util"
@@ -11,7 +13,6 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/block"
 	"github.com/facebookincubator/symphony/pkg/ent/blockinstance"
 	"github.com/facebookincubator/symphony/pkg/ent/flowinstance"
-	"time"
 )
 
 var ctx context.Context
@@ -21,7 +22,6 @@ func init() {
 }
 
 func UpdateFlowInstance(flowInstanceID int, workflowID string, runID string) error {
-
 	contextIsNull := ctx == nil
 
 	fmt.Println()
@@ -49,7 +49,6 @@ func UpdateFlowInstance(flowInstanceID int, workflowID string, runID string) err
 }
 
 func UpdateFlowInstanceStatus(flowInstanceID int, status flowinstance.Status, close bool) error {
-
 	contextIsNull := ctx == nil
 
 	fmt.Println()
@@ -79,7 +78,6 @@ func UpdateFlowInstanceStatus(flowInstanceID int, status flowinstance.Status, cl
 }
 
 func CreateBlockInstance(flowInstanceID int, blockID int, input map[string]interface{}) (int, error) {
-
 	inputJson, err := util.ToJson(input)
 	if err != nil {
 		return 0, err
@@ -108,7 +106,6 @@ func UpdateBlockStatus(
 	blockInstanceID int, status blockinstance.Status, close bool,
 	output map[string]interface{}, failureReason string,
 ) error {
-
 	query := ent.FromContext(ctx).BlockInstance.
 		UpdateOneID(blockInstanceID).
 		SetStatus(status)
@@ -136,7 +133,6 @@ func UpdateBlockStatus(
 }
 
 func GetInputAndBlocks(flowInstanceID int) (map[string]interface{}, map[int]model.BaseBlock, error) {
-
 	flowInstance, err := ent.FromContext(ctx).
 		FlowInstance.
 		Get(ctx, flowInstanceID)
@@ -167,7 +163,6 @@ func GetInputAndBlocks(flowInstanceID int) (map[string]interface{}, map[int]mode
 
 	if templateBlocks != nil {
 		for _, templateBlock := range templateBlocks {
-
 			transformations := getTransformation(templateBlock)
 
 			baseBlock := createBaseBlock(templateBlock, transformations, flowInstanceID)
@@ -289,7 +284,6 @@ func GetInputAndBlocks(flowInstanceID int) (map[string]interface{}, map[int]mode
 }
 
 func getTransformation(block *ent.Block) model.BlockTransformations {
-
 	transformations := model.BlockTransformations{}
 
 	if block.EnableInputTransformation != nil && *block.EnableInputTransformation {
@@ -354,7 +348,6 @@ func getTransformation(block *ent.Block) model.BlockTransformations {
 func createBaseBlock(
 	templateBlock *ent.Block, transformations model.BlockTransformations, flowInstanceID int,
 ) model.BaseBlock {
-
 	var maxAttempts, backOffRate, retryInterval int
 
 	if templateBlock.MaxAttemps != nil {
@@ -430,7 +423,6 @@ func getNextBlock(block *ent.Block, baseBlock model.BaseBlock) (model.BaseBlock,
 }
 
 func createStartBlock(templateBlock *ent.Block, baseBlock model.BaseBlock) (*model.BaseBlock, error) {
-
 	baseBlock, err := getNextBlock(templateBlock, baseBlock)
 	if err != nil {
 		return nil, err
@@ -447,7 +439,6 @@ func createEndBlock(_ *ent.Block, baseBlock model.BaseBlock) (*model.BaseBlock, 
 }
 
 func createGotoBlock(templateBlock *ent.Block, baseBlock model.BaseBlock) (*model.BaseBlock, error) {
-
 	baseBlock, err := getNextBlock(templateBlock, baseBlock)
 	if err != nil {
 		return nil, err
@@ -459,7 +450,6 @@ func createGotoBlock(templateBlock *ent.Block, baseBlock model.BaseBlock) (*mode
 }
 
 func createChoiceBlock(templateBlock *ent.Block, baseBlock model.BaseBlock) (*model.BaseBlock, error) {
-
 	exitPoints, err := templateBlock.QueryExitPoints().All(ctx)
 	if err != nil {
 		return nil, err
@@ -491,7 +481,6 @@ func createChoiceBlock(templateBlock *ent.Block, baseBlock model.BaseBlock) (*mo
 }
 
 func createExecuteFlowBlock(templateBlock *ent.Block, baseBlock model.BaseBlock) (*model.BaseBlock, error) {
-
 	baseBlock, err := getNextBlock(templateBlock, baseBlock)
 
 	if err != nil {
@@ -514,7 +503,6 @@ func createExecuteFlowBlock(templateBlock *ent.Block, baseBlock model.BaseBlock)
 }
 
 func createForEachBlock(templateBlock *ent.Block, baseBlock model.BaseBlock) (*model.BaseBlock, error) {
-
 	baseBlock, err := getNextBlock(templateBlock, baseBlock)
 	if err != nil {
 		return nil, err
@@ -536,7 +524,6 @@ func createForEachBlock(templateBlock *ent.Block, baseBlock model.BaseBlock) (*m
 }
 
 func createInvokeRestAPIBlock(templateBlock *ent.Block, baseBlock model.BaseBlock) (*model.BaseBlock, error) {
-
 	baseBlock, err := getNextBlock(templateBlock, baseBlock)
 	if err != nil {
 		return nil, err
@@ -584,7 +571,6 @@ func createInvokeRestAPIBlock(templateBlock *ent.Block, baseBlock model.BaseBloc
 }
 
 func createKafkaBlock(templateBlock *ent.Block, baseBlock model.BaseBlock) (*model.BaseBlock, error) {
-
 	baseBlock, err := getNextBlock(templateBlock, baseBlock)
 	if err != nil {
 		return nil, err
@@ -601,7 +587,6 @@ func createKafkaBlock(templateBlock *ent.Block, baseBlock model.BaseBlock) (*mod
 }
 
 func createParallelBlock(templateBlock *ent.Block, baseBlock model.BaseBlock) (*model.BaseBlock, error) {
-
 	baseBlock, err := getNextBlock(templateBlock, baseBlock)
 	if err != nil {
 		return nil, err
@@ -623,7 +608,6 @@ func createParallelBlock(templateBlock *ent.Block, baseBlock model.BaseBlock) (*
 }
 
 func createTimerBlock(templateBlock *ent.Block, baseBlock model.BaseBlock) (*model.BaseBlock, error) {
-
 	baseBlock, err := getNextBlock(templateBlock, baseBlock)
 
 	if err != nil {
@@ -668,7 +652,6 @@ func createTimerBlock(templateBlock *ent.Block, baseBlock model.BaseBlock) (*mod
 }
 
 func createWaitForSignalBlock(templateBlock *ent.Block, baseBlock model.BaseBlock) (*model.BaseBlock, error) {
-
 	baseBlock, err := getNextBlock(templateBlock, baseBlock)
 	if err != nil {
 		return nil, err
@@ -685,7 +668,6 @@ func createWaitForSignalBlock(templateBlock *ent.Block, baseBlock model.BaseBloc
 }
 
 func createStartWorkOrderBlock(templateBlock *ent.Block, baseBlock model.BaseBlock) (*model.BaseBlock, error) {
-
 	baseBlock, err := getNextBlock(templateBlock, baseBlock)
 	if err != nil {
 		return nil, err

@@ -5,11 +5,12 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/facebookincubator/symphony/async/automation/celgo"
-	"github.com/facebookincubator/symphony/async/automation/util"
 	"io"
 	"io/ioutil"
 	"net/http"
+
+	"github.com/facebookincubator/symphony/async/automation/celgo"
+	"github.com/facebookincubator/symphony/async/automation/util"
 )
 
 const (
@@ -22,7 +23,6 @@ type ExecutorInvokeRestAPIBlock struct {
 }
 
 func (b *ExecutorInvokeRestAPIBlock) runLogic() error {
-
 	invokeRestAPIBlock := b.executorBlock.InvokeRestAPI
 	if invokeRestAPIBlock == nil {
 		return configNotFound

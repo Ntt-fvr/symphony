@@ -561,9 +561,7 @@ func (r mutationResolver) importBlocks(ctx context.Context, input models.ImportF
 				/*} else {
 					newBlockInputs = append(newBlockInputs, blkInput)
 				}*/
-
 			}
-
 		}
 		if len(blockInputs) == len(newBlockInputs) {
 			return fmt.Errorf("there is circular dependency between blocks or dependency doesn't exist. num=%d", len(blockInputs))
@@ -722,7 +720,6 @@ func (r mutationResolver) ArchiveFlow(ctx context.Context, input models.ArchiveF
 }
 
 func (r mutationResolver) DuplicateFlow(ctx context.Context, input models.DuplicateFlowInput) (*ent.Flow, error) {
-
 	var err error
 	client := r.ClientFrom(ctx)
 
@@ -759,5 +756,4 @@ func (r mutationResolver) DuplicateFlow(ctx context.Context, input models.Duplic
 		}
 	}
 	return newFlow, nil
-
 }

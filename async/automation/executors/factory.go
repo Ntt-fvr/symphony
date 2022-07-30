@@ -11,7 +11,6 @@ func GetBlockInstances(
 	ctx workflow.Context, baseBlock model.BaseBlock, input, state map[string]interface{},
 	updateStatusFunction func(int, blockinstance.Status, bool, map[string]interface{}, string) error,
 ) ExecutorBlock {
-
 	var executorBlock ExecutorBlock
 
 	executorBase := createExecutorBase(ctx, baseBlock, input, state, updateStatusFunction)
@@ -101,7 +100,6 @@ func GetBlockInstances(
 		executorStartWorkOrderBlock.runLogicFunction = executorStartWorkOrderBlock.runLogic
 
 		executorBlock = &executorStartWorkOrderBlock*/
-
 	}
 
 	return executorBlock
@@ -111,7 +109,6 @@ func createExecutorBase(
 	ctx workflow.Context, baseBlock model.BaseBlock, input, state map[string]interface{},
 	updateStatusFunction func(int, blockinstance.Status, bool, map[string]interface{}, string) error,
 ) executorBaseBlock {
-
 	return executorBaseBlock{
 		Ctx:                  ctx,
 		executorBlock:        baseBlock,

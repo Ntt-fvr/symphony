@@ -2,6 +2,7 @@ package executors
 
 import (
 	"errors"
+
 	"github.com/facebookincubator/symphony/async/automation/celgo"
 	"github.com/facebookincubator/symphony/async/automation/model"
 	"go.uber.org/cadence/workflow"
@@ -45,7 +46,6 @@ func (b *ExecutorForEachBlock) runLogic() error {
 
 		executorBlock := b.SearchBlock(forEachBlock.StartBlockID)
 		for executorBlock != nil {
-
 			executorResult, err := b.ExecuteBlock(b.Ctx, *executorBlock, input, b.state)
 			if err != nil {
 				return err

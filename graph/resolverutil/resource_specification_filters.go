@@ -24,7 +24,6 @@ func handleResourceSpecificationFilter(q *ent.ResourceSpecificationQuery, filter
 	default:
 		return nil, errors.Errorf("filter type is not supported: %s", filter.FilterType)
 	}
-
 }
 
 func resourceSpecificationIDFilter(q *ent.ResourceSpecificationQuery, filter *models.ResourceSpecificationFilterInput) (*ent.ResourceSpecificationQuery, error) {

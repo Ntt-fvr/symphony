@@ -9,7 +9,6 @@ import (
 
 func ExecuteBlockActivity(ctx workflow.Context, block model.BaseBlock,
 	input, state map[string]interface{}) (*executors.ExecutorResult, error) {
-
 	blockInstance := executors.GetBlockInstances(ctx, block, input, state, operations.UpdateBlockStatus)
 	return blockInstance.Execute()
 }

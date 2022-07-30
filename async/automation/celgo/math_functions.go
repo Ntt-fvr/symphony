@@ -1,8 +1,9 @@
 package celgo
 
 import (
-	"github.com/google/cel-go/cel"
 	"math"
+
+	"github.com/google/cel-go/cel"
 
 	"github.com/google/cel-go/common/types"
 	"github.com/google/cel-go/common/types/ref"

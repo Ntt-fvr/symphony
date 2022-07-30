@@ -7,10 +7,11 @@ package worker
 import (
 	"context"
 	"fmt"
+	"time"
+
 	automationActivity "github.com/facebookincubator/symphony/async/automation/cadence/activity"
 	"github.com/facebookincubator/symphony/async/automation/cadence/flow"
 	"go.uber.org/cadence/activity"
-	"time"
 
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/block"

@@ -3,6 +3,7 @@ package executors
 import (
 	"encoding/json"
 	"errors"
+
 	jsonPatch "github.com/evanphx/json-patch"
 	"github.com/facebookincubator/symphony/async/automation/celgo"
 	"github.com/facebookincubator/symphony/async/automation/model"
@@ -158,7 +159,6 @@ func (b *executorBaseBlock) executeOutputTransformation() error {
 
 func (b *executorBaseBlock) valueTransformation(value map[string]interface{},
 	transformation model.BlockTransformationValue) (map[string]interface{}, error) {
-
 	result, err := b.dataTransformation(value, transformation.Key)
 	if err != nil {
 		return nil, err
@@ -169,7 +169,6 @@ func (b *executorBaseBlock) valueTransformation(value map[string]interface{},
 
 func (b *executorBaseBlock) stateTransformation(value map[string]interface{},
 	transformation model.BlockTransformationValue) (map[string]interface{}, error) {
-
 	result, err := b.dataTransformation(value, transformation.Key)
 	if err != nil {
 		return nil, err
@@ -180,13 +179,11 @@ func (b *executorBaseBlock) stateTransformation(value map[string]interface{},
 
 func (b *executorBaseBlock) dataTransformation(value map[string]interface{},
 	key celgo.AstKey) (map[string]interface{}, error) {
-
 	return b.evaluateTransformation(value, b.state, key)
 }
 
 func (b *executorBaseBlock) evaluateTransformation(input, state map[string]interface{},
 	key celgo.AstKey) (map[string]interface{}, error) {
-
 	inputVariable := celgo.ConvertToValue(input)
 	stateVariable := celgo.ConvertToValue(state)
 
@@ -205,7 +202,6 @@ func (b *executorBaseBlock) evaluateTransformation(input, state map[string]inter
 
 func (b *executorBaseBlock) transformation(original, target map[string]interface{},
 	strategy enum.TransfStrategy) (map[string]interface{}, error) {
-
 	switch strategy {
 	case enum.TransfStrategyReplace:
 		return target, nil
