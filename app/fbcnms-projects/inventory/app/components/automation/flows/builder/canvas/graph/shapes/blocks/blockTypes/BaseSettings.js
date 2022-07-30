@@ -26,6 +26,7 @@ import {TYPE as TrueFalseType} from '../../../facades/shapes/vertexes/logic/True
 import {TYPE as UpdateInventoryType} from '../../../facades/shapes/vertexes/actions/UpdateInventory';
 import {TYPE as UpdateWorkforceType} from '../../../facades/shapes/vertexes/actions/UpdateWorkforce';
 import {TYPE as WaitSignalType} from '../../../facades/shapes/vertexes/triggers/WaitSignal';
+import {TYPE as PublishToKafkaType} from '../../../facades/shapes/vertexes/actions/PublishToKafka';
 import {
   initialChoiceSettings,
   setChoiceSettings,
@@ -88,6 +89,10 @@ import {
   initialWaitSignalSettings,
   setWaitSignalSettings,
 } from './waitSignal/WaitSignalSettingsType';
+import {
+  initialPublishToKafkaSettings,
+  setPublishToKafkaSettings,
+} from './publishToKafka/PublishToKafkaSettings';
 
 export const getInitialBlockSettings = type => {
   switch (type) {
@@ -129,6 +134,8 @@ export const getInitialBlockSettings = type => {
       return initialTriggerWorkforceSettings;
     case WaitSignalType:
       return initialWaitSignalSettings;
+    case PublishToKafkaType:
+      return initialPublishToKafkaSettings;
     default:
       return '';
   }
@@ -149,6 +156,8 @@ export const setBlockSettings = (type, newSettings) => {
       return setUpdateInventorySettings(newSettings);
     case UpdateWorkforceType:
       return setUpdateWorkforceSettings(newSettings);
+    case PublishToKafkaType:
+      return setPublishToKafkaSettings(newSettings);
     // Administrative
     case ManualStartType:
       return setManualStartSettings(newSettings);

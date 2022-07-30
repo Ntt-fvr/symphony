@@ -37,7 +37,7 @@ describe('Suite Test Components /Timer/: ', () => {
     };
 
     render(<TestComponent />);
-    const text = screen.getByText(/triggerBlock.timer/i);
+    const text = screen.getByText(/timer/i);
     expect(text).toBeInTheDocument();
   });
 

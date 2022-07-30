@@ -14,7 +14,6 @@ import CloudUploadIcon from '@material-ui/icons/CloudUpload';
 import ConfigureTitle from './common/ConfigureTitle';
 import DialogStatus from '../configure/DialogStatusBulk';
 import React, {useState} from 'react';
-import TextField from '@material-ui/core/TextField';
 import TextInput from '@symphony/design-system/components/Input/TextInput';
 import fbt from 'fbt';
 import {CardAccordion} from './common/CardAccordion';
@@ -61,7 +60,7 @@ export type Props = $ReadOnly<{|
 |}>;
 
 const ChangeRequestByBulk = (props: Props) => {
-  const {onClick, infoCSV, nameFile} = props;
+  const {onClick, infoCSV, nameFile, origin} = props;
   const [infoTable, setInfoTable] = useState(props.infoCSV);
   const [nameFileSelected, setNameFileSelected] = useState(props.nameFile);
   const [schedule, setSchedule] = useState(DEFAULT_DATA_SCHEDULE);
@@ -198,6 +197,7 @@ const ChangeRequestByBulk = (props: Props) => {
           onClick={onClick}
           infoCSV={infoTable.length === 0 ? infoCSV : infoTable}
           schedule={schedule}
+          origin={origin}
         />
       )}
     </div>

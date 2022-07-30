@@ -145,7 +145,7 @@ const ResourcePropertiesCard = (props: Props) => {
       </span>
     );
   };
-
+ 
   return (
     <InventoryQueryRenderer
       query={ResourceCardListQuery}
@@ -158,6 +158,7 @@ const ResourcePropertiesCard = (props: Props) => {
         return (
           <div className={classes.root}>
             {resourceData.queryResource.map(item => (
+              
               <>
                 <Grid
                   container
@@ -370,9 +371,9 @@ const ResourcePropertiesCard = (props: Props) => {
                       <Configuration
                         resource={item}
                         cmVersion={resourceData.queryCMVersion.find(
-                          cm =>
+                          cm => {
                             cm.resource.id === item.id &&
-                            cm.status === 'CURRENT',
+                            cm.status === 'CURRENT'},
                         )}
                       />
                     ) : null}

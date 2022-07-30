@@ -192,8 +192,10 @@ const AddEditResourceInLocation = (props: Props) => {
       },
     });
   }
-
+  const DATE_FORMAT = 'YYYY-MM-DD[T]HH:mm:ss';
+  
   function handleCreateForm() {
+    const createdTime = moment(new Date()).format(DATE_FORMAT);
     const variables: AddResourceMutationVariables = {
       input: [
         {
@@ -216,6 +218,7 @@ const AddEditResourceInLocation = (props: Props) => {
         const cmVersionVariables: AddCMVersionMutationVariables = {
           input: [
             {
+              createTime: createdTime,
               resource: {
                 id: response.addResource?.resource[0]?.id,
               },
