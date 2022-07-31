@@ -180,9 +180,24 @@ func NewApplication(ctx context.Context, flags *cliFlags) (*application, func(),
 		cleanup()
 		return nil, nil, err
 	}
-	config2 := &flags.TelemetryConfig
-	tracer, cleanup10, err := telemetry.ProvideJaegerTracer(config2)
+	automationReceiverFactory := provideAutomationReceiverFactory(flags)
+	automationReceiver, cleanup10, err := ev.ProvideAutomationReceiver(ctx, automationReceiverFactory, eventObject)
 	if err != nil {
+		cleanup9()
+		cleanup8()
+		cleanup7()
+		cleanup6()
+		cleanup5()
+		cleanup4()
+		cleanup3()
+		cleanup2()
+		cleanup()
+		return nil, nil, err
+	}
+	config2 := &flags.TelemetryConfig
+	tracer, cleanup11, err := telemetry.ProvideJaegerTracer(config2)
+	if err != nil {
+		cleanup10()
 		cleanup9()
 		cleanup8()
 		cleanup7()
@@ -206,12 +221,13 @@ func NewApplication(ctx context.Context, flags *cliFlags) (*application, func(),
 	client := worker.NewClient(workerConfig)
 	v4 := newHandlers(bucket, flags, client, tenancy, tracer)
 	handlerConfig := handler.Config{
-		Tenancy:      tenancy,
-		Features:     variable,
-		Receiver:     receiver,
-		Logger:       logger,
-		Handlers:     v4,
-		HealthPoller: poller,
+		Tenancy:            tenancy,
+		Features:           variable,
+		Receiver:           receiver,
+		AutomationReceiver: automationReceiver,
+		Logger:             logger,
+		Handlers:           v4,
+		HealthPoller:       poller,
 	}
 	handlerServer := handler.NewServer(handlerConfig)
 	mainApplication := &application{
@@ -224,6 +240,7 @@ func NewApplication(ctx context.Context, flags *cliFlags) (*application, func(),
 		client:      client,
 	}
 	return mainApplication, func() {
+		cleanup11()
 		cleanup10()
 		cleanup9()
 		cleanup8()

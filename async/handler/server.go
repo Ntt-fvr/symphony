@@ -35,12 +35,13 @@ type Server struct {
 
 // Config defines the async server config.
 type Config struct {
-	Tenancy      viewer.Tenancy
-	Features     *runtimevar.Variable
-	Receiver     ev.Receiver
-	Logger       log.Logger
-	Handlers     []Handler
-	HealthPoller health.Poller
+	Tenancy            viewer.Tenancy
+	Features           *runtimevar.Variable
+	Receiver           ev.Receiver
+	AutomationReceiver ev.AutomationReceiver
+	Logger             log.Logger
+	Handlers           []Handler
+	HealthPoller       health.Poller
 }
 
 func NewServer(cfg Config) *Server {
@@ -53,13 +54,15 @@ func NewServer(cfg Config) *Server {
 	}
 	srv.service, _ = ev.NewService(
 		ev.Config{
-			Receiver: cfg.Receiver,
-			Handler:  srv,
+			Receiver:           cfg.Receiver,
+			AutomationReceiver: cfg.AutomationReceiver,
+			Handler:            srv,
 			OnError: func(ctx context.Context, err error) {
 				cfg.Logger.For(ctx).Error("cannot handle event", zap.Error(err))
 			},
 		},
 		ev.WithEvent(event.EntMutation),
+		ev.WithEvent(event.Automation),
 	)
 	return srv
 }
@@ -80,9 +83,14 @@ func (s *Server) Shutdown(ctx context.Context) error {
 
 // HandleEvent implement ev.EventHandler interface.
 func (s *Server) HandleEvent(ctx context.Context, evt *ev.Event) error {
-	if evt.Name == event.EntMutation {
+	switch evt.Name {
+	case event.EntMutation:
 		if _, ok := evt.Object.(event.LogEntry); !ok {
 			return fmt.Errorf("event object %T must be a log entry", evt.Object)
+		}
+	case event.Automation:
+		if _, ok := evt.Object.(event.SignalEvent); !ok {
+			return fmt.Errorf("event object %T must be a signal event", evt.Object)
 		}
 	}
 
@@ -90,6 +98,7 @@ func (s *Server) HandleEvent(ctx context.Context, evt *ev.Event) error {
 		s.logger.For(ctx).Error("failed to handle event", zap.Error(err))
 	}
 	return nil
+
 }
 
 func (s *Server) handleEvent(ctx context.Context, evt *ev.Event) error {

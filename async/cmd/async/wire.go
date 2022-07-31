@@ -71,9 +71,9 @@ func NewApplication(ctx context.Context, flags *cliFlags) (*application, func(),
 		),
 		provideAutomationEmitterFactory,
 		ev.ProvideReceiver,
-		//ev.ProvideAutomationReceiver,
+		ev.ProvideAutomationReceiver,
 		provideReceiverFactory,
-		//provideAutomationReceiverFactory,
+		provideAutomationReceiverFactory,
 		wire.InterfaceValue(
 			new(ev.EventObject),
 			event.LogEntry{},
@@ -178,6 +178,10 @@ func newHandlers(bucket *blob.Bucket, flags *cliFlags, client *worker.Client, te
 		handler.New(handler.HandleConfig{
 			Name:    "block_automationactivities_log",
 			Handler: handler.Func(handler.HandleBlockActivities),
+		}),
+		handler.New(handler.HandleConfig{
+			Name:    "automation_signal",
+			Handler: handler.Func(handler.HandleAutomationSignal),
 		}),
 	}
 }

@@ -59,17 +59,21 @@ func (l LoggingEventHandler) HandleEvent(ctx context.Context, evt *Event) (err e
 
 // Service handles incoming events.
 type Service struct {
-	receiver    Receiver
-	sem         *semaphore.Weighted
-	concurrency int64
-	handler     EventHandler
-	onError     func(context.Context, error)
+	receiver           Receiver
+	automationReceiver AutomationReceiver
+	sem                *semaphore.Weighted
+	concurrency        int64
+	handler            EventHandler
+	onError            func(context.Context, error)
 }
 
 // Config configures event handling service.
 type Config struct {
 	// Receiver is used when receiving events.
 	Receiver Receiver
+
+	// Receiver is used when receiving events.
+	AutomationReceiver AutomationReceiver
 
 	// Handler is used to process incoming events.
 	Handler EventHandler
@@ -131,6 +135,9 @@ func NewService(cfg Config, opts ...Option) (*Service, error) {
 	if cfg.Receiver == nil {
 		return nil, errors.New("receiver is nil")
 	}
+	if cfg.AutomationReceiver == nil {
+		return nil, errors.New("automation receiver is nil")
+	}
 	if cfg.Handler == nil {
 		return nil, errors.New("handler is nil")
 	}
@@ -148,6 +155,9 @@ func NewService(cfg Config, opts ...Option) (*Service, error) {
 			Filter:   o.filters,
 		}
 	}
+
+	automationReceiver := cfg.AutomationReceiver
+
 	if cfg.OnError == nil {
 		cfg.OnError = func(context.Context, error) {}
 	}
@@ -158,7 +168,8 @@ func NewService(cfg Config, opts ...Option) (*Service, error) {
 	}
 
 	return &Service{
-		receiver: receiver,
+		receiver:           receiver,
+		automationReceiver: automationReceiver,
 		sem: semaphore.NewWeighted(
 			o.concurrency,
 		),
@@ -249,6 +260,15 @@ func (s *Service) Run(ctx context.Context) (err error) {
 			continue
 		}
 
+		aevt, err := s.automationReceiver.Receive(ctx)
+		if err != nil {
+			return err
+		}
+		if s.concurrency == 1 {
+			s.handle(aevt)
+			continue
+		}
+
 		if err := s.sem.Acquire(ctx, 1); err != nil {
 			return err
 		}
@@ -269,5 +289,7 @@ func (s *Service) Stop(ctx context.Context) (err error) {
 			s.sem.Acquire(ctx, s.concurrency),
 		).ErrorOrNil()
 	}()
+
+	defer s.automationReceiver.Shutdown(ctx)
 	return s.receiver.Shutdown(ctx)
 }
