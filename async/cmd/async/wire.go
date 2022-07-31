@@ -64,12 +64,12 @@ func NewApplication(ctx context.Context, flags *cliFlags) (*application, func(),
 			"TenantMaxConn",
 		),
 		ev.ProvideEmitter,
-		//ev.ProvideAutomationEmitter,
+		ev.ProvideAutomationEmitter,
 		wire.Bind(
 			new(ev.EmitterFactory),
 			new(ev.TopicFactory),
 		),
-		//provideAutomationEmitterFactory,
+		provideAutomationEmitterFactory,
 		ev.ProvideReceiver,
 		//ev.ProvideAutomationReceiver,
 		provideReceiverFactory,
@@ -136,7 +136,6 @@ func provideReceiverFactory(flags *cliFlags) ev.ReceiverFactory {
 	return flags.EventSubURL
 }
 
-/*
 func provideAutomationReceiverFactory(flags *cliFlags) ev.AutomationReceiverFactory {
 	return flags.AutomationSubURL
 }
@@ -144,7 +143,6 @@ func provideAutomationReceiverFactory(flags *cliFlags) ev.AutomationReceiverFact
 func provideAutomationEmitterFactory(flags *cliFlags) ev.AutomationEmitterFactory {
 	return flags.AutomationPubURL
 }
-*/
 
 func newBucket(ctx context.Context, flags *cliFlags) (*blob.Bucket, func(), error) {
 	bucket, err := blob.OpenBucket(ctx, flags.ExportBucketURL.String())

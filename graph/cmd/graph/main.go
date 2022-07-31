@@ -30,17 +30,17 @@ import (
 )
 
 type cliFlags struct {
-	ConfigFile      kong.ConfigFlag `type:"existingfile" placeholder:"PATH" help:"Configuration file path."`
-	ListenAddress   string          `name:"web.listen-address" default:":http" help:"Web address to listen on."`
-	MetricsAddress  metrics.Addr    `name:"metrics.listen-address" default:":9464" help:"Metrics address to listen on."`
-	DatabaseURL     *url.URL        `name:"db.url" env:"DB_URL" required:"" placeholder:"URL" help:"Database URL."`
-	AuthURL         *url.URL        `name:"web.ws-auth-url" env:"WS_AUTH_URL" placeholder:"URL" help:"Websocket authentication URL."`
-	EventPubsubURL  ev.TopicFactory `name:"event.pubsub-url" env:"EVENT_PUBSUB_URL" required:"" placeholder:"URL" help:"Event pubsub URL."`
-	ComplexityLimit int             `name:"graphql.complexity-limit" env:"GRAPHQL_COMPLEXITY_LIMIT" help:"GraphQL complexity limit."`
-	//AutomationPubURL ev.TopicFactory  `name:"automation.pub-url" env:"AUTOMATION_PUB_URL" required:"" placeholder:"URL" help:"Automation publish URL."`
-	LogConfig       log.Config       `embed:""`
-	TelemetryConfig telemetry.Config `embed:""`
-	TenancyConfig   viewer.Config    `embed:""`
+	ConfigFile       kong.ConfigFlag  `type:"existingfile" placeholder:"PATH" help:"Configuration file path."`
+	ListenAddress    string           `name:"web.listen-address" default:":http" help:"Web address to listen on."`
+	MetricsAddress   metrics.Addr     `name:"metrics.listen-address" default:":9464" help:"Metrics address to listen on."`
+	DatabaseURL      *url.URL         `name:"db.url" env:"DB_URL" required:"" placeholder:"URL" help:"Database URL."`
+	AuthURL          *url.URL         `name:"web.ws-auth-url" env:"WS_AUTH_URL" placeholder:"URL" help:"Websocket authentication URL."`
+	EventPubsubURL   ev.TopicFactory  `name:"event.pubsub-url" env:"EVENT_PUBSUB_URL" required:"" placeholder:"URL" help:"Event pubsub URL."`
+	ComplexityLimit  int              `name:"graphql.complexity-limit" env:"GRAPHQL_COMPLEXITY_LIMIT" help:"GraphQL complexity limit."`
+	AutomationPubURL ev.TopicFactory  `name:"automation.pub-url" env:"AUTOMATION_PUB_URL" required:"" placeholder:"URL" help:"Automation publish URL."`
+	LogConfig        log.Config       `embed:""`
+	TelemetryConfig  telemetry.Config `embed:""`
+	TenancyConfig    viewer.Config    `embed:""`
 }
 
 func main() {

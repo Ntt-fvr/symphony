@@ -142,20 +142,8 @@ func NewApplication(ctx context.Context, flags *cliFlags) (*application, func(),
 		cleanup()
 		return nil, nil, err
 	}
-	eventer := &event.Eventer{
-		Logger:  logger,
-		Emitter: emitter,
-	}
-	factory := triggers.NewFactory()
-	actionsFactory := actions.NewFactory()
-	flower := &hooks.Flower{
-		TriggerFactory: factory,
-		ActionFactory:  actionsFactory,
-	}
-	tenancy := newTenancy(mySQLTenancy, eventer, flower)
-	receiverFactory := provideReceiverFactory(flags)
-	eventObject := _wireLogEntryValue
-	receiver, cleanup8, err := ev.ProvideReceiver(ctx, receiverFactory, eventObject)
+	automationEmitterFactory := provideAutomationEmitterFactory(flags)
+	automationEmitter, cleanup8, err := ev.ProvideAutomationEmitter(ctx, automationEmitterFactory)
 	if err != nil {
 		cleanup7()
 		cleanup6()
@@ -166,9 +154,36 @@ func NewApplication(ctx context.Context, flags *cliFlags) (*application, func(),
 		cleanup()
 		return nil, nil, err
 	}
-	config2 := &flags.TelemetryConfig
-	tracer, cleanup9, err := telemetry.ProvideJaegerTracer(config2)
+	eventer := &event.Eventer{
+		Logger:            logger,
+		Emitter:           emitter,
+		AutomationEmitter: automationEmitter,
+	}
+	factory := triggers.NewFactory()
+	actionsFactory := actions.NewFactory()
+	flower := &hooks.Flower{
+		TriggerFactory: factory,
+		ActionFactory:  actionsFactory,
+	}
+	tenancy := newTenancy(mySQLTenancy, eventer, flower)
+	receiverFactory := provideReceiverFactory(flags)
+	eventObject := _wireLogEntryValue
+	receiver, cleanup9, err := ev.ProvideReceiver(ctx, receiverFactory, eventObject)
 	if err != nil {
+		cleanup8()
+		cleanup7()
+		cleanup6()
+		cleanup5()
+		cleanup4()
+		cleanup3()
+		cleanup2()
+		cleanup()
+		return nil, nil, err
+	}
+	config2 := &flags.TelemetryConfig
+	tracer, cleanup10, err := telemetry.ProvideJaegerTracer(config2)
+	if err != nil {
+		cleanup9()
 		cleanup8()
 		cleanup7()
 		cleanup6()
@@ -209,6 +224,7 @@ func NewApplication(ctx context.Context, flags *cliFlags) (*application, func(),
 		client:      client,
 	}
 	return mainApplication, func() {
+		cleanup10()
 		cleanup9()
 		cleanup8()
 		cleanup7()
@@ -254,6 +270,14 @@ func provideViews() []*view.View {
 
 func provideReceiverFactory(flags *cliFlags) ev.ReceiverFactory {
 	return flags.EventSubURL
+}
+
+func provideAutomationReceiverFactory(flags *cliFlags) ev.AutomationReceiverFactory {
+	return flags.AutomationSubURL
+}
+
+func provideAutomationEmitterFactory(flags *cliFlags) ev.AutomationEmitterFactory {
+	return flags.AutomationPubURL
 }
 
 func newBucket(ctx context.Context, flags *cliFlags) (*blob.Bucket, func(), error) {

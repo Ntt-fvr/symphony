@@ -8,6 +8,8 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"github.com/facebookincubator/symphony/pkg/ent/block"
+	"time"
 
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/hook"
@@ -26,6 +28,30 @@ type WorkOrderStatusChangedPayload struct {
 	From      *workorder.Status `json:"from"`
 	To        workorder.Status  `json:"to"`
 	WorkOrder *ent.WorkOrder    `json:"workOrder"`
+}
+
+// SignalWorkOrderStatusChangedPayload is the payload of WorkOrderStatusChanged event.
+/*
+{
+    "signalModule": "one of Signal Module Enum values",
+    "signalType": "one of Signal Type Enum values",
+    "timestamp": "",
+    "flowInstanceID":
+    "payload": {
+        "key1": "value1",
+        "key2": {
+            "key21": {
+            }
+        },
+        "key3": []
+    }
+}*/
+type SignalPayload struct {
+	Module         string           `json:"signalModule"`
+	Type           block.SignalType `json:"signalType"`
+	Timestamp      int64            `json:"timestamp"`
+	FlowInstanceId string           `json:"flowInstanceID"`
+	Payload        *ent.Mutator     `json:"payload"`
 }
 
 // Hook returns the hook which generates events from mutations.
@@ -138,6 +164,13 @@ func (e *Eventer) workOrderStatusChangedHook() ent.Hook {
 					From:      &oldStatus,
 					To:        workOrder.Status,
 					WorkOrder: workOrder,
+				})
+				e.automationEmit(ctx, WorkOrderStatusChanged, &SignalPayload{
+					Module:         "WTF",
+					Type:           block.SignalTypeWOUPDATED,
+					Timestamp:      time.Now().UnixMilli() / 1000,
+					FlowInstanceId: "",
+					Payload:        nil,
 				})
 			}
 			return value, nil
