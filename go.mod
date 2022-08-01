@@ -48,7 +48,6 @@ require (
 	github.com/scylladb/go-set v1.0.2
 	github.com/shurcooL/graphql v0.0.0-20200928012149-18c5c3165e3a
 	github.com/sirupsen/logrus v1.8.1 // indirect
-	github.com/spf13/viper v1.7.0
 	github.com/stretchr/testify v1.8.0
 	github.com/uber-go/tally v3.3.17+incompatible
 	github.com/uber/jaeger-client-go v2.25.0+incompatible
