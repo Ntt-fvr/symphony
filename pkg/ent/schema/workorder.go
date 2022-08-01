@@ -219,6 +219,8 @@ func (WorkOrder) Edges() []ent.Edge {
 			Annotations(entgql.MapsTo("assignedTo")).
 			Unique(),
 		edge.To("appointment", Appointment.Type),
+		edge.To("flow_instance", FlowInstance.Type).
+			Unique(),
 	}
 }
 

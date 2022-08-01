@@ -12,6 +12,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/activity"
 	"github.com/facebookincubator/symphony/pkg/ent/appointment"
+	"github.com/facebookincubator/symphony/pkg/ent/automationactivity"
 	"github.com/facebookincubator/symphony/pkg/ent/block"
 	"github.com/facebookincubator/symphony/pkg/ent/blockinstance"
 	"github.com/facebookincubator/symphony/pkg/ent/checklistitem"
@@ -522,6 +523,7 @@ type AddWorkOrderInput struct {
 	DueDate             *time.Time                `json:"dueDate"`
 	ScheduledAt         *time.Time                `json:"scheduledAt"`
 	IsNameEditable      *bool                     `json:"isNameEditable"`
+	FlowInstanceID      *int                      `json:"flowInstanceId"`
 }
 
 type AddWorkOrderTypeInput struct {
@@ -575,6 +577,12 @@ type AlarmStatusInput struct {
 
 type ArchiveFlowInput struct {
 	FlowID int `json:"flowID"`
+}
+
+type AutomationActivityFilterInput struct {
+	Limit          int                             `json:"limit"`
+	OrderDirection ent.OrderDirection              `json:"orderDirection"`
+	ActivityType   automationactivity.ActivityType `json:"activityType"`
 }
 
 type BaseBlockInput struct {
@@ -1217,6 +1225,7 @@ type EditWorkOrderInput struct {
 	DueDate             *time.Time                `json:"dueDate"`
 	ScheduledAt         *time.Time                `json:"scheduledAt"`
 	IsNameEditable      *bool                     `json:"isNameEditable"`
+	FlowInstanceID      *int                      `json:"flowInstanceId"`
 }
 
 type EditWorkOrderTypeInput struct {

@@ -106,9 +106,3 @@ func provideViews() []*view.View {
 	views = append(views, ev.OpenCensusViews...)
 	return views
 }
-
-/*
-func provideAutomationEmitterFactory(flags *cliFlags) ev.AutomationEmitterFactory {
-	return flags.AutomationPubURL
-}
-*/

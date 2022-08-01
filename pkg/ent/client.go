@@ -14426,6 +14426,22 @@ func (c *WorkOrderClient) QueryAppointment(wo *WorkOrder) *AppointmentQuery {
 	return query
 }
 
+// QueryFlowInstance queries the flow_instance edge of a WorkOrder.
+func (c *WorkOrderClient) QueryFlowInstance(wo *WorkOrder) *FlowInstanceQuery {
+	query := &FlowInstanceQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := wo.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(workorder.Table, workorder.FieldID, id),
+			sqlgraph.To(flowinstance.Table, flowinstance.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, false, workorder.FlowInstanceTable, workorder.FlowInstanceColumn),
+		)
+		fromV = sqlgraph.Neighbors(wo.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // Hooks returns the client hooks.
 func (c *WorkOrderClient) Hooks() []Hook {
 	hooks := c.hooks.WorkOrder

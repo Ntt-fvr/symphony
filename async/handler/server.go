@@ -59,6 +59,7 @@ func NewServer(cfg Config) *Server {
 			},
 		},
 		ev.WithEvent(event.EntMutation),
+		ev.WithEvent(event.Automation),
 	)
 	return srv
 }
@@ -79,9 +80,15 @@ func (s *Server) Shutdown(ctx context.Context) error {
 
 // HandleEvent implement ev.EventHandler interface.
 func (s *Server) HandleEvent(ctx context.Context, evt *ev.Event) error {
-	if evt.Name == event.EntMutation {
+	fmt.Println("Evento: ", evt)
+	switch evt.Name {
+	case event.EntMutation:
 		if _, ok := evt.Object.(event.LogEntry); !ok {
 			return fmt.Errorf("event object %T must be a log entry", evt.Object)
+		}
+	case event.Automation:
+		if _, ok := evt.Object.(event.SignalEvent); !ok {
+			return fmt.Errorf("event object %T must be a signal event", evt.Object)
 		}
 	}
 
@@ -89,6 +96,7 @@ func (s *Server) HandleEvent(ctx context.Context, evt *ev.Event) error {
 		s.logger.For(ctx).Error("failed to handle event", zap.Error(err))
 	}
 	return nil
+
 }
 
 func (s *Server) handleEvent(ctx context.Context, evt *ev.Event) error {

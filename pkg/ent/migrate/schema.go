@@ -1267,7 +1267,7 @@ var (
 		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "create_time", Type: field.TypeTime},
 		{Name: "update_time", Type: field.TypeTime},
-		{Name: "status", Type: field.TypeEnum, Enums: []string{"RUNNING", "FAILED", "FAILING", "COMPLETED", "CANCELED", "PAUSED", "CLOSED"}, Default: "RUNNING"},
+		{Name: "status", Type: field.TypeEnum, Enums: []string{"RUNNING", "FAILED", "FAILING", "COMPLETED", "CANCELED", "CANCELING", "PAUSED", "PAUSING", "CLOSED", "RESUMING"}, Default: "RUNNING"},
 		{Name: "start_params", Type: field.TypeJSON, Nullable: true},
 		{Name: "output_params", Type: field.TypeJSON, Nullable: true},
 		{Name: "incompletion_reason", Type: field.TypeString, Nullable: true},
@@ -3202,6 +3202,7 @@ var (
 		{Name: "work_order_location", Type: field.TypeInt, Nullable: true},
 		{Name: "work_order_owner", Type: field.TypeInt, Nullable: true},
 		{Name: "work_order_assignee", Type: field.TypeInt, Nullable: true},
+		{Name: "work_order_flow_instance", Type: field.TypeInt, Nullable: true},
 	}
 	// WorkOrdersTable holds the schema information for the "work_orders" table.
 	WorkOrdersTable = &schema.Table{
@@ -3256,6 +3257,13 @@ var (
 				Columns: []*schema.Column{WorkOrdersColumns[21]},
 
 				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+			{
+				Symbol:  "work_orders_flow_instances_flow_instance",
+				Columns: []*schema.Column{WorkOrdersColumns[22]},
+
+				RefColumns: []*schema.Column{FlowInstancesColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 		},
@@ -3990,6 +3998,7 @@ func init() {
 	WorkOrdersTable.ForeignKeys[4].RefTable = LocationsTable
 	WorkOrdersTable.ForeignKeys[5].RefTable = UsersTable
 	WorkOrdersTable.ForeignKeys[6].RefTable = UsersTable
+	WorkOrdersTable.ForeignKeys[7].RefTable = FlowInstancesTable
 	WorkOrderDefinitionsTable.ForeignKeys[0].RefTable = ProjectTemplatesTable
 	WorkOrderDefinitionsTable.ForeignKeys[1].RefTable = ProjectTypesTable
 	WorkOrderDefinitionsTable.ForeignKeys[2].RefTable = WorkOrderTypesTable

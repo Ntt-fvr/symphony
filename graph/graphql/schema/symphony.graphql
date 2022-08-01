@@ -709,6 +709,22 @@ enum ActivityField
   CLOCK_OUT
 }
 
+enum AutomationActivityField
+  @goModel(
+    model: "github.com/facebookincubator/symphony/pkg/ent/automationactivity.ActivityType"
+  ) {
+  STATUS
+  CREATION_DATE
+}
+
+enum AutomationEntityType
+  @goModel(
+    model: "github.com/facebookincubator/symphony/pkg/ent/automationactivity.AutomationEntityType"
+  ) {
+  STATUS
+  CREATION_DATE
+}
+
 enum ClockOutReason
   @goModel(
     model: "github.com/facebookincubator/symphony/pkg/ent/activity.ClockOutReason"
@@ -748,10 +764,29 @@ type Activity implements Node {
   clockDetails: ClockDetails
 }
 
+type AutomationActivity implements Node {
+  id: ID!
+  author: User
+  activityType: AutomationActivityField!
+  entityType: AutomationEntityType!
+    @goField(name: "AutomationEntityType")
+  oldValue: String
+  newValue: String
+  createTime: Time!
+  flowInstance: FlowInstance
+  blockInstance: BlockInstance
+}
+
 input ActivityFilterInput {
   limit: Int! @numberValue(min: 0)
   orderDirection: OrderDirection!
   activityType: ActivityField!
+}
+
+input AutomationActivityFilterInput {
+  limit: Int! @numberValue(min: 0)
+  orderDirection: OrderDirection!
+  activityType: AutomationActivityField!
 }
 
 # specific equipment instance: e.g. Wifi Access Point X at Location Y.
@@ -903,6 +938,7 @@ input AddWorkOrderInput {
   dueDate: Time
   scheduledAt: Time
   isNameEditable: Boolean
+  flowInstanceId: ID
 }
 
 input EditWorkOrderInput {
@@ -925,6 +961,7 @@ input EditWorkOrderInput {
   dueDate: Time
   scheduledAt: Time
   isNameEditable: Boolean
+  flowInstanceId: ID
 }
 
 input TechnicianCheckListItemInput {
@@ -2198,6 +2235,7 @@ type WorkOrder implements Node & NamedNode {
   scheduledAt: Time
   Appointments:[Appointment]
   isNameEditable: Boolean
+  flowInstance: FlowInstance
 }
 
 """
@@ -5960,6 +5998,7 @@ type Block implements Node {
   units: RetryUnit
   maxAttemps: Int 
   backoffRate: Int
+  instances: [BlockInstance!]
 }
 
 type BlockVariable
@@ -6573,11 +6612,14 @@ enum FlowInstanceStatus
     model: "github.com/facebookincubator/symphony/pkg/ent/flowinstance.Status"
   ) {
   RUNNING
+  RESUMING
   FAILED
   FAILING
   COMPLETED
   CANCELED
+  CANCELING
   PAUSED
+  PAUSING
   CLOSED
 }
 
@@ -6617,6 +6659,8 @@ type BlockInstance implements Node {
   block: Block!
   startDate: Time!
   endDate: Time
+  #activities(filter: AutomationActivityFilterInput): [AutomationActivity!]!
+    #@goField(forceResolver: true)
 }
 
 input AddBlockInstanceInput {
@@ -6651,6 +6695,8 @@ type FlowInstance implements Node {
   endDate: Time
   startParams: [VariableValue!]
   incompletion_reason: String
+  activities(filter: AutomationActivityFilterInput): [AutomationActivity!]!
+    @goField(forceResolver: true)
 }
 
 input EditFlowInstanceInput {

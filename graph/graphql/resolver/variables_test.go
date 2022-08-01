@@ -170,9 +170,9 @@ func TestSubFlowBlockInputParams(t *testing.T) {
 		Name: "Flow",
 	})
 	require.NoError(t, err)
-	subFlowBlock, err := mr.AddSubflowBlock(ctx, flowDraft.ID, models.SubflowBlockInput{
-		Cid:    "sub_flow",
-		FlowID: flw.ID,
+	subFlowBlock, err := mr.AddExecuteFlowBlock(ctx, flowDraft.ID, models.ExecuteFlowBlockInput{
+		Cid:  "sub_flow",
+		Flow: flw.ID,
 	})
 	require.NoError(t, err)
 	inputParams, err := br.InputParamDefinitions(ctx, subFlowBlock)
@@ -181,9 +181,9 @@ func TestSubFlowBlockInputParams(t *testing.T) {
 	outputParams, err := br.OutputParamDefinitions(ctx, subFlowBlock)
 	require.NoError(t, err)
 	require.EqualValues(t, outputParams, endParamDefinitions)
-	subFlowBlock2, err := mr.AddSubflowBlock(ctx, flowDraft.ID, models.SubflowBlockInput{
-		Cid:    "sub_flow2",
-		FlowID: flw.ID,
+	subFlowBlock2, err := mr.AddExecuteFlowBlock(ctx, flowDraft.ID, models.ExecuteFlowBlockInput{
+		Cid:  "sub_flow2",
+		Flow: flw.ID,
 		Params: []*models.VariableExpressionInput{
 			{
 				Type:                  enum.VariableDefinition,
@@ -195,7 +195,7 @@ func TestSubFlowBlockInputParams(t *testing.T) {
 	require.NoError(t, err)
 	subFlowDetails, err := br.Details(ctx, subFlowBlock2)
 	require.NoError(t, err)
-	subflow, ok := subFlowDetails.(*models.SubflowBlock)
+	subflow, ok := subFlowDetails.(*models.ExecuteFlowBlock)
 	require.True(t, ok)
 	require.Len(t, subflow.Params, 1)
 	def, err := ver.VariableDefinition(ctx, subflow.Params[0])

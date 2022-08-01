@@ -18,7 +18,6 @@ import (
 type Eventer struct {
 	Logger  log.Logger
 	Emitter ev.Emitter
-	// AutomationEmitter ev.AutomationEmitter
 }
 
 // HookTo hooks eventer to ent client.
@@ -65,40 +64,3 @@ func (e *Eventer) emit(ctx context.Context, name string, obj interface{}) {
 		emit()
 	}
 }
-
-/*
-func (e *Eventer) automationEmit(ctx context.Context, name string, obj interface{}) {
-	current := viewer.FromContext(ctx)
-	event := &ev.Event{
-		Tenant: current.Tenant(),
-		Name:   name,
-		Object: obj,
-	}
-
-	logger := e.Logger.For(ctx).With(
-		zap.Object("viewer", current),
-		zap.Object("data", event),
-	)
-	emit := func() {
-		if err := e.AutomationEmitter.Emit(ctx, event); err != nil {
-			logger.Error("cannot emit event", zap.Error(err))
-		} else {
-			logger.Debug("emitted event")
-		}
-	}
-
-	if tx := ent.TxFromContext(ctx); tx != nil {
-		tx.OnCommit(func(next ent.Committer) ent.Committer {
-			return ent.CommitFunc(func(ctx context.Context, tx *ent.Tx) error {
-				err := next.Commit(ctx, tx)
-				if err == nil {
-					emit()
-				}
-				return err
-			})
-		})
-	} else {
-		emit()
-	}
-}
-*/

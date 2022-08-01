@@ -21,6 +21,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/comment"
 	"github.com/facebookincubator/symphony/pkg/ent/equipment"
 	"github.com/facebookincubator/symphony/pkg/ent/file"
+	"github.com/facebookincubator/symphony/pkg/ent/flowinstance"
 	"github.com/facebookincubator/symphony/pkg/ent/hyperlink"
 	"github.com/facebookincubator/symphony/pkg/ent/link"
 	"github.com/facebookincubator/symphony/pkg/ent/location"
@@ -521,6 +522,25 @@ func (wou *WorkOrderUpdate) AddAppointment(a ...*Appointment) *WorkOrderUpdate {
 	return wou.AddAppointmentIDs(ids...)
 }
 
+// SetFlowInstanceID sets the flow_instance edge to FlowInstance by id.
+func (wou *WorkOrderUpdate) SetFlowInstanceID(id int) *WorkOrderUpdate {
+	wou.mutation.SetFlowInstanceID(id)
+	return wou
+}
+
+// SetNillableFlowInstanceID sets the flow_instance edge to FlowInstance by id if the given value is not nil.
+func (wou *WorkOrderUpdate) SetNillableFlowInstanceID(id *int) *WorkOrderUpdate {
+	if id != nil {
+		wou = wou.SetFlowInstanceID(*id)
+	}
+	return wou
+}
+
+// SetFlowInstance sets the flow_instance edge to FlowInstance.
+func (wou *WorkOrderUpdate) SetFlowInstance(f *FlowInstance) *WorkOrderUpdate {
+	return wou.SetFlowInstanceID(f.ID)
+}
+
 // Mutation returns the WorkOrderMutation object of the builder.
 func (wou *WorkOrderUpdate) Mutation() *WorkOrderMutation {
 	return wou.mutation
@@ -755,6 +775,12 @@ func (wou *WorkOrderUpdate) RemoveAppointment(a ...*Appointment) *WorkOrderUpdat
 		ids[i] = a[i].ID
 	}
 	return wou.RemoveAppointmentIDs(ids...)
+}
+
+// ClearFlowInstance clears the "flow_instance" edge to type FlowInstance.
+func (wou *WorkOrderUpdate) ClearFlowInstance() *WorkOrderUpdate {
+	wou.mutation.ClearFlowInstance()
+	return wou
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -1748,6 +1774,41 @@ func (wou *WorkOrderUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if wou.mutation.FlowInstanceCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: false,
+			Table:   workorder.FlowInstanceTable,
+			Columns: []string{workorder.FlowInstanceColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: flowinstance.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := wou.mutation.FlowInstanceIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: false,
+			Table:   workorder.FlowInstanceTable,
+			Columns: []string{workorder.FlowInstanceColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: flowinstance.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	if n, err = sqlgraph.UpdateNodes(ctx, wou.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{workorder.Label}
@@ -2240,6 +2301,25 @@ func (wouo *WorkOrderUpdateOne) AddAppointment(a ...*Appointment) *WorkOrderUpda
 	return wouo.AddAppointmentIDs(ids...)
 }
 
+// SetFlowInstanceID sets the flow_instance edge to FlowInstance by id.
+func (wouo *WorkOrderUpdateOne) SetFlowInstanceID(id int) *WorkOrderUpdateOne {
+	wouo.mutation.SetFlowInstanceID(id)
+	return wouo
+}
+
+// SetNillableFlowInstanceID sets the flow_instance edge to FlowInstance by id if the given value is not nil.
+func (wouo *WorkOrderUpdateOne) SetNillableFlowInstanceID(id *int) *WorkOrderUpdateOne {
+	if id != nil {
+		wouo = wouo.SetFlowInstanceID(*id)
+	}
+	return wouo
+}
+
+// SetFlowInstance sets the flow_instance edge to FlowInstance.
+func (wouo *WorkOrderUpdateOne) SetFlowInstance(f *FlowInstance) *WorkOrderUpdateOne {
+	return wouo.SetFlowInstanceID(f.ID)
+}
+
 // Mutation returns the WorkOrderMutation object of the builder.
 func (wouo *WorkOrderUpdateOne) Mutation() *WorkOrderMutation {
 	return wouo.mutation
@@ -2474,6 +2554,12 @@ func (wouo *WorkOrderUpdateOne) RemoveAppointment(a ...*Appointment) *WorkOrderU
 		ids[i] = a[i].ID
 	}
 	return wouo.RemoveAppointmentIDs(ids...)
+}
+
+// ClearFlowInstance clears the "flow_instance" edge to type FlowInstance.
+func (wouo *WorkOrderUpdateOne) ClearFlowInstance() *WorkOrderUpdateOne {
+	wouo.mutation.ClearFlowInstance()
+	return wouo
 }
 
 // Save executes the query and returns the updated entity.
@@ -3457,6 +3543,41 @@ func (wouo *WorkOrderUpdateOne) sqlSave(ctx context.Context) (_node *WorkOrder, 
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: appointment.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if wouo.mutation.FlowInstanceCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: false,
+			Table:   workorder.FlowInstanceTable,
+			Columns: []string{workorder.FlowInstanceColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: flowinstance.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := wouo.mutation.FlowInstanceIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: false,
+			Table:   workorder.FlowInstanceTable,
+			Columns: []string{workorder.FlowInstanceColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: flowinstance.FieldID,
 				},
 			},
 		}
