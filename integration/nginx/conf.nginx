@@ -157,7 +157,7 @@ stream {
     }
     server {
         resolver 127.0.0.11 valid=30s;
-        listen 8090;
-        proxy_pass automation:8090;
+        listen 8070;
+        proxy_pass automation:80;
     }
 }

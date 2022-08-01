@@ -37,5 +37,5 @@ COPY --from=builder /build/* /bin/
 ENV GIN_MODE=release
 
 # Set exposed port and entrypoint
-EXPOSE 8090
+EXPOSE 80
 ENTRYPOINT ["/bin/automation"]
