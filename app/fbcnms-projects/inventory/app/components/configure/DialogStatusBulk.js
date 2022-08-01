@@ -214,7 +214,7 @@ const DialogStatus = (props: Props) => {
           _enqueueError(errors[0].message);
         } else {
           // navigate to main page
-          const createdTime = moment(new Date()).format(DATE_FORMAT);
+          const createdTime = moment(new Date()).format('YYYY-MM-DD[T]HH:mm:ssZ');
           const data = {
             flowID: queryResourceParameter.flows.edges[0].node.id,
             params: [
