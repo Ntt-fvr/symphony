@@ -19,6 +19,7 @@ RUN go mod download
 
 # Copy shared components
 COPY pkg /src/symphony/pkg
+COPY automation /src/symphony/automation
 
 # Build services
 WORKDIR /src/symphony/async
