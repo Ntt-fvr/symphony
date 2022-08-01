@@ -1921,7 +1921,7 @@ input AuthRule {
 }
 
 enum AuthType {
-  Basic
+  BASIC
   ODIC
 }
 
@@ -2031,6 +2031,7 @@ type Block implements Node {
 union BlockDetails = ActionBlock | ChoiceBlock | EndBlock | ExecuteFlowBlock | ForEachBlock | GotoBlock | InvokeRestAPIBlock | KafkaBlock | ParallelBlock | StartBlock | TimerBlock | TriggerBlock | WaitForSignalBlock
 
 type BlockInstance implements Node {
+  activities(filter: AutomationActivityFilterInput): [AutomationActivity!]!
   block: Block!
   endDate: Time
   failure_reason: String
