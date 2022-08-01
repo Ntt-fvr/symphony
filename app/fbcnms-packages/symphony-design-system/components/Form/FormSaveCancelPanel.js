@@ -16,8 +16,12 @@ import classNames from 'classnames';
 import {makeStyles} from '@material-ui/styles';
 
 const useStyles = makeStyles(() => ({
+  buttons: {
+    height: '36px',
+    width: '111px',
+  },
   cancelButton: {
-    marginRight: '8px',
+    marginRight: '1rem',
   },
 }));
 
@@ -54,6 +58,7 @@ const FormSaveCancelPanel = (props: Props) => {
         tooltip={isDisabled ? disabledMessage : undefined}>
         <Button
           className={classNames(
+            classes.buttons,
             classes.cancelButton,
             propsClasses?.cancelButton,
           )}
@@ -66,7 +71,9 @@ const FormSaveCancelPanel = (props: Props) => {
         disableOnFromError={true}
         disabled={isDisabled}
         tooltip={isDisabled ? disabledMessage : undefined}>
-        <Button className={propsClasses?.saveButton} onClick={onSave}>
+        <Button
+          className={classNames(classes.buttons, propsClasses?.saveButton)}
+          onClick={onSave}>
           {captions?.saveButton || Strings.common.saveButton}
         </Button>
       </FormAction>

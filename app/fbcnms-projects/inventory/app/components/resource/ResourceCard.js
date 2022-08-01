@@ -89,6 +89,8 @@ const ResourceCardListQuery = graphql`
               longitudeValue
               rangeFromValue
               rangeToValue
+              isMandatory
+              isInstanceProperty
             }
           }
         }

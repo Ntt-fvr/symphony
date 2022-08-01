@@ -21,10 +21,11 @@ import type {UpdateResourcePropertyMutationVariables} from '../../mutations/__ge
 
 import AddEditPropertyList from './AddEditPropertyList';
 import AddResourceMutation from '../../mutations/AddResourceMutation';
-import Button from '@material-ui/core/Button';
 import Card from '@symphony/design-system/components/Card/Card';
 import CardHeader from '@symphony/design-system/components/Card/CardHeader';
+import FormSaveCancelPanel from '@symphony/design-system/components/Form/FormSaveCancelPanel';
 import Grid from '@material-ui/core/Grid';
+import NameInput from '@symphony/design-system/components/Form/NameInput';
 import PropertyTypesTableDispatcher from '../form/context/property_types/PropertyTypesTableDispatcher';
 import React, {useState} from 'react';
 import SaveDialogConfirm from '../configure/SaveDialogConfirm';
@@ -32,7 +33,7 @@ import TextField from '@material-ui/core/TextField';
 import UpdateResourceMutation from '../../mutations/UpdateResourceMutation';
 import UpdateResourcePropertyMutation from '../../mutations/UpdateResourcePropertyMutation';
 import inventoryTheme from '../../common/theme';
-import symphony from '@symphony/design-system/theme/symphony';
+import {FormContextProvider} from '../../common/FormContext';
 import {MenuItem} from '@material-ui/core';
 import {camelCase, startCase} from 'lodash';
 import {makeStyles} from '@material-ui/styles';
@@ -54,25 +55,6 @@ const useStyles = makeStyles(() => ({
   },
   cardHeader: {
     margin: '20px 43px 22px 30px',
-  },
-  buttons: {
-    height: '36px',
-    width: '111px',
-  },
-  buttonAdd: {
-    '&.MuiButtonBase-root:hover': {
-      backgroundColor: symphony.palette.B50,
-    },
-  },
-  buttonEdit: {
-    '&.MuiButtonBase-root:hover': {
-      backgroundColor: 'transparent',
-      color: symphony.palette.B600,
-    },
-  },
-  input: {
-    display: 'inline-flex',
-    width: '100%',
   },
 }));
 
@@ -128,7 +110,7 @@ const AddEditResourceInLocation = (props: Props) => {
   const classes = useStyles();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [resourceType, setResourceType] = useState<ResourceType>({data: {}});
-  const nameEdit = useFormInput(dataformModal.name);
+  const nameEdit = useFormInput(mode === 'edit' ? dataformModal.name : '');
   const externalId = useFormInput(dataformModal.externalId);
   const lifecycleStatus = useFormInput(dataformModal.lifecycleStatus);
   const planningSubStatus = useFormInput(dataformModal.planningSubStatus);
@@ -170,7 +152,7 @@ const AddEditResourceInLocation = (props: Props) => {
       input: [
         {
           locatedIn: selectedLocationId,
-          name: resourceType.data.name,
+          name: nameEdit.value,
           resourceSpecification: dataformModal.id,
           isDeleted: true,
           externalId: resourceType.data.externalId,
@@ -240,20 +222,13 @@ const AddEditResourceInLocation = (props: Props) => {
     return mode === 'edit' ? (
       <Grid item xs={6}>
         <form className={classes.formField} autoComplete="off">
-          <TextField
-            required
-            label={label}
-            variant="outlined"
-            fullWidth
-            {...nameEdit}
-          />
+          <TextField label={label} variant="outlined" fullWidth {...nameEdit} />
         </form>
       </Grid>
     ) : (
       <Grid item xs={6}>
         <form className={classes.formField} autoComplete="off">
           <TextField
-            required
             label={label}
             variant="outlined"
             name={nameCreate}
@@ -308,88 +283,84 @@ const AddEditResourceInLocation = (props: Props) => {
     <>
       <Grid item xs={12} sm={12} lg={12} xl={12}>
         <Card margins="none">
-          <CardHeader className={classes.cardHeader}>
-            {dataformModal.name}
-          </CardHeader>
-          <Grid container>
-            {renderForm('Name', 'name', nameEdit)}
-            {renderForm('External ID', 'externalId', externalId)}
-            {renderFormSelect(
-              'Lifesycle State',
-              'lifecycleStatus',
-              lifecycleStatus,
-              selectListData.lifecycleStatus,
-            )}
-
-            {resourceType.data.lifecycleStatus === 'PLANNING' ||
-            lifecycleStatus.value === 'PLANNING'
-              ? renderFormSelect(
-                  'Planning Status',
-                  'typePlanningSubStatus',
-                  typePlanningSubStatus,
-                  selectListData.typePlanningSubStatus,
-                )
-              : null}
-
-            {resourceType.data.lifecycleStatus === 'OPERATING' ||
-            lifecycleStatus.value === 'OPERATING' ? (
-              <>
+          <PropertyTypesTableDispatcher.Provider
+            value={{dispatch: propertyTypesDispatcher, propertyTypes}}>
+            <FormContextProvider
+              permissions={{
+                entity: 'location',
+              }}>
+              <CardHeader className={classes.cardHeader}>
+                {dataformModal.name}
+              </CardHeader>
+              <Grid container>
+                <Grid item xs={6}>
+                  <div className={classes.formField} autoComplete="off">
+                    <NameInput title="" {...nameEdit} />
+                  </div>
+                </Grid>
+                {renderForm('External ID', 'externalId', externalId)}
                 {renderFormSelect(
-                  'Administrative Status',
-                  'planningSubStatus',
-                  planningSubStatus,
-                  selectListData.planningSubStatus,
+                  'Lifesycle State',
+                  'lifecycleStatus',
+                  lifecycleStatus,
+                  selectListData.lifecycleStatus,
                 )}
-                {renderFormSelect(
-                  'Operational Status',
-                  'operationalSubStatus',
-                  operationalSubStatus,
-                  selectListData.operationalSubStatus,
-                )}
-                {renderFormSelect(
-                  'Usage Status',
-                  'usageSubStatus',
-                  usageSubStatus,
-                  selectListData.usageSubStatus,
-                )}
-              </>
-            ) : null}
+                {resourceType.data.lifecycleStatus === 'PLANNING' ||
+                lifecycleStatus.value === 'PLANNING'
+                  ? renderFormSelect(
+                      'Planning Status',
+                      'typePlanningSubStatus',
+                      typePlanningSubStatus,
+                      selectListData.typePlanningSubStatus,
+                    )
+                  : null}
 
-            <Grid item xs={12}>
-              <CardHeader className={classes.cardHeader}>Properties</CardHeader>
-            </Grid>
-
-            <PropertyTypesTableDispatcher.Provider
-              value={{dispatch: propertyTypesDispatcher, propertyTypes}}>
+                {resourceType.data.lifecycleStatus === 'OPERATING' ||
+                lifecycleStatus.value === 'OPERATING' ? (
+                  <>
+                    {renderFormSelect(
+                      'Administrative Status',
+                      'planningSubStatus',
+                      planningSubStatus,
+                      selectListData.planningSubStatus,
+                    )}
+                    {renderFormSelect(
+                      'Operational Status',
+                      'operationalSubStatus',
+                      operationalSubStatus,
+                      selectListData.operationalSubStatus,
+                    )}
+                    {renderFormSelect(
+                      'Usage Status',
+                      'usageSubStatus',
+                      usageSubStatus,
+                      selectListData.usageSubStatus,
+                    )}
+                  </>
+                ) : null}
+              </Grid>
+              <Grid item xs={12}>
+                <CardHeader className={classes.cardHeader}>
+                  Properties
+                </CardHeader>
+              </Grid>
               <AddEditPropertyList propertyTypes={propertyTypes} />
-            </PropertyTypesTableDispatcher.Provider>
-          </Grid>
-          <Grid
-            className={classes.header}
-            container
-            direction="row"
-            justify="flex-end"
-            alignItems="center">
-            <Grid>
-              <Button
-                variant="outlined"
-                color="primary"
-                className={classes.buttons}
-                style={{marginRight: '1rem'}}
-                onClick={closeFormAddEdit}>
-                Cancel
-              </Button>
-            </Grid>
-            <Grid>
-              <Button
-                variant="contained"
-                color="primary"
-                className={classes.buttons}
-                onClick={() => setDialogOpen(true)}>
-                Save
-              </Button>
-            </Grid>
-          </Grid>
+              <Grid
+                className={classes.header}
+                container
+                direction="row"
+                justify="flex-end"
+                alignItems="center">
+                <Grid>
+                  <FormSaveCancelPanel
+                    isDisabled={false}
+                    onCancel={closeFormAddEdit}
+                    onSave={() => setDialogOpen(true)}
+                  />
+                </Grid>
+              </Grid>
+            </FormContextProvider>
+          </PropertyTypesTableDispatcher.Provider>
         </Card>
       </Grid>
       {dialogOpen && (
