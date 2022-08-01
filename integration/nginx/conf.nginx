@@ -150,14 +150,4 @@ stream {
         listen 33060;
         proxy_pass mysql:3306;
     }
-    server {
-        resolver 127.0.0.11 valid=30s;
-        listen 7933;
-        proxy_pass cadence:7933;
-    }
-    server {
-        resolver 127.0.0.11 valid=30s;
-        listen 8070;
-        proxy_pass automation:80;
-    }
 }
