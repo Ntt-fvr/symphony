@@ -104,6 +104,7 @@ services:
       dockerfile: automation/Dockerfile
     env_file:
       - conf/automation.env
+      - conf/log.env
     networks:
       - private
     depends_on:

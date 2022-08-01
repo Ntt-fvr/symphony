@@ -26,11 +26,11 @@ func GetDurationFromDateTime(dateTime time.Time) time.Duration {
 	return dateTime.Sub(time.Now())
 }
 
-func ToJsonBytes(value map[string]interface{}) ([]byte, error) {
+func ToJsonBytes(value interface{}) ([]byte, error) {
 	return json.Marshal(value)
 }
 
-func ToJsonString(value map[string]interface{}) (string, error) {
+func ToJsonString(value interface{}) (string, error) {
 	bytes, err := ToJsonBytes(value)
 	if err != nil {
 		return "", err

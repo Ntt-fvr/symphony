@@ -7,14 +7,16 @@ import (
 )
 
 var engine *gin.Engine
-var configuration config.AppConfig
+var apiConfig config.ApiConfig
+var cadenceConfig config.CadenceConfig
 
 func init() {
 	engine = gin.Default()
 }
 
-func Setup(appConfig config.AppConfig) {
-	configuration = appConfig
+func Setup(apiConfigValue config.ApiConfig, cadenceConfigValue config.CadenceConfig) {
+	apiConfig = apiConfigValue
+	cadenceConfig = cadenceConfigValue
 }
 
 func CreateUrlMappings() {
@@ -37,17 +39,17 @@ func CreateUrlMappings() {
 
 func RunServer() error {
 	var address string
-	if configuration.Api.Address != "" {
-		address = configuration.Api.Address
+	if apiConfig.Address != "" {
+		address = apiConfig.Address
 	} else {
 		address = "0.0.0.0"
 	}
 
 	var port int
-	if configuration.Api.Port > 0 {
-		port = configuration.Api.Port
+	if apiConfig.Port > 0 {
+		port = apiConfig.Port
 	} else {
-		port = 8080
+		port = 80
 	}
 
 	return engine.Run(fmt.Sprintf("%s:%d", address, port))

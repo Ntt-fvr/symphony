@@ -25,7 +25,7 @@ func flowStart(c *gin.Context) {
 		return
 	}
 
-	taskList := configuration.Cadence.Worker.TaskList
+	taskList := cadenceConfig.Worker.TaskList
 
 	workflowOptions := client.StartWorkflowOptions{
 		ID:                              "WORKFLOW_" + uuid.New().String(),
@@ -35,9 +35,9 @@ func flowStart(c *gin.Context) {
 	}
 
 	logger := builder.BuildLogger()
-	workflowClient := builder.BuildClient(configuration.Cadence)
+	workflowClient := builder.BuildClient(cadenceConfig)
 
-	flowInstanceID := strconv.FormatUint(request.FlowInstanceID, 10)
+	flowInstanceID := strconv.Itoa(request.FlowInstanceID)
 
 	execution, err := workflowClient.StartWorkflow(context.Background(), workflowOptions,
 		flow.AutomationWorkflow, taskList, flowInstanceID)
@@ -53,26 +53,26 @@ func flowStart(c *gin.Context) {
 }
 
 func flowPauseSignal(c *gin.Context) {
-	sendSignal(c, enum.SignalPause.String())
+	sendSignal(c, enum.SignalPause)
 }
 
 func flowResumeSignal(c *gin.Context) {
-	sendSignal(c, enum.SignalResume.String())
+	sendSignal(c, enum.SignalResume)
 }
 
 func flowCancelSignal(c *gin.Context) {
-	sendSignal(c, enum.SignalCancel.String())
+	sendSignal(c, enum.SignalCancel)
 }
 
 func flowBlockSignal(c *gin.Context) {
-	sendSignal(c, enum.SignalBlock.String())
+	sendSignal(c, enum.SignalBlock)
 }
 
 func flowTimerSignal(c *gin.Context) {
-	sendSignal(c, enum.SignalTimer.String())
+	sendSignal(c, enum.SignalTimer)
 }
 
-func sendSignal(c *gin.Context, signalName string) {
+func sendSignal(c *gin.Context, signalName enum.SignalName) {
 	var request model.SignalRequest
 
 	err := c.ShouldBindJSON(&request)
@@ -82,17 +82,17 @@ func sendSignal(c *gin.Context, signalName string) {
 	}
 
 	var payLoad interface{}
-	if request.Input != nil && len(request.Input) > 0 {
+	if request.Input != nil {
 		payLoad = request.Input
 	} else {
-		payLoad = signalName
+		payLoad = signalName.String()
 	}
 
 	logger := builder.BuildLogger()
-	workflowClient := builder.BuildClient(configuration.Cadence)
+	workflowClient := builder.BuildClient(cadenceConfig)
 
 	err = workflowClient.SignalWorkflow(
-		context.Background(), request.WorkflowID, request.RunID, signalName, payLoad,
+		context.Background(), request.WorkflowID, request.RunID, signalName.String(), payLoad,
 	)
 	if err != nil {
 		logger.Error("Signal failed.", zap.Error(err))

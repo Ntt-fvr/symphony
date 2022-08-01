@@ -1,29 +1,29 @@
 package config
 
 import (
-	"fmt"
 	"github.com/facebookincubator/symphony/automation/enum"
-	"github.com/spf13/viper"
+	"github.com/facebookincubator/symphony/pkg/log"
 )
 
-type appConfig struct {
-	ApiAddress                            string                         `mapstructure:"AUTOMATION_ADDRESS"`
-	ApiPort                               int                            `mapstructure:"AUTOMATION_PORT"`
-	CadenceAddress                        string                         `mapstructure:"CADENCE_ADDRESS"`
-	CadencePort                           int                            `mapstructure:"CADENCE_PORT"`
-	DomainName                            string                         `mapstructure:"DOMAIN_NAME"`
-	DomainWorkflowRetention               int32                          `mapstructure:"DOMAIN_WORKFLOW_RETENTION"`
-	DomainEmitMetrics                     bool                           `mapstructure:"DOMAIN_EMIT_METRICS"`
-	WorkerClientName                      string                         `mapstructure:"WORKER_CLIENT_NAME"`
-	WorkerServiceName                     string                         `mapstructure:"WORKER_SERVICE_NAME"`
-	WorkerTaskList                        string                         `mapstructure:"WORKER_TASK_LIST"`
-	GraphQLEndpoint                       string                         `mapstructure:"GRAPHQL_ENDPOINT"`
-	GraphQLAuthenticationType             enum.GraphQLAuthenticationType `mapstructure:"GRAPHQL_AUTHENTICATION_TYPE"`
-	GraphQLAuthenticationBasicUser        string                         `mapstructure:"GRAPHQL_AUTHENTICATION_BASIC_USER"`
-	GraphQLAuthenticationBasicPassword    string                         `mapstructure:"GRAPHQL_AUTHENTICATION_BASIC_PASSWORD"`
-	GraphQLAuthenticationOidcClientId     string                         `mapstructure:"GRAPHQL_AUTHENTICATION_OIDC_CLIENT_ID"`
-	GraphQLAuthenticationOidcClientSecret string                         `mapstructure:"GRAPHQL_AUTHENTICATION_OIDC_CLIENT_SECRET"`
-	GraphQLAuthenticationOidcUrl          string                         `mapstructure:"GRAPHQL_AUTHENTICATION_OIDC_URL"`
+type AppConfig struct {
+	ApiAddress                            string                         `name:"automation.api.address" env:"AUTOMATION_ADDRESS" default:"0.0.0.0"`
+	ApiPort                               int                            `name:"automation.api.port" env:"AUTOMATION_PORT" default:"80"`
+	CadenceAddress                        string                         `name:"automation.cadence.address" env:"CADENCE_ADDRESS"`
+	CadencePort                           int                            `name:"automation.cadence.port" env:"CADENCE_PORT" default:"7933"`
+	DomainName                            string                         `name:"automation.domain.name" env:"DOMAIN_NAME" default:"automation"`
+	DomainWorkflowRetention               int32                          `name:"automation.domain.retention" env:"DOMAIN_WORKFLOW_RETENTION" default:"2"`
+	DomainEmitMetrics                     bool                           `name:"automation..domain.emit" env:"DOMAIN_EMIT_METRICS" default:"true"`
+	WorkerClientName                      string                         `name:"automation.worker.client" env:"WORKER_CLIENT_NAME"`
+	WorkerServiceName                     string                         `name:"automation.worker.service" env:"WORKER_SERVICE_NAME" default:"cadence-frontend"`
+	WorkerTaskList                        string                         `name:"automation.worker.task" env:"WORKER_TASK_LIST"`
+	GraphQLEndpoint                       string                         `name:"automation.graphql.endpoint" env:"GRAPHQL_ENDPOINT"`
+	GraphQLAuthenticationType             enum.GraphQLAuthenticationType `name:"automation.graphql.auth" env:"GRAPHQL_AUTHENTICATION_TYPE"`
+	GraphQLAuthenticationBasicUser        string                         `name:"automation.graphql.basic.user" env:"GRAPHQL_AUTHENTICATION_BASIC_USER"`
+	GraphQLAuthenticationBasicPassword    string                         `name:"automation.graphql.basic.password" env:"GRAPHQL_AUTHENTICATION_BASIC_PASSWORD"`
+	GraphQLAuthenticationOidcClientId     string                         `name:"automation.graphql.oidc.client.id" env:"GRAPHQL_AUTHENTICATION_OIDC_CLIENT_ID"`
+	GraphQLAuthenticationOidcClientSecret string                         `name:"automation.graphql.oidc.client.secret" env:"GRAPHQL_AUTHENTICATION_OIDC_CLIENT_SECRET"`
+	GraphQLAuthenticationOidcUrl          string                         `name:"automation.graphql.oidc.url" env:"GRAPHQL_AUTHENTICATION_OIDC_URL"`
+	LogConfig                             log.Config                     `embed:""`
 }
 
 type ApiConfig struct {
@@ -72,60 +72,43 @@ type GraphQLConfig struct {
 	Authentication GraphQLAuthentication
 }
 
-type AppConfig struct {
-	Cadence CadenceConfig
-	GraphQL GraphQLConfig
-	Api     ApiConfig
+func ApiConfiguration(a *AppConfig) ApiConfig {
+	return ApiConfig{
+		Address: a.ApiAddress,
+		Port:    a.ApiPort,
+	}
 }
 
-func (h *AppConfig) Setup() {
-	viper.SetConfigName("automation")
-	viper.SetConfigType("env")
-	viper.AddConfigPath("/bin")
-	viper.AutomaticEnv()
-
-	if err := viper.ReadInConfig(); err != nil {
-		fmt.Printf("Error reading config file, %s", err)
-	}
-
-	var envConfig appConfig
-	err := viper.Unmarshal(&envConfig)
-	if err != nil {
-		fmt.Printf("Unable to decode into struct, %v", err)
-	}
-
-	h.Api = ApiConfig{
-		Address: envConfig.ApiAddress,
-		Port:    envConfig.ApiPort,
-	}
-
-	h.Cadence = CadenceConfig{
-		Host: envConfig.CadenceAddress,
-		Port: envConfig.CadencePort,
+func CadenceConfiguration(a *AppConfig) CadenceConfig {
+	return CadenceConfig{
+		Host: a.CadenceAddress,
+		Port: a.CadencePort,
 		Domain: CadenceDomain{
-			Name:              envConfig.DomainName,
-			WorkflowRetention: envConfig.DomainWorkflowRetention,
-			EmitMetric:        envConfig.DomainEmitMetrics,
+			Name:              a.DomainName,
+			WorkflowRetention: a.DomainWorkflowRetention,
+			EmitMetric:        a.DomainEmitMetrics,
 		},
 		Worker: CadenceWorker{
-			ClientName:  envConfig.WorkerClientName,
-			ServiceName: envConfig.WorkerServiceName,
-			TaskList:    envConfig.WorkerTaskList,
+			ClientName:  a.WorkerClientName,
+			ServiceName: a.WorkerServiceName,
+			TaskList:    a.WorkerTaskList,
 		},
 	}
+}
 
-	h.GraphQL = GraphQLConfig{
-		Endpoint: envConfig.GraphQLEndpoint,
+func GraphQLConfiguration(a *AppConfig) GraphQLConfig {
+	return GraphQLConfig{
+		Endpoint: a.GraphQLEndpoint,
 		Authentication: GraphQLAuthentication{
-			Type: envConfig.GraphQLAuthenticationType,
+			Type: a.GraphQLAuthenticationType,
 			Basic: GraphQLBasic{
-				User:     envConfig.GraphQLAuthenticationBasicUser,
-				Password: envConfig.GraphQLAuthenticationBasicPassword,
+				User:     a.GraphQLAuthenticationBasicUser,
+				Password: a.GraphQLAuthenticationBasicPassword,
 			},
 			Oidc: GraphQLOidc{
-				ClientId:     envConfig.GraphQLAuthenticationOidcClientId,
-				ClientSecret: envConfig.GraphQLAuthenticationOidcClientSecret,
-				Url:          envConfig.GraphQLAuthenticationOidcUrl,
+				ClientId:     a.GraphQLAuthenticationOidcClientId,
+				ClientSecret: a.GraphQLAuthenticationOidcClientSecret,
+				Url:          a.GraphQLAuthenticationOidcUrl,
 			},
 		},
 	}

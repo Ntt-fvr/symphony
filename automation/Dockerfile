@@ -23,8 +23,7 @@ COPY pkg /src/symphony/pkg
 # Build services
 WORKDIR /src/symphony/automation
 COPY automation .
-RUN mkdir /build && go build -tags musl -o /build/automation ./main/main.go
-COPY integration/conf/automation.env /build/
+RUN mkdir /build && go build -tags musl -o /build/automation ./automation/...
 
 # Create deployable image
 FROM alpine
@@ -35,8 +34,8 @@ RUN apk add --no-cache musl curl
 # Copy artifacts from builder
 COPY --from=builder /build/* /bin/
 
-RUN export GIN_MODE=release
+ENV GIN_MODE=release
 
 # Set exposed port and entrypoint
-EXPOSE 8080
+EXPOSE 80
 ENTRYPOINT ["/bin/automation"]

@@ -45,6 +45,7 @@ type cliFlags struct {
 	//AutomationSubURL   ev.TopicFactory  `name:"automation.sub-url" env:"AUTOMATION_SUB_URL" required:"" placeholder:"URL" help:"Automation subscribe URL."`
 	ExportBucketURL    *url.URL         `name:"export.bucket-url" env:"EXPORT_BUCKET_URL" required:"" placeholder:"URL" help:"Export bucket URL."`
 	ExportBucketPrefix string           `name:"export.bucket-prefix" env:"EXPORT_BUCKET_PREFIX" default:"exports/" help:"Export bucket prefix."`
+	AutomationURL      string           `name:"automation.url" env:"AUTOMATION_URL" required:"" placeholder:"URL" help:"Automation URL."`
 	CadenceAddr        string           `name:"cadence.addr" env:"CADENCE_ADDR" required:"" help:"Cadence server address."`
 	LogConfig          log.Config       `embed:""`
 	TelemetryConfig    telemetry.Config `embed:""`
