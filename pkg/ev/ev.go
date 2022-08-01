@@ -67,11 +67,6 @@ type Emitter interface {
 	Shutdowner
 }
 
-// Emitter represents types than can emit events.
-type AutomationEmitter Emitter
-
-type AutomationReceiver Receiver
-
 // Receiver receives emitted events.
 type Receiver interface {
 	Receive(context.Context) (*Event, error)
@@ -285,27 +280,9 @@ type EmitterFactory interface {
 	NewEmitter(context.Context) (Emitter, error)
 }
 
-// AutomationEmitterFactory represents types than can create emitters.
-type AutomationEmitterFactory interface {
-	NewAutomationEmitter(context.Context) (AutomationEmitter, error)
-}
-
-// AutomationReceiverFactory represents types than can create receivers.
-type AutomationReceiverFactory interface {
-	NewAutomationReceiver(context.Context, EventObject) (AutomationReceiver, error)
-}
-
 // ProvideEmitter is a wire provide which produces an emitter.
 func ProvideEmitter(ctx context.Context, factory EmitterFactory) (Emitter, func(), error) {
 	emitter, err := factory.NewEmitter(ctx)
-	if err != nil {
-		return nil, nil, err
-	}
-	return emitter, func() { emitter.Shutdown(ctx) }, nil
-}
-
-func ProvideAutomationEmitter(ctx context.Context, factory AutomationEmitterFactory) (AutomationEmitter, func(), error) {
-	emitter, err := factory.NewAutomationEmitter(ctx)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -326,21 +303,10 @@ func ProvideReceiver(ctx context.Context, factory ReceiverFactory, obj EventObje
 	return receiver, func() { receiver.Shutdown(ctx) }, nil
 }
 
-// ProvideAutomationReceiver is a wire provide which produces a receiver.
-func ProvideAutomationReceiver(ctx context.Context, factory AutomationReceiverFactory, obj EventObject) (AutomationReceiver, func(), error) {
-	receiver, err := factory.NewAutomationReceiver(ctx, obj)
-	if err != nil {
-		return nil, nil, err
-	}
-	return receiver, func() { receiver.Shutdown(ctx) }, nil
-}
-
 // Factory represents types than can create emitters and receivers.
 type Factory interface {
 	EmitterFactory
 	ReceiverFactory
-	AutomationEmitterFactory
-	AutomationReceiverFactory
 }
 
 // TopicFactory creates topic based emitters and receivers.
@@ -349,16 +315,6 @@ type TopicFactory string
 // NewEmitter creates a topic emitter.
 func (f TopicFactory) NewEmitter(ctx context.Context) (Emitter, error) {
 	return NewTopicEmitter(ctx, f.String(), MsgPackEncoder)
-}
-
-// NewAutomationEmitter creates a topic emitter.
-func (f TopicFactory) NewAutomationEmitter(ctx context.Context) (AutomationEmitter, error) {
-	return NewTopicEmitter(ctx, f.String(), MsgPackEncoder)
-}
-
-// NewAutomationReceiver creates a topic receiver.
-func (f TopicFactory) NewAutomationReceiver(ctx context.Context, obj EventObject) (AutomationReceiver, error) {
-	return NewTopicReceiver(ctx, f.String(), NewDecoder(obj, MsgPackDecode))
 }
 
 // NewReceiver creates a topic receiver.

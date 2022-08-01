@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"fmt"
 	"github.com/facebookincubator/symphony/pkg/ent/block"
 	"github.com/facebookincubator/symphony/pkg/ev"
 	"github.com/facebookincubator/symphony/pkg/event"
@@ -19,6 +20,7 @@ type SignalRequest struct {
 func HandleAutomationSignal(ctx context.Context, _ log.Logger, evt ev.EventObject) error {
 	var err error
 	entry, ok := evt.(event.SignalEvent)
+	fmt.Println("Handler Automation Signal", entry)
 	if !ok || entry.Type != block.SignalTypeWOUPDATED {
 		return nil
 	}

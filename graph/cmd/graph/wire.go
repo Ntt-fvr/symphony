@@ -55,12 +55,10 @@ func newApplication(ctx context.Context, flags *cliFlags) (*application, func(),
 		newMySQLTenancy,
 		newHealthChecks,
 		ev.ProvideEmitter,
-		ev.ProvideAutomationEmitter,
 		wire.Bind(
 			new(ev.EmitterFactory),
 			new(ev.TopicFactory),
 		),
-		provideAutomationEmitterFactory,
 		wire.Bind(
 			new(ev.ReceiverFactory),
 			new(ev.TopicFactory),
@@ -108,13 +106,3 @@ func provideViews() []*view.View {
 	views = append(views, ev.OpenCensusViews...)
 	return views
 }
-
-func provideAutomationEmitterFactory(flags *cliFlags) ev.AutomationEmitterFactory {
-	return flags.AutomationPubURL
-}
-
-/*
-func provideAutomationEmitterFactory(flags *cliFlags) ev.AutomationEmitterFactory {
-	return flags.AutomationPubURL
-}
-*/
