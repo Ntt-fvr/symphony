@@ -22,6 +22,10 @@ import type {
   TypePlanningSubStatus,
   UsageSubStatus,
 } from '../../mutations/__generated__/AddResourceMutation.graphql';
+import type {
+  UpdateParameterMutationResponse,
+  UpdateParameterMutationVariables,
+} from '../../mutations/__generated__/UpdateParameterMutation.graphql';
 
 import type {MutationCallbacks} from '../../mutations/MutationCallbacks';
 
@@ -37,6 +41,7 @@ import InputAdornment from '@material-ui/core/InputAdornment';
 import MomentUtils from '@date-io/moment';
 import SaveDialogConfirm from '../configure/SaveDialogConfirm';
 import TextField from '@material-ui/core/TextField';
+import UpdateParameterMutation from '../../mutations/UpdateParameterMutation';
 import inventoryTheme from '../../common/theme';
 import moment from 'moment';
 import symphony from '@symphony/design-system/theme/symphony';
@@ -179,9 +184,10 @@ const AddEditResourceInLocation = (props: Props) => {
     },
   );
 
-  const queryParameter = useLazyLoadQuery<AddEditResourceInLocationParameterQuery>(
+  const parameterQuery = useLazyLoadQuery<AddEditResourceInLocationParameterQuery>(
     queryConfigurationParameterTypeParameter,
   );
+  const {queryParameter} = parameterQuery;
 
   console.log('queryParameter -> ', queryParameter);
 
@@ -237,6 +243,26 @@ const AddEditResourceInLocation = (props: Props) => {
         },
       ],
     };
+
+    const te = queryParameter?.map(parameters => {
+      const responseParameter: UpdateParameterMutationResponse = {
+        input: {
+          filter: {
+            id: parameters?.id ?? '',
+          },
+          set: {
+            stringValue: parameters?.parameterType?.stringValue ?? null,
+            intValue: parameters?.parameterType?.intValue ?? null,
+            floatValue: parameters?.parameterType?.floatValue ?? null,
+          },
+        },
+      };
+      UpdateParameterMutation(responseParameter);
+    });
+
+    console.log('te ->', te);
+
+    // console.log('responseParameter', responseParameter);
 
     const response: MutationCallbacks<AddResourceMutationResponse> = {
       onCompleted: response => {
