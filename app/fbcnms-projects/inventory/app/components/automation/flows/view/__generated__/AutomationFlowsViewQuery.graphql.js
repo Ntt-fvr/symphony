@@ -16,7 +16,7 @@
 import type { ConcreteRequest } from 'relay-runtime';
 type AutomationFlowsList_flows$ref = any;
 export type FlowNewInstancesPolicy = "DISABLED" | "ENABLED" | "%future added value";
-export type FlowStatus = "ARCHIVED" | "DRAFT" | "ON_HOLD" | "PUBLISHED" | "UNPUBLISHED" | "%future added value";
+export type FlowStatus = "ARCHIVED" | "DELETED" | "DRAFT" | "ON_HOLD" | "PUBLISHED" | "%future added value";
 export type AutomationFlowsViewQueryVariables = {||};
 export type AutomationFlowsViewQueryResponse = {|
   +flows: {|

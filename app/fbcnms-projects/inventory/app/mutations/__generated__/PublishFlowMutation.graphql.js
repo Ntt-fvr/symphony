@@ -14,7 +14,7 @@
 
 /*::
 import type { ConcreteRequest } from 'relay-runtime';
-export type FlowCMType = "GENERAL_CM" | "INITIAL_CONFIG" | "SYNC_PARAMETERS" | "%future added value";
+export type FlowCMType = "GENERAL_CR" | "INITIAL_CONFIG" | "SYNC_PARAMETERS" | "%future added value";
 export type FlowNewInstancesPolicy = "DISABLED" | "ENABLED" | "%future added value";
 export type PublishFlowInput = {|
   cmType?: ?FlowCMType,

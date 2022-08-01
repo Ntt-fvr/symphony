@@ -92,6 +92,25 @@ const queryConfigurationParameterType = graphql`
     }
   }
 `;
+const queryConfigurationParameterTypeParameter = graphql`
+  query AddEditResourceInLocationParameterQuery {
+    queryParameter {
+      id
+      stringValue
+      intValue
+      floatValue
+      #
+      parameterType {
+        id
+        name
+        stringValue
+        intValue
+        floatValue
+        resourceSpecification
+      }
+    }
+  }
+`;
 
 const selectListData = {
   lifecycleStatus: ['PLANNING', 'INSTALLING', 'OPERATING', 'RETIRING'],
@@ -160,6 +179,12 @@ const AddEditResourceInLocation = (props: Props) => {
     },
   );
 
+  const queryParameter = useLazyLoadQuery<AddEditResourceInLocationParameterQuery>(
+    queryConfigurationParameterTypeParameter,
+  );
+
+  console.log('queryParameter -> ', queryParameter);
+
   const dataPropertyType = response.queryConfigurationParameterType
     ?.map(p => p)
     .filter(Boolean);
@@ -193,7 +218,7 @@ const AddEditResourceInLocation = (props: Props) => {
     });
   }
   const DATE_FORMAT = 'YYYY-MM-DD[T]HH:mm:ss';
-  
+
   function handleCreateForm() {
     const createdTime = moment(new Date()).format(DATE_FORMAT);
     const variables: AddResourceMutationVariables = {

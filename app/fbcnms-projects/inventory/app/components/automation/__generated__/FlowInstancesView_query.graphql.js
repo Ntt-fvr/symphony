@@ -14,7 +14,7 @@
 
 /*::
 import type { ReaderFragment } from 'relay-runtime';
-export type FlowInstanceStatus = "CANCELED" | "CLOSED" | "COMPLETED" | "FAILED" | "FAILING" | "PAUSED" | "RUNNING" | "%future added value";
+export type FlowInstanceStatus = "CANCELED" | "CANCELING" | "CLOSED" | "COMPLETED" | "FAILED" | "FAILING" | "PAUSED" | "PAUSING" | "RESUMING" | "RUNNING" | "%future added value";
 import type { FragmentReference } from "relay-runtime";
 declare export opaque type FlowInstancesView_query$ref: FragmentReference;
 declare export opaque type FlowInstancesView_query$fragmentType: FlowInstancesView_query$ref;
