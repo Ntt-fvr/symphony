@@ -7,7 +7,6 @@ package handler
 import (
 	"context"
 	"fmt"
-
 	"github.com/facebookincubator/symphony/pkg/authz"
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/user"
@@ -124,6 +123,7 @@ func (s *Server) handleEvent(ctx context.Context, evt *ev.Event) error {
 	)
 	ctx = log.NewFieldsContext(ctx, zap.Object("viewer", v))
 	ctx = viewer.NewContext(ctx, v)
+
 	permissions, err := authz.Permissions(ctx)
 	if err != nil {
 		const msg = "cannot get permissions"

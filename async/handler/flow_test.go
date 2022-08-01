@@ -38,7 +38,7 @@ func TestWorkflowCreated(t *testing.T) {
 		}).
 		Return(nil, nil).
 		Once()
-	flowHandler := handler.NewFlowHandler(&c)
+	flowHandler := handler.NewFlowHandler(&c, "")
 	entClient := viewertest.NewTestClient(t)
 	ctx := viewertest.NewContext(context.Background(), entClient)
 	entClient.Use(event.LogHook(flowHandler.Handle, log.NewNopLogger()))
