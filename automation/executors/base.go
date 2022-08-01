@@ -47,6 +47,7 @@ type ExecutorBaseBlock struct {
 	ctx              workflow.Context
 	runLogicFunction func() error
 	Type             enum.BlockType
+	Tenant           string
 	BlockID          string
 	FlowInstanceID   string
 	BlockInstanceID  string
@@ -127,7 +128,7 @@ func (b *ExecutorBaseBlock) updateBlockCompleted() {
 func (b *ExecutorBaseBlock) updateBlockInstanceStatus(
 	status enum.BlockInstanceStatus, close bool, failureReason string,
 ) {
-	_ = UpdateBlockStatus(b.BlockInstanceID, status, close, b.Output, failureReason)
+	_ = UpdateBlockStatus(b.Tenant, b.BlockInstanceID, status, close, b.Output, failureReason)
 }
 
 func (b *ExecutorBaseBlock) execute() (*ExecutorResult, error) {

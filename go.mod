@@ -26,6 +26,7 @@ require (
 	github.com/cespare/xxhash/v2 v2.1.2 // indirect
 	github.com/confluentinc/confluent-kafka-go v1.9.1
 	github.com/evanphx/json-patch v0.5.2
+	github.com/everisopennetworks/json-flat-go v0.1.2-ntt
 	github.com/facebook/ent v0.5.2-0.20201207120713-86b9d850ee78
 	github.com/facebookincubator/ent-contrib v0.0.0-20201210145028-3c4e794cc516
 	github.com/gin-gonic/gin v1.8.1
@@ -37,6 +38,7 @@ require (
 	github.com/gorilla/mux v1.8.0
 	github.com/gorilla/websocket v1.5.0
 	github.com/hashicorp/go-multierror v1.1.1
+	github.com/imdario/mergo v0.3.13 // indirect
 	github.com/mattn/go-sqlite3 v2.0.3+incompatible
 	github.com/opentracing/opentracing-go v1.2.0
 	github.com/pborman/uuid v1.2.1 // indirect
@@ -48,7 +50,6 @@ require (
 	github.com/scylladb/go-set v1.0.2
 	github.com/shurcooL/graphql v0.0.0-20200928012149-18c5c3165e3a
 	github.com/sirupsen/logrus v1.8.1 // indirect
-	github.com/spf13/viper v1.7.0
 	github.com/stretchr/testify v1.8.0
 	github.com/uber-go/tally v3.3.17+incompatible
 	github.com/uber/jaeger-client-go v2.25.0+incompatible

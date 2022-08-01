@@ -12,7 +12,7 @@ type ExecutorForEachBlock struct {
 	StartBlockID string
 	SearchBlock  func(string) *ExecutorBlock
 	ExecuteBlock func(
-		workflow.Context, ExecutorBlock, map[string]interface{}, map[string]interface{},
+		workflow.Context, ExecutorBlock, map[string]interface{}, map[string]interface{}, string,
 	) (*ExecutorResult, error)
 }
 
@@ -47,7 +47,7 @@ func (b *ExecutorForEachBlock) runLogic() error {
 		block := b.SearchBlock(b.StartBlockID)
 		for block != nil {
 
-			executorResult, err := b.ExecuteBlock(b.ctx, *block, input, b.State)
+			executorResult, err := b.ExecuteBlock(b.ctx, *block, input, b.State, b.Tenant)
 			if err != nil {
 				return err
 			}

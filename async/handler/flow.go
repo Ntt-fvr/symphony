@@ -54,14 +54,15 @@ func (f FlowHandler) Handle(ctx context.Context, _ log.Logger, evt ev.EventObjec
 		url = f.getUrl("start")
 		requestBody = model.FlowInstanceRequest{
 			FlowInstanceID: entry.CurrState.ID,
+			Tenant:         v.Tenant(),
 		}
 	} else {
 		switch entry.CurrState.Type {
-		case string(flowinstance.StatusPaused):
+		case flowinstance.StatusPaused.String():
 			url = f.getUrl("pause")
-		case string(flowinstance.StatusRunning):
+		case flowinstance.StatusRunning.String():
 			url = f.getUrl("resume")
-		case string(flowinstance.StatusCancelled):
+		case flowinstance.StatusCancelled.String():
 			url = f.getUrl("cancel")
 		}
 

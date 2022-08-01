@@ -10,7 +10,9 @@ import (
 	"time"
 )
 
-func AutomationWorkflow(ctx workflow.Context, taskList string, flowInstanceID string) (map[string]interface{}, error) {
+func AutomationWorkflow(
+	ctx workflow.Context, taskList string, flowInstanceID, tenant string,
+) (map[string]interface{}, error) {
 
 	externalActivityOptions := workflow.ActivityOptions{
 		TaskList:               taskList,
@@ -34,22 +36,22 @@ func AutomationWorkflow(ctx workflow.Context, taskList string, flowInstanceID st
 		workflowID := info.WorkflowExecution.ID
 		runID := info.WorkflowExecution.RunID
 
-		err := executors.UpdateFlowInstance(flowInstanceID, workflowID, runID)
+		err := executors.UpdateFlowInstance(tenant, flowInstanceID, workflowID, runID)
 		if err != nil {
-			_ = executors.UpdateFlowInstanceStatus(flowInstanceID, enum.FlowInstanceStatusFailing, true)
+			_ = executors.UpdateFlowInstanceStatus(tenant, flowInstanceID, enum.FlowInstanceStatusFailing, true)
 			return nil, err
 		}
 	}
 
-	input, blocks, err := executors.GetInputAndExecutors(flowInstanceID)
+	input, blocks, err := executors.GetInputAndExecutors(tenant, flowInstanceID)
 	if err != nil {
-		_ = executors.UpdateFlowInstanceStatus(flowInstanceID, enum.FlowInstanceStatusFailing, true)
+		_ = executors.UpdateFlowInstanceStatus(tenant, flowInstanceID, enum.FlowInstanceStatusFailing, true)
 		return nil, err
 	}
 
 	executorStartBlock := getExecutorStartBlock(blocks)
 	if executorStartBlock == nil {
-		_ = executors.UpdateFlowInstanceStatus(flowInstanceID, enum.FlowInstanceStatusFailing, true)
+		_ = executors.UpdateFlowInstanceStatus(tenant, flowInstanceID, enum.FlowInstanceStatusFailing, true)
 		return nil, errors.New("start executorBlock not found")
 	}
 
@@ -78,7 +80,7 @@ func AutomationWorkflow(ctx workflow.Context, taskList string, flowInstanceID st
 		switch flowAction {
 		case enum.FlowActionPause:
 			err := executors.UpdateFlowInstanceStatus(
-				executorBlock.GetFlowInstanceID(), enum.FlowInstanceStatusPaused, false,
+				tenant, executorBlock.GetFlowInstanceID(), enum.FlowInstanceStatusPaused, false,
 			)
 			if err != nil {
 				return nil, err
@@ -89,7 +91,7 @@ func AutomationWorkflow(ctx workflow.Context, taskList string, flowInstanceID st
 			switch flowAction {
 			case enum.FlowActionCancel:
 				err := executors.UpdateFlowInstanceStatus(
-					executorBlock.GetFlowInstanceID(), enum.FlowInstanceStatusCanceled, true,
+					tenant, executorBlock.GetFlowInstanceID(), enum.FlowInstanceStatusCanceled, true,
 				)
 				if err != nil {
 					return nil, err
@@ -99,7 +101,7 @@ func AutomationWorkflow(ctx workflow.Context, taskList string, flowInstanceID st
 			}
 		case enum.FlowActionCancel:
 			err := executors.UpdateFlowInstanceStatus(
-				executorBlock.GetFlowInstanceID(), enum.FlowInstanceStatusCanceled, true,
+				tenant, executorBlock.GetFlowInstanceID(), enum.FlowInstanceStatusCanceled, true,
 			)
 			if err != nil {
 				return nil, err
@@ -110,7 +112,7 @@ func AutomationWorkflow(ctx workflow.Context, taskList string, flowInstanceID st
 
 		executorBlock.AddAttempts()
 
-		result, err := executeBlock(ctx, executorBlock, input, state)
+		result, err := executeBlock(ctx, executorBlock, input, state, tenant)
 
 		if err != nil {
 			if executorBlock.GetAttempts() < executorBlock.GetMaxAttempts() {
@@ -118,8 +120,8 @@ func AutomationWorkflow(ctx workflow.Context, taskList string, flowInstanceID st
 			}
 
 			_ = executors.UpdateBlockStatus(
-				executorBlock.GetBlockInstanceID(), enum.BlockInstanceStatusFailed,
-				true, nil, err.Error(),
+				tenant, executorBlock.GetBlockInstanceID(),
+				enum.BlockInstanceStatusFailed, true, nil, err.Error(),
 			)
 			return nil, err
 		}
@@ -149,11 +151,12 @@ func AutomationWorkflow(ctx workflow.Context, taskList string, flowInstanceID st
 }
 
 func executeBlock(
-	ctx workflow.Context, executorBlock executors.ExecutorBlock, input, state map[string]interface{},
+	ctx workflow.Context, executorBlock executors.ExecutorBlock,
+	input, state map[string]interface{}, tenant string,
 ) (*executors.ExecutorResult, error) {
 
 	blockInstanceID, err := executors.CreateBlockInstance(
-		executorBlock.GetFlowInstanceID(), executorBlock.GetBlockID(), input,
+		tenant, executorBlock.GetFlowInstanceID(), executorBlock.GetBlockID(), input,
 	)
 	if err != nil {
 		return nil, err
