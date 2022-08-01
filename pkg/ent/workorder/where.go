@@ -1757,6 +1757,34 @@ func HasAppointmentWith(preds ...predicate.Appointment) predicate.WorkOrder {
 	})
 }
 
+// HasFlowInstance applies the HasEdge predicate on the "flow_instance" edge.
+func HasFlowInstance() predicate.WorkOrder {
+	return predicate.WorkOrder(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(FlowInstanceTable, FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, false, FlowInstanceTable, FlowInstanceColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasFlowInstanceWith applies the HasEdge predicate on the "flow_instance" edge with a given conditions (other predicates).
+func HasFlowInstanceWith(preds ...predicate.FlowInstance) predicate.WorkOrder {
+	return predicate.WorkOrder(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(FlowInstanceInverseTable, FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, false, FlowInstanceTable, FlowInstanceColumn),
+		)
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
 // And groups list of predicates with the AND operator between them.
 func And(predicates ...predicate.WorkOrder) predicate.WorkOrder {
 	return predicate.WorkOrder(func(s *sql.Selector) {

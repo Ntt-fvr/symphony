@@ -2833,3 +2833,7 @@ func init() {
 	// workertype.UpdateDefaultUpdateTime holds the default value on update for the update_time field.
 	workertype.UpdateDefaultUpdateTime = workertypeDescUpdateTime.UpdateDefault.(func() time.Time)
 }
+
+const (
+	Version = "(devel)" // Version of ent codegen.
+)

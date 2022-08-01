@@ -12,6 +12,7 @@ import (
 	"time"
 
 	"github.com/facebook/ent/dialect/sql"
+	"github.com/facebookincubator/symphony/pkg/ent/flowinstance"
 	"github.com/facebookincubator/symphony/pkg/ent/location"
 	"github.com/facebookincubator/symphony/pkg/ent/organization"
 	"github.com/facebookincubator/symphony/pkg/ent/project"
@@ -64,6 +65,7 @@ type WorkOrder struct {
 	work_order_location        *int
 	work_order_owner           *int
 	work_order_assignee        *int
+	work_order_flow_instance   *int
 }
 
 // WorkOrderEdges holds the relations/edges for other nodes in the graph.
@@ -100,9 +102,11 @@ type WorkOrderEdges struct {
 	Assignee *User
 	// Appointment holds the value of the appointment edge.
 	Appointment []*Appointment
+	// FlowInstance holds the value of the flow_instance edge.
+	FlowInstance *FlowInstance
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [16]bool
+	loadedTypes [17]bool
 }
 
 // TypeOrErr returns the Type value or an error if the edge
@@ -284,6 +288,20 @@ func (e WorkOrderEdges) AppointmentOrErr() ([]*Appointment, error) {
 	return nil, &NotLoadedError{edge: "appointment"}
 }
 
+// FlowInstanceOrErr returns the FlowInstance value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e WorkOrderEdges) FlowInstanceOrErr() (*FlowInstance, error) {
+	if e.loadedTypes[16] {
+		if e.FlowInstance == nil {
+			// The edge flow_instance was loaded in eager-loading,
+			// but was not found.
+			return nil, &NotFoundError{label: flowinstance.Label}
+		}
+		return e.FlowInstance, nil
+	}
+	return nil, &NotLoadedError{edge: "flow_instance"}
+}
+
 // scanValues returns the types for scanning values from sql.Rows.
 func (*WorkOrder) scanValues() []interface{} {
 	return []interface{}{
@@ -315,6 +333,7 @@ func (*WorkOrder) fkValues() []interface{} {
 		&sql.NullInt64{}, // work_order_location
 		&sql.NullInt64{}, // work_order_owner
 		&sql.NullInt64{}, // work_order_assignee
+		&sql.NullInt64{}, // work_order_flow_instance
 	}
 }
 
@@ -450,6 +469,12 @@ func (wo *WorkOrder) assignValues(values ...interface{}) error {
 			wo.work_order_assignee = new(int)
 			*wo.work_order_assignee = int(value.Int64)
 		}
+		if value, ok := values[7].(*sql.NullInt64); !ok {
+			return fmt.Errorf("unexpected type %T for edge-field work_order_flow_instance", value)
+		} else if value.Valid {
+			wo.work_order_flow_instance = new(int)
+			*wo.work_order_flow_instance = int(value.Int64)
+		}
 	}
 	return nil
 }
@@ -532,6 +557,11 @@ func (wo *WorkOrder) QueryAssignee() *UserQuery {
 // QueryAppointment queries the appointment edge of the WorkOrder.
 func (wo *WorkOrder) QueryAppointment() *AppointmentQuery {
 	return (&WorkOrderClient{config: wo.config}).QueryAppointment(wo)
+}
+
+// QueryFlowInstance queries the flow_instance edge of the WorkOrder.
+func (wo *WorkOrder) QueryFlowInstance() *FlowInstanceQuery {
+	return (&WorkOrderClient{config: wo.config}).QueryFlowInstance(wo)
 }
 
 // Update returns a builder for updating this WorkOrder.

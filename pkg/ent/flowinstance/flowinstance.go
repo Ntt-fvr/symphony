@@ -158,8 +158,11 @@ const (
 	StatusFailing   Status = "FAILING"
 	StatusCompleted Status = "COMPLETED"
 	StatusCancelled Status = "CANCELED"
+	StatusCanceling Status = "CANCELING"
 	StatusPaused    Status = "PAUSED"
+	StatusPausing   Status = "PAUSING"
 	StatusClosed    Status = "CLOSED"
+	StatusResuming  Status = "RESUMING"
 )
 
 func (s Status) String() string {
@@ -169,7 +172,7 @@ func (s Status) String() string {
 // StatusValidator is a validator for the "status" field enum values. It is called by the builders before save.
 func StatusValidator(s Status) error {
 	switch s {
-	case StatusRunning, StatusFailed, StatusFailing, StatusCompleted, StatusCancelled, StatusPaused, StatusClosed:
+	case StatusRunning, StatusFailed, StatusFailing, StatusCompleted, StatusCancelled, StatusCanceling, StatusPaused, StatusPausing, StatusClosed, StatusResuming:
 		return nil
 	default:
 		return fmt.Errorf("flowinstance: invalid enum value for status field: %q", s)

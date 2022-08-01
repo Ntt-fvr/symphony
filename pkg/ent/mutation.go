@@ -85935,6 +85935,8 @@ type WorkOrderMutation struct {
 	appointment                  map[int]struct{}
 	removedappointment           map[int]struct{}
 	clearedappointment           bool
+	flow_instance                *int
+	clearedflow_instance         bool
 	done                         bool
 	oldValue                     func(context.Context) (*WorkOrder, error)
 	predicates                   []predicate.WorkOrder
@@ -87433,6 +87435,45 @@ func (m *WorkOrderMutation) ResetAppointment() {
 	m.removedappointment = nil
 }
 
+// SetFlowInstanceID sets the flow_instance edge to FlowInstance by id.
+func (m *WorkOrderMutation) SetFlowInstanceID(id int) {
+	m.flow_instance = &id
+}
+
+// ClearFlowInstance clears the flow_instance edge to FlowInstance.
+func (m *WorkOrderMutation) ClearFlowInstance() {
+	m.clearedflow_instance = true
+}
+
+// FlowInstanceCleared returns if the edge flow_instance was cleared.
+func (m *WorkOrderMutation) FlowInstanceCleared() bool {
+	return m.clearedflow_instance
+}
+
+// FlowInstanceID returns the flow_instance id in the mutation.
+func (m *WorkOrderMutation) FlowInstanceID() (id int, exists bool) {
+	if m.flow_instance != nil {
+		return *m.flow_instance, true
+	}
+	return
+}
+
+// FlowInstanceIDs returns the flow_instance ids in the mutation.
+// Note that ids always returns len(ids) <= 1 for unique edges, and you should use
+// FlowInstanceID instead. It exists only for internal usage by the builders.
+func (m *WorkOrderMutation) FlowInstanceIDs() (ids []int) {
+	if id := m.flow_instance; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetFlowInstance reset all changes of the "flow_instance" edge.
+func (m *WorkOrderMutation) ResetFlowInstance() {
+	m.flow_instance = nil
+	m.clearedflow_instance = false
+}
+
 // Op returns the operation name.
 func (m *WorkOrderMutation) Op() Op {
 	return m.op
@@ -87847,7 +87888,7 @@ func (m *WorkOrderMutation) ResetField(name string) error {
 // AddedEdges returns all edge names that were set/added in this
 // mutation.
 func (m *WorkOrderMutation) AddedEdges() []string {
-	edges := make([]string, 0, 16)
+	edges := make([]string, 0, 17)
 	if m._type != nil {
 		edges = append(edges, workorder.EdgeType)
 	}
@@ -87895,6 +87936,9 @@ func (m *WorkOrderMutation) AddedEdges() []string {
 	}
 	if m.appointment != nil {
 		edges = append(edges, workorder.EdgeAppointment)
+	}
+	if m.flow_instance != nil {
+		edges = append(edges, workorder.EdgeFlowInstance)
 	}
 	return edges
 }
@@ -87985,6 +88029,10 @@ func (m *WorkOrderMutation) AddedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case workorder.EdgeFlowInstance:
+		if id := m.flow_instance; id != nil {
+			return []ent.Value{*id}
+		}
 	}
 	return nil
 }
@@ -87992,7 +88040,7 @@ func (m *WorkOrderMutation) AddedIDs(name string) []ent.Value {
 // RemovedEdges returns all edge names that were removed in this
 // mutation.
 func (m *WorkOrderMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 16)
+	edges := make([]string, 0, 17)
 	if m.removedequipment != nil {
 		edges = append(edges, workorder.EdgeEquipment)
 	}
@@ -88088,7 +88136,7 @@ func (m *WorkOrderMutation) RemovedIDs(name string) []ent.Value {
 // ClearedEdges returns all edge names that were cleared in this
 // mutation.
 func (m *WorkOrderMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 16)
+	edges := make([]string, 0, 17)
 	if m.cleared_type {
 		edges = append(edges, workorder.EdgeType)
 	}
@@ -88137,6 +88185,9 @@ func (m *WorkOrderMutation) ClearedEdges() []string {
 	if m.clearedappointment {
 		edges = append(edges, workorder.EdgeAppointment)
 	}
+	if m.clearedflow_instance {
+		edges = append(edges, workorder.EdgeFlowInstance)
+	}
 	return edges
 }
 
@@ -88176,6 +88227,8 @@ func (m *WorkOrderMutation) EdgeCleared(name string) bool {
 		return m.clearedassignee
 	case workorder.EdgeAppointment:
 		return m.clearedappointment
+	case workorder.EdgeFlowInstance:
+		return m.clearedflow_instance
 	}
 	return false
 }
@@ -88204,6 +88257,9 @@ func (m *WorkOrderMutation) ClearEdge(name string) error {
 		return nil
 	case workorder.EdgeAssignee:
 		m.ClearAssignee()
+		return nil
+	case workorder.EdgeFlowInstance:
+		m.ClearFlowInstance()
 		return nil
 	}
 	return fmt.Errorf("unknown WorkOrder unique edge %s", name)
@@ -88261,6 +88317,9 @@ func (m *WorkOrderMutation) ResetEdge(name string) error {
 		return nil
 	case workorder.EdgeAppointment:
 		m.ResetAppointment()
+		return nil
+	case workorder.EdgeFlowInstance:
+		m.ResetFlowInstance()
 		return nil
 	}
 	return fmt.Errorf("unknown WorkOrder edge %s", name)

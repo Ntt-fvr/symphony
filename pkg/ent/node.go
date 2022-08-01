@@ -9136,7 +9136,7 @@ func (wo *WorkOrder) Node(ctx context.Context) (node *Node, err error) {
 		ID:     wo.ID,
 		Type:   "WorkOrder",
 		Fields: make([]*Field, 14),
-		Edges:  make([]*Edge, 16),
+		Edges:  make([]*Edge, 17),
 	}
 	var buf []byte
 	if buf, err = json.Marshal(wo.CreateTime); err != nil {
@@ -9407,6 +9407,16 @@ func (wo *WorkOrder) Node(ctx context.Context) (node *Node, err error) {
 	}
 	node.Edges[15].IDs, err = wo.QueryAppointment().
 		Select(appointment.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	node.Edges[16] = &Edge{
+		Type: "FlowInstance",
+		Name: "flow_instance",
+	}
+	node.Edges[16].IDs, err = wo.QueryFlowInstance().
+		Select(flowinstance.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err

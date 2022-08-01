@@ -20,6 +20,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/comment"
 	"github.com/facebookincubator/symphony/pkg/ent/equipment"
 	"github.com/facebookincubator/symphony/pkg/ent/file"
+	"github.com/facebookincubator/symphony/pkg/ent/flowinstance"
 	"github.com/facebookincubator/symphony/pkg/ent/hyperlink"
 	"github.com/facebookincubator/symphony/pkg/ent/link"
 	"github.com/facebookincubator/symphony/pkg/ent/location"
@@ -477,6 +478,25 @@ func (woc *WorkOrderCreate) AddAppointment(a ...*Appointment) *WorkOrderCreate {
 		ids[i] = a[i].ID
 	}
 	return woc.AddAppointmentIDs(ids...)
+}
+
+// SetFlowInstanceID sets the flow_instance edge to FlowInstance by id.
+func (woc *WorkOrderCreate) SetFlowInstanceID(id int) *WorkOrderCreate {
+	woc.mutation.SetFlowInstanceID(id)
+	return woc
+}
+
+// SetNillableFlowInstanceID sets the flow_instance edge to FlowInstance by id if the given value is not nil.
+func (woc *WorkOrderCreate) SetNillableFlowInstanceID(id *int) *WorkOrderCreate {
+	if id != nil {
+		woc = woc.SetFlowInstanceID(*id)
+	}
+	return woc
+}
+
+// SetFlowInstance sets the flow_instance edge to FlowInstance.
+func (woc *WorkOrderCreate) SetFlowInstance(f *FlowInstance) *WorkOrderCreate {
+	return woc.SetFlowInstanceID(f.ID)
 }
 
 // Mutation returns the WorkOrderMutation object of the builder.
@@ -1026,6 +1046,25 @@ func (woc *WorkOrderCreate) createSpec() (*WorkOrder, *sqlgraph.CreateSpec) {
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: appointment.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := woc.mutation.FlowInstanceIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: false,
+			Table:   workorder.FlowInstanceTable,
+			Columns: []string{workorder.FlowInstanceColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: flowinstance.FieldID,
 				},
 			},
 		}

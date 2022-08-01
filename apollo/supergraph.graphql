@@ -1,3 +1,4 @@
+
 schema
   @core(feature: "https://specs.apollo.dev/core/v0.2"),
   @core(feature: "https://specs.apollo.dev/join/v0.1", for: EXECUTION)
@@ -1611,6 +1612,7 @@ input AddWorkOrderInput {
   description: String
   dueDate: Time
   duration: Float
+  flowInstanceId: ID
   index: Int
   isNameEditable: Boolean
   locationId: ID
@@ -1923,6 +1925,34 @@ enum AuthType {
   ODIC
 }
 
+type AutomationActivity implements Node {
+  activityType: AutomationActivityField!
+  author: User
+  blockInstance: BlockInstance
+  createTime: Time!
+  entityType: AutomationEntityType!
+  flowInstance: FlowInstance
+  id: ID!
+  newValue: String
+  oldValue: String
+}
+
+enum AutomationActivityField {
+  CREATION_DATE
+  STATUS
+}
+
+input AutomationActivityFilterInput {
+  activityType: AutomationActivityField!
+  limit: Int!
+  orderDirection: OrderDirection!
+}
+
+enum AutomationEntityType {
+  CREATION_DATE
+  STATUS
+}
+
 type AutomationPolicy {
   read: BasicPermissionRule!
   templates: CUD!
@@ -1984,6 +2014,7 @@ type Block implements Node {
   inputStateTransformation: String
   inputTransfStrategy: TransfStrategy
   inputTransformation: String
+  instances: [BlockInstance!]
   maxAttemps: Int
   nextBlocks: [Block!]!
   outputParamDefinitions: [VariableDefinition!]!
@@ -4339,6 +4370,7 @@ input EditWorkOrderInput {
   description: String
   dueDate: Time
   duration: Float
+  flowInstanceId: ID
   id: ID!
   index: Int
   installDate: Time
@@ -5182,6 +5214,7 @@ enum FlowFilterType {
 }
 
 type FlowInstance implements Node {
+  activities(filter: AutomationActivityFilterInput): [AutomationActivity!]!
   blocks: [BlockInstance!]!
   bssCode: String
   endDate: Time
@@ -5257,11 +5290,14 @@ enum FlowInstanceOrderField {
 
 enum FlowInstanceStatus {
   CANCELED
+  CANCELING
   CLOSED
   COMPLETED
   FAILED
   FAILING
   PAUSED
+  PAUSING
+  RESUMING
   RUNNING
 }
 
@@ -12922,6 +12958,7 @@ type WorkOrder implements NamedNode & Node {
   equipmentToAdd: [Equipment]!
   equipmentToRemove: [Equipment]!
   files: [File]!
+  flowInstance: FlowInstance
   hyperlinks: [Hyperlink!]!
   id: ID!
   images: [File]!

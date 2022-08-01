@@ -81,6 +81,8 @@ const (
 	EdgeAssignee = "assignee"
 	// EdgeAppointment holds the string denoting the appointment edge name in mutations.
 	EdgeAppointment = "appointment"
+	// EdgeFlowInstance holds the string denoting the flow_instance edge name in mutations.
+	EdgeFlowInstance = "flow_instance"
 
 	// Table holds the table name of the workorder in the database.
 	Table = "work_orders"
@@ -196,6 +198,13 @@ const (
 	AppointmentInverseTable = "appointments"
 	// AppointmentColumn is the table column denoting the appointment relation/edge.
 	AppointmentColumn = "work_order_appointment"
+	// FlowInstanceTable is the table the holds the flow_instance relation/edge.
+	FlowInstanceTable = "work_orders"
+	// FlowInstanceInverseTable is the table name for the FlowInstance entity.
+	// It exists in this package in order to avoid circular dependency with the "flowinstance" package.
+	FlowInstanceInverseTable = "flow_instances"
+	// FlowInstanceColumn is the table column denoting the flow_instance relation/edge.
+	FlowInstanceColumn = "work_order_flow_instance"
 )
 
 // Columns holds all SQL columns for workorder fields.
@@ -226,6 +235,7 @@ var ForeignKeys = []string{
 	"work_order_location",
 	"work_order_owner",
 	"work_order_assignee",
+	"work_order_flow_instance",
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).

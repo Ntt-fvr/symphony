@@ -858,7 +858,7 @@ func (r mutationResolver) AddTimerBlock(ctx context.Context, flowDraftID int, in
 	return b.Update().
 		SetEnableTimerExpression(*input.EnableExpressionL).
 		SetTimerExpression(*input.Expression).
-		SetTimerBehavior((block.TimerBehavior)(input.Behavior)).
+		SetTimerBehavior(input.Behavior).
 		SetNillableSeconds(input.Seconds).
 		SetNillableTimerSpecificDate(input.SpecificDatetime).
 		Save(ctx)
@@ -909,8 +909,8 @@ func (r mutationResolver) AddWaitForSignalBlock(ctx context.Context, flowDraftID
 		return nil, err
 	}
 	return b.Update().
-		SetSignalModule((block.SignalModule)(input.SignalModule)).
-		SetSignalType((block.SignalType)(input.Type)).
+		SetSignalModule(input.SignalModule).
+		SetSignalType(input.Type).
 		SetCustomFilter(*input.CustomFilter).
 		SetBlockFlow(input.Blocked).
 		Save(ctx)
