@@ -6204,7 +6204,7 @@ enum  AuthType
 @goModel(
   model: "github.com/facebookincubator/symphony/pkg/ent/block.AuthType"
   ) {
-  Basic
+  BASIC
   ODIC
 }
 
@@ -6659,8 +6659,8 @@ type BlockInstance implements Node {
   block: Block!
   startDate: Time!
   endDate: Time
-  #activities(filter: AutomationActivityFilterInput): [AutomationActivity!]!
-    #@goField(forceResolver: true)
+  activities(filter: AutomationActivityFilterInput): [AutomationActivity!]!
+    @goField(forceResolver: true)
 }
 
 input AddBlockInstanceInput {
