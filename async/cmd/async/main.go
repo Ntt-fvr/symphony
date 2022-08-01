@@ -35,14 +35,12 @@ import (
 )
 
 type cliFlags struct {
-	ConfigFile     kong.ConfigFlag `type:"existingfile" placeholder:"PATH" help:"Configuration file path."`
-	ListenAddress  string          `name:"web.listen-address" default:":http" help:"Web address to listen on."`
-	MetricsAddress metrics.Addr    `name:"metrics.listen-address" default:":9464" help:"Metrics address to listen on."`
-	DatabaseURL    *url.URL        `name:"db.url" env:"DB_URL" required:"" placeholder:"URL" help:"Database URL."`
-	EventPubURL    ev.TopicFactory `name:"event.pub-url" env:"EVENT_PUB_URL" required:"" placeholder:"URL" help:"Event publish URL."`
-	EventSubURL    ev.TopicFactory `name:"event.sub-url" env:"EVENT_SUB_URL" required:"" placeholder:"URL" help:"Event subscribe URL."`
-	//AutomationPubURL   ev.TopicFactory  `name:"automation.pub-url" env:"AUTOMATION_PUB_URL" required:"" placeholder:"URL" help:"Automation publish URL."`
-	//AutomationSubURL   ev.TopicFactory  `name:"automation.sub-url" env:"AUTOMATION_SUB_URL" required:"" placeholder:"URL" help:"Automation subscribe URL."`
+	ConfigFile         kong.ConfigFlag  `type:"existingfile" placeholder:"PATH" help:"Configuration file path."`
+	ListenAddress      string           `name:"web.listen-address" default:":http" help:"Web address to listen on."`
+	MetricsAddress     metrics.Addr     `name:"metrics.listen-address" default:":9464" help:"Metrics address to listen on."`
+	DatabaseURL        *url.URL         `name:"db.url" env:"DB_URL" required:"" placeholder:"URL" help:"Database URL."`
+	EventPubURL        ev.TopicFactory  `name:"event.pub-url" env:"EVENT_PUB_URL" required:"" placeholder:"URL" help:"Event publish URL."`
+	EventSubURL        ev.TopicFactory  `name:"event.sub-url" env:"EVENT_SUB_URL" required:"" placeholder:"URL" help:"Event subscribe URL."`
 	ExportBucketURL    *url.URL         `name:"export.bucket-url" env:"EXPORT_BUCKET_URL" required:"" placeholder:"URL" help:"Export bucket URL."`
 	ExportBucketPrefix string           `name:"export.bucket-prefix" env:"EXPORT_BUCKET_PREFIX" default:"exports/" help:"Export bucket prefix."`
 	CadenceAddr        string           `name:"cadence.addr" env:"CADENCE_ADDR" required:"" help:"Cadence server address."`

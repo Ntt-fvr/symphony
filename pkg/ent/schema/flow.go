@@ -199,8 +199,11 @@ func (FlowInstance) Fields() []ent.Field {
 				"Failing", "FAILING",
 				"Completed", "COMPLETED",
 				"Cancelled", "CANCELED",
+				"Canceling", "CANCELING",
 				"Paused", "PAUSED",
+				"Pausing", "PAUSING",
 				"Closed", "CLOSED",
+				"Resuming", "RESUMING",
 			).Default("RUNNING"),
 		field.JSON("start_params", []*flowschema.VariableValue{}).
 			Optional(),

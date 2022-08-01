@@ -8,6 +8,10 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"github.com/facebookincubator/symphony/pkg/ent/block"
+	"github.com/facebookincubator/symphony/pkg/ent/property"
+	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
+	"time"
 
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/hook"
@@ -26,6 +30,35 @@ type WorkOrderStatusChangedPayload struct {
 	From      *workorder.Status `json:"from"`
 	To        workorder.Status  `json:"to"`
 	WorkOrder *ent.WorkOrder    `json:"workOrder"`
+}
+
+// SignalWorkOrderStatusChangedPayload is the payload of WorkOrderStatusChanged event.
+/*
+{
+    "signalModule": "one of Signal Module Enum values",
+    "signalType": "one of Signal Type Enum values",
+    "timestamp": "",
+    "flowInstanceID":
+    "payload": {
+        "key1": "value1",
+        "key2": {
+            "key21": {
+            }
+        },
+        "key3": []
+    }
+}*/
+type SignalEvent struct {
+	Module         string           `json:"signalModule"`
+	Type           block.SignalType `json:"signalType"`
+	Timestamp      int64            `json:"timestamp"`
+	FlowInstanceId *int             `json:"flowInstanceID"`
+	Payload        *WOPayload       `json:"payload"`
+}
+
+type WOPayload struct {
+	WorkOrder  *ent.WorkOrder  `json:"workOrder"`
+	Properties []*ent.Property `json:"properties"`
 }
 
 // Hook returns the hook which generates events from mutations.
@@ -138,6 +171,18 @@ func (e *Eventer) workOrderStatusChangedHook() ent.Hook {
 					From:      &oldStatus,
 					To:        workOrder.Status,
 					WorkOrder: workOrder,
+				})
+				properties, _ := workOrder.Properties(ctx)
+				flowId := workOrder.QueryProperties().Where(property.HasTypeWith(propertytype.Name("flow_instance_id"))).OnlyX(ctx).IntVal
+				e.emit(ctx, Automation, &SignalEvent{
+					Module:         "WTF",
+					Type:           block.SignalTypeWOUPDATED,
+					Timestamp:      time.Now().UnixMilli() / 1000,
+					FlowInstanceId: flowId,
+					Payload: &WOPayload{
+						WorkOrder:  workOrder,
+						Properties: properties,
+					},
 				})
 			}
 			return value, nil

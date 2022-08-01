@@ -232,9 +232,9 @@ func TestCreateDraftFromExistingFlowAndPublish(t *testing.T) {
 	foundFlow, err := qr.Node(ctx, mainFlow.ID)
 	require.NoError(t, err)
 	require.Equal(t, "Main", foundFlow.(*ent.Flow).Name)
-	_, err = mr.AddSubflowBlock(ctx, draft.ID, models.SubflowBlockInput{
-		Cid:    "blackbox",
-		FlowID: subFlow.ID,
+	_, err = mr.AddExecuteFlowBlock(ctx, draft.ID, models.ExecuteFlowBlockInput{
+		Cid:  "blackbox",
+		Flow: subFlow.ID,
 		Params: []*models.VariableExpressionInput{
 			{
 				Type:                  enum.VariableDefinition,
@@ -548,16 +548,18 @@ func TestImportEmptyFlow(t *testing.T) {
 				},
 			},
 		},
-		DecisionBlocks: []*models.DecisionBlockInput{
+		ChoiceBlocks: []*models.ChoiceBlockInput{
 			{
 				Cid: "decision1",
 				Routes: []*models.DecisionRouteInput{
 					{
 						Cid:       pointer.ToString("true"),
+						Index:     pointer.ToInt(1),
 						Condition: &condition1,
 					},
 					{
 						Cid:       pointer.ToString("false"),
+						Index:     pointer.ToInt(2),
 						Condition: &condition1,
 					},
 				},

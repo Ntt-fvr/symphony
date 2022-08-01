@@ -64,16 +64,12 @@ func NewApplication(ctx context.Context, flags *cliFlags) (*application, func(),
 			"TenantMaxConn",
 		),
 		ev.ProvideEmitter,
-		//ev.ProvideAutomationEmitter,
 		wire.Bind(
 			new(ev.EmitterFactory),
 			new(ev.TopicFactory),
 		),
-		//provideAutomationEmitterFactory,
 		ev.ProvideReceiver,
-		//ev.ProvideAutomationReceiver,
 		provideReceiverFactory,
-		//provideAutomationReceiverFactory,
 		wire.InterfaceValue(
 			new(ev.EventObject),
 			event.LogEntry{},
@@ -136,16 +132,6 @@ func provideReceiverFactory(flags *cliFlags) ev.ReceiverFactory {
 	return flags.EventSubURL
 }
 
-/*
-func provideAutomationReceiverFactory(flags *cliFlags) ev.AutomationReceiverFactory {
-	return flags.AutomationSubURL
-}
-
-func provideAutomationEmitterFactory(flags *cliFlags) ev.AutomationEmitterFactory {
-	return flags.AutomationPubURL
-}
-*/
-
 func newBucket(ctx context.Context, flags *cliFlags) (*blob.Bucket, func(), error) {
 	bucket, err := blob.OpenBucket(ctx, flags.ExportBucketURL.String())
 	if err != nil {
@@ -180,6 +166,10 @@ func newHandlers(bucket *blob.Bucket, flags *cliFlags, client *worker.Client, te
 		handler.New(handler.HandleConfig{
 			Name:    "block_automationactivities_log",
 			Handler: handler.Func(handler.HandleBlockActivities),
+		}),
+		handler.New(handler.HandleConfig{
+			Name:    "automation_signal",
+			Handler: handler.Func(handler.HandleAutomationSignal),
 		}),
 	}
 }
