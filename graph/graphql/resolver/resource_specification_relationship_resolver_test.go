@@ -8,50 +8,53 @@ import (
 	"context"
 	"testing"
 
+	"github.com/facebookincubator/symphony/pkg/ent"
+	"github.com/facebookincubator/symphony/pkg/ent/user"
+
 	"github.com/facebookincubator/symphony/graph/graphql/generated"
 	"github.com/facebookincubator/symphony/graph/graphql/models"
+	"github.com/facebookincubator/symphony/pkg/viewer/viewertest"
 
 	"github.com/stretchr/testify/require"
 )
 
-// func TestAddRemoveResourceSpecificationRelationshipResolver(t *testing.T) {
-// 	r := newTestResolver(t)
-// 	defer r.Close()
-// 	// TODO(T66882071): Remove owner role
-// 	ctx := viewertest.NewContext(context.Background(), r.client, viewertest.WithRole(user.RoleOwner))
+func TestAddRemoveResourceSpecificationRelationshipResolver(t *testing.T) {
+	r := newTestResolver(t)
+	defer r.Close()
+	// TODO(T66882071): Remove owner role
+	ctx := viewertest.NewContext(context.Background(), r.client, viewertest.WithRole(user.RoleOwner))
 
-// 	mr := r.Mutation()
-// 	_, err := AddResourceSpecificationRelationShipListTest(ctx, t, mr)
-// 	if err != nil {
-// 		return
-// 	}
-// 	id1, id2, resourcespecification := AddResourceSpecificationRelationshipTest(ctx, t, mr)
-// 	EditResourceSpecificationRelationshipTest(ctx, t, mr, id1, id2, resourcespecification)
-// 	RemoveResourceSpecificationRelationshipTest(ctx, t, mr, id1, id2)
-// }
+	mr := r.Mutation()
+	_, err := AddResourceSpecificationRelationshipListTest(ctx, t, mr)
+	if err != nil {
+		return
+	}
+	id1, id2, resourcespecification := AddResourceSpecificationRelationshipTest(ctx, t, mr)
+	EditResourceSpecificationRelationshipTest(ctx, t, mr, id1, id2, resourcespecification)
+	RemoveResourceSpecificationRelationshipTest(ctx, t, mr, id1, id2)
+}
 
-// func AddResourceSpecificationRelationShipListTest(ctx context.Context, t *testing.T, mr generated.MutationResolver) ([]*ent.ResourceSpecificationRelationship, error) {
-// 	resourceType, err := mr.AddResourceType(ctx, models.AddResourceTypeInput{
-// 		Name: "resource_type_test_2",
-// 	})
-// 	require.NoError(t, err)
-// 	resourceSpecification, err := mr.AddResourceSpecification(ctx, models.AddResourceSpecificationInput{
-// 		Name:         "resource_specification_test_2",
-// 		ResourceType: resourceType.ID,
-// 	})
-// 	require.NoError(t, err)
-// 	resourceSpecificationRelationShip, err := mr.AddResourceSpecificationRelationShipList(ctx, models.AddResourceSpecificationRelationShipListInput{
-// 		ResourceSpecification: resourceSpecification.ID,
-// 		NameList: []*models.ResourceSpecificationRelationShipListInput{
-// 			{
-// 				Name: "PORT_1_OLT_PORT_EXT",
-// 			},
-// 		},
-// 	})
-// 	require.NoError(t, err)
-// 	return resourceSpecificationRelationShip, nil
-// }
-
+func AddResourceSpecificationRelationshipListTest(ctx context.Context, t *testing.T, mr generated.MutationResolver) ([]*ent.ResourceSpecificationRelationship, error) {
+	resourceType, err := mr.AddResourceType(ctx, models.AddResourceTypeInput{
+		Name:                 "resource_type_test_2",
+		ResourceTypeClass:    "RACK",
+		ResourceTypeBaseType: "LOGICAL_RESOURCE",
+	})
+	require.NoError(t, err)
+	resourceSpecification, err := mr.AddResourceSpecification(ctx, models.AddResourceSpecificationInput{
+		Name:         "resource_specification_test_2",
+		ResourceType: resourceType.ID,
+	})
+	require.NoError(t, err)
+	resourceSpecificationRelationShip, err := mr.AddResourceSpecificationRelationshipList(ctx, []*models.AddResourceSpecificationRelationshipInput{
+		{
+			Name:                  "resource_specification_relationship_list_1",
+			ResourceSpecification: resourceSpecification.ID,
+		},
+	})
+	require.NoError(t, err)
+	return resourceSpecificationRelationShip, nil
+}
 
 func AddResourceSpecificationRelationshipTest(ctx context.Context, t *testing.T, mr generated.MutationResolver) (int, int, int) {
 
