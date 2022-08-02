@@ -38,7 +38,16 @@ func NewFlowHandler(client client.Client, automationUrl string) *FlowHandler {
 
 // Handle handles event based on relevant logic
 func (f FlowHandler) Handle(ctx context.Context, logger log.Logger, evt ev.EventObject) error {
+
+	// TODO Remove it
+	tempLog := logger.For(ctx)
+
 	entry, ok := evt.(event.LogEntry)
+	// TODO Remove it
+	tempLog.Info(
+		"[FlowHandler]",
+		zap.Any("Entry", entry),
+	)
 	if !ok || entry.Type != ent.TypeFlowInstance {
 		return nil
 	}
@@ -53,9 +62,6 @@ func (f FlowHandler) Handle(ctx context.Context, logger log.Logger, evt ev.Event
 
 	flowInstanceID := entry.CurrState.ID
 	tenant := v.Tenant()
-
-	// TODO Remove it
-	tempLog := logger.For(ctx)
 
 	tempLog.Info(
 		"[Flow Instance]",
