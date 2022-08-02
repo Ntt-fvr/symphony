@@ -38,7 +38,17 @@ func (t *authedTransport) RoundTrip(req *http.Request) (*http.Response, error) {
 
 	tenant := req.Context().Value(tenantKey)
 	if tenant != nil {
+		// TODO Remove it
+		fmt.Println()
+		fmt.Printf("[Automation] Tenant: %s", tenant)
+		fmt.Println()
+
 		req.Header.Set("x-auth-organization", tenant.(string))
+	} else {
+		// TODO Remove it
+		fmt.Println()
+		fmt.Println("[Automation] No Tenant")
+		fmt.Println()
 	}
 
 	return t.wrapped.RoundTrip(req)
