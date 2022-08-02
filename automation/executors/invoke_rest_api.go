@@ -138,7 +138,7 @@ func (b *ExecutorInvokeRestAPIBlock) runLogic() error {
 }
 
 func (b *ExecutorInvokeRestAPIBlock) getUrl() (*string, error) {
-	native, err := b.getNativeValue(b.Url)
+	native, err := b.processExpressionLanguage(b.Url)
 	if err != nil {
 		return nil, err
 	}
@@ -162,7 +162,7 @@ func (b *ExecutorInvokeRestAPIBlock) getBody() (map[string]interface{}, error) {
 		invokeBody = "{}"
 	}
 
-	native, err := b.getNativeValue(invokeBody)
+	native, err := b.processExpressionLanguage(invokeBody)
 	if err != nil {
 		return nil, err
 	}
@@ -197,7 +197,7 @@ func (b *ExecutorInvokeRestAPIBlock) getHeaders() (map[string]interface{}, error
 		invokeHeaders = "{}"
 	}
 
-	native, err := b.getNativeValue(invokeHeaders)
+	native, err := b.processExpressionLanguage(invokeHeaders)
 	if err != nil {
 		return nil, err
 	}
@@ -210,7 +210,7 @@ func (b *ExecutorInvokeRestAPIBlock) getHeaders() (map[string]interface{}, error
 	return nil, errors.New("malformed body")
 }
 
-func (b *ExecutorInvokeRestAPIBlock) getNativeValue(value string) (map[string]interface{}, error) {
+func (b *ExecutorInvokeRestAPIBlock) processExpressionLanguage(value string) (map[string]interface{}, error) {
 	inputVariable := celgo.ConvertToValue(b.Input)
 	stateVariable := celgo.ConvertToValue(b.State)
 

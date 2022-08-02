@@ -18,7 +18,7 @@ type SignalRequest struct {
 }
 
 func HandleAutomationSignal(ctx context.Context, _ log.Logger, evt ev.EventObject) error {
-	var err error
+
 	entry, ok := evt.(event.SignalEvent)
 	fmt.Println("Handler Automation Signal", entry)
 	if !ok || entry.Type != block.SignalTypeWOUPDATED {
