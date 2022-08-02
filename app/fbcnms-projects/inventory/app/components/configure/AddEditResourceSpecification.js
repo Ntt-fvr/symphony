@@ -30,7 +30,6 @@ import RelationshipTypeItem from './RelationshipTypeItem';
 import SaveDialogConfirm from './SaveDialogConfirm';
 import TableConfigureAction from '../action_catalog/TableConfigureAction';
 import TextField from '@material-ui/core/TextField';
-import fbt from 'fbt';
 import inventoryTheme from '../../common/theme';
 import {camelCase, omit, startCase} from 'lodash';
 import {convertPropertyTypeToMutationInput} from '../../common/PropertyType';
@@ -215,10 +214,8 @@ export const AddEditResourceSpecification = (props: Props) => {
         alignItems="center">
         <Grid item xs>
           <ConfigureTitleSubItem
-            title={
-              fbt('Resources/', '') + ` ${editMode ? dataForm.name + '/' : ''}`
-            }
-            tag={' Resource specification'}
+            title={` ${editMode ? dataForm?.resourceType?.name + '/' : ''}`}
+            tag={dataForm.name ?? ''}
           />
         </Grid>
         <Grid>

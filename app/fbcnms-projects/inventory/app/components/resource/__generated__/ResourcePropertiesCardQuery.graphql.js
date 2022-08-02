@@ -94,6 +94,14 @@ export type ResourcePropertiesCardQueryResponse = {|
       |}
     |}>
   |},
+  +locations: ?{|
+    +edges: $ReadOnlyArray<{|
+      +node: ?{|
+        +id: string,
+        +name: string,
+      |}
+    |}>
+  |},
 |};
 export type ResourcePropertiesCardQuery = {|
   variables: ResourcePropertiesCardQueryVariables,
@@ -157,6 +165,14 @@ query ResourcePropertiesCardQuery(
           isMandatory
           isInstanceProperty
         }
+      }
+    }
+  }
+  locations {
+    edges {
+      node {
+        id
+        name
       }
     }
   }
@@ -256,6 +272,10 @@ v12 = {
   "storageKey": null
 },
 v13 = [
+  (v1/*: any*/),
+  (v2/*: any*/)
+],
+v14 = [
   {
     "alias": null,
     "args": [
@@ -400,10 +420,7 @@ v13 = [
                 "kind": "LinkedField",
                 "name": "resourceType",
                 "plural": false,
-                "selections": [
-                  (v1/*: any*/),
-                  (v2/*: any*/)
-                ],
+                "selections": (v13/*: any*/),
                 "storageKey": null
               },
               {
@@ -444,6 +461,38 @@ v13 = [
       }
     ],
     "storageKey": null
+  },
+  {
+    "alias": null,
+    "args": null,
+    "concreteType": "LocationConnection",
+    "kind": "LinkedField",
+    "name": "locations",
+    "plural": false,
+    "selections": [
+      {
+        "alias": null,
+        "args": null,
+        "concreteType": "LocationEdge",
+        "kind": "LinkedField",
+        "name": "edges",
+        "plural": true,
+        "selections": [
+          {
+            "alias": null,
+            "args": null,
+            "concreteType": "Location",
+            "kind": "LinkedField",
+            "name": "node",
+            "plural": false,
+            "selections": (v13/*: any*/),
+            "storageKey": null
+          }
+        ],
+        "storageKey": null
+      }
+    ],
+    "storageKey": null
   }
 ];
 return {
@@ -452,7 +501,7 @@ return {
     "kind": "Fragment",
     "metadata": null,
     "name": "ResourcePropertiesCardQuery",
-    "selections": (v13/*: any*/),
+    "selections": (v14/*: any*/),
     "type": "Query",
     "abstractKey": null
   },
@@ -461,19 +510,19 @@ return {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
     "name": "ResourcePropertiesCardQuery",
-    "selections": (v13/*: any*/)
+    "selections": (v14/*: any*/)
   },
   "params": {
-    "cacheID": "cc7ff0d1cb26c3219a1c440b76b58286",
+    "cacheID": "6d95724c6346b3114caefb398bc9314d",
     "id": null,
     "metadata": {},
     "name": "ResourcePropertiesCardQuery",
     "operationKind": "query",
-    "text": "query ResourcePropertiesCardQuery(\n  $filterResource: ResourceFilter\n) {\n  queryResource(filter: $filterResource) {\n    id\n    name\n    locatedIn\n    externalId\n    resourceSpecification\n    isDeleted\n    lifecycleStatus\n    typePlanningSubStatus\n    planningSubStatus\n    usageSubStatus\n    operationalSubStatus\n    resourceProperties {\n      booleanValue\n      floatValue\n      id\n      intValue\n      latitudeValue\n      longitudeValue\n      rangeFromValue\n      rangeToValue\n      stringValue\n      resourcePropertyType\n      isMandatory\n      isInstanceProperty\n    }\n  }\n  resourceSpecifications {\n    edges {\n      node {\n        id\n        name\n        resourceType {\n          id\n          name\n        }\n        resourcePropertyTypes {\n          id\n          name\n          type\n          stringValue\n          intValue\n          booleanValue\n          floatValue\n          latitudeValue\n          longitudeValue\n          rangeFromValue\n          rangeToValue\n          isMandatory\n          isInstanceProperty\n        }\n      }\n    }\n  }\n}\n"
+    "text": "query ResourcePropertiesCardQuery(\n  $filterResource: ResourceFilter\n) {\n  queryResource(filter: $filterResource) {\n    id\n    name\n    locatedIn\n    externalId\n    resourceSpecification\n    isDeleted\n    lifecycleStatus\n    typePlanningSubStatus\n    planningSubStatus\n    usageSubStatus\n    operationalSubStatus\n    resourceProperties {\n      booleanValue\n      floatValue\n      id\n      intValue\n      latitudeValue\n      longitudeValue\n      rangeFromValue\n      rangeToValue\n      stringValue\n      resourcePropertyType\n      isMandatory\n      isInstanceProperty\n    }\n  }\n  resourceSpecifications {\n    edges {\n      node {\n        id\n        name\n        resourceType {\n          id\n          name\n        }\n        resourcePropertyTypes {\n          id\n          name\n          type\n          stringValue\n          intValue\n          booleanValue\n          floatValue\n          latitudeValue\n          longitudeValue\n          rangeFromValue\n          rangeToValue\n          isMandatory\n          isInstanceProperty\n        }\n      }\n    }\n  }\n  locations {\n    edges {\n      node {\n        id\n        name\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = '2ce4e35f65eeed52a9fa7e75e094fce8';
+(node/*: any*/).hash = 'c34dd4af57582d17959f4868106448eb';
 
 module.exports = node;
