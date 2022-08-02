@@ -219,7 +219,7 @@ func (b *ExecutorInvokeRestAPIBlock) getNativeValue(value string) (map[string]in
 		celgo.StateVariable: stateVariable,
 	}
 
-	expression := fmt.Sprintf(`{"%s": %s}`, invokeParamKey, value)
+	expression := fmt.Sprintf(`{'%s': %s}`, invokeParamKey, value)
 
 	result, err := celgo.CompileAndEvaluate(expression, variables)
 	if err != nil {
