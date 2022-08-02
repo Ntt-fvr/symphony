@@ -68,6 +68,8 @@ type Props = $ReadOnly<{|
   tableTypes: Array<TableType>,
   nameCard: string,
   selectMultiple?: boolean,
+  vlan?: boolean,
+  items?: boolean,
   data: any,
   // supportDelete?: boolean,
 |}>;
@@ -76,6 +78,8 @@ const TableContextForm = ({
   tableTypes,
   nameCard,
   selectMultiple,
+  vlan,
+  items,
   data,
 }: // supportDelete,
 Props) => {
@@ -100,11 +104,27 @@ Props) => {
             <Table component="div" className={classes.root}>
               <TableHead component="div">
                 <TableRow component="div">
-                  <TableCell component="div">Name</TableCell>
-                  {selectMultiple ? null : (
+                  {selectMultiple && (
                     <TableCell component="div">
                       {nameCard} Specification
                     </TableCell>
+                  )}
+                  {vlan && (
+                    <>
+                      <TableCell component="div">{nameCard} Type</TableCell>
+                      <TableCell component="div">
+                        Resource Specification
+                      </TableCell>
+                      <TableCell component="div">Quantity</TableCell>
+                    </>
+                  )}
+                  {items && (
+                    <>
+                      <TableCell component="div">{nameCard} Name</TableCell>
+                      <TableCell component="div">
+                        {nameCard} Specification
+                      </TableCell>
+                    </>
                   )}
                   <TableCell component="div">Delete</TableCell>
                 </TableRow>
@@ -114,7 +134,7 @@ Props) => {
                 .sort(sortByIndex)
                 .map((item, i) => (
                   <TableRow component="div">
-                    {selectMultiple ? (
+                    {selectMultiple && (
                       <TableCell component="div" scope="row">
                         <Select
                           multiple
@@ -151,7 +171,85 @@ Props) => {
                           ))}
                         </Select>
                       </TableCell>
-                    ) : (
+                    )}
+                    {vlan && (
+                      <>
+                        <TableCell>
+                          <FormField>
+                            <TextField
+                              className={classes.formField}
+                              select
+                              label={`${nameCard} Type`}
+                              variant="outlined"
+                              fullWidth
+                              // value={item.resourceSpecification ?? ''}
+                              defaultValue=""
+                              // onChange={({target}) => {
+                              //   dispatch({
+                              //     type: 'UPDATE_PROPERTY_TYPE_NAME',
+                              //     ...item,
+                              //     resourceSpecification: target.value,
+                              //   });
+                              // }}
+                            >
+                              {data.map((item, index) => (
+                                <MenuItem
+                                  key={index}
+                                  value={item.resourceType.id}>
+                                  {item.resourceType.name}
+                                </MenuItem>
+                              ))}
+                            </TextField>
+                          </FormField>
+                        </TableCell>
+                        <TableCell>
+                          <FormField>
+                            <TextField
+                              className={classes.formField}
+                              select
+                              label={`Select ${nameCard} Specifications`}
+                              variant="outlined"
+                              fullWidth
+                              value={item.resourceSpecification ?? ''}
+                              defaultValue=""
+                              onChange={({target}) => {
+                                dispatch({
+                                  type: 'UPDATE_PROPERTY_TYPE_NAME',
+                                  ...item,
+                                  resourceSpecification: target.value,
+                                });
+                              }}>
+                              {data.map((item, index) => (
+                                <MenuItem key={index} value={item.id}>
+                                  {item.name}
+                                </MenuItem>
+                              ))}
+                            </TextField>
+                          </FormField>
+                        </TableCell>
+                        <TableCell>
+                          <FormField>
+                            <TextField
+                              className={classes.formField}
+                              label="Quantity"
+                              variant="outlined"
+                              type="number"
+                              fullWidth
+                              // value={item.resourceSpecification ?? ''}
+                              defaultValue=""
+                              // onChange={({target}) => {
+                              //   dispatch({
+                              //     type: 'UPDATE_PROPERTY_TYPE_NAME',
+                              //     ...item,
+                              //     resourceSpecification: target.value,
+                              //   });
+                              // }}
+                            />
+                          </FormField>
+                        </TableCell>
+                      </>
+                    )}
+                    {items && (
                       <>
                         <TableCell component="div" scope="row">
                           <FormField>
@@ -186,7 +284,6 @@ Props) => {
                           <FormField>
                             <TextField
                               className={classes.formField}
-                              required
                               select
                               label={`Select ${nameCard} Specifications`}
                               variant="outlined"

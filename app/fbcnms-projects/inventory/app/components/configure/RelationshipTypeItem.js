@@ -164,15 +164,19 @@ export default function RelationshipTypeItem(props: Props) {
   const [tableTypesCards, tableTypesDispatcherCards] = useTableTypesReducer(
     spliceItems(search('CARD') ?? []),
   );
+  const [tableTypesVlan, tableTypesDispatcherVlan] = useTableTypesReducer(
+    spliceItems(search('VLAN') ?? []),
+  );
 
   useEffect(() => {
     callback(unifyData);
-  }, [tableTypesSlots, tableTypesPorts, tableTypesCards]);
+  }, [tableTypesSlots, tableTypesPorts, tableTypesCards, tableTypesVlan]);
 
   const unifyData = [
     ...tableTypesSlots,
     ...tableTypesPorts,
     ...tableTypesCards,
+    ...tableTypesVlan,
   ];
 
   return (
@@ -201,6 +205,7 @@ export default function RelationshipTypeItem(props: Props) {
           <TableContextForm
             data={searchSpecification('PORT')}
             nameCard="Port"
+            items
             tableTypes={tableTypesPorts}
           />
         </TableTypesDispatcher.Provider>
@@ -211,12 +216,21 @@ export default function RelationshipTypeItem(props: Props) {
           <TableContextForm
             data={searchSpecification('SLOT')}
             nameCard="Slot"
+            items
             tableTypes={tableTypesSlots}
           />
         </TableTypesDispatcher.Provider>
       )}
-      {getdataAllRelationShips.includes('VLA') && (
-        <RelationshipFormValidation nameForm="Vlan" />
+      {getdataAllRelationShips.includes('VLAN') && (
+        <TableTypesDispatcher.Provider
+          value={{dispatch: tableTypesDispatcherVlan, tableTypesVlan}}>
+          <TableContextForm
+            data={searchSpecification('VLAN')}
+            nameCard="Vlan"
+            vlan
+            tableTypes={tableTypesVlan}
+          />
+        </TableTypesDispatcher.Provider>
       )}
     </>
   );
