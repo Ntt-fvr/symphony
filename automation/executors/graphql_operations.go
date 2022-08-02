@@ -38,9 +38,9 @@ func (t *authedTransport) RoundTrip(req *http.Request) (*http.Response, error) {
 	}
 	// req.Header.Set("Authorization", "bearer "+t.key)
 
-	tenant := req.Context().Value(tenantKey)
-	if tenant != nil {
-		req.Header.Set("x-auth-organization", tenant.(string))
+	tenantValue := req.Context().Value(tenantKey)
+	if tenantValue != nil {
+		req.Header.Set("x-auth-organization", tenantValue.(string))
 	}
 
 	req.Header.Set("x-auth-user-role", auth.UserRole)
@@ -50,8 +50,8 @@ func (t *authedTransport) RoundTrip(req *http.Request) (*http.Response, error) {
 	fmt.Println("**************************************")
 	fmt.Println("[Automation - GraphQL]")
 	fmt.Printf("Email: %s\n", req.Header.Get("x-auth-user-email"))
-	fmt.Printf("Email: %s\n", req.Header.Get("x-auth-organization"))
-	fmt.Printf("Email: %s\n", req.Header.Get("x-auth-user-role"))
+	fmt.Printf("Tenant: %s\n", req.Header.Get("x-auth-organization"))
+	fmt.Printf("Role: %s\n", req.Header.Get("x-auth-user-role"))
 	fmt.Println("**************************************")
 	fmt.Println()
 
