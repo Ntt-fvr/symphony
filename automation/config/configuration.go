@@ -17,6 +17,7 @@ type AppConfig struct {
 	WorkerServiceName                     string                         `name:"automation.worker.service" env:"WORKER_SERVICE_NAME" default:"cadence-frontend"`
 	WorkerTaskList                        string                         `name:"automation.worker.task" env:"WORKER_TASK_LIST"`
 	GraphQLEndpoint                       string                         `name:"automation.graphql.endpoint" env:"GRAPHQL_ENDPOINT"`
+	GraphQLUserRole                       string                         `name:"automation.graphql.user.role" env:"GRAPHQL_USER_ROLE"`
 	GraphQLAuthenticationType             enum.GraphQLAuthenticationType `name:"automation.graphql.auth" env:"GRAPHQL_AUTHENTICATION_TYPE"`
 	GraphQLAuthenticationBasicUser        string                         `name:"automation.graphql.basic.user" env:"GRAPHQL_AUTHENTICATION_BASIC_USER"`
 	GraphQLAuthenticationBasicPassword    string                         `name:"automation.graphql.basic.password" env:"GRAPHQL_AUTHENTICATION_BASIC_PASSWORD"`
@@ -62,9 +63,10 @@ type GraphQLBasic struct {
 }
 
 type GraphQLAuthentication struct {
-	Type  enum.GraphQLAuthenticationType
-	Basic GraphQLBasic
-	Oidc  GraphQLOidc
+	UserRole string
+	Type     enum.GraphQLAuthenticationType
+	Basic    GraphQLBasic
+	Oidc     GraphQLOidc
 }
 
 type GraphQLConfig struct {
@@ -100,7 +102,8 @@ func GraphQLConfiguration(a *AppConfig) GraphQLConfig {
 	return GraphQLConfig{
 		Endpoint: a.GraphQLEndpoint,
 		Authentication: GraphQLAuthentication{
-			Type: a.GraphQLAuthenticationType,
+			UserRole: a.GraphQLUserRole,
+			Type:     a.GraphQLAuthenticationType,
 			Basic: GraphQLBasic{
 				User:     a.GraphQLAuthenticationBasicUser,
 				Password: a.GraphQLAuthenticationBasicPassword,

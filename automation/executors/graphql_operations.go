@@ -33,23 +33,27 @@ func (t *authedTransport) RoundTrip(req *http.Request) (*http.Response, error) {
 	case enum.GraphQLAuthenticationTypeBasic:
 		basic := auth.Basic
 		req.SetBasicAuth(basic.User, basic.Password)
+
+		req.Header.Set("x-auth-user-email", basic.User)
 	}
 	// req.Header.Set("Authorization", "bearer "+t.key)
 
 	tenant := req.Context().Value(tenantKey)
 	if tenant != nil {
-		// TODO Remove it
-		fmt.Println()
-		fmt.Printf("[Automation] Tenant: %s", tenant)
-		fmt.Println()
-
 		req.Header.Set("x-auth-organization", tenant.(string))
-	} else {
-		// TODO Remove it
-		fmt.Println()
-		fmt.Println("[Automation] No Tenant")
-		fmt.Println()
 	}
+
+	req.Header.Set("x-auth-user-role", auth.UserRole)
+
+	// TODO Remove it
+	fmt.Println()
+	fmt.Println("**************************************")
+	fmt.Println("[Automation - GraphQL]")
+	fmt.Printf("Email: %s\n", req.Header.Get("x-auth-user-email"))
+	fmt.Printf("Email: %s\n", req.Header.Get("x-auth-organization"))
+	fmt.Printf("Email: %s\n", req.Header.Get("x-auth-user-role"))
+	fmt.Println("**************************************")
+	fmt.Println()
 
 	return t.wrapped.RoundTrip(req)
 }
