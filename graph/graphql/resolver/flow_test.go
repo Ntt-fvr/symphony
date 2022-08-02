@@ -628,11 +628,6 @@ func TestImportEmptyFlow(t *testing.T) {
 				TargetBlockCid: pointer.ToString("end"),
 			},
 		},
-		TrueFalseBlocks: []*models.TrueFalseBlockInput{
-			{
-				Cid: "trueFalse",
-			},
-		},
 		Connectors: connectorInputs,
 	})
 	require.NoError(t, err)
