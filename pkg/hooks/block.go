@@ -8,7 +8,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"time"
 
 	"github.com/facebookincubator/symphony/pkg/ent/automationactivity"
 
@@ -457,66 +456,51 @@ func (h Flower) VerifyBlockInstanceOutputsHook() ent.Hook {
 		))
 }
 
+// UpdateFlowInstanceStatus if the blockInstance status is failed or if is the endBlockInstance is completed
 func UpdateFlowInstanceStatus() ent.Hook {
 	hk := func(next ent.Mutator) ent.Mutator {
-		return hook.BlockInstanceFunc(
-			func(ctx context.Context, mutation *ent.BlockInstanceMutation) (ent.Value, error) {
-				client := mutation.Client()
-
-				status, _ := mutation.Status()
-
-				mutationActivity := client.AutomationActivity.Create().
-					SetAutomationEntityType(automationactivity.AutomationEntityTypeBlockInstance).
-					SetNewValue(status.String())
-
-				if mutation.Op().Is(ent.OpCreate) {
-					mutationActivity = mutationActivity.SetActivityType(automationactivity.ActivityTypeCreation)
-
-					mutationActivity.SaveX(ctx)
-				} else {
-					oldStatus, err := mutation.OldStatus(ctx)
-					if err != nil {
-						return nil, fmt.Errorf("failed to get previous status: %w", err)
-					}
-
-					mutationActivity = mutationActivity.
-						SetActivityType(automationactivity.ActivityTypeStatus).
-						SetOldValue(oldStatus.String())
-
-					mutationActivity.SaveX(ctx)
-
-					blockInstanceID, _ := mutation.ID()
-					blockInstance := client.BlockInstance.GetX(ctx, blockInstanceID)
-
-					flowInstanceID := blockInstance.
-						QueryFlowInstance().
-						OnlyIDX(ctx)
-
-					switch status {
-					case blockinstance.StatusFailed:
-						if err := client.FlowInstance.UpdateOneID(flowInstanceID).
-							SetStatus(flowinstance.StatusFailed).
-							Exec(ctx); err != nil {
-							return nil, fmt.Errorf("failed to update flow instance: %w", err)
-						}
-					case blockinstance.StatusCompleted:
-						flowBlock := blockInstance.QueryBlock().OnlyX(ctx)
-
-						if block.TypeEnd == flowBlock.Type {
-							if err := client.FlowInstance.UpdateOneID(flowInstanceID).
-								SetStatus(flowinstance.StatusCompleted).
-								SetEndDate(time.Now()).
-								Exec(ctx); err != nil {
-								return nil, fmt.Errorf("failed to update flow instance: %w", err)
-							}
-						}
-					}
+		return hook.BlockInstanceFunc(func(ctx context.Context, mutation *ent.BlockInstanceMutation) (ent.Value, error) {
+			var (
+				flowInstanceID int
+				err            error
+				blockID        int
+			)
+			status, _ := mutation.Status()
+			if mutation.Op().Is(ent.OpCreate) {
+				flowInstanceID, _ = mutation.FlowInstanceID()
+				blockID, _ = mutation.BlockID()
+			} else {
+				id, exists := mutation.ID()
+				if !exists {
+					return nil, fmt.Errorf("blockinstance has no id")
 				}
-
-				return next.Mutate(ctx, mutation)
-			},
-		)
+				flowInstanceID, _ = mutation.Client().BlockInstance.Query().
+					Where(blockinstance.ID(id)).
+					QueryFlowInstance().
+					OnlyID(ctx)
+				blockID, _ = mutation.Client().BlockInstance.Query().
+					Where(blockinstance.ID(id)).
+					QueryBlock().
+					OnlyID(ctx)
+			}
+			b := mutation.Client().Block.Query().
+				Where(block.ID(blockID)).
+				OnlyX(ctx)
+			if flowInstanceID != 0 && status == blockinstance.StatusFailed {
+				if err = mutation.Client().FlowInstance.UpdateOneID(flowInstanceID).
+					SetStatus(flowinstance.StatusFailed).
+					Exec(ctx); err != nil {
+					return nil, fmt.Errorf("failed to update flow instance: %w", err)
+				}
+			} else if flowInstanceID != 0 && status == blockinstance.StatusCompleted && block.TypeEnd == b.Type {
+				if err = mutation.Client().FlowInstance.UpdateOneID(flowInstanceID).
+					SetStatus(flowinstance.StatusCompleted).
+					Exec(ctx); err != nil {
+					return nil, fmt.Errorf("failed to update flow instance: %w", err)
+				}
+			}
+			return next.Mutate(ctx, mutation)
+		})
 	}
-
 	return hook.On(hk, ent.OpCreate|ent.OpUpdateOne)
 }

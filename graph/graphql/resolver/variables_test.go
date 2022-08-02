@@ -8,8 +8,6 @@ import (
 	"context"
 	"testing"
 
-	"github.com/facebookincubator/symphony/pkg/ent/flow"
-
 	"github.com/facebookincubator/symphony/graph/graphql/models"
 	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
 	"github.com/facebookincubator/symphony/pkg/flowengine/flowschema"
@@ -204,3 +202,4 @@ func TestSubFlowBlockInputParams(t *testing.T) {
 	require.Equal(t, "start_param", def.Name())
 	require.Empty(t, subflow.Params[0].BlockVariables)
 }
+
