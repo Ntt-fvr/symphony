@@ -14,6 +14,7 @@ import Accordion from '@material-ui/core/Accordion';
 import AccordionDetails from '@material-ui/core/AccordionDetails';
 import AccordionSummary from '@material-ui/core/AccordionSummary';
 import Button from '@symphony/design-system/components/Button';
+import CancelIcon from '@material-ui/icons/Cancel';
 import Chip from '@material-ui/core/Chip';
 import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutline';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
@@ -36,6 +37,7 @@ import {PlusIcon} from '@symphony/design-system/icons';
 import {makeStyles} from '@material-ui/styles';
 import {sortByIndex} from './draggable/DraggableUtils';
 import {useContext} from 'react';
+import {without} from 'lodash';
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -53,8 +55,13 @@ const useStyles = makeStyles(() => ({
       alignItems: 'center',
       padding: 0,
       marginLeft: '10px',
-      height: '34px',
+      height: '36px',
     },
+    width: 850,
+  },
+  chips: {
+    display: 'flex',
+    flexWrap: 'wrap',
   },
   chip: {
     marginRight: 10,
@@ -87,6 +94,11 @@ Props) => {
   const {dispatch} = useContext(TableTypesDispatcher);
   const [selectChip, setSelectChip] = useState([]);
   const lengthR = tableTypes.filter(o => o.name.length !== 0);
+
+  const handleDelete = (e, value) => {
+    e.preventDefault();
+    setSelectChip(current => without(current, value));
+  };
 
   return (
     <div className={classes.root}>
@@ -126,7 +138,9 @@ Props) => {
                       </TableCell>
                     </>
                   )}
-                  <TableCell component="div">Delete</TableCell>
+                  {selectMultiple ? null : (
+                    <TableCell component="div">Delete</TableCell>
+                  )}
                 </TableRow>
               </TableHead>
               {tableTypes
@@ -138,8 +152,8 @@ Props) => {
                       <TableCell component="div" scope="row">
                         <Select
                           multiple
-                          fullWidth
                           defaultValue=""
+                          fullWidth
                           value={selectChip}
                           onChange={({target}) => {
                             setSelectChip(target.value);
@@ -153,16 +167,23 @@ Props) => {
                             <OutlinedInput className={classes.selectCard} />
                           }
                           renderValue={selected => (
-                            <>
+                            <div className={classes.chips}>
                               {selected.map(value => (
                                 <Chip
                                   key={value}
                                   label={value}
-                                  onDelete={'handleDelete'}
+                                  deleteIcon={
+                                    <CancelIcon
+                                      onMouseDown={event =>
+                                        event.stopPropagation()
+                                      }
+                                    />
+                                  }
+                                  onDelete={e => handleDelete(e, value)}
                                   className={classes.chip}
                                 />
                               ))}
-                            </>
+                            </div>
                           )}>
                           {data.map((item, index) => (
                             <MenuItem key={index} value={item.name}>
@@ -182,16 +203,7 @@ Props) => {
                               label={`${nameCard} Type`}
                               variant="outlined"
                               fullWidth
-                              // value={item.resourceSpecification ?? ''}
-                              defaultValue=""
-                              // onChange={({target}) => {
-                              //   dispatch({
-                              //     type: 'UPDATE_PROPERTY_TYPE_NAME',
-                              //     ...item,
-                              //     resourceSpecification: target.value,
-                              //   });
-                              // }}
-                            >
+                              defaultValue="">
                               {data.map((item, index) => (
                                 <MenuItem
                                   key={index}
@@ -235,15 +247,7 @@ Props) => {
                               variant="outlined"
                               type="number"
                               fullWidth
-                              // value={item.resourceSpecification ?? ''}
                               defaultValue=""
-                              // onChange={({target}) => {
-                              //   dispatch({
-                              //     type: 'UPDATE_PROPERTY_TYPE_NAME',
-                              //     ...item,
-                              //     resourceSpecification: target.value,
-                              //   });
-                              // }}
                             />
                           </FormField>
                         </TableCell>
@@ -307,32 +311,36 @@ Props) => {
                         </TableCell>
                       </>
                     )}
-                    <TableCell component="div">
-                      <FormAction>
-                        <IconButton>
-                          <DeleteOutlinedIcon
-                            color="primary"
-                            onClick={() =>
-                              dispatch({
-                                type: 'DELETE_PROPERTY_TYPE',
-                                id: item.id,
-                              })
-                            }
-                          />
-                        </IconButton>
-                      </FormAction>
-                    </TableCell>
+                    {selectMultiple ? null : (
+                      <TableCell component="div">
+                        <FormAction>
+                          <IconButton>
+                            <DeleteOutlinedIcon
+                              color="primary"
+                              onClick={() =>
+                                dispatch({
+                                  type: 'DELETE_PROPERTY_TYPE',
+                                  id: item.id,
+                                })
+                              }
+                            />
+                          </IconButton>
+                        </FormAction>
+                      </TableCell>
+                    )}
                   </TableRow>
                 ))}
             </Table>
-            <FormAction>
-              <Button
-                variant="text"
-                onClick={() => dispatch({type: 'ADD_PROPERTY_TYPE'})}
-                leftIcon={PlusIcon}>
-                Add Relationship
-              </Button>
-            </FormAction>
+            {selectMultiple ? null : (
+              <FormAction>
+                <Button
+                  variant="text"
+                  onClick={() => dispatch({type: 'ADD_PROPERTY_TYPE'})}
+                  leftIcon={PlusIcon}>
+                  Add Relationship
+                </Button>
+              </FormAction>
+            )}
           </Grid>
         </AccordionDetails>
       </Accordion>
