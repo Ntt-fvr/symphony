@@ -28,9 +28,9 @@ import {Configuration} from '../resource_instance/Configuration';
 import {LogEvents, ServerLogger} from '../../common/LoggingUtils';
 import {ResourceNetworkCard} from './ResourceNetworkCard';
 import {camelCase, startCase} from 'lodash';
+import {getPropertyValue} from '../../common/Property';
 import {graphql} from 'relay-runtime';
 import {makeStyles} from '@material-ui/styles';
-
 const useStyles = makeStyles(theme => ({
   root: {
     height: 'calc(100% - 92px)',
@@ -64,6 +64,7 @@ const ResourceCardListQuery = graphql`
       id
       name
       locatedIn
+      externalId
       resourceSpecification
       isDeleted
       lifecycleStatus
@@ -71,6 +72,20 @@ const ResourceCardListQuery = graphql`
       planningSubStatus
       usageSubStatus
       operationalSubStatus
+      resourceProperties {
+        booleanValue
+        floatValue
+        id
+        intValue
+        latitudeValue
+        longitudeValue
+        rangeFromValue
+        rangeToValue
+        stringValue
+        resourcePropertyType
+        isMandatory
+        isInstanceProperty
+      }
     }
     resourceSpecifications {
       edges {
@@ -80,6 +95,21 @@ const ResourceCardListQuery = graphql`
           resourceType {
             id
             name
+          }
+          resourcePropertyTypes {
+            id
+            name
+            type
+            stringValue
+            intValue
+            booleanValue
+            floatValue
+            latitudeValue
+            longitudeValue
+            rangeFromValue
+            rangeToValue
+            isMandatory
+            isInstanceProperty
           }
         }
       }
@@ -138,14 +168,21 @@ const ResourcePropertiesCard = (props: Props) => {
   const [selectedTab, setSelectedTab] = useState('details');
   const [openDialog, setOpenDialog] = useState(false);
 
-  const validateForm = data => {
+  const validateForm = (title, data) => {
     return (
-      <span className={classes.resourceDetails}>
-        {data !== null ? startCase(camelCase(data)) : startCase('empty')}
-      </span>
+      <>
+        {data !== null ? (
+          <Typography style={{lineHeight: 2}} variant="body2">
+            {startCase(title) + ':'}
+            <span className={classes.resourceDetails}>
+              {startCase(camelCase(data))}
+            </span>
+          </Typography>
+        ) : null}
+      </>
     );
   };
- 
+
   return (
     <InventoryQueryRenderer
       query={ResourceCardListQuery}
@@ -155,10 +192,50 @@ const ResourcePropertiesCard = (props: Props) => {
         },
       }}
       render={resourceData => {
+        const getResourceData = resourceData.queryResource[0];
+        const filterSpecificationById = resourceData.resourceSpecifications.edges
+          .map(item => item?.node)
+          .filter(item => item.id === getResourceData.resourceSpecification);
+
+        const propertySpecification = filterSpecificationById.flatMap(
+          item => item.resourcePropertyTypes,
+        );
+
+        const propertyResource = getResourceData.resourceProperties.map(
+          item => item,
+        );
+
+        const spliceProperties = propertySpecification.map((item, index) => {
+          return {
+            ...propertyResource[index],
+            propertyType: item,
+            name: item.name,
+            type: item.type,
+          };
+        });
+
+        const selecTedResourceData = propertyResource.map((item, index) => {
+          return {
+            ...item,
+            propertyType: propertySpecification[index],
+          };
+        });
+
+        const convertParametersMap = resourceData.queryResource.flatMap(
+          (item, index) => {
+            return {
+              ...item,
+              resourceTypeName:
+                filterSpecificationById[index].resourceType.name,
+              resourceSName: filterSpecificationById[index].name,
+              resourceProperties: spliceProperties,
+            };
+          },
+        );
+
         return (
           <div className={classes.root}>
-            {resourceData.queryResource.map(item => (
-              
+            {convertParametersMap.map(item => (
               <>
                 <Grid
                   container
@@ -204,110 +281,46 @@ const ResourcePropertiesCard = (props: Props) => {
                     {selectedTab === 'details' ? (
                       <Card>
                         <CardContent>
-                          <Typography style={{lineHeight: 2}} variant="body2">
-                            Resource Type:
-                            {validateForm(null)}
-                          </Typography>
-                          <Typography style={{lineHeight: 2}} variant="body2">
-                            Resource Specification:
-                            {validateForm(null)}
-                          </Typography>
-                          <Typography style={{lineHeight: 2}} variant="body2">
-                            Lifecycle Status:
-                            {validateForm(item.lifecycleStatus)}
-                          </Typography>
-                          <Typography style={{lineHeight: 2}} variant="body2">
-                            Planning Status:
-                            {validateForm(item.typePlanningSubStatus)}
-                          </Typography>
-                          <Typography style={{lineHeight: 2}} variant="body2">
-                            Administrative Status:
-                            {validateForm(item.planningSubStatus)}
-                          </Typography>
-                          <Typography style={{lineHeight: 2}} variant="body2">
-                            Operational Status:
-                            {validateForm(item.operationalSubStatus)}
-                          </Typography>
-                          <Typography style={{lineHeight: 2}} variant="body2">
-                            Usage Status:
-                            {validateForm(item.usageSubStatus)}
-                          </Typography>
+                          {validateForm(
+                            'Resource Type:',
+                            item.resourceTypeName,
+                          )}
+                          {validateForm(
+                            'Resource Specification:',
+                            item.resourceSName,
+                          )}
+                          {validateForm(
+                            'Lifecycle Status:',
+                            item.lifecycleStatus,
+                          )}
+                          {validateForm(
+                            'Planning Status:',
+                            item.typePlanningSubStatus,
+                          )}
+                          {validateForm(
+                            'Administrative Status:',
+                            item.planningSubStatus,
+                          )}
+                          {validateForm(
+                            'Operational Status:',
+                            item.operationalSubStatus,
+                          )}
+                          {validateForm('Usage Status:', item.usageSubStatus)}
+
                           <Typography
                             style={{lineHeight: 3, fontWeight: 'bold'}}
                             variant="h6">
                             Properties
                           </Typography>
                           <Grid container>
-                            <Grid item xs={6}>
-                              <Typography
-                                style={{lineHeight: 2}}
-                                variant="body2">
-                                ID:
-                                {validateForm(null)}
-                              </Typography>
-                              <Typography
-                                style={{lineHeight: 2}}
-                                variant="body2">
-                                Model:
-                                {validateForm(null)}
-                              </Typography>
-                              <Typography
-                                style={{lineHeight: 2}}
-                                variant="body2">
-                                Serving Area:
-                                {validateForm(null)}
-                              </Typography>
-                              <Typography
-                                style={{lineHeight: 2}}
-                                variant="body2">
-                                Last Config Date:
-                                {validateForm(null)}
-                              </Typography>
-                              <Typography
-                                style={{lineHeight: 2}}
-                                variant="body2">
-                                Administrative Substate:
-                                {validateForm(null)}
-                              </Typography>
-                              <Typography
-                                style={{lineHeight: 2}}
-                                variant="body2">
-                                Serial:
-                                {validateForm(null)}
-                              </Typography>
-                            </Grid>
-                            <Grid item xs={6}>
-                              <Typography
-                                style={{lineHeight: 2}}
-                                variant="body2">
-                                Vendor:
-                                {validateForm(null)}
-                              </Typography>
-                              <Typography
-                                style={{lineHeight: 2}}
-                                variant="body2">
-                                IP:
-                                {validateForm(null)}
-                              </Typography>
-                              <Typography
-                                style={{lineHeight: 2}}
-                                variant="body2">
-                                Instalation date:
-                                {validateForm(null)}
-                              </Typography>
-                              <Typography
-                                style={{lineHeight: 2}}
-                                variant="body2">
-                                Lifesycle state:
-                                {validateForm(null)}
-                              </Typography>
-                              <Typography
-                                style={{lineHeight: 2}}
-                                variant="body2">
-                                Operational substate:
-                                {validateForm(null)}
-                              </Typography>
-                            </Grid>
+                            {selecTedResourceData.map(item => (
+                              <Grid item xs={6}>
+                                {validateForm(
+                                  item.propertyType.name,
+                                  getPropertyValue(item),
+                                )}
+                              </Grid>
+                            ))}
                           </Grid>
                         </CardContent>
                         <CardActions>
@@ -370,11 +383,9 @@ const ResourcePropertiesCard = (props: Props) => {
                     {selectedTab === 'configuration' ? (
                       <Configuration
                         resource={item}
-                        cmVersion={resourceData.queryCMVersion.find(
-                          cm => {
-                            cm.resource.id === item.id &&
-                            cm.status === 'CURRENT'},
-                        )}
+                        cmVersion={resourceData.queryCMVersion.find(cm => {
+                          cm.resource.id === item.id && cm.status === 'CURRENT';
+                        })}
                       />
                     ) : null}
                     {selectedTab === 'services' ? <div>Services</div> : null}

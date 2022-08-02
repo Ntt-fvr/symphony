@@ -1,4 +1,3 @@
-
 schema
   @core(feature: "https://specs.apollo.dev/core/v0.2"),
   @core(feature: "https://specs.apollo.dev/join/v0.1", for: EXECUTION)
@@ -1300,6 +1299,8 @@ input AddResourcePropertyInput {
   createTime: DateTime
   floatValue: Float
   intValue: Int
+  isInstanceProperty: Boolean
+  isMandatory: Boolean
   latitudeValue: Float
   longitudeValue: Float
   rangeFromValue: Float
@@ -4278,9 +4279,10 @@ input EditResourceSpecificationItemsInput {
 }
 
 input EditResourceSpecificationRelationshipInput {
-  id: ID!
+  id: ID
   name: String!
   resourceSpecification: ID
+  resourceSpecificationList: [ID]
 }
 
 input EditResourceTypeInput {
@@ -6534,7 +6536,7 @@ type Mutation {
   addComment(input: CommentInput!): Comment! @join__field(graph: SYMPHONY)
   addComparator(input: AddComparatorInput!): Comparator! @join__field(graph: SYMPHONY)
   addConfigParamTag(input: [AddConfigParamTagInput!]!): AddConfigParamTagPayload @join__field(graph: DGRAPHSERVICE)
-  addConfigurationParameterType(input: [AddConfigurationParameterTypeInput!]!, upsert: Boolean): AddConfigurationParameterTypePayload @join__field(graph: DGRAPHSERVICE)
+  addConfigurationParameterType(input: [AddConfigurationParameterTypeInput!]!): AddConfigurationParameterTypePayload @join__field(graph: DGRAPHSERVICE)
   addConnector(flowDraftId: ID!, input: ConnectorInput!): Connector! @join__field(graph: SYMPHONY)
   addCounter(input: AddCounterInput!): Counter! @join__field(graph: SYMPHONY)
   addCounterFamily(input: AddCounterFamilyInput!): CounterFamily! @join__field(graph: SYMPHONY)
@@ -6768,7 +6770,7 @@ type Mutation {
   editReportFilter(input: EditReportFilterInput!): ReportFilter! @join__field(graph: SYMPHONY)
   editResourceSpecification(input: EditResourceSpecificationInput!): ResourceSpecification! @join__field(graph: SYMPHONY)
   editResourceSpecificationItems(input: EditResourceSpecificationItemsInput!): ResourceSpecificationItems! @join__field(graph: SYMPHONY)
-  editResourceSpecificationRelationship(input: EditResourceSpecificationRelationshipInput!): ResourceSpecificationRelationship! @join__field(graph: SYMPHONY)
+  editResourceSpecificationRelationship(input: [EditResourceSpecificationRelationshipInput!]!): [ResourceSpecificationRelationship!]! @join__field(graph: SYMPHONY)
   editResourceType(input: EditResourceTypeInput!): ResourceType! @join__field(graph: SYMPHONY)
   editResourceTypeRelationship(input: EditResourceTypeRelationshipInput!): ResourceTypeRelationship! @join__field(graph: SYMPHONY)
   editRule(input: EditRuleInput!): Rule! @join__field(graph: SYMPHONY)
@@ -8531,7 +8533,7 @@ type Query {
   getCharacteristic(characteristicId: ID!): Characteristic @join__field(graph: DGRAPHSERVICE)
   getCharacteristicRelationship(id: ID!): CharacteristicRelationship @join__field(graph: DGRAPHSERVICE)
   getConfigParamTag(id: ID!): ConfigParamTag @join__field(graph: DGRAPHSERVICE)
-  getConfigurationParameterType(id: ID, name: String): ConfigurationParameterType @join__field(graph: DGRAPHSERVICE)
+  getConfigurationParameterType(id: ID!): ConfigurationParameterType @join__field(graph: DGRAPHSERVICE)
   getDefaultConfig(id: ID!): DefaultConfig @join__field(graph: DGRAPHSERVICE)
   getExternalReference(id: String!): ExternalReference @join__field(graph: DGRAPHSERVICE)
   getFeature(id: ID!): Feature @join__field(graph: DGRAPHSERVICE)
@@ -8544,7 +8546,7 @@ type Query {
   getParty(id: String!): Party @join__field(graph: DGRAPHSERVICE)
   getPlace(placeId: ID!): Place @join__field(graph: DGRAPHSERVICE)
   getRelatedEntity(id: String!): RelatedEntity @join__field(graph: DGRAPHSERVICE)
-  getResource(id: ID, name: String): Resource @join__field(graph: DGRAPHSERVICE)
+  getResource(externalId: String, id: ID): Resource @join__field(graph: DGRAPHSERVICE)
   getResourceOrderIM(id: ID!): ResourceOrderIM @join__field(graph: DGRAPHSERVICE)
   getResourceOrderItem(id: String!): ResourceOrderItem @join__field(graph: DGRAPHSERVICE)
   getResourceProperty(id: ID!): ResourceProperty @join__field(graph: DGRAPHSERVICE)
@@ -9770,6 +9772,8 @@ type ResourceProperty implements DefaultConfig {
   floatValue: Float
   id: ID!
   intValue: Int
+  isInstanceProperty: Boolean
+  isMandatory: Boolean
   latitudeValue: Float
   longitudeValue: Float
   rangeFromValue: Float
@@ -9834,6 +9838,8 @@ enum ResourcePropertyHasFilter {
   createTime
   floatValue
   intValue
+  isInstanceProperty
+  isMandatory
   latitudeValue
   longitudeValue
   rangeFromValue
@@ -9884,6 +9890,8 @@ input ResourcePropertyPatch {
   createTime: DateTime
   floatValue: Float
   intValue: Int
+  isInstanceProperty: Boolean
+  isMandatory: Boolean
   latitudeValue: Float
   longitudeValue: Float
   rangeFromValue: Float
@@ -9901,6 +9909,8 @@ input ResourcePropertyRef {
   floatValue: Float
   id: ID
   intValue: Int
+  isInstanceProperty: Boolean
+  isMandatory: Boolean
   latitudeValue: Float
   longitudeValue: Float
   rangeFromValue: Float

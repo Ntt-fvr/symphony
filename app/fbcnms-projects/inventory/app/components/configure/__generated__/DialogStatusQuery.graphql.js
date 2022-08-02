@@ -15,7 +15,7 @@
 /*::
 import type { ConcreteRequest } from 'relay-runtime';
 export type FilterOperator = "CONTAINS" | "DATE_GREATER_OR_EQUAL_THAN" | "DATE_GREATER_THAN" | "DATE_LESS_OR_EQUAL_THAN" | "DATE_LESS_THAN" | "IS" | "IS_NIL" | "IS_NIL_OR_DATE_GREATER_OR_EQUAL_THAN" | "IS_NOT_ONE_OF" | "IS_ONE_OF" | "%future added value";
-export type FlowCMType = "GENERAL_CM" | "INITIAL_CONFIG" | "SYNC_PARAMETERS" | "%future added value";
+export type FlowCMType = "GENERAL_CR" | "INITIAL_CONFIG" | "SYNC_PARAMETERS" | "%future added value";
 export type FlowFilterType = "FLOW_CM_TYPE" | "FLOW_NAME" | "%future added value";
 export type FlowNewInstancesPolicy = "DISABLED" | "ENABLED" | "%future added value";
 export type FlowStatus = "ARCHIVED" | "DELETED" | "DRAFT" | "ON_HOLD" | "PUBLISHED" | "%future added value";

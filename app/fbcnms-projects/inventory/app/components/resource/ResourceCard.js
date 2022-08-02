@@ -24,7 +24,6 @@ import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
-import TablePagination from '@material-ui/core/TablePagination';
 import TableRow from '@material-ui/core/TableRow';
 import Typography from '@material-ui/core/Typography';
 import symphony from '@symphony/design-system/theme/symphony';
@@ -50,6 +49,9 @@ const useStyles = makeStyles(theme => ({
   tableTitle: {
     fontSize: '1rem',
     color: theme.palette.primary.main,
+  },
+  container: {
+    maxHeight: 440,
   },
 }));
 
@@ -77,9 +79,20 @@ const ResourceCardListQuery = graphql`
           resourceSpecification {
             id
             name
-            vendor {
+            resourcePropertyTypes {
               id
               name
+              type
+              stringValue
+              intValue
+              booleanValue
+              floatValue
+              latitudeValue
+              longitudeValue
+              rangeFromValue
+              rangeToValue
+              isMandatory
+              isInstanceProperty
             }
           }
         }
@@ -126,8 +139,6 @@ const ResourceCard = (props: Props) => {
   const [openDialog, setOpenDialog] = useState(false);
   const [resourceTypes, setResourceTypes] = useState({});
   const [dataEdit, setDataEdit] = useState({});
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
 
   useEffect(() => {
     isCompleted();
@@ -138,19 +149,6 @@ const ResourceCard = (props: Props) => {
       setResourceTypes(data);
     });
   }, [setResourceTypes]);
-
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
-  };
-
-  const handleChangeRowsPerPage = event => {
-    setRowsPerPage(Number(event.target.value));
-    setPage(0);
-  };
-
-  const filterDataById = resourceTypes?.queryResource?.filter(
-    item => item.locatedIn === selectedLocationId,
-  );
 
   const editResource = resources => {
     onEditResource(setDataEdit(resources));
@@ -246,7 +244,7 @@ const ResourceCard = (props: Props) => {
               }
             />
             <CardContent>
-              <TableContainer>
+              <TableContainer className={classes.container}>
                 <Table stickyHeader>
                   <TableHead>
                     <TableRow>
@@ -261,49 +259,31 @@ const ResourceCard = (props: Props) => {
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    {newArrayDataForm
-                      ?.slice(
-                        page * rowsPerPage,
-                        page * rowsPerPage + rowsPerPage,
-                      )
-                      .flatMap((item, index) => (
-                        <TableRow tabIndex={-1} key={index}>
-                          <TableCell>
-                            <Button
-                              variant="text"
-                              onClick={() =>
-                                onResourceSelected(item.data[0].idResource)
-                              }>
-                              <Typography>
-                                {item.data[0].nameResource}
-                              </Typography>
-                            </Button>
-                          </TableCell>
-                          <TableCell>
-                            {item.data[0].nameSpecification}
-                          </TableCell>
-                          <TableCell>{item.data[0].nameResourceType}</TableCell>
-                          <TableCell>
-                            <IconButton>
-                              <DeleteOutlinedIcon
-                                style={{color: symphony.palette.B600}}
-                              />
-                            </IconButton>
-                          </TableCell>
-                        </TableRow>
-                      ))}
+                    {newArrayDataForm?.flatMap((item, index) => (
+                      <TableRow hover key={index}>
+                        <TableCell>
+                          <Button
+                            variant="text"
+                            onClick={() =>
+                              onResourceSelected(item.data[0].idResource)
+                            }>
+                            <Typography>{item.data[0].nameResource}</Typography>
+                          </Button>
+                        </TableCell>
+                        <TableCell>{item.data[0].nameSpecification}</TableCell>
+                        <TableCell>{item.data[0].nameResourceType}</TableCell>
+                        <TableCell>
+                          <IconButton>
+                            <DeleteOutlinedIcon
+                              style={{color: symphony.palette.B600}}
+                            />
+                          </IconButton>
+                        </TableCell>
+                      </TableRow>
+                    ))}
                   </TableBody>
                 </Table>
               </TableContainer>
-              <TablePagination
-                rowsPerPageOptions={[5, 10, 15]}
-                component="div"
-                count={!filterDataById ? 0 : filterDataById?.length}
-                rowsPerPage={rowsPerPage}
-                page={page}
-                onChangePage={handleChangePage}
-                onChangeRowsPerPage={handleChangeRowsPerPage}
-              />
             </CardContent>
           </Card>
           {openDialog && (

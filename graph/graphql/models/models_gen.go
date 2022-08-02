@@ -1119,9 +1119,10 @@ type EditResourceSpecificationItemsInput struct {
 }
 
 type EditResourceSpecificationRelationshipInput struct {
-	ID                    int    `json:"id"`
-	Name                  string `json:"name"`
-	ResourceSpecification *int   `json:"resourceSpecification"`
+	ID                        *int   `json:"id"`
+	Name                      string `json:"name"`
+	ResourceSpecification     *int   `json:"resourceSpecification"`
+	ResourceSpecificationList []*int `json:"resourceSpecificationList"`
 }
 
 type EditResourceTypeInput struct {

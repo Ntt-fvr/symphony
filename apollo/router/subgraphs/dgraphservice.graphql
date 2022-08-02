@@ -1,5 +1,8 @@
+directive @search(by: [DgraphIndex!]) on FIELD_DEFINITION
+directive @withSubscription on OBJECT | INTERFACE | FIELD_DEFINITION
 directive @remote on OBJECT | INTERFACE | UNION | INPUT_OBJECT | ENUM
 directive @remoteResponse(name: String) on FIELD_DEFINITION
+directive @lambda on FIELD_DEFINITION
 directive @lambdaOnMutate(
   add: Boolean
   update: Boolean
@@ -10,12 +13,18 @@ directive @generate(
   mutation: GenerateMutationParams
   subscription: Boolean
 ) on OBJECT | INTERFACE
+directive @dgraph(
+  type: String
+  pred: String
+) on OBJECT | INTERFACE | FIELD_DEFINITION
+directive @secret(field: String!, pred: String) on OBJECT | INTERFACE
 directive @hasInverse(field: String!) on FIELD_DEFINITION
+directive @custom(http: CustomHTTP, dql: String) on FIELD_DEFINITION
+directive @id(interface: Boolean) on FIELD_DEFINITION
 directive @default(
   add: DgraphDefault
   update: DgraphDefault
 ) on FIELD_DEFINITION
-directive @withSubscription on OBJECT | INTERFACE | FIELD_DEFINITION
 directive @auth(
   password: AuthRule
   query: AuthRule
@@ -23,15 +32,6 @@ directive @auth(
   update: AuthRule
   delete: AuthRule
 ) on OBJECT | INTERFACE
-directive @custom(http: CustomHTTP, dql: String) on FIELD_DEFINITION
-directive @search(by: [DgraphIndex!]) on FIELD_DEFINITION
-directive @dgraph(
-  type: String
-  pred: String
-) on OBJECT | INTERFACE | FIELD_DEFINITION
-directive @id(interface: Boolean) on FIELD_DEFINITION
-directive @secret(field: String!, pred: String) on OBJECT | INTERFACE
-directive @lambda on FIELD_DEFINITION
 enum _CancellationRequestOrdering {
   id_asc
   id_desc
@@ -1298,6 +1298,8 @@ input AddResourcePropertyInput {
   rawValue: String
   resource: ResourceRef
   resourcePropertyType: String!
+  isMandatory: Boolean
+  isInstanceProperty: Boolean
 }
 
 type AddResourcePropertyPayload {
@@ -3601,7 +3603,6 @@ type Mutation {
   deleteParameter(filter: ParameterFilter!): DeleteParameterPayload
   addConfigurationParameterType(
     input: [AddConfigurationParameterTypeInput!]!
-    upsert: Boolean
   ): AddConfigurationParameterTypePayload
   updateConfigurationParameterType(
     input: UpdateConfigurationParameterTypeInput!
@@ -4448,7 +4449,7 @@ type Query {
   aggregateDefaultConfig(
     filter: DefaultConfigFilter
   ): DefaultConfigAggregateResult
-  getResource(id: ID, name: String): Resource
+  getResource(id: ID, externalId: String): Resource
   queryResource(
     filter: ResourceFilter
     order: ResourceOrder
@@ -4482,10 +4483,7 @@ type Query {
     offset: Int
   ): [Parameter]
   aggregateParameter(filter: ParameterFilter): ParameterAggregateResult
-  getConfigurationParameterType(
-    id: ID
-    name: String
-  ): ConfigurationParameterType
+  getConfigurationParameterType(id: ID!): ConfigurationParameterType
   queryConfigurationParameterType(
     filter: ConfigurationParameterTypeFilter
     order: ConfigurationParameterTypeOrder
@@ -5208,6 +5206,8 @@ type ResourceProperty implements DefaultConfig {
   rawValue: String
   resource(filter: ResourceFilter): Resource
   resourcePropertyType: String!
+  isMandatory: Boolean
+  isInstanceProperty: Boolean
 }
 
 type ResourcePropertyAggregateResult {
@@ -5272,6 +5272,8 @@ enum ResourcePropertyHasFilter {
   rawValue
   resource
   resourcePropertyType
+  isMandatory
+  isInstanceProperty
 }
 
 input ResourcePropertyOrder {
@@ -5308,6 +5310,8 @@ input ResourcePropertyPatch {
   rawValue: String
   resource: ResourceRef
   resourcePropertyType: String
+  isMandatory: Boolean
+  isInstanceProperty: Boolean
 }
 
 input ResourcePropertyRef {
@@ -5325,6 +5329,8 @@ input ResourcePropertyRef {
   rawValue: String
   resource: ResourceRef
   resourcePropertyType: String
+  isMandatory: Boolean
+  isInstanceProperty: Boolean
 }
 
 input ResourceRef {
@@ -7143,3 +7149,4 @@ enum WeekDay {
 input WithinFilter {
   polygon: PolygonRef!
 }
+
