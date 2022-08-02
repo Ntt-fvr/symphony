@@ -6278,12 +6278,9 @@ type KafkaBlock {
 union BlockDetails =
     StartBlock
   | EndBlock
-  #| DecisionBlock
   | GotoBlock
-  #| SubflowBlock
   | TriggerBlock
   | ActionBlock
-  #| TrueFalseBlock
   | ChoiceBlock
   | TimerBlock
   | WaitForSignalBlock
@@ -6297,7 +6294,7 @@ union BlockDetails =
 
 input StartBlockInput {
   cid: String!
-  paramDefinitions: [VariableDefinitionInput!]!
+  paramDefinitions: [VariableDefinitionInput!]
   uiRepresentation: BlockUIRepresentationInput
 }
 
@@ -6398,7 +6395,7 @@ input BaseBlockInput {
 
 input ChoiceBlockInput {
   cid: String!
-  entryPoint: EntryPointInput!
+  entryPoint: EntryPointInput
   defaultExitPoint: ExitPointInput
   routes: [DecisionRouteInput!]
   basicDefinitions: BaseBlockInput!
@@ -6407,34 +6404,34 @@ input ChoiceBlockInput {
 
 input TimerBlockInput {
   cid: String!
-  exitPoint: ExitPointInput!
-  entryPoint: EntryPointInput!
+  exitPoint: ExitPointInput
+  entryPoint: EntryPointInput
   behavior: TimerBehavior!
   seconds: Int
   specificDatetime: Time
   enableExpressionL: Boolean
   expression: String
-  params: [VariableExpressionInput!]!
+  params: [VariableExpressionInput!]
   uiRepresentation: BlockUIRepresentationInput
 }
 
 input WaitForSignalBlockInput {
   cid: String!
-  entryPoint: EntryPointInput!
-  exitPoint: ExitPointInput!
+  entryPoint: EntryPointInput
+  exitPoint: ExitPointInput
   type: SignalType!
   signalModule: SignalModule!
   customFilter: String
   blocked: Boolean!
-  params: [VariableExpressionInput!]!
+  params: [VariableExpressionInput!]
   basicDefinitions: BaseBlockInput!
   uiRepresentation: BlockUIRepresentationInput
 }
 
 input InvokeRestAPIBlockInput {
   cid: String!
-  entryPoint: EntryPointInput!
-  exitPoint: ExitPointInput!
+  entryPoint: EntryPointInput
+  exitPoint: ExitPointInput
   method: UrlMethod!
   url: String!
   connectionTimeOut: Int!
@@ -6447,14 +6444,14 @@ input InvokeRestAPIBlockInput {
   clientSecret: String
   oidcUrl: String
   basicDefinitions: BaseBlockInput!
-  params: [VariableExpressionInput!]!
+  params: [VariableExpressionInput!]
   uiRepresentation: BlockUIRepresentationInput
 }
 
 input ExecuteFlowBlockInput {
   cid: String!
-  entryPoint: EntryPointInput!
-  exitPoint: ExitPointInput!
+  entryPoint: EntryPointInput
+  exitPoint: ExitPointInput
   flow: ID!
   params: [VariableExpressionInput!]!
   basicDefinitions: BaseBlockInput!
@@ -6463,8 +6460,8 @@ input ExecuteFlowBlockInput {
 
 input KafkaBlockInput {
   cid: String!
-  entryPoint: EntryPointInput!
-  exitPoint: ExitPointInput!
+  entryPoint: EntryPointInput
+  exitPoint: ExitPointInput
   brokers: [String!]
   topic: String!
   message: String!
@@ -6480,12 +6477,9 @@ input ImportFlowDraftInput {
   endParamDefinitions: [VariableDefinitionInput!]!
   startBlock: StartBlockInput
   endBlocks: [EndBlockInput!]
-  #decisionBlocks: [DecisionBlockInput!]
   gotoBlocks: [GotoBlockInput!]
-  #subflowBlocks: [SubflowBlockInput!]
   triggerBlocks: [TriggerBlockInput!]
   actionBlocks: [ActionBlockInput!]
-  #trueFalseBlocks: [TrueFalseBlockInput!]
   choiceBlocks: [ChoiceBlockInput!]
   executeFlowBlocks: [ExecuteFlowBlockInput!]
   timerBlocks: [TimerBlockInput!]
