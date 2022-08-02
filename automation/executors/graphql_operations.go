@@ -43,16 +43,6 @@ func (t *authedTransport) RoundTrip(req *http.Request) (*http.Response, error) {
 
 	req.Header.Set("x-auth-user-role", auth.UserRole)
 
-	// TODO Remove it
-	fmt.Println()
-	fmt.Println("**************************************")
-	fmt.Println("[Automation - GraphQL]")
-	fmt.Printf("Email: %s\n", req.Header.Get("x-auth-user-email"))
-	fmt.Printf("Tenant: %s\n", req.Header.Get("x-auth-organization"))
-	fmt.Printf("Role: %s\n", req.Header.Get("x-auth-user-role"))
-	fmt.Println("**************************************")
-	fmt.Println()
-
 	return t.wrapped.RoundTrip(req)
 }
 

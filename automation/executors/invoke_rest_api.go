@@ -214,6 +214,16 @@ func (b *ExecutorInvokeRestAPIBlock) getNativeValue(value string) (map[string]in
 	inputVariable := celgo.ConvertToValue(b.Input)
 	stateVariable := celgo.ConvertToValue(b.State)
 
+	// TODO Remove it
+	fmt.Println()
+	fmt.Println("**************************************")
+	fmt.Println("[Automation - Invoke - GetNarive]")
+	fmt.Printf("Input: %s\n", b.Input)
+	fmt.Printf("State: %s\n", b.State)
+	fmt.Printf("Expression: %s\n", value)
+	fmt.Println("**************************************")
+	fmt.Println()
+
 	variables := map[string]interface{}{
 		celgo.InputVariable: inputVariable,
 		celgo.StateVariable: stateVariable,
