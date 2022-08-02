@@ -6536,7 +6536,7 @@ type Mutation {
   addComment(input: CommentInput!): Comment! @join__field(graph: SYMPHONY)
   addComparator(input: AddComparatorInput!): Comparator! @join__field(graph: SYMPHONY)
   addConfigParamTag(input: [AddConfigParamTagInput!]!): AddConfigParamTagPayload @join__field(graph: DGRAPHSERVICE)
-  addConfigurationParameterType(input: [AddConfigurationParameterTypeInput!]!, upsert: Boolean): AddConfigurationParameterTypePayload @join__field(graph: DGRAPHSERVICE)
+  addConfigurationParameterType(input: [AddConfigurationParameterTypeInput!]!): AddConfigurationParameterTypePayload @join__field(graph: DGRAPHSERVICE)
   addConnector(flowDraftId: ID!, input: ConnectorInput!): Connector! @join__field(graph: SYMPHONY)
   addCounter(input: AddCounterInput!): Counter! @join__field(graph: SYMPHONY)
   addCounterFamily(input: AddCounterFamilyInput!): CounterFamily! @join__field(graph: SYMPHONY)
@@ -8533,7 +8533,7 @@ type Query {
   getCharacteristic(characteristicId: ID!): Characteristic @join__field(graph: DGRAPHSERVICE)
   getCharacteristicRelationship(id: ID!): CharacteristicRelationship @join__field(graph: DGRAPHSERVICE)
   getConfigParamTag(id: ID!): ConfigParamTag @join__field(graph: DGRAPHSERVICE)
-  getConfigurationParameterType(id: ID, name: String): ConfigurationParameterType @join__field(graph: DGRAPHSERVICE)
+  getConfigurationParameterType(id: ID!): ConfigurationParameterType @join__field(graph: DGRAPHSERVICE)
   getDefaultConfig(id: ID!): DefaultConfig @join__field(graph: DGRAPHSERVICE)
   getExternalReference(id: String!): ExternalReference @join__field(graph: DGRAPHSERVICE)
   getFeature(id: ID!): Feature @join__field(graph: DGRAPHSERVICE)
@@ -13439,6 +13439,6 @@ enum core__Purpose {
 scalar join__FieldSet
 
 enum join__Graph {
-  DGRAPHSERVICE @join__graph(name: "dgraphservice" url: "http://alpha:8080/graphql")
-  SYMPHONY @join__graph(name: "symphony" url: "http://graph/query")
+  DGRAPHSERVICE @join__graph(name: "dgraphservice" url: "http://dgraph-dgraph-alpha.dgraph.svc.cluster.local:8080/graphql")
+  SYMPHONY @join__graph(name: "symphony" url: "http://symphony-graph/query")
 }

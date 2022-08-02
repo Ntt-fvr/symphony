@@ -111,7 +111,6 @@ func (r mutationResolver) RemoveResourceSpecificationRelationship(ctx context.Co
 	return id, nil
 }
 
-<<<<<<< HEAD
 func (r mutationResolver) EditResourceSpecificationRelationship(ctx context.Context, inputs []*models.EditResourceSpecificationRelationshipInput) ([]*ent.ResourceSpecificationRelationship, error) {
 	var resourceSpecificationRs []*ent.ResourceSpecificationRelationship
 	for _, input := range inputs {
@@ -123,7 +122,7 @@ func (r mutationResolver) EditResourceSpecificationRelationship(ctx context.Cont
 			}
 			resource_rs, err := r.AddResourceSpecificationRelationship(ctx, input_agregar)
 			if err != nil {
-				return nil, fmt.Errorf("has ocurred error on proces: %v", err)
+				return nil, fmt.Errorf("has occurred error on process: %v", err)
 			}
 			resourceSpecificationRs = append(resourceSpecificationRs, resource_rs)
 		} else {
@@ -131,13 +130,13 @@ func (r mutationResolver) EditResourceSpecificationRelationship(ctx context.Cont
 			et, err := client.ResourceSpecificationRelationship.Get(ctx, *input.ID)
 			if err != nil {
 				if ent.IsNotFound(err) {
-					return nil, gqlerror.Errorf("has ocurred error on proces: %v", err)
+					return nil, gqlerror.Errorf("has occurred error on process: %v", err)
 				}
-				return nil, errors.Wrapf(err, "has ocurred error on proces: %v", err)
+				return nil, errors.Wrapf(err, "has occurred error on process: %v", err)
 			}
 			var resourcespecification, err3 = et.Resourcespecification(ctx)
 			if err3 != nil {
-				return nil, errors.Wrap(err3, "has ocurred error on proces: %v")
+				return nil, errors.Wrap(err3, "has occurred error on process: %v")
 			}
 
 			if input.Name != et.Name || input.ResourceSpecification != &resourcespecification.ID {
@@ -147,38 +146,12 @@ func (r mutationResolver) EditResourceSpecificationRelationship(ctx context.Cont
 					SetNillableResourcespecificationID(input.ResourceSpecification).
 					Save(ctx); err != nil {
 					if ent.IsConstraintError(err) {
-						return nil, gqlerror.Errorf("has ocurred error on proces: %v", err)
+						return nil, gqlerror.Errorf("has occurred error on process: %v", err)
 					}
-					return nil, errors.Wrap(err, "has ocurred error on proces: %v")
+					return nil, errors.Wrap(err, "has occurred error on process: %v")
 				}
 			}
 			resourceSpecificationRs = append(resourceSpecificationRs, et)
-=======
-func (r mutationResolver) EditResourceSpecificationRelationship(ctx context.Context, input models.EditResourceSpecificationRelationshipInput) (*ent.ResourceSpecificationRelationship, error) {
-	client := r.ClientFrom(ctx)
-	et, err := client.ResourceSpecificationRelationship.Get(ctx, input.ID)
-	if err != nil {
-		if ent.IsNotFound(err) {
-			return nil, gqlerror.Errorf("has occurred error on process: %v", err)
-		}
-		return nil, errors.Wrapf(err, "has occurred error on process: %v", err)
-	}
-	var resourcespecification, err3 = et.Resourcespecification(ctx)
-	if err3 != nil {
-		return nil, errors.Wrap(err3, "has occurred error on process: %v")
-	}
-
-	if input.Name != et.Name || input.ResourceSpecification != &resourcespecification.ID {
-		if et, err = client.ResourceSpecificationRelationship.
-			UpdateOne(et).
-			SetName(input.Name).
-			SetNillableResourcespecificationID(input.ResourceSpecification).
-			Save(ctx); err != nil {
-			if ent.IsConstraintError(err) {
-				return nil, gqlerror.Errorf("has occurred error on process: %v", err)
-			}
-			return nil, errors.Wrap(err, "has occurred error on process: %v")
->>>>>>> 7884ed806e5fba216ab5023e0ac7061f749dde9e
 		}
 	}
 	return resourceSpecificationRs, nil
