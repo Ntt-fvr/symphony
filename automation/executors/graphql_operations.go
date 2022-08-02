@@ -16,8 +16,6 @@ import (
 	"time"
 )
 
-const tenantKey = "tenant-key"
-
 var graphqlClient graphql.Client
 
 type authedTransport struct {
@@ -38,7 +36,7 @@ func (t *authedTransport) RoundTrip(req *http.Request) (*http.Response, error) {
 	}
 	// req.Header.Set("Authorization", "bearer "+t.key)
 
-	tenantValue := req.Context().Value(tenantKey)
+	tenantValue := req.Context().Value(enum.TenantArg)
 	if tenantValue != nil {
 		req.Header.Set("x-auth-organization", tenantValue.(string))
 	}
@@ -75,7 +73,7 @@ func Setup(configuration config.GraphQLConfig) {
 	graphqlClient = graphql.NewClient(configuration.Endpoint, &httpClient)
 }
 
-func CreateBlockInstance(tenant, flowInstanceID, blockID string, input map[string]interface{}) (*string, error) {
+func CreateBlockInstance(ctx context.Context, flowInstanceID, blockID string, input map[string]interface{}) (*string, error) {
 
 	inputJson, err := util.ToJsonString(input)
 	if err != nil {
@@ -88,8 +86,6 @@ func CreateBlockInstance(tenant, flowInstanceID, blockID string, input map[strin
 		BlockId:   blockID,
 		StartDate: time.Now(),
 	}
-
-	ctx := context.WithValue(context.Background(), tenantKey, tenant)
 
 	response, err := symphony.AddBlockInstance(ctx, graphqlClient, flowInstanceID, blockInput)
 	if err != nil {
@@ -104,7 +100,7 @@ func CreateBlockInstance(tenant, flowInstanceID, blockID string, input map[strin
 }
 
 func UpdateBlockStatus(
-	tenant, blockInstanceID string, status enum.BlockInstanceStatus,
+	ctx context.Context, blockInstanceID string, status enum.BlockInstanceStatus,
 	close bool, output map[string]interface{}, failureReason string,
 ) error {
 	blockEdit := symphony.EditBlockInstanceInput{
@@ -125,8 +121,6 @@ func UpdateBlockStatus(
 		blockEdit.EndDate = &endDate
 	}
 
-	ctx := context.WithValue(context.Background(), tenantKey, tenant)
-
 	response, err := symphony.EditBlockInstance(ctx, graphqlClient, blockEdit)
 	if err != nil {
 		return err
@@ -140,7 +134,7 @@ func UpdateBlockStatus(
 }
 
 func UpdateFlowInstance(
-	tenant, flowInstanceID, workflowID, runID string,
+	ctx context.Context, flowInstanceID, workflowID, runID string,
 ) error {
 	status := enum.FlowInstanceStatusRunning
 
@@ -150,8 +144,6 @@ func UpdateFlowInstance(
 		ServiceInstanceCode: &runID,
 		Status:              &status,
 	}
-
-	ctx := context.WithValue(context.Background(), tenantKey, tenant)
 
 	response, err := symphony.EditFlowInstance(ctx, graphqlClient, flowEdit)
 	if err != nil {
@@ -166,7 +158,7 @@ func UpdateFlowInstance(
 }
 
 func UpdateFlowInstanceStatus(
-	tenant, flowInstanceID string, status enum.FlowInstanceStatus, close bool,
+	ctx context.Context, flowInstanceID string, status enum.FlowInstanceStatus, close bool,
 ) error {
 	flowEdit := symphony.EditFlowInstanceInput{
 		Id:     flowInstanceID,
@@ -178,8 +170,6 @@ func UpdateFlowInstanceStatus(
 
 		flowEdit.EndDate = &endDate
 	}
-
-	ctx := context.WithValue(context.Background(), tenantKey, tenant)
 
 	response, err := symphony.EditFlowInstance(ctx, graphqlClient, flowEdit)
 	if err != nil {
@@ -194,9 +184,12 @@ func UpdateFlowInstanceStatus(
 }
 
 func GetInputAndExecutors(
-	tenant, flowInstanceID string,
+	ctx context.Context, flowInstanceID string,
 ) (map[string]interface{}, map[string]ExecutorBlock, error) {
-	response, err := symphony.FlowInstanceQuery(context.Background(), graphqlClient, flowInstanceID)
+
+	tenant, _ := ctx.Value(enum.TenantArg).(string)
+
+	response, err := symphony.FlowInstanceQuery(ctx, graphqlClient, flowInstanceID)
 	if err != nil {
 		return nil, nil, err
 	}

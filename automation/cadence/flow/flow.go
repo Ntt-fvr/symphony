@@ -1,6 +1,7 @@
 package flow
 
 import (
+	"context"
 	"errors"
 	"github.com/facebookincubator/symphony/automation/cadence/activity"
 	"github.com/facebookincubator/symphony/automation/enum"
@@ -31,27 +32,29 @@ func AutomationWorkflow(
 
 	ctx = workflow.WithLocalActivityOptions(ctx, localActivityOptions)
 
+	graphCtx := context.WithValue(context.Background(), enum.TenantArg, tenant)
+
 	info := workflow.GetInfo(ctx)
 	if info != nil {
 		workflowID := info.WorkflowExecution.ID
 		runID := info.WorkflowExecution.RunID
 
-		err := executors.UpdateFlowInstance(tenant, flowInstanceID, workflowID, runID)
+		err := executors.UpdateFlowInstance(graphCtx, flowInstanceID, workflowID, runID)
 		if err != nil {
-			_ = executors.UpdateFlowInstanceStatus(tenant, flowInstanceID, enum.FlowInstanceStatusFailing, true)
+			_ = executors.UpdateFlowInstanceStatus(graphCtx, flowInstanceID, enum.FlowInstanceStatusFailing, true)
 			return nil, err
 		}
 	}
 
-	input, blocks, err := executors.GetInputAndExecutors(tenant, flowInstanceID)
+	input, blocks, err := executors.GetInputAndExecutors(graphCtx, flowInstanceID)
 	if err != nil {
-		_ = executors.UpdateFlowInstanceStatus(tenant, flowInstanceID, enum.FlowInstanceStatusFailing, true)
+		_ = executors.UpdateFlowInstanceStatus(graphCtx, flowInstanceID, enum.FlowInstanceStatusFailing, true)
 		return nil, err
 	}
 
 	executorStartBlock := getExecutorStartBlock(blocks)
 	if executorStartBlock == nil {
-		_ = executors.UpdateFlowInstanceStatus(tenant, flowInstanceID, enum.FlowInstanceStatusFailing, true)
+		_ = executors.UpdateFlowInstanceStatus(graphCtx, flowInstanceID, enum.FlowInstanceStatusFailing, true)
 		return nil, errors.New("start executorBlock not found")
 	}
 
@@ -80,7 +83,7 @@ func AutomationWorkflow(
 		switch flowAction {
 		case enum.FlowActionPause:
 			err := executors.UpdateFlowInstanceStatus(
-				tenant, executorBlock.GetFlowInstanceID(), enum.FlowInstanceStatusPaused, false,
+				graphCtx, executorBlock.GetFlowInstanceID(), enum.FlowInstanceStatusPaused, false,
 			)
 			if err != nil {
 				return nil, err
@@ -91,7 +94,7 @@ func AutomationWorkflow(
 			switch flowAction {
 			case enum.FlowActionCancel:
 				err := executors.UpdateFlowInstanceStatus(
-					tenant, executorBlock.GetFlowInstanceID(), enum.FlowInstanceStatusCanceled, true,
+					graphCtx, executorBlock.GetFlowInstanceID(), enum.FlowInstanceStatusCanceled, true,
 				)
 				if err != nil {
 					return nil, err
@@ -101,7 +104,7 @@ func AutomationWorkflow(
 			}
 		case enum.FlowActionCancel:
 			err := executors.UpdateFlowInstanceStatus(
-				tenant, executorBlock.GetFlowInstanceID(), enum.FlowInstanceStatusCanceled, true,
+				graphCtx, executorBlock.GetFlowInstanceID(), enum.FlowInstanceStatusCanceled, true,
 			)
 			if err != nil {
 				return nil, err
@@ -112,7 +115,7 @@ func AutomationWorkflow(
 
 		executorBlock.AddAttempts()
 
-		result, err := executeBlock(ctx, executorBlock, input, state, tenant)
+		result, err := executeBlock(ctx, graphCtx, executorBlock, input, state)
 
 		if err != nil {
 			if executorBlock.GetAttempts() < executorBlock.GetMaxAttempts() {
@@ -120,7 +123,7 @@ func AutomationWorkflow(
 			}
 
 			_ = executors.UpdateBlockStatus(
-				tenant, executorBlock.GetBlockInstanceID(),
+				graphCtx, executorBlock.GetBlockInstanceID(),
 				enum.BlockInstanceStatusFailed, true, nil, err.Error(),
 			)
 			return nil, err
@@ -151,12 +154,13 @@ func AutomationWorkflow(
 }
 
 func executeBlock(
-	ctx workflow.Context, executorBlock executors.ExecutorBlock,
-	input, state map[string]interface{}, tenant string,
+	ctx workflow.Context, graphCtx context.Context,
+	executorBlock executors.ExecutorBlock,
+	input, state map[string]interface{},
 ) (*executors.ExecutorResult, error) {
 
 	blockInstanceID, err := executors.CreateBlockInstance(
-		tenant, executorBlock.GetFlowInstanceID(), executorBlock.GetBlockID(), input,
+		graphCtx, executorBlock.GetFlowInstanceID(), executorBlock.GetBlockID(), input,
 	)
 	if err != nil {
 		return nil, err

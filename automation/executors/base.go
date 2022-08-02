@@ -1,6 +1,7 @@
 package executors
 
 import (
+	"context"
 	"encoding/json"
 	jsonPatch "github.com/evanphx/json-patch"
 	"github.com/facebookincubator/symphony/automation/celgo"
@@ -45,6 +46,7 @@ type ExecutorBlock interface {
 
 type ExecutorBaseBlock struct {
 	ctx              workflow.Context
+	graphCtx         context.Context
 	runLogicFunction func() error
 	Type             enum.BlockType
 	Tenant           string
@@ -128,10 +130,12 @@ func (b *ExecutorBaseBlock) updateBlockCompleted() {
 func (b *ExecutorBaseBlock) updateBlockInstanceStatus(
 	status enum.BlockInstanceStatus, close bool, failureReason string,
 ) {
-	_ = UpdateBlockStatus(b.Tenant, b.BlockInstanceID, status, close, b.Output, failureReason)
+	_ = UpdateBlockStatus(b.graphCtx, b.BlockInstanceID, status, close, b.Output, failureReason)
 }
 
 func (b *ExecutorBaseBlock) execute() (*ExecutorResult, error) {
+	b.graphCtx = context.WithValue(context.Background(), enum.TenantArg, b.Tenant)
+
 	b.updateBlockInProgress()
 
 	err := b.executeInputTransformation()

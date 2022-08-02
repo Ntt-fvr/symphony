@@ -1,6 +1,7 @@
 package executors
 
 import (
+	"context"
 	"errors"
 	"github.com/facebookincubator/symphony/automation/celgo"
 	"go.uber.org/cadence/workflow"
@@ -12,7 +13,7 @@ type ExecutorForEachBlock struct {
 	StartBlockID string
 	SearchBlock  func(string) *ExecutorBlock
 	ExecuteBlock func(
-		workflow.Context, ExecutorBlock, map[string]interface{}, map[string]interface{}, string,
+		workflow.Context, context.Context, ExecutorBlock, map[string]interface{}, map[string]interface{},
 	) (*ExecutorResult, error)
 }
 
@@ -47,7 +48,7 @@ func (b *ExecutorForEachBlock) runLogic() error {
 		block := b.SearchBlock(b.StartBlockID)
 		for block != nil {
 
-			executorResult, err := b.ExecuteBlock(b.ctx, *block, input, b.State, b.Tenant)
+			executorResult, err := b.ExecuteBlock(b.ctx, b.graphCtx, *block, input, b.State)
 			if err != nil {
 				return err
 			}

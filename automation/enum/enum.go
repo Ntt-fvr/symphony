@@ -10,8 +10,9 @@ const (
 type ContextArg string
 
 const (
-	FlowActionArg ContextArg = "FLOW_ACTION_ARG"
 	BlocksArg     ContextArg = "BLOCKS_ARG"
+	FlowActionArg ContextArg = "FLOW_ACTION_ARG"
+	TenantArg     ContextArg = "TENANT_ARG"
 )
 
 func (ca ContextArg) String() string {
