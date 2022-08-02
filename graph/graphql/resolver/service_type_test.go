@@ -6,6 +6,7 @@ package resolver_test
 
 import (
 	"context"
+	"fmt"
 	"testing"
 
 	"github.com/AlekSi/pointer"
@@ -97,6 +98,9 @@ func TestEditServiceTypeWithProperties(t *testing.T) {
 	})
 	require.NoError(t, err)
 	require.Equal(t, serviceType.Name, newType.Name, "successfully edited service type name")
+
+	linkProps := newType.QueryPropertyTypes().AllX(ctx)
+	fmt.Println(linkProps)
 
 	strProp = newType.QueryPropertyTypes().Where(propertytype.TypeEQ(propertytype.TypeString)).OnlyX(ctx)
 	require.Equal(t, "str_prop_new", strProp.Name, "successfully edited prop type name")

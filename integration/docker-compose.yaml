@@ -30,8 +30,6 @@ services:
     restart: on-failure
 
   inventory:
-    env_file:
-      ../app/fbcnms-projects/inventory/.env
     build:
       context: ../app
       dockerfile: fbcnms-projects/inventory/Dockerfile
@@ -97,6 +95,20 @@ services:
       - mysql
       - nats
       - platform-server
+    healthcheck: *healthcheck
+    restart: on-failure
+
+  automation:
+    build:
+      <<: *buildctx
+      dockerfile: automation/Dockerfile
+    env_file:
+      - conf/automation.env
+      - conf/log.env
+    networks:
+      - private
+    depends_on:
+      - cadence
     healthcheck: *healthcheck
     restart: on-failure
 

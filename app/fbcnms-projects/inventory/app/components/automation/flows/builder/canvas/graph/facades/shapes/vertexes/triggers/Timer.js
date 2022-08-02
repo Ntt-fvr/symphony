@@ -14,10 +14,8 @@ import fbt from 'fbt';
 import symphony from '@symphony/design-system/theme/symphony';
 import {IVertexModel, PORTS_GROUPS} from '../BaseVertext';
 import {VERTEX_COMMON_DISPLAY, getInitObject} from '../BaseVertext';
-import {getTriggerType} from '../actions/utils';
 
-export const TRIGGER_TYPE_ID = 'timer';
-export const TYPE = getTriggerType(TRIGGER_TYPE_ID);
+export const TYPE = 'TimerBlock';
 
 const FILL_COLOR = symphony.palette.AUTOMATION.ORANGE;
 const TOTAL_SIZE = 72;

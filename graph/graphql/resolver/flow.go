@@ -149,6 +149,7 @@ func (r mutationResolver) PublishFlow(ctx context.Context, input models.PublishF
 		SetEndParamDefinitions(flowDraft.EndParamDefinitions).
 		SetStatus(flow.StatusPublished).
 		SetNewInstancesPolicy(input.FlowInstancesPolicy).
+		SetNillableCmType(input.CmType).
 		ClearBlocks().
 		Save(ctx)
 	if err != nil {
@@ -206,20 +207,6 @@ func (r queryResolver) FlowDrafts(
 		predicates = append(predicates, flowdraft.NameEQ(*name))
 	}
 	return r.ClientFrom(ctx).FlowDraft.Query().Where(flowdraft.Or(predicates...)).
-		Paginate(ctx, after, first, before, last)
-}
-
-func (r queryResolver) Flows(
-	ctx context.Context,
-	after *ent.Cursor, first *int,
-	before *ent.Cursor, last *int,
-	name *string,
-) (*ent.FlowConnection, error) {
-	var predicates []predicate.Flow
-	if name != nil {
-		predicates = append(predicates, flow.NameEQ(*name))
-	}
-	return r.ClientFrom(ctx).Flow.Query().Where(flow.Or(predicates...)).
 		Paginate(ctx, after, first, before, last)
 }
 
@@ -574,9 +561,7 @@ func (r mutationResolver) importBlocks(ctx context.Context, input models.ImportF
 				/*} else {
 					newBlockInputs = append(newBlockInputs, blkInput)
 				}*/
-
 			}
-
 		}
 		if len(blockInputs) == len(newBlockInputs) {
 			return fmt.Errorf("there is circular dependency between blocks or dependency doesn't exist. num=%d", len(blockInputs))
@@ -735,7 +720,6 @@ func (r mutationResolver) ArchiveFlow(ctx context.Context, input models.ArchiveF
 }
 
 func (r mutationResolver) DuplicateFlow(ctx context.Context, input models.DuplicateFlowInput) (*ent.Flow, error) {
-
 	var err error
 	client := r.ClientFrom(ctx)
 
@@ -756,15 +740,20 @@ func (r mutationResolver) DuplicateFlow(ctx context.Context, input models.Duplic
 		SetCreationDate(time.Now()).
 		Save(ctx)
 
+	if err != nil {
+		return nil, fmt.Errorf("failed to duplicate flow: %w", err)
+	}
+
 	blockQuery := client.Block.Query().
 		Where(block.HasFlowWith(flow.ID(f.ID)))
 	setFlowBlocks := func(b *ent.BlockCreate) {
 		b.SetFlow(newFlow)
 	}
-	if err := flowengine.CopyBlocks(ctx, blockQuery, setFlowBlocks); err != nil {
-		return nil, err
+	count, _ := f.QueryBlocks().Count(ctx)
+	if count > 0 {
+		if err := flowengine.CopyBlocks(ctx, blockQuery, setFlowBlocks); err != nil {
+			return nil, err
+		}
 	}
-
 	return newFlow, nil
-
 }

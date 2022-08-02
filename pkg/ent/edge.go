@@ -2640,6 +2640,14 @@ func (wo *WorkOrder) Appointment(ctx context.Context) ([]*Appointment, error) {
 	return result, err
 }
 
+func (wo *WorkOrder) FlowInstance(ctx context.Context) (*FlowInstance, error) {
+	result, err := wo.Edges.FlowInstanceOrErr()
+	if IsNotLoaded(err) {
+		result, err = wo.QueryFlowInstance().Only(ctx)
+	}
+	return result, MaskNotFound(err)
+}
+
 func (wod *WorkOrderDefinition) Type(ctx context.Context) (*WorkOrderType, error) {
 	result, err := wod.Edges.TypeOrErr()
 	if IsNotLoaded(err) {

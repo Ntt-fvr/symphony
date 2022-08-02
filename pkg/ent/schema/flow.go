@@ -69,12 +69,18 @@ func (Flow) Fields() []ent.Field {
 				"Draft", "DRAFT",
 				"Archived", "ARCHIVED",
 				"On_Hold", "ON_HOLD",
+				"Deleted", "DELETED",
 			).Default("DRAFT"),
 		field.Enum("newInstancesPolicy").
 			NamedValues(
 				"Enabled", "ENABLED",
 				"Disabled", "DISABLED",
 			).Default("DISABLED"),
+		field.Enum("cm_type").NamedValues(
+			"initial_config", "INITIAL_CONFIG",
+			"general_cr", "GENERAL_CR",
+			"sync_parameters", "SYNC_PARAMETERS",
+		).Default("INITIAL_CONFIG").Annotations(entgql.OrderField("CM_TYPE")),
 		field.Time("creation_date").
 			Annotations(
 				entgql.OrderField("CREATED_AT"),
@@ -193,8 +199,11 @@ func (FlowInstance) Fields() []ent.Field {
 				"Failing", "FAILING",
 				"Completed", "COMPLETED",
 				"Cancelled", "CANCELED",
+				"Canceling", "CANCELING",
 				"Paused", "PAUSED",
+				"Pausing", "PAUSING",
 				"Closed", "CLOSED",
+				"Resuming", "RESUMING",
 			).Default("RUNNING"),
 		field.JSON("start_params", []*flowschema.VariableValue{}).
 			Optional(),
@@ -251,7 +260,7 @@ func (FlowInstance) Hooks() []ent.Hook {
 	return []ent.Hook{
 		hooks.DenyCreationOfInstanceOfDisabledFlowHook(),
 		hooks.CopyFlowToFlowExecutionTemplateHook(),
-		//hooks.FlowInstanceAutomationActivity(),
+		hooks.FlowInstanceAutomationActivity(),
 	}
 }
 

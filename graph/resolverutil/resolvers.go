@@ -503,3 +503,13 @@ func ResourceSpecificationItemsFilter(query *ent.ResourceSpecificationItemsQuery
 	}
 	return query, nil
 }
+
+func FlowsFilter(query *ent.FlowQuery, filters []*models.FlowFilterInput) (*ent.FlowQuery, error) {
+	var err error
+	for _, f := range filters {
+		if query, err = handleFlow(query, f); err != nil {
+			return nil, err
+		}
+	}
+	return query, nil
+}

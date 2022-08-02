@@ -1612,6 +1612,7 @@ input AddWorkOrderInput {
   description: String
   dueDate: Time
   duration: Float
+  flowInstanceId: ID
   index: Int
   isNameEditable: Boolean
   locationId: ID
@@ -1919,6 +1920,39 @@ input AuthRule {
   rule: String
 }
 
+enum AuthType {
+  BASIC
+  ODIC
+}
+
+type AutomationActivity implements Node {
+  activityType: AutomationActivityField!
+  author: User
+  blockInstance: BlockInstance
+  createTime: Time!
+  entityType: AutomationEntityType!
+  flowInstance: FlowInstance
+  id: ID!
+  newValue: String
+  oldValue: String
+}
+
+enum AutomationActivityField {
+  CREATION_DATE
+  STATUS
+}
+
+input AutomationActivityFilterInput {
+  activityType: AutomationActivityField!
+  limit: Int!
+  orderDirection: OrderDirection!
+}
+
+enum AutomationEntityType {
+  CREATION_DATE
+  STATUS
+}
+
 type AutomationPolicy {
   read: BasicPermissionRule!
   templates: CUD!
@@ -1980,6 +2014,7 @@ type Block implements Node {
   inputStateTransformation: String
   inputTransfStrategy: TransfStrategy
   inputTransformation: String
+  instances: [BlockInstance!]
   maxAttemps: Int
   nextBlocks: [Block!]!
   outputParamDefinitions: [VariableDefinition!]!
@@ -1996,6 +2031,7 @@ type Block implements Node {
 union BlockDetails = ActionBlock | ChoiceBlock | EndBlock | ExecuteFlowBlock | ForEachBlock | GotoBlock | InvokeRestAPIBlock | KafkaBlock | ParallelBlock | StartBlock | TimerBlock | TriggerBlock | WaitForSignalBlock
 
 type BlockInstance implements Node {
+  activities(filter: AutomationActivityFilterInput): [AutomationActivity!]!
   block: Block!
   endDate: Time
   failure_reason: String
@@ -4182,6 +4218,11 @@ input EditPropertyCategoryInput {
   parameterCatalogId: ID!
 }
 
+input EditPropertyTypeInput {
+  id: ID!
+  isDeleted: Boolean!
+}
+
 input EditPropertyTypeValueInput {
   id: ID
   isDeleted: Boolean
@@ -4330,6 +4371,7 @@ input EditWorkOrderInput {
   description: String
   dueDate: Time
   duration: Float
+  flowInstanceId: ID
   id: ID!
   index: Int
   installDate: Time
@@ -4979,6 +5021,7 @@ type FloorPlanScale {
 type Flow implements Node {
   author: User!
   blocks: [Block!]!
+  cmType: FlowCMType
   connectors: [Connector!]!
   creationDate: Time!
   description: String
@@ -4992,6 +5035,12 @@ type Flow implements Node {
   runningInstances: Int!
   status: FlowStatus!
   updateTime: Time!
+}
+
+enum FlowCMType {
+  GENERAL_CR
+  INITIAL_CONFIG
+  SYNC_PARAMETERS
 }
 
 """A connection to a list of Flows."""
@@ -5149,7 +5198,24 @@ type FlowExecutionTemplate implements Node {
   name: String!
 }
 
+input FlowFilterInput {
+  cmType: FlowCMType
+  filterType: FlowFilterType!
+  idSet: [ID!]
+  maxDepth: Int = 5
+  operator: FilterOperator!
+  stringSet: [String!]
+  stringValue: String
+  timeValue: Time
+}
+
+enum FlowFilterType {
+  FLOW_CM_TYPE
+  FLOW_NAME
+}
+
 type FlowInstance implements Node {
+  activities(filter: AutomationActivityFilterInput): [AutomationActivity!]!
   blocks: [BlockInstance!]!
   bssCode: String
   endDate: Time
@@ -5225,11 +5291,14 @@ enum FlowInstanceOrderField {
 
 enum FlowInstanceStatus {
   CANCELED
+  CANCELING
   CLOSED
   COMPLETED
   FAILED
   FAILING
   PAUSED
+  PAUSING
+  RESUMING
   RUNNING
 }
 
@@ -5238,12 +5307,32 @@ enum FlowNewInstancesPolicy {
   ENABLED
 }
 
+"""Ordering options for ResourceType connections."""
+input FlowOrder {
+  """The ordering direction."""
+  direction: OrderDirection!
+
+  """The field to order ResourceType by."""
+  field: FlowOrderField
+}
+
+enum FlowOrderField {
+  """Order Flow by CMType."""
+  CM_TYPE
+
+  """Order Flow by creation time."""
+  CREATED_AT
+
+  """Order Flow by name."""
+  NAME
+}
+
 enum FlowStatus {
   ARCHIVED
+  DELETED
   DRAFT
   ON_HOLD
   PUBLISHED
-  UNPUBLISHED
 }
 
 type ForEachBlock {
@@ -5532,27 +5621,39 @@ input InventoryPolicyInput {
 }
 
 type InvokeRestAPIBlock {
+  authType: AuthType
   body: String!
+  clientId: String
+  clientSecret: String
   connectionTimeOut: Int!
   entryPoint: EntryPoint!
   exitPoint: ExitPoint!
   headers: [VariableValue!]!
   method: UrlMethod!
+  oidcUrl: String
+  password: String
   url: String!
+  user: String
 }
 
 input InvokeRestAPIBlockInput {
+  authType: AuthType
   basicDefinitions: BaseBlockInput!
   body: String!
   cid: String!
+  clientId: String
+  clientSecret: String
   connectionTimeOut: Int!
   entryPoint: EntryPointInput!
   exitPoint: ExitPointInput!
   headers: [VariableValueInput]!
   method: UrlMethod!
+  oidcUrl: String
   params: [VariableExpressionInput!]!
+  password: String
   uiRepresentation: BlockUIRepresentationInput
   url: String!
+  user: String
 }
 
 type KafkaBlock {
@@ -6433,7 +6534,7 @@ type Mutation {
   addComment(input: CommentInput!): Comment! @join__field(graph: SYMPHONY)
   addComparator(input: AddComparatorInput!): Comparator! @join__field(graph: SYMPHONY)
   addConfigParamTag(input: [AddConfigParamTagInput!]!): AddConfigParamTagPayload @join__field(graph: DGRAPHSERVICE)
-  addConfigurationParameterType(input: [AddConfigurationParameterTypeInput!]!): AddConfigurationParameterTypePayload @join__field(graph: DGRAPHSERVICE)
+  addConfigurationParameterType(input: [AddConfigurationParameterTypeInput!]!, upsert: Boolean): AddConfigurationParameterTypePayload @join__field(graph: DGRAPHSERVICE)
   addConnector(flowDraftId: ID!, input: ConnectorInput!): Connector! @join__field(graph: SYMPHONY)
   addCounter(input: AddCounterInput!): Counter! @join__field(graph: SYMPHONY)
   addCounterFamily(input: AddCounterFamilyInput!): CounterFamily! @join__field(graph: SYMPHONY)
@@ -6659,6 +6760,7 @@ type Mutation {
   editProject(input: EditProjectInput!): Project! @join__field(graph: SYMPHONY)
   editProjectType(input: EditProjectTypeInput!): ProjectType! @join__field(graph: SYMPHONY)
   editPropertyCategories(propertyCategories: [EditPropertyCategoryInput]): [PropertyCategory!] @join__field(graph: SYMPHONY)
+  editPropertyType(input: EditPropertyTypeInput!): PropertyType! @join__field(graph: SYMPHONY)
   editPropertyTypeValue(input: EditPropertyTypeValueInput!): PropertyTypeValue! @join__field(graph: SYMPHONY)
   editRecommendations(input: EditRecommendationsInput!): Recommendations! @join__field(graph: SYMPHONY)
   editRecommendationsCategory(input: EditRecommendationsCategoryInput!): RecommendationsCategory! @join__field(graph: SYMPHONY)
@@ -8049,6 +8151,7 @@ enum PropertyTypeValueOrderField {
 }
 
 input PublishFlowInput {
+  cmType: FlowCMType
   flowDraftID: ID!
   flowInstancesPolicy: FlowNewInstancesPolicy!
 }
@@ -8390,15 +8493,7 @@ type Query {
     name: String
   ): FlowDraftConnection! @join__field(graph: SYMPHONY)
   flowInstances(after: Cursor, before: Cursor, filterBy: [FlowInstanceFilterInput!], first: Int, last: Int, orderBy: FlowInstanceOrder): FlowInstanceConnection! @join__field(graph: SYMPHONY)
-  flows(
-    after: Cursor
-    before: Cursor
-    first: Int
-    last: Int
-
-    """Filter flows by case sensitive name."""
-    name: String
-  ): FlowConnection! @join__field(graph: SYMPHONY)
+  flows(after: Cursor, before: Cursor, filterBy: [FlowFilterInput!], first: Int, last: Int, orderBy: FlowOrder): FlowConnection! @join__field(graph: SYMPHONY)
 
   """A list of formulas."""
   formulas(
@@ -8436,7 +8531,7 @@ type Query {
   getCharacteristic(characteristicId: ID!): Characteristic @join__field(graph: DGRAPHSERVICE)
   getCharacteristicRelationship(id: ID!): CharacteristicRelationship @join__field(graph: DGRAPHSERVICE)
   getConfigParamTag(id: ID!): ConfigParamTag @join__field(graph: DGRAPHSERVICE)
-  getConfigurationParameterType(id: ID!): ConfigurationParameterType @join__field(graph: DGRAPHSERVICE)
+  getConfigurationParameterType(id: ID, name: String): ConfigurationParameterType @join__field(graph: DGRAPHSERVICE)
   getDefaultConfig(id: ID!): DefaultConfig @join__field(graph: DGRAPHSERVICE)
   getExternalReference(id: String!): ExternalReference @join__field(graph: DGRAPHSERVICE)
   getFeature(id: ID!): Feature @join__field(graph: DGRAPHSERVICE)
@@ -12864,6 +12959,7 @@ type WorkOrder implements NamedNode & Node {
   equipmentToAdd: [Equipment]!
   equipmentToRemove: [Equipment]!
   files: [File]!
+  flowInstance: FlowInstance
   hyperlinks: [Hyperlink!]!
   id: ID!
   images: [File]!

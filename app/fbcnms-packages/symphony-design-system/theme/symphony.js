@@ -98,6 +98,7 @@ export default {
     AUTOMATION,
     separator: 'rgba(0, 0, 0, 0.12)',
     separatorLight: 'rgba(0, 0, 0, 0.06)',
+    gray:'#C4C4C4'
   },
   shadows: {
     DP1: '0px 1px 4px 0px rgba(0, 0, 0, 0.17)',

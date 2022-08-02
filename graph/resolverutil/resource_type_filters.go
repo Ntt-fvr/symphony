@@ -23,7 +23,6 @@ func handleResourceTypeFilter(q *ent.ResourceTypeQuery, filter *models.ResourceT
 	default:
 		return nil, errors.Errorf("filter type is not supported: %s", filter.FilterType)
 	}
-
 }
 
 func resourceTypeNameFilter(q *ent.ResourceTypeQuery, filter *models.ResourceTypeFilterInput) (*ent.ResourceTypeQuery, error) {

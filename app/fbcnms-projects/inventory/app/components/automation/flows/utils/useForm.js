@@ -11,9 +11,9 @@ import useSideEffectCallback from '../../../admin/userManagement/utils/useSideEf
 import {isEqual} from 'lodash';
 import {useEffect, useState} from 'react';
 
-export const useForm = (propValues = {}) => {
+export const useForm = (propValues = {}, blockParameterUpdate) => {
   const [fieldValues, setFieldValues] = useState<string>({});
-  useEffect(() => setFieldValues(propValues), []);
+  useEffect(() => setFieldValues(propValues), [blockParameterUpdate]);
 
   const onValueChanged = fieldValues => {
     setFieldValues(fieldValues);

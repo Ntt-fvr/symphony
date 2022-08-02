@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
+//go:build wireinject
 // +build wireinject
 
 package main
@@ -155,9 +156,24 @@ func newHandlers(bucket *blob.Bucket, flags *cliFlags, client *worker.Client, te
 				bucket, flags.ExportBucketPrefix, client.GetCadenceClient(worker.ExportDomainName.String())),
 		}, handler.WithTransaction(false)),
 		handler.New(handler.HandleConfig{
-			Name:    "flow",
-			Handler: handler.NewFlowHandler(client.GetCadenceClient(worker.FlowDomainName.String())),
+			Name: "flow",
+			Handler: handler.NewFlowHandler(
+				client.GetCadenceClient(worker.FlowDomainName.String()),
+				flags.AutomationURL,
+			),
 		}, handler.WithTransaction(false)),
+		handler.New(handler.HandleConfig{
+			Name:    "flow_automationactivities_log",
+			Handler: handler.Func(handler.HandleFlowActivities),
+		}),
+		handler.New(handler.HandleConfig{
+			Name:    "block_automationactivities_log",
+			Handler: handler.Func(handler.HandleBlockActivities),
+		}),
+		handler.New(handler.HandleConfig{
+			Name:    "automation_signal",
+			Handler: handler.Func(handler.HandleAutomationSignal),
+		}),
 	}
 }
 

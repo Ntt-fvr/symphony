@@ -12,8 +12,6 @@ import (
 	"time"
 
 	"github.com/facebookincubator/symphony/pkg/ent/flow"
-	"github.com/facebookincubator/symphony/pkg/flowengine/flowschema"
-	"github.com/facebookincubator/symphony/pkg/viewer"
 
 	"github.com/facebookincubator/symphony/async/handler"
 	"github.com/facebookincubator/symphony/async/worker"
@@ -30,38 +28,34 @@ func TestWorkflowCreated(t *testing.T) {
 	c := mocks.Client{}
 	var (
 		workflowID, workflowName string
-		workflowInput            int
+		workflowInput            worker.RunFlowInput
 	)
-	c.On("StartWorkflow", mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything).
+	c.On("StartWorkflow", mock.Anything, mock.Anything, mock.Anything, mock.Anything).
 		Run(func(args mock.Arguments) {
 			workflowID = args.Get(1).(client.StartWorkflowOptions).ID
-			workflowName = args.Get(3).(string)
-			workflowInput = args.Get(4).(int)
+			workflowName = args.Get(2).(string)
+			workflowInput = args.Get(3).(worker.RunFlowInput)
 		}).
 		Return(nil, nil).
 		Once()
-	flowHandler := handler.NewFlowHandler(&c)
+	flowHandler := handler.NewFlowHandler(&c, "")
 	entClient := viewertest.NewTestClient(t)
 	ctx := viewertest.NewContext(context.Background(), entClient)
-	user, _ := viewer.FromContext(ctx).(*viewer.UserViewer)
 	entClient.Use(event.LogHook(flowHandler.Handle, log.NewNopLogger()))
 	flw, err := entClient.Flow.Create().
 		SetName("Flow").
 		SetStatus(flow.StatusPublished).
-		SetCreationDate(time.Now()).
-		SetAuthor(user.User()).
 		SetNewInstancesPolicy(flow.NewInstancesPolicyEnabled).
 		Save(ctx)
 	require.NoError(t, err)
-
 	flwInstance, err := entClient.FlowInstance.Create().
-		SetFlowID(flw.ID).
+		SetFlow(flw).
+		SetBssCode("CODE123").
 		SetStartDate(time.Now()).
-		SetStartParams([]*flowschema.VariableValue{}).
 		Save(ctx)
 	require.NoError(t, err)
-	require.Equal(t, worker.AutomationTaskListName, workflowName)
-	require.Equal(t, flwInstance.ID, workflowInput)
+	require.Equal(t, worker.RunFlowWorkflowName, workflowName)
+	require.Equal(t, flwInstance.ID, workflowInput.FlowInstanceID)
 	parts := strings.Split(workflowID, "/")
 	require.Len(t, parts, 2)
 	require.Equal(t, viewertest.DefaultTenant, parts[0])

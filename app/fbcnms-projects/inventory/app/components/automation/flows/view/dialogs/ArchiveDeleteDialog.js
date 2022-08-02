@@ -7,6 +7,10 @@
  * @flow
  * @format
  */
+
+import type {ArchiveFlowMutationVariables} from '../../mutations/__generated__/AddContractMutation.graphql';
+
+import ArchiveFlowMutation from '../../../../../mutations/ArchiveFlowMutation';
 import * as React from 'react';
 import Button from '@symphony/design-system/components/Button';
 import symphony, {BLUE, YELLOW} from '@symphony/design-system/theme/symphony';
@@ -78,7 +82,19 @@ const ArchiveDeleteDialog = ({
   isOpen,
   activeModal,
   openModal,
+  idFlow,
 }: Props) => {
+  const handleClick = () => {
+    const variables: ArchiveFlowMutationVariables = {
+      input: {flowID: idFlow},
+    };
+    ArchiveFlowMutation(variables, {
+      onCompleted: () => {
+        window.location.reload();
+      },
+    });
+  };
+
   const classes = useStyles();
   if (isOpen) {
     return (
@@ -105,7 +121,7 @@ const ArchiveDeleteDialog = ({
             onClick={() => openModal()}>
             Cancel
           </Button>
-          <Button>Confirm</Button>
+          <Button onClick={handleClick}>Confirm</Button>
         </div>
       </Dialog>
     );

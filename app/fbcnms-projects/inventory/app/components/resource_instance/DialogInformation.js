@@ -7,7 +7,9 @@
  * @flow strict-local
  * @format
  */
+import type {FlowStartMutationVariables} from '../../mutations/__generated__/FlowStartMutation.graphql';
 
+import FlowStartMutation from '../../mutations/FlowStartMutation';
 import Button from '@material-ui/core/Button';
 import Card from '@symphony/design-system/components/Card/Card';
 import CardHeader from '@symphony/design-system/components/Card/CardHeader';
@@ -18,6 +20,9 @@ import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined';
 import React from 'react';
 import Text from '@symphony/design-system/components/Text';
 import {makeStyles} from '@material-ui/styles';
+import {useLazyLoadQuery} from 'react-relay/hooks';
+import {graphql} from 'relay-runtime';
+import moment from 'moment';
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -49,8 +54,70 @@ type Props = $ReadOnly<{|
   onClose: () => void,
 |}>;
 
+const DialogInformationQuery = graphql`
+  query DialogInformationQuery(
+    $filterBy: [FlowFilterInput!]
+    $filter: ResourceFilter
+  ) {
+    flows(filterBy: $filterBy) {
+      edges {
+        node {
+          id
+          name
+          status
+          newInstancesPolicy
+          cmType
+        }
+        cursor
+      }
+    }
+    queryResource(filter: $filter) {
+      name
+    }
+  }
+`;
+
 const DialogInformation = (props: Props) => {
   const {onClose} = props;
+  const queryString = window.location.search;
+  const urlParams = new URLSearchParams(queryString);
+  const createdTime = moment(new Date()).format('YYYY-MM-DD[T]HH:mm:ssZ');
+  const resourceId = urlParams.get('resource');
+
+  const flowQuery = useLazyLoadQuery(DialogInformationQuery, {
+    filterBy: [
+      {
+        filterType: 'FLOW_CM_TYPE',
+        operator: 'IS',
+        cmType: 'SYNC_PARAMETERS',
+      },
+    ],
+    filter: {
+      id: resourceId,
+    },
+  });
+
+  const handleClick = () => {
+    const data = {
+      flowID: flowQuery.flows.edges[0].node.id,
+      params: [
+        {
+          variableDefinitionKey: 'resourceName',
+          value: flowQuery.queryResource[0].name,
+        },
+      ],
+      startDate: createdTime,
+    };
+
+    const variables: FlowStartMutationVariables = {
+      input: data,
+    };
+    FlowStartMutation(variables, {
+      onCompleted: () => {
+        onClose();
+      },
+    });
+  };
 
   const classes = useStyles();
   return (
@@ -88,7 +155,8 @@ const DialogInformation = (props: Props) => {
         </Button>
         <Button
           onClick={() => {
-            onClose();
+            handleClick();
+            // onClose();
           }}
           className={classes.option}
           variant="contained"

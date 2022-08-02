@@ -352,7 +352,6 @@ func TestChoiceBlock(t *testing.T) {
 				Index:     pointer.ToInt(3),
 			},
 		},
-		BasicDefinitions: &models.BaseBlockInput{},
 	})
 	require.NoError(t, err)
 

@@ -27,9 +27,9 @@ func (r mutationResolver) AddResourceType(ctx context.Context, input models.AddR
 		Save(ctx)
 	if err != nil {
 		if ent.IsConstraintError(err) {
-			return nil, gqlerror.Errorf("has ocurred error on proces: %v", err)
+			return nil, gqlerror.Errorf("has occurred error on process: %v", err)
 		}
-		return nil, fmt.Errorf("has ocurred error on proces: %v", err)
+		return nil, fmt.Errorf("has occurred error on process: %v", err)
 	}
 	return typ, nil
 }
@@ -42,12 +42,12 @@ func (r mutationResolver) RemoveResourceType(ctx context.Context, id int) (int, 
 		).
 		Only(ctx)
 	if err != nil {
-		return id, errors.Wrapf(err, "has ocurred error on proces: %v", err)
+		return id, errors.Wrapf(err, "has occurred error on process: %v", err)
 	}
 	//TODO: borrar o editar los edges relacionados
 
 	if err := client.ResourceType.DeleteOne(t).Exec(ctx); err != nil {
-		return id, errors.Wrap(err, "has ocurred error on proces: %v")
+		return id, errors.Wrap(err, "has occurred error on process: %v")
 	}
 	return id, nil
 }
@@ -57,9 +57,9 @@ func (r mutationResolver) EditResourceType(ctx context.Context, input models.Edi
 	et, err := client.ResourceType.Get(ctx, input.ID)
 	if err != nil {
 		if ent.IsNotFound(err) {
-			return nil, gqlerror.Errorf("has ocurred error on proces: %v", err)
+			return nil, gqlerror.Errorf("has occurred error on process: %v", err)
 		}
-		return nil, errors.Wrapf(err, "has ocurred error on proces: %v", err)
+		return nil, errors.Wrapf(err, "has occurred error on process: %v", err)
 	}
 	var resourceClass, resourceBaseType = et.ResourceTypeClass, et.ResourceTypeBaseType
 	var change = false
@@ -79,9 +79,9 @@ func (r mutationResolver) EditResourceType(ctx context.Context, input models.Edi
 			SetResourceTypeClass(resourceClass).
 			Save(ctx); err != nil {
 			if ent.IsConstraintError(err) {
-				return nil, gqlerror.Errorf("has ocurred error on proces: %v", err)
+				return nil, gqlerror.Errorf("has occurred error on process: %v", err)
 			}
-			return nil, errors.Wrap(err, "has ocurred error on proces: %v")
+			return nil, errors.Wrap(err, "has occurred error on process: %v")
 		}
 	}
 	return et, nil

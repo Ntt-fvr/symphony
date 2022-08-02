@@ -260,6 +260,41 @@ func Body(v string) predicate.Block {
 	})
 }
 
+// User applies equality check predicate on the "user" field. It's identical to UserEQ.
+func User(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldUser), v))
+	})
+}
+
+// Password applies equality check predicate on the "password" field. It's identical to PasswordEQ.
+func Password(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldPassword), v))
+	})
+}
+
+// ClientID applies equality check predicate on the "client_id" field. It's identical to ClientIDEQ.
+func ClientID(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldClientID), v))
+	})
+}
+
+// ClientSecret applies equality check predicate on the "client_secret" field. It's identical to ClientSecretEQ.
+func ClientSecret(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldClientSecret), v))
+	})
+}
+
+// OidcURL applies equality check predicate on the "oidc_url" field. It's identical to OidcURLEQ.
+func OidcURL(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldOidcURL), v))
+	})
+}
+
 // CustomFilter applies equality check predicate on the "custom_filter" field. It's identical to CustomFilterEQ.
 func CustomFilter(v string) predicate.Block {
 	return predicate.Block(func(s *sql.Selector) {
@@ -2847,6 +2882,693 @@ func HeadersIsNil() predicate.Block {
 func HeadersNotNil() predicate.Block {
 	return predicate.Block(func(s *sql.Selector) {
 		s.Where(sql.NotNull(s.C(FieldHeaders)))
+	})
+}
+
+// AuthTypeEQ applies the EQ predicate on the "auth_type" field.
+func AuthTypeEQ(v AuthType) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldAuthType), v))
+	})
+}
+
+// AuthTypeNEQ applies the NEQ predicate on the "auth_type" field.
+func AuthTypeNEQ(v AuthType) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldAuthType), v))
+	})
+}
+
+// AuthTypeIn applies the In predicate on the "auth_type" field.
+func AuthTypeIn(vs ...AuthType) predicate.Block {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Block(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.In(s.C(FieldAuthType), v...))
+	})
+}
+
+// AuthTypeNotIn applies the NotIn predicate on the "auth_type" field.
+func AuthTypeNotIn(vs ...AuthType) predicate.Block {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Block(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.NotIn(s.C(FieldAuthType), v...))
+	})
+}
+
+// AuthTypeIsNil applies the IsNil predicate on the "auth_type" field.
+func AuthTypeIsNil() predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldAuthType)))
+	})
+}
+
+// AuthTypeNotNil applies the NotNil predicate on the "auth_type" field.
+func AuthTypeNotNil() predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldAuthType)))
+	})
+}
+
+// UserEQ applies the EQ predicate on the "user" field.
+func UserEQ(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldUser), v))
+	})
+}
+
+// UserNEQ applies the NEQ predicate on the "user" field.
+func UserNEQ(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldUser), v))
+	})
+}
+
+// UserIn applies the In predicate on the "user" field.
+func UserIn(vs ...string) predicate.Block {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Block(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.In(s.C(FieldUser), v...))
+	})
+}
+
+// UserNotIn applies the NotIn predicate on the "user" field.
+func UserNotIn(vs ...string) predicate.Block {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Block(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.NotIn(s.C(FieldUser), v...))
+	})
+}
+
+// UserGT applies the GT predicate on the "user" field.
+func UserGT(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldUser), v))
+	})
+}
+
+// UserGTE applies the GTE predicate on the "user" field.
+func UserGTE(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldUser), v))
+	})
+}
+
+// UserLT applies the LT predicate on the "user" field.
+func UserLT(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldUser), v))
+	})
+}
+
+// UserLTE applies the LTE predicate on the "user" field.
+func UserLTE(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldUser), v))
+	})
+}
+
+// UserContains applies the Contains predicate on the "user" field.
+func UserContains(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.Contains(s.C(FieldUser), v))
+	})
+}
+
+// UserHasPrefix applies the HasPrefix predicate on the "user" field.
+func UserHasPrefix(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.HasPrefix(s.C(FieldUser), v))
+	})
+}
+
+// UserHasSuffix applies the HasSuffix predicate on the "user" field.
+func UserHasSuffix(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.HasSuffix(s.C(FieldUser), v))
+	})
+}
+
+// UserIsNil applies the IsNil predicate on the "user" field.
+func UserIsNil() predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldUser)))
+	})
+}
+
+// UserNotNil applies the NotNil predicate on the "user" field.
+func UserNotNil() predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldUser)))
+	})
+}
+
+// UserEqualFold applies the EqualFold predicate on the "user" field.
+func UserEqualFold(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.EqualFold(s.C(FieldUser), v))
+	})
+}
+
+// UserContainsFold applies the ContainsFold predicate on the "user" field.
+func UserContainsFold(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.ContainsFold(s.C(FieldUser), v))
+	})
+}
+
+// PasswordEQ applies the EQ predicate on the "password" field.
+func PasswordEQ(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldPassword), v))
+	})
+}
+
+// PasswordNEQ applies the NEQ predicate on the "password" field.
+func PasswordNEQ(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldPassword), v))
+	})
+}
+
+// PasswordIn applies the In predicate on the "password" field.
+func PasswordIn(vs ...string) predicate.Block {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Block(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.In(s.C(FieldPassword), v...))
+	})
+}
+
+// PasswordNotIn applies the NotIn predicate on the "password" field.
+func PasswordNotIn(vs ...string) predicate.Block {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Block(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.NotIn(s.C(FieldPassword), v...))
+	})
+}
+
+// PasswordGT applies the GT predicate on the "password" field.
+func PasswordGT(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldPassword), v))
+	})
+}
+
+// PasswordGTE applies the GTE predicate on the "password" field.
+func PasswordGTE(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldPassword), v))
+	})
+}
+
+// PasswordLT applies the LT predicate on the "password" field.
+func PasswordLT(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldPassword), v))
+	})
+}
+
+// PasswordLTE applies the LTE predicate on the "password" field.
+func PasswordLTE(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldPassword), v))
+	})
+}
+
+// PasswordContains applies the Contains predicate on the "password" field.
+func PasswordContains(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.Contains(s.C(FieldPassword), v))
+	})
+}
+
+// PasswordHasPrefix applies the HasPrefix predicate on the "password" field.
+func PasswordHasPrefix(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.HasPrefix(s.C(FieldPassword), v))
+	})
+}
+
+// PasswordHasSuffix applies the HasSuffix predicate on the "password" field.
+func PasswordHasSuffix(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.HasSuffix(s.C(FieldPassword), v))
+	})
+}
+
+// PasswordIsNil applies the IsNil predicate on the "password" field.
+func PasswordIsNil() predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldPassword)))
+	})
+}
+
+// PasswordNotNil applies the NotNil predicate on the "password" field.
+func PasswordNotNil() predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldPassword)))
+	})
+}
+
+// PasswordEqualFold applies the EqualFold predicate on the "password" field.
+func PasswordEqualFold(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.EqualFold(s.C(FieldPassword), v))
+	})
+}
+
+// PasswordContainsFold applies the ContainsFold predicate on the "password" field.
+func PasswordContainsFold(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.ContainsFold(s.C(FieldPassword), v))
+	})
+}
+
+// ClientIDEQ applies the EQ predicate on the "client_id" field.
+func ClientIDEQ(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldClientID), v))
+	})
+}
+
+// ClientIDNEQ applies the NEQ predicate on the "client_id" field.
+func ClientIDNEQ(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldClientID), v))
+	})
+}
+
+// ClientIDIn applies the In predicate on the "client_id" field.
+func ClientIDIn(vs ...string) predicate.Block {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Block(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.In(s.C(FieldClientID), v...))
+	})
+}
+
+// ClientIDNotIn applies the NotIn predicate on the "client_id" field.
+func ClientIDNotIn(vs ...string) predicate.Block {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Block(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.NotIn(s.C(FieldClientID), v...))
+	})
+}
+
+// ClientIDGT applies the GT predicate on the "client_id" field.
+func ClientIDGT(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldClientID), v))
+	})
+}
+
+// ClientIDGTE applies the GTE predicate on the "client_id" field.
+func ClientIDGTE(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldClientID), v))
+	})
+}
+
+// ClientIDLT applies the LT predicate on the "client_id" field.
+func ClientIDLT(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldClientID), v))
+	})
+}
+
+// ClientIDLTE applies the LTE predicate on the "client_id" field.
+func ClientIDLTE(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldClientID), v))
+	})
+}
+
+// ClientIDContains applies the Contains predicate on the "client_id" field.
+func ClientIDContains(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.Contains(s.C(FieldClientID), v))
+	})
+}
+
+// ClientIDHasPrefix applies the HasPrefix predicate on the "client_id" field.
+func ClientIDHasPrefix(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.HasPrefix(s.C(FieldClientID), v))
+	})
+}
+
+// ClientIDHasSuffix applies the HasSuffix predicate on the "client_id" field.
+func ClientIDHasSuffix(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.HasSuffix(s.C(FieldClientID), v))
+	})
+}
+
+// ClientIDIsNil applies the IsNil predicate on the "client_id" field.
+func ClientIDIsNil() predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldClientID)))
+	})
+}
+
+// ClientIDNotNil applies the NotNil predicate on the "client_id" field.
+func ClientIDNotNil() predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldClientID)))
+	})
+}
+
+// ClientIDEqualFold applies the EqualFold predicate on the "client_id" field.
+func ClientIDEqualFold(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.EqualFold(s.C(FieldClientID), v))
+	})
+}
+
+// ClientIDContainsFold applies the ContainsFold predicate on the "client_id" field.
+func ClientIDContainsFold(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.ContainsFold(s.C(FieldClientID), v))
+	})
+}
+
+// ClientSecretEQ applies the EQ predicate on the "client_secret" field.
+func ClientSecretEQ(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldClientSecret), v))
+	})
+}
+
+// ClientSecretNEQ applies the NEQ predicate on the "client_secret" field.
+func ClientSecretNEQ(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldClientSecret), v))
+	})
+}
+
+// ClientSecretIn applies the In predicate on the "client_secret" field.
+func ClientSecretIn(vs ...string) predicate.Block {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Block(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.In(s.C(FieldClientSecret), v...))
+	})
+}
+
+// ClientSecretNotIn applies the NotIn predicate on the "client_secret" field.
+func ClientSecretNotIn(vs ...string) predicate.Block {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Block(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.NotIn(s.C(FieldClientSecret), v...))
+	})
+}
+
+// ClientSecretGT applies the GT predicate on the "client_secret" field.
+func ClientSecretGT(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldClientSecret), v))
+	})
+}
+
+// ClientSecretGTE applies the GTE predicate on the "client_secret" field.
+func ClientSecretGTE(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldClientSecret), v))
+	})
+}
+
+// ClientSecretLT applies the LT predicate on the "client_secret" field.
+func ClientSecretLT(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldClientSecret), v))
+	})
+}
+
+// ClientSecretLTE applies the LTE predicate on the "client_secret" field.
+func ClientSecretLTE(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldClientSecret), v))
+	})
+}
+
+// ClientSecretContains applies the Contains predicate on the "client_secret" field.
+func ClientSecretContains(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.Contains(s.C(FieldClientSecret), v))
+	})
+}
+
+// ClientSecretHasPrefix applies the HasPrefix predicate on the "client_secret" field.
+func ClientSecretHasPrefix(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.HasPrefix(s.C(FieldClientSecret), v))
+	})
+}
+
+// ClientSecretHasSuffix applies the HasSuffix predicate on the "client_secret" field.
+func ClientSecretHasSuffix(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.HasSuffix(s.C(FieldClientSecret), v))
+	})
+}
+
+// ClientSecretIsNil applies the IsNil predicate on the "client_secret" field.
+func ClientSecretIsNil() predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldClientSecret)))
+	})
+}
+
+// ClientSecretNotNil applies the NotNil predicate on the "client_secret" field.
+func ClientSecretNotNil() predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldClientSecret)))
+	})
+}
+
+// ClientSecretEqualFold applies the EqualFold predicate on the "client_secret" field.
+func ClientSecretEqualFold(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.EqualFold(s.C(FieldClientSecret), v))
+	})
+}
+
+// ClientSecretContainsFold applies the ContainsFold predicate on the "client_secret" field.
+func ClientSecretContainsFold(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.ContainsFold(s.C(FieldClientSecret), v))
+	})
+}
+
+// OidcURLEQ applies the EQ predicate on the "oidc_url" field.
+func OidcURLEQ(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldOidcURL), v))
+	})
+}
+
+// OidcURLNEQ applies the NEQ predicate on the "oidc_url" field.
+func OidcURLNEQ(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldOidcURL), v))
+	})
+}
+
+// OidcURLIn applies the In predicate on the "oidc_url" field.
+func OidcURLIn(vs ...string) predicate.Block {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Block(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.In(s.C(FieldOidcURL), v...))
+	})
+}
+
+// OidcURLNotIn applies the NotIn predicate on the "oidc_url" field.
+func OidcURLNotIn(vs ...string) predicate.Block {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Block(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.NotIn(s.C(FieldOidcURL), v...))
+	})
+}
+
+// OidcURLGT applies the GT predicate on the "oidc_url" field.
+func OidcURLGT(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldOidcURL), v))
+	})
+}
+
+// OidcURLGTE applies the GTE predicate on the "oidc_url" field.
+func OidcURLGTE(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldOidcURL), v))
+	})
+}
+
+// OidcURLLT applies the LT predicate on the "oidc_url" field.
+func OidcURLLT(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldOidcURL), v))
+	})
+}
+
+// OidcURLLTE applies the LTE predicate on the "oidc_url" field.
+func OidcURLLTE(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldOidcURL), v))
+	})
+}
+
+// OidcURLContains applies the Contains predicate on the "oidc_url" field.
+func OidcURLContains(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.Contains(s.C(FieldOidcURL), v))
+	})
+}
+
+// OidcURLHasPrefix applies the HasPrefix predicate on the "oidc_url" field.
+func OidcURLHasPrefix(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.HasPrefix(s.C(FieldOidcURL), v))
+	})
+}
+
+// OidcURLHasSuffix applies the HasSuffix predicate on the "oidc_url" field.
+func OidcURLHasSuffix(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.HasSuffix(s.C(FieldOidcURL), v))
+	})
+}
+
+// OidcURLIsNil applies the IsNil predicate on the "oidc_url" field.
+func OidcURLIsNil() predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldOidcURL)))
+	})
+}
+
+// OidcURLNotNil applies the NotNil predicate on the "oidc_url" field.
+func OidcURLNotNil() predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldOidcURL)))
+	})
+}
+
+// OidcURLEqualFold applies the EqualFold predicate on the "oidc_url" field.
+func OidcURLEqualFold(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.EqualFold(s.C(FieldOidcURL), v))
+	})
+}
+
+// OidcURLContainsFold applies the ContainsFold predicate on the "oidc_url" field.
+func OidcURLContainsFold(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.ContainsFold(s.C(FieldOidcURL), v))
 	})
 }
 

@@ -101,6 +101,18 @@ type Block struct {
 	Body *string `json:"body,omitempty"`
 	// Headers holds the value of the "headers" field.
 	Headers []*flowschema.VariableValue `json:"headers,omitempty"`
+	// AuthType holds the value of the "auth_type" field.
+	AuthType block.AuthType `json:"auth_type,omitempty"`
+	// User holds the value of the "user" field.
+	User string `json:"user,omitempty"`
+	// Password holds the value of the "password" field.
+	Password string `json:"password,omitempty"`
+	// ClientID holds the value of the "client_id" field.
+	ClientID string `json:"client_id,omitempty"`
+	// ClientSecret holds the value of the "client_secret" field.
+	ClientSecret string `json:"client_secret,omitempty"`
+	// OidcURL holds the value of the "oidc_url" field.
+	OidcURL string `json:"oidc_url,omitempty"`
 	// SignalType holds the value of the "signal_type" field.
 	SignalType block.SignalType `json:"signal_type,omitempty"`
 	// SignalModule holds the value of the "signal_module" field.
@@ -308,6 +320,12 @@ func (*Block) scanValues() []interface{} {
 		&sql.NullInt64{},  // connection_timeout
 		&sql.NullString{}, // body
 		&[]byte{},         // headers
+		&sql.NullString{}, // auth_type
+		&sql.NullString{}, // user
+		&sql.NullString{}, // password
+		&sql.NullString{}, // client_id
+		&sql.NullString{}, // client_secret
+		&sql.NullString{}, // oidc_url
 		&sql.NullString{}, // signal_type
 		&sql.NullString{}, // signal_module
 		&sql.NullString{}, // custom_filter
@@ -570,61 +588,91 @@ func (b *Block) assignValues(values ...interface{}) error {
 		}
 	}
 	if value, ok := values[37].(*sql.NullString); !ok {
-		return fmt.Errorf("unexpected type %T for field signal_type", values[37])
+		return fmt.Errorf("unexpected type %T for field auth_type", values[37])
+	} else if value.Valid {
+		b.AuthType = block.AuthType(value.String)
+	}
+	if value, ok := values[38].(*sql.NullString); !ok {
+		return fmt.Errorf("unexpected type %T for field user", values[38])
+	} else if value.Valid {
+		b.User = value.String
+	}
+	if value, ok := values[39].(*sql.NullString); !ok {
+		return fmt.Errorf("unexpected type %T for field password", values[39])
+	} else if value.Valid {
+		b.Password = value.String
+	}
+	if value, ok := values[40].(*sql.NullString); !ok {
+		return fmt.Errorf("unexpected type %T for field client_id", values[40])
+	} else if value.Valid {
+		b.ClientID = value.String
+	}
+	if value, ok := values[41].(*sql.NullString); !ok {
+		return fmt.Errorf("unexpected type %T for field client_secret", values[41])
+	} else if value.Valid {
+		b.ClientSecret = value.String
+	}
+	if value, ok := values[42].(*sql.NullString); !ok {
+		return fmt.Errorf("unexpected type %T for field oidc_url", values[42])
+	} else if value.Valid {
+		b.OidcURL = value.String
+	}
+	if value, ok := values[43].(*sql.NullString); !ok {
+		return fmt.Errorf("unexpected type %T for field signal_type", values[43])
 	} else if value.Valid {
 		b.SignalType = block.SignalType(value.String)
 	}
-	if value, ok := values[38].(*sql.NullString); !ok {
-		return fmt.Errorf("unexpected type %T for field signal_module", values[38])
+	if value, ok := values[44].(*sql.NullString); !ok {
+		return fmt.Errorf("unexpected type %T for field signal_module", values[44])
 	} else if value.Valid {
 		b.SignalModule = block.SignalModule(value.String)
 	}
-	if value, ok := values[39].(*sql.NullString); !ok {
-		return fmt.Errorf("unexpected type %T for field custom_filter", values[39])
+	if value, ok := values[45].(*sql.NullString); !ok {
+		return fmt.Errorf("unexpected type %T for field custom_filter", values[45])
 	} else if value.Valid {
 		b.CustomFilter = value.String
 	}
-	if value, ok := values[40].(*sql.NullBool); !ok {
-		return fmt.Errorf("unexpected type %T for field block_flow", values[40])
+	if value, ok := values[46].(*sql.NullBool); !ok {
+		return fmt.Errorf("unexpected type %T for field block_flow", values[46])
 	} else if value.Valid {
 		b.BlockFlow = value.Bool
 	}
 
-	if value, ok := values[41].(*[]byte); !ok {
-		return fmt.Errorf("unexpected type %T for field kafka_brokers", values[41])
+	if value, ok := values[47].(*[]byte); !ok {
+		return fmt.Errorf("unexpected type %T for field kafka_brokers", values[47])
 	} else if value != nil && len(*value) > 0 {
 		if err := json.Unmarshal(*value, &b.KafkaBrokers); err != nil {
 			return fmt.Errorf("unmarshal field kafka_brokers: %v", err)
 		}
 	}
-	if value, ok := values[42].(*sql.NullString); !ok {
-		return fmt.Errorf("unexpected type %T for field kafka_topic", values[42])
+	if value, ok := values[48].(*sql.NullString); !ok {
+		return fmt.Errorf("unexpected type %T for field kafka_topic", values[48])
 	} else if value.Valid {
 		b.KafkaTopic = value.String
 	}
-	if value, ok := values[43].(*sql.NullString); !ok {
-		return fmt.Errorf("unexpected type %T for field kafka_message", values[43])
+	if value, ok := values[49].(*sql.NullString); !ok {
+		return fmt.Errorf("unexpected type %T for field kafka_message", values[49])
 	} else if value.Valid {
 		b.KafkaMessage = value.String
 	}
-	if value, ok := values[44].(*sql.NullString); !ok {
-		return fmt.Errorf("unexpected type %T for field kafka_message_type", values[44])
+	if value, ok := values[50].(*sql.NullString); !ok {
+		return fmt.Errorf("unexpected type %T for field kafka_message_type", values[50])
 	} else if value.Valid {
 		b.KafkaMessageType = enum.KafkaMessageType(value.String)
 	}
-	if value, ok := values[45].(*sql.NullString); !ok {
-		return fmt.Errorf("unexpected type %T for field foreach_key", values[45])
+	if value, ok := values[51].(*sql.NullString); !ok {
+		return fmt.Errorf("unexpected type %T for field foreach_key", values[51])
 	} else if value.Valid {
 		b.ForeachKey = new(string)
 		*b.ForeachKey = value.String
 	}
-	if value, ok := values[46].(*sql.NullInt64); !ok {
-		return fmt.Errorf("unexpected type %T for field foreach_start_blockID", values[46])
+	if value, ok := values[52].(*sql.NullInt64); !ok {
+		return fmt.Errorf("unexpected type %T for field foreach_start_blockID", values[52])
 	} else if value.Valid {
 		b.ForeachStartBlockID = new(int)
 		*b.ForeachStartBlockID = int(value.Int64)
 	}
-	values = values[47:]
+	values = values[53:]
 	if len(values) == len(block.ForeignKeys) {
 		if value, ok := values[0].(*sql.NullInt64); !ok {
 			return fmt.Errorf("unexpected type %T for edge-field block_sub_flow", value)
@@ -858,6 +906,18 @@ func (b *Block) String() string {
 	}
 	builder.WriteString(", headers=")
 	builder.WriteString(fmt.Sprintf("%v", b.Headers))
+	builder.WriteString(", auth_type=")
+	builder.WriteString(fmt.Sprintf("%v", b.AuthType))
+	builder.WriteString(", user=")
+	builder.WriteString(b.User)
+	builder.WriteString(", password=")
+	builder.WriteString(b.Password)
+	builder.WriteString(", client_id=")
+	builder.WriteString(b.ClientID)
+	builder.WriteString(", client_secret=")
+	builder.WriteString(b.ClientSecret)
+	builder.WriteString(", oidc_url=")
+	builder.WriteString(b.OidcURL)
 	builder.WriteString(", signal_type=")
 	builder.WriteString(fmt.Sprintf("%v", b.SignalType))
 	builder.WriteString(", signal_module=")

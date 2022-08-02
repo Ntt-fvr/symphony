@@ -216,12 +216,18 @@ func (r blockResolver) Details(ctx context.Context, obj *ent.Block) (models.Bloc
 		}
 
 		return &models.InvokeRestAPIBlock{
-			EntryPoint: entryPoint,
-			ExitPoint:  exitPoint,
-			URL:        url,
-			Method:     method,
-			Headers:    obj.Headers,
-			Body:       body,
+			EntryPoint:   entryPoint,
+			ExitPoint:    exitPoint,
+			URL:          url,
+			Method:       method,
+			Headers:      obj.Headers,
+			Body:         body,
+			AuthType:     &obj.AuthType,
+			User:         &obj.User,
+			Password:     &obj.Password,
+			ClientID:     &obj.ClientID,
+			ClientSecret: &obj.ClientSecret,
+			OidcURL:      &obj.OidcURL,
 		}, nil
 	case block.TypeTimer:
 		return &models.TimerBlock{
@@ -809,11 +815,25 @@ func (r mutationResolver) AddChoiceBlock(ctx context.Context, flowDraftID int, i
 			}
 		}
 	}
+
+	if input.DefaultExitPoint != nil {
+		dExitPoint, err := b.QueryExitPoints().Where(exitpoint.RoleEQ(flowschema.ExitPointRoleDefault), exitpoint.CidIsNil()).Only(ctx)
+		if err != nil {
+			return nil, err
+		}
+
+		if _, err := dExitPoint.Update().
+			SetCid(*input.DefaultExitPoint.Cid).
+			Save(ctx); err != nil {
+			return nil, fmt.Errorf("failed to create choice default exit point: %w", err)
+		}
+	}
+
 	return b, nil
 }
 
 func (r mutationResolver) AddExecuteFlowBlock(ctx context.Context, flowDraftID int, input models.ExecuteFlowBlockInput) (*ent.Block, error) {
-	mutation := addBlockMutation(ctx, input.Cid, block.TypeSubFlow, flowDraftID, input.UIRepresentation)
+	mutation := addBlockMutation(ctx, input.Cid, block.TypeExecuteFlow, flowDraftID, input.UIRepresentation)
 	b, err := mutation.SetSubFlowID(input.Flow).
 		Save(ctx)
 	if err != nil {
@@ -838,7 +858,7 @@ func (r mutationResolver) AddTimerBlock(ctx context.Context, flowDraftID int, in
 	return b.Update().
 		SetEnableTimerExpression(*input.EnableExpressionL).
 		SetTimerExpression(*input.Expression).
-		SetTimerBehavior((block.TimerBehavior)(input.Behavior)).
+		SetTimerBehavior(input.Behavior).
 		SetNillableSeconds(input.Seconds).
 		SetNillableTimerSpecificDate(input.SpecificDatetime).
 		Save(ctx)
@@ -852,26 +872,45 @@ func (r mutationResolver) AddInvokeRestAPIBlock(ctx context.Context, flowDraftID
 		return nil, err
 	}
 
-	return b.Update().
+	details := b.Update().
 		SetBody(input.Body).
 		SetConnectionTimeout(input.ConnectionTimeOut).
 		SetHeaders(input.Headers).
 		SetURL(input.URL).
-		SetURLMethod(block.URLMethod(input.Method)).
-		Save(ctx)
+		SetURLMethod(block.URLMethod(input.Method))
 
+	if input.AuthType != nil {
+		details = details.SetAuthType(block.AuthType(*input.AuthType))
+	}
+	if input.User != nil {
+		details = details.SetNillableUser(input.User)
+	}
+	if input.Password != nil {
+		details = details.SetNillablePassword(input.Password)
+	}
+	if input.ClientID != nil {
+		details = details.SetNillableClientID(input.ClientID)
+	}
+	if input.ClientSecret != nil {
+		details = details.SetNillableClientSecret(input.ClientSecret)
+	}
+	if input.OidcURL != nil {
+		details = details.SetNillableOidcURL(input.OidcURL)
+	}
+
+	return details.Save(ctx)
 }
 
 func (r mutationResolver) AddWaitForSignalBlock(ctx context.Context, flowDraftID int, input models.WaitForSignalBlockInput) (*ent.Block, error) {
-	mutation := addBlockMutation(ctx, input.Cid, block.TypeInvokeRestAPI, flowDraftID, input.UIRepresentation)
+	mutation := addBlockMutation(ctx, input.Cid, block.TypeWaitForSignal, flowDraftID, input.UIRepresentation)
 	addBlockBasicDefinitions(ctx, mutation, *input.BasicDefinitions)
 	b, err := mutation.Save(ctx)
 	if err != nil {
 		return nil, err
 	}
 	return b.Update().
-		SetSignalModule((block.SignalModule)(input.SignalModule)).
-		SetSignalType((block.SignalType)(input.Type)).
+		SetSignalModule(input.SignalModule).
+		SetSignalType(input.Type).
 		SetCustomFilter(*input.CustomFilter).
 		SetBlockFlow(input.Blocked).
 		Save(ctx)
@@ -896,7 +935,7 @@ func addBlockBasicDefinitions(ctx context.Context, mutation *ent.BlockCreate, in
 }
 
 func (r mutationResolver) AddKafkaBlock(ctx context.Context, flowDraftID int, input models.KafkaBlockInput) (*ent.Block, error) {
-	mutation := addBlockMutation(ctx, input.Cid, block.TypeInvokeRestAPI, flowDraftID, input.UIRepresentation)
+	mutation := addBlockMutation(ctx, input.Cid, block.TypeKafka, flowDraftID, input.UIRepresentation)
 	addBlockBasicDefinitions(ctx, mutation, *input.BasicDefinitions)
 	b, err := mutation.Save(ctx)
 	if err != nil {

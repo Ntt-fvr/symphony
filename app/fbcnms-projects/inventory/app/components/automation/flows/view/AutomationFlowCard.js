@@ -22,6 +22,11 @@ import symphony from '@symphony/design-system/theme/symphony';
 import {InventoryAPIUrls} from '../../../../common/InventoryAPI';
 import {createFragmentContainer, graphql} from 'react-relay';
 import {makeStyles} from '@material-ui/styles';
+import {PauseCircleOutline} from '@material-ui/icons';
+import CheckCircleOutlineOutlined from '@material-ui/icons/CheckCircleOutlineOutlined';
+import {AllInbox} from '@material-ui/icons';
+import {DriveFileRenameOutline} from '@material-ui/icons';
+import moment from 'moment';
 
 export const FLOW_STATUSES = {
   UNPUBLISHED: {
@@ -29,18 +34,35 @@ export const FLOW_STATUSES = {
     label: fbt('Unpublished', ''),
     backgroundColor: symphony.palette.D50,
     color: symphony.palette.secondary,
+    icon: <PauseCircleOutline />,
   },
   PUBLISHED: {
     key: 'PUBLISHED',
     label: fbt('Published', ''),
     backgroundColor: symphony.palette.G600,
     color: symphony.palette.white,
+    icon: <CheckCircleOutlineOutlined />,
   },
   ARCHIVED: {
     key: 'ARCHIVED',
     label: fbt('Archived', ''),
-    backgroundColor: symphony.palette.D700,
+    backgroundColor: symphony.palette.gray,
     color: symphony.palette.white,
+    icon: <AllInbox />,
+  },
+  ON_HOLD: {
+    key: 'ON_HOLD',
+    label: fbt('On Hold', ''),
+    backgroundColor: symphony.palette.Y600,
+    color: symphony.palette.secondary,
+    icon: <PauseCircleOutline />,
+  },
+  DRAFT: {
+    key: 'DRAFT',
+    label: fbt('Draft', ''),
+    backgroundColor: symphony.palette.B50,
+    color: symphony.palette.secondary,
+    icon: <DriveFileRenameOutline />,
   },
   // eslint-disable-next-line relay/no-future-added-value
   '%future added value': {
@@ -153,15 +175,19 @@ type Props = $ReadOnly<{|
 |}>;
 
 function AutomationFlowCard(props: Props) {
-  const {id, name, description, status, newInstancesPolicy, draft} = props.flow;
+  const {
+    id,
+    name,
+    description,
+    status,
+    draft,
+    author,
+    creationDate,
+    updateTime,
+    runningInstances,
+    failedInstances,
+  } = props.flow;
   const hasDraft = draft ? !draft.sameAsFlow : false;
-
-  // TODO: when available get these from the AutomationFlowCard_flow
-  const runningInstances = 1;
-  const failingInstances = 1;
-  const createdBy = 'Julian Huerta';
-  const lastEditor = 'Adriana Lorenzano';
-  const creationDate = '14/03/2022 - 09:35:20';
 
   const classes = useStyles();
   const editFlowUrl = draft
@@ -180,7 +206,7 @@ function AutomationFlowCard(props: Props) {
           </Link>
           <div className={classes.statusContainer}>
             <div className={classes.statuses}>
-              <StatusTag status={status} />
+              <StatusTag status={status} hasDraft={hasDraft} />
               {hasDraft && status !== FLOW_STATUSES.UNPUBLISHED.key ? (
                 <Text
                   variant="caption"
@@ -192,6 +218,7 @@ function AutomationFlowCard(props: Props) {
             </div>
             <div className={classes.insideContainer}>
               <CustomizedMenus
+                idFlow={id}
                 icon={MoreVertIcon}
                 name={name}
                 description={description}
@@ -236,7 +263,7 @@ function AutomationFlowCard(props: Props) {
             <InfoIcon />
           </Tooltip>
         </div>
-        {failingInstances === 0 ? (
+        {failedInstances === 0 ? (
           <Text variant="body1" color="gray" className={classes.noneInstance}>
             <fbt desc="">None</fbt>
           </Text>
@@ -251,18 +278,18 @@ function AutomationFlowCard(props: Props) {
       </div>
       <div className={classes.runningInstancesContainer}>
         <Text variant="body1" color="gray" className={classes.smallText}>
-          Author: {createdBy}
+          {`Author: ${author.firstName} ${author.lastName}`}
         </Text>
         <Text variant="body1" color="gray" className={classes.smallText}>
-          Last editor: {lastEditor}
+          {`Last editor: ${author.firstName} ${author.lastName}`}
         </Text>
       </div>
       <div className={classes.runningInstancesContainer}>
         <Text variant="body1" color="gray" className={classes.smallText}>
-          Creation date: {creationDate}
+          {`Creation date: ${moment(creationDate).format('YYYY-MM-DD')}`}
         </Text>
         <Text variant="body1" color="gray" className={classes.smallText}>
-          Edit date: {creationDate}
+          {` Edit date: ${moment(updateTime).format('YYYY-MM-DD')}`}
         </Text>
       </div>
     </div>
@@ -281,6 +308,15 @@ export default createFragmentContainer(AutomationFlowCard, {
         id
         sameAsFlow
       }
+      creationDate
+      updateTime
+      author {
+        id
+        firstName
+        email
+      }
+      runningInstances
+      failedInstances
     }
   `,
 });

@@ -89,7 +89,7 @@ services:
     healthcheck: *healthcheck
 
   cadence:
-    image: ubercadence/server:0.14.1-auto-setup
+    image: ubercadence/server:0.24.0-auto-setup
     ports:
       - 7933:7933
       - 7934:7934
@@ -148,6 +148,18 @@ services:
       - mysql
       - nats
       - front
+    healthcheck: *healthcheck
+    restart: on-failure
+
+  automation:
+    build:
+      context: ..
+      dockerfile: automation/Dockerfile
+    env_file:
+      - conf/automation.env
+      - conf/log.env
+    depends_on:
+      - cadence
     healthcheck: *healthcheck
     restart: on-failure
 

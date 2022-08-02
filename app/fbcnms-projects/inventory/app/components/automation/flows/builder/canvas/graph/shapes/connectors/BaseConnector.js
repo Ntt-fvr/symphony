@@ -44,6 +44,10 @@ export const DEFAULT_LINK_SETTINGS = {
         },
       },
     },
+    connector:{
+      name: 'rounded',
+      args: {},
+    }
   }),
   defaultConnector: {name: 'jumpover'},
   defaultRouter: {name: 'manhattan'},

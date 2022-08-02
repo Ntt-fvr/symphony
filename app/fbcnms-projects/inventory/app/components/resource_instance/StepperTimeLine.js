@@ -112,7 +112,7 @@ const TooltipTime = withStyles(() => ({
     color: 'white',
     maxWidth: 220,
     fontSize: '14px',
-    width: '140px',
+    width: '155px',
     height: '30px',
     position: 'absolute',
     top: '-50px',
@@ -160,12 +160,20 @@ const StepperTimeLine = (props: Props) => {
     const dateConvert = moment(date).format('DD MMM YYYY');
     return dateConvert;
   };
+  const formatDateTime = date => {
+    const timeConvert = moment(date).format('YYYY-MM-DD/HH:mm:ss');
+    return timeConvert;
+  };
 
   const SelectedAndCurrent = label => {
     const currentVersion = queryCMVersion.queryResource[0].cmVersions.filter(
       item => item.status === 'CURRENT',
     );
-    CMSelected(label, currentVersion, queryCMVersion.queryResource[0].cmVersions);
+    CMSelected(
+      label,
+      currentVersion,
+      queryCMVersion.queryResource[0].cmVersions,
+    );
   };
 
   return (
@@ -183,7 +191,7 @@ const StepperTimeLine = (props: Props) => {
               <TooltipTime
                 arrow={false}
                 placement="top"
-                title={formatDate(label.createTime)}>
+                title={formatDateTime(label.createTime)}>
                 <FiberManualRecordIcon className={classes.stepLabelRoot} />
               </TooltipTime>
             }>

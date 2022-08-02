@@ -26,6 +26,7 @@ import TriggerWorkforceBlockType from '../../canvas/graph/shapes/blocks/blockTyp
 import UpdateInventoryBlockType from '../../canvas/graph/shapes/blocks/blockTypes/updateInventory/UpdateInventoryBlockType';
 import UpdateWorkforceBlockType from '../../canvas/graph/shapes/blocks/blockTypes/updateWorkforce/UpdateWorkforceBlockType';
 import WaitSignalBlockType from '../../canvas/graph/shapes/blocks/blockTypes/waitSignal/WaitSignalBlockType';
+import PublishToKafkaBlockType from '../../canvas/graph/shapes/blocks/blockTypes/publishToKafka/PublishToKafkaBlockType';
 import {BackFlow} from '@symphony/design-system/icons';
 
 import ListItemIcon from '@material-ui/core/ListItemIcon';
@@ -80,11 +81,11 @@ export default function BlocksBar(props: Props) {
     () => [
       new ManualStartBlockType(flow),
       new EndBlockType(flow),
-      new TriggerStartBlockType(flow),
+      //new TriggerStartBlockType(flow),
       new Timer(flow),
-      new ForEachLoop(flow),
+      // new ForEachLoop(flow),
       new ChoiceBlockType(flow),
-      new ParallelBlockType(flow),
+      // new ParallelBlockType(flow),
       new GoToBlockType(flow),
     ],
     [flow],
@@ -99,7 +100,8 @@ export default function BlocksBar(props: Props) {
       new ExecuteFlowBlockType(flow),
       new WaitSignalBlockType(flow),
       new InvokeRestApiBlockType(flow),
-      new ExecuteNetworkActionBlockType(flow),
+      //new ExecuteNetworkActionBlockType(flow),
+      new PublishToKafkaBlockType(flow)
     ],
     [flow],
   );

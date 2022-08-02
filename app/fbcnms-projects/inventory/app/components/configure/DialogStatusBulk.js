@@ -11,7 +11,9 @@ import type {
   AddRequestChangeMutationResponse,
   AddRequestChangeMutationVariables,
 } from '../../mutations/__generated__/AddRequestChangeMutation.graphql';
+import type {FlowStartMutationVariables} from '../../mutations/__generated__/FlowStartMutation.graphql';
 
+import FlowStartMutation from '../../mutations/FlowStartMutation';
 import AddRequestChangeMutation from '../../mutations/AddRequestChangeMutation';
 import Button from '@material-ui/core/Button';
 import Card from '@symphony/design-system/components/Card/Card';
@@ -70,7 +72,7 @@ const useStyles = makeStyles(() => ({
 }));
 
 const DialogStatusBulkQuery = graphql`
-  query DialogStatusBulkQuery {
+  query DialogStatusBulkQuery($filterBy: [FlowFilterInput!]) {
     queryResource {
       id
       name
@@ -78,6 +80,18 @@ const DialogStatusBulkQuery = graphql`
     queryConfigurationParameterType {
       id
       name
+    }
+    flows(filterBy: $filterBy) {
+      edges {
+        node {
+          id
+          name
+          status
+          newInstancesPolicy
+          cmType
+        }
+        cursor
+      }
     }
   }
 `;
@@ -99,12 +113,19 @@ const TYPES = {
 const DATE_FORMAT = 'YYYY-MM-DD[T]HH:mm:ss';
 
 const DialogStatus = (props: Props) => {
-  const {onClose, name, onClick, schedule, infoCSV} = props;
+  const {onClose, name, onClick, schedule, infoCSV, origin} = props;
   const enqueueSnackbar = useEnqueueSnackbar();
-  const [filter, setFilters] = useState({});
   const {me} = useMainContext();
   const [description, setDescription] = useState('');
-  const queryResourceParameter = useLazyLoadQuery(DialogStatusBulkQuery, {});
+  const queryResourceParameter = useLazyLoadQuery(DialogStatusBulkQuery, {
+    filterBy: [
+      {
+        filterType: 'FLOW_CM_TYPE',
+        operator: 'IS',
+        cmType: origin,
+      },
+    ],
+  });
 
   const _enqueueError = useCallback(
     (message: string) => {
@@ -193,13 +214,32 @@ const DialogStatus = (props: Props) => {
           _enqueueError(errors[0].message);
         } else {
           // navigate to main page
-          onClick();
+          const createdTime = moment(new Date()).format(DATE_FORMAT);
+          const data = {
+            flowID: queryResourceParameter.flows.edges[0].node.id,
+            params: [
+              {
+                variableDefinitionKey: 'changeId',
+                value: response.addChangeRequest.changeRequest[0].id,
+              },
+            ],
+            startDate: createdTime,
+          };
+
+          const variables: FlowStartMutationVariables = {
+            input: data,
+          };
+          FlowStartMutation(variables, {
+            onCompleted: () => {
+            },
+          });
         }
       },
       onError: (error: Error) => {
         _enqueueError(getGraphError(error));
       },
     };
+    onClick();
 
     AddRequestChangeMutation(variables, callbacks);
   };

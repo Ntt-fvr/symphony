@@ -78,11 +78,11 @@ func (r mutationResolver) EditResourceSpecificationItems(ctx context.Context, in
 	}
 	var resourcespecificationrelationship, err2 = et.Resourcespecificationrelationship(ctx)
 	if err2 != nil {
-		return nil, errors.Wrap(err2, "has ocurred error on proces: %v")
+		return nil, errors.Wrap(err2, "has occurred error on process: %v")
 	}
 	var resourcespecification, err3 = et.Resourcespecificationitems(ctx)
 	if err3 != nil {
-		return nil, errors.Wrap(err3, "has ocurred error on proces: %v")
+		return nil, errors.Wrap(err3, "has occurred error on process: %v")
 	}
 	if input.ResourceSpecificationRelationship != &resourcespecificationrelationship.ID || input.ResourceSpecification != &resourcespecification.ID {
 		if et, err = client.ResourceSpecificationItems.

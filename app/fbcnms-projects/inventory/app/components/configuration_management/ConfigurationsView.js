@@ -45,13 +45,27 @@ const useStyles = makeStyles(() => ({
     width: '100%',
   },
   selectResourceType: {
-    width: '160px',
+    width: 'auto',
+    minWidth: '150px',
     margin: '5px',
+    '& .MuiSelect-selectMenu': {
+      height: '20px',
+    },
+    '& .MuiOutlinedInput-input': {
+      paddingTop: '15px',
+    },
   },
   selectResourceSpecification: {
     paddingLeft: '0px',
-    width: '200px',
+    width: 'auto',
+    minWidth: '210px',
     margin: '5px',
+    '& .MuiSelect-selectMenu': {
+      height: '20px',
+    },
+    '& .MuiOutlinedInput-input': {
+      paddingTop: '15px',
+    },
   },
   bar: {
     display: 'flex',
