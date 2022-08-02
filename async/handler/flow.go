@@ -40,7 +40,7 @@ func NewFlowHandler(client client.Client, automationUrl string) *FlowHandler {
 func (f FlowHandler) Handle(ctx context.Context, logger log.Logger, evt ev.EventObject) error {
 
 	// TODO Remove it
-	tempLog := logger.Background()
+	tempLog := logger.For(ctx)
 
 	entry, ok := evt.(event.LogEntry)
 	// TODO Remove it

@@ -40,7 +40,7 @@ func flowStart(c *gin.Context) {
 	flowInstanceID := strconv.Itoa(request.FlowInstanceID)
 
 	execution, err := workflowClient.StartWorkflow(context.Background(), workflowOptions,
-		flow.AutomationWorkflow, taskList, flowInstanceID)
+		flow.AutomationWorkflow, taskList, flowInstanceID, request.Tenant)
 	if err != nil {
 		logger.Error("Workflow failed.", zap.Error(err))
 		c.IndentedJSON(http.StatusBadRequest, gin.H{"message": err.Error()})

@@ -80,14 +80,39 @@ func (s *Server) Shutdown(ctx context.Context) error {
 
 // HandleEvent implement ev.EventHandler interface.
 func (s *Server) HandleEvent(ctx context.Context, evt *ev.Event) error {
-	fmt.Println("Evento: ", evt)
+	// TODO Remove it
+	s.logger.For(ctx).Info(
+		"[Async Server]",
+		zap.Any("Event", evt),
+	)
+
 	switch evt.Name {
 	case event.EntMutation:
+		// TODO Remove it
+		s.logger.For(ctx).Info(
+			"[Async Server]",
+			zap.String("Ent Mutation", "OK"),
+		)
 		if _, ok := evt.Object.(event.LogEntry); !ok {
+			// TODO Remove it
+			s.logger.For(ctx).Info(
+				"[Async Server]",
+				zap.String("Log Entry", "Error"),
+			)
 			return fmt.Errorf("event object %T must be a log entry", evt.Object)
 		}
 	case event.Automation:
+		// TODO Remove it
+		s.logger.For(ctx).Info(
+			"[Async Server]",
+			zap.String("Automation", "OK"),
+		)
 		if _, ok := evt.Object.(event.SignalEvent); !ok {
+			// TODO Remove it
+			s.logger.For(ctx).Info(
+				"[Async Server]",
+				zap.String("Signal Event", "Error"),
+			)
 			return fmt.Errorf("event object %T must be a signal event", evt.Object)
 		}
 	}
@@ -100,6 +125,11 @@ func (s *Server) HandleEvent(ctx context.Context, evt *ev.Event) error {
 }
 
 func (s *Server) handleEvent(ctx context.Context, evt *ev.Event) error {
+	// TODO Remove it
+	s.logger.For(ctx).Info(
+		"[Async Server he]",
+		zap.String("handleEvent", "OK"),
+	)
 	client, err := s.tenancy.ClientFor(ctx, evt.Tenant)
 	if err != nil {
 		const msg = "cannot get tenancy client"
@@ -107,6 +137,11 @@ func (s *Server) handleEvent(ctx context.Context, evt *ev.Event) error {
 		return fmt.Errorf("%s. tenant: %s", msg, evt.Tenant)
 	}
 	ctx = ent.NewContext(ctx, client)
+	// TODO Remove it
+	s.logger.For(ctx).Info(
+		"[Async Server he]",
+		zap.String("New Context", "OK"),
+	)
 
 	var featureList []string
 	snapshot, err := s.features.Latest(ctx)
@@ -118,8 +153,14 @@ func (s *Server) handleEvent(ctx context.Context, evt *ev.Event) error {
 			featureList = features
 		}
 	}
+
 	v := viewer.NewAutomation(evt.Tenant, ServiceName, user.RoleOwner,
 		viewer.WithFeatures(featureList...),
+	)
+	// TODO Remove it
+	s.logger.For(ctx).Info(
+		"[Async Server he]",
+		zap.String("New Automation", "OK"),
 	)
 	ctx = log.NewFieldsContext(ctx, zap.Object("viewer", v))
 	ctx = viewer.NewContext(ctx, v)
@@ -135,6 +176,11 @@ func (s *Server) handleEvent(ctx context.Context, evt *ev.Event) error {
 	ctx = authz.NewContext(ctx, permissions)
 
 	for _, h := range s.handlers {
+		// TODO Remove it
+		s.logger.For(ctx).Info(
+			"[Async Server he]",
+			zap.String("Handler", "OK"),
+		)
 		if err := h.Handle(ctx, s.logger, evt.Object); err != nil {
 			s.logger.For(ctx).Error("running handler", zap.Error(err))
 		}
