@@ -10,32 +10,6 @@ import (
 
 var programs = map[string]cel.Program{}
 
-/*
-func Compile(expr string, exprType *exprpb.Type) (string, error) {
-	ast, err := compile(expr, exprType)
-	if err != nil {
-		return "", err
-	}
-	return astToString(ast)
-}
-
-func astToString(ast *cel.Ast) (string, error) {
-	return cel.AstToString(ast)
-}
-
-func compile(expr string, exprType *exprpb.Type) (*cel.Ast, error) {
-	ast, iss := compileAst(expr)
-	if iss != nil {
-		return nil, iss
-	}
-	if !proto.Equal(ast.ResultType(), exprType) {
-		err := fmt.Sprintf("Got %v, wanted %v result type", ast.ResultType(), exprType)
-		return nil, errors.New(err)
-	}
-	return ast, nil
-}
-*/
-
 func compileAst(expr string) (*cel.Ast, error) {
 	ast, iss := environment.Compile(expr)
 	if iss.Err() != nil {

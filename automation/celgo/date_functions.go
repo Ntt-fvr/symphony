@@ -32,7 +32,7 @@ func dateInstanceFunctions() []cel.EnvOption {
 	return []cel.EnvOption{
 		cel.Function("format",
 			cel.MemberOverload(DateFormat,
-				[]*cel.Type{cel.TimestampType}, cel.StringType,
+				[]*cel.Type{cel.TimestampType, cel.StringType}, cel.StringType,
 				cel.BinaryBinding(
 					func(value, value2 ref.Val) ref.Val {
 						switch v := value.Value(); v.(type) {

@@ -221,17 +221,6 @@ func (b *ExecutorInvokeRestAPIBlock) getNativeValue(value string) (map[string]in
 
 	expression := fmt.Sprintf(`{'%s': %s}`, invokeParamKey, value)
 
-	// TODO Remove it
-	fmt.Println()
-	fmt.Println("**************************************")
-	fmt.Println("[Automation - Invoke - GetNative]")
-	fmt.Printf("Input: %s\n", b.Input)
-	fmt.Printf("State: %s\n", b.State)
-	fmt.Printf("Value: %s\n", value)
-	fmt.Printf("Expression: %s\n", expression)
-	fmt.Println("**************************************")
-	fmt.Println()
-
 	result, err := celgo.CompileAndEvaluate(expression, variables)
 	if err != nil {
 		return nil, err
