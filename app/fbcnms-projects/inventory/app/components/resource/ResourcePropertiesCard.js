@@ -24,6 +24,7 @@ import React, {useState} from 'react';
 import Tab from '@material-ui/core/Tab';
 import Tabs from '@material-ui/core/Tabs';
 import Typography from '@material-ui/core/Typography';
+import {Configuration} from '../resource_instance/Configuration';
 import {LogEvents, ServerLogger} from '../../common/LoggingUtils';
 import {ResourceNetworkCard} from './ResourceNetworkCard';
 import {camelCase, startCase} from 'lodash';
@@ -111,6 +112,39 @@ const ResourceCardListQuery = graphql`
             isInstanceProperty
           }
         }
+      }
+    }
+    queryCMVersion {
+      id
+      parameters {
+        id
+        stringValue
+        rangeToValue
+        rangeFromValue
+        floatValue
+        intValue
+        booleanValue
+        latitudeValue
+        longitudeValue
+        parameterType {
+          id
+          name
+          resourceSpecification
+          stringValue
+          floatValue
+          intValue
+          type
+        }
+      }
+      status
+      resource {
+        id
+        name
+        resourceProperties {
+          id
+          resourcePropertyType
+        }
+        locatedIn
       }
     }
   }
@@ -239,6 +273,8 @@ const ResourcePropertiesCard = (props: Props) => {
                   <Tab label="Details" value="details" />
                   <Tab label="Ports" value="ports" />
                   <Tab label="Network" value="network" />
+                  <Tab label="Configuration" value="configuration" />
+                  <Tab label="Services" value="services" />
                 </Tabs>
                 <>
                   <PerfectScrollbar>
@@ -344,9 +380,15 @@ const ResourcePropertiesCard = (props: Props) => {
                         dataListStepper={dataListStepper}
                       />
                     ) : null}
-                    {selectedTab === 'services' ? (
-                      <div>soy services</div>
+                    {selectedTab === 'configuration' ? (
+                      <Configuration
+                        resource={item}
+                        cmVersion={resourceData.queryCMVersion.find(cm => {
+                          cm.resource.id === item.id && cm.status === 'CURRENT';
+                        })}
+                      />
                     ) : null}
+                    {selectedTab === 'services' ? <div>Services</div> : null}
                   </PerfectScrollbar>
                   {openDialog && (
                     <ModalSteper

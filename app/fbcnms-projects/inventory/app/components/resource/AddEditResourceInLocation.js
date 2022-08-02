@@ -8,8 +8,11 @@
  * @format
  */
 
-import type {AddResourceMutationVariables} from '../../mutations/__generated__/AddResourceMutation.graphql';
+import type {AddCMVersionMutationVariables} from '../../mutations/__generated__/AddCMVersionMutation.graphql';
+import type {AddEditResourceInLocationQuery} from './__generated__/AddEditResourceInLocationQuery.graphql';
 import type {
+  AddResourceMutationResponse,
+  AddResourceMutationVariables,
   LifecycleStatus,
   OperationalSubStatus,
   PlanningSubStatus,
@@ -19,6 +22,9 @@ import type {
 import type {UpdateResourceMutationVariables} from '../../mutations/__generated__/UpdateResourceMutation.graphql';
 import type {UpdateResourcePropertyMutationVariables} from '../../mutations/__generated__/UpdateResourcePropertyMutation.graphql';
 
+import type {MutationCallbacks} from '../../mutations/MutationCallbacks';
+
+import AddCMVersionMutation from '../../mutations/AddCMVersionMutation';
 import AddEditPropertyList from './AddEditPropertyList';
 import AddResourceMutation from '../../mutations/AddResourceMutation';
 import Card from '@symphony/design-system/components/Card/Card';
@@ -33,9 +39,11 @@ import TextField from '@material-ui/core/TextField';
 import UpdateResourceMutation from '../../mutations/UpdateResourceMutation';
 import UpdateResourcePropertyMutation from '../../mutations/UpdateResourcePropertyMutation';
 import inventoryTheme from '../../common/theme';
+import moment from 'moment';
 import {FormContextProvider} from '../../common/FormContext';
 import {MenuItem} from '@material-ui/core';
 import {camelCase, startCase} from 'lodash';
+import {graphql} from 'relay-runtime';
 import {makeStyles} from '@material-ui/styles';
 import {omit} from 'lodash';
 import {
@@ -43,6 +51,7 @@ import {
   toMutablePropertyEdit,
 } from '../context/TableTypeState';
 import {useFormInput} from '../assurance/common/useFormInput';
+import {useLazyLoadQuery} from 'react-relay/hooks';
 import {usePropertyTypesReducer} from '../form/context/property_types/PropertyTypesTableState';
 
 const useStyles = makeStyles(() => ({
@@ -57,6 +66,23 @@ const useStyles = makeStyles(() => ({
     margin: '20px 43px 22px 30px',
   },
 }));
+
+const queryConfigurationParameterType = graphql`
+  query AddEditResourceInLocationQuery(
+    $filter: ConfigurationParameterTypeFilter
+  ) {
+    queryConfigurationParameterType(filter: $filter) {
+      id
+      name
+      type
+      intValue
+      floatValue
+      stringValue
+      booleanValue
+      resourceSpecification
+    }
+  }
+`;
 
 const selectListData = {
   lifecycleStatus: ['PLANNING', 'INSTALLING', 'OPERATING', 'RETIRING'],
@@ -120,6 +146,31 @@ const AddEditResourceInLocation = (props: Props) => {
     dataformModal.typePlanningSubStatus,
   );
 
+  const response = useLazyLoadQuery<AddEditResourceInLocationQuery>(
+    queryConfigurationParameterType,
+    {
+      filter: {
+        resourceSpecification: {
+          eq: dataformModal.id,
+        },
+      },
+    },
+  );
+
+  const dataPropertyType = response.queryConfigurationParameterType
+    ?.map(p => p)
+    .filter(Boolean);
+
+  const convertParametersMap = (data: T): T =>
+    data?.map(prop => {
+      return {
+        parameterType: {
+          ...prop,
+          resourceSpecification: dataformModal.id,
+        },
+      };
+    });
+
   function handleChange({target}) {
     setResourceType({
       data: {
@@ -147,7 +198,11 @@ const AddEditResourceInLocation = (props: Props) => {
     })
     .map(o => omit(o, ['name', 'type', 'id', 'propertyType']));
 
+  //CM Version date
+  const DATE_FORMAT = 'YYYY-MM-DD[T]HH:mm:ss';
+
   function handleCreateForm() {
+    const createdTime = moment(new Date()).format(DATE_FORMAT);
     const variables: AddResourceMutationVariables = {
       input: [
         {
@@ -165,13 +220,30 @@ const AddEditResourceInLocation = (props: Props) => {
         },
       ],
     };
-    AddResourceMutation(variables, {
-      onCompleted: () => {
+
+    const response: MutationCallbacks<AddResourceMutationResponse> = {
+      onCompleted: response => {
+        const cmVersionVariables: AddCMVersionMutationVariables = {
+          input: [
+            {
+              createTime: createdTime,
+              resource: {
+                id: response.addResource?.resource[0]?.id,
+              },
+              parameters: convertParametersMap(dataPropertyType),
+              status: 'CURRENT',
+            },
+          ],
+        };
+        AddCMVersionMutation(cmVersionVariables, {
+          onCompleted: () => isCompleted(),
+        });
         isCompleted();
-        setResourceType({data: {}});
-        closeFormAddEdit();
       },
-    });
+    };
+    AddResourceMutation(variables, response);
+    setResourceType({data: {}});
+    closeFormAddEdit();
   }
 
   const setDataFormEdit = {

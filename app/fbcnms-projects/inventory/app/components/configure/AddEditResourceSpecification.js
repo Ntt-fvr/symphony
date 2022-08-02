@@ -8,40 +8,55 @@
  * @format
  */
 
+import type {AddConfigurationParameterTypeMutationResponse} from '../../mutations/__generated__/AddConfigurationParameterTypeMutation.graphql';
+import type {AddConfigurationParameterTypeMutationVariables} from '../../mutations/__generated__/AddConfigurationParameterTypeMutation.graphql';
+import type {AddEditResourceSpecificationQuery} from './__generated__/AddEditResourceSpecificationQuery.graphql';
 import type {AddResourceSpecificationMutationVariables} from '../../mutations/__generated__/AddResourceSpecificationMutation.graphql';
-import type {AddResourceSpecificationRelationshipListMutationVariables} from '../../mutations/__generated__/AddResourceSpecificationRelationshipListMutation.graphql';
 import type {EditResourceSpecificationMutationVariables} from '../../mutations/__generated__/EditResourceSpecificationMutation.graphql';
+import type {MutationCallbacks} from '../../mutations/MutationCallbacks';
 import type {ResourceSpecifications} from './EditResourceTypeItem';
 
+import ActionTypesTableDispatcher from '../action_catalog/context/ActionTypesTableDispactcher';
+import AddConfigurationParameterMutation from '../../mutations/AddConfigurationParameter';
+import AddConfigurationParameterTypeMutation from '../../mutations/AddConfigurationParameterTypeMutation';
 import AddResourceSpecificationMutation from '../../mutations/AddResourceSpecificationMutation';
-import AddResourceSpecificationRelationshipListMutation from '../../mutations/AddResourceSpecificationRelationshipListMutation';
 import Button from '@material-ui/core/Button';
 import Card from '@symphony/design-system/components/Card/Card';
 import CardHeader from '@symphony/design-system/components/Card/CardHeader';
 import ConfigureTitleSubItem from '../assurance/common/ConfigureTitleSubItem';
 import EditResourceSpecificationMutation from '../../mutations/EditResourceSpecificationMutation';
 import ExpandingPanel from '@fbcnms/ui/components/ExpandingPanel';
+import ExperimentalParametersTypesTable from '../form/ExperimentalParametersTypesTable';
 import ExperimentalPropertyTypesTable from '../form/ExperimentalPropertyTypesTable';
 import Grid from '@material-ui/core/Grid';
 import MenuItem from '@material-ui/core/MenuItem';
+import ParameterTypesTableDispatcher from '../form/context/property_types/ParameterTypesTableDispatcher';
 import PropertyTypesTableDispatcher from '../form/context/property_types/PropertyTypesTableDispatcher';
 import React, {useMemo, useState} from 'react';
 import RelationshipTypeItem from './RelationshipTypeItem';
 import SaveDialogConfirm from './SaveDialogConfirm';
 import TableConfigureAction from '../action_catalog/TableConfigureAction';
 import TextField from '@material-ui/core/TextField';
+import UpdateonfigurationParameterTypeMutation from '../../mutations/UpdateConfigurationParameterType';
 import fbt from 'fbt';
 import inventoryTheme from '../../common/theme';
 import {camelCase, omit, startCase} from 'lodash';
+import {convertParameterTypeToMutationInput} from '../../common/ParameterType';
 import {convertPropertyTypeToMutationInput} from '../../common/PropertyType';
 import {convertTableTypeToMutationInput} from '../context/TableTypeState';
+import {graphql} from 'relay-runtime';
+import {isTempId} from '../../common/EntUtils';
 import {makeStyles} from '@material-ui/styles';
+import {toMutableParameterType} from '../../common/ParameterType';
 import {toMutablePropertyType} from '../../common/PropertyType';
-import {useDisabledButton} from './../assurance/common/useDisabledButton';
-import {useDisabledButtonEdit} from './../assurance/common/useDisabledButton';
+import {useActionTypesReducer} from '../action_catalog/context/ActionTypesTableState';
+import {useDisabledButton} from '../assurance/common/useDisabledButton';
+import {useDisabledButtonEdit} from '../assurance/common/useDisabledButton';
 import {useFormInput} from '../assurance/common/useFormInput';
+import {useLazyLoadQuery} from 'react-relay/hooks';
+import {useParameterTypesReducer} from '../form/context/property_types/ParameterTypesTableState';
 import {usePropertyTypesReducer} from '../form/context/property_types/PropertyTypesTableState';
-import {useValidationEdit} from './../assurance/common/useValidation';
+import {useValidationEdit} from '../assurance/common/useValidation';
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -64,6 +79,56 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
+const ConfigurationParameters = graphql`
+  query AddEditResourceSpecificationQuery {
+    queryConfigurationParameterType {
+      name
+      id
+      booleanValue
+      category
+      externalId
+      floatValue
+      index
+      intValue
+      isDeleted
+      isEditable
+      isListable
+      isMandatory
+      isPrioritary
+      mappingIn
+      mappingOut
+      nodeType
+      rawValue
+      resourceSpecification
+      stringValue
+      type
+      __typename
+      tags {
+        id
+        name
+      }
+    }
+    queryActionTemplate {
+      id
+      name
+      type
+      actionTemplateItems {
+        id
+        parameters {
+          id
+          name
+        }
+        value {
+          stringValue
+        }
+        isDeleted
+      }
+      resourceSpecifications
+      isDeleted
+    }
+  }
+`;
+
 type ResourceSpecification = {
   data: {
     name: string,
@@ -72,7 +137,7 @@ type ResourceSpecification = {
 };
 
 type Props = $ReadOnly<{|
-  dataForm: any,
+  dataForm: ResourceSpecifications,
   vendorData?: any,
   formValues: ResourceSpecifications,
   editMode: boolean,
@@ -93,22 +158,59 @@ export const AddEditResourceSpecification = (props: Props) => {
   } = props;
   const [dialogSaveForm, setDialogSaveForm] = useState(false);
   const [dialogCancelForm, setDialogCancelForm] = useState(false);
+
+  const classes = useStyles();
+
+  const [configurationParameters, setConfigurationParameters] = useState(
+    useLazyLoadQuery<AddEditResourceSpecificationQuery>(
+      ConfigurationParameters,
+    ),
+  );
+
   const [dataCallback, setDataCallback] = useState();
 
   const callback = data => {
     setDataCallback(data);
   };
-  const classes = useStyles();
+
+  const filterConfigurationParameter = configurationParameters?.queryConfigurationParameterType?.filter(
+    item => item?.resourceSpecification === dataForm?.id,
+  );
+
+  const filterActionTemplate = configurationParameters?.queryActionTemplate?.filter(
+    item => item?.resourceSpecifications === dataForm?.id,
+  );
 
   const [
     resourceSpecification,
     setResourceSpecification,
   ] = useState<ResourceSpecification>({data: {}});
+
   const [propertyTypes, propertyTypesDispatcher] = usePropertyTypesReducer(
     (dataForm?.resourcePropertyTypes ?? [])
       .filter(Boolean)
       .map(toMutablePropertyType),
   );
+
+  const [parameterTypes, parameterTypesDispacher] = useParameterTypesReducer({
+    parameterTypes: (filterConfigurationParameter ?? [])
+      .filter(Boolean)
+      .map(toMutableParameterType),
+    resourceSpecification: dataForm?.id,
+  });
+
+  const currentParams = (filterConfigurationParameter ?? [])
+    .filter(Boolean)
+    .map(item => item.id);
+  const [actionTypes, actionTypesTableDispatcher] = useActionTypesReducer(
+    (filterActionTemplate ?? []).filter(Boolean),
+  );
+
+  const filterEdit = parameterTypes.filter(item => item.name !== item.oldName);
+
+  const editOneToOne = filterEdit.map(item => item);
+
+  const newParameter = parameterTypes?.filter(item => isTempId(item?.id));
 
   const nameEdit = useFormInput(dataForm.name);
 
@@ -123,6 +225,7 @@ export const AddEditResourceSpecification = (props: Props) => {
       ) || []
     );
   };
+
   const handleDisable = useDisabledButton(
     omit(resourceSpecification.data, 'vendor'),
     namesFilter,
@@ -167,13 +270,27 @@ export const AddEditResourceSpecification = (props: Props) => {
         ),
       },
     };
-    AddResourceSpecificationMutation(variables, {
-      onCompleted: () => {
-        isCompleted();
-        setResourceSpecification({data: {}});
-        closeForm();
+
+    const response: MutationCallbacks<AddConfigurationParameterTypeMutationResponse> = {
+      onCompleted: response => {
+        const variablesCP: AddConfigurationParameterTypeMutationVariables = {
+          input: convertParameterTypeToMutationInput(
+            parameterTypes,
+            response?.addResourceSpecification.id,
+          ),
+        };
+
+        AddConfigurationParameterTypeMutation(variablesCP, {
+          onCompleted: () => {
+            isCompleted();
+            setResourceSpecification({data: {}});
+            setConfigurationParameters({});
+            closeForm();
+          },
+        });
       },
-    });
+    };
+    AddResourceSpecificationMutation(variables, response);
   }
 
   function handleClickEdit() {
@@ -181,28 +298,64 @@ export const AddEditResourceSpecification = (props: Props) => {
       input: {
         id: dataForm.id,
         name: nameEdit.value,
-        vendor: vendorEdit.value,
         resourceType: dataForm.resourceType.id,
         resourcePropertyTypes: convertPropertyTypeToMutationInput(
           propertyTypes,
         ),
       },
     };
-    EditResourceSpecificationMutation(variables, {
-      onCompleted: () => {
-        isCompleted();
-        closeForm();
-      },
-    });
 
-    const variablesPort: AddResourceSpecificationRelationshipListMutationVariables = {
-      input: convertTableTypeToMutationInput(dataCallback),
-    };
-    AddResourceSpecificationRelationshipListMutation(variablesPort, {
-      onCompleted: () => {
-        isCompleted();
+    const response = {
+      onCompleted: response => {
+        const addConfigParamVariables = {
+          input: convertPropertyTypeToMutationInput(parameterTypes)
+            .filter(item =>
+              currentParams.length > 0
+                ? !currentParams.includes(item?.id)
+                : true,
+            )
+            ?.map(item => {
+              return {
+                ...convertParameterTypeToMutationInput(item),
+                resourceSpecification: response.editResourceSpecification?.id,
+              };
+            }),
+        };
+
+        AddConfigurationParameterMutation(addConfigParamVariables, {
+          onCompleted: () => {
+            if (currentParams.length > 0) {
+              convertPropertyTypeToMutationInput(parameterTypes)
+                .filter(item => currentParams.includes(item.id))
+                .map(item => {
+                  const configParamVariables = {
+                    input: {
+                      filter: {
+                        id: item.id,
+                      },
+                      set: {
+                        ...convertParameterTypeToMutationInput(item),
+                      },
+                    },
+                  };
+                  UpdateonfigurationParameterTypeMutation(
+                    configParamVariables,
+                    {
+                      onCompleted: () => {
+                        setResourceSpecification({data: {}});
+                        setConfigurationParametes({data: {}});
+                      },
+                    },
+                  );
+                });
+            }
+            isCompleted();
+            closeForm();
+          },
+        });
       },
-    });
+    };
+    EditResourceSpecificationMutation(variables, response);
   }
 
   return (
@@ -321,8 +474,29 @@ export const AddEditResourceSpecification = (props: Props) => {
         </ExpandingPanel>
       </Card>
       <Card margins="none">
+        <ExpandingPanel title="Configuration parameters">
+          <ParameterTypesTableDispatcher.Provider
+            value={{
+              dispatch: parameterTypesDispacher,
+              parameterTypes,
+            }}>
+            <ExperimentalParametersTypesTable
+              supportDelete={true}
+              parameterTypes={parameterTypes}
+              idRs={dataForm?.id}
+            />
+          </ParameterTypesTableDispatcher.Provider>
+        </ExpandingPanel>
+      </Card>
+      <Card margins="none">
         <ExpandingPanel title="Configure Actions">
-          <TableConfigureAction />
+          <ActionTypesTableDispatcher.Provider
+            value={{dispatch: actionTypesTableDispatcher, actionTypes}}>
+            <TableConfigureAction
+              actionTypes={actionTypes}
+              resourceSpecification={dataForm?.id}
+            />
+          </ActionTypesTableDispatcher.Provider>
         </ExpandingPanel>
       </Card>
       {dialogSaveForm && (

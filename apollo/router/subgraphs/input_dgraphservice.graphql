@@ -35,21 +35,21 @@ enum UsageSubStatus
   TERMINATING
 }
 
-type NumericPool { 
-id: ID!
-description: String
-limit: Int!
-customLimit: Int
-resources: [Resource!]!
-isDeleted: Boolean!
-statusNumericPools: [StatusNumericPool]
+type NumericPool {
+  id: ID!
+  description: String
+  limit: Int!
+  customLimit: Int
+  resources: [Resource!]!
+  isDeleted: Boolean!
+  statusNumericPools: [StatusNumericPool]
 }
 
 type StatusNumericPool {
-id: ID!
-numericPool: NumericPool @hasInverse(field: statusNumericPools)
-status: UsageSubStatus
-values: [Int]
+  id: ID!
+  numericPool: NumericPool @hasInverse(field: statusNumericPools)
+  status: UsageSubStatus
+  values: [Int]
 }
 
 interface DefaultConfig {
@@ -84,6 +84,7 @@ type Resource implements DefaultConfig{
   isEditable: Boolean @default(add: { value: true})
   actionScheduler: ActionScheduler
   changeItems: [ChangeItem] @hasInverse(field: resource)
+  cmVersions: [CMVersion] @hasInverse(field: resource)
 }
 type ResourceProperty implements DefaultConfig{
   stringValue: String @search(by: [term])
@@ -139,7 +140,7 @@ enum ParameterKind{
 }
 type ConfigurationParameterType implements DefaultConfig{
   externalId: String
-  name: String! @id
+  name: String! @search(by: [hash])
   type: ParameterKind!
   nodeType: String
   index: Int
@@ -177,7 +178,7 @@ enum ChangeItemStatus{
 }
 type ChangeItem implements DefaultConfig{
   resource: Resource
-  parameterType: ConfigurationParameterType! 
+  parameterType: ConfigurationParameterType!
   stringValue: String
   intValue: Int
   booleanValue: Boolean
@@ -326,8 +327,8 @@ type ServiceOrderItem {
   id: String! @search(by: [hash])
   type: String!
   action: String!
-  service: ServiceSOM! 
-  state: String  
+  service: ServiceSOM!
+  state: String
 }
 
 enum _ServiceSOMOrdering {
@@ -385,10 +386,10 @@ type ServiceSOM{
   serviceType: String
   state: String @search(by: [hash])
   type: String
-  relatedParty: [Party]  
+  relatedParty: [Party]
   place: [Place]  @hasInverse(field: services)
   serviceSpecification: ServiceSpecificationReference @hasInverse(field: services)
-  serviceCharacteristic: [Characteristic] @hasInverse(field: services) 
+  serviceCharacteristic: [Characteristic] @hasInverse(field: services)
   supportingService: [ServiceSOM]
   supportingResource: [SupportingResource]
   serviceRelationship: [ServiceRelationship]
@@ -398,10 +399,10 @@ type ServiceSOM{
 }
 
 type ServiceRelationship{
- id: ID!
- relationshipType: String!
- service: ServiceSOM!
- serviceRelationshipCharacteristic: [Characteristic]
+  id: ID!
+  relationshipType: String!
+  service: ServiceSOM!
+  serviceRelationshipCharacteristic: [Characteristic]
 }
 
 type Feature{
@@ -477,7 +478,7 @@ type ServiceSpecificationReference {
   href: String
   name: String
   version: String
-  services: [ServiceSOM] 
+  services: [ServiceSOM]
 }
 
 enum _CharacteristicOrdering {
@@ -576,7 +577,7 @@ enum _CancellationRequestOrdering {
 }
 
 type CancellationRequest {
-  id: ID! 
+  id: ID!
   type: String
   cancellationReason: String
   externalId: String @search(by: [hash])
@@ -604,7 +605,7 @@ type ModificationRequest {
   externalId: String @search(by: [hash])
   modifyReason: String!
   requestedCompletionDate: String!
-  serviceorders: [ServiceOrder] 
+  serviceorders: [ServiceOrder]
 }
 
 enum _ServiceOrderOrdering {
@@ -709,6 +710,7 @@ enum ActionTemplateType {
 type ActionTemplate implements DefaultConfig{
   name:String!
   type:ActionTemplateType!
+  isDeleted:Boolean
   resourceSpecifications: String! @search(by: [hash])
   actionTemplateItems:[ActionTemplateItem!]!
   actionExecutions: [ActionExecution!]
@@ -716,6 +718,7 @@ type ActionTemplate implements DefaultConfig{
 type ActionTemplateItem implements DefaultConfig{
   parameters:ConfigurationParameterType!
   value:Parameter!
+  isDeleted:Boolean
   actionTemplate:ActionTemplate! @hasInverse(field: actionTemplateItems)
 }
 enum ActionSchedulerType {
@@ -733,8 +736,10 @@ type ActionScheduler implements DefaultConfig{
   type:ActionSchedulerType!
   date: DateTime
   cron: String
+  resourceTypeName:String
+  resourceSpecificationName:String
   actions:[ActionExecution!] @hasInverse(field: scheduler)
-  status: ActionSchedulerStatus! 
+  status: ActionSchedulerStatus!
   resources: [Resource!]!
   actionTemplate: ActionTemplate!
 }

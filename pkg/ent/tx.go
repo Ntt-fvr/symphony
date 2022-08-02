@@ -24,6 +24,8 @@ type Tx struct {
 	AlarmStatus *AlarmStatusClient
 	// Appointment is the client for interacting with the Appointment builders.
 	Appointment *AppointmentClient
+	// AutomationActivity is the client for interacting with the AutomationActivity builders.
+	AutomationActivity *AutomationActivityClient
 	// Block is the client for interacting with the Block builders.
 	Block *BlockClient
 	// BlockInstance is the client for interacting with the BlockInstance builders.
@@ -349,6 +351,7 @@ func (tx *Tx) init() {
 	tx.AlarmFilter = NewAlarmFilterClient(tx.config)
 	tx.AlarmStatus = NewAlarmStatusClient(tx.config)
 	tx.Appointment = NewAppointmentClient(tx.config)
+	tx.AutomationActivity = NewAutomationActivityClient(tx.config)
 	tx.Block = NewBlockClient(tx.config)
 	tx.BlockInstance = NewBlockInstanceClient(tx.config)
 	tx.CheckListCategory = NewCheckListCategoryClient(tx.config)

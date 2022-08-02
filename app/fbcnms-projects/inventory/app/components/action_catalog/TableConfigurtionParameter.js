@@ -8,12 +8,13 @@
  * @format
  */
 
-import * as React from 'react';
 import Button from '@symphony/design-system/components/Button';
 import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutline';
 import FormAction from '@symphony/design-system/components/Form/FormAction';
 import FormField from '@symphony/design-system/components/FormField/FormField';
 import IconButton from '@material-ui/core/IconButton';
+import React, {useCallback, useEffect, useState} from 'react';
+import RelayEnvironment from '../../common/RelayEnvironment';
 import Table from '@material-ui/core/Table';
 import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
@@ -24,6 +25,7 @@ import fbt from 'fbt';
 import inventoryTheme from '../../common/theme';
 import {MenuItem} from '@material-ui/core';
 import {PlusIcon} from '@symphony/design-system/icons';
+import {fetchQuery, graphql} from 'relay-runtime';
 import {makeStyles} from '@material-ui/styles';
 
 const useStyles = makeStyles(() => ({
@@ -47,12 +49,63 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-type Props = $ReadOnly<{||}>;
-const actionTypes = [{}];
+const paramsQuery = graphql`
+  query TableConfigurtionParameterQuery(
+    $filter: ConfigurationParameterTypeFilter
+  ) {
+    queryConfigurationParameterType(filter: $filter) {
+      id
+      name
+    }
+  }
+`;
+type Props = $ReadOnly<{|resourceSpecification: string|}>;
 
 const TableConfigurtionParameter = (props: Props) => {
-  const {} = props;
+  const {resourceSpecification, actionItems, setActionItems} = props;
   const classes = useStyles();
+
+  const [configParams, setConfigParams] = useState([]);
+
+  useEffect(() => {
+    isCompleted();
+  }, []);
+
+  const isCompleted = useCallback(() => {
+    fetchQuery(RelayEnvironment, paramsQuery, {
+      filter: {
+        resourceSpecification: {
+          eq: resourceSpecification ?? '',
+        },
+      },
+    }).then(data => {
+      setConfigParams(data?.queryConfigurationParameterType);
+    });
+  }, [resourceSpecification]);
+
+  const addParam = id => {
+    setActionItems([
+      ...actionItems,
+      {
+        id: id,
+        parameters: {
+          id: '',
+        },
+        value: {stringValue: ''},
+        isDeleted: false,
+      },
+    ]);
+  };
+
+  const updateParam = (id, editParam) => {
+    const paramIndex = actionItems.findIndex(item => item.id === id);
+    const newParams = [
+      ...actionItems.slice(0, paramIndex),
+      editParam(actionItems[paramIndex]),
+      ...actionItems.slice(paramIndex + 1),
+    ];
+    setActionItems(newParams);
+  };
 
   return (
     <div className={classes.container}>
@@ -60,10 +113,10 @@ const TableConfigurtionParameter = (props: Props) => {
         <TableHead component="div">
           <TableRow component="div">
             <TableCell style={{width: '50%'}} component="div">
-              <fbt desc="">Configuration Parameter</fbt>
+              <fbt desc="">Configuration Parameter*</fbt>
             </TableCell>
             <TableCell style={{width: '40%'}} component="div">
-              <fbt desc="">Value</fbt>
+              <fbt desc="">Value*</fbt>
             </TableCell>
             <TableCell style={{width: '10%'}} component="div">
               <fbt desc="">Delete</fbt>
@@ -71,49 +124,96 @@ const TableConfigurtionParameter = (props: Props) => {
           </TableRow>
         </TableHead>
 
-        {actionTypes?.map((item, i) => (
-          <TableRow component="div" key={i}>
-            <TableCell component="div" scope="row">
-              <FormField>
-                <TextField
-                  required
-                  id="outlined-select-parameter"
-                  select
-                  className={classes.selectField}
-                  placeholder="Select Parameter"
-                  name="family"
-                  defaultValue=""
-                  variant="outlined">
-                  <MenuItem>one</MenuItem>
-                  <MenuItem>two</MenuItem>
-                  <MenuItem>three</MenuItem>
-                </TextField>
-              </FormField>
-            </TableCell>
+        {actionItems
+          ?.filter(item => !item.isDeleted)
+          ?.map(item => (
+            <TableRow component="div" key={item?.id}>
+              <TableCell component="div" scope="row">
+                <FormField>
+                  <TextField
+                    required
+                    id="outlined-select-parameter"
+                    select
+                    className={classes.selectField}
+                    placeholder="Select Parameter"
+                    name="family"
+                    variant="outlined"
+                    value={item.parameters?.id}
+                    onChange={e => {
+                      e.preventDefault();
+                      updateParam(item?.id, pt => ({
+                        ...pt,
+                        parameters: {
+                          id: e.target.value,
+                        },
+                      }));
+                    }}>
+                    {configParams?.map(param => (
+                      <MenuItem
+                        key={param.id}
+                        value={param.id}
+                        disabled={
+                          param.id != item.parameters.id &&
+                          actionItems
+                            .filter(i => !i.isDeleted)
+                            .map(i => i.parameters.id)
+                            .includes(param.id)
+                        }>
+                        {param.name}
+                      </MenuItem>
+                    ))}
+                  </TextField>
+                </FormField>
+              </TableCell>
 
-            <TableCell component="div" scope="row">
-              <FormField>
-                <TextInput
-                  autoFocus={true}
-                  placeholder="Value"
-                  autoComplete="off"
-                  className={classes.input}
-                />
-              </FormField>
-            </TableCell>
+              <TableCell component="div" scope="row">
+                <FormField>
+                  <TextInput
+                    required
+                    autoFocus={true}
+                    placeholder="Value"
+                    autoComplete="off"
+                    className={classes.input}
+                    value={item?.value?.stringValue}
+                    onChange={e => {
+                      e.preventDefault();
+                      updateParam(item?.id, pt => ({
+                        ...pt,
+                        value: {
+                          stringValue: e.target.value,
+                        },
+                      }));
+                    }}
+                  />
+                </FormField>
+              </TableCell>
 
-            <TableCell component="div" scope="row">
-              <FormAction>
-                <IconButton aria-label="delete">
-                  <DeleteOutlinedIcon color="primary" />
-                </IconButton>
-              </FormAction>
-            </TableCell>
-          </TableRow>
-        ))}
+              <TableCell component="div" scope="row">
+                <FormAction>
+                  <IconButton
+                    aria-label="delete"
+                    onClick={e => {
+                      e.preventDefault();
+                      updateParam(item?.id, pt => ({
+                        ...pt,
+                        isDeleted: true,
+                      }));
+                    }}>
+                    <DeleteOutlinedIcon color="primary" />
+                  </IconButton>
+                </FormAction>
+              </TableCell>
+            </TableRow>
+          ))}
       </Table>
       <FormAction>
-        <Button variant="text" leftIcon={PlusIcon}>
+        <Button
+          variant="text"
+          leftIcon={PlusIcon}
+          onClick={e => {
+            e.preventDefault();
+            addParam(actionItems.length);
+          }}>
           <fbt desc="">Add Parameter</fbt>
         </Button>
       </FormAction>

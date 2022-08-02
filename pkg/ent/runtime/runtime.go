@@ -14,6 +14,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/alarmfilter"
 	"github.com/facebookincubator/symphony/pkg/ent/alarmstatus"
 	"github.com/facebookincubator/symphony/pkg/ent/appointment"
+	"github.com/facebookincubator/symphony/pkg/ent/automationactivity"
 	"github.com/facebookincubator/symphony/pkg/ent/block"
 	"github.com/facebookincubator/symphony/pkg/ent/blockinstance"
 	"github.com/facebookincubator/symphony/pkg/ent/checklistcategory"
@@ -224,6 +225,29 @@ func init() {
 	appointment.DefaultUpdateTime = appointmentDescUpdateTime.Default.(func() time.Time)
 	// appointment.UpdateDefaultUpdateTime holds the default value on update for the update_time field.
 	appointment.UpdateDefaultUpdateTime = appointmentDescUpdateTime.UpdateDefault.(func() time.Time)
+	automationactivityMixin := schema.AutomationActivity{}.Mixin()
+	automationactivity.Policy = privacy.NewPolicies(schema.AutomationActivity{})
+	automationactivity.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := automationactivity.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
+	automationactivityMixinFields0 := automationactivityMixin[0].Fields()
+	automationactivityFields := schema.AutomationActivity{}.Fields()
+	_ = automationactivityFields
+	// automationactivityDescCreateTime is the schema descriptor for create_time field.
+	automationactivityDescCreateTime := automationactivityMixinFields0[0].Descriptor()
+	// automationactivity.DefaultCreateTime holds the default value on creation for the create_time field.
+	automationactivity.DefaultCreateTime = automationactivityDescCreateTime.Default.(func() time.Time)
+	// automationactivityDescUpdateTime is the schema descriptor for update_time field.
+	automationactivityDescUpdateTime := automationactivityMixinFields0[1].Descriptor()
+	// automationactivity.DefaultUpdateTime holds the default value on creation for the update_time field.
+	automationactivity.DefaultUpdateTime = automationactivityDescUpdateTime.Default.(func() time.Time)
+	// automationactivity.UpdateDefaultUpdateTime holds the default value on update for the update_time field.
+	automationactivity.UpdateDefaultUpdateTime = automationactivityDescUpdateTime.UpdateDefault.(func() time.Time)
 	blockMixin := schema.Block{}.Mixin()
 	block.Policy = privacy.NewPolicies(schema.Block{})
 	block.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -260,6 +284,38 @@ func init() {
 	blockDescCid := blockFields[0].Descriptor()
 	// block.CidValidator is a validator for the "cid" field. It is called by the builders before save.
 	block.CidValidator = blockDescCid.Validators[0].(func(string) error)
+	// blockDescEnableInputTransformation is the schema descriptor for enable_input_transformation field.
+	blockDescEnableInputTransformation := blockFields[7].Descriptor()
+	// block.DefaultEnableInputTransformation holds the default value on creation for the enable_input_transformation field.
+	block.DefaultEnableInputTransformation = blockDescEnableInputTransformation.Default.(bool)
+	// blockDescEnableOutputTransformation is the schema descriptor for enable_output_transformation field.
+	blockDescEnableOutputTransformation := blockFields[10].Descriptor()
+	// block.DefaultEnableOutputTransformation holds the default value on creation for the enable_output_transformation field.
+	block.DefaultEnableOutputTransformation = blockDescEnableOutputTransformation.Default.(bool)
+	// blockDescEnableInputStateTransformation is the schema descriptor for enable_input_state_transformation field.
+	blockDescEnableInputStateTransformation := blockFields[13].Descriptor()
+	// block.DefaultEnableInputStateTransformation holds the default value on creation for the enable_input_state_transformation field.
+	block.DefaultEnableInputStateTransformation = blockDescEnableInputStateTransformation.Default.(bool)
+	// blockDescEnableOutputStateTransformation is the schema descriptor for enable_output_state_transformation field.
+	blockDescEnableOutputStateTransformation := blockFields[16].Descriptor()
+	// block.DefaultEnableOutputStateTransformation holds the default value on creation for the enable_output_state_transformation field.
+	block.DefaultEnableOutputStateTransformation = blockDescEnableOutputStateTransformation.Default.(bool)
+	// blockDescEnableErrorHandling is the schema descriptor for enable_error_handling field.
+	blockDescEnableErrorHandling := blockFields[19].Descriptor()
+	// block.DefaultEnableErrorHandling holds the default value on creation for the enable_error_handling field.
+	block.DefaultEnableErrorHandling = blockDescEnableErrorHandling.Default.(bool)
+	// blockDescEnableRetryPolicy is the schema descriptor for enable_retry_policy field.
+	blockDescEnableRetryPolicy := blockFields[20].Descriptor()
+	// block.DefaultEnableRetryPolicy holds the default value on creation for the enable_retry_policy field.
+	block.DefaultEnableRetryPolicy = blockDescEnableRetryPolicy.Default.(bool)
+	// blockDescEnableTimerExpression is the schema descriptor for enable_timer_expression field.
+	blockDescEnableTimerExpression := blockFields[27].Descriptor()
+	// block.DefaultEnableTimerExpression holds the default value on creation for the enable_timer_expression field.
+	block.DefaultEnableTimerExpression = blockDescEnableTimerExpression.Default.(bool)
+	// blockDescBlockFlow is the schema descriptor for block_flow field.
+	blockDescBlockFlow := blockFields[44].Descriptor()
+	// block.DefaultBlockFlow holds the default value on creation for the block_flow field.
+	block.DefaultBlockFlow = blockDescBlockFlow.Default.(bool)
 	blockinstanceMixin := schema.BlockInstance{}.Mixin()
 	blockinstance.Policy = privacy.NewPolicies(schema.BlockInstance{})
 	blockinstance.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -1123,6 +1179,8 @@ func init() {
 	flowinstance.Hooks[1] = flowinstanceHooks[0]
 
 	flowinstance.Hooks[2] = flowinstanceHooks[1]
+
+	flowinstance.Hooks[3] = flowinstanceHooks[2]
 	flowinstanceMixinFields0 := flowinstanceMixin[0].Fields()
 	flowinstanceMixinFields1 := flowinstanceMixin[1].Fields()
 	flowinstanceFields := schema.FlowInstance{}.Fields()

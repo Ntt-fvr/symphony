@@ -17,6 +17,8 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/block"
 	"github.com/facebookincubator/symphony/pkg/ent/flow"
 	"github.com/facebookincubator/symphony/pkg/ent/flowdraft"
+	"github.com/facebookincubator/symphony/pkg/ent/flowinstance"
+	"github.com/facebookincubator/symphony/pkg/ent/user"
 	"github.com/facebookincubator/symphony/pkg/flowengine/flowschema"
 )
 
@@ -109,6 +111,26 @@ func (fc *FlowCreate) SetNillableNewInstancesPolicy(fip *flow.NewInstancesPolicy
 	return fc
 }
 
+// SetCmType sets the cm_type field.
+func (fc *FlowCreate) SetCmType(ft flow.CmType) *FlowCreate {
+	fc.mutation.SetCmType(ft)
+	return fc
+}
+
+// SetNillableCmType sets the cm_type field if the given value is not nil.
+func (fc *FlowCreate) SetNillableCmType(ft *flow.CmType) *FlowCreate {
+	if ft != nil {
+		fc.SetCmType(*ft)
+	}
+	return fc
+}
+
+// SetCreationDate sets the creation_date field.
+func (fc *FlowCreate) SetCreationDate(t time.Time) *FlowCreate {
+	fc.mutation.SetCreationDate(t)
+	return fc
+}
+
 // AddBlockIDs adds the blocks edge to Block by ids.
 func (fc *FlowCreate) AddBlockIDs(ids ...int) *FlowCreate {
 	fc.mutation.AddBlockIDs(ids...)
@@ -141,6 +163,47 @@ func (fc *FlowCreate) SetNillableDraftID(id *int) *FlowCreate {
 // SetDraft sets the draft edge to FlowDraft.
 func (fc *FlowCreate) SetDraft(f *FlowDraft) *FlowCreate {
 	return fc.SetDraftID(f.ID)
+}
+
+// SetAuthorID sets the author edge to User by id.
+func (fc *FlowCreate) SetAuthorID(id int) *FlowCreate {
+	fc.mutation.SetAuthorID(id)
+	return fc
+}
+
+// SetAuthor sets the author edge to User.
+func (fc *FlowCreate) SetAuthor(u *User) *FlowCreate {
+	return fc.SetAuthorID(u.ID)
+}
+
+// AddEditorIDs adds the editor edge to User by ids.
+func (fc *FlowCreate) AddEditorIDs(ids ...int) *FlowCreate {
+	fc.mutation.AddEditorIDs(ids...)
+	return fc
+}
+
+// AddEditor adds the editor edges to User.
+func (fc *FlowCreate) AddEditor(u ...*User) *FlowCreate {
+	ids := make([]int, len(u))
+	for i := range u {
+		ids[i] = u[i].ID
+	}
+	return fc.AddEditorIDs(ids...)
+}
+
+// AddInstanceIDs adds the instance edge to FlowInstance by ids.
+func (fc *FlowCreate) AddInstanceIDs(ids ...int) *FlowCreate {
+	fc.mutation.AddInstanceIDs(ids...)
+	return fc
+}
+
+// AddInstance adds the instance edges to FlowInstance.
+func (fc *FlowCreate) AddInstance(f ...*FlowInstance) *FlowCreate {
+	ids := make([]int, len(f))
+	for i := range f {
+		ids[i] = f[i].ID
+	}
+	return fc.AddInstanceIDs(ids...)
 }
 
 // Mutation returns the FlowMutation object of the builder.
@@ -211,6 +274,10 @@ func (fc *FlowCreate) defaults() {
 		v := flow.DefaultNewInstancesPolicy
 		fc.mutation.SetNewInstancesPolicy(v)
 	}
+	if _, ok := fc.mutation.CmType(); !ok {
+		v := flow.DefaultCmType
+		fc.mutation.SetCmType(v)
+	}
 }
 
 // check runs all checks and user-defined validators on the builder.
@@ -244,6 +311,20 @@ func (fc *FlowCreate) check() error {
 		if err := flow.NewInstancesPolicyValidator(v); err != nil {
 			return &ValidationError{Name: "newInstancesPolicy", err: fmt.Errorf("ent: validator failed for field \"newInstancesPolicy\": %w", err)}
 		}
+	}
+	if _, ok := fc.mutation.CmType(); !ok {
+		return &ValidationError{Name: "cm_type", err: errors.New("ent: missing required field \"cm_type\"")}
+	}
+	if v, ok := fc.mutation.CmType(); ok {
+		if err := flow.CmTypeValidator(v); err != nil {
+			return &ValidationError{Name: "cm_type", err: fmt.Errorf("ent: validator failed for field \"cm_type\": %w", err)}
+		}
+	}
+	if _, ok := fc.mutation.CreationDate(); !ok {
+		return &ValidationError{Name: "creation_date", err: errors.New("ent: missing required field \"creation_date\"")}
+	}
+	if _, ok := fc.mutation.AuthorID(); !ok {
+		return &ValidationError{Name: "author", err: errors.New("ent: missing required edge \"author\"")}
 	}
 	return nil
 }
@@ -328,6 +409,22 @@ func (fc *FlowCreate) createSpec() (*Flow, *sqlgraph.CreateSpec) {
 		})
 		_node.NewInstancesPolicy = value
 	}
+	if value, ok := fc.mutation.CmType(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeEnum,
+			Value:  value,
+			Column: flow.FieldCmType,
+		})
+		_node.CmType = value
+	}
+	if value, ok := fc.mutation.CreationDate(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeTime,
+			Value:  value,
+			Column: flow.FieldCreationDate,
+		})
+		_node.CreationDate = value
+	}
 	if nodes := fc.mutation.BlocksIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
@@ -358,6 +455,63 @@ func (fc *FlowCreate) createSpec() (*Flow, *sqlgraph.CreateSpec) {
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: flowdraft.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := fc.mutation.AuthorIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: false,
+			Table:   flow.AuthorTable,
+			Columns: []string{flow.AuthorColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: user.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := fc.mutation.EditorIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   flow.EditorTable,
+			Columns: []string{flow.EditorColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: user.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := fc.mutation.InstanceIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   flow.InstanceTable,
+			Columns: []string{flow.InstanceColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: flowinstance.FieldID,
 				},
 			},
 		}

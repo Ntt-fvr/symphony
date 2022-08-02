@@ -12,7 +12,7 @@ import Button from '@material-ui/core/Button';
 import Card from '@symphony/design-system/components/Card/Card';
 import DialogActions from '@material-ui/core/DialogActions';
 import Grid from '@material-ui/core/Grid';
-import React from 'react';
+import React, {useState} from 'react';
 import TableConfigurtionParameter from './TableConfigurtionParameter';
 import Text from '@symphony/design-system/components/Text';
 import {StepperName} from './StepperName';
@@ -41,13 +41,39 @@ const useStyles = makeStyles(() => ({
 type Props = $ReadOnly<{|
   open?: boolean,
   onClose: () => void,
+  isEdit?: boolean,
+  actionDetails?: {},
   setIsDialogConfirmChange: any,
   activeStep: any,
   handleBackStep: any,
+  resourceSpecification: string,
+  handleSave: () => void,
 |}>;
 
 const DialogConfigurationParameter = (props: Props) => {
-  const {onClose, setIsDialogConfirmChange, activeStep, handleBackStep} = props;
+  const {
+    onClose,
+    isEdit,
+    actionDetails,
+    setIsDialogConfirmChange,
+    activeStep,
+    handleBackStep,
+    resourceSpecification,
+    handleSave,
+    handleUpdate,
+  } = props;
+  const [actionItems, setActionItems] = useState(
+    isEdit ? actionDetails.actionTemplateItems : [],
+  );
+
+  const handleDisabled = () => {
+    return !(
+      actionItems.filter(item => !item.isDeleted).length > 0 &&
+      actionItems
+        .filter(item => !item.isDeleted)
+        .every(item => !!(item.parameters.id && item.value.stringValue))
+    );
+  };
 
   const classes = useStyles();
   const handleBack = () => {
@@ -66,7 +92,11 @@ const DialogConfigurationParameter = (props: Props) => {
         </Grid>
       </Card>
       <Grid style={{margin: '20px 30px 20px 30px'}} item xs={12}>
-        <TableConfigurtionParameter />
+        <TableConfigurtionParameter
+          resourceSpecification={resourceSpecification}
+          actionItems={actionItems}
+          setActionItems={setActionItems}
+        />
       </Grid>
       <DialogActions className={classes.dialogActions}>
         <Button
@@ -90,12 +120,18 @@ const DialogConfigurationParameter = (props: Props) => {
         </Button>
         <Button
           onClick={() => {
+            if (isEdit) {
+              handleUpdate(actionItems);
+            } else {
+              handleSave(actionItems);
+            }
             onClose();
           }}
           style={{height: '36px'}}
           variant="contained"
+          disabled={handleDisabled()}
           color="primary">
-          save
+          {isEdit ? 'update' : 'save'}
         </Button>
       </DialogActions>
     </div>

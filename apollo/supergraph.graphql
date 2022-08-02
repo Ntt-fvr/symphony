@@ -186,6 +186,8 @@ type ActionScheduler implements DefaultConfig {
   description: String!
   id: ID!
   name: String!
+  resourceSpecificationName: String
+  resourceTypeName: String
   resources(filter: ResourceFilter, first: Int, offset: Int, order: ResourceOrder): [Resource!]!
   resourcesAggregate(filter: ResourceFilter): ResourceAggregateResult
   status: ActionSchedulerStatus!
@@ -205,6 +207,10 @@ type ActionSchedulerAggregateResult {
   descriptionMin: String
   nameMax: String
   nameMin: String
+  resourceSpecificationNameMax: String
+  resourceSpecificationNameMin: String
+  resourceTypeNameMax: String
+  resourceTypeNameMin: String
   updateTimeMax: DateTime
   updateTimeMin: DateTime
 }
@@ -225,6 +231,8 @@ enum ActionSchedulerHasFilter {
   date
   description
   name
+  resourceSpecificationName
+  resourceTypeName
   resources
   status
   type
@@ -243,6 +251,8 @@ enum ActionSchedulerOrderable {
   date
   description
   name
+  resourceSpecificationName
+  resourceTypeName
   updateTime
 }
 
@@ -254,6 +264,8 @@ input ActionSchedulerPatch {
   date: DateTime
   description: String
   name: String
+  resourceSpecificationName: String
+  resourceTypeName: String
   resources: [ResourceRef!]
   status: ActionSchedulerStatus
   type: ActionSchedulerType
@@ -269,6 +281,8 @@ input ActionSchedulerRef {
   description: String
   id: ID
   name: String
+  resourceSpecificationName: String
+  resourceTypeName: String
   resources: [ResourceRef!]
   status: ActionSchedulerStatus
   type: ActionSchedulerType
@@ -293,6 +307,7 @@ type ActionTemplate implements DefaultConfig {
   actionTemplateItemsAggregate(filter: ActionTemplateItemFilter): ActionTemplateItemAggregateResult
   createTime: DateTime
   id: ID!
+  isDeleted: Boolean
   name: String!
   resourceSpecifications: String!
   type: ActionTemplateType!
@@ -324,6 +339,7 @@ enum ActionTemplateHasFilter {
   actionExecutions
   actionTemplateItems
   createTime
+  isDeleted
   name
   resourceSpecifications
   type
@@ -334,6 +350,7 @@ type ActionTemplateItem implements DefaultConfig {
   actionTemplate(filter: ActionTemplateFilter): ActionTemplate!
   createTime: DateTime
   id: ID!
+  isDeleted: Boolean
   parameters(filter: ConfigurationParameterTypeFilter): ConfigurationParameterType!
   updateTime: DateTime
   value(filter: ParameterFilter): Parameter!
@@ -358,6 +375,7 @@ input ActionTemplateItemFilter {
 enum ActionTemplateItemHasFilter {
   actionTemplate
   createTime
+  isDeleted
   parameters
   updateTime
   value
@@ -377,6 +395,7 @@ enum ActionTemplateItemOrderable {
 input ActionTemplateItemPatch {
   actionTemplate: ActionTemplateRef
   createTime: DateTime
+  isDeleted: Boolean
   parameters: ConfigurationParameterTypeRef
   updateTime: DateTime
   value: ParameterRef
@@ -386,6 +405,7 @@ input ActionTemplateItemRef {
   actionTemplate: ActionTemplateRef
   createTime: DateTime
   id: ID
+  isDeleted: Boolean
   parameters: ConfigurationParameterTypeRef
   updateTime: DateTime
   value: ParameterRef
@@ -408,6 +428,7 @@ input ActionTemplatePatch {
   actionExecutions: [ActionExecutionRef!]
   actionTemplateItems: [ActionTemplateItemRef!]
   createTime: DateTime
+  isDeleted: Boolean
   name: String
   resourceSpecifications: String
   type: ActionTemplateType
@@ -419,6 +440,7 @@ input ActionTemplateRef {
   actionTemplateItems: [ActionTemplateItemRef!]
   createTime: DateTime
   id: ID
+  isDeleted: Boolean
   name: String
   resourceSpecifications: String
   type: ActionTemplateType
@@ -511,6 +533,8 @@ input AddActionSchedulerInput {
   date: DateTime
   description: String!
   name: String!
+  resourceSpecificationName: String
+  resourceTypeName: String
   resources: [ResourceRef!]!
   status: ActionSchedulerStatus!
   type: ActionSchedulerType!
@@ -526,6 +550,7 @@ input AddActionTemplateInput {
   actionExecutions: [ActionExecutionRef!]
   actionTemplateItems: [ActionTemplateItemRef!]!
   createTime: DateTime
+  isDeleted: Boolean
   name: String!
   resourceSpecifications: String!
   type: ActionTemplateType!
@@ -535,6 +560,7 @@ input AddActionTemplateInput {
 input AddActionTemplateItemInput {
   actionTemplate: ActionTemplateRef!
   createTime: DateTime
+  isDeleted: Boolean
   parameters: ConfigurationParameterTypeRef!
   updateTime: DateTime
   value: ParameterRef!
@@ -586,7 +612,9 @@ type AddAppointmentRefPayload {
 
 input AddBlockInstanceInput {
   blockId: ID!
+  inputJSON: String
   inputs: [VariableValueInput!]
+  outputJSON: String
   outputs: [VariableValueInput!]
   startDate: Time!
   status: BlockInstanceStatus
@@ -844,6 +872,17 @@ input AddFeatureInput {
 type AddFeaturePayload {
   feature(filter: FeatureFilter, first: Int, offset: Int, order: FeatureOrder): [Feature]
   numUids: Int
+}
+
+input AddFilesInput {
+  annotation: String
+  category: String
+  contentType: String!
+  documentCategoryId: ID
+  fileName: String!
+  fileSize: Int!
+  imgKey: String!
+  modified: Time!
 }
 
 input AddFloorPlanInput {
@@ -1200,6 +1239,7 @@ input AddResourceInput {
   available: Boolean
   belongsTo: ResourceRef
   changeItems: [ChangeItemRef]
+  cmVersions: [CMVersionRef]
   composedOf: [ResourceRef]
   createTime: DateTime
   crossConnection: ResourceRef
@@ -1573,6 +1613,7 @@ input AddWorkOrderInput {
   description: String
   dueDate: Time
   duration: Float
+  flowInstanceId: ID
   index: Int
   isNameEditable: Boolean
   locationId: ID
@@ -1859,6 +1900,10 @@ enum AppointmentStatus {
   CANCELED
 }
 
+input ArchiveFlowInput {
+  flowID: ID!
+}
+
 type AssurancePolicy {
   read: BasicPermissionRule!
   templates: CUD!
@@ -1876,6 +1921,39 @@ input AuthRule {
   rule: String
 }
 
+enum AuthType {
+  BASIC
+  ODIC
+}
+
+type AutomationActivity implements Node {
+  activityType: AutomationActivityField!
+  author: User
+  blockInstance: BlockInstance
+  createTime: Time!
+  entityType: AutomationEntityType!
+  flowInstance: FlowInstance
+  id: ID!
+  newValue: String
+  oldValue: String
+}
+
+enum AutomationActivityField {
+  CREATION_DATE
+  STATUS
+}
+
+input AutomationActivityFilterInput {
+  activityType: AutomationActivityField!
+  limit: Int!
+  orderDirection: OrderDirection!
+}
+
+enum AutomationEntityType {
+  CREATION_DATE
+  STATUS
+}
+
 type AutomationPolicy {
   read: BasicPermissionRule!
   templates: CUD!
@@ -1884,6 +1962,27 @@ type AutomationPolicy {
 input AutomationPolicyInput {
   read: BasicPermissionRuleInput
   templates: BasicCUDInput
+}
+
+input BaseBlockInput {
+  backoffRate: Int
+  enableErrorHandling: Boolean
+  enableInputStateTransformation: Boolean!
+  enableInputTransformation: Boolean!
+  enableOutputStateTransformation: Boolean!
+  enableOutputTransformation: Boolean!
+  enableRetryPolicy: Boolean
+  inputParamDefinitions: String
+  inputStateParamDefinitions: String
+  inputStateTransfStrategy: TransfStrategy
+  inputTransfStrategy: TransfStrategy
+  maxAttemps: Int
+  outputParamDefinitions: String
+  outputStateParamDefinitions: String
+  outputStateTransfStrategy: TransfStrategy
+  outputTransfStrategy: TransfStrategy
+  retryInterval: Int
+  units: RetryUnit
 }
 
 input BasicCUDInput {
@@ -1901,19 +2000,39 @@ input BasicPermissionRuleInput {
 }
 
 type Block implements Node {
+  backoffRate: Int
   cid: String!
   details: BlockDetails!
+  enableErrorHandling: Boolean
+  enableInputStateTransformation: Boolean!
+  enableInputTransformation: Boolean!
+  enableOutputStateTransformation: Boolean!
+  enableOutputTransformation: Boolean!
+  enableRetryPolicy: Boolean
   id: ID!
   inputParamDefinitions: [VariableDefinition!]!
+  inputStateTransfStrategy: TransfStrategy
+  inputStateTransformation: String
+  inputTransfStrategy: TransfStrategy
+  inputTransformation: String
+  instances: [BlockInstance!]
+  maxAttemps: Int
   nextBlocks: [Block!]!
   outputParamDefinitions: [VariableDefinition!]!
+  outputStateTransfStrategy: TransfStrategy
+  outputStateTransformation: String
+  outputTransfStrategy: TransfStrategy
+  outputTransformation: String
   prevBlocks: [Block!]!
+  retryInterval: Int
   uiRepresentation: BlockUIRepresentation
+  units: RetryUnit
 }
 
-union BlockDetails = ActionBlock | DecisionBlock | EndBlock | GotoBlock | StartBlock | SubflowBlock | TriggerBlock | TrueFalseBlock
+union BlockDetails = ActionBlock | ChoiceBlock | EndBlock | ExecuteFlowBlock | ForEachBlock | GotoBlock | InvokeRestAPIBlock | KafkaBlock | ParallelBlock | StartBlock | TimerBlock | TriggerBlock | WaitForSignalBlock
 
 type BlockInstance implements Node {
+  activities(filter: AutomationActivityFilterInput): [AutomationActivity!]!
   block: Block!
   endDate: Time
   failure_reason: String
@@ -2723,6 +2842,21 @@ enum CheckListItemType {
   yes_no
 }
 
+type ChoiceBlock {
+  defaultExitPoint: ExitPoint!
+  entryPoint: EntryPoint!
+  rules: [DecisionRoute!]!
+}
+
+input ChoiceBlockInput {
+  basicDefinitions: BaseBlockInput!
+  cid: String!
+  defaultExitPoint: ExitPointInput
+  entryPoint: EntryPointInput
+  routes: [DecisionRouteInput!]
+  uiRepresentation: BlockUIRepresentationInput
+}
+
 type ClockActivity {
   author: User!
   details: ClockDetails!
@@ -3343,6 +3477,7 @@ type DecisionRoute {
 input DecisionRouteInput {
   cid: String
   condition: VariableExpressionInput!
+  index: Int
 }
 
 interface DefaultConfig {
@@ -3795,6 +3930,12 @@ enum DomainOrderField {
   UPDATED_AT
 }
 
+input DuplicateFlowInput {
+  description: String
+  flowID: ID!
+  name: String!
+}
+
 type Edge {
   ids: [ID!]!
   name: String!
@@ -3835,7 +3976,9 @@ input EditBlockInstanceInput {
   endDate: Time
   failure_reason: String
   id: ID!
+  inputJSON: String
   inputs: [VariableValueInput!]
+  outputJSON: String
   outputs: [VariableValueInput!]
   status: BlockInstanceStatus
 }
@@ -3905,9 +4048,11 @@ input EditEventSeverityInput {
 }
 
 input EditFlowInstanceInput {
+  bssCode: String
   endDate: Time
   id: ID!
   serviceInstanceCode: String
+  startParams: [VariableValueInput]
   status: FlowInstanceStatus
 }
 
@@ -4074,6 +4219,11 @@ input EditPropertyCategoryInput {
   parameterCatalogId: ID!
 }
 
+input EditPropertyTypeInput {
+  id: ID!
+  isDeleted: Boolean!
+}
+
 input EditPropertyTypeValueInput {
   id: ID
   isDeleted: Boolean
@@ -4223,6 +4373,7 @@ input EditWorkOrderInput {
   description: String
   dueDate: Time
   duration: Float
+  flowInstanceId: ID
   id: ID!
   index: Int
   installDate: Time
@@ -4597,10 +4748,28 @@ enum EventSeverityOrderField {
   UPDATED_AT
 }
 
+type ExecuteFlowBlock {
+  entryPoint: EntryPoint!
+  exitPoint: ExitPoint!
+  flow: Flow
+  params: [VariableExpression!]!
+}
+
+input ExecuteFlowBlockInput {
+  basicDefinitions: BaseBlockInput!
+  cid: String!
+  entryPoint: EntryPointInput
+  exitPoint: ExitPointInput
+  flow: ID!
+  params: [VariableExpressionInput!]!
+  uiRepresentation: BlockUIRepresentationInput
+}
+
 type ExitPoint implements Node {
   cid: String
   condition: VariableExpression
   id: ID!
+  index: Int
   nextEntryPoints: [EntryPoint!]!
   parentBlock: Block!
 }
@@ -4611,7 +4780,7 @@ input ExitPointInput {
 }
 
 enum ExitPointRole {
-  DECISION
+  CHOICE
   DEFAULT
 }
 
@@ -4852,15 +5021,28 @@ type FloorPlanScale {
 }
 
 type Flow implements Node {
+  author: User!
   blocks: [Block!]!
+  cmType: FlowCMType
   connectors: [Connector!]!
+  creationDate: Time!
   description: String
   draft: FlowDraft
+  editor: User!
   endParamDefinitions: [VariableDefinition!]!
+  failedInstances: Int!
   id: ID!
   name: String!
   newInstancesPolicy: FlowNewInstancesPolicy!
+  runningInstances: Int!
   status: FlowStatus!
+  updateTime: Time!
+}
+
+enum FlowCMType {
+  GENERAL_CR
+  INITIAL_CONFIG
+  SYNC_PARAMETERS
 }
 
 """A connection to a list of Flows."""
@@ -5018,13 +5200,32 @@ type FlowExecutionTemplate implements Node {
   name: String!
 }
 
+input FlowFilterInput {
+  cmType: FlowCMType
+  filterType: FlowFilterType!
+  idSet: [ID!]
+  maxDepth: Int = 5
+  operator: FilterOperator!
+  stringSet: [String!]
+  stringValue: String
+  timeValue: Time
+}
+
+enum FlowFilterType {
+  FLOW_CM_TYPE
+  FLOW_NAME
+}
+
 type FlowInstance implements Node {
+  activities(filter: AutomationActivityFilterInput): [AutomationActivity!]!
   blocks: [BlockInstance!]!
-  bssCode: String!
+  bssCode: String
   endDate: Time
   id: ID!
+  incompletion_reason: String
   serviceInstanceCode: String
   startDate: Time!
+  startParams: [VariableValue!]
   status: FlowInstanceStatus!
   template: FlowExecutionTemplate!
 }
@@ -5092,9 +5293,15 @@ enum FlowInstanceOrderField {
 
 enum FlowInstanceStatus {
   CANCELED
+  CANCELING
+  CLOSED
   COMPLETED
   FAILED
-  IN_PROGRESS
+  FAILING
+  PAUSED
+  PAUSING
+  RESUMING
+  RUNNING
 }
 
 enum FlowNewInstancesPolicy {
@@ -5102,10 +5309,38 @@ enum FlowNewInstancesPolicy {
   ENABLED
 }
 
+"""Ordering options for ResourceType connections."""
+input FlowOrder {
+  """The ordering direction."""
+  direction: OrderDirection!
+
+  """The field to order ResourceType by."""
+  field: FlowOrderField
+}
+
+enum FlowOrderField {
+  """Order Flow by CMType."""
+  CM_TYPE
+
+  """Order Flow by creation time."""
+  CREATED_AT
+
+  """Order Flow by name."""
+  NAME
+}
+
 enum FlowStatus {
   ARCHIVED
+  DELETED
+  DRAFT
+  ON_HOLD
   PUBLISHED
-  UNPUBLISHED
+}
+
+type ForEachBlock {
+  entryPoint: EntryPoint!
+  exitPoint: ExitPoint!
+  internalExitPoint: ExitPoint!
 }
 
 type Formula implements Node {
@@ -5264,6 +5499,11 @@ input GeometryRef {
   y: String
 }
 
+enum GoToType {
+  DESTINATION
+  ORIGIN
+}
+
 type GotoBlock {
   entryPoint: EntryPoint!
   target: Block
@@ -5272,6 +5512,7 @@ type GotoBlock {
 input GotoBlockInput {
   cid: String!
   targetBlockCid: String
+  type: GoToType!
   uiRepresentation: BlockUIRepresentationInput
 }
 
@@ -5303,18 +5544,21 @@ enum ImageEntity {
 
 input ImportFlowDraftInput {
   actionBlocks: [ActionBlockInput!]
+  choiceBlocks: [ChoiceBlockInput!]
   connectors: [ConnectorInput!]
-  decisionBlocks: [DecisionBlockInput!]
   description: String
   endBlocks: [EndBlockInput!]
   endParamDefinitions: [VariableDefinitionInput!]!
+  executeFlowBlocks: [ExecuteFlowBlockInput!]
   gotoBlocks: [GotoBlockInput!]
   id: ID!
+  invokeRestAPIBlocks: [InvokeRestAPIBlockInput!]
+  kafkaBlocks: [KafkaBlockInput!]
   name: String!
   startBlock: StartBlockInput
-  subflowBlocks: [SubflowBlockInput!]
+  timerBlocks: [TimerBlockInput!]
   triggerBlocks: [TriggerBlockInput!]
-  trueFalseBlocks: [TrueFalseBlockInput!]
+  waitForSignalBlocks: [WaitForSignalBlockInput!]
 }
 
 scalar Int64
@@ -5376,6 +5620,69 @@ input InventoryPolicyInput {
   propertyCategory: PropertyCategoryCUDInput
   read: BasicPermissionRuleInput
   serviceType: BasicCUDInput
+}
+
+type InvokeRestAPIBlock {
+  authType: AuthType
+  body: String!
+  clientId: String
+  clientSecret: String
+  connectionTimeOut: Int!
+  entryPoint: EntryPoint!
+  exitPoint: ExitPoint!
+  headers: [VariableValue!]!
+  method: UrlMethod!
+  oidcUrl: String
+  password: String
+  url: String!
+  user: String
+}
+
+input InvokeRestAPIBlockInput {
+  authType: AuthType
+  basicDefinitions: BaseBlockInput!
+  body: String!
+  cid: String!
+  clientId: String
+  clientSecret: String
+  connectionTimeOut: Int!
+  entryPoint: EntryPointInput
+  exitPoint: ExitPointInput
+  headers: [VariableValueInput]!
+  method: UrlMethod!
+  oidcUrl: String
+  params: [VariableExpressionInput!]
+  password: String
+  uiRepresentation: BlockUIRepresentationInput
+  url: String!
+  user: String
+}
+
+type KafkaBlock {
+  brokers: [String!]
+  entryPoint: EntryPoint!
+  exitPoint: ExitPoint!
+  message: String!
+  topic: String!
+  type: KafkaMessageType!
+}
+
+input KafkaBlockInput {
+  basicDefinitions: BaseBlockInput!
+  brokers: [String!]
+  cid: String!
+  entryPoint: EntryPointInput
+  exitPoint: ExitPointInput
+  message: String!
+  topic: String!
+  type: KafkaMessageType!
+  uiRepresentation: BlockUIRepresentationInput
+}
+
+enum KafkaMessageType {
+  EXPRESSION
+  INPUT
+  STATE
 }
 
 type Kpi implements Node {
@@ -6225,6 +6532,7 @@ type Mutation {
   addChangeRequestActivity(input: [AddChangeRequestActivityInput!]!): AddChangeRequestActivityPayload @join__field(graph: DGRAPHSERVICE)
   addCharacteristic(input: [AddCharacteristicInput!]!): AddCharacteristicPayload @join__field(graph: DGRAPHSERVICE)
   addCharacteristicRelationship(input: [AddCharacteristicRelationshipInput!]!): AddCharacteristicRelationshipPayload @join__field(graph: DGRAPHSERVICE)
+  addChoiceBlock(flowDraftId: ID!, input: ChoiceBlockInput!): Block! @join__field(graph: SYMPHONY)
   addComment(input: CommentInput!): Comment! @join__field(graph: SYMPHONY)
   addComparator(input: AddComparatorInput!): Comparator! @join__field(graph: SYMPHONY)
   addConfigParamTag(input: [AddConfigParamTagInput!]!): AddConfigParamTagPayload @join__field(graph: DGRAPHSERVICE)
@@ -6235,15 +6543,16 @@ type Mutation {
   addCounterFormula(input: AddCounterFormulaInput!): CounterFormula! @join__field(graph: SYMPHONY)
   addCounterFormulaList(input: AddCounterFormulaListInput!): [CounterFormula!]! @join__field(graph: SYMPHONY)
   addCustomer(input: AddCustomerInput!): Customer! @join__field(graph: SYMPHONY)
-  addDecisionBlock(flowDraftId: ID!, input: DecisionBlockInput!): Block! @join__field(graph: SYMPHONY)
   addDomain(input: AddDomainInput!): Domain! @join__field(graph: SYMPHONY)
   addEndBlock(flowDraftId: ID!, input: EndBlockInput!): Block! @join__field(graph: SYMPHONY)
   addEquipment(input: AddEquipmentInput!): Equipment! @join__field(graph: SYMPHONY)
   addEquipmentPortType(input: AddEquipmentPortTypeInput!): EquipmentPortType! @join__field(graph: SYMPHONY)
   addEquipmentType(input: AddEquipmentTypeInput!): EquipmentType! @join__field(graph: SYMPHONY)
   addEventSeverity(input: AddEventSeverityInput!): EventSeverity! @join__field(graph: SYMPHONY)
+  addExecuteFlowBlock(flowDraftId: ID!, input: ExecuteFlowBlockInput!): Block! @join__field(graph: SYMPHONY)
   addExternalReference(input: [AddExternalReferenceInput!]!, upsert: Boolean): AddExternalReferencePayload @join__field(graph: DGRAPHSERVICE)
   addFeature(input: [AddFeatureInput!]!): AddFeaturePayload @join__field(graph: DGRAPHSERVICE)
+  addFiles(input: AddFilesInput!): File! @join__field(graph: SYMPHONY)
   addFloorPlan(input: AddFloorPlanInput!): FloorPlan! @join__field(graph: SYMPHONY)
   addFlowDraft(input: AddFlowDraftInput!): FlowDraft! @join__field(graph: SYMPHONY)
   addFlowExecutionReference(input: [AddFlowExecutionReferenceInput!]!): AddFlowExecutionReferencePayload @join__field(graph: DGRAPHSERVICE)
@@ -6252,6 +6561,8 @@ type Mutation {
   addGotoBlock(flowDraftId: ID!, input: GotoBlockInput!): Block! @join__field(graph: SYMPHONY)
   addHyperlink(input: AddHyperlinkInput!): Hyperlink! @join__field(graph: SYMPHONY)
   addImage(input: AddImageInput!): File! @join__field(graph: SYMPHONY)
+  addInvokeRestAPIBlock(flowDraftId: ID!, input: InvokeRestAPIBlockInput!): Block! @join__field(graph: SYMPHONY)
+  addKafkaBlock(flowDraftId: ID!, input: KafkaBlockInput!): Block! @join__field(graph: SYMPHONY)
   addKpi(input: AddKpiInput!): Kpi! @join__field(graph: SYMPHONY)
   addKpiCategory(input: AddKpiCategoryInput!): KpiCategory! @join__field(graph: SYMPHONY)
   addKqi(input: AddKqiInput!): Kqi! @join__field(graph: SYMPHONY)
@@ -6318,14 +6629,14 @@ type Mutation {
   ): ServiceType! @join__field(graph: SYMPHONY)
   addStartBlock(flowDraftId: ID!, input: StartBlockInput!): Block! @join__field(graph: SYMPHONY)
   addStatusNumericPool(input: [AddStatusNumericPoolInput!]!): AddStatusNumericPoolPayload @join__field(graph: DGRAPHSERVICE)
-  addSubflowBlock(flowDraftId: ID!, input: SubflowBlockInput!): Block! @join__field(graph: SYMPHONY)
   addSubscriber(input: [AddSubscriberInput!]!): AddSubscriberPayload @join__field(graph: DGRAPHSERVICE)
   addTech(input: AddTechInput!): Tech! @join__field(graph: SYMPHONY)
   addThreshold(input: AddThresholdInput!): Threshold! @join__field(graph: SYMPHONY)
+  addTimerBlock(flowDraftId: ID!, input: TimerBlockInput!): Block! @join__field(graph: SYMPHONY)
   addTriggerBlock(flowDraftId: ID!, input: TriggerBlockInput!): Block! @join__field(graph: SYMPHONY)
-  addTrueFalseBlock(flowDraftId: ID!, input: TrueFalseBlockInput!): Block! @join__field(graph: SYMPHONY)
   addUsersGroup(input: AddUsersGroupInput!): UsersGroup! @join__field(graph: SYMPHONY)
   addVendor(input: AddVendorInput!): Vendor! @join__field(graph: SYMPHONY)
+  addWaitForSignalBlock(flowDraftId: ID!, input: WaitForSignalBlockInput!): Block! @join__field(graph: SYMPHONY)
   addWiFiScans(
     """wifi scan data"""
     data: [SurveyWiFiScanData]!
@@ -6336,6 +6647,7 @@ type Mutation {
   addWorkOrder(input: AddWorkOrderInput!): WorkOrder! @join__field(graph: SYMPHONY)
   addWorkOrderType(input: AddWorkOrderTypeInput!): WorkOrderType! @join__field(graph: SYMPHONY)
   addWorkerType(input: AddWorkerTypeInput!): WorkerType! @join__field(graph: SYMPHONY)
+  archiveFlow(input: ArchiveFlowInput!): Flow! @join__field(graph: SYMPHONY)
   createProject(input: AddProjectInput!): Project! @join__field(graph: SYMPHONY)
   createProjectType(input: AddProjectTypeInput!): ProjectType! @join__field(graph: SYMPHONY)
   createSurvey(data: SurveyCreateData!): ID! @join__field(graph: SYMPHONY)
@@ -6401,6 +6713,7 @@ type Mutation {
   deleteStatusNumericPool(filter: StatusNumericPoolFilter!): DeleteStatusNumericPoolPayload @join__field(graph: DGRAPHSERVICE)
   deleteSubscriber(filter: SubscriberFilter!): DeleteSubscriberPayload @join__field(graph: DGRAPHSERVICE)
   deleteUsersGroup(id: ID!): Boolean! @join__field(graph: SYMPHONY)
+  duplicateFlow(input: DuplicateFlowInput!): Flow! @join__field(graph: SYMPHONY)
   editAlarmFilter(input: EditAlarmFilterInput!): AlarmFilter! @join__field(graph: SYMPHONY)
   editAlarmStatus(input: EditAlarmStatusInput!): AlarmStatus! @join__field(graph: SYMPHONY)
   editAppointment(input: EditAppointmentInput!): Appointment! @join__field(graph: SYMPHONY)
@@ -6449,6 +6762,7 @@ type Mutation {
   editProject(input: EditProjectInput!): Project! @join__field(graph: SYMPHONY)
   editProjectType(input: EditProjectTypeInput!): ProjectType! @join__field(graph: SYMPHONY)
   editPropertyCategories(propertyCategories: [EditPropertyCategoryInput]): [PropertyCategory!] @join__field(graph: SYMPHONY)
+  editPropertyType(input: EditPropertyTypeInput!): PropertyType! @join__field(graph: SYMPHONY)
   editPropertyTypeValue(input: EditPropertyTypeValueInput!): PropertyTypeValue! @join__field(graph: SYMPHONY)
   editRecommendations(input: EditRecommendationsInput!): Recommendations! @join__field(graph: SYMPHONY)
   editRecommendationsCategory(input: EditRecommendationsCategoryInput!): RecommendationsCategory! @join__field(graph: SYMPHONY)
@@ -6922,6 +7236,12 @@ type PageInfo {
 
   """When paginating forwards, the cursor to continue."""
   startCursor: Cursor
+}
+
+type ParallelBlock {
+  entryPoint: EntryPoint!
+  exitPoint: ExitPoint!
+  internalExitPoint: ExitPoint!
 }
 
 type Parameter implements DefaultConfig {
@@ -7833,6 +8153,7 @@ enum PropertyTypeValueOrderField {
 }
 
 input PublishFlowInput {
+  cmType: FlowCMType
   flowDraftID: ID!
   flowInstancesPolicy: FlowNewInstancesPolicy!
 }
@@ -8174,15 +8495,7 @@ type Query {
     name: String
   ): FlowDraftConnection! @join__field(graph: SYMPHONY)
   flowInstances(after: Cursor, before: Cursor, filterBy: [FlowInstanceFilterInput!], first: Int, last: Int, orderBy: FlowInstanceOrder): FlowInstanceConnection! @join__field(graph: SYMPHONY)
-  flows(
-    after: Cursor
-    before: Cursor
-    first: Int
-    last: Int
-
-    """Filter flows by case sensitive name."""
-    name: String
-  ): FlowConnection! @join__field(graph: SYMPHONY)
+  flows(after: Cursor, before: Cursor, filterBy: [FlowFilterInput!], first: Int, last: Int, orderBy: FlowOrder): FlowConnection! @join__field(graph: SYMPHONY)
 
   """A list of formulas."""
   formulas(
@@ -9190,6 +9503,8 @@ type Resource implements DefaultConfig {
   belongsTo(filter: ResourceFilter): Resource
   changeItems(filter: ChangeItemFilter, first: Int, offset: Int, order: ChangeItemOrder): [ChangeItem]
   changeItemsAggregate(filter: ChangeItemFilter): ChangeItemAggregateResult
+  cmVersions(filter: CMVersionFilter, first: Int, offset: Int, order: CMVersionOrder): [CMVersion]
+  cmVersionsAggregate(filter: CMVersionFilter): CMVersionAggregateResult
   composedOf(filter: ResourceFilter, first: Int, offset: Int, order: ResourceOrder): [Resource]
   composedOfAggregate(filter: ResourceFilter): ResourceAggregateResult
   createTime: DateTime
@@ -9253,6 +9568,7 @@ enum ResourceHasFilter {
   available
   belongsTo
   changeItems
+  cmVersions
   composedOf
   createTime
   crossConnection
@@ -9425,6 +9741,7 @@ input ResourcePatch {
   available: Boolean
   belongsTo: ResourceRef
   changeItems: [ChangeItemRef]
+  cmVersions: [CMVersionRef]
   composedOf: [ResourceRef]
   createTime: DateTime
   crossConnection: ResourceRef
@@ -9636,6 +9953,7 @@ input ResourceRef {
   available: Boolean
   belongsTo: ResourceRef
   changeItems: [ChangeItemRef]
+  cmVersions: [CMVersionRef]
   composedOf: [ResourceRef]
   createTime: DateTime
   crossConnection: ResourceRef
@@ -10080,6 +10398,12 @@ enum ResourceTypeRelationshipOrderField {
 
   """Order ResourceTypeRelationship by update time."""
   UPDATED_AT
+}
+
+enum RetryUnit {
+  HOURS
+  MINUTES
+  SECONDS
 }
 
 enum RollbackPolicyConfig {
@@ -11147,6 +11471,24 @@ input ServiceTypeEditData {
   properties: [PropertyTypeInput]
 }
 
+enum SignalModule {
+  ASSURANCE
+  CM
+  INVENTORY
+  WFM
+}
+
+enum SignalType {
+  CRCREATED
+  CRUPDATED
+  MOICREATED
+  MOIUPDATED
+  PR_CREATED
+  PR_UPDATED
+  WOCREATED
+  WOUPDATED
+}
+
 input SlotFilterInput {
   slotEndDate: Time!
   slotStartDate: Time!
@@ -11159,12 +11501,12 @@ type StartBlock {
 
 input StartBlockInput {
   cid: String!
-  paramDefinitions: [VariableDefinitionInput!]!
+  paramDefinitions: [VariableDefinitionInput!]
   uiRepresentation: BlockUIRepresentationInput
 }
 
 input StartFlowInput {
-  bssCode: String!
+  bssCode: String
   flowID: ID!
   params: [VariableValueInput]!
   startDate: Time!
@@ -11718,6 +12060,33 @@ enum ThresholdOrderField {
 
 scalar Time
 
+enum TimerBehavior {
+  FIXED_INTERVAL
+  SPECIFIC_DATETIME
+}
+
+type TimerBlock {
+  behavior: TimerBehavior!
+  datetime: Time
+  enableExpressionL: Boolean
+  exitPoint: ExitPoint!
+  expression: String
+  seconds: Int
+}
+
+input TimerBlockInput {
+  behavior: TimerBehavior!
+  cid: String!
+  enableExpressionL: Boolean
+  entryPoint: EntryPointInput
+  exitPoint: ExitPointInput
+  expression: String
+  params: [VariableExpressionInput!]
+  seconds: Int
+  specificDatetime: Time
+  uiRepresentation: BlockUIRepresentationInput
+}
+
 type TopologyLink {
   source: Node!
   target: Node!
@@ -11726,6 +12095,11 @@ type TopologyLink {
 
 enum TopologyLinkType {
   PHYSICAL
+}
+
+enum TransfStrategy {
+  MERGE
+  REPLACE
 }
 
 type TriggerBlock {
@@ -12243,6 +12617,14 @@ input UpdateUserGroupsInput {
   removeGroupIds: [ID!]!
 }
 
+enum UrlMethod {
+  DELETE
+  GET
+  PATCH
+  POST
+  PUT
+}
+
 enum UsageSubStatus {
   ASSIGNED
   AVAILABLE
@@ -12536,6 +12918,28 @@ type Viewer {
   user: User
 }
 
+type WaitForSignalBlock {
+  blocked: Boolean!
+  customFilter: String
+  entryPoint: EntryPoint!
+  exitPoint: ExitPoint!
+  signalModule: SignalModule
+  type: SignalType
+}
+
+input WaitForSignalBlockInput {
+  basicDefinitions: BaseBlockInput!
+  blocked: Boolean!
+  cid: String!
+  customFilter: String
+  entryPoint: EntryPointInput
+  exitPoint: ExitPointInput
+  params: [VariableExpressionInput!]
+  signalModule: SignalModule!
+  type: SignalType!
+  uiRepresentation: BlockUIRepresentationInput
+}
+
 enum WeekDay {
   FRIDAY
   MONDAY
@@ -12565,6 +12969,7 @@ type WorkOrder implements NamedNode & Node {
   equipmentToAdd: [Equipment]!
   equipmentToRemove: [Equipment]!
   files: [File]!
+  flowInstance: FlowInstance
   hyperlinks: [Hyperlink!]!
   id: ID!
   images: [File]!

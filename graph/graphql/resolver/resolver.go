@@ -307,3 +307,11 @@ func (r resolver) ResourcePropertyType() generated.ResourcePropertyTypeResolver 
 func (r resolver) ResourceSpecificationRelationship() generated.ResourceSpecificationRelationshipResolver {
 	return resourceSpecificationRelationshipResolver{}
 }
+
+func (r resolver) FlowInstance() generated.FlowInstanceResolver {
+	return flowInstanceResolver{}
+}
+
+func (r resolver) BlockInstance() generated.BlockInstanceResolver {
+	return blockInstanceResolver{}
+}

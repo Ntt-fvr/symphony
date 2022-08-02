@@ -22,6 +22,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/alarmfilter"
 	"github.com/facebookincubator/symphony/pkg/ent/alarmstatus"
 	"github.com/facebookincubator/symphony/pkg/ent/appointment"
+	"github.com/facebookincubator/symphony/pkg/ent/automationactivity"
 	"github.com/facebookincubator/symphony/pkg/ent/block"
 	"github.com/facebookincubator/symphony/pkg/ent/blockinstance"
 	"github.com/facebookincubator/symphony/pkg/ent/checklistcategory"
@@ -1333,6 +1334,225 @@ var DefaultAppointmentOrder = &AppointmentOrder{
 		field: appointment.FieldID,
 		toCursor: func(a *Appointment) Cursor {
 			return Cursor{ID: a.ID}
+		},
+	},
+}
+
+// AutomationActivityEdge is the edge representation of AutomationActivity.
+type AutomationActivityEdge struct {
+	Node   *AutomationActivity `json:"node"`
+	Cursor Cursor              `json:"cursor"`
+}
+
+// AutomationActivityConnection is the connection containing edges to AutomationActivity.
+type AutomationActivityConnection struct {
+	Edges      []*AutomationActivityEdge `json:"edges"`
+	PageInfo   PageInfo                  `json:"pageInfo"`
+	TotalCount int                       `json:"totalCount"`
+}
+
+// AutomationActivityPaginateOption enables pagination customization.
+type AutomationActivityPaginateOption func(*automationActivityPager) error
+
+// WithAutomationActivityOrder configures pagination ordering.
+func WithAutomationActivityOrder(order *AutomationActivityOrder) AutomationActivityPaginateOption {
+	if order == nil {
+		order = DefaultAutomationActivityOrder
+	}
+	o := *order
+	return func(pager *automationActivityPager) error {
+		if err := o.Direction.Validate(); err != nil {
+			return err
+		}
+		if o.Field == nil {
+			o.Field = DefaultAutomationActivityOrder.Field
+		}
+		pager.order = &o
+		return nil
+	}
+}
+
+// WithAutomationActivityFilter configures pagination filter.
+func WithAutomationActivityFilter(filter func(*AutomationActivityQuery) (*AutomationActivityQuery, error)) AutomationActivityPaginateOption {
+	return func(pager *automationActivityPager) error {
+		if filter == nil {
+			return errors.New("AutomationActivityQuery filter cannot be nil")
+		}
+		pager.filter = filter
+		return nil
+	}
+}
+
+type automationActivityPager struct {
+	order  *AutomationActivityOrder
+	filter func(*AutomationActivityQuery) (*AutomationActivityQuery, error)
+}
+
+func newAutomationActivityPager(opts []AutomationActivityPaginateOption) (*automationActivityPager, error) {
+	pager := &automationActivityPager{}
+	for _, opt := range opts {
+		if err := opt(pager); err != nil {
+			return nil, err
+		}
+	}
+	if pager.order == nil {
+		pager.order = DefaultAutomationActivityOrder
+	}
+	return pager, nil
+}
+
+func (p *automationActivityPager) applyFilter(query *AutomationActivityQuery) (*AutomationActivityQuery, error) {
+	if p.filter != nil {
+		return p.filter(query)
+	}
+	return query, nil
+}
+
+func (p *automationActivityPager) toCursor(aa *AutomationActivity) Cursor {
+	return p.order.Field.toCursor(aa)
+}
+
+func (p *automationActivityPager) applyCursors(query *AutomationActivityQuery, after, before *Cursor) *AutomationActivityQuery {
+	for _, predicate := range cursorsToPredicates(
+		p.order.Direction, after, before,
+		p.order.Field.field, DefaultAutomationActivityOrder.Field.field,
+	) {
+		query = query.Where(predicate)
+	}
+	return query
+}
+
+func (p *automationActivityPager) applyOrder(query *AutomationActivityQuery, reverse bool) *AutomationActivityQuery {
+	direction := p.order.Direction
+	if reverse {
+		direction = direction.reverse()
+	}
+	query = query.Order(direction.orderFunc(p.order.Field.field))
+	if p.order.Field != DefaultAutomationActivityOrder.Field {
+		query = query.Order(direction.orderFunc(DefaultAutomationActivityOrder.Field.field))
+	}
+	return query
+}
+
+// Paginate executes the query and returns a relay based cursor connection to AutomationActivity.
+func (aa *AutomationActivityQuery) Paginate(
+	ctx context.Context, after *Cursor, first *int,
+	before *Cursor, last *int, opts ...AutomationActivityPaginateOption,
+) (*AutomationActivityConnection, error) {
+	if err := validateFirstLast(first, last); err != nil {
+		return nil, err
+	}
+	pager, err := newAutomationActivityPager(opts)
+	if err != nil {
+		return nil, err
+	}
+
+	if aa, err = pager.applyFilter(aa); err != nil {
+		return nil, err
+	}
+
+	conn := &AutomationActivityConnection{Edges: []*AutomationActivityEdge{}}
+	if !hasCollectedField(ctx, edgesField) ||
+		first != nil && *first == 0 ||
+		last != nil && *last == 0 {
+		if hasCollectedField(ctx, totalCountField) ||
+			hasCollectedField(ctx, pageInfoField) {
+			count, err := aa.Count(ctx)
+			if err != nil {
+				return nil, err
+			}
+			conn.TotalCount = count
+			conn.PageInfo.HasNextPage = first != nil && count > 0
+			conn.PageInfo.HasPreviousPage = last != nil && count > 0
+		}
+		return conn, nil
+	}
+
+	if (after != nil || first != nil || before != nil || last != nil) &&
+		hasCollectedField(ctx, totalCountField) {
+		count, err := aa.Clone().Count(ctx)
+		if err != nil {
+			return nil, err
+		}
+		conn.TotalCount = count
+	}
+
+	aa = pager.applyCursors(aa, after, before)
+	aa = pager.applyOrder(aa, last != nil)
+	var limit int
+	if first != nil {
+		limit = *first + 1
+	} else if last != nil {
+		limit = *last + 1
+	}
+	if limit > 0 {
+		aa = aa.Limit(limit)
+	}
+
+	if field := getCollectedField(ctx, edgesField, nodeField); field != nil {
+		aa = aa.collectField(graphql.GetOperationContext(ctx), *field)
+	}
+
+	nodes, err := aa.All(ctx)
+	if err != nil || len(nodes) == 0 {
+		return conn, err
+	}
+
+	if len(nodes) == limit {
+		conn.PageInfo.HasNextPage = first != nil
+		conn.PageInfo.HasPreviousPage = last != nil
+		nodes = nodes[:len(nodes)-1]
+	}
+
+	var nodeAt func(int) *AutomationActivity
+	if last != nil {
+		n := len(nodes) - 1
+		nodeAt = func(i int) *AutomationActivity {
+			return nodes[n-i]
+		}
+	} else {
+		nodeAt = func(i int) *AutomationActivity {
+			return nodes[i]
+		}
+	}
+
+	conn.Edges = make([]*AutomationActivityEdge, len(nodes))
+	for i := range nodes {
+		node := nodeAt(i)
+		conn.Edges[i] = &AutomationActivityEdge{
+			Node:   node,
+			Cursor: pager.toCursor(node),
+		}
+	}
+
+	conn.PageInfo.StartCursor = &conn.Edges[0].Cursor
+	conn.PageInfo.EndCursor = &conn.Edges[len(conn.Edges)-1].Cursor
+	if conn.TotalCount == 0 {
+		conn.TotalCount = len(nodes)
+	}
+
+	return conn, nil
+}
+
+// AutomationActivityOrderField defines the ordering field of AutomationActivity.
+type AutomationActivityOrderField struct {
+	field    string
+	toCursor func(*AutomationActivity) Cursor
+}
+
+// AutomationActivityOrder defines the ordering of AutomationActivity.
+type AutomationActivityOrder struct {
+	Direction OrderDirection                `json:"direction"`
+	Field     *AutomationActivityOrderField `json:"field"`
+}
+
+// DefaultAutomationActivityOrder is the default ordering of AutomationActivity.
+var DefaultAutomationActivityOrder = &AutomationActivityOrder{
+	Direction: OrderDirectionAsc,
+	Field: &AutomationActivityOrderField{
+		field: automationactivity.FieldID,
+		toCursor: func(aa *AutomationActivity) Cursor {
+			return Cursor{ID: aa.ID}
 		},
 	},
 }
@@ -7160,6 +7380,49 @@ func (ep *ExitPointQuery) Paginate(
 	return conn, nil
 }
 
+var (
+	// ExitPointOrderFieldIndex orders ExitPoint by index.
+	ExitPointOrderFieldIndex = &ExitPointOrderField{
+		field: exitpoint.FieldIndex,
+		toCursor: func(ep *ExitPoint) Cursor {
+			return Cursor{
+				ID:    ep.ID,
+				Value: ep.Index,
+			}
+		},
+	}
+)
+
+// String implement fmt.Stringer interface.
+func (f ExitPointOrderField) String() string {
+	var str string
+	switch f.field {
+	case exitpoint.FieldIndex:
+		str = "INDEX"
+	}
+	return str
+}
+
+// MarshalGQL implements graphql.Marshaler interface.
+func (f ExitPointOrderField) MarshalGQL(w io.Writer) {
+	io.WriteString(w, strconv.Quote(f.String()))
+}
+
+// UnmarshalGQL implements graphql.Unmarshaler interface.
+func (f *ExitPointOrderField) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("ExitPointOrderField %T must be a string", v)
+	}
+	switch str {
+	case "INDEX":
+		*f = *ExitPointOrderFieldIndex
+	default:
+		return fmt.Errorf("%s is not a valid ExitPointOrderField", str)
+	}
+	return nil
+}
+
 // ExitPointOrderField defines the ordering field of ExitPoint.
 type ExitPointOrderField struct {
 	field    string
@@ -8691,6 +8954,63 @@ func (f *FlowQuery) Paginate(
 	}
 
 	return conn, nil
+}
+
+var (
+	// FlowOrderFieldCmType orders Flow by cm_type.
+	FlowOrderFieldCmType = &FlowOrderField{
+		field: flow.FieldCmType,
+		toCursor: func(f *Flow) Cursor {
+			return Cursor{
+				ID:    f.ID,
+				Value: f.CmType,
+			}
+		},
+	}
+	// FlowOrderFieldCreationDate orders Flow by creation_date.
+	FlowOrderFieldCreationDate = &FlowOrderField{
+		field: flow.FieldCreationDate,
+		toCursor: func(f *Flow) Cursor {
+			return Cursor{
+				ID:    f.ID,
+				Value: f.CreationDate,
+			}
+		},
+	}
+)
+
+// String implement fmt.Stringer interface.
+func (f FlowOrderField) String() string {
+	var str string
+	switch f.field {
+	case flow.FieldCmType:
+		str = "CM_TYPE"
+	case flow.FieldCreationDate:
+		str = "CREATED_AT"
+	}
+	return str
+}
+
+// MarshalGQL implements graphql.Marshaler interface.
+func (f FlowOrderField) MarshalGQL(w io.Writer) {
+	io.WriteString(w, strconv.Quote(f.String()))
+}
+
+// UnmarshalGQL implements graphql.Unmarshaler interface.
+func (f *FlowOrderField) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("FlowOrderField %T must be a string", v)
+	}
+	switch str {
+	case "CM_TYPE":
+		*f = *FlowOrderFieldCmType
+	case "CREATED_AT":
+		*f = *FlowOrderFieldCreationDate
+	default:
+		return fmt.Errorf("%s is not a valid FlowOrderField", str)
+	}
+	return nil
 }
 
 // FlowOrderField defines the ordering field of Flow.

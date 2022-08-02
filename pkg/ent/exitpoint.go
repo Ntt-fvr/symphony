@@ -33,6 +33,8 @@ type ExitPoint struct {
 	Cid *string `json:"cid,omitempty"`
 	// Condition holds the value of the "condition" field.
 	Condition *flowschema.VariableExpression `json:"condition,omitempty"`
+	// Index holds the value of the "index" field.
+	Index int `json:"index,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the ExitPointQuery when eager-loading is set.
 	Edges             ExitPointEdges `json:"edges"`
@@ -82,6 +84,7 @@ func (*ExitPoint) scanValues() []interface{} {
 		&sql.NullString{}, // role
 		&sql.NullString{}, // cid
 		&[]byte{},         // condition
+		&sql.NullInt64{},  // index
 	}
 }
 
@@ -133,7 +136,12 @@ func (ep *ExitPoint) assignValues(values ...interface{}) error {
 			return fmt.Errorf("unmarshal field condition: %v", err)
 		}
 	}
-	values = values[5:]
+	if value, ok := values[5].(*sql.NullInt64); !ok {
+		return fmt.Errorf("unexpected type %T for field index", values[5])
+	} else if value.Valid {
+		ep.Index = int(value.Int64)
+	}
+	values = values[6:]
 	if len(values) == len(exitpoint.ForeignKeys) {
 		if value, ok := values[0].(*sql.NullInt64); !ok {
 			return fmt.Errorf("unexpected type %T for edge-field block_exit_points", value)
@@ -190,6 +198,8 @@ func (ep *ExitPoint) String() string {
 	}
 	builder.WriteString(", condition=")
 	builder.WriteString(fmt.Sprintf("%v", ep.Condition))
+	builder.WriteString(", index=")
+	builder.WriteString(fmt.Sprintf("%v", ep.Index))
 	builder.WriteByte(')')
 	return builder.String()
 }

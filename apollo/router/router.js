@@ -14,7 +14,6 @@ const gateway = new ApolloGateway({
     return new RemoteGraphQLDataSource({
       url,
       willSendRequest({ request, context }) {
-        console.log("Symphony integration type");
           request.http.headers = {
             ...context.headers
           }
@@ -30,6 +29,11 @@ function startApollo(){
     gateway,
     context: ({ req: { headers } }) => {
       return { headers };
+    }, 
+    csrfPrevention:true,
+    cors: {
+      origin:  "https://studio.apollographql.com", 
+      credentials: true
     },
   });
   server.listen({ port: port }).then(({ url }) => {

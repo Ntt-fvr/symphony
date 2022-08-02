@@ -56,6 +56,30 @@ func (a *Appointment) Assignee(ctx context.Context) (*User, error) {
 	return result, MaskNotFound(err)
 }
 
+func (aa *AutomationActivity) Author(ctx context.Context) (*User, error) {
+	result, err := aa.Edges.AuthorOrErr()
+	if IsNotLoaded(err) {
+		result, err = aa.QueryAuthor().Only(ctx)
+	}
+	return result, MaskNotFound(err)
+}
+
+func (aa *AutomationActivity) FlowInstance(ctx context.Context) (*FlowInstance, error) {
+	result, err := aa.Edges.FlowInstanceOrErr()
+	if IsNotLoaded(err) {
+		result, err = aa.QueryFlowInstance().Only(ctx)
+	}
+	return result, MaskNotFound(err)
+}
+
+func (aa *AutomationActivity) BlockInstance(ctx context.Context) (*BlockInstance, error) {
+	result, err := aa.Edges.BlockInstanceOrErr()
+	if IsNotLoaded(err) {
+		result, err = aa.QueryBlockInstance().Only(ctx)
+	}
+	return result, MaskNotFound(err)
+}
+
 func (b *Block) Flow(ctx context.Context) (*Flow, error) {
 	result, err := b.Edges.FlowOrErr()
 	if IsNotLoaded(err) {
@@ -150,6 +174,14 @@ func (bi *BlockInstance) SubflowInstance(ctx context.Context) (*FlowInstance, er
 		result, err = bi.QuerySubflowInstance().Only(ctx)
 	}
 	return result, MaskNotFound(err)
+}
+
+func (bi *BlockInstance) BlockActivities(ctx context.Context) ([]*AutomationActivity, error) {
+	result, err := bi.Edges.BlockActivitiesOrErr()
+	if IsNotLoaded(err) {
+		result, err = bi.QueryBlockActivities().All(ctx)
+	}
+	return result, err
 }
 
 func (clc *CheckListCategory) CheckListItems(ctx context.Context) ([]*CheckListItem, error) {
@@ -832,6 +864,30 @@ func (f *Flow) Draft(ctx context.Context) (*FlowDraft, error) {
 	return result, MaskNotFound(err)
 }
 
+func (f *Flow) Author(ctx context.Context) (*User, error) {
+	result, err := f.Edges.AuthorOrErr()
+	if IsNotLoaded(err) {
+		result, err = f.QueryAuthor().Only(ctx)
+	}
+	return result, err
+}
+
+func (f *Flow) Editor(ctx context.Context) ([]*User, error) {
+	result, err := f.Edges.EditorOrErr()
+	if IsNotLoaded(err) {
+		result, err = f.QueryEditor().All(ctx)
+	}
+	return result, err
+}
+
+func (f *Flow) Instance(ctx context.Context) ([]*FlowInstance, error) {
+	result, err := f.Edges.InstanceOrErr()
+	if IsNotLoaded(err) {
+		result, err = f.QueryInstance().All(ctx)
+	}
+	return result, err
+}
+
 func (fd *FlowDraft) Blocks(ctx context.Context) ([]*Block, error) {
 	result, err := fd.Edges.BlocksOrErr()
 	if IsNotLoaded(err) {
@@ -886,6 +942,14 @@ func (fi *FlowInstance) ParentSubflowBlock(ctx context.Context) (*BlockInstance,
 		result, err = fi.QueryParentSubflowBlock().Only(ctx)
 	}
 	return result, MaskNotFound(err)
+}
+
+func (fi *FlowInstance) FlowActivities(ctx context.Context) ([]*AutomationActivity, error) {
+	result, err := fi.Edges.FlowActivitiesOrErr()
+	if IsNotLoaded(err) {
+		result, err = fi.QueryFlowActivities().All(ctx)
+	}
+	return result, err
 }
 
 func (f *Formula) NetworkType(ctx context.Context) (*NetworkType, error) {
@@ -2384,6 +2448,14 @@ func (u *User) Appointment(ctx context.Context) ([]*Appointment, error) {
 	return result, err
 }
 
+func (u *User) AuthoredFlow(ctx context.Context) ([]*Flow, error) {
+	result, err := u.Edges.AuthoredFlowOrErr()
+	if IsNotLoaded(err) {
+		result, err = u.QueryAuthoredFlow().All(ctx)
+	}
+	return result, err
+}
+
 func (ug *UsersGroup) Members(ctx context.Context) ([]*User, error) {
 	result, err := ug.Edges.MembersOrErr()
 	if IsNotLoaded(err) {
@@ -2566,6 +2638,14 @@ func (wo *WorkOrder) Appointment(ctx context.Context) ([]*Appointment, error) {
 		result, err = wo.QueryAppointment().All(ctx)
 	}
 	return result, err
+}
+
+func (wo *WorkOrder) FlowInstance(ctx context.Context) (*FlowInstance, error) {
+	result, err := wo.Edges.FlowInstanceOrErr()
+	if IsNotLoaded(err) {
+		result, err = wo.QueryFlowInstance().Only(ctx)
+	}
+	return result, MaskNotFound(err)
 }
 
 func (wod *WorkOrderDefinition) Type(ctx context.Context) (*WorkOrderType, error) {

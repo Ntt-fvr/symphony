@@ -30,6 +30,8 @@ const (
 	FieldCid = "cid"
 	// FieldCondition holds the string denoting the condition field in the database.
 	FieldCondition = "condition"
+	// FieldIndex holds the string denoting the index field in the database.
+	FieldIndex = "index"
 
 	// EdgeNextEntryPoints holds the string denoting the next_entry_points edge name in mutations.
 	EdgeNextEntryPoints = "next_entry_points"
@@ -60,6 +62,7 @@ var Columns = []string{
 	FieldRole,
 	FieldCid,
 	FieldCondition,
+	FieldIndex,
 }
 
 // ForeignKeys holds the SQL foreign-keys that are owned by the ExitPoint type.
@@ -108,7 +111,7 @@ var (
 // RoleValidator is a validator for the "role" field enum values. It is called by the builders before save.
 func RoleValidator(r flowschema.ExitPointRole) error {
 	switch r {
-	case "DEFAULT", "DECISION", "TRUE", "FALSE":
+	case "DEFAULT", "DECISION", "TRUE", "FALSE", "CHOICE":
 		return nil
 	default:
 		return fmt.Errorf("exitpoint: invalid enum value for role field: %q", r)

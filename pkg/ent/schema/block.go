@@ -13,6 +13,7 @@ import (
 	"github.com/facebookincubator/ent-contrib/entgql"
 	"github.com/facebookincubator/symphony/pkg/authz"
 	"github.com/facebookincubator/symphony/pkg/ent/privacy"
+	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
 	"github.com/facebookincubator/symphony/pkg/flowengine/flowschema"
 	"github.com/facebookincubator/symphony/pkg/hooks"
 )
@@ -20,6 +21,10 @@ import (
 // Block defines the block schema.
 type Block struct {
 	schema
+}
+type DecisionRoute struct {
+	ExitPoint ExitPoint
+	Condition string
 }
 
 // Fields returns block fields.
@@ -37,6 +42,15 @@ func (Block) Fields() []ent.Field {
 				"Trigger", "TRIGGER",
 				"Action", "ACTION",
 				"TrueFalse", "TRUE_FALSE",
+				"Choice", "CHOICE",
+				"ExecuteFlow", "EXECUTE_FLOW",
+				"NetworkAction", "NETWORK_ACTION",
+				"Timer", "TIMER",
+				"InvokeRestAPI", "INVOKE_REST_API",
+				"WaitForSignal", "WAIT_FOR_SIGNAL",
+				"ForEach", "FOREACH",
+				"Parallel", "PARALLEL",
+				"Kafka", "KAFKA",
 			),
 		field.Enum("action_type").
 			GoType(flowschema.ActionTypeID("")).
@@ -52,6 +66,176 @@ func (Block) Fields() []ent.Field {
 			Optional(),
 		field.JSON("ui_representation", &flowschema.BlockUIRepresentation{}).
 			Optional(),
+		field.Bool("enable_input_transformation").
+			Optional().
+			Default(false).
+			Nillable(),
+		field.Enum("input_transf_strategy").
+			GoType(enum.TransfStrategy("")).
+			Optional().
+			Nillable(),
+		field.String("input_transformation").
+			Optional().
+			Nillable(),
+		field.Bool("enable_output_transformation").
+			Optional().
+			Default(false).
+			Nillable(),
+		field.Enum("output_transf_strategy").
+			GoType(enum.TransfStrategy("")).
+			Optional().
+			Nillable(),
+		field.String("output_transformation").
+			Optional().
+			Nillable(),
+		field.Bool("enable_input_state_transformation").
+			Optional().
+			Default(false).
+			Nillable(),
+		field.Enum("input_state_transf_strategy").
+			GoType(enum.TransfStrategy("")).
+			Optional().
+			Nillable(),
+		field.String("input_state_transformation").
+			Optional().
+			Nillable(),
+		field.Bool("enable_output_state_transformation").
+			Optional().
+			Default(false).
+			Nillable(),
+		field.Enum("output_state_transf_strategy").
+			GoType(enum.TransfStrategy("")).
+			Optional().
+			Nillable(),
+		field.String("output_state_transformation").
+			Optional().
+			Nillable(),
+		field.Bool("enable_error_handling").
+			Optional().
+			Default(false).
+			Nillable(),
+		field.Bool("enable_retry_policy").
+			Optional().
+			Default(false).
+			Nillable(),
+		field.Int("retryInterval").
+			Optional().
+			Nillable(),
+		field.Enum("retry_unit").
+			NamedValues(
+				"SECONDS", "SECONDS",
+				"MINUTES", "MINUTES",
+				"HOURS", "HOURS",
+			).
+			Optional(),
+		field.Int("maxAttemps").
+			Optional().
+			Nillable(),
+		field.Int("backOffRate").
+			Optional().
+			Nillable(),
+
+		field.Enum("timer_behavior").
+			NamedValues(
+				"FIXED_INTERVAL", "FIXED_INTERVAL",
+				"SPECIFIC_DATETIME", "SPECIFIC_DATETIME",
+			).
+			Optional().
+			Nillable(),
+		field.Int("seconds").
+			Optional().
+			Nillable(),
+		field.Bool("enable_timer_expression").
+			Optional().
+			Default(false).
+			Nillable(),
+		field.String("timer_expression").
+			Optional().
+			Nillable(),
+		field.Time("timer_specific_date").
+			Optional().
+			Nillable(),
+
+		field.Enum("url_method").
+			NamedValues(
+				"POST", "POST",
+				"GET", "GET",
+				"PUT", "PUT",
+				"DELETE", "DELETE",
+				"PATCH", "PATCH",
+			).
+			Optional().
+			Nillable(),
+		field.String("url").
+			Optional().
+			Nillable(),
+		field.Int("connection_timeout").
+			Optional().
+			Nillable(),
+		field.Text("body").
+			Optional().
+			Nillable(),
+		field.JSON("headers", []*flowschema.VariableValue{}).
+			Optional(),
+		field.Enum("auth_type").
+			NamedValues(
+				"Basic", "BASIC",
+				"OIDC", "OIDC",
+			).
+			Optional(),
+		field.String("user").
+			Optional(),
+		field.String("password").
+			Optional(),
+		field.String("client_id").
+			Optional(),
+		field.String("client_secret").
+			Optional(),
+		field.String("oidc_url").
+			Optional(),
+
+		field.Enum("signal_type").
+			NamedValues(
+				"WOCREATED", "WOCREATED",
+				"CRCREATED", "CRCREATED",
+				"PR_CREATED", "PR_CREATED",
+				"MOICREATED", "MOICREATED",
+				"WOUPDATED", "WOUPDATED",
+				"CRUPDATED", "CRUPDATED",
+				"PR_UPDATED", "PR_UPDATED",
+				"MOIUPDATED", "MOIUPDATED",
+			).
+			Optional(),
+		field.Enum("signal_module").
+			NamedValues(
+				"INVENTORY", "INVENTORY",
+				"CM", "CM",
+				"WFM", "WFM",
+				"ASSURANCE", "ASSURANCE",
+			).
+			Optional(),
+		field.String("custom_filter").
+			Optional(),
+		field.Bool("block_flow").
+			Default(false).
+			Optional(),
+
+		field.Strings("kafka_brokers").
+			Optional(),
+		field.String("kafka_topic").
+			Optional(),
+		field.String("kafka_message").
+			Optional(),
+		field.Enum("kafka_message_type").
+			GoType(enum.KafkaMessageType("")).
+			Optional(),
+
+		field.String("foreach_key").
+			Optional().
+			Nillable(),
+		field.Int("foreach_start_blockID").
+			Optional().
+			Nillable(),
 	}
 }
 
@@ -134,6 +318,10 @@ func (BlockInstance) Fields() []ent.Field {
 			Optional(),
 		field.JSON("outputs", []*flowschema.VariableValue{}).
 			Optional(),
+		field.Text("input_json").
+			Optional(),
+		field.Text("output_json").
+			Optional(),
 		field.String("failure_reason").
 			Optional(),
 		field.Int("block_instance_counter").
@@ -174,6 +362,7 @@ func (BlockInstance) Edges() []ent.Edge {
 			Required(),
 		edge.To("subflow_instance", FlowInstance.Type).
 			Unique(),
+		edge.To("block_activities", AutomationActivity.Type),
 	}
 }
 

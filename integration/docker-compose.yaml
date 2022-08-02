@@ -33,6 +33,8 @@ services:
     build:
       context: ../app
       dockerfile: fbcnms-projects/inventory/Dockerfile
+      args:
+       - recaptcha=$${RECAPTCHA_KEY}
     networks:
       - private
     healthcheck:
@@ -93,6 +95,20 @@ services:
       - mysql
       - nats
       - platform-server
+    healthcheck: *healthcheck
+    restart: on-failure
+
+  automation:
+    build:
+      <<: *buildctx
+      dockerfile: automation/Dockerfile
+    env_file:
+      - conf/automation.env
+      - conf/log.env
+    networks:
+      - private
+    depends_on:
+      - cadence
     healthcheck: *healthcheck
     restart: on-failure
 
@@ -244,7 +260,7 @@ services:
     restart: on-failure
 
   cadence:
-    image: ubercadence/server:0.14.1-auto-setup
+    image: ubercadence/server:0.24.0-auto-setup
     networks:
       - private
     env_file:

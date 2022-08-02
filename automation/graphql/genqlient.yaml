@@ -1,0 +1,35 @@
+schema:
+  - schema.graphql
+operations:
+  - operations.graphql
+generated: ../symphony/symphony.go
+# needed since it doesn't match the directory name:
+package: symphony
+
+# We bind github's DateTime scalar type to Go's time.Time (which conveniently
+# already defines MarshalJSON and UnmarshalJSON).  This means genqlient will
+# use time.Time when a query requests a DateTime, and is required for custom
+# scalars.
+bindings:
+  Time:
+    type: time.Time
+  BlockInstanceStatus:
+    type: symphony_automation/enum.BlockInstanceStatus
+  FlowInstanceStatus:
+    type: symphony_automation/enum.FlowInstanceStatus
+  UrlMethod:
+    type: symphony_automation/enum.UrlMethod
+  KafkaMessageType:
+    type: symphony_automation/enum.KafkaMessageType
+  TransfStrategy:
+    type: symphony_automation/enum.TransfStrategy
+  RetryUnit:
+    type: symphony_automation/enum.RetryUnit
+  SignalModule:
+    type: symphony_automation/enum.SignalModule
+  SignalType:
+    type: symphony_automation/enum.SignalType
+  TimerBehavior:
+    type: symphony_automation/enum.TimerBehavior
+  AuthType:
+    type: symphony_automation/enum.AuthType

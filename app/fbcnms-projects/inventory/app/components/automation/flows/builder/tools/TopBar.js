@@ -9,20 +9,44 @@
  */
 
 import Button from '@symphony/design-system/components/Button';
-import FlowBuilderButton from '../../utils/FlowBuilderButton';
+import ButtonFlowStatus from '../../../common/ButtonFlowStatus';
+import DeleteOutlineIcon from '@material-ui/icons/DeleteOutline';
+import DialogModal from '../../view/dialogs/DialogModal';
 import FlowHeader from './FlowHeader';
-import React, {useCallback} from 'react';
+import IconButton from '@symphony/design-system/components/IconButton';
+import ListAltIcon from '@material-ui/icons/ListAlt';
+import Menu from '@material-ui/core/Menu';
+import MenuItem from '@material-ui/core/MenuItem';
+import MenuTopBar from './MenuTopBar';
+import MoreVertIcon from '@material-ui/icons/MoreVert';
+import ArrowBackIcon from '@material-ui/icons/ArrowBack';
+import Popover from '@material-ui/core/Popover';
+import React, {useCallback, useState} from 'react';
 import Strings from '@fbcnms/strings/Strings';
 import ToolsBar from './ToolsBar';
+import Tooltip from '../widgets/detailsPanel/inputs/Tooltip';
 import fbt from 'fbt';
+import {BLUE, DARK, GREEN} from '@symphony/design-system/theme/symphony';
+import {
+  CheckIcon,
+  DuplicateFlowIcon,
+  GridIcon,
+  RedoIcon,
+  UndoIcon,
+} from '@symphony/design-system/icons';
+import {TYPE as ForEachLoopType} from '../canvas/graph/facades/shapes/vertexes/logic/ForEachLoop';
+import {FlowLogsTable} from './FlowLogs';
+import {Grid} from '@material-ui/core';
+import {IconButton as MatIconButton} from '@material-ui/core';
+import {POSITION} from '@symphony/design-system/components/Dialog/DialogFrame';
 import {
   PREDICATES,
   useKeyboardShortcut,
 } from '../widgets/keyboardShortcuts/KeyboardShortcutsContext';
-import {SettingsIcon} from '@symphony/design-system/icons';
+import {TYPE as ParallelType} from '../canvas/graph/facades/shapes/vertexes/logic/Parallel';
 import {makeStyles} from '@material-ui/styles';
+import {resizeValidator} from './utils/helpers';
 import {useCopyPaste} from '../widgets/copyPaste/CopyPasteContext';
-import {useDetailsPane} from '../widgets/detailsPanel/DetailsPanelContext';
 import {useEnqueueSnackbar} from '@fbcnms/ui/hooks/useSnackbar';
 import {useFlowData} from '../../data/FlowDataContext';
 import {useGraph} from '../canvas/graph/graphAPIContext/GraphContext';
@@ -32,14 +56,101 @@ import {useReadOnlyMode} from '../widgets/readOnlyModeContext';
 const useStyles = makeStyles(() => ({
   root: {
     top: 0,
+    justifyContent: 'space-between',
+    flexWrap: 'wrap',
+    zIndex: 1,
+  },
+  fullWidth:{
+    backgroundColor: BLUE.B600,
+    color:'white',
+    width: '100%',
+    margin: '0',
+    padding: '10px',
+  },
+  iconroot: {
+    '& div[class*="textVariant"]': {
+      minHeight: 36,
+      minWidth: 36,
+      background:
+        'linear-gradient(180deg, #FFFFFF 0%, rgba(255, 255, 255, 0) 100%), #FFFFFF',
+      borderRadius: 4,
+      color: DARK.D900,
+      fill: DARK.D900,
+      '&:hover': {
+        color: BLUE.B600,
+        fill: BLUE.B600,
+        '& svg': {
+          color: BLUE.B600,
+        },
+      },
+    },
+    '& span[class*="buttonText"]': {
+      padding: 4,
+    },
   },
   right: {
     display: 'flex',
+    justifyContent: 'flex-end',
+    marginBottom: 8,
+    '& div[class*="textVariant"]': {
+      height: 'auto',
+    },
   },
-  center: {
-    flexGrow: 1,
+  left: {
+    display: 'flex',
+    justifyContent: 'flex-start',
+    marginBottom: 8,
+    '& div[class*="textVariant"]': {
+      minHeight: 36,
+      minWidth: 36,
+      background:
+        'linear-gradient(180deg, #FFFFFF 0%, rgba(255, 255, 255, 0) 100%), #FFFFFF',
+      borderRadius: 4,
+      color: DARK.D900,
+      fill: DARK.D900,
+      '&:hover': {
+        color: BLUE.B600,
+        fill: BLUE.B600,
+        '& svg': {
+          color: BLUE.B600,
+        },
+      },
+    },
+    '& span[class*="buttonText"]': {
+      padding: 4,
+    },
   },
-  left: {},
+  marginLeft: {
+    marginLeft: '32px !important',
+  },
+  textVariant: {
+    padding: '0 8px',
+    color: DARK.D900,
+    fill: DARK.D900,
+    '&:hover': {
+      color: BLUE.B600,
+      fill: BLUE.B600,
+      '& span': {
+        color: BLUE.B600,
+      },
+    },
+    width: 92,
+    justifyContent: 'right',
+    backgroundColor: 'rgb(210, 218, 231)',
+  },
+  blue: {
+    color: BLUE.B600 + ' !important',
+    fill: BLUE.B600 + ' !important',
+  },
+  publish: {
+    backgroundColor: `${GREEN.G600} !important`,
+  },
+  detailsContainer: {
+    marginRight: '64px',
+    marginLeft: '65px',
+    marginTop: '64px',
+    marginBottom: '250px',
+  },
 }));
 
 export default function TopBar() {
@@ -49,22 +160,69 @@ export default function TopBar() {
 
 function BuilderTopBar() {
   const classes = useStyles();
+  const [isGrid, setIsGrid] = useState(false);
 
   const flow = useGraph();
   const selection = useGraphSelection();
-  const detailsPane = useDetailsPane();
   const flowData = useFlowData();
   const enqueueSnackbar = useEnqueueSnackbar();
   const copyPaste = useCopyPaste();
+  const [openModal, setOpenModal] = useState(false);
 
   const deleteSelected = useCallback(() => {
     if (selection.selectedLink) {
       return flow.removeConnector(selection.selectedLink);
     } else {
-      return flow.removeBlocks([...selection.selectedElements]);
+      const isCoupledBlocks = [...selection.selectedElements].find(
+        block =>
+          block.model.attributes.type === ParallelType ||
+          block.model.attributes.type === ForEachLoopType,
+      );
+      if (isCoupledBlocks) {
+        toggleModal();
+      } else {
+        const idParent = selection.selectedElements[0].model.idParent;
+        if (idParent) {
+          flow.removeBlocks([...selection.selectedElements]);
+          resizeValidator(flow, idParent);
+        } else {
+          return flow.removeBlocks([...selection.selectedElements]);
+        }
+      }
     }
   }, [flow, selection]);
   useKeyboardShortcut(PREDICATES.del, deleteSelected);
+
+  const deleteBlocks = useCallback(() => {
+    const blockList = flow.getBlocks();
+    const coupleBlockList = [...selection.selectedElements].filter(
+      block =>
+        block.model.attributes.type === ParallelType ||
+        block.model.attributes.type === ForEachLoopType,
+    );
+
+    const isChildrenBlockList = blockList.filter(block =>
+      coupleBlockList.find(
+        coupleBlock => coupleBlock.id === block.model.attributes.parent,
+      ),
+    );
+
+    const selectedElementList = [
+      ...selection.selectedElements,
+      ...isChildrenBlockList,
+    ];
+
+    toggleModal();
+    flow.removeBlocks([...selectedElementList]);
+
+    return enqueueSnackbar(`${fbt('The block has been removed!', '')}`, {
+      variant: 'success',
+    });
+  }, [flow, selection, openModal]);
+
+  const toggleModal = () => {
+    setOpenModal(!openModal);
+  };
 
   const save = useCallback(() => {
     flowData
@@ -106,57 +264,161 @@ function BuilderTopBar() {
       });
   }, [enqueueSnackbar, flowData]);
 
+  const handleShowGrid = () => {
+    !isGrid ? flow.showGrid() : flow.hiddenGrid();
+    setIsGrid(prev => {
+      return !prev;
+    });
+  };
+
+  const isSaved = () => !flowData.flowDraft?.id || !flowData.hasChanges;
+
   return (
-    <ToolsBar className={classes.root}>
-      <div className={classes.left}>
-        <Button
-          onClick={deleteSelected}
-          disabled={
-            selection.selectedElements.length == 0 && !selection.selectedLink
-          }>
-          Delete
-        </Button>
-        <Button onClick={copyPaste.copy} disabled={!copyPaste.allowCopy}>
-          Copy
-        </Button>
-        <Button onClick={copyPaste.paste} disabled={!copyPaste.allowPaste}>
-          Paste
-        </Button>
-        <Button
-          onClick={copyPaste.duplicate}
-          disabled={!copyPaste.allowDuplicate}>
-          Duplicate
-        </Button>
-      </div>
-      <div className={classes.center} />
-      <div className={classes.right}>
-        <FlowBuilderButton icon={SettingsIcon} onClick={detailsPane.toggle} />
-        <Button
-          disabled={!flowData.flowDraft?.id || !flowData.hasChanges}
-          onClick={save}>
-          {Strings.common.saveButton}
-        </Button>
-        <Button onClick={publish} tooltip="publish last saved version">{`${fbt(
-          'Publish',
+    <>
+      <ToolsBar className={classes.root}>
+        <div className={classes.left}>
+          <Tooltip tooltip={'Show Grid'}>
+            <IconButton
+              className={!isGrid ? classes.blue : null}
+              skin={'inherit'}
+              onClick={() => handleShowGrid()}
+              icon={GridIcon}
+            />
+          </Tooltip>
+        </div>
+        <div className={classes.left}>
+          {copyPaste.allowDuplicate && (
+            <Tooltip tooltip={'Duplicate'}>
+              <IconButton
+                skin={'inherit'}
+                icon={DuplicateFlowIcon}
+                onClick={copyPaste.duplicate}
+                disabled={!copyPaste.allowDuplicate}
+              />
+            </Tooltip>
+          )}
+          {!(
+            selection.selectedElements.length === 0 && !selection.selectedLink
+          ) && (
+            <Tooltip tooltip={'Delete block'}>
+              <IconButton
+                skin={'inherit'}
+                icon={DeleteOutlineIcon}
+                onClick={deleteSelected}
+                disabled={
+                  selection.selectedElements.length === 0 &&
+                  !selection.selectedLink
+                }
+              />
+            </Tooltip>
+          )}
+        </div>
+
+        <div className={classes.right}>
+          <Button
+            className={classes.textVariant}
+            variant={'text'}
+            skin={'inherit'}
+            color={'secondary'}
+            leftIcon={isSaved() ? CheckIcon : null}
+            disabled={isSaved()}
+            onClick={save}>
+            {isSaved() ? 'Saved' : Strings.common.saveButton}
+          </Button>
+          <MenuTopBar
+            name={flowData.flowDraft?.name || ''}
+            description={flowData.flowDraft?.name || ''}
+            editText="Here you can change the name and description of your workflow"
+            duplicateText="Duplicating this workflow saves the same settings as the current workflow and will be available in the general list of workflows as a draft. Please assign a new name and description."
+          />
+          <Tooltip tooltip={'publish last saved version'}>
+            <Button
+              onClick={publish}
+              disabled={isSaved() && flowData.hasPublish}
+              className={flowData.hasPublish ? classes.publish : null}>
+              {flowData.hasPublish ? 'Published' : 'Publish'}
+            </Button>
+          </Tooltip>
+        </div>
+      </ToolsBar>
+
+      <DialogModal
+        alertType={'info'}
+        isOpen={openModal}
+        handleOpenModal={toggleModal}
+        handleBtnConfirmClicked={deleteBlocks}
+        btnConfirmText={fbt('Continue', '')}
+        title={fbt('Delete a complex block', '')}
+        description={fbt(
+          'All blocks it contains will also be deleted. Are you sure you want to continue?',
           '',
-        )}`}</Button>
-      </div>
-    </ToolsBar>
+        )}
+      />
+    </>
   );
 }
 
 function ViewerTopBar() {
   const classes = useStyles();
-  const detailsPane = useDetailsPane();
+  const selection = useGraphSelection();
+  const selectionCount = selection.selectedElements.length;
+  const [anchorEl, setAnchorEl] = React.useState(null);
+
+  const handleClick = event => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const open = Boolean(anchorEl);
+  const id = open ? 'simple-popover' : undefined;
 
   return (
     <ToolsBar className={classes.root}>
       <div className={classes.left}>
-        <FlowHeader />
+        <div className={classes.iconroot}>
+          <Tooltip tooltip={``}>
+            <IconButton skin={'inherit'} icon={ArrowBackIcon} />
+          </Tooltip>
+        </div>
+        <div className={classes.iconroot}>
+          <Tooltip
+            tooltip={`View ${selectionCount == 0 ? 'Workflow' : 'Block'} Logs`}>
+            <IconButton
+              skin={'inherit'}
+              icon={ListAltIcon}
+              onClick={handleClick}
+            />
+          </Tooltip>
+          <Popover
+            id={id}
+            open={open}
+            anchorEl={anchorEl}
+            onClose={handleClose}
+            anchorOrigin={{
+              vertical: 'top',
+              horizontal: 'left',
+            }}
+            transformOrigin={{
+              vertical: 'top',
+              horizontal: 'left',
+            }}>
+            <h4 className={classes.fullWidth}> {`${selectionCount == 0 ? 'Workflow' : 'Block'} Log`} </h4>
+            <FlowLogsTable />
+          </Popover>
+        </div>
       </div>
-      <div className={classes.center} />
       <div className={classes.right}>
-        <FlowBuilderButton icon={SettingsIcon} onClick={detailsPane.toggle} />
+        <Tooltip tooltip={'Edit flow data'}>
+          <Button
+            onClick={e => {
+              e.preventDefault();
+            }}>
+            {'Edit Flow'}
+          </Button>
+        </Tooltip>
       </div>
     </ToolsBar>
   );

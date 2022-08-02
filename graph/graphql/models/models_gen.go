@@ -12,6 +12,8 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/activity"
 	"github.com/facebookincubator/symphony/pkg/ent/appointment"
+	"github.com/facebookincubator/symphony/pkg/ent/automationactivity"
+	"github.com/facebookincubator/symphony/pkg/ent/block"
 	"github.com/facebookincubator/symphony/pkg/ent/blockinstance"
 	"github.com/facebookincubator/symphony/pkg/ent/checklistitem"
 	"github.com/facebookincubator/symphony/pkg/ent/file"
@@ -91,11 +93,13 @@ type AddAppointmentInput struct {
 }
 
 type AddBlockInstanceInput struct {
-	Status    *blockinstance.Status       `json:"status"`
-	Inputs    []*flowschema.VariableValue `json:"inputs"`
-	Outputs   []*flowschema.VariableValue `json:"outputs"`
-	BlockID   int                         `json:"blockId"`
-	StartDate time.Time                   `json:"startDate"`
+	Status     *blockinstance.Status       `json:"status"`
+	Inputs     []*flowschema.VariableValue `json:"inputs"`
+	Outputs    []*flowschema.VariableValue `json:"outputs"`
+	InputJSON  *string                     `json:"inputJSON"`
+	OutputJSON *string                     `json:"outputJSON"`
+	BlockID    int                         `json:"blockId"`
+	StartDate  time.Time                   `json:"startDate"`
 }
 
 type AddBulkServiceLinksAndPortsInput struct {
@@ -167,6 +171,17 @@ type AddEquipmentTypeInput struct {
 
 type AddEventSeverityInput struct {
 	Name string `json:"name"`
+}
+
+type AddFilesInput struct {
+	ImgKey             string    `json:"imgKey"`
+	FileName           string    `json:"fileName"`
+	FileSize           int       `json:"fileSize"`
+	Modified           time.Time `json:"modified"`
+	ContentType        string    `json:"contentType"`
+	Category           *string   `json:"category"`
+	Annotation         *string   `json:"annotation"`
+	DocumentCategoryID *int      `json:"documentCategoryId"`
 }
 
 type AddFloorPlanInput struct {
@@ -508,6 +523,7 @@ type AddWorkOrderInput struct {
 	DueDate             *time.Time                `json:"dueDate"`
 	ScheduledAt         *time.Time                `json:"scheduledAt"`
 	IsNameEditable      *bool                     `json:"isNameEditable"`
+	FlowInstanceID      *int                      `json:"flowInstanceId"`
 }
 
 type AddWorkOrderTypeInput struct {
@@ -559,6 +575,37 @@ type AlarmStatusInput struct {
 	Name string `json:"name"`
 }
 
+type ArchiveFlowInput struct {
+	FlowID int `json:"flowID"`
+}
+
+type AutomationActivityFilterInput struct {
+	Limit          int                             `json:"limit"`
+	OrderDirection ent.OrderDirection              `json:"orderDirection"`
+	ActivityType   automationactivity.ActivityType `json:"activityType"`
+}
+
+type BaseBlockInput struct {
+	EnableInputTransformation       bool                 `json:"enableInputTransformation"`
+	InputTransfStrategy             *enum.TransfStrategy `json:"inputTransfStrategy"`
+	InputParamDefinitions           *string              `json:"inputParamDefinitions"`
+	EnableOutputTransformation      bool                 `json:"enableOutputTransformation"`
+	OutputTransfStrategy            *enum.TransfStrategy `json:"outputTransfStrategy"`
+	OutputParamDefinitions          *string              `json:"outputParamDefinitions"`
+	EnableInputStateTransformation  bool                 `json:"enableInputStateTransformation"`
+	InputStateTransfStrategy        *enum.TransfStrategy `json:"inputStateTransfStrategy"`
+	InputStateParamDefinitions      *string              `json:"inputStateParamDefinitions"`
+	EnableOutputStateTransformation bool                 `json:"enableOutputStateTransformation"`
+	OutputStateTransfStrategy       *enum.TransfStrategy `json:"outputStateTransfStrategy"`
+	OutputStateParamDefinitions     *string              `json:"outputStateParamDefinitions"`
+	EnableErrorHandling             *bool                `json:"enableErrorHandling"`
+	EnableRetryPolicy               *bool                `json:"enableRetryPolicy"`
+	RetryInterval                   *int                 `json:"retryInterval"`
+	Units                           *RetryUnit           `json:"units"`
+	MaxAttemps                      *int                 `json:"maxAttemps"`
+	BackoffRate                     *int                 `json:"backoffRate"`
+}
+
 type BlockVariableInput struct {
 	BlockCid                  string                      `json:"blockCid"`
 	Type                      enum.VariableExpressionType `json:"type"`
@@ -608,6 +655,23 @@ type CheckListItemInput struct {
 	YesNoResponse      *checklistitem.YesNoVal              `json:"yesNoResponse"`
 	WifiData           []*SurveyWiFiScanData                `json:"wifiData"`
 	CellData           []*SurveyCellScanData                `json:"cellData"`
+}
+
+type ChoiceBlock struct {
+	EntryPoint       *ent.EntryPoint  `json:"entryPoint"`
+	DefaultExitPoint *ent.ExitPoint   `json:"defaultExitPoint"`
+	Rules            []*DecisionRoute `json:"rules"`
+}
+
+func (ChoiceBlock) IsBlockDetails() {}
+
+type ChoiceBlockInput struct {
+	Cid              string                            `json:"cid"`
+	EntryPoint       *EntryPointInput                  `json:"entryPoint"`
+	DefaultExitPoint *ExitPointInput                   `json:"defaultExitPoint"`
+	Routes           []*DecisionRouteInput             `json:"routes"`
+	BasicDefinitions *BaseBlockInput                   `json:"basicDefinitions"`
+	UIRepresentation *flowschema.BlockUIRepresentation `json:"uiRepresentation"`
 }
 
 type ClockActivity struct {
@@ -682,8 +746,6 @@ type DecisionBlock struct {
 	Routes           []*DecisionRoute `json:"routes"`
 }
 
-func (DecisionBlock) IsBlockDetails() {}
-
 type DecisionBlockInput struct {
 	Cid              string                            `json:"cid"`
 	Routes           []*DecisionRouteInput             `json:"routes"`
@@ -696,6 +758,7 @@ type DecisionRoute struct {
 
 type DecisionRouteInput struct {
 	Cid       *string                  `json:"cid"`
+	Index     *int                     `json:"index"`
 	Condition *VariableExpressionInput `json:"condition"`
 }
 
@@ -711,6 +774,12 @@ type DomainFilterInput struct {
 type DomainInput struct {
 	ID   int    `json:"id"`
 	Name string `json:"name"`
+}
+
+type DuplicateFlowInput struct {
+	FlowID      int     `json:"flowID"`
+	Name        string  `json:"name"`
+	Description *string `json:"description"`
 }
 
 type EditAlarmFilterInput struct {
@@ -748,6 +817,8 @@ type EditBlockInstanceInput struct {
 	Status        *blockinstance.Status       `json:"status"`
 	Inputs        []*flowschema.VariableValue `json:"inputs"`
 	Outputs       []*flowschema.VariableValue `json:"outputs"`
+	InputJSON     *string                     `json:"inputJSON"`
+	OutputJSON    *string                     `json:"outputJSON"`
 	FailureReason *string                     `json:"failure_reason"`
 	EndDate       *time.Time                  `json:"endDate"`
 }
@@ -817,10 +888,12 @@ type EditEventSeverityInput struct {
 }
 
 type EditFlowInstanceInput struct {
-	ID                  int                  `json:"id"`
-	ServiceInstanceCode *string              `json:"serviceInstanceCode"`
-	Status              *flowinstance.Status `json:"status"`
-	EndDate             *time.Time           `json:"endDate"`
+	ID                  int                         `json:"id"`
+	ServiceInstanceCode *string                     `json:"serviceInstanceCode"`
+	Status              *flowinstance.Status        `json:"status"`
+	BssCode             *string                     `json:"bssCode"`
+	EndDate             *time.Time                  `json:"endDate"`
+	StartParams         []*flowschema.VariableValue `json:"startParams"`
 }
 
 type EditFormulaInput struct {
@@ -986,6 +1059,11 @@ type EditPropertyCategoryInput struct {
 	ParameterCatalogID int    `json:"parameterCatalogId"`
 }
 
+type EditPropertyTypeInput struct {
+	ID        int  `json:"id"`
+	IsDeleted bool `json:"isDeleted"`
+}
+
 type EditPropertyTypeValueInput struct {
 	ID        *int   `json:"id"`
 	Name      string `json:"name"`
@@ -1148,6 +1226,7 @@ type EditWorkOrderInput struct {
 	DueDate             *time.Time                `json:"dueDate"`
 	ScheduledAt         *time.Time                `json:"scheduledAt"`
 	IsNameEditable      *bool                     `json:"isNameEditable"`
+	FlowInstanceID      *int                      `json:"flowInstanceId"`
 }
 
 type EditWorkOrderTypeInput struct {
@@ -1224,6 +1303,25 @@ type EventSeverityFilterInput struct {
 	StringSet   []string                `json:"stringSet"`
 }
 
+type ExecuteFlowBlock struct {
+	Flow       *ent.Flow                        `json:"flow"`
+	Params     []*flowschema.VariableExpression `json:"params"`
+	EntryPoint *ent.EntryPoint                  `json:"entryPoint"`
+	ExitPoint  *ent.ExitPoint                   `json:"exitPoint"`
+}
+
+func (ExecuteFlowBlock) IsBlockDetails() {}
+
+type ExecuteFlowBlockInput struct {
+	Cid              string                            `json:"cid"`
+	EntryPoint       *EntryPointInput                  `json:"entryPoint"`
+	ExitPoint        *ExitPointInput                   `json:"exitPoint"`
+	Flow             int                               `json:"flow"`
+	Params           []*VariableExpressionInput        `json:"params"`
+	BasicDefinitions *BaseBlockInput                   `json:"basicDefinitions"`
+	UIRepresentation *flowschema.BlockUIRepresentation `json:"uiRepresentation"`
+}
+
 type ExitPointInput struct {
 	Role *flowschema.ExitPointRole `json:"role"`
 	Cid  *string                   `json:"cid"`
@@ -1241,6 +1339,17 @@ type FileInput struct {
 	Annotation       *string    `json:"annotation"`
 }
 
+type FlowFilterInput struct {
+	FilterType  FlowFilterType      `json:"filterType"`
+	Operator    enum.FilterOperator `json:"operator"`
+	StringValue *string             `json:"stringValue"`
+	CmType      *flow.CmType        `json:"cmType"`
+	IDSet       []int               `json:"idSet"`
+	StringSet   []string            `json:"stringSet"`
+	TimeValue   *time.Time          `json:"timeValue"`
+	MaxDepth    *int                `json:"maxDepth"`
+}
+
 type FlowInstanceFilterInput struct {
 	FilterType    FlowInstanceFilterType    `json:"filterType"`
 	Operator      enum.FilterOperator       `json:"operator"`
@@ -1251,6 +1360,14 @@ type FlowInstanceFilterInput struct {
 	TimeValue     *time.Time                `json:"timeValue"`
 	MaxDepth      *int                      `json:"maxDepth"`
 }
+
+type ForEachBlock struct {
+	EntryPoint        *ent.EntryPoint `json:"entryPoint"`
+	InternalExitPoint *ent.ExitPoint  `json:"internalExitPoint"`
+	ExitPoint         *ent.ExitPoint  `json:"exitPoint"`
+}
+
+func (ForEachBlock) IsBlockDetails() {}
 
 type FormulaFilterInput struct {
 	FilterType  FormulaFilterType   `json:"filterType"`
@@ -1294,6 +1411,7 @@ func (GotoBlock) IsBlockDetails() {}
 type GotoBlockInput struct {
 	Cid              string                            `json:"cid"`
 	TargetBlockCid   *string                           `json:"targetBlockCid"`
+	Type             GoToType                          `json:"type"`
 	UIRepresentation *flowschema.BlockUIRepresentation `json:"uiRepresentation"`
 }
 
@@ -1304,13 +1422,77 @@ type ImportFlowDraftInput struct {
 	EndParamDefinitions []*flowschema.VariableDefinition `json:"endParamDefinitions"`
 	StartBlock          *StartBlockInput                 `json:"startBlock"`
 	EndBlocks           []*EndBlockInput                 `json:"endBlocks"`
-	DecisionBlocks      []*DecisionBlockInput            `json:"decisionBlocks"`
 	GotoBlocks          []*GotoBlockInput                `json:"gotoBlocks"`
-	SubflowBlocks       []*SubflowBlockInput             `json:"subflowBlocks"`
 	TriggerBlocks       []*TriggerBlockInput             `json:"triggerBlocks"`
 	ActionBlocks        []*ActionBlockInput              `json:"actionBlocks"`
-	TrueFalseBlocks     []*TrueFalseBlockInput           `json:"trueFalseBlocks"`
+	ChoiceBlocks        []*ChoiceBlockInput              `json:"choiceBlocks"`
+	ExecuteFlowBlocks   []*ExecuteFlowBlockInput         `json:"executeFlowBlocks"`
+	TimerBlocks         []*TimerBlockInput               `json:"timerBlocks"`
+	WaitForSignalBlocks []*WaitForSignalBlockInput       `json:"waitForSignalBlocks"`
+	InvokeRestAPIBlocks []*InvokeRestAPIBlockInput       `json:"invokeRestAPIBlocks"`
+	KafkaBlocks         []*KafkaBlockInput               `json:"kafkaBlocks"`
 	Connectors          []*ConnectorInput                `json:"connectors"`
+}
+
+type InvokeRestAPIBlock struct {
+	EntryPoint        *ent.EntryPoint             `json:"entryPoint"`
+	Method            block.URLMethod             `json:"method"`
+	URL               string                      `json:"url"`
+	ConnectionTimeOut int                         `json:"connectionTimeOut"`
+	Body              string                      `json:"body"`
+	Headers           []*flowschema.VariableValue `json:"headers"`
+	AuthType          *block.AuthType             `json:"authType"`
+	User              *string                     `json:"user"`
+	Password          *string                     `json:"password"`
+	ClientID          *string                     `json:"clientId"`
+	ClientSecret      *string                     `json:"clientSecret"`
+	OidcURL           *string                     `json:"oidcUrl"`
+	ExitPoint         *ent.ExitPoint              `json:"exitPoint"`
+}
+
+func (InvokeRestAPIBlock) IsBlockDetails() {}
+
+type InvokeRestAPIBlockInput struct {
+	Cid               string                            `json:"cid"`
+	EntryPoint        *EntryPointInput                  `json:"entryPoint"`
+	ExitPoint         *ExitPointInput                   `json:"exitPoint"`
+	Method            block.URLMethod                   `json:"method"`
+	URL               string                            `json:"url"`
+	ConnectionTimeOut int                               `json:"connectionTimeOut"`
+	Body              string                            `json:"body"`
+	Headers           []*flowschema.VariableValue       `json:"headers"`
+	AuthType          *block.AuthType                   `json:"authType"`
+	User              *string                           `json:"user"`
+	Password          *string                           `json:"password"`
+	ClientID          *string                           `json:"clientId"`
+	ClientSecret      *string                           `json:"clientSecret"`
+	OidcURL           *string                           `json:"oidcUrl"`
+	BasicDefinitions  *BaseBlockInput                   `json:"basicDefinitions"`
+	Params            []*VariableExpressionInput        `json:"params"`
+	UIRepresentation  *flowschema.BlockUIRepresentation `json:"uiRepresentation"`
+}
+
+type KafkaBlock struct {
+	EntryPoint *ent.EntryPoint       `json:"entryPoint"`
+	ExitPoint  *ent.ExitPoint        `json:"exitPoint"`
+	Brokers    []string              `json:"brokers"`
+	Topic      string                `json:"topic"`
+	Message    string                `json:"message"`
+	Type       enum.KafkaMessageType `json:"type"`
+}
+
+func (KafkaBlock) IsBlockDetails() {}
+
+type KafkaBlockInput struct {
+	Cid              string                            `json:"cid"`
+	EntryPoint       *EntryPointInput                  `json:"entryPoint"`
+	ExitPoint        *ExitPointInput                   `json:"exitPoint"`
+	Brokers          []string                          `json:"brokers"`
+	Topic            string                            `json:"topic"`
+	Message          string                            `json:"message"`
+	Type             enum.KafkaMessageType             `json:"type"`
+	BasicDefinitions *BaseBlockInput                   `json:"basicDefinitions"`
+	UIRepresentation *flowschema.BlockUIRepresentation `json:"uiRepresentation"`
 }
 
 type KpiCategoryFilterInput struct {
@@ -1423,6 +1605,14 @@ type OrganizationFilterInput struct {
 	StringSet   []string               `json:"stringSet"`
 }
 
+type ParallelBlock struct {
+	EntryPoint        *ent.EntryPoint `json:"entryPoint"`
+	InternalExitPoint *ent.ExitPoint  `json:"internalExitPoint"`
+	ExitPoint         *ent.ExitPoint  `json:"exitPoint"`
+}
+
+func (ParallelBlock) IsBlockDetails() {}
+
 type PermissionsPolicyFilterInput struct {
 	FilterType  PermissionsPolicyFilterType `json:"filterType"`
 	Operator    enum.FilterOperator         `json:"operator"`
@@ -1484,6 +1674,7 @@ type PropertyTypeValueFilterInput struct {
 type PublishFlowInput struct {
 	FlowDraftID         int                     `json:"flowDraftID"`
 	FlowInstancesPolicy flow.NewInstancesPolicy `json:"flowInstancesPolicy"`
+	CmType              *flow.CmType            `json:"cmType"`
 }
 
 type PythonPackage struct {
@@ -1701,7 +1892,7 @@ type StartBlockInput struct {
 
 type StartFlowInput struct {
 	FlowID    int                         `json:"flowID"`
-	BssCode   string                      `json:"bssCode"`
+	BssCode   *string                     `json:"bssCode"`
 	StartDate time.Time                   `json:"startDate"`
 	Params    []*flowschema.VariableValue `json:"params"`
 }
@@ -1712,8 +1903,6 @@ type SubflowBlock struct {
 	EntryPoint *ent.EntryPoint                  `json:"entryPoint"`
 	ExitPoint  *ent.ExitPoint                   `json:"exitPoint"`
 }
-
-func (SubflowBlock) IsBlockDetails() {}
 
 type SubflowBlockInput struct {
 	Cid              string                            `json:"cid"`
@@ -1870,6 +2059,30 @@ type ThresholdInput struct {
 	Kpi         int          `json:"kpi"`
 }
 
+type TimerBlock struct {
+	Behavior          block.TimerBehavior `json:"behavior"`
+	Seconds           *int                `json:"seconds"`
+	Datetime          *time.Time          `json:"datetime"`
+	EnableExpressionL *bool               `json:"enableExpressionL"`
+	Expression        *string             `json:"expression"`
+	ExitPoint         *ent.ExitPoint      `json:"exitPoint"`
+}
+
+func (TimerBlock) IsBlockDetails() {}
+
+type TimerBlockInput struct {
+	Cid               string                            `json:"cid"`
+	ExitPoint         *ExitPointInput                   `json:"exitPoint"`
+	EntryPoint        *EntryPointInput                  `json:"entryPoint"`
+	Behavior          block.TimerBehavior               `json:"behavior"`
+	Seconds           *int                              `json:"seconds"`
+	SpecificDatetime  *time.Time                        `json:"specificDatetime"`
+	EnableExpressionL *bool                             `json:"enableExpressionL"`
+	Expression        *string                           `json:"expression"`
+	Params            []*VariableExpressionInput        `json:"params"`
+	UIRepresentation  *flowschema.BlockUIRepresentation `json:"uiRepresentation"`
+}
+
 type TopologyLink struct {
 	Type   TopologyLinkType `json:"type"`
 	Source ent.Noder        `json:"source"`
@@ -1896,8 +2109,6 @@ type TrueFalseBlock struct {
 	TrueExitPoint  *ent.ExitPoint  `json:"trueExitPoint"`
 	FalseExitPoint *ent.ExitPoint  `json:"falseExitPoint"`
 }
-
-func (TrueFalseBlock) IsBlockDetails() {}
 
 type TrueFalseBlockInput struct {
 	Cid              string                            `json:"cid"`
@@ -1959,6 +2170,30 @@ type VendorFilterInput struct {
 	IDSet       []int               `json:"idSet"`
 	MaxDepth    *int                `json:"maxDepth"`
 	StringSet   []string            `json:"stringSet"`
+}
+
+type WaitForSignalBlock struct {
+	EntryPoint   *ent.EntryPoint     `json:"entryPoint"`
+	ExitPoint    *ent.ExitPoint      `json:"exitPoint"`
+	Type         *block.SignalType   `json:"type"`
+	SignalModule *block.SignalModule `json:"signalModule"`
+	CustomFilter *string             `json:"customFilter"`
+	Blocked      bool                `json:"blocked"`
+}
+
+func (WaitForSignalBlock) IsBlockDetails() {}
+
+type WaitForSignalBlockInput struct {
+	Cid              string                            `json:"cid"`
+	EntryPoint       *EntryPointInput                  `json:"entryPoint"`
+	ExitPoint        *ExitPointInput                   `json:"exitPoint"`
+	Type             block.SignalType                  `json:"type"`
+	SignalModule     block.SignalModule                `json:"signalModule"`
+	CustomFilter     *string                           `json:"customFilter"`
+	Blocked          bool                              `json:"blocked"`
+	Params           []*VariableExpressionInput        `json:"params"`
+	BasicDefinitions *BaseBlockInput                   `json:"basicDefinitions"`
+	UIRepresentation *flowschema.BlockUIRepresentation `json:"uiRepresentation"`
 }
 
 type WorkOrderDefinitionInput struct {
@@ -2347,6 +2582,47 @@ func (e FilterEntity) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 
+type FlowFilterType string
+
+const (
+	FlowFilterTypeFlowName   FlowFilterType = "FLOW_NAME"
+	FlowFilterTypeFlowCmType FlowFilterType = "FLOW_CM_TYPE"
+)
+
+var AllFlowFilterType = []FlowFilterType{
+	FlowFilterTypeFlowName,
+	FlowFilterTypeFlowCmType,
+}
+
+func (e FlowFilterType) IsValid() bool {
+	switch e {
+	case FlowFilterTypeFlowName, FlowFilterTypeFlowCmType:
+		return true
+	}
+	return false
+}
+
+func (e FlowFilterType) String() string {
+	return string(e)
+}
+
+func (e *FlowFilterType) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = FlowFilterType(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid FlowFilterType", str)
+	}
+	return nil
+}
+
+func (e FlowFilterType) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
 // what filters should we apply on flow instances
 type FlowInstanceFilterType string
 
@@ -2431,6 +2707,47 @@ func (e *FormulaFilterType) UnmarshalGQL(v interface{}) error {
 }
 
 func (e FormulaFilterType) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+type GoToType string
+
+const (
+	GoToTypeOrigin      GoToType = "ORIGIN"
+	GoToTypeDestination GoToType = "DESTINATION"
+)
+
+var AllGoToType = []GoToType{
+	GoToTypeOrigin,
+	GoToTypeDestination,
+}
+
+func (e GoToType) IsValid() bool {
+	switch e {
+	case GoToTypeOrigin, GoToTypeDestination:
+		return true
+	}
+	return false
+}
+
+func (e GoToType) String() string {
+	return string(e)
+}
+
+func (e *GoToType) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = GoToType(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid GoToType", str)
+	}
+	return nil
+}
+
+func (e GoToType) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 
@@ -3366,6 +3683,49 @@ func (e *ResourceTypeRelationshipFilterType) UnmarshalGQL(v interface{}) error {
 }
 
 func (e ResourceTypeRelationshipFilterType) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+type RetryUnit string
+
+const (
+	RetryUnitSeconds RetryUnit = "SECONDS"
+	RetryUnitMinutes RetryUnit = "MINUTES"
+	RetryUnitHours   RetryUnit = "HOURS"
+)
+
+var AllRetryUnit = []RetryUnit{
+	RetryUnitSeconds,
+	RetryUnitMinutes,
+	RetryUnitHours,
+}
+
+func (e RetryUnit) IsValid() bool {
+	switch e {
+	case RetryUnitSeconds, RetryUnitMinutes, RetryUnitHours:
+		return true
+	}
+	return false
+}
+
+func (e RetryUnit) String() string {
+	return string(e)
+}
+
+func (e *RetryUnit) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = RetryUnit(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid RetryUnit", str)
+	}
+	return nil
+}
+
+func (e RetryUnit) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 

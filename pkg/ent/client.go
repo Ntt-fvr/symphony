@@ -17,6 +17,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/alarmfilter"
 	"github.com/facebookincubator/symphony/pkg/ent/alarmstatus"
 	"github.com/facebookincubator/symphony/pkg/ent/appointment"
+	"github.com/facebookincubator/symphony/pkg/ent/automationactivity"
 	"github.com/facebookincubator/symphony/pkg/ent/block"
 	"github.com/facebookincubator/symphony/pkg/ent/blockinstance"
 	"github.com/facebookincubator/symphony/pkg/ent/checklistcategory"
@@ -129,6 +130,8 @@ type Client struct {
 	AlarmStatus *AlarmStatusClient
 	// Appointment is the client for interacting with the Appointment builders.
 	Appointment *AppointmentClient
+	// AutomationActivity is the client for interacting with the AutomationActivity builders.
+	AutomationActivity *AutomationActivityClient
 	// Block is the client for interacting with the Block builders.
 	Block *BlockClient
 	// BlockInstance is the client for interacting with the BlockInstance builders.
@@ -334,6 +337,7 @@ func (c *Client) init() {
 	c.AlarmFilter = NewAlarmFilterClient(c.config)
 	c.AlarmStatus = NewAlarmStatusClient(c.config)
 	c.Appointment = NewAppointmentClient(c.config)
+	c.AutomationActivity = NewAutomationActivityClient(c.config)
 	c.Block = NewBlockClient(c.config)
 	c.BlockInstance = NewBlockInstanceClient(c.config)
 	c.CheckListCategory = NewCheckListCategoryClient(c.config)
@@ -463,6 +467,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		AlarmFilter:                       NewAlarmFilterClient(cfg),
 		AlarmStatus:                       NewAlarmStatusClient(cfg),
 		Appointment:                       NewAppointmentClient(cfg),
+		AutomationActivity:                NewAutomationActivityClient(cfg),
 		Block:                             NewBlockClient(cfg),
 		BlockInstance:                     NewBlockInstanceClient(cfg),
 		CheckListCategory:                 NewCheckListCategoryClient(cfg),
@@ -575,6 +580,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		AlarmFilter:                       NewAlarmFilterClient(cfg),
 		AlarmStatus:                       NewAlarmStatusClient(cfg),
 		Appointment:                       NewAppointmentClient(cfg),
+		AutomationActivity:                NewAutomationActivityClient(cfg),
 		Block:                             NewBlockClient(cfg),
 		BlockInstance:                     NewBlockInstanceClient(cfg),
 		CheckListCategory:                 NewCheckListCategoryClient(cfg),
@@ -700,6 +706,7 @@ func (c *Client) Use(hooks ...Hook) {
 	c.AlarmFilter.Use(hooks...)
 	c.AlarmStatus.Use(hooks...)
 	c.Appointment.Use(hooks...)
+	c.AutomationActivity.Use(hooks...)
 	c.Block.Use(hooks...)
 	c.BlockInstance.Use(hooks...)
 	c.CheckListCategory.Use(hooks...)
@@ -1247,6 +1254,143 @@ func (c *AppointmentClient) Hooks() []Hook {
 	return append(hooks[:len(hooks):len(hooks)], appointment.Hooks[:]...)
 }
 
+// AutomationActivityClient is a client for the AutomationActivity schema.
+type AutomationActivityClient struct {
+	config
+}
+
+// NewAutomationActivityClient returns a client for the AutomationActivity from the given config.
+func NewAutomationActivityClient(c config) *AutomationActivityClient {
+	return &AutomationActivityClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `automationactivity.Hooks(f(g(h())))`.
+func (c *AutomationActivityClient) Use(hooks ...Hook) {
+	c.hooks.AutomationActivity = append(c.hooks.AutomationActivity, hooks...)
+}
+
+// Create returns a create builder for AutomationActivity.
+func (c *AutomationActivityClient) Create() *AutomationActivityCreate {
+	mutation := newAutomationActivityMutation(c.config, OpCreate)
+	return &AutomationActivityCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of AutomationActivity entities.
+func (c *AutomationActivityClient) CreateBulk(builders ...*AutomationActivityCreate) *AutomationActivityCreateBulk {
+	return &AutomationActivityCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for AutomationActivity.
+func (c *AutomationActivityClient) Update() *AutomationActivityUpdate {
+	mutation := newAutomationActivityMutation(c.config, OpUpdate)
+	return &AutomationActivityUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *AutomationActivityClient) UpdateOne(aa *AutomationActivity) *AutomationActivityUpdateOne {
+	mutation := newAutomationActivityMutation(c.config, OpUpdateOne, withAutomationActivity(aa))
+	return &AutomationActivityUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *AutomationActivityClient) UpdateOneID(id int) *AutomationActivityUpdateOne {
+	mutation := newAutomationActivityMutation(c.config, OpUpdateOne, withAutomationActivityID(id))
+	return &AutomationActivityUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for AutomationActivity.
+func (c *AutomationActivityClient) Delete() *AutomationActivityDelete {
+	mutation := newAutomationActivityMutation(c.config, OpDelete)
+	return &AutomationActivityDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a delete builder for the given entity.
+func (c *AutomationActivityClient) DeleteOne(aa *AutomationActivity) *AutomationActivityDeleteOne {
+	return c.DeleteOneID(aa.ID)
+}
+
+// DeleteOneID returns a delete builder for the given id.
+func (c *AutomationActivityClient) DeleteOneID(id int) *AutomationActivityDeleteOne {
+	builder := c.Delete().Where(automationactivity.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &AutomationActivityDeleteOne{builder}
+}
+
+// Query returns a query builder for AutomationActivity.
+func (c *AutomationActivityClient) Query() *AutomationActivityQuery {
+	return &AutomationActivityQuery{config: c.config}
+}
+
+// Get returns a AutomationActivity entity by its id.
+func (c *AutomationActivityClient) Get(ctx context.Context, id int) (*AutomationActivity, error) {
+	return c.Query().Where(automationactivity.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *AutomationActivityClient) GetX(ctx context.Context, id int) *AutomationActivity {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryAuthor queries the author edge of a AutomationActivity.
+func (c *AutomationActivityClient) QueryAuthor(aa *AutomationActivity) *UserQuery {
+	query := &UserQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := aa.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(automationactivity.Table, automationactivity.FieldID, id),
+			sqlgraph.To(user.Table, user.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, false, automationactivity.AuthorTable, automationactivity.AuthorColumn),
+		)
+		fromV = sqlgraph.Neighbors(aa.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryFlowInstance queries the flow_instance edge of a AutomationActivity.
+func (c *AutomationActivityClient) QueryFlowInstance(aa *AutomationActivity) *FlowInstanceQuery {
+	query := &FlowInstanceQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := aa.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(automationactivity.Table, automationactivity.FieldID, id),
+			sqlgraph.To(flowinstance.Table, flowinstance.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, automationactivity.FlowInstanceTable, automationactivity.FlowInstanceColumn),
+		)
+		fromV = sqlgraph.Neighbors(aa.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryBlockInstance queries the block_instance edge of a AutomationActivity.
+func (c *AutomationActivityClient) QueryBlockInstance(aa *AutomationActivity) *BlockInstanceQuery {
+	query := &BlockInstanceQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := aa.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(automationactivity.Table, automationactivity.FieldID, id),
+			sqlgraph.To(blockinstance.Table, blockinstance.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, automationactivity.BlockInstanceTable, automationactivity.BlockInstanceColumn),
+		)
+		fromV = sqlgraph.Neighbors(aa.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *AutomationActivityClient) Hooks() []Hook {
+	hooks := c.hooks.AutomationActivity
+	return append(hooks[:len(hooks):len(hooks)], automationactivity.Hooks[:]...)
+}
+
 // BlockClient is a client for the Block schema.
 type BlockClient struct {
 	config
@@ -1604,6 +1748,22 @@ func (c *BlockInstanceClient) QuerySubflowInstance(bi *BlockInstance) *FlowInsta
 			sqlgraph.From(blockinstance.Table, blockinstance.FieldID, id),
 			sqlgraph.To(flowinstance.Table, flowinstance.FieldID),
 			sqlgraph.Edge(sqlgraph.O2O, false, blockinstance.SubflowInstanceTable, blockinstance.SubflowInstanceColumn),
+		)
+		fromV = sqlgraph.Neighbors(bi.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryBlockActivities queries the block_activities edge of a BlockInstance.
+func (c *BlockInstanceClient) QueryBlockActivities(bi *BlockInstance) *AutomationActivityQuery {
+	query := &AutomationActivityQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := bi.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(blockinstance.Table, blockinstance.FieldID, id),
+			sqlgraph.To(automationactivity.Table, automationactivity.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, blockinstance.BlockActivitiesTable, blockinstance.BlockActivitiesColumn),
 		)
 		fromV = sqlgraph.Neighbors(bi.driver.Dialect(), step)
 		return fromV, nil
@@ -5641,6 +5801,54 @@ func (c *FlowClient) QueryDraft(f *Flow) *FlowDraftQuery {
 	return query
 }
 
+// QueryAuthor queries the author edge of a Flow.
+func (c *FlowClient) QueryAuthor(f *Flow) *UserQuery {
+	query := &UserQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := f.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(flow.Table, flow.FieldID, id),
+			sqlgraph.To(user.Table, user.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, false, flow.AuthorTable, flow.AuthorColumn),
+		)
+		fromV = sqlgraph.Neighbors(f.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryEditor queries the editor edge of a Flow.
+func (c *FlowClient) QueryEditor(f *Flow) *UserQuery {
+	query := &UserQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := f.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(flow.Table, flow.FieldID, id),
+			sqlgraph.To(user.Table, user.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, flow.EditorTable, flow.EditorColumn),
+		)
+		fromV = sqlgraph.Neighbors(f.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryInstance queries the instance edge of a Flow.
+func (c *FlowClient) QueryInstance(f *Flow) *FlowInstanceQuery {
+	query := &FlowInstanceQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := f.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(flow.Table, flow.FieldID, id),
+			sqlgraph.To(flowinstance.Table, flowinstance.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, true, flow.InstanceTable, flow.InstanceColumn),
+		)
+		fromV = sqlgraph.Neighbors(f.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // Hooks returns the client hooks.
 func (c *FlowClient) Hooks() []Hook {
 	hooks := c.hooks.Flow
@@ -6013,6 +6221,22 @@ func (c *FlowInstanceClient) QueryParentSubflowBlock(fi *FlowInstance) *BlockIns
 			sqlgraph.From(flowinstance.Table, flowinstance.FieldID, id),
 			sqlgraph.To(blockinstance.Table, blockinstance.FieldID),
 			sqlgraph.Edge(sqlgraph.O2O, true, flowinstance.ParentSubflowBlockTable, flowinstance.ParentSubflowBlockColumn),
+		)
+		fromV = sqlgraph.Neighbors(fi.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryFlowActivities queries the flow_activities edge of a FlowInstance.
+func (c *FlowInstanceClient) QueryFlowActivities(fi *FlowInstance) *AutomationActivityQuery {
+	query := &AutomationActivityQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := fi.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(flowinstance.Table, flowinstance.FieldID, id),
+			sqlgraph.To(automationactivity.Table, automationactivity.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, flowinstance.FlowActivitiesTable, flowinstance.FlowActivitiesColumn),
 		)
 		fromV = sqlgraph.Neighbors(fi.driver.Dialect(), step)
 		return fromV, nil
@@ -13551,6 +13775,22 @@ func (c *UserClient) QueryAppointment(u *User) *AppointmentQuery {
 	return query
 }
 
+// QueryAuthoredFlow queries the authored_flow edge of a User.
+func (c *UserClient) QueryAuthoredFlow(u *User) *FlowQuery {
+	query := &FlowQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := u.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, id),
+			sqlgraph.To(flow.Table, flow.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, true, user.AuthoredFlowTable, user.AuthoredFlowColumn),
+		)
+		fromV = sqlgraph.Neighbors(u.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // Hooks returns the client hooks.
 func (c *UserClient) Hooks() []Hook {
 	hooks := c.hooks.User
@@ -14179,6 +14419,22 @@ func (c *WorkOrderClient) QueryAppointment(wo *WorkOrder) *AppointmentQuery {
 			sqlgraph.From(workorder.Table, workorder.FieldID, id),
 			sqlgraph.To(appointment.Table, appointment.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, workorder.AppointmentTable, workorder.AppointmentColumn),
+		)
+		fromV = sqlgraph.Neighbors(wo.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryFlowInstance queries the flow_instance edge of a WorkOrder.
+func (c *WorkOrderClient) QueryFlowInstance(wo *WorkOrder) *FlowInstanceQuery {
+	query := &FlowInstanceQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := wo.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(workorder.Table, workorder.FieldID, id),
+			sqlgraph.To(flowinstance.Table, flowinstance.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, false, workorder.FlowInstanceTable, workorder.FlowInstanceColumn),
 		)
 		fromV = sqlgraph.Neighbors(wo.driver.Dialect(), step)
 		return fromV, nil

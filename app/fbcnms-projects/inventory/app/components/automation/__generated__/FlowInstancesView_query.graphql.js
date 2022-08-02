@@ -14,7 +14,7 @@
 
 /*::
 import type { ReaderFragment } from 'relay-runtime';
-export type FlowInstanceStatus = "CANCELED" | "COMPLETED" | "FAILED" | "IN_PROGRESS" | "%future added value";
+export type FlowInstanceStatus = "CANCELED" | "CANCELING" | "CLOSED" | "COMPLETED" | "FAILED" | "FAILING" | "PAUSED" | "PAUSING" | "RESUMING" | "RUNNING" | "%future added value";
 import type { FragmentReference } from "relay-runtime";
 declare export opaque type FlowInstancesView_query$ref: FragmentReference;
 declare export opaque type FlowInstancesView_query$fragmentType: FlowInstancesView_query$ref;
@@ -27,7 +27,6 @@ export type FlowInstancesView_query = {|
         +status: FlowInstanceStatus,
         +startDate: any,
         +endDate: ?any,
-        +bssCode: string,
         +serviceInstanceCode: ?string,
         +template: {|
           +id: string,
@@ -174,13 +173,6 @@ return {
                   "alias": null,
                   "args": null,
                   "kind": "ScalarField",
-                  "name": "bssCode",
-                  "storageKey": null
-                },
-                {
-                  "alias": null,
-                  "args": null,
-                  "kind": "ScalarField",
                   "name": "serviceInstanceCode",
                   "storageKey": null
                 },
@@ -257,6 +249,6 @@ return {
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = '7942d016ca3ac6e6094785f425707d9a';
+(node/*: any*/).hash = '37bb699bb1f095dcfb24d5ad6dc75e98';
 
 module.exports = node;

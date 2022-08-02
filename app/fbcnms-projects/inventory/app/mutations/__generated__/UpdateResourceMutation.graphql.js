@@ -23,7 +23,7 @@ export type LifecycleStatus = "INSTALLING" | "OPERATING" | "PLANNING" | "RETIRIN
 export type OperationalSubStatus = "NOT_WORKING" | "WORKING" | "%future added value";
 export type ParameterKind = "bool" | "date" | "datetime_local" | "email" | "enum" | "float" | "gps_location" | "int" | "range" | "string" | "%future added value";
 export type PlanningSubStatus = "ACTIVATED" | "DESACTIVATED" | "%future added value";
-export type ResourceHasFilter = "actionScheduler" | "available" | "belongsTo" | "changeItems" | "composedOf" | "createTime" | "crossConnection" | "crossconnectionInv" | "externalId" | "isDeleted" | "isEditable" | "lifecycleStatus" | "locatedIn" | "logicalLinkInv" | "logicalLinks" | "name" | "numericPools" | "operationalSubStatus" | "physicalLink" | "physicalLinkInv" | "planningSubStatus" | "resourceProperties" | "resourceSpecification" | "typePlanningSubStatus" | "updateTime" | "usageSubStatus" | "%future added value";
+export type ResourceHasFilter = "actionScheduler" | "available" | "belongsTo" | "changeItems" | "cmVersions" | "composedOf" | "createTime" | "crossConnection" | "crossconnectionInv" | "externalId" | "isDeleted" | "isEditable" | "lifecycleStatus" | "locatedIn" | "logicalLinkInv" | "logicalLinks" | "name" | "numericPools" | "operationalSubStatus" | "physicalLink" | "physicalLinkInv" | "planningSubStatus" | "resourceProperties" | "resourceSpecification" | "typePlanningSubStatus" | "updateTime" | "usageSubStatus" | "%future added value";
 export type TypePlanningSubStatus = "DESIGNED" | "FEASIBILITY_CHECKED" | "ORDERED" | "PROPOSED" | "%future added value";
 export type UsageSubStatus = "ASSIGNED" | "AVAILABLE" | "NO_AVAILABLE" | "RESERVED" | "TERMINATING" | "%future added value";
 export type VersionStatus = "CURRENT" | "REPLACED" | "%future added value";
@@ -52,6 +52,7 @@ export type ResourcePatch = {|
   available?: ?boolean,
   belongsTo?: ?ResourceRef,
   changeItems?: ?$ReadOnlyArray<?ChangeItemRef>,
+  cmVersions?: ?$ReadOnlyArray<?CMVersionRef>,
   composedOf?: ?$ReadOnlyArray<?ResourceRef>,
   createTime?: ?any,
   crossConnection?: ?ResourceRef,
@@ -84,6 +85,8 @@ export type ActionSchedulerRef = {|
   description?: ?string,
   id?: ?string,
   name?: ?string,
+  resourceSpecificationName?: ?string,
+  resourceTypeName?: ?string,
   resources?: ?$ReadOnlyArray<ResourceRef>,
   status?: ?ActionSchedulerStatus,
   type?: ?ActionSchedulerType,
@@ -94,6 +97,7 @@ export type ActionTemplateRef = {|
   actionTemplateItems?: ?$ReadOnlyArray<ActionTemplateItemRef>,
   createTime?: ?any,
   id?: ?string,
+  isDeleted?: ?boolean,
   name?: ?string,
   resourceSpecifications?: ?string,
   type?: ?ActionTemplateType,
@@ -122,6 +126,7 @@ export type ResourceRef = {|
   available?: ?boolean,
   belongsTo?: ?ResourceRef,
   changeItems?: ?$ReadOnlyArray<?ChangeItemRef>,
+  cmVersions?: ?$ReadOnlyArray<?CMVersionRef>,
   composedOf?: ?$ReadOnlyArray<?ResourceRef>,
   createTime?: ?any,
   crossConnection?: ?ResourceRef,
@@ -263,6 +268,7 @@ export type ActionTemplateItemRef = {|
   actionTemplate?: ?ActionTemplateRef,
   createTime?: ?any,
   id?: ?string,
+  isDeleted?: ?boolean,
   parameters?: ?ConfigurationParameterTypeRef,
   updateTime?: ?any,
   value?: ?ParameterRef,

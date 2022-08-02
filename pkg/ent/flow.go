@@ -15,6 +15,7 @@ import (
 	"github.com/facebook/ent/dialect/sql"
 	"github.com/facebookincubator/symphony/pkg/ent/flow"
 	"github.com/facebookincubator/symphony/pkg/ent/flowdraft"
+	"github.com/facebookincubator/symphony/pkg/ent/user"
 	"github.com/facebookincubator/symphony/pkg/flowengine/flowschema"
 )
 
@@ -37,9 +38,14 @@ type Flow struct {
 	Status flow.Status `json:"status,omitempty"`
 	// NewInstancesPolicy holds the value of the "newInstancesPolicy" field.
 	NewInstancesPolicy flow.NewInstancesPolicy `json:"newInstancesPolicy,omitempty"`
+	// CmType holds the value of the "cm_type" field.
+	CmType flow.CmType `json:"cm_type,omitempty"`
+	// CreationDate holds the value of the "creation_date" field.
+	CreationDate time.Time `json:"creation_date,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the FlowQuery when eager-loading is set.
-	Edges FlowEdges `json:"edges"`
+	Edges       FlowEdges `json:"edges"`
+	flow_author *int
 }
 
 // FlowEdges holds the relations/edges for other nodes in the graph.
@@ -48,9 +54,15 @@ type FlowEdges struct {
 	Blocks []*Block
 	// Draft holds the value of the draft edge.
 	Draft *FlowDraft
+	// Author holds the value of the author edge.
+	Author *User
+	// Editor holds the value of the editor edge.
+	Editor []*User
+	// Instance holds the value of the instance edge.
+	Instance []*FlowInstance
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [2]bool
+	loadedTypes [5]bool
 }
 
 // BlocksOrErr returns the Blocks value or an error if the edge
@@ -76,6 +88,38 @@ func (e FlowEdges) DraftOrErr() (*FlowDraft, error) {
 	return nil, &NotLoadedError{edge: "draft"}
 }
 
+// AuthorOrErr returns the Author value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e FlowEdges) AuthorOrErr() (*User, error) {
+	if e.loadedTypes[2] {
+		if e.Author == nil {
+			// The edge author was loaded in eager-loading,
+			// but was not found.
+			return nil, &NotFoundError{label: user.Label}
+		}
+		return e.Author, nil
+	}
+	return nil, &NotLoadedError{edge: "author"}
+}
+
+// EditorOrErr returns the Editor value or an error if the edge
+// was not loaded in eager-loading.
+func (e FlowEdges) EditorOrErr() ([]*User, error) {
+	if e.loadedTypes[3] {
+		return e.Editor, nil
+	}
+	return nil, &NotLoadedError{edge: "editor"}
+}
+
+// InstanceOrErr returns the Instance value or an error if the edge
+// was not loaded in eager-loading.
+func (e FlowEdges) InstanceOrErr() ([]*FlowInstance, error) {
+	if e.loadedTypes[4] {
+		return e.Instance, nil
+	}
+	return nil, &NotLoadedError{edge: "instance"}
+}
+
 // scanValues returns the types for scanning values from sql.Rows.
 func (*Flow) scanValues() []interface{} {
 	return []interface{}{
@@ -87,6 +131,15 @@ func (*Flow) scanValues() []interface{} {
 		&[]byte{},         // end_param_definitions
 		&sql.NullString{}, // status
 		&sql.NullString{}, // newInstancesPolicy
+		&sql.NullString{}, // cm_type
+		&sql.NullTime{},   // creation_date
+	}
+}
+
+// fkValues returns the types for scanning foreign-keys values from sql.Rows.
+func (*Flow) fkValues() []interface{} {
+	return []interface{}{
+		&sql.NullInt64{}, // flow_author
 	}
 }
 
@@ -141,6 +194,25 @@ func (f *Flow) assignValues(values ...interface{}) error {
 	} else if value.Valid {
 		f.NewInstancesPolicy = flow.NewInstancesPolicy(value.String)
 	}
+	if value, ok := values[7].(*sql.NullString); !ok {
+		return fmt.Errorf("unexpected type %T for field cm_type", values[7])
+	} else if value.Valid {
+		f.CmType = flow.CmType(value.String)
+	}
+	if value, ok := values[8].(*sql.NullTime); !ok {
+		return fmt.Errorf("unexpected type %T for field creation_date", values[8])
+	} else if value.Valid {
+		f.CreationDate = value.Time
+	}
+	values = values[9:]
+	if len(values) == len(flow.ForeignKeys) {
+		if value, ok := values[0].(*sql.NullInt64); !ok {
+			return fmt.Errorf("unexpected type %T for edge-field flow_author", value)
+		} else if value.Valid {
+			f.flow_author = new(int)
+			*f.flow_author = int(value.Int64)
+		}
+	}
 	return nil
 }
 
@@ -152,6 +224,21 @@ func (f *Flow) QueryBlocks() *BlockQuery {
 // QueryDraft queries the draft edge of the Flow.
 func (f *Flow) QueryDraft() *FlowDraftQuery {
 	return (&FlowClient{config: f.config}).QueryDraft(f)
+}
+
+// QueryAuthor queries the author edge of the Flow.
+func (f *Flow) QueryAuthor() *UserQuery {
+	return (&FlowClient{config: f.config}).QueryAuthor(f)
+}
+
+// QueryEditor queries the editor edge of the Flow.
+func (f *Flow) QueryEditor() *UserQuery {
+	return (&FlowClient{config: f.config}).QueryEditor(f)
+}
+
+// QueryInstance queries the instance edge of the Flow.
+func (f *Flow) QueryInstance() *FlowInstanceQuery {
+	return (&FlowClient{config: f.config}).QueryInstance(f)
 }
 
 // Update returns a builder for updating this Flow.
@@ -193,6 +280,10 @@ func (f *Flow) String() string {
 	builder.WriteString(fmt.Sprintf("%v", f.Status))
 	builder.WriteString(", newInstancesPolicy=")
 	builder.WriteString(fmt.Sprintf("%v", f.NewInstancesPolicy))
+	builder.WriteString(", cm_type=")
+	builder.WriteString(fmt.Sprintf("%v", f.CmType))
+	builder.WriteString(", creation_date=")
+	builder.WriteString(f.CreationDate.Format(time.ANSIC))
 	builder.WriteByte(')')
 	return builder.String()
 }

@@ -1,15 +1,11 @@
 // Copyright (c) 2004-present Facebook All rights reserved.
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
-
 package handler
 
 import (
-	"encoding/json"
-	"net/http"
-	"strconv"
-
 	"cloud.google.com/go/storage"
+	"encoding/json"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/s3"
 	"github.com/facebookincubator/symphony/pkg/log"
@@ -19,6 +15,8 @@ import (
 	"go.opencensus.io/plugin/ochttp"
 	"go.uber.org/zap"
 	"gocloud.dev/blob"
+	"net/http"
+	"strconv"
 )
 
 // Provider is a Wire provider set that produces a handler from config.
@@ -45,7 +43,6 @@ type Config struct {
 func New(cfg Config) *Handler {
 	h := &Handler{logger: cfg.Logger}
 	h.bucket = cfg.Bucket
-
 	router := mux.NewRouter()
 	router.Path("/get").
 		Methods(http.MethodGet).
@@ -58,6 +55,12 @@ func New(cfg Config) *Handler {
 		Queries("contentType", "{contentType}").
 		Handler(ochttp.WithRouteTag(
 			http.HandlerFunc(h.put), "put",
+		))
+	router.Path("/putNifi").
+		Methods(http.MethodGet).
+		Queries("contentType", "{contentType}").
+		Handler(ochttp.WithRouteTag(
+			http.HandlerFunc(h.putNifi), "putNifi",
 		))
 	router.Path("/delete").
 		Queries("key", "{key}").
@@ -74,7 +77,6 @@ func New(cfg Config) *Handler {
 	h.Handler = router
 	return h
 }
-
 func getKey(r *http.Request, key string) string {
 	if key == "" {
 		return key
@@ -86,7 +88,19 @@ func getKey(r *http.Request, key string) string {
 	}
 	return key
 }
-
+func getKeynifi(r *http.Request, key string) string {
+	nombreArray := r.URL.Query()["nameFile"]
+	var nameFile = nombreArray[0]
+	if key == "" {
+		return key
+	}
+	if global, _ := strconv.ParseBool(r.Header.Get("Is-Global")); !global {
+		if ns := r.Header.Get("x-auth-organization"); ns != "" {
+			key = ns + "/" + key + "-" + nameFile
+		}
+	}
+	return key
+}
 func (h *Handler) get(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	logger := h.logger.For(ctx)
@@ -105,7 +119,6 @@ func (h *Handler) get(w http.ResponseWriter, r *http.Request) {
 	logger.Debug("signed get url", zap.String("key", key))
 	http.Redirect(w, r, u, http.StatusSeeOther)
 }
-
 func (h *Handler) put(w http.ResponseWriter, r *http.Request) {
 	var (
 		ctx    = r.Context()
@@ -135,7 +148,6 @@ func (h *Handler) put(w http.ResponseWriter, r *http.Request) {
 	}
 	logger.Debug("signed put url", zap.String("key", key))
 }
-
 func (h *Handler) delete(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	logger := h.logger.For(ctx)
@@ -156,7 +168,6 @@ func (h *Handler) delete(w http.ResponseWriter, r *http.Request) {
 	logger.Debug("signed delete url", zap.String("key", key))
 	http.Redirect(w, r, u, http.StatusTemporaryRedirect)
 }
-
 func (h *Handler) download(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	vars := mux.Vars(r)
@@ -187,7 +198,103 @@ func (h *Handler) download(w http.ResponseWriter, r *http.Request) {
 	)
 	http.Redirect(w, r, u, http.StatusSeeOther)
 }
-
+func (h *Handler) getNifi(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+	logger := h.logger.For(ctx)
+	key := getKey(r, mux.Vars(r)["key"])
+	if key == "" {
+		logger.Error("cannot resolve object key")
+		http.Error(w, "", http.StatusBadRequest)
+		return
+	}
+	u, err := h.bucket.SignedURL(ctx, key, nil)
+	if err != nil {
+		logger.Error("cannot sign get object url", zap.Error(err))
+		http.Error(w, "", http.StatusInternalServerError)
+		return
+	}
+	logger.Debug("signed get url", zap.String("key", key))
+	http.Redirect(w, r, u, http.StatusSeeOther)
+}
+func (h *Handler) putNifi(w http.ResponseWriter, r *http.Request) {
+	var (
+		ctx    = r.Context()
+		logger = h.logger.For(ctx)
+		rsp    struct {
+			URL string `json:"URL"`
+			Key string `json:"key"`
+		}
+		err error
+	)
+	rsp.Key = uuid.New().String()
+	key := getKeynifi(r, rsp.Key)
+	if rsp.URL, err = h.bucket.SignedURL(ctx, key,
+		&blob.SignedURLOptions{
+			Method:      http.MethodPut,
+			ContentType: mux.Vars(r)["contentType"],
+		},
+	); err != nil {
+		logger.Error("cannot sign put object url", zap.Error(err))
+		http.Error(w, "", http.StatusInternalServerError)
+		return
+	}
+	w.Header().Set("Content-Type", "application/json")
+	if err := json.NewEncoder(w).Encode(&rsp); err != nil {
+		logger.Error("cannot write put object response", zap.Error(err))
+		return
+	}
+	logger.Debug("signed put url", zap.String("key", key))
+}
+func (h *Handler) deleteNifi(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+	logger := h.logger.For(ctx)
+	key := getKey(r, mux.Vars(r)["key"])
+	if key == "" {
+		logger.Error("cannot resolve object key")
+		http.Error(w, "", http.StatusBadRequest)
+		return
+	}
+	u, err := h.bucket.SignedURL(ctx, key,
+		&blob.SignedURLOptions{Method: http.MethodDelete},
+	)
+	if err != nil {
+		logger.Error("cannot sign delete object url", zap.Error(err))
+		http.Error(w, "", http.StatusInternalServerError)
+		return
+	}
+	logger.Debug("signed delete url", zap.String("key", key))
+	http.Redirect(w, r, u, http.StatusTemporaryRedirect)
+}
+func (h *Handler) downloadNifi(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+	vars := mux.Vars(r)
+	logger := h.logger.For(ctx)
+	key := getKey(r, vars["key"])
+	if key == "" {
+		logger.Error("cannot resolve object key")
+		http.Error(w, "", http.StatusBadRequest)
+		return
+	}
+	filename := vars["filename"]
+	if filename == "" {
+		logger.Error("cannot resolve object filename")
+		http.Error(w, "", http.StatusBadRequest)
+		return
+	}
+	u, err := h.bucket.SignedURL(ctx, key, &blob.SignedURLOptions{
+		BeforeSign: setResponseContentDisposition(filename),
+	})
+	if err != nil {
+		logger.Error("cannot sign download url", zap.Error(err))
+		http.Error(w, "", http.StatusInternalServerError)
+		return
+	}
+	logger.Debug("signed download url",
+		zap.String("key", key),
+		zap.String("filename", filename),
+	)
+	http.Redirect(w, r, u, http.StatusSeeOther)
+}
 func setResponseContentDisposition(filename string) func(func(interface{}) bool) error {
 	return func(asFunc func(interface{}) bool) error {
 		var in *s3.GetObjectInput

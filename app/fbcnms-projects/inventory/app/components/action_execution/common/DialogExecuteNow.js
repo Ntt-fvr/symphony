@@ -19,6 +19,8 @@ import IconButton from '@material-ui/core/IconButton';
 import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined';
 import React from 'react';
 import Text from '@symphony/design-system/components/Text';
+import moment from 'moment';
+import {actionExecutionTypes} from './ActionExecution-enums';
 import {makeStyles} from '@material-ui/styles';
 
 const useStyles = makeStyles(() => ({
@@ -53,15 +55,17 @@ const useStyles = makeStyles(() => ({
 }));
 
 type Props = $ReadOnly<{|
-  onClick?: () => void,
+  onSave?: () => void,
   name?: string,
   open?: boolean,
+  execDetails: {},
+  execType: string,
   onClose: () => void,
   dataRow: any,
 |}>;
 
 const DialogExecuteNow = (props: Props) => {
-  const {onClose, dataRow} = props;
+  const {onSave, onClose, dataRow, resourceSpec} = props;
 
   const classes = useStyles();
   return (
@@ -96,11 +100,17 @@ const DialogExecuteNow = (props: Props) => {
                 <InfoOutlinedIcon color={'primary'} />
               </Grid>
               <Grid container item xs={11}>
-                <CardHeader>Are you sure to run the action now?</CardHeader>
-                <Text>
-                  This will perform the action inmediately on the selected
-                  resource and cannot be undone
-                </Text>
+                <Grid item xs={12}>
+                  <CardHeader>Are you sure to run the action now?</CardHeader>
+                  {props.execType == actionExecutionTypes.ManualExecution ? (
+                    <Text>
+                      This will perform the action inmediately on the selected
+                      resource and cannot be undone
+                    </Text>
+                  ) : (
+                    ''
+                  )}
+                </Grid>
                 <Grid
                   style={{marginTop: '20px'}}
                   container
@@ -110,6 +120,20 @@ const DialogExecuteNow = (props: Props) => {
                   <Text useEllipsis={true} weight="bold">
                     Action:
                   </Text>
+                  {props.execType == actionExecutionTypes.OneTimeExecution ? (
+                    <Text useEllipsis={true} weight="bold">
+                      Date:
+                    </Text>
+                  ) : (
+                    ''
+                  )}
+                  {props.execType == actionExecutionTypes.OneTimeExecution ? (
+                    <Text useEllipsis={true} weight="bold">
+                      Hour:
+                    </Text>
+                  ) : (
+                    ''
+                  )}
                   <Text useEllipsis={true} weight="bold">
                     Resource:
                   </Text>
@@ -120,8 +144,20 @@ const DialogExecuteNow = (props: Props) => {
                   direction="column"
                   item
                   xs={2}>
-                  <Text>{dataRow.actionTempleate}</Text>
-                  <Text>{dataRow.resourceSpecification}</Text>
+                  <Text>{dataRow.actionTemplate.name}</Text>
+                  {props.execType == actionExecutionTypes.OneTimeExecution ? (
+                    <Text>
+                      {moment(props.execDetails.date).format('MM/DD/YYYY')}
+                    </Text>
+                  ) : (
+                    ''
+                  )}
+                  {props.execType == actionExecutionTypes.OneTimeExecution ? (
+                    <Text>{moment(props.execDetails.hour).format('LT')}</Text>
+                  ) : (
+                    ''
+                  )}
+                  <Text>{resourceSpec}</Text>
                 </Grid>
               </Grid>
             </Grid>
@@ -137,11 +173,18 @@ const DialogExecuteNow = (props: Props) => {
           Cancel
         </Button>
         <Button
-          onClick={onClose}
+          onClick={() => {
+            onSave();
+            onClose();
+          }}
           className={classes.option}
           variant="contained"
           color="primary">
-          Execute Now
+          {props.execType == actionExecutionTypes.ManualExecution
+            ? 'Confirm'
+            : !props.execType
+            ? 'Execute Now'
+            : 'Save'}
         </Button>
       </DialogActions>
     </Dialog>

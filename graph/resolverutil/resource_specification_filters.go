@@ -24,7 +24,6 @@ func handleResourceSpecificationFilter(q *ent.ResourceSpecificationQuery, filter
 	default:
 		return nil, errors.Errorf("filter type is not supported: %s", filter.FilterType)
 	}
-
 }
 
 func resourceSpecificationIDFilter(q *ent.ResourceSpecificationQuery, filter *models.ResourceSpecificationFilterInput) (*ent.ResourceSpecificationQuery, error) {
@@ -37,8 +36,8 @@ func resourceSpecificationIDFilter(q *ent.ResourceSpecificationQuery, filter *mo
 func resourceSpecificationNameFilter(q *ent.ResourceSpecificationQuery, filter *models.ResourceSpecificationFilterInput) (*ent.ResourceSpecificationQuery, error) {
 	if filter.Operator == enum.FilterOperatorContains && filter.StringValue != nil {
 		return q.Where(resourcespecification.NameContainsFold(*filter.StringValue)), nil
-	} else if filter.Operator == enum.FilterOperatorIsOneOf && filter.StringValue != nil {
-		return q.Where(resourcespecification.NameEQ(*filter.StringValue)), nil
+	} else if filter.Operator == enum.FilterOperatorIsOneOf && filter.StringSet != nil {
+		return q.Where(resourcespecification.NameIn(filter.StringSet...)), nil
 	}
 	return nil, errors.Errorf("operation is not supported: %s", filter.Operator)
 }

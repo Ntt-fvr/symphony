@@ -28,7 +28,7 @@ func (resourcePropertyTypeResolver) RawValue(ctx context.Context, resourceproper
 func (resourcePropertyTypeResolver) ResourceSpecification(ctx context.Context, resourcepropertytype *ent.ResourcePropertyType) (*ent.ResourceSpecification, error) {
 	variable, err := resourcepropertytype.ResourceSpecification(ctx)
 	if err != nil {
-		return nil, fmt.Errorf("has ocurred error on proces: %v", err)
+		return nil, fmt.Errorf("has occurred error on process: %v", err)
 	}
 	return variable, nil
 }
@@ -36,7 +36,6 @@ func (resourcePropertyTypeResolver) ResourceSpecification(ctx context.Context, r
 func (r mutationResolver) AddResourcePropertyType(
 	ctx context.Context, parentSetter func(ptc *ent.ResourcePropertyTypeCreate), inputs ...*models.AddResourcePropertyTypeInput,
 ) error {
-
 	var (
 		client   = r.ClientFrom(ctx).ResourcePropertyType
 		builders = make([]*ent.ResourcePropertyTypeCreate, len(inputs))
@@ -161,15 +160,15 @@ func (r mutationResolver) RemoveResourcePropertyType(ctx context.Context, id int
 		).
 		Only(ctx)
 	if err != nil {
-		return id, errors.Wrapf(err, "has ocurred error on process: %v", err)
+		return id, errors.Wrapf(err, "has occurred error on process: %v", err)
 	}
 
 	et, err := client.ResourcePropertyType.Get(ctx, t.ID)
 	if err != nil {
 		if ent.IsNotFound(err) {
-			return id, gqlerror.Errorf("has ocurred error on process: %v", err)
+			return id, gqlerror.Errorf("has occurred error on process: %v", err)
 		}
-		return id, errors.Wrapf(err, "has ocurred error on process: %v", err)
+		return id, errors.Wrapf(err, "has occurred error on process: %v", err)
 	}
 	var delete = true
 	if et, err = client.ResourcePropertyType.
@@ -177,9 +176,9 @@ func (r mutationResolver) RemoveResourcePropertyType(ctx context.Context, id int
 		SetDeleted(delete).
 		Save(ctx); err != nil {
 		if ent.IsConstraintError(err) {
-			return id, gqlerror.Errorf("has ocurred error on proces: %v", err)
+			return id, gqlerror.Errorf("has occurred error on process: %v", err)
 		}
-		return id, errors.Wrap(err, "has ocurred error on proces: %v")
+		return id, errors.Wrap(err, "has occurred error on process: %v")
 	}
 	return id, nil
 }

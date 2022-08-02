@@ -26,6 +26,7 @@ const mutation = graphql`
     addResource(input: $input) {
       numUids
       resource {
+        id
         name
         externalId
         locatedIn

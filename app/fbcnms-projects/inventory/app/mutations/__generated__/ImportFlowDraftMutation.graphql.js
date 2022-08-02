@@ -15,25 +15,37 @@
 /*::
 import type { ConcreteRequest } from 'relay-runtime';
 export type ActionTypeId = "update_inventory" | "update_workforce" | "work_order" | "worker" | "%future added value";
+export type AuthType = "BASIC" | "ODIC" | "%future added value";
 export type EntryPointRole = "DEFAULT" | "%future added value";
-export type ExitPointRole = "DECISION" | "DEFAULT" | "%future added value";
+export type ExitPointRole = "CHOICE" | "DEFAULT" | "%future added value";
+export type GoToType = "DESTINATION" | "ORIGIN" | "%future added value";
+export type KafkaMessageType = "EXPRESSION" | "INPUT" | "STATE" | "%future added value";
+export type RetryUnit = "HOURS" | "MINUTES" | "SECONDS" | "%future added value";
+export type SignalModule = "ASSURANCE" | "CM" | "INVENTORY" | "WFM" | "%future added value";
+export type SignalType = "CRCREATED" | "CRUPDATED" | "MOICREATED" | "MOIUPDATED" | "PR_CREATED" | "PR_UPDATED" | "WOCREATED" | "WOUPDATED" | "%future added value";
+export type TimerBehavior = "FIXED_INTERVAL" | "SPECIFIC_DATETIME" | "%future added value";
+export type TransfStrategy = "MERGE" | "REPLACE" | "%future added value";
 export type TriggerTypeId = "work_order" | "%future added value";
+export type UrlMethod = "DELETE" | "GET" | "PATCH" | "POST" | "PUT" | "%future added value";
 export type VariableExpressionType = "ChekListItemDefinition" | "DecisionDefinition" | "PropertyTypeDefinition" | "VariableDefinition" | "%future added value";
 export type VariableType = "DATE" | "INT" | "LOCATION" | "PROJECT" | "STRING" | "USER" | "WORK_ORDER" | "WORK_ORDER_TYPE" | "%future added value";
 export type ImportFlowDraftInput = {|
   actionBlocks?: ?$ReadOnlyArray<ActionBlockInput>,
+  choiceBlocks?: ?$ReadOnlyArray<ChoiceBlockInput>,
   connectors?: ?$ReadOnlyArray<ConnectorInput>,
-  decisionBlocks?: ?$ReadOnlyArray<DecisionBlockInput>,
   description?: ?string,
   endBlocks?: ?$ReadOnlyArray<EndBlockInput>,
   endParamDefinitions: $ReadOnlyArray<VariableDefinitionInput>,
+  executeFlowBlocks?: ?$ReadOnlyArray<ExecuteFlowBlockInput>,
   gotoBlocks?: ?$ReadOnlyArray<GotoBlockInput>,
   id: string,
+  invokeRestAPIBlocks?: ?$ReadOnlyArray<InvokeRestAPIBlockInput>,
+  kafkaBlocks?: ?$ReadOnlyArray<KafkaBlockInput>,
   name: string,
   startBlock?: ?StartBlockInput,
-  subflowBlocks?: ?$ReadOnlyArray<SubflowBlockInput>,
+  timerBlocks?: ?$ReadOnlyArray<TimerBlockInput>,
   triggerBlocks?: ?$ReadOnlyArray<TriggerBlockInput>,
-  trueFalseBlocks?: ?$ReadOnlyArray<TrueFalseBlockInput>,
+  waitForSignalBlocks?: ?$ReadOnlyArray<WaitForSignalBlockInput>,
 |};
 export type ActionBlockInput = {|
   actionType: ActionTypeId,
@@ -60,11 +72,33 @@ export type BlockUIRepresentationInput = {|
   xPosition: number,
   yPosition: number,
 |};
-export type ConnectorInput = {|
-  sourceBlockCid: string,
-  sourcePoint?: ?ExitPointInput,
-  targetBlockCid: string,
-  targetPoint?: ?EntryPointInput,
+export type ChoiceBlockInput = {|
+  basicDefinitions: BaseBlockInput,
+  cid: string,
+  defaultExitPoint?: ?ExitPointInput,
+  entryPoint?: ?EntryPointInput,
+  routes?: ?$ReadOnlyArray<DecisionRouteInput>,
+  uiRepresentation?: ?BlockUIRepresentationInput,
+|};
+export type BaseBlockInput = {|
+  backoffRate?: ?number,
+  enableErrorHandling?: ?boolean,
+  enableInputStateTransformation: boolean,
+  enableInputTransformation: boolean,
+  enableOutputStateTransformation: boolean,
+  enableOutputTransformation: boolean,
+  enableRetryPolicy?: ?boolean,
+  inputParamDefinitions?: ?string,
+  inputStateParamDefinitions?: ?string,
+  inputStateTransfStrategy?: ?TransfStrategy,
+  inputTransfStrategy?: ?TransfStrategy,
+  maxAttemps?: ?number,
+  outputParamDefinitions?: ?string,
+  outputStateParamDefinitions?: ?string,
+  outputStateTransfStrategy?: ?TransfStrategy,
+  outputTransfStrategy?: ?TransfStrategy,
+  retryInterval?: ?number,
+  units?: ?RetryUnit,
 |};
 export type ExitPointInput = {|
   cid?: ?string,
@@ -74,14 +108,16 @@ export type EntryPointInput = {|
   cid?: ?string,
   role?: ?EntryPointRole,
 |};
-export type DecisionBlockInput = {|
-  cid: string,
-  routes?: ?$ReadOnlyArray<DecisionRouteInput>,
-  uiRepresentation?: ?BlockUIRepresentationInput,
-|};
 export type DecisionRouteInput = {|
   cid?: ?string,
   condition: VariableExpressionInput,
+  index?: ?number,
+|};
+export type ConnectorInput = {|
+  sourceBlockCid: string,
+  sourcePoint?: ?ExitPointInput,
+  targetBlockCid: string,
+  targetPoint?: ?EntryPointInput,
 |};
 export type EndBlockInput = {|
   cid: string,
@@ -96,20 +132,70 @@ export type VariableDefinitionInput = {|
   multipleValues?: ?boolean,
   type: VariableType,
 |};
+export type ExecuteFlowBlockInput = {|
+  basicDefinitions: BaseBlockInput,
+  cid: string,
+  entryPoint?: ?EntryPointInput,
+  exitPoint?: ?ExitPointInput,
+  flow: string,
+  params: $ReadOnlyArray<VariableExpressionInput>,
+  uiRepresentation?: ?BlockUIRepresentationInput,
+|};
 export type GotoBlockInput = {|
   cid: string,
   targetBlockCid?: ?string,
+  type: GoToType,
+  uiRepresentation?: ?BlockUIRepresentationInput,
+|};
+export type InvokeRestAPIBlockInput = {|
+  authType?: ?AuthType,
+  basicDefinitions: BaseBlockInput,
+  body: string,
+  cid: string,
+  clientId?: ?string,
+  clientSecret?: ?string,
+  connectionTimeOut: number,
+  entryPoint?: ?EntryPointInput,
+  exitPoint?: ?ExitPointInput,
+  headers: $ReadOnlyArray<?VariableValueInput>,
+  method: UrlMethod,
+  oidcUrl?: ?string,
+  params?: ?$ReadOnlyArray<VariableExpressionInput>,
+  password?: ?string,
+  uiRepresentation?: ?BlockUIRepresentationInput,
+  url: string,
+  user?: ?string,
+|};
+export type VariableValueInput = {|
+  value: string,
+  variableDefinitionKey: string,
+|};
+export type KafkaBlockInput = {|
+  basicDefinitions: BaseBlockInput,
+  brokers?: ?$ReadOnlyArray<string>,
+  cid: string,
+  entryPoint?: ?EntryPointInput,
+  exitPoint?: ?ExitPointInput,
+  message: string,
+  topic: string,
+  type: KafkaMessageType,
   uiRepresentation?: ?BlockUIRepresentationInput,
 |};
 export type StartBlockInput = {|
   cid: string,
-  paramDefinitions: $ReadOnlyArray<VariableDefinitionInput>,
+  paramDefinitions?: ?$ReadOnlyArray<VariableDefinitionInput>,
   uiRepresentation?: ?BlockUIRepresentationInput,
 |};
-export type SubflowBlockInput = {|
+export type TimerBlockInput = {|
+  behavior: TimerBehavior,
   cid: string,
-  flowId: string,
-  params: $ReadOnlyArray<VariableExpressionInput>,
+  enableExpressionL?: ?boolean,
+  entryPoint?: ?EntryPointInput,
+  exitPoint?: ?ExitPointInput,
+  expression?: ?string,
+  params?: ?$ReadOnlyArray<VariableExpressionInput>,
+  seconds?: ?number,
+  specificDatetime?: ?any,
   uiRepresentation?: ?BlockUIRepresentationInput,
 |};
 export type TriggerBlockInput = {|
@@ -118,8 +204,16 @@ export type TriggerBlockInput = {|
   triggerType: TriggerTypeId,
   uiRepresentation?: ?BlockUIRepresentationInput,
 |};
-export type TrueFalseBlockInput = {|
+export type WaitForSignalBlockInput = {|
+  basicDefinitions: BaseBlockInput,
+  blocked: boolean,
   cid: string,
+  customFilter?: ?string,
+  entryPoint?: ?EntryPointInput,
+  exitPoint?: ?ExitPointInput,
+  params?: ?$ReadOnlyArray<VariableExpressionInput>,
+  signalModule: SignalModule,
+  type: SignalType,
   uiRepresentation?: ?BlockUIRepresentationInput,
 |};
 export type ImportFlowDraftMutationVariables = {|

@@ -10,14 +10,14 @@
 
 import React from 'react';
 import TriggerWorkforceIcon from './TriggerWorkforceIcon';
-import fbt from 'fbt';
 import {BasePresentation} from '../BasePresentation';
+import {Typography} from '@material-ui/core';
 
 export default function TriggerWorkforceIconPresentation() {
   return (
     <BasePresentation
       icon={TriggerWorkforceIcon}
-      text={fbt('Work Order', '')}
+      text={<Typography variant="caption">Work Order</Typography>}
     />
   );
 }

@@ -1348,6 +1348,31 @@ func (r mutationResolver) createImage(ctx context.Context, input *models.AddImag
 	return img, nil
 }
 
+func (r mutationResolver) AddFiles(ctx context.Context, input models.AddFilesInput) (*ent.File, error) {
+	query := r.ClientFrom(ctx).
+		File.Create().
+		SetStoreKey(input.ImgKey).
+		SetName(input.FileName).
+		SetSize(input.FileSize).
+		SetModifiedAt(input.Modified).
+		SetUploadedAt(time.Now()).
+		SetType(func() file.Type {
+			if strings.HasPrefix(input.ContentType, "image/") {
+				return file.TypeImage
+			}
+			return file.TypeFile
+		}()).
+		SetContentType(input.ContentType).
+		SetNillableCategory(input.Category).
+		SetNillableDocumentCategoryID(input.DocumentCategoryID).
+		SetNillableAnnotation(input.Annotation)
+	img, err := query.Save(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("creating file for key %q: %w", input.ImgKey, err)
+	}
+	return img, nil
+}
+
 func (r mutationResolver) AddImage(ctx context.Context, input models.AddImageInput) (*ent.File, error) {
 	return r.createImage(ctx, &input, func(create *ent.FileCreate) error {
 		switch input.EntityType {

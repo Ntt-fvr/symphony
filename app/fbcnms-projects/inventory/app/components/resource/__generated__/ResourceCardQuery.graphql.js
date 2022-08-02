@@ -25,9 +25,9 @@ export type ResourceCardQueryResponse = {|
   +queryResource: ?$ReadOnlyArray<?{|
     +id: string,
     +name: string,
-    +locatedIn: ?string,
-    +resourceSpecification: string,
     +isDeleted: boolean,
+    +resourceSpecification: string,
+    +locatedIn: ?string,
     +lifecycleStatus: ?LifecycleStatus,
     +typePlanningSubStatus: ?TypePlanningSubStatus,
     +planningSubStatus: ?PlanningSubStatus,
@@ -86,9 +86,9 @@ query ResourceCardQuery {
   queryResource {
     id
     name
-    locatedIn
-    resourceSpecification
     isDeleted
+    resourceSpecification
+    locatedIn
     lifecycleStatus
     typePlanningSubStatus
     planningSubStatus
@@ -167,7 +167,7 @@ v2 = [
         "alias": null,
         "args": null,
         "kind": "ScalarField",
-        "name": "locatedIn",
+        "name": "isDeleted",
         "storageKey": null
       },
       {
@@ -181,7 +181,7 @@ v2 = [
         "alias": null,
         "args": null,
         "kind": "ScalarField",
-        "name": "isDeleted",
+        "name": "locatedIn",
         "storageKey": null
       },
       {
@@ -427,16 +427,16 @@ return {
     "selections": (v2/*: any*/)
   },
   "params": {
-    "cacheID": "aa18e598865b719dba0a6a6114d1adcc",
+    "cacheID": "29122e26c72f9309fa20ecc6cc6ba9cf",
     "id": null,
     "metadata": {},
     "name": "ResourceCardQuery",
     "operationKind": "query",
-    "text": "query ResourceCardQuery {\n  queryResource {\n    id\n    name\n    locatedIn\n    resourceSpecification\n    isDeleted\n    lifecycleStatus\n    typePlanningSubStatus\n    planningSubStatus\n    usageSubStatus\n    operationalSubStatus\n  }\n  resourceTypes {\n    edges {\n      node {\n        id\n        name\n        resourceSpecification {\n          id\n          name\n          resourcePropertyTypes {\n            id\n            name\n            type\n            stringValue\n            intValue\n            booleanValue\n            floatValue\n            latitudeValue\n            longitudeValue\n            rangeFromValue\n            rangeToValue\n            isMandatory\n            isInstanceProperty\n          }\n        }\n      }\n    }\n  }\n  resourceSpecifications {\n    edges {\n      node {\n        id\n        name\n        resourceType {\n          id\n          name\n        }\n      }\n    }\n  }\n}\n"
+    "text": "query ResourceCardQuery {\n  queryResource {\n    id\n    name\n    isDeleted\n    resourceSpecification\n    locatedIn\n    lifecycleStatus\n    typePlanningSubStatus\n    planningSubStatus\n    usageSubStatus\n    operationalSubStatus\n  }\n  resourceTypes {\n    edges {\n      node {\n        id\n        name\n        resourceSpecification {\n          id\n          name\n          resourcePropertyTypes {\n            id\n            name\n            type\n            stringValue\n            intValue\n            booleanValue\n            floatValue\n            latitudeValue\n            longitudeValue\n            rangeFromValue\n            rangeToValue\n            isMandatory\n            isInstanceProperty\n          }\n        }\n      }\n    }\n  }\n  resourceSpecifications {\n    edges {\n      node {\n        id\n        name\n        resourceType {\n          id\n          name\n        }\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = 'b2390069086e745940e8b827cad17b74';
+(node/*: any*/).hash = '6bdca94bf6f7bb46fb414f14d2d12244';
 
 module.exports = node;
