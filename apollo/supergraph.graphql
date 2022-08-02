@@ -1921,7 +1921,7 @@ input AuthRule {
 }
 
 enum AuthType {
-  Basic
+  BASIC
   ODIC
 }
 
@@ -2031,6 +2031,7 @@ type Block implements Node {
 union BlockDetails = ActionBlock | ChoiceBlock | EndBlock | ExecuteFlowBlock | ForEachBlock | GotoBlock | InvokeRestAPIBlock | KafkaBlock | ParallelBlock | StartBlock | TimerBlock | TriggerBlock | WaitForSignalBlock
 
 type BlockInstance implements Node {
+  activities(filter: AutomationActivityFilterInput): [AutomationActivity!]!
   block: Block!
   endDate: Time
   failure_reason: String
@@ -2850,7 +2851,7 @@ input ChoiceBlockInput {
   basicDefinitions: BaseBlockInput!
   cid: String!
   defaultExitPoint: ExitPointInput
-  entryPoint: EntryPointInput!
+  entryPoint: EntryPointInput
   routes: [DecisionRouteInput!]
   uiRepresentation: BlockUIRepresentationInput
 }
@@ -4755,8 +4756,8 @@ type ExecuteFlowBlock {
 input ExecuteFlowBlockInput {
   basicDefinitions: BaseBlockInput!
   cid: String!
-  entryPoint: EntryPointInput!
-  exitPoint: ExitPointInput!
+  entryPoint: EntryPointInput
+  exitPoint: ExitPointInput
   flow: ID!
   params: [VariableExpressionInput!]!
   uiRepresentation: BlockUIRepresentationInput
@@ -5643,12 +5644,12 @@ input InvokeRestAPIBlockInput {
   clientId: String
   clientSecret: String
   connectionTimeOut: Int!
-  entryPoint: EntryPointInput!
-  exitPoint: ExitPointInput!
+  entryPoint: EntryPointInput
+  exitPoint: ExitPointInput
   headers: [VariableValueInput]!
   method: UrlMethod!
   oidcUrl: String
-  params: [VariableExpressionInput!]!
+  params: [VariableExpressionInput!]
   password: String
   uiRepresentation: BlockUIRepresentationInput
   url: String!
@@ -5668,8 +5669,8 @@ input KafkaBlockInput {
   basicDefinitions: BaseBlockInput!
   brokers: [String!]
   cid: String!
-  entryPoint: EntryPointInput!
-  exitPoint: ExitPointInput!
+  entryPoint: EntryPointInput
+  exitPoint: ExitPointInput
   message: String!
   topic: String!
   type: KafkaMessageType!
@@ -11490,7 +11491,7 @@ type StartBlock {
 
 input StartBlockInput {
   cid: String!
-  paramDefinitions: [VariableDefinitionInput!]!
+  paramDefinitions: [VariableDefinitionInput!]
   uiRepresentation: BlockUIRepresentationInput
 }
 
@@ -12067,10 +12068,10 @@ input TimerBlockInput {
   behavior: TimerBehavior!
   cid: String!
   enableExpressionL: Boolean
-  entryPoint: EntryPointInput!
-  exitPoint: ExitPointInput!
+  entryPoint: EntryPointInput
+  exitPoint: ExitPointInput
   expression: String
-  params: [VariableExpressionInput!]!
+  params: [VariableExpressionInput!]
   seconds: Int
   specificDatetime: Time
   uiRepresentation: BlockUIRepresentationInput
@@ -12921,9 +12922,9 @@ input WaitForSignalBlockInput {
   blocked: Boolean!
   cid: String!
   customFilter: String
-  entryPoint: EntryPointInput!
-  exitPoint: ExitPointInput!
-  params: [VariableExpressionInput!]!
+  entryPoint: EntryPointInput
+  exitPoint: ExitPointInput
+  params: [VariableExpressionInput!]
   signalModule: SignalModule!
   type: SignalType!
   uiRepresentation: BlockUIRepresentationInput

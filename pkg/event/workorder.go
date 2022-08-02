@@ -173,12 +173,12 @@ func (e *Eventer) workOrderStatusChangedHook() ent.Hook {
 					WorkOrder: workOrder,
 				})
 				properties, _ := workOrder.Properties(ctx)
-				flowId := workOrder.QueryProperties().Where(property.HasTypeWith(propertytype.Name("flow_instance_id"))).OnlyX(ctx).IntVal
+				flowId, _ := workOrder.QueryProperties().Where(property.HasTypeWith(propertytype.Name("flow_instance_id"))).Only(ctx)
 				e.emit(ctx, Automation, &SignalEvent{
 					Module:         "WTF",
 					Type:           block.SignalTypeWOUPDATED,
 					Timestamp:      time.Now().UnixMilli() / 1000,
-					FlowInstanceId: flowId,
+					FlowInstanceId: flowId.IntVal,
 					Payload: &WOPayload{
 						WorkOrder:  workOrder,
 						Properties: properties,

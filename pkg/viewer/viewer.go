@@ -120,8 +120,9 @@ func (v *UserViewer) Role() user.Role {
 // AutomationViewer is a viewer that holds information for the automation process.
 type AutomationViewer struct {
 	viewer
-	name string
-	role user.Role
+	name       string
+	requestUrl string
+	role       user.Role
 }
 
 // Name implements Viewer.Name by returning stored name.
@@ -132,6 +133,10 @@ func (v *AutomationViewer) Name() string {
 // Role implements Viewer.Role by returning stored role.
 func (v *AutomationViewer) Role() user.Role {
 	return v.role
+}
+
+func (v *AutomationViewer) RequestUrl() string {
+	return v.requestUrl
 }
 
 // NewUser initializes and return UserViewer.
@@ -153,7 +158,8 @@ func NewAutomation(tenant, name string, role user.Role, options ...Option) *Auto
 			tenant: tenant,
 		},
 		name: name,
-		role: role}
+		role: role,
+	}
 	for _, option := range options {
 		option(v)
 	}

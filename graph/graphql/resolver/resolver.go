@@ -311,3 +311,7 @@ func (r resolver) ResourceSpecificationRelationship() generated.ResourceSpecific
 func (r resolver) FlowInstance() generated.FlowInstanceResolver {
 	return flowInstanceResolver{}
 }
+
+func (r resolver) BlockInstance() generated.BlockInstanceResolver {
+	return blockInstanceResolver{}
+}
