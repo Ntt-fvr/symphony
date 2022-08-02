@@ -737,7 +737,7 @@ type ActionScheduler implements DefaultConfig{
   resourceTypeName:String
   resourceSpecificationName:String
   actions:[ActionExecution!] @hasInverse(field: scheduler)
-  status: ActionSchedulerStatus!
+  status: ActionSchedulerStatus! @search
   resources: [Resource!]!
   actionTemplate: ActionTemplate!
 }
