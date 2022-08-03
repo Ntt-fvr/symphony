@@ -239,10 +239,15 @@ func (r blockResolver) Details(ctx context.Context, obj *ent.Block) (models.Bloc
 			Datetime:          obj.TimerSpecificDate,
 		}, nil
 	case block.TypeExecuteFlow:
+		subflow, _ := obj.Flow(ctx)
+		if err != nil {
+			return nil, err
+		}
 		return &models.ExecuteFlowBlock{
 			ExitPoint:  exitPoint,
 			EntryPoint: entryPoint,
 			Params:     obj.InputParams,
+			Flow:       subflow,
 		}, nil
 	case block.TypeWaitForSignal:
 		return &models.WaitForSignalBlock{

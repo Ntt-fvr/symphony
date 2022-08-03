@@ -1033,6 +1033,26 @@ func (bu *BlockUpdate) ClearForeachStartBlockID() *BlockUpdate {
 	return bu
 }
 
+// SetGotoType sets the goto_type field.
+func (bu *BlockUpdate) SetGotoType(bt block.GotoType) *BlockUpdate {
+	bu.mutation.SetGotoType(bt)
+	return bu
+}
+
+// SetNillableGotoType sets the goto_type field if the given value is not nil.
+func (bu *BlockUpdate) SetNillableGotoType(bt *block.GotoType) *BlockUpdate {
+	if bt != nil {
+		bu.SetGotoType(*bt)
+	}
+	return bu
+}
+
+// ClearGotoType clears the value of goto_type.
+func (bu *BlockUpdate) ClearGotoType() *BlockUpdate {
+	bu.mutation.ClearGotoType()
+	return bu
+}
+
 // SetFlowID sets the flow edge to Flow by id.
 func (bu *BlockUpdate) SetFlowID(id int) *BlockUpdate {
 	bu.mutation.SetFlowID(id)
@@ -1437,6 +1457,11 @@ func (bu *BlockUpdate) check() error {
 	if v, ok := bu.mutation.KafkaMessageType(); ok {
 		if err := block.KafkaMessageTypeValidator(v); err != nil {
 			return &ValidationError{Name: "kafka_message_type", err: fmt.Errorf("ent: validator failed for field \"kafka_message_type\": %w", err)}
+		}
+	}
+	if v, ok := bu.mutation.GotoType(); ok {
+		if err := block.GotoTypeValidator(v); err != nil {
+			return &ValidationError{Name: "goto_type", err: fmt.Errorf("ent: validator failed for field \"goto_type\": %w", err)}
 		}
 	}
 	return nil
@@ -2158,6 +2183,19 @@ func (bu *BlockUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeInt,
 			Column: block.FieldForeachStartBlockID,
+		})
+	}
+	if value, ok := bu.mutation.GotoType(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeEnum,
+			Value:  value,
+			Column: block.FieldGotoType,
+		})
+	}
+	if bu.mutation.GotoTypeCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeEnum,
+			Column: block.FieldGotoType,
 		})
 	}
 	if bu.mutation.FlowCleared() {
@@ -3544,6 +3582,26 @@ func (buo *BlockUpdateOne) ClearForeachStartBlockID() *BlockUpdateOne {
 	return buo
 }
 
+// SetGotoType sets the goto_type field.
+func (buo *BlockUpdateOne) SetGotoType(bt block.GotoType) *BlockUpdateOne {
+	buo.mutation.SetGotoType(bt)
+	return buo
+}
+
+// SetNillableGotoType sets the goto_type field if the given value is not nil.
+func (buo *BlockUpdateOne) SetNillableGotoType(bt *block.GotoType) *BlockUpdateOne {
+	if bt != nil {
+		buo.SetGotoType(*bt)
+	}
+	return buo
+}
+
+// ClearGotoType clears the value of goto_type.
+func (buo *BlockUpdateOne) ClearGotoType() *BlockUpdateOne {
+	buo.mutation.ClearGotoType()
+	return buo
+}
+
 // SetFlowID sets the flow edge to Flow by id.
 func (buo *BlockUpdateOne) SetFlowID(id int) *BlockUpdateOne {
 	buo.mutation.SetFlowID(id)
@@ -3948,6 +4006,11 @@ func (buo *BlockUpdateOne) check() error {
 	if v, ok := buo.mutation.KafkaMessageType(); ok {
 		if err := block.KafkaMessageTypeValidator(v); err != nil {
 			return &ValidationError{Name: "kafka_message_type", err: fmt.Errorf("ent: validator failed for field \"kafka_message_type\": %w", err)}
+		}
+	}
+	if v, ok := buo.mutation.GotoType(); ok {
+		if err := block.GotoTypeValidator(v); err != nil {
+			return &ValidationError{Name: "goto_type", err: fmt.Errorf("ent: validator failed for field \"goto_type\": %w", err)}
 		}
 	}
 	return nil
@@ -4667,6 +4730,19 @@ func (buo *BlockUpdateOne) sqlSave(ctx context.Context) (_node *Block, err error
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeInt,
 			Column: block.FieldForeachStartBlockID,
+		})
+	}
+	if value, ok := buo.mutation.GotoType(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeEnum,
+			Value:  value,
+			Column: block.FieldGotoType,
+		})
+	}
+	if buo.mutation.GotoTypeCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeEnum,
+			Column: block.FieldGotoType,
 		})
 	}
 	if buo.mutation.FlowCleared() {

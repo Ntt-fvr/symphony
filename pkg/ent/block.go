@@ -133,6 +133,8 @@ type Block struct {
 	ForeachKey *string `json:"foreach_key,omitempty"`
 	// ForeachStartBlockID holds the value of the "foreach_start_blockID" field.
 	ForeachStartBlockID *int `json:"foreach_start_blockID,omitempty"`
+	// GotoType holds the value of the "goto_type" field.
+	GotoType block.GotoType `json:"goto_type,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the BlockQuery when eager-loading is set.
 	Edges                          BlockEdges `json:"edges"`
@@ -336,6 +338,7 @@ func (*Block) scanValues() []interface{} {
 		&sql.NullString{}, // kafka_message_type
 		&sql.NullString{}, // foreach_key
 		&sql.NullInt64{},  // foreach_start_blockID
+		&sql.NullString{}, // goto_type
 	}
 }
 
@@ -672,7 +675,12 @@ func (b *Block) assignValues(values ...interface{}) error {
 		b.ForeachStartBlockID = new(int)
 		*b.ForeachStartBlockID = int(value.Int64)
 	}
-	values = values[53:]
+	if value, ok := values[53].(*sql.NullString); !ok {
+		return fmt.Errorf("unexpected type %T for field goto_type", values[53])
+	} else if value.Valid {
+		b.GotoType = block.GotoType(value.String)
+	}
+	values = values[54:]
 	if len(values) == len(block.ForeignKeys) {
 		if value, ok := values[0].(*sql.NullInt64); !ok {
 			return fmt.Errorf("unexpected type %T for edge-field block_sub_flow", value)
@@ -942,6 +950,8 @@ func (b *Block) String() string {
 		builder.WriteString(", foreach_start_blockID=")
 		builder.WriteString(fmt.Sprintf("%v", *v))
 	}
+	builder.WriteString(", goto_type=")
+	builder.WriteString(fmt.Sprintf("%v", b.GotoType))
 	builder.WriteByte(')')
 	return builder.String()
 }

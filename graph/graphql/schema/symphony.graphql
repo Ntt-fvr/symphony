@@ -6136,6 +6136,7 @@ type SubflowBlock {
 
 type GotoBlock {
   target: Block
+  type: GoToType!
   entryPoint: EntryPoint!
 }
 
@@ -6154,7 +6155,10 @@ type ActionBlock {
   workerType: WorkerType
 }
 
-enum GoToType{
+enum GoToType
+@goModel(
+  model: "github.com/facebookincubator/symphony/pkg/ent/block.GotoType"
+  ) {
   ORIGIN
   DESTINATION
 }

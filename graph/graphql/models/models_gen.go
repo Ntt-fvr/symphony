@@ -1402,6 +1402,7 @@ type GeneralFilterInput struct {
 
 type GotoBlock struct {
 	Target     *ent.Block      `json:"target"`
+	Type       block.GotoType  `json:"type"`
 	EntryPoint *ent.EntryPoint `json:"entryPoint"`
 }
 
@@ -1410,7 +1411,7 @@ func (GotoBlock) IsBlockDetails() {}
 type GotoBlockInput struct {
 	Cid              string                            `json:"cid"`
 	TargetBlockCid   *string                           `json:"targetBlockCid"`
-	Type             GoToType                          `json:"type"`
+	Type             block.GotoType                    `json:"type"`
 	UIRepresentation *flowschema.BlockUIRepresentation `json:"uiRepresentation"`
 }
 
@@ -2706,47 +2707,6 @@ func (e *FormulaFilterType) UnmarshalGQL(v interface{}) error {
 }
 
 func (e FormulaFilterType) MarshalGQL(w io.Writer) {
-	fmt.Fprint(w, strconv.Quote(e.String()))
-}
-
-type GoToType string
-
-const (
-	GoToTypeOrigin      GoToType = "ORIGIN"
-	GoToTypeDestination GoToType = "DESTINATION"
-)
-
-var AllGoToType = []GoToType{
-	GoToTypeOrigin,
-	GoToTypeDestination,
-}
-
-func (e GoToType) IsValid() bool {
-	switch e {
-	case GoToTypeOrigin, GoToTypeDestination:
-		return true
-	}
-	return false
-}
-
-func (e GoToType) String() string {
-	return string(e)
-}
-
-func (e *GoToType) UnmarshalGQL(v interface{}) error {
-	str, ok := v.(string)
-	if !ok {
-		return fmt.Errorf("enums must be strings")
-	}
-
-	*e = GoToType(str)
-	if !e.IsValid() {
-		return fmt.Errorf("%s is not a valid GoToType", str)
-	}
-	return nil
-}
-
-func (e GoToType) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 
