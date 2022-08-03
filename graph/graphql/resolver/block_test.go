@@ -473,7 +473,7 @@ func TestWaitForSignalBlock(t *testing.T) {
 	require.Equal(t, bool(false), waitForSignal.Blocked)
 }
 
-// Error Unknown
+// Error on connectionTimeOut at details
 func TestInvokeRestAPIBlock(t *testing.T) {
 	r := newTestResolver(t)
 	defer r.Close()
@@ -494,8 +494,9 @@ func TestInvokeRestAPIBlock(t *testing.T) {
 		Headers: []*flowschema.VariableValue{
 			nil, &flowschema.VariableValue{VariableDefinitionKey: body, Value: body},
 		},
-		URL:    "localhost",
-		Method: block.URLMethodGET,
+		URL:              "localhost",
+		Method:           block.URLMethodGET,
+		BasicDefinitions: &models.BaseBlockInput{},
 	})
 	require.NoError(t, err)
 	details, err := br.Details(ctx, b)
@@ -507,6 +508,7 @@ func TestInvokeRestAPIBlock(t *testing.T) {
 	require.Equal(t, block.URLMethodGET, invokeRestAPI.Method)
 }
 
+// Error flow details on subFLow
 func TestExecuteFLowBlockBlock(t *testing.T) {
 	r := newTestResolver(t)
 	defer r.Close()
@@ -527,13 +529,12 @@ func TestExecuteFLowBlockBlock(t *testing.T) {
 	require.NoError(t, err)
 	details, err := br.Details(ctx, b)
 	require.NoError(t, err)
-	_, ok := details.(*models.ExecuteFlowBlock)
+	executeFlow, ok := details.(*models.ExecuteFlowBlock)
 	require.True(t, ok)
 	require.Equal(t, "executeFlow", b.Cid)
-	//require.Equal(t, subflow.ID, executeFlow.Flow.ID)
+	require.Equal(t, subflow.ID, executeFlow.Flow)
 }
 
-// Error Unknown
 func TestKafkaBlock(t *testing.T) {
 	r := newTestResolver(t)
 	defer r.Close()
@@ -550,9 +551,10 @@ func TestKafkaBlock(t *testing.T) {
 		Brokers: []string{
 			"test",
 		},
-		Topic:   "kafkaTopic",
-		Message: "kafkaMessage",
-		Type:    enum.KafkaMessageTypeInput,
+		Topic:            "kafkaTopic",
+		Message:          "kafkaMessage",
+		Type:             enum.KafkaMessageTypeInput,
+		BasicDefinitions: &models.BaseBlockInput{},
 	})
 	require.NoError(t, err)
 	details, err := br.Details(ctx, b)
