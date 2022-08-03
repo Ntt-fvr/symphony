@@ -13,6 +13,7 @@ import type {AddConfigurationParameterTypeMutationVariables} from '../../mutatio
 import type {AddEditResourceSpecificationQuery} from './__generated__/AddEditResourceSpecificationQuery.graphql';
 import type {AddResourceSpecificationMutationVariables} from '../../mutations/__generated__/AddResourceSpecificationMutation.graphql';
 import type {EditResourceSpecificationMutationVariables} from '../../mutations/__generated__/EditResourceSpecificationMutation.graphql';
+import type {EditResourceSpecificationRelationshipMutationVariables} from '../../mutations/__generated__/EditResourceSpecificationRelationshipMutation.graphql';
 import type {MutationCallbacks} from '../../mutations/MutationCallbacks';
 import type {ResourceSpecifications} from './EditResourceTypeItem';
 
@@ -25,6 +26,7 @@ import Card from '@symphony/design-system/components/Card/Card';
 import CardHeader from '@symphony/design-system/components/Card/CardHeader';
 import ConfigureTitleSubItem from '../assurance/common/ConfigureTitleSubItem';
 import EditResourceSpecificationMutation from '../../mutations/EditResourceSpecificationMutation';
+import EditResourceSpecificationRelationshipMutation from '../../mutations/EditResourceSpecificationRelationshipMutation';
 import ExpandingPanel from '@fbcnms/ui/components/ExpandingPanel';
 import ExperimentalParametersTypesTable from '../form/ExperimentalParametersTypesTable';
 import ExperimentalPropertyTypesTable from '../form/ExperimentalPropertyTypesTable';
@@ -38,14 +40,12 @@ import SaveDialogConfirm from './SaveDialogConfirm';
 import TableConfigureAction from '../action_catalog/TableConfigureAction';
 import TextField from '@material-ui/core/TextField';
 import UpdateonfigurationParameterTypeMutation from '../../mutations/UpdateConfigurationParameterType';
-import fbt from 'fbt';
 import inventoryTheme from '../../common/theme';
 import {camelCase, omit, startCase} from 'lodash';
 import {convertParameterTypeToMutationInput} from '../../common/ParameterType';
 import {convertPropertyTypeToMutationInput} from '../../common/PropertyType';
 import {convertTableTypeToMutationInput} from '../context/TableTypeState';
 import {graphql} from 'relay-runtime';
-import {isTempId} from '../../common/EntUtils';
 import {makeStyles} from '@material-ui/styles';
 import {toMutableParameterType} from '../../common/ParameterType';
 import {toMutablePropertyType} from '../../common/PropertyType';
@@ -156,14 +156,14 @@ export const AddEditResourceSpecification = (props: Props) => {
     filterData,
     vendorData,
   } = props;
+  const classes = useStyles();
   const [dialogSaveForm, setDialogSaveForm] = useState(false);
   const [dialogCancelForm, setDialogCancelForm] = useState(false);
-
-  const classes = useStyles();
 
   const [configurationParameters, setConfigurationParameters] = useState(
     useLazyLoadQuery<AddEditResourceSpecificationQuery>(
       ConfigurationParameters,
+      {},
     ),
   );
 
@@ -205,12 +205,6 @@ export const AddEditResourceSpecification = (props: Props) => {
   const [actionTypes, actionTypesTableDispatcher] = useActionTypesReducer(
     (filterActionTemplate ?? []).filter(Boolean),
   );
-
-  const filterEdit = parameterTypes.filter(item => item.name !== item.oldName);
-
-  const editOneToOne = filterEdit.map(item => item);
-
-  const newParameter = parameterTypes?.filter(item => isTempId(item?.id));
 
   const nameEdit = useFormInput(dataForm.name);
 
@@ -355,6 +349,14 @@ export const AddEditResourceSpecification = (props: Props) => {
         });
       },
     };
+    const relationshipItems: EditResourceSpecificationRelationshipMutationVariables = {
+      input: convertTableTypeToMutationInput(dataCallback),
+    };
+    EditResourceSpecificationRelationshipMutation(relationshipItems, {
+      onCompleted: () => {
+        isCompleted();
+      },
+    });
     EditResourceSpecificationMutation(variables, response);
   }
 
@@ -368,10 +370,8 @@ export const AddEditResourceSpecification = (props: Props) => {
         alignItems="center">
         <Grid item xs>
           <ConfigureTitleSubItem
-            title={
-              fbt('Resources/', '') + ` ${editMode ? dataForm.name + '/' : ''}`
-            }
-            tag={' Resource specification'}
+            title={` ${editMode ? dataForm?.resourceType?.name + '/' : ''}`}
+            tag={dataForm.name ?? ''}
           />
         </Grid>
         <Grid>

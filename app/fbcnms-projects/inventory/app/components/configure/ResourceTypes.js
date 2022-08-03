@@ -59,6 +59,7 @@ const ResourceTypesQuery = graphql`
           }
           resourceType {
             id
+            name
             resourceTypeClass
           }
           resourcePropertyTypes {

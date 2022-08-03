@@ -31,6 +31,7 @@ import {camelCase, startCase} from 'lodash';
 import {getPropertyValue} from '../../common/Property';
 import {graphql} from 'relay-runtime';
 import {makeStyles} from '@material-ui/styles';
+import {useHistory} from 'react-router-dom';
 const useStyles = makeStyles(theme => ({
   root: {
     height: 'calc(100% - 92px)',
@@ -116,6 +117,16 @@ const ResourceCardListQuery = graphql`
     }
     queryCMVersion {
       id
+      status
+      resource {
+        id
+        name
+        locatedIn
+        resourceProperties {
+          id
+          resourcePropertyType
+        }
+      }
       parameters {
         id
         stringValue
@@ -136,15 +147,13 @@ const ResourceCardListQuery = graphql`
           type
         }
       }
-      status
-      resource {
-        id
-        name
-        resourceProperties {
+    }
+    locations {
+      edges {
+        node {
           id
-          resourcePropertyType
+          name
         }
-        locatedIn
       }
     }
   }
@@ -167,6 +176,11 @@ const ResourcePropertiesCard = (props: Props) => {
   const classes = useStyles();
   const [selectedTab, setSelectedTab] = useState('details');
   const [openDialog, setOpenDialog] = useState(false);
+  const history = useHistory();
+
+  const onClickHistory = id => {
+    history.push(`/inventory/inventory?location=${id}`);
+  };
 
   const validateForm = (title, data) => {
     return (
@@ -193,6 +207,11 @@ const ResourcePropertiesCard = (props: Props) => {
       }}
       render={resourceData => {
         const getResourceData = resourceData.queryResource[0];
+
+        const filterLocationById = resourceData.locations.edges
+          .map(item => item.node)
+          .filter(item => item.id === getResourceData.locatedIn);
+
         const filterSpecificationById = resourceData.resourceSpecifications.edges
           .map(item => item?.node)
           .filter(item => item.id === getResourceData.resourceSpecification);
@@ -225,6 +244,7 @@ const ResourcePropertiesCard = (props: Props) => {
           (item, index) => {
             return {
               ...item,
+              location: filterLocationById[index],
               resourceTypeName:
                 filterSpecificationById[index].resourceType.name,
               resourceSName: filterSpecificationById[index].name,
@@ -245,11 +265,12 @@ const ResourcePropertiesCard = (props: Props) => {
                   <Breadcrumbs
                     breadcrumbs={[
                       {
-                        id: 'Location',
-                        name: 'Location',
+                        id: item.location.id,
+                        name: item.location.name,
+                        onClick: () => onClickHistory(item.location.id),
                       },
                       {
-                        id: `OLT_1212323434`,
+                        id: item.id,
                         name: item.name,
                       },
                     ]}
