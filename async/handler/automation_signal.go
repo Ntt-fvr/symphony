@@ -51,8 +51,8 @@ func HandleAutomationSignal(ctx context.Context, _ log.Logger, evt ev.EventObjec
 			for _, blockInstance := range blockInstances {
 				block, _ := blockInstance.Block(ctx)
 				//TODO: Implementar busqueda de bloque con EL
+				fmt.Println(block)
 				sendSignalRequestToFlow(flowInstance.ID, entry)
-				//fmt.Println(block)
 			}
 		}
 	}
