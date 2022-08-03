@@ -8641,7 +8641,7 @@ type Mutation {
   editIsListable(input: EditIsListableInput!): PropertyType!
   addResourceSpecificationRelationshipList(input: [AddResourceSpecificationRelationshipInput!]!):[ResourceSpecificationRelationship!]!
   addResourceSpecificationRelationship(input: AddResourceSpecificationRelationshipInput!): ResourceSpecificationRelationship!
-  editResourceSpecificationRelationship(input: EditResourceSpecificationRelationshipInput!): ResourceSpecificationRelationship!
+  editResourceSpecificationRelationship(input: [EditResourceSpecificationRelationshipInput!]!): [ResourceSpecificationRelationship!]!
   removeResourceSpecificationRelationship(id: ID!): ID!
   addResourceSpecificationItems(input: AddResourceSpecificationItemsInput!): ResourceSpecificationItems!
   editResourceSpecificationItems(input: EditResourceSpecificationItemsInput!): ResourceSpecificationItems!
@@ -9996,9 +9996,10 @@ input AddResourceSpecificationRelationshipInput {
 }
 
 input EditResourceSpecificationRelationshipInput {
-  id: ID!
+  id: ID
   name: String!
   resourceSpecification: ID
+  resourceSpecificationList: [ID]
 }
 
 enum ResourceSpecificationRelationshipFilterType {

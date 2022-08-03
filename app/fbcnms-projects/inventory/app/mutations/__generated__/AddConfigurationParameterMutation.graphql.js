@@ -240,6 +240,8 @@ export type ResourcePropertyRef = {|
   floatValue?: ?number,
   id?: ?string,
   intValue?: ?number,
+  isInstanceProperty?: ?boolean,
+  isMandatory?: ?boolean,
   latitudeValue?: ?number,
   longitudeValue?: ?number,
   rangeFromValue?: ?number,

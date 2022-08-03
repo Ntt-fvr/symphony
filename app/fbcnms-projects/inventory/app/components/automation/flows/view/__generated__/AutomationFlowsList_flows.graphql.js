@@ -16,7 +16,7 @@
 import type { ReaderFragment } from 'relay-runtime';
 type AutomationFlowCard_flow$ref = any;
 export type FlowNewInstancesPolicy = "DISABLED" | "ENABLED" | "%future added value";
-export type FlowStatus = "ARCHIVED" | "DRAFT" | "ON_HOLD" | "PUBLISHED" | "UNPUBLISHED" | "%future added value";
+export type FlowStatus = "ARCHIVED" | "DELETED" | "DRAFT" | "ON_HOLD" | "PUBLISHED" | "%future added value";
 import type { FragmentReference } from "relay-runtime";
 declare export opaque type AutomationFlowsList_flows$ref: FragmentReference;
 declare export opaque type AutomationFlowsList_flows$fragmentType: AutomationFlowsList_flows$ref;

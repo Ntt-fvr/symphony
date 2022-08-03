@@ -11,7 +11,9 @@ import type {
   AddRequestChangeMutationResponse,
   AddRequestChangeMutationVariables,
 } from '../../mutations/__generated__/AddRequestChangeMutation.graphql';
+import type {FlowStartMutationVariables} from '../../mutations/__generated__/FlowStartMutation.graphql';
 
+import FlowStartMutation from '../../mutations/FlowStartMutation';
 import AddRequestChangeMutation from '../../mutations/AddRequestChangeMutation';
 import Button from '@material-ui/core/Button';
 import Card from '@symphony/design-system/components/Card/Card';
@@ -31,6 +33,8 @@ import {getGraphError} from '../../common/EntUtils';
 import {makeStyles} from '@material-ui/styles';
 import {useEnqueueSnackbar} from '@fbcnms/ui/hooks/useSnackbar';
 import {useMainContext} from './../../components/MainContext';
+import {useLazyLoadQuery} from 'react-relay/hooks';
+import {graphql} from 'relay-runtime';
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -84,6 +88,23 @@ const TYPES = {
 
 const DATE_FORMAT = 'YYYY-MM-DD[T]HH:mm:ss';
 
+const DialogStatusQuery = graphql`
+  query DialogStatusQuery($filterBy: [FlowFilterInput!]) {
+    flows(filterBy: $filterBy) {
+      edges {
+        node {
+          id
+          name
+          status
+          newInstancesPolicy
+          cmType
+        }
+        cursor
+      }
+    }
+  }
+`;
+
 const DialogStatus = (props: Props) => {
   const {
     onClose,
@@ -98,6 +119,15 @@ const DialogStatus = (props: Props) => {
   } = props;
   const enqueueSnackbar = useEnqueueSnackbar();
   const {me} = useMainContext();
+  const queryResourceParameter = useLazyLoadQuery(DialogStatusQuery, {
+    filterBy: [
+      {
+        filterType: 'FLOW_CM_TYPE',
+        operator: 'IS',
+        cmType: 'GENERAL_CM',
+      },
+    ],
+  });
 
   const _enqueueError = useCallback(
     (message: string) => {
@@ -167,14 +197,34 @@ const DialogStatus = (props: Props) => {
         if (errors && errors[0]) {
           _enqueueError(errors[0].message);
         } else {
-          // navigate to main page
-          onClick();
+          
+          const createdTime = moment(new Date()).format(
+            'YYYY-MM-DD[T]HH:mm:ssZ',
+          );
+          const data = {
+            flowID: queryResourceParameter.flows.edges[0].node.id,
+            params: [
+              {
+                variableDefinitionKey: 'changeId',
+                value: response.addChangeRequest.changeRequest[0].id,
+              },
+            ],
+            startDate: createdTime,
+          };
+
+          const variables: FlowStartMutationVariables = {
+            input: data,
+          };
+          FlowStartMutation(variables, {
+            onCompleted: () => {},
+          });
         }
       },
       onError: (error: Error) => {
         _enqueueError(getGraphError(error));
       },
     };
+    onClick();
 
     AddRequestChangeMutation(variables, callbacks);
   };

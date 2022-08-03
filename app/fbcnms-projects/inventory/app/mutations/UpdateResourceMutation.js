@@ -12,9 +12,10 @@ import type {
   UpdateResourceMutation,
   UpdateResourceMutationResponse,
   UpdateResourceMutationVariables,
-} from './__generated__/UpdateResourceMutation.graphql';
+} from './__generated__/UpdateResourceMutation.graphql.js';
 
 import type {MutationCallbacks} from './MutationCallbacks.js';
+
 import type {SelectorStoreUpdater} from 'relay-runtime';
 
 import RelayEnvironment from '../common/RelayEnvironment.js';
@@ -27,6 +28,28 @@ const mutation = graphql`
       resource {
         id
         name
+        externalId
+        locatedIn
+        resourceSpecification
+        isDeleted
+        lifecycleStatus
+        planningSubStatus
+        typePlanningSubStatus
+        usageSubStatus
+        operationalSubStatus
+        resourceProperties {
+          booleanValue
+          floatValue
+          id
+          intValue
+          latitudeValue
+          longitudeValue
+          rangeFromValue
+          rangeToValue
+          rawValue
+          stringValue
+          resourcePropertyType
+        }
         logicalLinks {
           name
         }

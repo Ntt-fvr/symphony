@@ -15,7 +15,7 @@
 /*::
 import type { ConcreteRequest } from 'relay-runtime';
 export type ActionTypeId = "update_inventory" | "update_workforce" | "work_order" | "worker" | "%future added value";
-export type AuthType = "Basic" | "ODIC" | "%future added value";
+export type AuthType = "BASIC" | "ODIC" | "%future added value";
 export type EntryPointRole = "DEFAULT" | "%future added value";
 export type ExitPointRole = "CHOICE" | "DEFAULT" | "%future added value";
 export type GoToType = "DESTINATION" | "ORIGIN" | "%future added value";
@@ -76,7 +76,7 @@ export type ChoiceBlockInput = {|
   basicDefinitions: BaseBlockInput,
   cid: string,
   defaultExitPoint?: ?ExitPointInput,
-  entryPoint: EntryPointInput,
+  entryPoint?: ?EntryPointInput,
   routes?: ?$ReadOnlyArray<DecisionRouteInput>,
   uiRepresentation?: ?BlockUIRepresentationInput,
 |};
@@ -135,8 +135,8 @@ export type VariableDefinitionInput = {|
 export type ExecuteFlowBlockInput = {|
   basicDefinitions: BaseBlockInput,
   cid: string,
-  entryPoint: EntryPointInput,
-  exitPoint: ExitPointInput,
+  entryPoint?: ?EntryPointInput,
+  exitPoint?: ?ExitPointInput,
   flow: string,
   params: $ReadOnlyArray<VariableExpressionInput>,
   uiRepresentation?: ?BlockUIRepresentationInput,
@@ -155,12 +155,12 @@ export type InvokeRestAPIBlockInput = {|
   clientId?: ?string,
   clientSecret?: ?string,
   connectionTimeOut: number,
-  entryPoint: EntryPointInput,
-  exitPoint: ExitPointInput,
+  entryPoint?: ?EntryPointInput,
+  exitPoint?: ?ExitPointInput,
   headers: $ReadOnlyArray<?VariableValueInput>,
   method: UrlMethod,
   oidcUrl?: ?string,
-  params: $ReadOnlyArray<VariableExpressionInput>,
+  params?: ?$ReadOnlyArray<VariableExpressionInput>,
   password?: ?string,
   uiRepresentation?: ?BlockUIRepresentationInput,
   url: string,
@@ -174,8 +174,8 @@ export type KafkaBlockInput = {|
   basicDefinitions: BaseBlockInput,
   brokers?: ?$ReadOnlyArray<string>,
   cid: string,
-  entryPoint: EntryPointInput,
-  exitPoint: ExitPointInput,
+  entryPoint?: ?EntryPointInput,
+  exitPoint?: ?ExitPointInput,
   message: string,
   topic: string,
   type: KafkaMessageType,
@@ -183,17 +183,17 @@ export type KafkaBlockInput = {|
 |};
 export type StartBlockInput = {|
   cid: string,
-  paramDefinitions: $ReadOnlyArray<VariableDefinitionInput>,
+  paramDefinitions?: ?$ReadOnlyArray<VariableDefinitionInput>,
   uiRepresentation?: ?BlockUIRepresentationInput,
 |};
 export type TimerBlockInput = {|
   behavior: TimerBehavior,
   cid: string,
   enableExpressionL?: ?boolean,
-  entryPoint: EntryPointInput,
-  exitPoint: ExitPointInput,
+  entryPoint?: ?EntryPointInput,
+  exitPoint?: ?ExitPointInput,
   expression?: ?string,
-  params: $ReadOnlyArray<VariableExpressionInput>,
+  params?: ?$ReadOnlyArray<VariableExpressionInput>,
   seconds?: ?number,
   specificDatetime?: ?any,
   uiRepresentation?: ?BlockUIRepresentationInput,
@@ -209,9 +209,9 @@ export type WaitForSignalBlockInput = {|
   blocked: boolean,
   cid: string,
   customFilter?: ?string,
-  entryPoint: EntryPointInput,
-  exitPoint: ExitPointInput,
-  params: $ReadOnlyArray<VariableExpressionInput>,
+  entryPoint?: ?EntryPointInput,
+  exitPoint?: ?ExitPointInput,
+  params?: ?$ReadOnlyArray<VariableExpressionInput>,
   signalModule: SignalModule,
   type: SignalType,
   uiRepresentation?: ?BlockUIRepresentationInput,
