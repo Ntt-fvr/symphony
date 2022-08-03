@@ -23,6 +23,7 @@ func updateBlockActivitiesCreate(ctx context.Context, entry *event.LogEntry) err
 		SetActivityType(automationactivity.ActivityTypeCreation).
 		SetAutomationEntityType(automationactivity.AutomationEntityTypeBlockInstance).
 		SetNewValue(strconv.FormatInt(entry.Time.Unix(), 10)).
+		SetBlockInstanceID(entry.CurrState.ID).
 		SetAuthorID(*userID).
 		Save(ctx)
 	if err != nil {
@@ -54,7 +55,7 @@ func updateBlockActivitiesUpdate(ctx context.Context, entry *event.LogEntry) err
 func HandleBlockActivities(ctx context.Context, _ log.Logger, evt ev.EventObject) error {
 	var err error
 	entry, ok := evt.(event.LogEntry)
-	if !ok || entry.Type != ent.TypeWorkOrder {
+	if !ok || entry.Type != ent.TypeBlockInstance {
 		return nil
 	}
 	if entry.Operation.Is(ent.OpCreate) {

@@ -163,14 +163,14 @@ func CopyBlocks(ctx context.Context, blocksQuery *ent.BlockQuery, addToFlow func
 				SetNillableOidcURL(&blk.OidcURL)
 		case block.TypeTimer:
 			blockCreate = blockCreate.SetEnableTimerExpression(*blk.EnableTimerExpression).
-				SetTimerExpression(*blk.TimerExpression).
+				SetNillableTimerExpression(blk.TimerExpression).
 				SetTimerBehavior(*blk.TimerBehavior).
 				SetNillableSeconds(blk.Seconds).
 				SetNillableTimerSpecificDate(blk.TimerSpecificDate)
 		case block.TypeWaitForSignal:
 			blockCreate = blockCreate.SetSignalModule(blk.SignalModule).
 				SetSignalType(blk.SignalType).
-				SetCustomFilter(blk.CustomFilter).
+				SetNillableCustomFilter(&blk.CustomFilter).
 				SetBlockFlow(blk.BlockFlow)
 		case block.TypeKafka:
 			blockCreate = blockCreate.SetKafkaBrokers(blk.KafkaBrokers).

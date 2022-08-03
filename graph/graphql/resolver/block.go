@@ -236,6 +236,7 @@ func (r blockResolver) Details(ctx context.Context, obj *ent.Block) (models.Bloc
 			Expression:        obj.TimerExpression,
 			EnableExpressionL: obj.EnableTimerExpression,
 			Seconds:           obj.Seconds,
+			Datetime:          obj.TimerSpecificDate,
 		}, nil
 	case block.TypeExecuteFlow:
 		return &models.ExecuteFlowBlock{

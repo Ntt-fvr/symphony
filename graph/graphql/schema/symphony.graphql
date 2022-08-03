@@ -6205,7 +6205,7 @@ enum  AuthType
   model: "github.com/facebookincubator/symphony/pkg/ent/block.AuthType"
   ) {
   BASIC
-  ODIC
+  OIDC
 }
 
 type InvokeRestAPIBlock {

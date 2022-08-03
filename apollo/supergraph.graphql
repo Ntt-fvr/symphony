@@ -1,3 +1,4 @@
+
 schema
   @core(feature: "https://specs.apollo.dev/core/v0.2"),
   @core(feature: "https://specs.apollo.dev/join/v0.1", for: EXECUTION)
@@ -1927,7 +1928,7 @@ input AuthRule {
 
 enum AuthType {
   BASIC
-  ODIC
+  OIDC
 }
 
 type AutomationActivity implements Node {
