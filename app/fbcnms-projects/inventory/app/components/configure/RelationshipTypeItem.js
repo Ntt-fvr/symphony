@@ -181,7 +181,8 @@ export default function RelationshipTypeItem(props: Props) {
 
   return (
     <>
-      {!getdataAllRelationShips.length ? null : (
+      {!getdataAllRelationShips.length ||
+      getdataAllRelationShips.toString() === 'EQUIPMENT' ? null : (
         <Grid className={classes.relationship} item xs={12}>
           <Text weight={'bold'} variant={'h6'}>
             Relationship types definition
