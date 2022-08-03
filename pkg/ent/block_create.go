@@ -732,6 +732,34 @@ func (bc *BlockCreate) SetNillableGotoType(bt *block.GotoType) *BlockCreate {
 	return bc
 }
 
+// SetAddInputToOutput sets the add_input_to_output field.
+func (bc *BlockCreate) SetAddInputToOutput(b bool) *BlockCreate {
+	bc.mutation.SetAddInputToOutput(b)
+	return bc
+}
+
+// SetNillableAddInputToOutput sets the add_input_to_output field if the given value is not nil.
+func (bc *BlockCreate) SetNillableAddInputToOutput(b *bool) *BlockCreate {
+	if b != nil {
+		bc.SetAddInputToOutput(*b)
+	}
+	return bc
+}
+
+// SetAdditionMethod sets the addition_method field.
+func (bc *BlockCreate) SetAdditionMethod(bm block.AdditionMethod) *BlockCreate {
+	bc.mutation.SetAdditionMethod(bm)
+	return bc
+}
+
+// SetNillableAdditionMethod sets the addition_method field if the given value is not nil.
+func (bc *BlockCreate) SetNillableAdditionMethod(bm *block.AdditionMethod) *BlockCreate {
+	if bm != nil {
+		bc.SetAdditionMethod(*bm)
+	}
+	return bc
+}
+
 // SetFlowID sets the flow edge to Flow by id.
 func (bc *BlockCreate) SetFlowID(id int) *BlockCreate {
 	bc.mutation.SetFlowID(id)
@@ -983,6 +1011,10 @@ func (bc *BlockCreate) defaults() {
 		v := block.DefaultBlockFlow
 		bc.mutation.SetBlockFlow(v)
 	}
+	if _, ok := bc.mutation.AddInputToOutput(); !ok {
+		v := block.DefaultAddInputToOutput
+		bc.mutation.SetAddInputToOutput(v)
+	}
 }
 
 // check runs all checks and user-defined validators on the builder.
@@ -1077,6 +1109,11 @@ func (bc *BlockCreate) check() error {
 	if v, ok := bc.mutation.GotoType(); ok {
 		if err := block.GotoTypeValidator(v); err != nil {
 			return &ValidationError{Name: "goto_type", err: fmt.Errorf("ent: validator failed for field \"goto_type\": %w", err)}
+		}
+	}
+	if v, ok := bc.mutation.AdditionMethod(); ok {
+		if err := block.AdditionMethodValidator(v); err != nil {
+			return &ValidationError{Name: "addition_method", err: fmt.Errorf("ent: validator failed for field \"addition_method\": %w", err)}
 		}
 	}
 	return nil
@@ -1537,6 +1574,22 @@ func (bc *BlockCreate) createSpec() (*Block, *sqlgraph.CreateSpec) {
 			Column: block.FieldGotoType,
 		})
 		_node.GotoType = value
+	}
+	if value, ok := bc.mutation.AddInputToOutput(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Value:  value,
+			Column: block.FieldAddInputToOutput,
+		})
+		_node.AddInputToOutput = &value
+	}
+	if value, ok := bc.mutation.AdditionMethod(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeEnum,
+			Value:  value,
+			Column: block.FieldAdditionMethod,
+		})
+		_node.AdditionMethod = value
 	}
 	if nodes := bc.mutation.FlowIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

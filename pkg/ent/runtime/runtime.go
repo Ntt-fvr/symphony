@@ -316,6 +316,10 @@ func init() {
 	blockDescBlockFlow := blockFields[44].Descriptor()
 	// block.DefaultBlockFlow holds the default value on creation for the block_flow field.
 	block.DefaultBlockFlow = blockDescBlockFlow.Default.(bool)
+	// blockDescAddInputToOutput is the schema descriptor for add_input_to_output field.
+	blockDescAddInputToOutput := blockFields[52].Descriptor()
+	// block.DefaultAddInputToOutput holds the default value on creation for the add_input_to_output field.
+	block.DefaultAddInputToOutput = blockDescAddInputToOutput.Default.(bool)
 	blockinstanceMixin := schema.BlockInstance{}.Mixin()
 	blockinstance.Policy = privacy.NewPolicies(schema.BlockInstance{})
 	blockinstance.Hooks[0] = func(next ent.Mutator) ent.Mutator {

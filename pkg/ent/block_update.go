@@ -1053,6 +1053,46 @@ func (bu *BlockUpdate) ClearGotoType() *BlockUpdate {
 	return bu
 }
 
+// SetAddInputToOutput sets the add_input_to_output field.
+func (bu *BlockUpdate) SetAddInputToOutput(b bool) *BlockUpdate {
+	bu.mutation.SetAddInputToOutput(b)
+	return bu
+}
+
+// SetNillableAddInputToOutput sets the add_input_to_output field if the given value is not nil.
+func (bu *BlockUpdate) SetNillableAddInputToOutput(b *bool) *BlockUpdate {
+	if b != nil {
+		bu.SetAddInputToOutput(*b)
+	}
+	return bu
+}
+
+// ClearAddInputToOutput clears the value of add_input_to_output.
+func (bu *BlockUpdate) ClearAddInputToOutput() *BlockUpdate {
+	bu.mutation.ClearAddInputToOutput()
+	return bu
+}
+
+// SetAdditionMethod sets the addition_method field.
+func (bu *BlockUpdate) SetAdditionMethod(bm block.AdditionMethod) *BlockUpdate {
+	bu.mutation.SetAdditionMethod(bm)
+	return bu
+}
+
+// SetNillableAdditionMethod sets the addition_method field if the given value is not nil.
+func (bu *BlockUpdate) SetNillableAdditionMethod(bm *block.AdditionMethod) *BlockUpdate {
+	if bm != nil {
+		bu.SetAdditionMethod(*bm)
+	}
+	return bu
+}
+
+// ClearAdditionMethod clears the value of addition_method.
+func (bu *BlockUpdate) ClearAdditionMethod() *BlockUpdate {
+	bu.mutation.ClearAdditionMethod()
+	return bu
+}
+
 // SetFlowID sets the flow edge to Flow by id.
 func (bu *BlockUpdate) SetFlowID(id int) *BlockUpdate {
 	bu.mutation.SetFlowID(id)
@@ -1462,6 +1502,11 @@ func (bu *BlockUpdate) check() error {
 	if v, ok := bu.mutation.GotoType(); ok {
 		if err := block.GotoTypeValidator(v); err != nil {
 			return &ValidationError{Name: "goto_type", err: fmt.Errorf("ent: validator failed for field \"goto_type\": %w", err)}
+		}
+	}
+	if v, ok := bu.mutation.AdditionMethod(); ok {
+		if err := block.AdditionMethodValidator(v); err != nil {
+			return &ValidationError{Name: "addition_method", err: fmt.Errorf("ent: validator failed for field \"addition_method\": %w", err)}
 		}
 	}
 	return nil
@@ -2196,6 +2241,32 @@ func (bu *BlockUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeEnum,
 			Column: block.FieldGotoType,
+		})
+	}
+	if value, ok := bu.mutation.AddInputToOutput(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Value:  value,
+			Column: block.FieldAddInputToOutput,
+		})
+	}
+	if bu.mutation.AddInputToOutputCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Column: block.FieldAddInputToOutput,
+		})
+	}
+	if value, ok := bu.mutation.AdditionMethod(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeEnum,
+			Value:  value,
+			Column: block.FieldAdditionMethod,
+		})
+	}
+	if bu.mutation.AdditionMethodCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeEnum,
+			Column: block.FieldAdditionMethod,
 		})
 	}
 	if bu.mutation.FlowCleared() {
@@ -3602,6 +3673,46 @@ func (buo *BlockUpdateOne) ClearGotoType() *BlockUpdateOne {
 	return buo
 }
 
+// SetAddInputToOutput sets the add_input_to_output field.
+func (buo *BlockUpdateOne) SetAddInputToOutput(b bool) *BlockUpdateOne {
+	buo.mutation.SetAddInputToOutput(b)
+	return buo
+}
+
+// SetNillableAddInputToOutput sets the add_input_to_output field if the given value is not nil.
+func (buo *BlockUpdateOne) SetNillableAddInputToOutput(b *bool) *BlockUpdateOne {
+	if b != nil {
+		buo.SetAddInputToOutput(*b)
+	}
+	return buo
+}
+
+// ClearAddInputToOutput clears the value of add_input_to_output.
+func (buo *BlockUpdateOne) ClearAddInputToOutput() *BlockUpdateOne {
+	buo.mutation.ClearAddInputToOutput()
+	return buo
+}
+
+// SetAdditionMethod sets the addition_method field.
+func (buo *BlockUpdateOne) SetAdditionMethod(bm block.AdditionMethod) *BlockUpdateOne {
+	buo.mutation.SetAdditionMethod(bm)
+	return buo
+}
+
+// SetNillableAdditionMethod sets the addition_method field if the given value is not nil.
+func (buo *BlockUpdateOne) SetNillableAdditionMethod(bm *block.AdditionMethod) *BlockUpdateOne {
+	if bm != nil {
+		buo.SetAdditionMethod(*bm)
+	}
+	return buo
+}
+
+// ClearAdditionMethod clears the value of addition_method.
+func (buo *BlockUpdateOne) ClearAdditionMethod() *BlockUpdateOne {
+	buo.mutation.ClearAdditionMethod()
+	return buo
+}
+
 // SetFlowID sets the flow edge to Flow by id.
 func (buo *BlockUpdateOne) SetFlowID(id int) *BlockUpdateOne {
 	buo.mutation.SetFlowID(id)
@@ -4011,6 +4122,11 @@ func (buo *BlockUpdateOne) check() error {
 	if v, ok := buo.mutation.GotoType(); ok {
 		if err := block.GotoTypeValidator(v); err != nil {
 			return &ValidationError{Name: "goto_type", err: fmt.Errorf("ent: validator failed for field \"goto_type\": %w", err)}
+		}
+	}
+	if v, ok := buo.mutation.AdditionMethod(); ok {
+		if err := block.AdditionMethodValidator(v); err != nil {
+			return &ValidationError{Name: "addition_method", err: fmt.Errorf("ent: validator failed for field \"addition_method\": %w", err)}
 		}
 	}
 	return nil
@@ -4743,6 +4859,32 @@ func (buo *BlockUpdateOne) sqlSave(ctx context.Context) (_node *Block, err error
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeEnum,
 			Column: block.FieldGotoType,
+		})
+	}
+	if value, ok := buo.mutation.AddInputToOutput(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Value:  value,
+			Column: block.FieldAddInputToOutput,
+		})
+	}
+	if buo.mutation.AddInputToOutputCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Column: block.FieldAddInputToOutput,
+		})
+	}
+	if value, ok := buo.mutation.AdditionMethod(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeEnum,
+			Value:  value,
+			Column: block.FieldAdditionMethod,
+		})
+	}
+	if buo.mutation.AdditionMethodCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeEnum,
+			Column: block.FieldAdditionMethod,
 		})
 	}
 	if buo.mutation.FlowCleared() {

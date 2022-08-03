@@ -216,18 +216,19 @@ func (r blockResolver) Details(ctx context.Context, obj *ent.Block) (models.Bloc
 		}
 
 		return &models.InvokeRestAPIBlock{
-			EntryPoint:   entryPoint,
-			ExitPoint:    exitPoint,
-			URL:          url,
-			Method:       method,
-			Headers:      obj.Headers,
-			Body:         body,
-			AuthType:     &obj.AuthType,
-			User:         &obj.User,
-			Password:     &obj.Password,
-			ClientID:     &obj.ClientID,
-			ClientSecret: &obj.ClientSecret,
-			OidcURL:      &obj.OidcURL,
+			EntryPoint:        entryPoint,
+			ExitPoint:         exitPoint,
+			URL:               url,
+			Method:            method,
+			Headers:           obj.Headers,
+			Body:              body,
+			ConnectionTimeOut: *obj.ConnectionTimeout,
+			AuthType:          &obj.AuthType,
+			User:              &obj.User,
+			Password:          &obj.Password,
+			ClientID:          &obj.ClientID,
+			ClientSecret:      &obj.ClientSecret,
+			OidcURL:           &obj.OidcURL,
 		}, nil
 	case block.TypeTimer:
 		return &models.TimerBlock{
@@ -407,10 +408,11 @@ func getBlockVariables(ctx context.Context, inputVariables []*models.VariableExp
 			})
 		case enum.DecisionDefinition:
 			vars = append(vars, &flowschema.VariableExpression{
-				BlockID:        blockID,
-				Type:           variable.Type,
-				Expression:     variable.Expression,
-				BlockVariables: blockVariables,
+				BlockID:               blockID,
+				Type:                  variable.Type,
+				VariableDefinitionKey: *variable.VariableDefinitionKey,
+				Expression:            variable.Expression,
+				BlockVariables:        blockVariables,
 			})
 		}
 	}
@@ -933,6 +935,12 @@ func addBlockBasicDefinitions(ctx context.Context, mutation *ent.BlockCreate, in
 		SetNillableOutputStateTransfStrategy(input.OutputStateTransfStrategy).
 		SetNillableInputTransfStrategy(input.InputTransfStrategy).
 		SetNillableOutputTransfStrategy(input.OutputTransfStrategy).
+		SetNillableInputTransformation(input.InputParamDefinitions).
+		SetNillableOutputTransformation(input.OutputParamDefinitions).
+		SetNillableInputStateTransformation(input.InputStateParamDefinitions).
+		SetNillableOutputStateTransformation(input.OutputStateParamDefinitions).
+		SetNillableAddInputToOutput(input.AddInputToOutput).
+		SetNillableAdditionMethod(input.AdditionMethod).
 		SetNillableEnableErrorHandling(input.EnableErrorHandling).
 		SetNillableEnableRetryPolicy(input.EnableRetryPolicy).
 		SetNillableRetryInterval(input.RetryInterval).

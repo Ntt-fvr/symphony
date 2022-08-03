@@ -242,6 +242,8 @@ var (
 		{Name: "foreach_key", Type: field.TypeString, Nullable: true},
 		{Name: "foreach_start_block_id", Type: field.TypeInt, Nullable: true},
 		{Name: "goto_type", Type: field.TypeEnum, Nullable: true, Enums: []string{"ORIGIN", "DESTINATION"}},
+		{Name: "add_input_to_output", Type: field.TypeBool, Nullable: true},
+		{Name: "addition_method", Type: field.TypeEnum, Nullable: true, Enums: []string{"COMBINE", "DISCARD_RESULT"}},
 		{Name: "block_sub_flow", Type: field.TypeInt, Nullable: true},
 		{Name: "block_goto_block", Type: field.TypeInt, Nullable: true},
 		{Name: "flow_blocks", Type: field.TypeInt, Nullable: true},
@@ -256,35 +258,35 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:  "blocks_flows_sub_flow",
-				Columns: []*schema.Column{BlocksColumns[55]},
-
-				RefColumns: []*schema.Column{FlowsColumns[0]},
-				OnDelete:   schema.SetNull,
-			},
-			{
-				Symbol:  "blocks_blocks_goto_block",
-				Columns: []*schema.Column{BlocksColumns[56]},
-
-				RefColumns: []*schema.Column{BlocksColumns[0]},
-				OnDelete:   schema.SetNull,
-			},
-			{
-				Symbol:  "blocks_flows_blocks",
 				Columns: []*schema.Column{BlocksColumns[57]},
 
 				RefColumns: []*schema.Column{FlowsColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
-				Symbol:  "blocks_flow_drafts_blocks",
+				Symbol:  "blocks_blocks_goto_block",
 				Columns: []*schema.Column{BlocksColumns[58]},
+
+				RefColumns: []*schema.Column{BlocksColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+			{
+				Symbol:  "blocks_flows_blocks",
+				Columns: []*schema.Column{BlocksColumns[59]},
+
+				RefColumns: []*schema.Column{FlowsColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+			{
+				Symbol:  "blocks_flow_drafts_blocks",
+				Columns: []*schema.Column{BlocksColumns[60]},
 
 				RefColumns: []*schema.Column{FlowDraftsColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
 				Symbol:  "blocks_flow_execution_templates_blocks",
-				Columns: []*schema.Column{BlocksColumns[59]},
+				Columns: []*schema.Column{BlocksColumns[61]},
 
 				RefColumns: []*schema.Column{FlowExecutionTemplatesColumns[0]},
 				OnDelete:   schema.SetNull,
@@ -294,17 +296,17 @@ var (
 			{
 				Name:    "block_cid_flow_draft_blocks",
 				Unique:  true,
-				Columns: []*schema.Column{BlocksColumns[3], BlocksColumns[58]},
+				Columns: []*schema.Column{BlocksColumns[3], BlocksColumns[60]},
 			},
 			{
 				Name:    "block_cid_flow_blocks",
 				Unique:  true,
-				Columns: []*schema.Column{BlocksColumns[3], BlocksColumns[57]},
+				Columns: []*schema.Column{BlocksColumns[3], BlocksColumns[59]},
 			},
 			{
 				Name:    "block_cid_flow_execution_template_blocks",
 				Unique:  true,
-				Columns: []*schema.Column{BlocksColumns[3], BlocksColumns[59]},
+				Columns: []*schema.Column{BlocksColumns[3], BlocksColumns[61]},
 			},
 		},
 	}

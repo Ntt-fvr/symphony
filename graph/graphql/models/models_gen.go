@@ -586,24 +586,26 @@ type AutomationActivityFilterInput struct {
 }
 
 type BaseBlockInput struct {
-	EnableInputTransformation       bool                 `json:"enableInputTransformation"`
-	InputTransfStrategy             *enum.TransfStrategy `json:"inputTransfStrategy"`
-	InputParamDefinitions           *string              `json:"inputParamDefinitions"`
-	EnableOutputTransformation      bool                 `json:"enableOutputTransformation"`
-	OutputTransfStrategy            *enum.TransfStrategy `json:"outputTransfStrategy"`
-	OutputParamDefinitions          *string              `json:"outputParamDefinitions"`
-	EnableInputStateTransformation  bool                 `json:"enableInputStateTransformation"`
-	InputStateTransfStrategy        *enum.TransfStrategy `json:"inputStateTransfStrategy"`
-	InputStateParamDefinitions      *string              `json:"inputStateParamDefinitions"`
-	EnableOutputStateTransformation bool                 `json:"enableOutputStateTransformation"`
-	OutputStateTransfStrategy       *enum.TransfStrategy `json:"outputStateTransfStrategy"`
-	OutputStateParamDefinitions     *string              `json:"outputStateParamDefinitions"`
-	EnableErrorHandling             *bool                `json:"enableErrorHandling"`
-	EnableRetryPolicy               *bool                `json:"enableRetryPolicy"`
-	RetryInterval                   *int                 `json:"retryInterval"`
-	Units                           *RetryUnit           `json:"units"`
-	MaxAttemps                      *int                 `json:"maxAttemps"`
-	BackoffRate                     *int                 `json:"backoffRate"`
+	EnableInputTransformation       bool                  `json:"enableInputTransformation"`
+	InputTransfStrategy             *enum.TransfStrategy  `json:"inputTransfStrategy"`
+	InputParamDefinitions           *string               `json:"inputParamDefinitions"`
+	EnableOutputTransformation      bool                  `json:"enableOutputTransformation"`
+	OutputTransfStrategy            *enum.TransfStrategy  `json:"outputTransfStrategy"`
+	OutputParamDefinitions          *string               `json:"outputParamDefinitions"`
+	EnableInputStateTransformation  bool                  `json:"enableInputStateTransformation"`
+	InputStateTransfStrategy        *enum.TransfStrategy  `json:"inputStateTransfStrategy"`
+	InputStateParamDefinitions      *string               `json:"inputStateParamDefinitions"`
+	EnableOutputStateTransformation bool                  `json:"enableOutputStateTransformation"`
+	OutputStateTransfStrategy       *enum.TransfStrategy  `json:"outputStateTransfStrategy"`
+	OutputStateParamDefinitions     *string               `json:"outputStateParamDefinitions"`
+	EnableErrorHandling             *bool                 `json:"enableErrorHandling"`
+	EnableRetryPolicy               *bool                 `json:"enableRetryPolicy"`
+	AddInputToOutput                *bool                 `json:"addInputToOutput"`
+	AdditionMethod                  *block.AdditionMethod `json:"additionMethod"`
+	RetryInterval                   *int                  `json:"retryInterval"`
+	Units                           *RetryUnit            `json:"units"`
+	MaxAttemps                      *int                  `json:"maxAttemps"`
+	BackoffRate                     *int                  `json:"backoffRate"`
 }
 
 type BlockVariableInput struct {

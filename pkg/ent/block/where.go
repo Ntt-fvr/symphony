@@ -337,6 +337,13 @@ func ForeachStartBlockID(v int) predicate.Block {
 	})
 }
 
+// AddInputToOutput applies equality check predicate on the "add_input_to_output" field. It's identical to AddInputToOutputEQ.
+func AddInputToOutput(v bool) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldAddInputToOutput), v))
+	})
+}
+
 // CreateTimeEQ applies the EQ predicate on the "create_time" field.
 func CreateTimeEQ(v time.Time) predicate.Block {
 	return predicate.Block(func(s *sql.Selector) {
@@ -4451,6 +4458,96 @@ func GotoTypeIsNil() predicate.Block {
 func GotoTypeNotNil() predicate.Block {
 	return predicate.Block(func(s *sql.Selector) {
 		s.Where(sql.NotNull(s.C(FieldGotoType)))
+	})
+}
+
+// AddInputToOutputEQ applies the EQ predicate on the "add_input_to_output" field.
+func AddInputToOutputEQ(v bool) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldAddInputToOutput), v))
+	})
+}
+
+// AddInputToOutputNEQ applies the NEQ predicate on the "add_input_to_output" field.
+func AddInputToOutputNEQ(v bool) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldAddInputToOutput), v))
+	})
+}
+
+// AddInputToOutputIsNil applies the IsNil predicate on the "add_input_to_output" field.
+func AddInputToOutputIsNil() predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldAddInputToOutput)))
+	})
+}
+
+// AddInputToOutputNotNil applies the NotNil predicate on the "add_input_to_output" field.
+func AddInputToOutputNotNil() predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldAddInputToOutput)))
+	})
+}
+
+// AdditionMethodEQ applies the EQ predicate on the "addition_method" field.
+func AdditionMethodEQ(v AdditionMethod) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldAdditionMethod), v))
+	})
+}
+
+// AdditionMethodNEQ applies the NEQ predicate on the "addition_method" field.
+func AdditionMethodNEQ(v AdditionMethod) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldAdditionMethod), v))
+	})
+}
+
+// AdditionMethodIn applies the In predicate on the "addition_method" field.
+func AdditionMethodIn(vs ...AdditionMethod) predicate.Block {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Block(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.In(s.C(FieldAdditionMethod), v...))
+	})
+}
+
+// AdditionMethodNotIn applies the NotIn predicate on the "addition_method" field.
+func AdditionMethodNotIn(vs ...AdditionMethod) predicate.Block {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Block(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.NotIn(s.C(FieldAdditionMethod), v...))
+	})
+}
+
+// AdditionMethodIsNil applies the IsNil predicate on the "addition_method" field.
+func AdditionMethodIsNil() predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldAdditionMethod)))
+	})
+}
+
+// AdditionMethodNotNil applies the NotNil predicate on the "addition_method" field.
+func AdditionMethodNotNil() predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldAdditionMethod)))
 	})
 }
 
