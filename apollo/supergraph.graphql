@@ -819,6 +819,23 @@ input AddEquipmentTypeInput {
   properties: [PropertyTypeInput!]
 }
 
+input AddErrorMessageInput {
+  baseType: String
+  code: String
+  message: String
+  reason: String
+  referenceError: String
+  schemaLocation: String
+  status: String
+  timestamp: DateTime
+  type: String
+}
+
+type AddErrorMessagePayload {
+  errorMessage(filter: ErrorMessageFilter, first: Int, offset: Int, order: ErrorMessageOrder): [ErrorMessage]
+  numUids: Int
+}
+
 input AddEventSeverityInput {
   name: String!
 }
@@ -869,6 +886,7 @@ input AddFlowDraftInput {
 }
 
 input AddFlowExecutionReferenceInput {
+  baseFlow: String
   cancelto: FlowExecutionReferenceRef
   creationDate: String
   domainId: String
@@ -1016,6 +1034,7 @@ input AddModificationRequestInput {
   modifyReason: String!
   requestedCompletionDate: String!
   serviceorders: [ServiceOrderRef]
+  state: String
   type: String!
 }
 
@@ -1231,6 +1250,7 @@ input AddResourceOrderIMInput {
   lineId: String
   reservationId: String
   resourceOrderItem: [ResourceOrderItemRef]
+  status: String
 }
 
 type AddResourceOrderIMPayload {
@@ -1240,8 +1260,10 @@ type AddResourceOrderIMPayload {
 
 input AddResourceOrderItemInput {
   action: String
+  errorMessage: [ErrorMessageRef]
   id: String!
   service: SupportingServiceRef
+  status: String
 }
 
 type AddResourceOrderItemPayload {
@@ -1306,7 +1328,7 @@ input AddResourcePropertyTypeInput {
 input AddResourceReferenceInput {
   externalId: String
   href: String
-  name: String
+  type: String
 }
 
 type AddResourceReferencePayload {
@@ -1419,6 +1441,7 @@ input AddServiceOrderInput {
 input AddServiceOrderItemInput {
   action: String!
   appointment: AppointmentRefRef
+  errorMessage: [ErrorMessageRef]
   id: String!
   quantity: Int
   service: ServiceSOMRef!
@@ -3488,6 +3511,12 @@ type DeleteDefaultConfigPayload {
   numUids: Int
 }
 
+type DeleteErrorMessagePayload {
+  errorMessage(filter: ErrorMessageFilter, first: Int, offset: Int, order: ErrorMessageOrder): [ErrorMessage]
+  msg: String
+  numUids: Int
+}
+
 type DeleteExternalReferencePayload {
   externalReference(filter: ExternalReferenceFilter, first: Int, offset: Int, order: ExternalReferenceOrder): [ExternalReference]
   msg: String
@@ -4536,6 +4565,104 @@ type EquipmentTypeEdge {
   node: EquipmentType
 }
 
+type ErrorMessage {
+  baseType: String
+  code: String
+  id: ID!
+  message: String
+  reason: String
+  referenceError: String
+  schemaLocation: String
+  status: String
+  timestamp: DateTime
+  type: String
+}
+
+type ErrorMessageAggregateResult {
+  baseTypeMax: String
+  baseTypeMin: String
+  codeMax: String
+  codeMin: String
+  count: Int
+  messageMax: String
+  messageMin: String
+  reasonMax: String
+  reasonMin: String
+  referenceErrorMax: String
+  referenceErrorMin: String
+  schemaLocationMax: String
+  schemaLocationMin: String
+  statusMax: String
+  statusMin: String
+  timestampMax: DateTime
+  timestampMin: DateTime
+  typeMax: String
+  typeMin: String
+}
+
+input ErrorMessageFilter {
+  and: [ErrorMessageFilter]
+  has: [ErrorMessageHasFilter]
+  id: [ID!]
+  not: ErrorMessageFilter
+  or: [ErrorMessageFilter]
+}
+
+enum ErrorMessageHasFilter {
+  baseType
+  code
+  message
+  reason
+  referenceError
+  schemaLocation
+  status
+  timestamp
+  type
+}
+
+input ErrorMessageOrder {
+  asc: ErrorMessageOrderable
+  desc: ErrorMessageOrderable
+  then: ErrorMessageOrder
+}
+
+enum ErrorMessageOrderable {
+  baseType
+  code
+  message
+  reason
+  referenceError
+  schemaLocation
+  status
+  timestamp
+  type
+}
+
+input ErrorMessagePatch {
+  baseType: String
+  code: String
+  message: String
+  reason: String
+  referenceError: String
+  schemaLocation: String
+  status: String
+  timestamp: DateTime
+  type: String
+}
+
+input ErrorMessageRef {
+  baseType: String
+  code: String
+  id: ID
+  message: String
+  reason: String
+  referenceError: String
+  schemaLocation: String
+  status: String
+  timestamp: DateTime
+  type: String
+}
+
 type EventSeverity implements Node {
   id: ID!
   name: String!
@@ -4916,6 +5043,7 @@ type FlowEdge {
 }
 
 type FlowExecutionReference {
+  baseFlow: String
   cancelto(filter: FlowExecutionReferenceFilter): FlowExecutionReference
   creationDate: String
   domainId: String
@@ -4929,6 +5057,8 @@ type FlowExecutionReference {
 }
 
 type FlowExecutionReferenceAggregateResult {
+  baseFlowMax: String
+  baseFlowMin: String
   count: Int
   creationDateMax: String
   creationDateMin: String
@@ -4958,6 +5088,7 @@ input FlowExecutionReferenceFilter {
 }
 
 enum FlowExecutionReferenceHasFilter {
+  baseFlow
   cancelto
   creationDate
   domainId
@@ -4976,6 +5107,7 @@ input FlowExecutionReferenceOrder {
 }
 
 enum FlowExecutionReferenceOrderable {
+  baseFlow
   creationDate
   domainId
   endExecutionDate
@@ -4986,6 +5118,7 @@ enum FlowExecutionReferenceOrderable {
 }
 
 input FlowExecutionReferencePatch {
+  baseFlow: String
   cancelto: FlowExecutionReferenceRef
   creationDate: String
   domainId: String
@@ -4998,6 +5131,7 @@ input FlowExecutionReferencePatch {
 }
 
 input FlowExecutionReferenceRef {
+  baseFlow: String
   cancelto: FlowExecutionReferenceRef
   creationDate: String
   domainId: String
@@ -6128,6 +6262,7 @@ type ModificationRequest {
   requestedCompletionDate: String!
   serviceorders(filter: ServiceOrderFilter, first: Int, offset: Int, order: ServiceOrderOrder): [ServiceOrder]
   serviceordersAggregate(filter: ServiceOrderFilter): ServiceOrderAggregateResult
+  state: String
   type: String!
 }
 
@@ -6139,6 +6274,8 @@ type ModificationRequestAggregateResult {
   modifyReasonMin: String
   requestedCompletionDateMax: String
   requestedCompletionDateMin: String
+  stateMax: String
+  stateMin: String
   typeMax: String
   typeMin: String
 }
@@ -6157,6 +6294,7 @@ enum ModificationRequestHasFilter {
   modifyReason
   requestedCompletionDate
   serviceorders
+  state
   type
 }
 
@@ -6170,6 +6308,7 @@ enum ModificationRequestOrderable {
   externalId
   modifyReason
   requestedCompletionDate
+  state
   type
 }
 
@@ -6178,6 +6317,7 @@ input ModificationRequestPatch {
   modifyReason: String
   requestedCompletionDate: String
   serviceorders: [ServiceOrderRef]
+  state: String
   type: String
 }
 
@@ -6187,6 +6327,7 @@ input ModificationRequestRef {
   modifyReason: String
   requestedCompletionDate: String
   serviceorders: [ServiceOrderRef]
+  state: String
   type: String
 }
 
@@ -6241,6 +6382,7 @@ type Mutation {
   addEquipment(input: AddEquipmentInput!): Equipment! @join__field(graph: SYMPHONY)
   addEquipmentPortType(input: AddEquipmentPortTypeInput!): EquipmentPortType! @join__field(graph: SYMPHONY)
   addEquipmentType(input: AddEquipmentTypeInput!): EquipmentType! @join__field(graph: SYMPHONY)
+  addErrorMessage(input: [AddErrorMessageInput!]!): AddErrorMessagePayload @join__field(graph: DGRAPHSERVICE)
   addEventSeverity(input: AddEventSeverityInput!): EventSeverity! @join__field(graph: SYMPHONY)
   addExternalReference(input: [AddExternalReferenceInput!]!, upsert: Boolean): AddExternalReferencePayload @join__field(graph: DGRAPHSERVICE)
   addFeature(input: [AddFeatureInput!]!): AddFeaturePayload @join__field(graph: DGRAPHSERVICE)
@@ -6357,6 +6499,7 @@ type Mutation {
   deleteConfigurationParameterType(filter: ConfigurationParameterTypeFilter!): DeleteConfigurationParameterTypePayload @join__field(graph: DGRAPHSERVICE)
   deleteConnector(flowDraftId: ID!, input: ConnectorInput!): Boolean! @join__field(graph: SYMPHONY)
   deleteDefaultConfig(filter: DefaultConfigFilter!): DeleteDefaultConfigPayload @join__field(graph: DGRAPHSERVICE)
+  deleteErrorMessage(filter: ErrorMessageFilter!): DeleteErrorMessagePayload @join__field(graph: DGRAPHSERVICE)
   deleteExternalReference(filter: ExternalReferenceFilter!): DeleteExternalReferencePayload @join__field(graph: DGRAPHSERVICE)
   deleteFeature(filter: FeatureFilter!): DeleteFeaturePayload @join__field(graph: DGRAPHSERVICE)
   deleteFloorPlan(id: ID!): Boolean! @join__field(graph: SYMPHONY)
@@ -6582,6 +6725,7 @@ type Mutation {
   updateConfigParamTag(input: UpdateConfigParamTagInput!): UpdateConfigParamTagPayload @join__field(graph: DGRAPHSERVICE)
   updateConfigurationParameterType(input: UpdateConfigurationParameterTypeInput!): UpdateConfigurationParameterTypePayload @join__field(graph: DGRAPHSERVICE)
   updateDefaultConfig(input: UpdateDefaultConfigInput!): UpdateDefaultConfigPayload @join__field(graph: DGRAPHSERVICE)
+  updateErrorMessage(input: UpdateErrorMessageInput!): UpdateErrorMessagePayload @join__field(graph: DGRAPHSERVICE)
   updateExternalReference(input: UpdateExternalReferenceInput!): UpdateExternalReferencePayload @join__field(graph: DGRAPHSERVICE)
   updateFeature(input: UpdateFeatureInput!): UpdateFeaturePayload @join__field(graph: DGRAPHSERVICE)
   updateFlowExecutionReference(input: UpdateFlowExecutionReferenceInput!): UpdateFlowExecutionReferencePayload @join__field(graph: DGRAPHSERVICE)
@@ -7930,6 +8074,7 @@ type Query {
   aggregateConfigParamTag(filter: ConfigParamTagFilter): ConfigParamTagAggregateResult @join__field(graph: DGRAPHSERVICE)
   aggregateConfigurationParameterType(filter: ConfigurationParameterTypeFilter): ConfigurationParameterTypeAggregateResult @join__field(graph: DGRAPHSERVICE)
   aggregateDefaultConfig(filter: DefaultConfigFilter): DefaultConfigAggregateResult @join__field(graph: DGRAPHSERVICE)
+  aggregateErrorMessage(filter: ErrorMessageFilter): ErrorMessageAggregateResult @join__field(graph: DGRAPHSERVICE)
   aggregateExternalReference(filter: ExternalReferenceFilter): ExternalReferenceAggregateResult @join__field(graph: DGRAPHSERVICE)
   aggregateFeature(filter: FeatureFilter): FeatureAggregateResult @join__field(graph: DGRAPHSERVICE)
   aggregateFlowExecutionReference(filter: FlowExecutionReferenceFilter): FlowExecutionReferenceAggregateResult @join__field(graph: DGRAPHSERVICE)
@@ -8222,6 +8367,7 @@ type Query {
   getConfigParamTag(id: ID!): ConfigParamTag @join__field(graph: DGRAPHSERVICE)
   getConfigurationParameterType(id: ID, name: String): ConfigurationParameterType @join__field(graph: DGRAPHSERVICE)
   getDefaultConfig(id: ID!): DefaultConfig @join__field(graph: DGRAPHSERVICE)
+  getErrorMessage(id: ID!): ErrorMessage @join__field(graph: DGRAPHSERVICE)
   getExternalReference(id: String!): ExternalReference @join__field(graph: DGRAPHSERVICE)
   getFeature(id: ID!): Feature @join__field(graph: DGRAPHSERVICE)
   getFlowExecutionReference(id: ID!): FlowExecutionReference @join__field(graph: DGRAPHSERVICE)
@@ -8235,7 +8381,7 @@ type Query {
   getRelatedEntity(id: String!): RelatedEntity @join__field(graph: DGRAPHSERVICE)
   getResource(externalId: String, id: ID): Resource @join__field(graph: DGRAPHSERVICE)
   getResourceOrderIM(id: ID!): ResourceOrderIM @join__field(graph: DGRAPHSERVICE)
-  getResourceOrderItem(id: String!): ResourceOrderItem @join__field(graph: DGRAPHSERVICE)
+  getResourceOrderItem(id: String, resourceOrderItemId: ID): ResourceOrderItem @join__field(graph: DGRAPHSERVICE)
   getResourceProperty(id: ID!): ResourceProperty @join__field(graph: DGRAPHSERVICE)
   getResourceReference(id: ID!): ResourceReference @join__field(graph: DGRAPHSERVICE)
   getSchedulerConfig(id: ID!): SchedulerConfig @join__field(graph: DGRAPHSERVICE)
@@ -8630,6 +8776,7 @@ type Query {
   queryConfigParamTag(filter: ConfigParamTagFilter, first: Int, offset: Int, order: ConfigParamTagOrder): [ConfigParamTag] @join__field(graph: DGRAPHSERVICE)
   queryConfigurationParameterType(filter: ConfigurationParameterTypeFilter, first: Int, offset: Int, order: ConfigurationParameterTypeOrder): [ConfigurationParameterType] @join__field(graph: DGRAPHSERVICE)
   queryDefaultConfig(filter: DefaultConfigFilter, first: Int, offset: Int, order: DefaultConfigOrder): [DefaultConfig] @join__field(graph: DGRAPHSERVICE)
+  queryErrorMessage(filter: ErrorMessageFilter, first: Int, offset: Int, order: ErrorMessageOrder): [ErrorMessage] @join__field(graph: DGRAPHSERVICE)
   queryExternalReference(filter: ExternalReferenceFilter, first: Int, offset: Int, order: ExternalReferenceOrder): [ExternalReference] @join__field(graph: DGRAPHSERVICE)
   queryFeature(filter: FeatureFilter, first: Int, offset: Int, order: FeatureOrder): [Feature] @join__field(graph: DGRAPHSERVICE)
   queryFlowExecutionReference(filter: FlowExecutionReferenceFilter, first: Int, offset: Int, order: FlowExecutionReferenceOrder): [FlowExecutionReference] @join__field(graph: DGRAPHSERVICE)
@@ -9238,11 +9385,11 @@ type ResourceAggregateResult {
 
 input ResourceFilter {
   and: [ResourceFilter]
-  externalId: StringHashFilter
+  externalId: StringHashFilter_StringRegExpFilter
   has: [ResourceHasFilter]
   id: [ID!]
   locatedIn: StringHashFilter
-  name: StringHashFilter
+  name: StringHashFilter_StringRegExpFilter
   not: ResourceFilter
   or: [ResourceFilter]
   resourceSpecification: StringHashFilter
@@ -9292,6 +9439,7 @@ type ResourceOrderIM {
   reservationId: String
   resourceOrderItem(filter: ResourceOrderItemFilter, first: Int, offset: Int, order: ResourceOrderItemOrder): [ResourceOrderItem]
   resourceOrderItemAggregate(filter: ResourceOrderItemFilter): ResourceOrderItemAggregateResult
+  status: String
 }
 
 type ResourceOrderIMAggregateResult {
@@ -9306,6 +9454,8 @@ type ResourceOrderIMAggregateResult {
   lineIdMin: String
   reservationIdMax: String
   reservationIdMin: String
+  statusMax: String
+  statusMin: String
 }
 
 input ResourceOrderIMFilter {
@@ -9325,6 +9475,7 @@ enum ResourceOrderIMHasFilter {
   lineId
   reservationId
   resourceOrderItem
+  status
 }
 
 input ResourceOrderIMOrder {
@@ -9339,6 +9490,7 @@ enum ResourceOrderIMOrderable {
   externalId
   lineId
   reservationId
+  status
 }
 
 input ResourceOrderIMPatch {
@@ -9348,6 +9500,7 @@ input ResourceOrderIMPatch {
   lineId: String
   reservationId: String
   resourceOrderItem: [ResourceOrderItemRef]
+  status: String
 }
 
 input ResourceOrderIMRef {
@@ -9358,12 +9511,17 @@ input ResourceOrderIMRef {
   lineId: String
   reservationId: String
   resourceOrderItem: [ResourceOrderItemRef]
+  status: String
 }
 
 type ResourceOrderItem {
   action: String
+  errorMessage(filter: ErrorMessageFilter, first: Int, offset: Int, order: ErrorMessageOrder): [ErrorMessage]
+  errorMessageAggregate(filter: ErrorMessageFilter): ErrorMessageAggregateResult
   id: String!
+  resourceOrderItemId: ID!
   service(filter: SupportingServiceFilter): SupportingService
+  status: String
 }
 
 type ResourceOrderItemAggregateResult {
@@ -9372,6 +9530,8 @@ type ResourceOrderItemAggregateResult {
   count: Int
   idMax: String
   idMin: String
+  statusMax: String
+  statusMin: String
 }
 
 input ResourceOrderItemFilter {
@@ -9380,12 +9540,15 @@ input ResourceOrderItemFilter {
   id: StringHashFilter
   not: ResourceOrderItemFilter
   or: [ResourceOrderItemFilter]
+  resourceOrderItemId: [ID!]
 }
 
 enum ResourceOrderItemHasFilter {
   action
+  errorMessage
   id
   service
+  status
 }
 
 input ResourceOrderItemOrder {
@@ -9397,18 +9560,24 @@ input ResourceOrderItemOrder {
 enum ResourceOrderItemOrderable {
   action
   id
+  status
 }
 
 input ResourceOrderItemPatch {
   action: String
+  errorMessage: [ErrorMessageRef]
   id: String
   service: SupportingServiceRef
+  status: String
 }
 
 input ResourceOrderItemRef {
   action: String
+  errorMessage: [ErrorMessageRef]
   id: String
+  resourceOrderItemId: ID
   service: SupportingServiceRef
+  status: String
 }
 
 enum ResourceOrderable {
@@ -9665,7 +9834,7 @@ type ResourceReference {
   externalId: String
   href: String
   id: ID!
-  name: String
+  type: String
 }
 
 type ResourceReferenceAggregateResult {
@@ -9674,8 +9843,8 @@ type ResourceReferenceAggregateResult {
   externalIdMin: String
   hrefMax: String
   hrefMin: String
-  nameMax: String
-  nameMin: String
+  typeMax: String
+  typeMin: String
 }
 
 input ResourceReferenceFilter {
@@ -9690,7 +9859,7 @@ input ResourceReferenceFilter {
 enum ResourceReferenceHasFilter {
   externalId
   href
-  name
+  type
 }
 
 input ResourceReferenceOrder {
@@ -9702,20 +9871,20 @@ input ResourceReferenceOrder {
 enum ResourceReferenceOrderable {
   externalId
   href
-  name
+  type
 }
 
 input ResourceReferencePatch {
   externalId: String
   href: String
-  name: String
+  type: String
 }
 
 input ResourceReferenceRef {
   externalId: String
   href: String
   id: ID
-  name: String
+  type: String
 }
 
 enum ResourceRelationshipMultiplicityKind {
@@ -10495,6 +10664,8 @@ enum ServiceOrderHasFilter {
 type ServiceOrderItem {
   action: String!
   appointment(filter: AppointmentRefFilter): AppointmentRef
+  errorMessage(filter: ErrorMessageFilter, first: Int, offset: Int, order: ErrorMessageOrder): [ErrorMessage]
+  errorMessageAggregate(filter: ErrorMessageFilter): ErrorMessageAggregateResult
   id: String!
   quantity: Int
   service(filter: ServiceSOMFilter): ServiceSOM!
@@ -10531,6 +10702,7 @@ input ServiceOrderItemFilter {
 enum ServiceOrderItemHasFilter {
   action
   appointment
+  errorMessage
   id
   quantity
   service
@@ -10555,6 +10727,7 @@ enum ServiceOrderItemOrderable {
 input ServiceOrderItemPatch {
   action: String
   appointment: AppointmentRefRef
+  errorMessage: [ErrorMessageRef]
   id: String
   quantity: Int
   service: ServiceSOMRef
@@ -10565,6 +10738,7 @@ input ServiceOrderItemPatch {
 input ServiceOrderItemRef {
   action: String
   appointment: AppointmentRefRef
+  errorMessage: [ErrorMessageRef]
   id: String
   quantity: Int
   service: ServiceSOMRef
@@ -11226,6 +11400,12 @@ input StringFullTextFilter {
 input StringHashFilter {
   eq: String
   in: [String]
+}
+
+input StringHashFilter_StringRegExpFilter {
+  eq: String
+  in: [String]
+  regexp: String
 }
 
 input StringRange {
@@ -11948,6 +12128,17 @@ input UpdateDefaultConfigInput {
 
 type UpdateDefaultConfigPayload {
   defaultConfig(filter: DefaultConfigFilter, first: Int, offset: Int, order: DefaultConfigOrder): [DefaultConfig]
+  numUids: Int
+}
+
+input UpdateErrorMessageInput {
+  filter: ErrorMessageFilter!
+  remove: ErrorMessagePatch
+  set: ErrorMessagePatch
+}
+
+type UpdateErrorMessagePayload {
+  errorMessage(filter: ErrorMessageFilter, first: Int, offset: Int, order: ErrorMessageOrder): [ErrorMessage]
   numUids: Int
 }
 

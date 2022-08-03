@@ -59,9 +59,9 @@ interface DefaultConfig {
 }
 
 type Resource implements DefaultConfig{
-  name: String! @search(by: [hash])
+  name: String! @search(by: [hash,regexp])
   available: Boolean
-  externalId: String @id @search(by: [hash]) 
+  externalId: String @id @search(by: [hash,regexp]) 
   lifecycleStatus: LifecycleStatus
   typePlanningSubStatus: TypePlanningSubStatus
   planningSubStatus: PlanningSubStatus
@@ -70,7 +70,6 @@ type Resource implements DefaultConfig{
   belongsTo: Resource
   composedOf: [Resource] @hasInverse(field: belongsTo)
   locatedIn: String @search(by: [hash])
-  #contains: String @search(by: [hash]) @hasInverse(field: locatedIn)
   physicalLink: Resource
   physicalLinkInv: Resource @hasInverse(field: physicalLink)
   logicalLinks: [Resource]
@@ -328,6 +327,7 @@ type ServiceOrderItem {
   action: String!
   service: ServiceSOM! 
   state: String  
+  errorMessage: [ErrorMessage]
 }
 
 enum _ServiceSOMOrdering {
@@ -422,7 +422,7 @@ type ResourceReference {
   id: ID!
   externalId: String @search(by: [hash])
   href: String
-  name: String
+  type: String
 }
 
 enum _PlaceOrdering {
@@ -551,6 +551,7 @@ type FlowExecutionReference {
   domainId: String
   projectId: String
   runId: String
+  baseFlow: String
   workflowId: String
   creationDate: String @search(by: [exact])
   executionDate:  String @search(by: [exact])
@@ -601,6 +602,7 @@ enum _ModificationRequestOrdering {
 type ModificationRequest {
   id: ID!
   type: String!
+  state: String
   externalId: String @search(by: [hash])
   modifyReason: String!
   requestedCompletionDate: String!
@@ -690,13 +692,30 @@ type ResourceOrderIM{
   description: String
   externalId: String
   resourceOrderItem: [ResourceOrderItem]
+  status: String
 }
 
 
 type ResourceOrderItem{
+  resourceOrderItemId: ID!
   id: String! @id
   action: String
   service: SupportingService
+  status: String
+  errorMessage: [ErrorMessage]
+}
+
+type ErrorMessage {
+  id: ID!
+  code: String
+  message: String
+  reason: String
+  referenceError: String
+  status: String
+  timestamp: DateTime
+  baseType: String
+  schemaLocation: String
+  type: String
 }
 
 union SupportingResource = Resource | ResourceReference
