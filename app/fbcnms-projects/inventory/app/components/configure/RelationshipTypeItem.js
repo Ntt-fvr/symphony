@@ -189,7 +189,7 @@ export default function RelationshipTypeItem(props: Props) {
           </Text>
         </Grid>
       )}
-      {getdataAllRelationShips.includes('CARD') && (
+      {getdataAllRelationShips.includes('CAR') && (
         <TableTypesDispatcher.Provider
           value={{dispatch: tableTypesDispatcherCards, tableTypesCards}}>
           <TableContextForm
@@ -222,7 +222,7 @@ export default function RelationshipTypeItem(props: Props) {
           />
         </TableTypesDispatcher.Provider>
       )}
-      {getdataAllRelationShips.includes('VLAN') && (
+      {getdataAllRelationShips.includes('VLA') && (
         <TableTypesDispatcher.Provider
           value={{dispatch: tableTypesDispatcherVlan, tableTypesVlan}}>
           <TableContextForm
