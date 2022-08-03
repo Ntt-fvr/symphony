@@ -221,6 +221,7 @@ input ActionSchedulerFilter {
   id: [ID!]
   not: ActionSchedulerFilter
   or: [ActionSchedulerFilter]
+  status: ActionSchedulerStatus_hash
 }
 
 enum ActionSchedulerHasFilter {
@@ -292,6 +293,11 @@ input ActionSchedulerRef {
 enum ActionSchedulerStatus {
   ACTIVED
   DEACTIVATED
+}
+
+input ActionSchedulerStatus_hash {
+  eq: ActionSchedulerStatus
+  in: [ActionSchedulerStatus]
 }
 
 enum ActionSchedulerType {
@@ -1643,6 +1649,11 @@ input AddWorkerTypeInput {
   propertyTypes: [PropertyTypeInput!]
 }
 
+enum AdditionMethod {
+  COMBINE
+  DISCARD_RESULT
+}
+
 type AdministrativePolicy {
   access: BasicPermissionRule!
 }
@@ -1923,7 +1934,7 @@ input AuthRule {
 
 enum AuthType {
   BASIC
-  ODIC
+  OIDC
 }
 
 type AutomationActivity implements Node {
@@ -1965,6 +1976,8 @@ input AutomationPolicyInput {
 }
 
 input BaseBlockInput {
+  addInputToOutput: Boolean
+  additionMethod: AdditionMethod
   backoffRate: Int
   enableErrorHandling: Boolean
   enableInputStateTransformation: Boolean!
@@ -2000,6 +2013,8 @@ input BasicPermissionRuleInput {
 }
 
 type Block implements Node {
+  addInputToOutput: Boolean!
+  additionMethod: AdditionMethod
   backoffRate: Int
   cid: String!
   details: BlockDetails!
@@ -5507,6 +5522,7 @@ enum GoToType {
 type GotoBlock {
   entryPoint: EntryPoint!
   target: Block
+  type: GoToType!
 }
 
 input GotoBlockInput {

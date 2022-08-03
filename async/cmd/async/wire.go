@@ -170,10 +170,12 @@ func newHandlers(bucket *blob.Bucket, flags *cliFlags, client *worker.Client, te
 			Name:    "block_automationactivities_log",
 			Handler: handler.Func(handler.HandleBlockActivities),
 		}),
-		handler.New(handler.HandleConfig{
-			Name:    "automation_signal",
-			Handler: handler.Func(handler.HandleAutomationSignal),
-		}),
+		/*
+			handler.New(handler.HandleConfig{
+				Name:    "automation_signal",
+				Handler: handler.Func(handler.HandleAutomationSignal),
+			}),
+		*/
 	}
 }
 

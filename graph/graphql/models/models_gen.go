@@ -586,24 +586,26 @@ type AutomationActivityFilterInput struct {
 }
 
 type BaseBlockInput struct {
-	EnableInputTransformation       bool                 `json:"enableInputTransformation"`
-	InputTransfStrategy             *enum.TransfStrategy `json:"inputTransfStrategy"`
-	InputParamDefinitions           *string              `json:"inputParamDefinitions"`
-	EnableOutputTransformation      bool                 `json:"enableOutputTransformation"`
-	OutputTransfStrategy            *enum.TransfStrategy `json:"outputTransfStrategy"`
-	OutputParamDefinitions          *string              `json:"outputParamDefinitions"`
-	EnableInputStateTransformation  bool                 `json:"enableInputStateTransformation"`
-	InputStateTransfStrategy        *enum.TransfStrategy `json:"inputStateTransfStrategy"`
-	InputStateParamDefinitions      *string              `json:"inputStateParamDefinitions"`
-	EnableOutputStateTransformation bool                 `json:"enableOutputStateTransformation"`
-	OutputStateTransfStrategy       *enum.TransfStrategy `json:"outputStateTransfStrategy"`
-	OutputStateParamDefinitions     *string              `json:"outputStateParamDefinitions"`
-	EnableErrorHandling             *bool                `json:"enableErrorHandling"`
-	EnableRetryPolicy               *bool                `json:"enableRetryPolicy"`
-	RetryInterval                   *int                 `json:"retryInterval"`
-	Units                           *RetryUnit           `json:"units"`
-	MaxAttemps                      *int                 `json:"maxAttemps"`
-	BackoffRate                     *int                 `json:"backoffRate"`
+	EnableInputTransformation       bool                  `json:"enableInputTransformation"`
+	InputTransfStrategy             *enum.TransfStrategy  `json:"inputTransfStrategy"`
+	InputParamDefinitions           *string               `json:"inputParamDefinitions"`
+	EnableOutputTransformation      bool                  `json:"enableOutputTransformation"`
+	OutputTransfStrategy            *enum.TransfStrategy  `json:"outputTransfStrategy"`
+	OutputParamDefinitions          *string               `json:"outputParamDefinitions"`
+	EnableInputStateTransformation  bool                  `json:"enableInputStateTransformation"`
+	InputStateTransfStrategy        *enum.TransfStrategy  `json:"inputStateTransfStrategy"`
+	InputStateParamDefinitions      *string               `json:"inputStateParamDefinitions"`
+	EnableOutputStateTransformation bool                  `json:"enableOutputStateTransformation"`
+	OutputStateTransfStrategy       *enum.TransfStrategy  `json:"outputStateTransfStrategy"`
+	OutputStateParamDefinitions     *string               `json:"outputStateParamDefinitions"`
+	EnableErrorHandling             *bool                 `json:"enableErrorHandling"`
+	EnableRetryPolicy               *bool                 `json:"enableRetryPolicy"`
+	AddInputToOutput                *bool                 `json:"addInputToOutput"`
+	AdditionMethod                  *block.AdditionMethod `json:"additionMethod"`
+	RetryInterval                   *int                  `json:"retryInterval"`
+	Units                           *RetryUnit            `json:"units"`
+	MaxAttemps                      *int                  `json:"maxAttemps"`
+	BackoffRate                     *int                  `json:"backoffRate"`
 }
 
 type BlockVariableInput struct {
@@ -1403,6 +1405,7 @@ type GeneralFilterInput struct {
 
 type GotoBlock struct {
 	Target     *ent.Block      `json:"target"`
+	Type       block.GotoType  `json:"type"`
 	EntryPoint *ent.EntryPoint `json:"entryPoint"`
 }
 
@@ -1411,7 +1414,7 @@ func (GotoBlock) IsBlockDetails() {}
 type GotoBlockInput struct {
 	Cid              string                            `json:"cid"`
 	TargetBlockCid   *string                           `json:"targetBlockCid"`
-	Type             GoToType                          `json:"type"`
+	Type             block.GotoType                    `json:"type"`
 	UIRepresentation *flowschema.BlockUIRepresentation `json:"uiRepresentation"`
 }
 
@@ -2707,47 +2710,6 @@ func (e *FormulaFilterType) UnmarshalGQL(v interface{}) error {
 }
 
 func (e FormulaFilterType) MarshalGQL(w io.Writer) {
-	fmt.Fprint(w, strconv.Quote(e.String()))
-}
-
-type GoToType string
-
-const (
-	GoToTypeOrigin      GoToType = "ORIGIN"
-	GoToTypeDestination GoToType = "DESTINATION"
-)
-
-var AllGoToType = []GoToType{
-	GoToTypeOrigin,
-	GoToTypeDestination,
-}
-
-func (e GoToType) IsValid() bool {
-	switch e {
-	case GoToTypeOrigin, GoToTypeDestination:
-		return true
-	}
-	return false
-}
-
-func (e GoToType) String() string {
-	return string(e)
-}
-
-func (e *GoToType) UnmarshalGQL(v interface{}) error {
-	str, ok := v.(string)
-	if !ok {
-		return fmt.Errorf("enums must be strings")
-	}
-
-	*e = GoToType(str)
-	if !e.IsValid() {
-		return fmt.Errorf("%s is not a valid GoToType", str)
-	}
-	return nil
-}
-
-func (e GoToType) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 
