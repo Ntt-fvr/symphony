@@ -106,8 +106,7 @@ export default function RelationshipTypeItem(props: Props) {
         {
           filterType: 'RESOURCE_RELATIONSHIP_RESOURCE',
           operator: 'IS_ONE_OF',
-          //idSet: [dataForm?.resourceType?.id || dataForm?.id],
-          idSet: [],
+          idSet: [dataForm?.resourceType?.id || dataForm?.id],
         },
         {
           filterType: 'RESOURCE_RELATIONSHIP_TYPE',
@@ -189,7 +188,7 @@ export default function RelationshipTypeItem(props: Props) {
           </Text>
         </Grid>
       )}
-      {getdataAllRelationShips.includes('CARD') && (
+      {getdataAllRelationShips.includes('CAR') && (
         <TableTypesDispatcher.Provider
           value={{dispatch: tableTypesDispatcherCards, tableTypesCards}}>
           <TableContextForm
@@ -222,7 +221,7 @@ export default function RelationshipTypeItem(props: Props) {
           />
         </TableTypesDispatcher.Provider>
       )}
-      {getdataAllRelationShips.includes('VLAN') && (
+      {getdataAllRelationShips.includes('VLA') && (
         <TableTypesDispatcher.Provider
           value={{dispatch: tableTypesDispatcherVlan, tableTypesVlan}}>
           <TableContextForm
