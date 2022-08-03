@@ -236,6 +236,12 @@ func (Block) Fields() []ent.Field {
 		field.Int("foreach_start_blockID").
 			Optional().
 			Nillable(),
+		field.Enum("goto_type").
+			NamedValues(
+				"ORIGIN", "ORIGIN",
+				"DESTINATION", "DESTINATION",
+			).
+			Optional(),
 	}
 }
 

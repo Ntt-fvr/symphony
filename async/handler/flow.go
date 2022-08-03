@@ -17,7 +17,6 @@ import (
 	"github.com/facebookincubator/symphony/pkg/log"
 	"github.com/facebookincubator/symphony/pkg/viewer"
 	"go.uber.org/cadence/client"
-	"go.uber.org/zap"
 	"net/http"
 	"strings"
 )
@@ -37,17 +36,9 @@ func NewFlowHandler(client client.Client, automationUrl string) *FlowHandler {
 }
 
 // Handle handles event based on relevant logic
-func (f FlowHandler) Handle(ctx context.Context, logger log.Logger, evt ev.EventObject) error {
-
-	// TODO Remove it
-	tempLog := logger.For(ctx)
+func (f FlowHandler) Handle(ctx context.Context, _ log.Logger, evt ev.EventObject) error {
 
 	entry, ok := evt.(event.LogEntry)
-	// TODO Remove it
-	tempLog.Info(
-		"[FlowHandler]",
-		zap.Any("Entry", entry),
-	)
 	if !ok || entry.Type != ent.TypeFlowInstance {
 		return nil
 	}
@@ -63,24 +54,12 @@ func (f FlowHandler) Handle(ctx context.Context, logger log.Logger, evt ev.Event
 	flowInstanceID := entry.CurrState.ID
 	tenant := v.Tenant()
 
-	tempLog.Info(
-		"[Flow Instance]",
-		zap.Int("[Automation] flow instance id", flowInstanceID),
-		zap.String("[Automation] tenant", tenant),
-	)
-
 	if entry.Operation.Is(ent.OpCreate) {
 		url = f.getUrl("start")
 		requestBody = model.FlowInstanceRequest{
 			FlowInstanceID: flowInstanceID,
 			Tenant:         tenant,
 		}
-
-		// TODO Remove it
-		tempLog.Info(
-			"[Flow Instance]",
-			zap.String("[Automation] url [start]", url),
-		)
 	} else {
 		switch entry.CurrState.Type {
 		case flowinstance.StatusPaused.String():
@@ -90,12 +69,6 @@ func (f FlowHandler) Handle(ctx context.Context, logger log.Logger, evt ev.Event
 		case flowinstance.StatusCancelled.String():
 			url = f.getUrl("cancel")
 		}
-
-		// TODO Remove it
-		tempLog.Info(
-			"[Flow Instance]",
-			zap.String("[Automation] url [signal]", url),
-		)
 
 		flowInstance, err := ent.FromContext(ctx).FlowInstance.Get(ctx, entry.CurrState.ID)
 		if err != nil {
@@ -113,12 +86,6 @@ func (f FlowHandler) Handle(ctx context.Context, logger log.Logger, evt ev.Event
 		return err
 	}
 
-	// TODO Remove it
-	tempLog.Info(
-		"[Flow Instance]",
-		zap.String("[Automation] body", string(body)),
-	)
-
 	request, err := http.NewRequest(http.MethodPost, url, bytes.NewBuffer(body))
 	if err != nil {
 		return err
@@ -126,21 +93,10 @@ func (f FlowHandler) Handle(ctx context.Context, logger log.Logger, evt ev.Event
 
 	automationClient := &http.Client{}
 
-	response, err := automationClient.Do(request)
+	_, err = automationClient.Do(request)
 	if err != nil {
-		// TODO Remove it
-		tempLog.Error(
-			"[Flow Instance]",
-			zap.String("[Automation] error", err.Error()),
-		)
 		return err
 	}
-
-	// TODO Remove it
-	tempLog.Error(
-		"[Flow Instance]",
-		zap.Int("[Automation] response status", response.StatusCode),
-	)
 
 	return nil
 }

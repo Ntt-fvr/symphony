@@ -222,6 +222,7 @@ input ActionSchedulerFilter {
   id: [ID!]
   not: ActionSchedulerFilter
   or: [ActionSchedulerFilter]
+  status: ActionSchedulerStatus_hash
 }
 
 enum ActionSchedulerHasFilter {
@@ -293,6 +294,11 @@ input ActionSchedulerRef {
 enum ActionSchedulerStatus {
   ACTIVED
   DEACTIVATED
+}
+
+input ActionSchedulerStatus_hash {
+  eq: ActionSchedulerStatus
+  in: [ActionSchedulerStatus]
 }
 
 enum ActionSchedulerType {
@@ -1922,7 +1928,7 @@ input AuthRule {
 
 enum AuthType {
   BASIC
-  ODIC
+  OIDC
 }
 
 type AutomationActivity implements Node {
@@ -2851,7 +2857,7 @@ input ChoiceBlockInput {
   basicDefinitions: BaseBlockInput!
   cid: String!
   defaultExitPoint: ExitPointInput
-  entryPoint: EntryPointInput!
+  entryPoint: EntryPointInput
   routes: [DecisionRouteInput!]
   uiRepresentation: BlockUIRepresentationInput
 }
@@ -4756,8 +4762,8 @@ type ExecuteFlowBlock {
 input ExecuteFlowBlockInput {
   basicDefinitions: BaseBlockInput!
   cid: String!
-  entryPoint: EntryPointInput!
-  exitPoint: ExitPointInput!
+  entryPoint: EntryPointInput
+  exitPoint: ExitPointInput
   flow: ID!
   params: [VariableExpressionInput!]!
   uiRepresentation: BlockUIRepresentationInput
@@ -5644,12 +5650,12 @@ input InvokeRestAPIBlockInput {
   clientId: String
   clientSecret: String
   connectionTimeOut: Int!
-  entryPoint: EntryPointInput!
-  exitPoint: ExitPointInput!
+  entryPoint: EntryPointInput
+  exitPoint: ExitPointInput
   headers: [VariableValueInput]!
   method: UrlMethod!
   oidcUrl: String
-  params: [VariableExpressionInput!]!
+  params: [VariableExpressionInput!]
   password: String
   uiRepresentation: BlockUIRepresentationInput
   url: String!
@@ -5669,8 +5675,8 @@ input KafkaBlockInput {
   basicDefinitions: BaseBlockInput!
   brokers: [String!]
   cid: String!
-  entryPoint: EntryPointInput!
-  exitPoint: ExitPointInput!
+  entryPoint: EntryPointInput
+  exitPoint: ExitPointInput
   message: String!
   topic: String!
   type: KafkaMessageType!
@@ -6534,7 +6540,7 @@ type Mutation {
   addComment(input: CommentInput!): Comment! @join__field(graph: SYMPHONY)
   addComparator(input: AddComparatorInput!): Comparator! @join__field(graph: SYMPHONY)
   addConfigParamTag(input: [AddConfigParamTagInput!]!): AddConfigParamTagPayload @join__field(graph: DGRAPHSERVICE)
-  addConfigurationParameterType(input: [AddConfigurationParameterTypeInput!]!, upsert: Boolean): AddConfigurationParameterTypePayload @join__field(graph: DGRAPHSERVICE)
+  addConfigurationParameterType(input: [AddConfigurationParameterTypeInput!]!): AddConfigurationParameterTypePayload @join__field(graph: DGRAPHSERVICE)
   addConnector(flowDraftId: ID!, input: ConnectorInput!): Connector! @join__field(graph: SYMPHONY)
   addCounter(input: AddCounterInput!): Counter! @join__field(graph: SYMPHONY)
   addCounterFamily(input: AddCounterFamilyInput!): CounterFamily! @join__field(graph: SYMPHONY)
@@ -8531,7 +8537,7 @@ type Query {
   getCharacteristic(characteristicId: ID!): Characteristic @join__field(graph: DGRAPHSERVICE)
   getCharacteristicRelationship(id: ID!): CharacteristicRelationship @join__field(graph: DGRAPHSERVICE)
   getConfigParamTag(id: ID!): ConfigParamTag @join__field(graph: DGRAPHSERVICE)
-  getConfigurationParameterType(id: ID, name: String): ConfigurationParameterType @join__field(graph: DGRAPHSERVICE)
+  getConfigurationParameterType(id: ID!): ConfigurationParameterType @join__field(graph: DGRAPHSERVICE)
   getDefaultConfig(id: ID!): DefaultConfig @join__field(graph: DGRAPHSERVICE)
   getExternalReference(id: String!): ExternalReference @join__field(graph: DGRAPHSERVICE)
   getFeature(id: ID!): Feature @join__field(graph: DGRAPHSERVICE)
@@ -11491,7 +11497,7 @@ type StartBlock {
 
 input StartBlockInput {
   cid: String!
-  paramDefinitions: [VariableDefinitionInput!]!
+  paramDefinitions: [VariableDefinitionInput!]
   uiRepresentation: BlockUIRepresentationInput
 }
 
@@ -12068,10 +12074,10 @@ input TimerBlockInput {
   behavior: TimerBehavior!
   cid: String!
   enableExpressionL: Boolean
-  entryPoint: EntryPointInput!
-  exitPoint: ExitPointInput!
+  entryPoint: EntryPointInput
+  exitPoint: ExitPointInput
   expression: String
-  params: [VariableExpressionInput!]!
+  params: [VariableExpressionInput!]
   seconds: Int
   specificDatetime: Time
   uiRepresentation: BlockUIRepresentationInput
@@ -12922,9 +12928,9 @@ input WaitForSignalBlockInput {
   blocked: Boolean!
   cid: String!
   customFilter: String
-  entryPoint: EntryPointInput!
-  exitPoint: ExitPointInput!
-  params: [VariableExpressionInput!]!
+  entryPoint: EntryPointInput
+  exitPoint: ExitPointInput
+  params: [VariableExpressionInput!]
   signalModule: SignalModule!
   type: SignalType!
   uiRepresentation: BlockUIRepresentationInput

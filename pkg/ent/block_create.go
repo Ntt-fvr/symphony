@@ -718,6 +718,20 @@ func (bc *BlockCreate) SetNillableForeachStartBlockID(i *int) *BlockCreate {
 	return bc
 }
 
+// SetGotoType sets the goto_type field.
+func (bc *BlockCreate) SetGotoType(bt block.GotoType) *BlockCreate {
+	bc.mutation.SetGotoType(bt)
+	return bc
+}
+
+// SetNillableGotoType sets the goto_type field if the given value is not nil.
+func (bc *BlockCreate) SetNillableGotoType(bt *block.GotoType) *BlockCreate {
+	if bt != nil {
+		bc.SetGotoType(*bt)
+	}
+	return bc
+}
+
 // SetFlowID sets the flow edge to Flow by id.
 func (bc *BlockCreate) SetFlowID(id int) *BlockCreate {
 	bc.mutation.SetFlowID(id)
@@ -1058,6 +1072,11 @@ func (bc *BlockCreate) check() error {
 	if v, ok := bc.mutation.KafkaMessageType(); ok {
 		if err := block.KafkaMessageTypeValidator(v); err != nil {
 			return &ValidationError{Name: "kafka_message_type", err: fmt.Errorf("ent: validator failed for field \"kafka_message_type\": %w", err)}
+		}
+	}
+	if v, ok := bc.mutation.GotoType(); ok {
+		if err := block.GotoTypeValidator(v); err != nil {
+			return &ValidationError{Name: "goto_type", err: fmt.Errorf("ent: validator failed for field \"goto_type\": %w", err)}
 		}
 	}
 	return nil
@@ -1510,6 +1529,14 @@ func (bc *BlockCreate) createSpec() (*Block, *sqlgraph.CreateSpec) {
 			Column: block.FieldForeachStartBlockID,
 		})
 		_node.ForeachStartBlockID = &value
+	}
+	if value, ok := bc.mutation.GotoType(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeEnum,
+			Value:  value,
+			Column: block.FieldGotoType,
+		})
+		_node.GotoType = value
 	}
 	if nodes := bc.mutation.FlowIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

@@ -4392,6 +4392,68 @@ func ForeachStartBlockIDNotNil() predicate.Block {
 	})
 }
 
+// GotoTypeEQ applies the EQ predicate on the "goto_type" field.
+func GotoTypeEQ(v GotoType) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldGotoType), v))
+	})
+}
+
+// GotoTypeNEQ applies the NEQ predicate on the "goto_type" field.
+func GotoTypeNEQ(v GotoType) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldGotoType), v))
+	})
+}
+
+// GotoTypeIn applies the In predicate on the "goto_type" field.
+func GotoTypeIn(vs ...GotoType) predicate.Block {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Block(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.In(s.C(FieldGotoType), v...))
+	})
+}
+
+// GotoTypeNotIn applies the NotIn predicate on the "goto_type" field.
+func GotoTypeNotIn(vs ...GotoType) predicate.Block {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Block(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.NotIn(s.C(FieldGotoType), v...))
+	})
+}
+
+// GotoTypeIsNil applies the IsNil predicate on the "goto_type" field.
+func GotoTypeIsNil() predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldGotoType)))
+	})
+}
+
+// GotoTypeNotNil applies the NotNil predicate on the "goto_type" field.
+func GotoTypeNotNil() predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldGotoType)))
+	})
+}
+
 // HasFlow applies the HasEdge predicate on the "flow" edge.
 func HasFlow() predicate.Block {
 	return predicate.Block(func(s *sql.Selector) {

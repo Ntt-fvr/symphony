@@ -236,12 +236,18 @@ func (r blockResolver) Details(ctx context.Context, obj *ent.Block) (models.Bloc
 			Expression:        obj.TimerExpression,
 			EnableExpressionL: obj.EnableTimerExpression,
 			Seconds:           obj.Seconds,
+			Datetime:          obj.TimerSpecificDate,
 		}, nil
 	case block.TypeExecuteFlow:
+		subflow, _ := obj.Flow(ctx)
+		if err != nil {
+			return nil, err
+		}
 		return &models.ExecuteFlowBlock{
 			ExitPoint:  exitPoint,
 			EntryPoint: entryPoint,
 			Params:     obj.InputParams,
+			Flow:       subflow,
 		}, nil
 	case block.TypeWaitForSignal:
 		return &models.WaitForSignalBlock{
@@ -413,9 +419,10 @@ func getBlockVariables(ctx context.Context, inputVariables []*models.VariableExp
 
 func (r mutationResolver) AddStartBlock(ctx context.Context, flowDraftID int, input models.StartBlockInput) (*ent.Block, error) {
 	mutation := addBlockMutation(ctx, input.Cid, block.TypeStart, flowDraftID, input.UIRepresentation)
-	return mutation.
-		SetStartParamDefinitions(input.ParamDefinitions).
-		Save(ctx)
+	if input.ParamDefinitions != nil {
+		mutation = mutation.SetStartParamDefinitions(input.ParamDefinitions)
+	}
+	return mutation.Save(ctx)
 }
 
 func (r mutationResolver) AddEndBlock(ctx context.Context, flowDraftID int, input models.EndBlockInput) (*ent.Block, error) {
@@ -857,7 +864,7 @@ func (r mutationResolver) AddTimerBlock(ctx context.Context, flowDraftID int, in
 
 	return b.Update().
 		SetEnableTimerExpression(*input.EnableExpressionL).
-		SetTimerExpression(*input.Expression).
+		SetNillableTimerExpression(input.Expression).
 		SetTimerBehavior(input.Behavior).
 		SetNillableSeconds(input.Seconds).
 		SetNillableTimerSpecificDate(input.SpecificDatetime).
