@@ -9,8 +9,6 @@ import (
 	"errors"
 	"fmt"
 	"github.com/facebookincubator/symphony/pkg/ent/block"
-	"github.com/facebookincubator/symphony/pkg/ent/property"
-	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
 	"time"
 
 	"github.com/facebookincubator/symphony/pkg/ent"
@@ -52,7 +50,7 @@ type SignalEvent struct {
 	Module         string           `json:"signalModule"`
 	Type           block.SignalType `json:"signalType"`
 	Timestamp      int64            `json:"timestamp"`
-	FlowInstanceId *int             `json:"flowInstanceID"`
+	FlowInstanceId int              `json:"flowInstanceID"`
 	Payload        *WOPayload       `json:"payload"`
 }
 
@@ -173,17 +171,21 @@ func (e *Eventer) workOrderStatusChangedHook() ent.Hook {
 					WorkOrder: workOrder,
 				})
 				properties, _ := workOrder.Properties(ctx)
-				flowId, _ := workOrder.QueryProperties().Where(property.HasTypeWith(propertytype.Name("flow_instance_id"))).Only(ctx)
-				e.emit(ctx, Automation, &SignalEvent{
-					Module:         "WTF",
-					Type:           block.SignalTypeWOUPDATED,
-					Timestamp:      time.Now().UnixMilli() / 1000,
-					FlowInstanceId: flowId.IntVal,
+				flowId, err := workOrder.FlowInstance(ctx)
+				signal := &SignalEvent{
+					Module:    "WTF",
+					Type:      block.SignalTypeWOUPDATED,
+					Timestamp: time.Now().UnixMilli() / 1000,
 					Payload: &WOPayload{
 						WorkOrder:  workOrder,
 						Properties: properties,
 					},
-				})
+				}
+				if err != nil {
+					signal.FlowInstanceId = flowId.ID
+				}
+
+				e.emit(ctx, Automation, signal)
 			}
 			return value, nil
 		})
