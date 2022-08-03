@@ -326,7 +326,9 @@ func TestStartFlow(t *testing.T) {
 	flw, err := mr.PublishFlow(ctx, models.PublishFlowInput{FlowDraftID: draft.ID, FlowInstancesPolicy: flow.NewInstancesPolicyEnabled})
 	require.NoError(t, err)
 	_, err = mr.StartFlow(ctx, models.StartFlowInput{
-		FlowID: flw.ID,
+		FlowID:    flw.ID,
+		StartDate: time.Now(),
+		Params:    []*flowschema.VariableValue{},
 	})
 	require.Error(t, err)
 	_, err = mr.AddStartBlock(ctx, draft.ID, models.StartBlockInput{
@@ -467,7 +469,6 @@ func TestImportEmptyFlow(t *testing.T) {
 	require.NoError(t, err)
 	propertyTypeWkID := wkType.QueryPropertyTypes().Where(propertytype.Name("str_prop")).OnlyIDX(ctx)
 	owner := viewer.FromContext(ctx).(*viewer.UserViewer).User()
-	trueRole := flowschema.ExitPointRoleTrue
 	connectorInputs := []*models.ConnectorInput{
 		{
 			SourceBlockCid: "start",
@@ -488,13 +489,6 @@ func TestImportEmptyFlow(t *testing.T) {
 			SourceBlockCid: "decision1",
 			SourcePoint: &models.ExitPointInput{
 				Cid: pointer.ToString("true"),
-			},
-			TargetBlockCid: "trueFalse",
-		},
-		{
-			SourceBlockCid: "trueFalse",
-			SourcePoint: &models.ExitPointInput{
-				Role: &trueRole,
 			},
 			TargetBlockCid: "end",
 		},
@@ -563,6 +557,7 @@ func TestImportEmptyFlow(t *testing.T) {
 						Condition: &condition1,
 					},
 				},
+				BasicDefinitions: &models.BaseBlockInput{},
 			},
 		},
 		ActionBlocks: []*models.ActionBlockInput{
@@ -636,7 +631,7 @@ func TestImportEmptyFlow(t *testing.T) {
 	require.Equal(t, paramDefinitions, newDraft.EndParamDefinitions)
 	blocks, err := newDraft.QueryBlocks().All(ctx)
 	require.NoError(t, err)
-	require.Len(t, blocks, 8)
+	require.Len(t, blocks, 7)
 	for _, blk := range blocks {
 		switch blk.Type {
 		case block.TypeStart:
@@ -688,15 +683,15 @@ func TestImportEmptyFlow(t *testing.T) {
 		case block.TypeGoTo:
 			require.Equal(t, "shortcut", blk.Cid)
 			require.Equal(t, draft.QueryBlocks().Where(block.TypeEQ(block.TypeEnd)).OnlyIDX(ctx), blk.QueryGotoBlock().OnlyIDX(ctx))
-		case block.TypeTrueFalse:
-			require.Equal(t, "trueFalse", blk.Cid)
+		case block.TypeChoice:
+			require.Equal(t, "decision1", blk.Cid)
 		default:
 			t.Fatalf("block type not found: %v", blk.Type)
 		}
 	}
 	connectors, err := fdr.Connectors(ctx, newDraft)
 	require.NoError(t, err)
-	require.Len(t, connectors, 6)
+	require.Len(t, connectors, 5)
 	for _, connector := range connectors {
 		sourceBlock, err := connector.Source.QueryParentBlock().Only(ctx)
 		require.NoError(t, err)
