@@ -16,21 +16,18 @@ import (
 	"github.com/facebookincubator/symphony/pkg/event"
 	"github.com/facebookincubator/symphony/pkg/log"
 	"github.com/facebookincubator/symphony/pkg/viewer"
-	"go.uber.org/cadence/client"
 	"net/http"
 	"strings"
 )
 
 // FlowHandler is the handler struct for handling flow lifecycle (starting flows, registering triggers etc).
 type FlowHandler struct {
-	client        client.Client
 	automationUrl string
 }
 
 // NewFlowHandler return FlowHandler
-func NewFlowHandler(client client.Client, automationUrl string) *FlowHandler {
+func NewFlowHandler(automationUrl string) *FlowHandler {
 	return &FlowHandler{
-		client:        client,
 		automationUrl: automationUrl,
 	}
 }

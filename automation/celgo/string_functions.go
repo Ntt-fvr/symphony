@@ -12,14 +12,12 @@ import (
 
 const (
 	StringAppend     = "function_string_append"
-	StringEndWith    = "function_string_end_with"
 	StringIndexOf    = "function_string_index_of"
 	StringJoin       = "function_string_join"
 	StringLower      = "function_string_lower"
 	StringPrepend    = "function_string_prepend"
 	StringReplaceAll = "function_string_replace_all"
 	StringSplit      = "function_string_split"
-	StringStartWith  = "function_string_start_with"
 	StringSubstring1 = "function_string_substring1"
 	StringSubstring2 = "function_string_substring2"
 	StringTrim       = "function_string_trim"
@@ -106,40 +104,6 @@ func stringInstanceFunctions() []cel.EnvOption {
 							}
 						}
 						return values[0]
-					},
-				),
-			),
-		),
-		cel.Function("startWith",
-			cel.MemberOverload(StringStartWith,
-				[]*cel.Type{cel.StringType, cel.StringType}, cel.BoolType,
-				cel.BinaryBinding(
-					func(value1, value2 ref.Val) ref.Val {
-						switch v := value1.Value(); v.(type) {
-						case string:
-							switch sw := value2.Value(); sw.(type) {
-							case string:
-								return types.Bool(strings.HasPrefix(v.(string), sw.(string)))
-							}
-						}
-						return types.Bool(false)
-					},
-				),
-			),
-		),
-		cel.Function("endWith",
-			cel.MemberOverload(StringEndWith,
-				[]*cel.Type{cel.StringType, cel.StringType}, cel.BoolType,
-				cel.BinaryBinding(
-					func(value1, value2 ref.Val) ref.Val {
-						switch v := value1.Value(); v.(type) {
-						case string:
-							switch sw := value2.Value(); sw.(type) {
-							case string:
-								return types.Bool(strings.HasSuffix(v.(string), sw.(string)))
-							}
-						}
-						return types.Bool(false)
 					},
 				),
 			),
@@ -260,7 +224,7 @@ func stringInstanceFunctions() []cel.EnvOption {
 						case string:
 							switch a := value2.Value(); a.(type) {
 							case string:
-								return types.String(a.(string) +  v.(string))
+								return types.String(a.(string) + v.(string))
 							}
 						}
 						return types.String("")

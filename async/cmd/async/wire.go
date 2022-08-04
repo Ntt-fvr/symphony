@@ -10,6 +10,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"github.com/google/wire"
 	"net/http"
 
 	"contrib.go.opencensus.io/integrations/ocsql"
@@ -32,7 +33,6 @@ import (
 	"go.uber.org/cadence/.gen/go/cadence/workflowserviceclient"
 	"gocloud.dev/runtimevar"
 
-	"github.com/google/wire"
 	"go.opencensus.io/stats/view"
 	"gocloud.dev/blob"
 	"gocloud.dev/server/health"
@@ -158,7 +158,6 @@ func newHandlers(bucket *blob.Bucket, flags *cliFlags, client *worker.Client, te
 		handler.New(handler.HandleConfig{
 			Name: "flow",
 			Handler: handler.NewFlowHandler(
-				client.GetCadenceClient(worker.FlowDomainName.String()),
 				flags.AutomationURL,
 			),
 		}, handler.WithTransaction(false)),
@@ -170,12 +169,10 @@ func newHandlers(bucket *blob.Bucket, flags *cliFlags, client *worker.Client, te
 			Name:    "block_automationactivities_log",
 			Handler: handler.Func(handler.HandleBlockActivities),
 		}),
-		/*
-			handler.New(handler.HandleConfig{
-				Name:    "automation_signal",
-				Handler: handler.Func(handler.HandleAutomationSignal),
-			}),
-		*/
+		handler.New(handler.HandleConfig{
+			Name:    "automation_signal",
+			Handler: handler.Func(handler.HandleAutomationSignal),
+		}),
 	}
 }
 
