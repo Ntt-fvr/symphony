@@ -259,6 +259,12 @@ export type UpdateParameterMutationResponse = {|
       +floatValue: ?number,
       +intValue: ?number,
       +stringValue: ?string,
+      +parameterType: {|
+        +id: string,
+        +intValue: ?number,
+        +floatValue: ?number,
+        +stringValue: ?string,
+      |},
     |}>
   |}
 |};
@@ -279,6 +285,12 @@ mutation UpdateParameterMutation(
       floatValue
       intValue
       stringValue
+      parameterType {
+        id
+        intValue
+        floatValue
+        stringValue
+      }
     }
   }
 }
@@ -292,7 +304,35 @@ var v0 = [
     "name": "input"
   }
 ],
-v1 = [
+v1 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "id",
+  "storageKey": null
+},
+v2 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "floatValue",
+  "storageKey": null
+},
+v3 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "intValue",
+  "storageKey": null
+},
+v4 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "stringValue",
+  "storageKey": null
+},
+v5 = [
   {
     "alias": null,
     "args": [
@@ -315,32 +355,23 @@ v1 = [
         "name": "parameter",
         "plural": true,
         "selections": [
+          (v1/*: any*/),
+          (v2/*: any*/),
+          (v3/*: any*/),
+          (v4/*: any*/),
           {
             "alias": null,
             "args": null,
-            "kind": "ScalarField",
-            "name": "id",
-            "storageKey": null
-          },
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "floatValue",
-            "storageKey": null
-          },
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "intValue",
-            "storageKey": null
-          },
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "stringValue",
+            "concreteType": "ConfigurationParameterType",
+            "kind": "LinkedField",
+            "name": "parameterType",
+            "plural": false,
+            "selections": [
+              (v1/*: any*/),
+              (v3/*: any*/),
+              (v2/*: any*/),
+              (v4/*: any*/)
+            ],
             "storageKey": null
           }
         ],
@@ -356,7 +387,7 @@ return {
     "kind": "Fragment",
     "metadata": null,
     "name": "UpdateParameterMutation",
-    "selections": (v1/*: any*/),
+    "selections": (v5/*: any*/),
     "type": "Mutation",
     "abstractKey": null
   },
@@ -365,19 +396,19 @@ return {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
     "name": "UpdateParameterMutation",
-    "selections": (v1/*: any*/)
+    "selections": (v5/*: any*/)
   },
   "params": {
-    "cacheID": "6d20ffab800f23b967107a23eca4595b",
+    "cacheID": "193fdacfe40b9aac24232fcf9e0ae454",
     "id": null,
     "metadata": {},
     "name": "UpdateParameterMutation",
     "operationKind": "mutation",
-    "text": "mutation UpdateParameterMutation(\n  $input: UpdateParameterInput!\n) {\n  updateParameter(input: $input) {\n    parameter {\n      id\n      floatValue\n      intValue\n      stringValue\n    }\n  }\n}\n"
+    "text": "mutation UpdateParameterMutation(\n  $input: UpdateParameterInput!\n) {\n  updateParameter(input: $input) {\n    parameter {\n      id\n      floatValue\n      intValue\n      stringValue\n      parameterType {\n        id\n        intValue\n        floatValue\n        stringValue\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = 'd3937fbdf4746c86bac8117af00930aa';
+(node/*: any*/).hash = '1fe288aa940f4ba85048607587c4cc4d';
 
 module.exports = node;

@@ -244,6 +244,7 @@ export type AddCMVersionMutationResponse = {|
         +name: string,
       |},
       +parameters: $ReadOnlyArray<{|
+        +id: string,
         +parameterType: {|
           +id: string,
           +name: string,
@@ -253,7 +254,7 @@ export type AddCMVersionMutationResponse = {|
           +stringValue: ?string,
           +booleanValue: ?boolean,
           +resourceSpecification: string,
-        |}
+        |},
       |}>,
     |}>
   |}
@@ -278,6 +279,7 @@ mutation AddCMVersionMutation(
         name
       }
       parameters {
+        id
         parameterType {
           id
           name
@@ -288,7 +290,6 @@ mutation AddCMVersionMutation(
           booleanValue
           resourceSpecification
         }
-        id
       }
     }
   }
@@ -303,137 +304,125 @@ var v0 = [
     "name": "input"
   }
 ],
-v1 = [
-  {
-    "kind": "Variable",
-    "name": "input",
-    "variableName": "input"
-  }
-],
-v2 = {
+v1 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "id",
   "storageKey": null
 },
-v3 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "status",
-  "storageKey": null
-},
-v4 = {
+v2 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "name",
   "storageKey": null
 },
-v5 = {
-  "alias": null,
-  "args": null,
-  "concreteType": "Resource",
-  "kind": "LinkedField",
-  "name": "resource",
-  "plural": false,
-  "selections": [
-    (v2/*: any*/),
-    (v4/*: any*/)
-  ],
-  "storageKey": null
-},
-v6 = {
-  "alias": null,
-  "args": null,
-  "concreteType": "ConfigurationParameterType",
-  "kind": "LinkedField",
-  "name": "parameterType",
-  "plural": false,
-  "selections": [
-    (v2/*: any*/),
-    (v4/*: any*/),
-    {
-      "alias": null,
-      "args": null,
-      "kind": "ScalarField",
-      "name": "type",
-      "storageKey": null
-    },
-    {
-      "alias": null,
-      "args": null,
-      "kind": "ScalarField",
-      "name": "intValue",
-      "storageKey": null
-    },
-    {
-      "alias": null,
-      "args": null,
-      "kind": "ScalarField",
-      "name": "floatValue",
-      "storageKey": null
-    },
-    {
-      "alias": null,
-      "args": null,
-      "kind": "ScalarField",
-      "name": "stringValue",
-      "storageKey": null
-    },
-    {
-      "alias": null,
-      "args": null,
-      "kind": "ScalarField",
-      "name": "booleanValue",
-      "storageKey": null
-    },
-    {
-      "alias": null,
-      "args": null,
-      "kind": "ScalarField",
-      "name": "resourceSpecification",
-      "storageKey": null
-    }
-  ],
-  "storageKey": null
-};
-return {
-  "fragment": {
-    "argumentDefinitions": (v0/*: any*/),
-    "kind": "Fragment",
-    "metadata": null,
-    "name": "AddCMVersionMutation",
+v3 = [
+  {
+    "alias": null,
+    "args": [
+      {
+        "kind": "Variable",
+        "name": "input",
+        "variableName": "input"
+      }
+    ],
+    "concreteType": "AddCMVersionPayload",
+    "kind": "LinkedField",
+    "name": "addCMVersion",
+    "plural": false,
     "selections": [
       {
         "alias": null,
-        "args": (v1/*: any*/),
-        "concreteType": "AddCMVersionPayload",
+        "args": null,
+        "concreteType": "CMVersion",
         "kind": "LinkedField",
-        "name": "addCMVersion",
-        "plural": false,
+        "name": "cMVersion",
+        "plural": true,
         "selections": [
+          (v1/*: any*/),
           {
             "alias": null,
             "args": null,
-            "concreteType": "CMVersion",
+            "kind": "ScalarField",
+            "name": "status",
+            "storageKey": null
+          },
+          {
+            "alias": null,
+            "args": null,
+            "concreteType": "Resource",
             "kind": "LinkedField",
-            "name": "cMVersion",
+            "name": "resource",
+            "plural": false,
+            "selections": [
+              (v1/*: any*/),
+              (v2/*: any*/)
+            ],
+            "storageKey": null
+          },
+          {
+            "alias": null,
+            "args": null,
+            "concreteType": "Parameter",
+            "kind": "LinkedField",
+            "name": "parameters",
             "plural": true,
             "selections": [
-              (v2/*: any*/),
-              (v3/*: any*/),
-              (v5/*: any*/),
+              (v1/*: any*/),
               {
                 "alias": null,
                 "args": null,
-                "concreteType": "Parameter",
+                "concreteType": "ConfigurationParameterType",
                 "kind": "LinkedField",
-                "name": "parameters",
-                "plural": true,
+                "name": "parameterType",
+                "plural": false,
                 "selections": [
-                  (v6/*: any*/)
+                  (v1/*: any*/),
+                  (v2/*: any*/),
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "type",
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "intValue",
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "floatValue",
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "stringValue",
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "booleanValue",
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "resourceSpecification",
+                    "storageKey": null
+                  }
                 ],
                 "storageKey": null
               }
@@ -444,6 +433,16 @@ return {
         "storageKey": null
       }
     ],
+    "storageKey": null
+  }
+];
+return {
+  "fragment": {
+    "argumentDefinitions": (v0/*: any*/),
+    "kind": "Fragment",
+    "metadata": null,
+    "name": "AddCMVersionMutation",
+    "selections": (v3/*: any*/),
     "type": "Mutation",
     "abstractKey": null
   },
@@ -452,58 +451,19 @@ return {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
     "name": "AddCMVersionMutation",
-    "selections": [
-      {
-        "alias": null,
-        "args": (v1/*: any*/),
-        "concreteType": "AddCMVersionPayload",
-        "kind": "LinkedField",
-        "name": "addCMVersion",
-        "plural": false,
-        "selections": [
-          {
-            "alias": null,
-            "args": null,
-            "concreteType": "CMVersion",
-            "kind": "LinkedField",
-            "name": "cMVersion",
-            "plural": true,
-            "selections": [
-              (v2/*: any*/),
-              (v3/*: any*/),
-              (v5/*: any*/),
-              {
-                "alias": null,
-                "args": null,
-                "concreteType": "Parameter",
-                "kind": "LinkedField",
-                "name": "parameters",
-                "plural": true,
-                "selections": [
-                  (v6/*: any*/),
-                  (v2/*: any*/)
-                ],
-                "storageKey": null
-              }
-            ],
-            "storageKey": null
-          }
-        ],
-        "storageKey": null
-      }
-    ]
+    "selections": (v3/*: any*/)
   },
   "params": {
-    "cacheID": "1c78007646bcce0e759d558d605d2549",
+    "cacheID": "c9ec8df68dabe519478b26d306dac67e",
     "id": null,
     "metadata": {},
     "name": "AddCMVersionMutation",
     "operationKind": "mutation",
-    "text": "mutation AddCMVersionMutation(\n  $input: [AddCMVersionInput!]!\n) {\n  addCMVersion(input: $input) {\n    cMVersion {\n      id\n      status\n      resource {\n        id\n        name\n      }\n      parameters {\n        parameterType {\n          id\n          name\n          type\n          intValue\n          floatValue\n          stringValue\n          booleanValue\n          resourceSpecification\n        }\n        id\n      }\n    }\n  }\n}\n"
+    "text": "mutation AddCMVersionMutation(\n  $input: [AddCMVersionInput!]!\n) {\n  addCMVersion(input: $input) {\n    cMVersion {\n      id\n      status\n      resource {\n        id\n        name\n      }\n      parameters {\n        id\n        parameterType {\n          id\n          name\n          type\n          intValue\n          floatValue\n          stringValue\n          booleanValue\n          resourceSpecification\n        }\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = 'ce660b2b9c00291e74c14658cdc329ee';
+(node/*: any*/).hash = '0f3baa46b4134e3f295704ed9cbdbd46';
 
 module.exports = node;

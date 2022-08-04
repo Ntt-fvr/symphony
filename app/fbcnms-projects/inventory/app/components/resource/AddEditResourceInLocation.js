@@ -8,7 +8,10 @@
  * @format
  */
 
-import type {AddCMVersionMutationVariables} from '../../mutations/__generated__/AddCMVersionMutation.graphql';
+import type {
+  AddCMVersionMutationResponse,
+  AddCMVersionMutationVariables,
+} from '../../mutations/__generated__/AddCMVersionMutation.graphql';
 import type {AddEditResourceInLocationQuery} from './__generated__/AddEditResourceInLocationQuery.graphql';
 
 import React, {useState} from 'react';
@@ -244,47 +247,66 @@ const AddEditResourceInLocation = (props: Props) => {
       ],
     };
 
-    const te = queryParameter?.map(parameters => {
-      const responseParameter: UpdateParameterMutationResponse = {
-        input: {
-          filter: {
-            id: parameters?.id ?? '',
-          },
-          set: {
-            stringValue: parameters?.parameterType?.stringValue ?? null,
-            intValue: parameters?.parameterType?.intValue ?? null,
-            floatValue: parameters?.parameterType?.floatValue ?? null,
-          },
-        },
-      };
-      UpdateParameterMutation(responseParameter);
-    });
-
-    console.log('te ->', te);
-
-    // console.log('responseParameter', responseParameter);
-
-    const response: MutationCallbacks<AddResourceMutationResponse> = {
-      onCompleted: response => {
+    const responseFnResource: MutationCallbacks<AddResourceMutationResponse> = {
+      onCompleted: responseResource => {
         const cmVersionVariables: AddCMVersionMutationVariables = {
           input: [
             {
               createTime: createdTime,
               resource: {
-                id: response.addResource?.resource[0]?.id,
+                id: responseResource.addResource?.resource[0]?.id,
               },
               parameters: convertParametersMap(dataPropertyType),
               status: 'CURRENT',
             },
           ],
         };
-        AddCMVersionMutation(cmVersionVariables, {
-          onCompleted: () => isCompleted(),
-        });
-        isCompleted();
+
+        const responseFnCmVersion: MutationCallbacks<AddCMVersionMutationResponse> = {
+          onCompleted: responseCmVersion => {
+            responseCmVersion?.addCMVersion.cMVersion[0]?.parameters.map(
+              (parameter, i) => {
+                const responseParameter: UpdateParameterMutationVariables = {
+                  input: {
+                    filter: {
+                      id: parameter?.id ?? '',
+                    },
+                    set: {
+                      stringValue:
+                        parameter?.parameterType?.stringValue ?? null,
+                      intValue: parameter?.parameterType?.intValue ?? null,
+                      floatValue: parameter?.parameterType?.floatValue ?? null,
+                    },
+                  },
+                };
+                UpdateParameterMutation(responseParameter, {
+                  onCompleted: () => {
+                    // console.log(
+                    //   i,
+                    //   responsePar?.addCMVersion.cMVersion[0]?.parameters
+                    //     .length - 1,
+                    // );
+                    if (
+                      i ===
+                      responsePar?.addCMVersion.cMVersion[0]?.parameters
+                        .length -
+                        1
+                    ) {
+                      isCompleted();
+                      // , console.log('is-complete');
+                    }
+                  },
+                });
+              },
+            );
+          },
+        };
+
+        AddCMVersionMutation(cmVersionVariables, responseFnCmVersion);
       },
     };
-    AddResourceMutation(variables, response);
+
+    AddResourceMutation(variables, responseFnResource);
     setResourceType({data: {}});
     closeFormAddEdit();
   }

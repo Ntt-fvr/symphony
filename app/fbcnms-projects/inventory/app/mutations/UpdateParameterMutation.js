@@ -27,6 +27,12 @@ const mutation = graphql`
         floatValue
         intValue
         stringValue
+        parameterType {
+          id
+          intValue
+          floatValue
+          stringValue
+        }
       }
     }
   }
