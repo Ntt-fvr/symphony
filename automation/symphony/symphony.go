@@ -8,7 +8,6 @@ import (
 	"fmt"
 	"github.com/facebookincubator/symphony/automation/enum"
 	"time"
-
 	"github.com/Khan/genqlient/graphql"
 )
 

@@ -5,15 +5,16 @@ import (
 	"crypto/tls"
 	"errors"
 	"fmt"
+	"net/http"
+	"sort"
+	"time"
+
 	"github.com/Khan/genqlient/graphql"
 	"github.com/facebookincubator/symphony/automation/celgo"
 	"github.com/facebookincubator/symphony/automation/config"
 	"github.com/facebookincubator/symphony/automation/enum"
 	"github.com/facebookincubator/symphony/automation/symphony"
 	"github.com/facebookincubator/symphony/automation/util"
-	"net/http"
-	"sort"
-	"time"
 )
 
 var graphqlClient graphql.Client

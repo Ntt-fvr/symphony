@@ -352,6 +352,7 @@ func TestChoiceBlock(t *testing.T) {
 				Index:     pointer.ToInt(3),
 			},
 		},
+		BasicDefinitions: &models.BaseBlockInput{},
 	})
 	require.NoError(t, err)
 
@@ -409,4 +410,161 @@ func TestChoiceBlock(t *testing.T) {
 	connectors, err := fdr.Connectors(ctx, flowDraft)
 	require.NoError(t, err)
 	require.Len(t, connectors, 2)
+}
+
+func TestTimerBlock(t *testing.T) {
+	r := newTestResolver(t)
+	defer r.Close()
+	ctx := viewertest.NewContext(context.Background(), r.client)
+
+	mr, br := r.Mutation(), r.Block()
+	flowDraft, err := mr.AddFlowDraft(ctx, models.AddFlowDraftInput{
+		Name: "Flow Name",
+	})
+	require.NoError(t, err)
+
+	expression := "test_timer"
+
+	b, err := mr.AddTimerBlock(ctx, flowDraft.ID, models.TimerBlockInput{
+		Cid:               "timer",
+		EnableExpressionL: &block.DefaultBlockFlow,
+		Expression:        &expression,
+		Behavior:          block.TimerBehaviorFIXED_INTERVAL,
+	})
+	require.NoError(t, err)
+	details, err := br.Details(ctx, b)
+	require.NoError(t, err)
+	timer, ok := details.(*models.TimerBlock)
+	require.True(t, ok)
+	require.Equal(t, &expression, timer.Expression)
+	require.Equal(t, &block.DefaultBlockFlow, timer.EnableExpressionL)
+	require.Equal(t, block.TimerBehaviorFIXED_INTERVAL, timer.Behavior)
+}
+
+// Error Unknown
+func TestWaitForSignalBlock(t *testing.T) {
+	r := newTestResolver(t)
+	defer r.Close()
+	ctx := viewertest.NewContext(context.Background(), r.client)
+
+	mr, br := r.Mutation(), r.Block()
+	flowDraft, err := mr.AddFlowDraft(ctx, models.AddFlowDraftInput{
+		Name: "Flow Name",
+	})
+	require.NoError(t, err)
+
+	filter := "signalFilter"
+	signalModule := block.SignalModuleASSURANCE
+	typeWait := block.SignalTypeCRCREATED
+
+	b, err := mr.AddWaitForSignalBlock(ctx, flowDraft.ID, models.WaitForSignalBlockInput{
+		Cid:              "waitForSignal",
+		SignalModule:     block.SignalModuleASSURANCE,
+		Type:             block.SignalTypeCRCREATED,
+		CustomFilter:     &filter,
+		Blocked:          bool(false),
+		BasicDefinitions: &models.BaseBlockInput{},
+	})
+	require.NoError(t, err)
+	details, err := br.Details(ctx, b)
+	require.NoError(t, err)
+	waitForSignal, ok := details.(*models.WaitForSignalBlock)
+	require.True(t, ok)
+	require.Equal(t, &signalModule, waitForSignal.SignalModule)
+	require.Equal(t, &typeWait, waitForSignal.Type)
+	require.Equal(t, &filter, waitForSignal.CustomFilter)
+	require.Equal(t, bool(false), waitForSignal.Blocked)
+}
+
+// Error on connectionTimeOut at details
+func TestInvokeRestAPIBlock(t *testing.T) {
+	r := newTestResolver(t)
+	defer r.Close()
+	ctx := viewertest.NewContext(context.Background(), r.client)
+
+	mr, br := r.Mutation(), r.Block()
+	flowDraft, err := mr.AddFlowDraft(ctx, models.AddFlowDraftInput{
+		Name: "Flow Name",
+	})
+	require.NoError(t, err)
+
+	body := "signalFilter"
+
+	b, err := mr.AddInvokeRestAPIBlock(ctx, flowDraft.ID, models.InvokeRestAPIBlockInput{
+		Cid:               "invokeRestAPI",
+		Body:              body,
+		ConnectionTimeOut: 23,
+		Headers: []*flowschema.VariableValue{
+			nil, &flowschema.VariableValue{VariableDefinitionKey: body, Value: body},
+		},
+		URL:              "localhost",
+		Method:           block.URLMethodGET,
+		BasicDefinitions: &models.BaseBlockInput{},
+	})
+	require.NoError(t, err)
+	details, err := br.Details(ctx, b)
+	require.NoError(t, err)
+	invokeRestAPI, ok := details.(*models.InvokeRestAPIBlock)
+	require.True(t, ok)
+	require.Equal(t, 23, invokeRestAPI.ConnectionTimeOut)
+	require.Equal(t, "localhost", invokeRestAPI.URL)
+	require.Equal(t, block.URLMethodGET, invokeRestAPI.Method)
+}
+
+// Error flow details on subFLow
+func TestExecuteFLowBlockBlock(t *testing.T) {
+	r := newTestResolver(t)
+	defer r.Close()
+	ctx := viewertest.NewContext(context.Background(), r.client)
+
+	mr, br := r.Mutation(), r.Block()
+	flowDraft, err := mr.AddFlowDraft(ctx, models.AddFlowDraftInput{
+		Name: "Flow Name",
+	})
+	require.NoError(t, err)
+
+	subflow := prepareBasicFlow(ctx, t, mr, "subFlow", nil, nil)
+
+	b, err := mr.AddExecuteFlowBlock(ctx, flowDraft.ID, models.ExecuteFlowBlockInput{
+		Cid:  "executeFlow",
+		Flow: subflow.ID,
+	})
+	require.NoError(t, err)
+	details, err := br.Details(ctx, b)
+	require.NoError(t, err)
+	executeFlow, ok := details.(*models.ExecuteFlowBlock)
+	require.True(t, ok)
+	require.Equal(t, "executeFlow", b.Cid)
+	require.Equal(t, subflow.ID, executeFlow.Flow)
+}
+
+func TestKafkaBlock(t *testing.T) {
+	r := newTestResolver(t)
+	defer r.Close()
+	ctx := viewertest.NewContext(context.Background(), r.client)
+
+	mr, br := r.Mutation(), r.Block()
+	flowDraft, err := mr.AddFlowDraft(ctx, models.AddFlowDraftInput{
+		Name: "Flow Name",
+	})
+	require.NoError(t, err)
+
+	b, err := mr.AddKafkaBlock(ctx, flowDraft.ID, models.KafkaBlockInput{
+		Cid: "kafkaBlock",
+		Brokers: []string{
+			"test",
+		},
+		Topic:            "kafkaTopic",
+		Message:          "kafkaMessage",
+		Type:             enum.KafkaMessageTypeInput,
+		BasicDefinitions: &models.BaseBlockInput{},
+	})
+	require.NoError(t, err)
+	details, err := br.Details(ctx, b)
+	require.NoError(t, err)
+	kafka, ok := details.(*models.KafkaBlock)
+	require.True(t, ok)
+	require.Equal(t, "kafkaTopic", kafka.Topic)
+	require.Equal(t, "kafkaMessage", kafka.Message)
+	require.Equal(t, enum.KafkaMessageTypeInput, kafka.Type)
 }
