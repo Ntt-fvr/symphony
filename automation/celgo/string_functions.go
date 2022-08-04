@@ -12,14 +12,13 @@ import (
 
 const (
 	StringAppend     = "function_string_append"
-	StringEndWith    = "function_string_end_with"
 	StringIndexOf    = "function_string_index_of"
 	StringJoin       = "function_string_join"
+	StringJoinWith   = "function_string_join_with"
 	StringLower      = "function_string_lower"
 	StringPrepend    = "function_string_prepend"
 	StringReplaceAll = "function_string_replace_all"
 	StringSplit      = "function_string_split"
-	StringStartWith  = "function_string_start_with"
 	StringSubstring1 = "function_string_substring1"
 	StringSubstring2 = "function_string_substring2"
 	StringTrim       = "function_string_trim"
@@ -33,19 +32,13 @@ func stringGlobalFunctions() []cel.EnvOption {
 				[]*cel.Type{cel.ListType(cel.StringType), cel.StringType}, cel.StringType,
 				cel.BinaryBinding(
 					func(value1, value2 ref.Val) ref.Val {
-						switch v := value1.Value(); v.(type) {
-						case []ref.Val:
-							list, err := value1.ConvertToNative(reflect.TypeOf([]string{}))
-							if err != nil {
-								return &types.Err{}
-							}
-
-							switch sep := value2.Value(); sep.(type) {
-							case string:
-								return types.String(strings.Join(list.([]string), sep.(string)))
-							}
+						list, err := value1.ConvertToNative(reflect.TypeOf([]string{}))
+						if err != nil {
+							return &types.Err{}
 						}
-						return nil
+
+						sep := value2.Value().(string)
+						return types.String(strings.Join(list.([]string), sep))
 					},
 				),
 			),
@@ -60,11 +53,8 @@ func stringInstanceFunctions() []cel.EnvOption {
 				[]*cel.Type{cel.StringType}, cel.StringType,
 				cel.UnaryBinding(
 					func(value ref.Val) ref.Val {
-						switch v := value.Value(); v.(type) {
-						case string:
-							return types.String(strings.ToLower(v.(string)))
-						}
-						return value
+						v := value.Value().(string)
+						return types.String(strings.ToLower(v))
 					},
 				),
 			),
@@ -74,11 +64,8 @@ func stringInstanceFunctions() []cel.EnvOption {
 				[]*cel.Type{cel.StringType}, cel.StringType,
 				cel.UnaryBinding(
 					func(value ref.Val) ref.Val {
-						switch v := value.Value(); v.(type) {
-						case string:
-							return types.String(strings.ToUpper(v.(string)))
-						}
-						return value
+						v := value.Value().(string)
+						return types.String(strings.ToUpper(v))
 					},
 				),
 			),
@@ -88,58 +75,23 @@ func stringInstanceFunctions() []cel.EnvOption {
 				[]*cel.Type{cel.StringType, cel.StringType, cel.StringType}, cel.StringType,
 				cel.FunctionBinding(
 					func(values ...ref.Val) ref.Val {
-						switch l := len(values); l {
-						case 0:
-							return nil
-						case 1, 2:
-							return values[0]
-						case 3:
-							switch s := values[0].Value(); s.(type) {
-							case string:
-								switch old := values[1].Value(); old.(type) {
-								case string:
-									switch value := values[2].Value(); value.(type) {
-									case string:
-										return types.String(strings.ReplaceAll(s.(string), old.(string), value.(string)))
-									}
-								}
-							}
-						}
-						return values[0]
+						s := values[0].Value().(string)
+						old := values[1].Value().(string)
+						value := values[2].Value().(string)
+						return types.String(strings.ReplaceAll(s, old, value))
 					},
 				),
 			),
 		),
-		cel.Function("startWith",
-			cel.MemberOverload(StringStartWith,
-				[]*cel.Type{cel.StringType, cel.StringType}, cel.BoolType,
-				cel.BinaryBinding(
-					func(value1, value2 ref.Val) ref.Val {
-						switch v := value1.Value(); v.(type) {
-						case string:
-							switch sw := value2.Value(); sw.(type) {
-							case string:
-								return types.Bool(strings.HasPrefix(v.(string), sw.(string)))
-							}
-						}
-						return types.Bool(false)
-					},
-				),
-			),
-		),
-		cel.Function("endWith",
-			cel.MemberOverload(StringEndWith,
-				[]*cel.Type{cel.StringType, cel.StringType}, cel.BoolType,
-				cel.BinaryBinding(
-					func(value1, value2 ref.Val) ref.Val {
-						switch v := value1.Value(); v.(type) {
-						case string:
-							switch sw := value2.Value(); sw.(type) {
-							case string:
-								return types.Bool(strings.HasSuffix(v.(string), sw.(string)))
-							}
-						}
-						return types.Bool(false)
+		cel.Function("joinWith",
+			cel.MemberOverload(StringJoinWith,
+				[]*cel.Type{cel.StringType, cel.StringType, cel.StringType}, cel.StringType,
+				cel.FunctionBinding(
+					func(values ...ref.Val) ref.Val {
+						s := values[0].Value().(string)
+						elem := values[1].Value().(string)
+						sep := values[2].Value().(string)
+						return types.String(strings.Join([]string{s, elem}, sep))
 					},
 				),
 			),
@@ -149,14 +101,9 @@ func stringInstanceFunctions() []cel.EnvOption {
 				[]*cel.Type{cel.StringType, cel.StringType}, cel.IntType,
 				cel.BinaryBinding(
 					func(value1, value2 ref.Val) ref.Val {
-						switch v := value1.Value(); v.(type) {
-						case string:
-							switch ew := value2.Value(); ew.(type) {
-							case string:
-								return types.Int(strings.Index(v.(string), ew.(string)))
-							}
-						}
-						return types.Int(-1)
+						v := value1.Value().(string)
+						ew := value2.Value().(string)
+						return types.Int(strings.Index(v, ew))
 					},
 				),
 			),
@@ -166,14 +113,9 @@ func stringInstanceFunctions() []cel.EnvOption {
 				[]*cel.Type{cel.StringType, cel.StringType}, cel.ListType(cel.StringType),
 				cel.BinaryBinding(
 					func(value1, value2 ref.Val) ref.Val {
-						switch v := value1.Value(); v.(type) {
-						case string:
-							switch sep := value2.Value(); sep.(type) {
-							case string:
-								return types.DefaultTypeAdapter.NativeToValue(strings.Split(v.(string), sep.(string)))
-							}
-						}
-						return types.DefaultTypeAdapter.NativeToValue([]string{})
+						v := value1.Value().(string)
+						sep := value2.Value().(string)
+						return types.DefaultTypeAdapter.NativeToValue(strings.Split(v, sep))
 					},
 				),
 			),
@@ -183,11 +125,8 @@ func stringInstanceFunctions() []cel.EnvOption {
 				[]*cel.Type{cel.StringType}, cel.StringType,
 				cel.UnaryBinding(
 					func(value ref.Val) ref.Val {
-						switch v := value.Value(); v.(type) {
-						case string:
-							return types.String(strings.TrimSpace(v.(string)))
-						}
-						return value
+						v := value.Value().(string)
+						return types.String(strings.TrimSpace(v))
 					},
 				),
 			),
@@ -197,14 +136,9 @@ func stringInstanceFunctions() []cel.EnvOption {
 				[]*cel.Type{cel.StringType, cel.IntType}, cel.StringType,
 				cel.BinaryBinding(
 					func(value1, value2 ref.Val) ref.Val {
-						switch v := value1.Value(); v.(type) {
-						case string:
-							switch st := value2.Value(); st.(type) {
-							case int64:
-								return types.String(v.(string)[st.(int64):])
-							}
-						}
-						return value1
+						v := value1.Value().(string)
+						st := value2.Value().(int64)
+						return types.String(v[st:])
 					},
 				),
 			),
@@ -212,24 +146,10 @@ func stringInstanceFunctions() []cel.EnvOption {
 				[]*cel.Type{cel.StringType, cel.IntType, cel.IntType}, cel.StringType,
 				cel.FunctionBinding(
 					func(values ...ref.Val) ref.Val {
-						switch l := len(values); l {
-						case 0:
-							return nil
-						case 1, 2:
-							return values[0]
-						case 3:
-							switch s := values[0].Value(); s.(type) {
-							case string:
-								switch st := values[1].Value(); st.(type) {
-								case int64:
-									switch en := values[2].Value(); en.(type) {
-									case int64:
-										return types.String(s.(string)[st.(int64):en.(int64)])
-									}
-								}
-							}
-						}
-						return values[0]
+						s := values[0].Value().(string)
+						st := values[1].Value().(int64)
+						en := values[2].Value().(int64)
+						return types.String(s[st:en])
 					},
 				),
 			),
@@ -239,14 +159,9 @@ func stringInstanceFunctions() []cel.EnvOption {
 				[]*cel.Type{cel.StringType, cel.StringType}, cel.StringType,
 				cel.BinaryBinding(
 					func(value1, value2 ref.Val) ref.Val {
-						switch v := value1.Value(); v.(type) {
-						case string:
-							switch a := value2.Value(); a.(type) {
-							case string:
-								return types.String(v.(string) + a.(string))
-							}
-						}
-						return types.String("")
+						v := value1.Value().(string)
+						a := value2.Value().(string)
+						return types.String(v + a)
 					},
 				),
 			),
@@ -256,14 +171,9 @@ func stringInstanceFunctions() []cel.EnvOption {
 				[]*cel.Type{cel.StringType, cel.StringType}, cel.StringType,
 				cel.BinaryBinding(
 					func(value1, value2 ref.Val) ref.Val {
-						switch v := value1.Value(); v.(type) {
-						case string:
-							switch a := value2.Value(); a.(type) {
-							case string:
-								return types.String(a.(string) +  v.(string))
-							}
-						}
-						return types.String("")
+						v := value1.Value().(string)
+						a := value2.Value().(string)
+						return types.String(a + v)
 					},
 				),
 			),
