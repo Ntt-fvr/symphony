@@ -1,0 +1,1 @@
+. 2goXShrautomation/executors/foreach.go
