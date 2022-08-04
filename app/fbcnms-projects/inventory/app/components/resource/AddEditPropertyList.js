@@ -9,6 +9,7 @@
  */
 
 import * as React from 'react';
+import CardHeader from '@symphony/design-system/components/Card/CardHeader';
 import Grid from '@material-ui/core/Grid';
 import PropertyTypesTableDispatcher from '../form/context/property_types/PropertyTypesTableDispatcher';
 import PropertyValueInput from '../form/PropertyValueInput';
@@ -21,6 +22,9 @@ const useStyles = makeStyles(() => ({
     display: 'inline-flex',
     width: '100%',
   },
+  cardHeader: {
+    margin: '20px 43px 22px 30px',
+  },
 }));
 
 type Props = $ReadOnly<{|
@@ -32,27 +36,34 @@ const AddEditPropertyList = ({propertyTypes}: Props) => {
   const {dispatch} = useContext(PropertyTypesTableDispatcher);
 
   return (
-    <Grid container>
-      {propertyTypes.map(property => (
-        <Grid key={property.id} className={classes.inputMargin} item xs={6}>
-          <PropertyValueInput
-            required={!!property.propertyType.isMandatory}
-            disabled={!property.propertyType.isInstanceProperty}
-            label={property.name}
-            className={classes.input}
-            inputType="Property"
-            property={property}
-            headlineVariant="form"
-            onChange={value =>
-              dispatch({
-                type: 'UPDATE_PROPERTY_TYPE',
-                value,
-              })
-            }
-          />
+    <>
+      {propertyTypes.name === undefined ? null : (
+        <Grid container>
+          <Grid item xs={12}>
+            <CardHeader className={classes.cardHeader}>Properties</CardHeader>
+          </Grid>
+          {propertyTypes.map(property => (
+            <Grid key={property.id} className={classes.inputMargin} item xs={6}>
+              <PropertyValueInput
+                required={!!property?.propertyType?.isMandatory}
+                disabled={!property?.propertyType?.isInstanceProperty}
+                label={property.name}
+                className={classes.input}
+                inputType="Property"
+                property={property}
+                headlineVariant="form"
+                onChange={value =>
+                  dispatch({
+                    type: 'UPDATE_PROPERTY_TYPE',
+                    value,
+                  })
+                }
+              />
+            </Grid>
+          ))}
         </Grid>
-      ))}
-    </Grid>
+      )}
+    </>
   );
 };
 
