@@ -13,9 +13,6 @@ import type {
   AddCMVersionMutationVariables,
 } from '../../mutations/__generated__/AddCMVersionMutation.graphql';
 import type {AddEditResourceInLocationQuery} from './__generated__/AddEditResourceInLocationQuery.graphql';
-
-import React, {useState} from 'react';
-
 import type {
   AddResourceMutationResponse,
   AddResourceMutationVariables,
@@ -29,32 +26,41 @@ import type {
   UpdateParameterMutationResponse,
   UpdateParameterMutationVariables,
 } from '../../mutations/__generated__/UpdateParameterMutation.graphql';
+import type {UpdateResourceMutationVariables} from '../../mutations/__generated__/UpdateResourceMutation.graphql';
+import type {UpdateResourcePropertyMutationVariables} from '../../mutations/__generated__/UpdateResourcePropertyMutation.graphql';
 
 import type {MutationCallbacks} from '../../mutations/MutationCallbacks';
 
 import AddCMVersionMutation from '../../mutations/AddCMVersionMutation';
+import AddEditPropertyList from './AddEditPropertyList';
 import AddResourceMutation from '../../mutations/AddResourceMutation';
-import Button from '@material-ui/core/Button';
 import Card from '@symphony/design-system/components/Card/Card';
 import CardHeader from '@symphony/design-system/components/Card/CardHeader';
-import Event from '@material-ui/icons/Event';
+import FormSaveCancelPanel from '@symphony/design-system/components/Form/FormSaveCancelPanel';
 import Grid from '@material-ui/core/Grid';
-import IconButton from '@material-ui/core/IconButton';
-import InputAdornment from '@material-ui/core/InputAdornment';
-import MomentUtils from '@date-io/moment';
+import NameInput from '@symphony/design-system/components/Form/NameInput';
+import PropertyTypesTableDispatcher from '../form/context/property_types/PropertyTypesTableDispatcher';
+import React, {useState} from 'react';
 import SaveDialogConfirm from '../configure/SaveDialogConfirm';
 import TextField from '@material-ui/core/TextField';
 import UpdateParameterMutation from '../../mutations/UpdateParameterMutation';
+import UpdateResourceMutation from '../../mutations/UpdateResourceMutation';
+import UpdateResourcePropertyMutation from '../../mutations/UpdateResourcePropertyMutation';
 import inventoryTheme from '../../common/theme';
 import moment from 'moment';
-import symphony from '@symphony/design-system/theme/symphony';
-import {DateTimePicker, MuiPickersUtilsProvider} from '@material-ui/pickers';
+import {FormContextProvider} from '../../common/FormContext';
 import {MenuItem} from '@material-ui/core';
 import {camelCase, startCase} from 'lodash';
 import {graphql} from 'relay-runtime';
 import {makeStyles} from '@material-ui/styles';
+import {omit} from 'lodash';
+import {
+  toMutableProperty,
+  toMutablePropertyEdit,
+} from '../context/TableTypeState';
 import {useFormInput} from '../assurance/common/useFormInput';
 import {useLazyLoadQuery} from 'react-relay/hooks';
+import {usePropertyTypesReducer} from '../form/context/property_types/PropertyTypesTableState';
 
 const useStyles = makeStyles(() => ({
   formField: {
@@ -66,21 +72,6 @@ const useStyles = makeStyles(() => ({
   },
   cardHeader: {
     margin: '20px 43px 22px 30px',
-  },
-  buttons: {
-    height: '36px',
-    width: '111px',
-  },
-  buttonAdd: {
-    '&.MuiButtonBase-root:hover': {
-      backgroundColor: symphony.palette.B50,
-    },
-  },
-  buttonEdit: {
-    '&.MuiButtonBase-root:hover': {
-      backgroundColor: 'transparent',
-      color: symphony.palette.B600,
-    },
   },
 }));
 
@@ -172,9 +163,15 @@ const AddEditResourceInLocation = (props: Props) => {
   const classes = useStyles();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [resourceType, setResourceType] = useState<ResourceType>({data: {}});
-  const [slotStartDate, setSlotStartDate] = useState(moment);
-  const [slotEndDate, setSlotEndDate] = useState(moment);
-  const [slotInstallDate, setSlotInstallDate] = useState(moment);
+  const nameEdit = useFormInput(mode === 'edit' ? dataformModal.name : '');
+  const externalId = useFormInput(dataformModal.externalId);
+  const lifecycleStatus = useFormInput(dataformModal.lifecycleStatus);
+  const planningSubStatus = useFormInput(dataformModal.planningSubStatus);
+  const operationalSubStatus = useFormInput(dataformModal.operationalSubStatus);
+  const usageSubStatus = useFormInput(dataformModal.usageSubStatus);
+  const typePlanningSubStatus = useFormInput(
+    dataformModal.typePlanningSubStatus,
+  );
 
   const response = useLazyLoadQuery<AddEditResourceInLocationQuery>(
     queryConfigurationParameterType,
@@ -192,8 +189,6 @@ const AddEditResourceInLocation = (props: Props) => {
   );
   const {queryParameter} = parameterQuery;
 
-  console.log('queryParameter -> ', queryParameter);
-
   const dataPropertyType = response.queryConfigurationParameterType
     ?.map(p => p)
     .filter(Boolean);
@@ -208,16 +203,6 @@ const AddEditResourceInLocation = (props: Props) => {
       };
     });
 
-  const nameEdit = useFormInput(dataformModal.name);
-  const externalID = useFormInput(dataformModal.externalID);
-  const lifecycleStatus = useFormInput(dataformModal.lifecycleStatus);
-  const planningSubStatus = useFormInput(dataformModal.planningSubStatus);
-  const operationalSubStatus = useFormInput(dataformModal.operationalSubStatus);
-  const usageSubStatus = useFormInput(dataformModal.usageSubStatus);
-  const typePlanningSubStatus = useFormInput(
-    dataformModal.typePlanningSubStatus,
-  );
-
   function handleChange({target}) {
     setResourceType({
       data: {
@@ -226,6 +211,25 @@ const AddEditResourceInLocation = (props: Props) => {
       },
     });
   }
+
+  const [propertyTypes, propertyTypesDispatcher] = usePropertyTypesReducer(
+    (mode === 'edit'
+      ? dataformModal.resourceProperties ?? []
+      : dataformModal.resourcePropertyTypes ?? []
+    )
+      .filter(Boolean)
+      .map(mode === 'edit' ? toMutablePropertyEdit : toMutableProperty),
+  );
+
+  const spliceProperties = propertyTypes
+    ?.map(o => {
+      return {
+        ...o,
+        resourcePropertyType: o.type,
+      };
+    })
+    .map(o => omit(o, ['name', 'type', 'id', 'propertyType']));
+
   const DATE_FORMAT = 'YYYY-MM-DD[T]HH:mm:ss';
 
   function handleCreateForm() {
@@ -234,7 +238,7 @@ const AddEditResourceInLocation = (props: Props) => {
       input: [
         {
           locatedIn: selectedLocationId,
-          name: resourceType.data.name,
+          name: nameEdit.value,
           resourceSpecification: dataformModal.id,
           isDeleted: true,
           externalId: resourceType.data.externalId,
@@ -243,6 +247,7 @@ const AddEditResourceInLocation = (props: Props) => {
           planningSubStatus: resourceType.data.planningSubStatus,
           usageSubStatus: resourceType.data.usageSubStatus,
           operationalSubStatus: resourceType.data.operationalSubStatus,
+          resourceProperties: spliceProperties,
         },
       ],
     };
@@ -281,19 +286,13 @@ const AddEditResourceInLocation = (props: Props) => {
                 };
                 UpdateParameterMutation(responseParameter, {
                   onCompleted: () => {
-                    // console.log(
-                    //   i,
-                    //   responsePar?.addCMVersion.cMVersion[0]?.parameters
-                    //     .length - 1,
-                    // );
                     if (
                       i ===
-                      responsePar?.addCMVersion.cMVersion[0]?.parameters
+                      responseCmVersion?.addCMVersion.cMVersion[0]?.parameters
                         .length -
                         1
                     ) {
                       isCompleted();
-                      // , console.log('is-complete');
                     }
                   },
                 });
@@ -310,24 +309,62 @@ const AddEditResourceInLocation = (props: Props) => {
     setResourceType({data: {}});
     closeFormAddEdit();
   }
+
+  const setDataFormEdit = {
+    externalId: externalId.value,
+    lifecycleStatus: lifecycleStatus.value,
+    typePlanningSubStatus: typePlanningSubStatus.value,
+    planningSubStatus: planningSubStatus.value,
+    usageSubStatus: usageSubStatus.value,
+    operationalSubStatus: operationalSubStatus.value,
+  };
+
+  const setDataValidation =
+    nameEdit.value === dataformModal.name
+      ? {...setDataFormEdit}
+      : {...setDataFormEdit, name: nameEdit.value};
+
+  function handleEditForm() {
+    const variables: UpdateResourceMutationVariables = {
+      input: {
+        filter: {
+          id: dataformModal.id,
+        },
+        set: setDataValidation,
+      },
+    };
+
+    propertyTypes.forEach(e => {
+      const variablesEditpropeties: UpdateResourcePropertyMutationVariables = {
+        input: {
+          filter: {
+            id: Array<string>(e.id),
+          },
+          set: omit(e, ['name', 'type', 'id', 'propertyType']),
+        },
+      };
+      UpdateResourcePropertyMutation(variablesEditpropeties);
+    });
+
+    UpdateResourceMutation(variables, {
+      onCompleted: () => {
+        isCompleted();
+        closeFormAddEdit();
+      },
+    });
+  }
+
   const renderForm = (label, nameCreate, nameEdit) => {
     return mode === 'edit' ? (
       <Grid item xs={6}>
         <form className={classes.formField} autoComplete="off">
-          <TextField
-            required
-            label={label}
-            variant="outlined"
-            fullWidth
-            {...nameEdit}
-          />
+          <TextField label={label} variant="outlined" fullWidth {...nameEdit} />
         </form>
       </Grid>
     ) : (
       <Grid item xs={6}>
         <form className={classes.formField} autoComplete="off">
           <TextField
-            required
             label={label}
             variant="outlined"
             name={nameCreate}
@@ -378,174 +415,95 @@ const AddEditResourceInLocation = (props: Props) => {
     );
   };
 
-  const renderFormPicker = (label, value, setValue) => {
-    return mode === 'edit' ? (
-      <Grid item xs={6}>
-        <MuiPickersUtilsProvider utils={MomentUtils}>
-          <DateTimePicker
-            label={label}
-            variant="inline"
-            inputVariant="outlined"
-            className={classes.formField}
-            style={{
-              width: '-webkit-fill-available',
-              marginBottom: '41px',
-            }}
-            value={value}
-            onChange={setValue}
-            format="yyyy/MM/DD HH:mm a"
-            InputProps={{
-              endAdornment: (
-                <InputAdornment position="end">
-                  <IconButton>
-                    <Event style={{color: '#8895AD'}} />
-                  </IconButton>
-                </InputAdornment>
-              ),
-            }}
-          />
-        </MuiPickersUtilsProvider>
-      </Grid>
-    ) : (
-      <Grid item xs={6}>
-        <MuiPickersUtilsProvider utils={MomentUtils}>
-          <DateTimePicker
-            label={label}
-            variant="inline"
-            inputVariant="outlined"
-            className={classes.formField}
-            style={{
-              width: '-webkit-fill-available',
-              marginBottom: '41px',
-            }}
-            value={value}
-            onChange={setValue}
-            format="yyyy/MM/DD HH:mm a"
-            InputProps={{
-              endAdornment: (
-                <InputAdornment position="end">
-                  <IconButton>
-                    <Event style={{color: '#8895AD'}} />
-                  </IconButton>
-                </InputAdornment>
-              ),
-            }}
-          />
-        </MuiPickersUtilsProvider>
-      </Grid>
-    );
-  };
-
   return (
     <>
       <Grid item xs={12} sm={12} lg={12} xl={12}>
         <Card margins="none">
-          <CardHeader className={classes.cardHeader}>
-            {dataformModal.name}
-          </CardHeader>
-          <Grid container>
-            {renderForm('Name', 'name', nameEdit)}
-            {renderForm('External ID', 'externalID', externalID)}
-            {renderFormSelect(
-              'Lifesycle State',
-              'lifecycleStatus',
-              lifecycleStatus,
-              selectListData.lifecycleStatus,
-            )}
-
-            {resourceType.data.lifecycleStatus === 'PLANNING'
-              ? renderFormSelect(
-                  'Planning Status',
-                  'typePlanningSubStatus',
-                  typePlanningSubStatus,
-                  selectListData.typePlanningSubStatus,
-                )
-              : null}
-
-            {resourceType.data.lifecycleStatus === 'OPERATING' ? (
-              <>
+          <PropertyTypesTableDispatcher.Provider
+            value={{dispatch: propertyTypesDispatcher, propertyTypes}}>
+            <FormContextProvider
+              permissions={{
+                entity: 'location',
+              }}>
+              <CardHeader className={classes.cardHeader}>
+                {dataformModal.name}
+              </CardHeader>
+              <Grid container>
+                <Grid item xs={6}>
+                  <div className={classes.formField} autoComplete="off">
+                    <NameInput title="" {...nameEdit} />
+                  </div>
+                </Grid>
+                {renderForm('External ID', 'externalId', externalId)}
                 {renderFormSelect(
-                  'Administrative Status',
-                  'planningSubStatus',
-                  planningSubStatus,
-                  selectListData.planningSubStatus,
+                  'Lifesycle State',
+                  'lifecycleStatus',
+                  lifecycleStatus,
+                  selectListData.lifecycleStatus,
                 )}
-                {renderFormSelect(
-                  'Operational Status',
-                  'operationalSubStatus',
-                  operationalSubStatus,
-                  selectListData.operationalSubStatus,
-                )}
-                {renderFormSelect(
-                  'Usage Status',
-                  'usageSubStatus',
-                  usageSubStatus,
-                  selectListData.usageSubStatus,
-                )}
-              </>
-            ) : null}
+                {resourceType.data.lifecycleStatus === 'PLANNING' ||
+                lifecycleStatus.value === 'PLANNING'
+                  ? renderFormSelect(
+                      'Planning Status',
+                      'typePlanningSubStatus',
+                      typePlanningSubStatus,
+                      selectListData.typePlanningSubStatus,
+                    )
+                  : null}
 
-            <Grid item xs={12}>
-              <CardHeader className={classes.cardHeader}>Properties</CardHeader>
-            </Grid>
-            {renderForm('ID', 'id')}
-            {renderForm('Administrative Substate', 'administrativeSubstate')}
-            {renderFormPicker(
-              'In Service Date',
-              slotStartDate,
-              setSlotStartDate,
-            )}
-            {renderFormPicker(
-              'End Service Date',
-              slotStartDate,
-              setSlotStartDate,
-            )}
-            {renderFormPicker(
-              'Out of Service Date',
-              slotEndDate,
-              setSlotEndDate,
-            )}
-            {renderFormPicker(
-              'Install Date',
-              slotInstallDate,
-              setSlotInstallDate,
-            )}
-            {renderForm('Bandwith from', 'bandwithFrom')}
-            {renderForm('Bandwith from', 'bandwithFrom')}
-          </Grid>
-          <Grid
-            className={classes.header}
-            container
-            direction="row"
-            justify="flex-end"
-            alignItems="center">
-            <Grid>
-              <Button
-                variant="outlined"
-                color="primary"
-                className={classes.buttons}
-                style={{marginRight: '1rem'}}
-                onClick={closeFormAddEdit}>
-                Cancel
-              </Button>
-            </Grid>
-            <Grid>
-              <Button
-                variant="contained"
-                color="primary"
-                className={classes.buttons}
-                onClick={() => setDialogOpen(true)}>
-                Save
-              </Button>
-            </Grid>
-          </Grid>
+                {resourceType.data.lifecycleStatus === 'OPERATING' ||
+                lifecycleStatus.value === 'OPERATING' ? (
+                  <>
+                    {renderFormSelect(
+                      'Administrative Status',
+                      'planningSubStatus',
+                      planningSubStatus,
+                      selectListData.planningSubStatus,
+                    )}
+                    {renderFormSelect(
+                      'Operational Status',
+                      'operationalSubStatus',
+                      operationalSubStatus,
+                      selectListData.operationalSubStatus,
+                    )}
+                    {renderFormSelect(
+                      'Usage Status',
+                      'usageSubStatus',
+                      usageSubStatus,
+                      selectListData.usageSubStatus,
+                    )}
+                  </>
+                ) : null}
+              </Grid>
+              <Grid item xs={12}>
+                <CardHeader className={classes.cardHeader}>
+                  Properties
+                </CardHeader>
+              </Grid>
+              <AddEditPropertyList propertyTypes={propertyTypes} />
+              <Grid
+                className={classes.header}
+                container
+                direction="row"
+                justify="flex-end"
+                alignItems="center">
+                <Grid>
+                  <FormSaveCancelPanel
+                    isDisabled={false}
+                    onCancel={closeFormAddEdit}
+                    onSave={() => setDialogOpen(true)}
+                  />
+                </Grid>
+              </Grid>
+            </FormContextProvider>
+          </PropertyTypesTableDispatcher.Provider>
         </Card>
       </Grid>
       {dialogOpen && (
         <SaveDialogConfirm
           open={dialogOpen}
           onClose={() => setDialogOpen(false)}
-          saveItem={handleCreateForm}
+          saveItem={mode === 'edit' ? handleEditForm : handleCreateForm}
           resource={''}
           typeAlert={'information'}
           customMessage="The information will be saved and you can find it in the list of resources."

@@ -24,6 +24,7 @@ func updateFlowActivitiesCreate(ctx context.Context, entry *event.LogEntry) erro
 		SetAutomationEntityType(automationactivity.AutomationEntityTypeFlowInstance).
 		SetNewValue(strconv.FormatInt(entry.Time.Unix(), 10)).
 		SetAuthorID(*userID).
+		SetFlowInstanceID(entry.CurrState.ID).
 		Save(ctx)
 	if err != nil {
 		return err
@@ -54,7 +55,7 @@ func updateFlowActivitiesUpdate(ctx context.Context, entry *event.LogEntry) erro
 func HandleFlowActivities(ctx context.Context, _ log.Logger, evt ev.EventObject) error {
 	var err error
 	entry, ok := evt.(event.LogEntry)
-	if !ok || entry.Type != ent.TypeWorkOrder {
+	if !ok || entry.Type != ent.TypeFlowInstance {
 		return nil
 	}
 	if entry.Operation.Is(ent.OpCreate) {

@@ -98,6 +98,20 @@ services:
     healthcheck: *healthcheck
     restart: on-failure
 
+  automation:
+    build:
+      <<: *buildctx
+      dockerfile: automation/Dockerfile
+    env_file:
+      - conf/automation.env
+      - conf/log.env
+    networks:
+      - private
+    depends_on:
+      - cadence
+    healthcheck: *healthcheck
+    restart: on-failure
+
   migrate-graph:
     build:
       <<: *buildctx

@@ -559,7 +559,7 @@ func (b *Block) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
 		ID:     b.ID,
 		Type:   "Block",
-		Fields: make([]*Field, 53),
+		Fields: make([]*Field, 56),
 		Edges:  make([]*Edge, 9),
 	}
 	var buf []byte
@@ -985,6 +985,30 @@ func (b *Block) Node(ctx context.Context) (node *Node, err error) {
 	node.Fields[52] = &Field{
 		Type:  "int",
 		Name:  "foreach_start_blockID",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(b.GotoType); err != nil {
+		return nil, err
+	}
+	node.Fields[53] = &Field{
+		Type:  "block.GotoType",
+		Name:  "goto_type",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(b.AddInputToOutput); err != nil {
+		return nil, err
+	}
+	node.Fields[54] = &Field{
+		Type:  "bool",
+		Name:  "add_input_to_output",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(b.AdditionMethod); err != nil {
+		return nil, err
+	}
+	node.Fields[55] = &Field{
+		Type:  "block.AdditionMethod",
+		Name:  "addition_method",
 		Value: string(buf),
 	}
 	node.Edges[0] = &Edge{

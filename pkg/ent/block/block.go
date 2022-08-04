@@ -129,6 +129,12 @@ const (
 	FieldForeachKey = "foreach_key"
 	// FieldForeachStartBlockID holds the string denoting the foreach_start_blockid field in the database.
 	FieldForeachStartBlockID = "foreach_start_block_id"
+	// FieldGotoType holds the string denoting the goto_type field in the database.
+	FieldGotoType = "goto_type"
+	// FieldAddInputToOutput holds the string denoting the add_input_to_output field in the database.
+	FieldAddInputToOutput = "add_input_to_output"
+	// FieldAdditionMethod holds the string denoting the addition_method field in the database.
+	FieldAdditionMethod = "addition_method"
 
 	// EdgeFlow holds the string denoting the flow edge name in mutations.
 	EdgeFlow = "flow"
@@ -266,6 +272,9 @@ var Columns = []string{
 	FieldKafkaMessageType,
 	FieldForeachKey,
 	FieldForeachStartBlockID,
+	FieldGotoType,
+	FieldAddInputToOutput,
+	FieldAdditionMethod,
 }
 
 // ForeignKeys holds the SQL foreign-keys that are owned by the Block type.
@@ -325,6 +334,8 @@ var (
 	DefaultEnableTimerExpression bool
 	// DefaultBlockFlow holds the default value on creation for the block_flow field.
 	DefaultBlockFlow bool
+	// DefaultAddInputToOutput holds the default value on creation for the add_input_to_output field.
+	DefaultAddInputToOutput bool
 )
 
 // Type defines the type for the type enum field.
@@ -585,6 +596,52 @@ func KafkaMessageTypeValidator(kmt enum.KafkaMessageType) error {
 	}
 }
 
+// GotoType defines the type for the goto_type enum field.
+type GotoType string
+
+// GotoType values.
+const (
+	GotoTypeORIGIN      GotoType = "ORIGIN"
+	GotoTypeDESTINATION GotoType = "DESTINATION"
+)
+
+func (gt GotoType) String() string {
+	return string(gt)
+}
+
+// GotoTypeValidator is a validator for the "goto_type" field enum values. It is called by the builders before save.
+func GotoTypeValidator(gt GotoType) error {
+	switch gt {
+	case GotoTypeORIGIN, GotoTypeDESTINATION:
+		return nil
+	default:
+		return fmt.Errorf("block: invalid enum value for goto_type field: %q", gt)
+	}
+}
+
+// AdditionMethod defines the type for the addition_method enum field.
+type AdditionMethod string
+
+// AdditionMethod values.
+const (
+	AdditionMethodCOMBINE        AdditionMethod = "COMBINE"
+	AdditionMethodDISCARD_RESULT AdditionMethod = "DISCARD_RESULT"
+)
+
+func (am AdditionMethod) String() string {
+	return string(am)
+}
+
+// AdditionMethodValidator is a validator for the "addition_method" field enum values. It is called by the builders before save.
+func AdditionMethodValidator(am AdditionMethod) error {
+	switch am {
+	case AdditionMethodCOMBINE, AdditionMethodDISCARD_RESULT:
+		return nil
+	default:
+		return fmt.Errorf("block: invalid enum value for addition_method field: %q", am)
+	}
+}
+
 // MarshalGQL implements graphql.Marshaler interface.
 func (_type Type) MarshalGQL(w io.Writer) {
 	io.WriteString(w, strconv.Quote(_type.String()))
@@ -759,3 +816,39 @@ var (
 	// enum.KafkaMessageType must implement graphql.Unmarshaler.
 	_ graphql.Unmarshaler = (*enum.KafkaMessageType)(nil)
 )
+
+// MarshalGQL implements graphql.Marshaler interface.
+func (gt GotoType) MarshalGQL(w io.Writer) {
+	io.WriteString(w, strconv.Quote(gt.String()))
+}
+
+// UnmarshalGQL implements graphql.Unmarshaler interface.
+func (gt *GotoType) UnmarshalGQL(val interface{}) error {
+	str, ok := val.(string)
+	if !ok {
+		return fmt.Errorf("enum %T must be a string", val)
+	}
+	*gt = GotoType(str)
+	if err := GotoTypeValidator(*gt); err != nil {
+		return fmt.Errorf("%s is not a valid GotoType", str)
+	}
+	return nil
+}
+
+// MarshalGQL implements graphql.Marshaler interface.
+func (am AdditionMethod) MarshalGQL(w io.Writer) {
+	io.WriteString(w, strconv.Quote(am.String()))
+}
+
+// UnmarshalGQL implements graphql.Unmarshaler interface.
+func (am *AdditionMethod) UnmarshalGQL(val interface{}) error {
+	str, ok := val.(string)
+	if !ok {
+		return fmt.Errorf("enum %T must be a string", val)
+	}
+	*am = AdditionMethod(str)
+	if err := AdditionMethodValidator(*am); err != nil {
+		return fmt.Errorf("%s is not a valid AdditionMethod", str)
+	}
+	return nil
+}

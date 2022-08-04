@@ -4,6 +4,6 @@ subgraphs:
     schema:
       file: ./router/subgraphs/dgraphservice.graphql
   symphony:
-    routing_url: http://graph/query
+    routing_url: http://symphony-graph/query
     schema:
       file: ./router/subgraphs/symphony.graphql

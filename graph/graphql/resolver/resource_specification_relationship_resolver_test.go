@@ -91,16 +91,31 @@ func AddResourceSpecificationRelationshipTest(ctx context.Context, t *testing.T,
 }
 
 func EditResourceSpecificationRelationshipTest(ctx context.Context, t *testing.T, mr generated.MutationResolver, id1 int, id2 int, resourcespecification int) {
-	_, err := mr.EditResourceSpecificationRelationship(ctx, models.EditResourceSpecificationRelationshipInput{
-		ID:                    id1,
-		Name:                  "resource_specification_relationship_1.1",
-		ResourceSpecification: &resourcespecification,
+	_, err := mr.EditResourceSpecificationRelationship(ctx, []*models.EditResourceSpecificationRelationshipInput{
+		{
+			ID:                    &id1,
+			Name:                  "resource_specification_relationship_1.1",
+			ResourceSpecification: &resourcespecification,
+		}, {
+			ID:                    &id2,
+			Name:                  "resource_specification_relationship_2.1",
+			ResourceSpecification: &resourcespecification,
+		}, {
+			Name:                  "resource_specification_relationship_3",
+			ResourceSpecification: &resourcespecification,
+		},
 	})
 	require.NoError(t, err)
-	_, err = mr.EditResourceSpecificationRelationship(ctx, models.EditResourceSpecificationRelationshipInput{
-		ID:                    id2,
-		Name:                  "resource_specification_relationship_1.1",
-		ResourceSpecification: &resourcespecification,
+	_, err = mr.EditResourceSpecificationRelationship(ctx, []*models.EditResourceSpecificationRelationshipInput{
+		{
+			ID:                    &id1,
+			Name:                  "resource_specification_relationship_1.1",
+			ResourceSpecification: &resourcespecification,
+		}, {
+			ID:                    &id2,
+			Name:                  "resource_specification_relationship_1.1",
+			ResourceSpecification: &resourcespecification,
+		},
 	})
 	require.Error(t, err)
 }

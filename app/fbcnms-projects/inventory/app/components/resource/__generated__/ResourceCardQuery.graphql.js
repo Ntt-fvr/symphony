@@ -17,6 +17,7 @@ import type { ConcreteRequest } from 'relay-runtime';
 export type LifecycleStatus = "INSTALLING" | "OPERATING" | "PLANNING" | "RETIRING" | "%future added value";
 export type OperationalSubStatus = "NOT_WORKING" | "WORKING" | "%future added value";
 export type PlanningSubStatus = "ACTIVATED" | "DESACTIVATED" | "%future added value";
+export type ResourcePropertyKind = "bool" | "date" | "datetime_local" | "email" | "enum" | "float" | "gps_location" | "int" | "node" | "range" | "string" | "%future added value";
 export type TypePlanningSubStatus = "DESIGNED" | "FEASIBILITY_CHECKED" | "ORDERED" | "PROPOSED" | "%future added value";
 export type UsageSubStatus = "ASSIGNED" | "AVAILABLE" | "NO_AVAILABLE" | "RESERVED" | "TERMINATING" | "%future added value";
 export type ResourceCardQueryVariables = {||};
@@ -41,10 +42,21 @@ export type ResourceCardQueryResponse = {|
         +resourceSpecification: ?$ReadOnlyArray<?{|
           +id: string,
           +name: string,
-          +vendor: ?{|
+          +resourcePropertyTypes: $ReadOnlyArray<?{|
             +id: string,
             +name: string,
-          |},
+            +type: ResourcePropertyKind,
+            +stringValue: ?string,
+            +intValue: ?number,
+            +booleanValue: ?boolean,
+            +floatValue: ?number,
+            +latitudeValue: ?number,
+            +longitudeValue: ?number,
+            +rangeFromValue: ?number,
+            +rangeToValue: ?number,
+            +isMandatory: ?boolean,
+            +isInstanceProperty: ?boolean,
+          |}>,
         |}>,
       |}
     |}>
@@ -91,9 +103,20 @@ query ResourceCardQuery {
         resourceSpecification {
           id
           name
-          vendor {
+          resourcePropertyTypes {
             id
             name
+            type
+            stringValue
+            intValue
+            booleanValue
+            floatValue
+            latitudeValue
+            longitudeValue
+            rangeFromValue
+            rangeToValue
+            isMandatory
+            isInstanceProperty
           }
         }
       }
@@ -130,10 +153,6 @@ v1 = {
   "storageKey": null
 },
 v2 = [
-  (v0/*: any*/),
-  (v1/*: any*/)
-],
-v3 = [
   {
     "alias": null,
     "args": null,
@@ -242,11 +261,91 @@ v3 = [
                   {
                     "alias": null,
                     "args": null,
-                    "concreteType": "Vendor",
+                    "concreteType": "ResourcePropertyType",
                     "kind": "LinkedField",
-                    "name": "vendor",
-                    "plural": false,
-                    "selections": (v2/*: any*/),
+                    "name": "resourcePropertyTypes",
+                    "plural": true,
+                    "selections": [
+                      (v0/*: any*/),
+                      (v1/*: any*/),
+                      {
+                        "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
+                        "name": "type",
+                        "storageKey": null
+                      },
+                      {
+                        "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
+                        "name": "stringValue",
+                        "storageKey": null
+                      },
+                      {
+                        "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
+                        "name": "intValue",
+                        "storageKey": null
+                      },
+                      {
+                        "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
+                        "name": "booleanValue",
+                        "storageKey": null
+                      },
+                      {
+                        "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
+                        "name": "floatValue",
+                        "storageKey": null
+                      },
+                      {
+                        "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
+                        "name": "latitudeValue",
+                        "storageKey": null
+                      },
+                      {
+                        "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
+                        "name": "longitudeValue",
+                        "storageKey": null
+                      },
+                      {
+                        "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
+                        "name": "rangeFromValue",
+                        "storageKey": null
+                      },
+                      {
+                        "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
+                        "name": "rangeToValue",
+                        "storageKey": null
+                      },
+                      {
+                        "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
+                        "name": "isMandatory",
+                        "storageKey": null
+                      },
+                      {
+                        "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
+                        "name": "isInstanceProperty",
+                        "storageKey": null
+                      }
+                    ],
                     "storageKey": null
                   }
                 ],
@@ -294,7 +393,10 @@ v3 = [
                 "kind": "LinkedField",
                 "name": "resourceType",
                 "plural": false,
-                "selections": (v2/*: any*/),
+                "selections": [
+                  (v0/*: any*/),
+                  (v1/*: any*/)
+                ],
                 "storageKey": null
               }
             ],
@@ -313,7 +415,7 @@ return {
     "kind": "Fragment",
     "metadata": null,
     "name": "ResourceCardQuery",
-    "selections": (v3/*: any*/),
+    "selections": (v2/*: any*/),
     "type": "Query",
     "abstractKey": null
   },
@@ -322,19 +424,19 @@ return {
     "argumentDefinitions": [],
     "kind": "Operation",
     "name": "ResourceCardQuery",
-    "selections": (v3/*: any*/)
+    "selections": (v2/*: any*/)
   },
   "params": {
-    "cacheID": "91d077dac5bdc8fec25d1ece20c61df0",
+    "cacheID": "29122e26c72f9309fa20ecc6cc6ba9cf",
     "id": null,
     "metadata": {},
     "name": "ResourceCardQuery",
     "operationKind": "query",
-    "text": "query ResourceCardQuery {\n  queryResource {\n    id\n    name\n    isDeleted\n    resourceSpecification\n    locatedIn\n    lifecycleStatus\n    typePlanningSubStatus\n    planningSubStatus\n    usageSubStatus\n    operationalSubStatus\n  }\n  resourceTypes {\n    edges {\n      node {\n        id\n        name\n        resourceSpecification {\n          id\n          name\n          vendor {\n            id\n            name\n          }\n        }\n      }\n    }\n  }\n  resourceSpecifications {\n    edges {\n      node {\n        id\n        name\n        resourceType {\n          id\n          name\n        }\n      }\n    }\n  }\n}\n"
+    "text": "query ResourceCardQuery {\n  queryResource {\n    id\n    name\n    isDeleted\n    resourceSpecification\n    locatedIn\n    lifecycleStatus\n    typePlanningSubStatus\n    planningSubStatus\n    usageSubStatus\n    operationalSubStatus\n  }\n  resourceTypes {\n    edges {\n      node {\n        id\n        name\n        resourceSpecification {\n          id\n          name\n          resourcePropertyTypes {\n            id\n            name\n            type\n            stringValue\n            intValue\n            booleanValue\n            floatValue\n            latitudeValue\n            longitudeValue\n            rangeFromValue\n            rangeToValue\n            isMandatory\n            isInstanceProperty\n          }\n        }\n      }\n    }\n  }\n  resourceSpecifications {\n    edges {\n      node {\n        id\n        name\n        resourceType {\n          id\n          name\n        }\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = '13e3dae581057609cc88e840f890957a';
+(node/*: any*/).hash = '6bdca94bf6f7bb46fb414f14d2d12244';
 
 module.exports = node;

@@ -151,6 +151,18 @@ services:
     healthcheck: *healthcheck
     restart: on-failure
 
+  automation:
+    build:
+      context: ..
+      dockerfile: automation/Dockerfile
+    env_file:
+      - conf/automation.env
+      - conf/log.env
+    depends_on:
+      - cadence
+    healthcheck: *healthcheck
+    restart: on-failure
+
   store:
     build:
       context: ..
