@@ -27,9 +27,9 @@ func HandleAutomationSignal(ctx context.Context, _ log.Logger, evt ev.EventObjec
 	if !ok || entry.Type != block.SignalTypeWOUPDATED {
 		return nil
 	}
-	var flowInstanceId int
 	if entry.FlowInstanceId > 0 {
-		flowInstanceId = entry.FlowInstanceId
+		_, err := sendSignalRequestToFlow(entry.FlowInstanceId, entry)
+		return err
 	} else {
 		client := ent.FromContext(ctx)
 		flowInstances, err := client.FlowInstance.Query().Where(
@@ -52,9 +52,15 @@ func HandleAutomationSignal(ctx context.Context, _ log.Logger, evt ev.EventObjec
 				block, _ := blockInstance.Block(ctx)
 				//TODO: Implementar busqueda de bloque con EL
 				fmt.Println(block)
+				sendSignalRequestToFlow(flowInstance.ID, entry)
 			}
 		}
 	}
+
+	return nil
+}
+
+func sendSignalRequestToFlow(flowInstanceId int, entry event.SignalEvent) (*string, error) {
 	url := "http://automation/api/flow/1.0/signal"
 	bodyObject := &SignalRequest{
 		FlowInstanceId: flowInstanceId,
@@ -65,16 +71,17 @@ func HandleAutomationSignal(ctx context.Context, _ log.Logger, evt ev.EventObjec
 
 	request, err := http.NewRequest(http.MethodPost, url, bytes.NewBuffer(body))
 	if err != nil {
-		return err
+		return nil, err
 	}
 	automationClient := &http.Client{}
 	_, err = automationClient.Do(request)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	if err != nil {
-		return err
+		return nil, err
 	}
-	return nil
+
+	return nil, nil
 }

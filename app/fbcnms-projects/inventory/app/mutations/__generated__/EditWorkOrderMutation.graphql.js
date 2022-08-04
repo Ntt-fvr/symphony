@@ -29,6 +29,7 @@ export type EditWorkOrderInput = {|
   description?: ?string,
   dueDate?: ?any,
   duration?: ?number,
+  flowInstanceId?: ?string,
   id: string,
   index?: ?number,
   installDate?: ?any,

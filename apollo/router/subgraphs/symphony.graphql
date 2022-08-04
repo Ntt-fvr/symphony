@@ -5957,6 +5957,14 @@ enum RetryUnit {
   HOURS
 }
 
+enum AdditionMethod
+@goModel(
+    model: "github.com/facebookincubator/symphony/pkg/ent/block.AdditionMethod"       
+  ){
+  COMBINE
+  DISCARD_RESULT
+}
+
 # Block definitions
 
 type Block implements Node {
@@ -5987,6 +5995,8 @@ type Block implements Node {
   maxAttemps: Int 
   backoffRate: Int
   instances: [BlockInstance!]
+  addInputToOutput: Boolean!
+  additionMethod: AdditionMethod
 }
 
 type BlockVariable
@@ -6124,6 +6134,7 @@ type SubflowBlock {
 
 type GotoBlock {
   target: Block
+  type: GoToType!
   entryPoint: EntryPoint!
 }
 
@@ -6142,7 +6153,10 @@ type ActionBlock {
   workerType: WorkerType
 }
 
-enum GoToType{
+enum GoToType
+@goModel(
+  model: "github.com/facebookincubator/symphony/pkg/ent/block.GotoType"
+  ) {
   ORIGIN
   DESTINATION
 }
@@ -6193,7 +6207,7 @@ enum  AuthType
   model: "github.com/facebookincubator/symphony/pkg/ent/block.AuthType"
   ) {
   BASIC
-  ODIC
+  OIDC
 }
 
 type InvokeRestAPIBlock {
@@ -6386,6 +6400,8 @@ input BaseBlockInput {
   outputStateParamDefinitions: String
   enableErrorHandling: Boolean
   enableRetryPolicy: Boolean
+  addInputToOutput: Boolean
+  additionMethod: AdditionMethod
   retryInterval: Int
   units: RetryUnit
   maxAttemps: Int
@@ -8625,7 +8641,7 @@ type Mutation {
   editIsListable(input: EditIsListableInput!): PropertyType!
   addResourceSpecificationRelationshipList(input: [AddResourceSpecificationRelationshipInput!]!):[ResourceSpecificationRelationship!]!
   addResourceSpecificationRelationship(input: AddResourceSpecificationRelationshipInput!): ResourceSpecificationRelationship!
-  editResourceSpecificationRelationship(input: EditResourceSpecificationRelationshipInput!): ResourceSpecificationRelationship!
+  editResourceSpecificationRelationship(input: [EditResourceSpecificationRelationshipInput!]!): [ResourceSpecificationRelationship!]!
   removeResourceSpecificationRelationship(id: ID!): ID!
   addResourceSpecificationItems(input: AddResourceSpecificationItemsInput!): ResourceSpecificationItems!
   editResourceSpecificationItems(input: EditResourceSpecificationItemsInput!): ResourceSpecificationItems!
@@ -9980,9 +9996,10 @@ input AddResourceSpecificationRelationshipInput {
 }
 
 input EditResourceSpecificationRelationshipInput {
-  id: ID!
+  id: ID
   name: String!
   resourceSpecification: ID
+  resourceSpecificationList: [ID]
 }
 
 enum ResourceSpecificationRelationshipFilterType {

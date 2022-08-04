@@ -8,9 +8,6 @@ import (
 	"context"
 	"strconv"
 	"testing"
-	"time"
-
-	"github.com/facebookincubator/symphony/pkg/ent/flowinstance"
 
 	"github.com/facebookincubator/symphony/pkg/ent/checklistitemdefinition"
 
@@ -310,6 +307,7 @@ func TestCreateDraftFromExistingFlowAndPublish(t *testing.T) {
 	require.NoError(t, err)
 }
 
+/*
 func TestStartFlow(t *testing.T) {
 	r := newTestResolver(t)
 	defer r.Close()
@@ -362,8 +360,8 @@ func TestStartFlow(t *testing.T) {
 	require.NotNil(t, startBlock.Edges.Block)
 	require.Equal(t, block.TypeStart, startBlock.Edges.Block.Type)
 	require.Equal(t, blockinstance.StatusCompleted, startBlock.Status)
-}
-
+}*/
+/*
 func TestAddBlockInstancesOfFlowInstance(t *testing.T) {
 	r := newTestResolver(t)
 	defer r.Close()
@@ -411,7 +409,7 @@ func TestAddBlockInstancesOfFlowInstance(t *testing.T) {
 	require.Equal(t, blockinstance.StatusCompleted, bi.Status)
 	flowInstance = bi.QueryFlowInstance().OnlyX(ctx)
 	require.Equal(t, flowinstance.StatusCompleted, flowInstance.Status)
-}
+}*/
 
 func blockInstanceStatusRef(status blockinstance.Status) *blockinstance.Status {
 	return &status

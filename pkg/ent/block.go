@@ -133,6 +133,12 @@ type Block struct {
 	ForeachKey *string `json:"foreach_key,omitempty"`
 	// ForeachStartBlockID holds the value of the "foreach_start_blockID" field.
 	ForeachStartBlockID *int `json:"foreach_start_blockID,omitempty"`
+	// GotoType holds the value of the "goto_type" field.
+	GotoType block.GotoType `json:"goto_type,omitempty"`
+	// AddInputToOutput holds the value of the "add_input_to_output" field.
+	AddInputToOutput *bool `json:"add_input_to_output,omitempty"`
+	// AdditionMethod holds the value of the "addition_method" field.
+	AdditionMethod block.AdditionMethod `json:"addition_method,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the BlockQuery when eager-loading is set.
 	Edges                          BlockEdges `json:"edges"`
@@ -336,6 +342,9 @@ func (*Block) scanValues() []interface{} {
 		&sql.NullString{}, // kafka_message_type
 		&sql.NullString{}, // foreach_key
 		&sql.NullInt64{},  // foreach_start_blockID
+		&sql.NullString{}, // goto_type
+		&sql.NullBool{},   // add_input_to_output
+		&sql.NullString{}, // addition_method
 	}
 }
 
@@ -672,7 +681,23 @@ func (b *Block) assignValues(values ...interface{}) error {
 		b.ForeachStartBlockID = new(int)
 		*b.ForeachStartBlockID = int(value.Int64)
 	}
-	values = values[53:]
+	if value, ok := values[53].(*sql.NullString); !ok {
+		return fmt.Errorf("unexpected type %T for field goto_type", values[53])
+	} else if value.Valid {
+		b.GotoType = block.GotoType(value.String)
+	}
+	if value, ok := values[54].(*sql.NullBool); !ok {
+		return fmt.Errorf("unexpected type %T for field add_input_to_output", values[54])
+	} else if value.Valid {
+		b.AddInputToOutput = new(bool)
+		*b.AddInputToOutput = value.Bool
+	}
+	if value, ok := values[55].(*sql.NullString); !ok {
+		return fmt.Errorf("unexpected type %T for field addition_method", values[55])
+	} else if value.Valid {
+		b.AdditionMethod = block.AdditionMethod(value.String)
+	}
+	values = values[56:]
 	if len(values) == len(block.ForeignKeys) {
 		if value, ok := values[0].(*sql.NullInt64); !ok {
 			return fmt.Errorf("unexpected type %T for edge-field block_sub_flow", value)
@@ -942,6 +967,14 @@ func (b *Block) String() string {
 		builder.WriteString(", foreach_start_blockID=")
 		builder.WriteString(fmt.Sprintf("%v", *v))
 	}
+	builder.WriteString(", goto_type=")
+	builder.WriteString(fmt.Sprintf("%v", b.GotoType))
+	if v := b.AddInputToOutput; v != nil {
+		builder.WriteString(", add_input_to_output=")
+		builder.WriteString(fmt.Sprintf("%v", *v))
+	}
+	builder.WriteString(", addition_method=")
+	builder.WriteString(fmt.Sprintf("%v", b.AdditionMethod))
 	builder.WriteByte(')')
 	return builder.String()
 }

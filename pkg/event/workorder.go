@@ -8,8 +8,9 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/facebookincubator/symphony/pkg/ent/block"
 	"time"
+
+	"github.com/facebookincubator/symphony/pkg/ent/block"
 
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/hook"
@@ -173,7 +174,7 @@ func (e *Eventer) workOrderStatusChangedHook() ent.Hook {
 				properties, _ := workOrder.Properties(ctx)
 				flowId, err := workOrder.FlowInstance(ctx)
 				signal := &SignalEvent{
-					Module:    "WTF",
+					Module:    block.SignalModuleWFM.String(),
 					Type:      block.SignalTypeWOUPDATED,
 					Timestamp: time.Now().UnixMilli() / 1000,
 					Payload: &WOPayload{

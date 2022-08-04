@@ -28,6 +28,7 @@ export type AddWorkOrderInput = {|
   description?: ?string,
   dueDate?: ?any,
   duration?: ?number,
+  flowInstanceId?: ?string,
   index?: ?number,
   isNameEditable?: ?boolean,
   locationId?: ?string,

@@ -10,7 +10,6 @@ import (
 	"fmt"
 
 	"github.com/facebookincubator/symphony/pkg/ent"
-	"github.com/facebookincubator/symphony/pkg/ent/automationactivity"
 	"github.com/facebookincubator/symphony/pkg/ent/block"
 	"github.com/facebookincubator/symphony/pkg/ent/flow"
 	"github.com/facebookincubator/symphony/pkg/ent/flowdraft"
@@ -202,6 +201,7 @@ func CopyFlowToFlowExecutionTemplateHook() ent.Hook {
 	return hook.On(hk, ent.OpCreate)
 }
 
+/*
 func FlowInstanceAutomationActivity() ent.Hook {
 	hk := func(next ent.Mutator) ent.Mutator {
 		return hook.FlowInstanceFunc(
@@ -209,10 +209,14 @@ func FlowInstanceAutomationActivity() ent.Hook {
 				client := mutation.Client()
 
 				status, _ := mutation.Status()
+				flowInstaceID, _ := mutation.ID()
+
+				fmt.Println("mutation id =", flowInstaceID)
 
 				mutationActivity := client.AutomationActivity.Create().
 					SetAutomationEntityType(automationactivity.AutomationEntityTypeFlowInstance).
-					SetNewValue(status.String())
+					SetNewValue(status.String()).
+					SetFlowInstanceID(flowInstaceID)
 
 				if mutation.Op().Is(ent.OpCreate) {
 					mutationActivity = mutationActivity.SetActivityType(automationactivity.ActivityTypeCreation)
@@ -236,3 +240,4 @@ func FlowInstanceAutomationActivity() ent.Hook {
 
 	return hook.On(hk, ent.OpCreate|ent.OpUpdateOne)
 }
+*/
