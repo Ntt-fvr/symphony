@@ -1,11 +1,11 @@
 package celgo
 
 import (
+	"github.com/golang-module/carbon"
 	"github.com/google/cel-go/cel"
-	"time"
-
 	"github.com/google/cel-go/common/types"
 	"github.com/google/cel-go/common/types/ref"
+	"time"
 )
 
 const (
@@ -32,17 +32,13 @@ func dateInstanceFunctions() []cel.EnvOption {
 	return []cel.EnvOption{
 		cel.Function("format",
 			cel.MemberOverload(DateFormat,
-				[]*cel.Type{cel.TimestampType, cel.StringType}, cel.StringType,
-				cel.BinaryBinding(
-					func(value, value2 ref.Val) ref.Val {
-						switch v := value.Value(); v.(type) {
-						case time.Time:
-							switch f := value2.Value(); f.(type) {
-							case string:
-								return types.String((v.(time.Time)).Format(f.(string)))
-							}
-						}
-						return types.String("")
+				[]*cel.Type{cel.TimestampType, cel.StringType, cel.StringType}, cel.StringType,
+				cel.FunctionBinding(
+					func(values ...ref.Val) ref.Val {
+						v := values[0].Value().(time.Time)
+						f := values[1].Value().(string)
+						tz := values[2].Value().(string)
+						return types.String(carbon.CreateFromTimestampMilli(v.UnixMilli()).Format(f, tz))
 					},
 				),
 			),
