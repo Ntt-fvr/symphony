@@ -38,6 +38,11 @@ export type ActionSchedulerFilter = {|
   id?: ?$ReadOnlyArray<string>,
   not?: ?ActionSchedulerFilter,
   or?: ?$ReadOnlyArray<?ActionSchedulerFilter>,
+  status?: ?ActionSchedulerStatus_hash,
+|};
+export type ActionSchedulerStatus_hash = {|
+  eq?: ?ActionSchedulerStatus,
+  in?: ?$ReadOnlyArray<?ActionSchedulerStatus>,
 |};
 export type ActionSchedulerPatch = {|
   actionTemplate?: ?ActionTemplateRef,
