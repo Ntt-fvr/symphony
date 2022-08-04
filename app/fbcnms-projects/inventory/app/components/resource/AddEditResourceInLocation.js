@@ -22,10 +22,7 @@ import type {
   TypePlanningSubStatus,
   UsageSubStatus,
 } from '../../mutations/__generated__/AddResourceMutation.graphql';
-import type {
-  UpdateParameterMutationResponse,
-  UpdateParameterMutationVariables,
-} from '../../mutations/__generated__/UpdateParameterMutation.graphql';
+import type {UpdateParameterMutationVariables} from '../../mutations/__generated__/UpdateParameterMutation.graphql';
 import type {UpdateResourceMutationVariables} from '../../mutations/__generated__/UpdateResourceMutation.graphql';
 import type {UpdateResourcePropertyMutationVariables} from '../../mutations/__generated__/UpdateResourcePropertyMutation.graphql';
 
@@ -88,25 +85,6 @@ const queryConfigurationParameterType = graphql`
       stringValue
       booleanValue
       resourceSpecification
-    }
-  }
-`;
-const queryConfigurationParameterTypeParameter = graphql`
-  query AddEditResourceInLocationParameterQuery {
-    queryParameter {
-      id
-      stringValue
-      intValue
-      floatValue
-      #
-      parameterType {
-        id
-        name
-        stringValue
-        intValue
-        floatValue
-        resourceSpecification
-      }
     }
   }
 `;
@@ -183,11 +161,6 @@ const AddEditResourceInLocation = (props: Props) => {
       },
     },
   );
-
-  const parameterQuery = useLazyLoadQuery<AddEditResourceInLocationParameterQuery>(
-    queryConfigurationParameterTypeParameter,
-  );
-  const {queryParameter} = parameterQuery;
 
   const dataPropertyType = response.queryConfigurationParameterType
     ?.map(p => p)
@@ -269,7 +242,7 @@ const AddEditResourceInLocation = (props: Props) => {
 
         const responseFnCmVersion: MutationCallbacks<AddCMVersionMutationResponse> = {
           onCompleted: responseCmVersion => {
-            responseCmVersion?.addCMVersion.cMVersion[0]?.parameters.map(
+            responseCmVersion?.addCMVersion?.cMVersion[0]?.parameters.map(
               (parameter, i) => {
                 const responseParameter: UpdateParameterMutationVariables = {
                   input: {
@@ -288,7 +261,7 @@ const AddEditResourceInLocation = (props: Props) => {
                   onCompleted: () => {
                     if (
                       i ===
-                      responseCmVersion?.addCMVersion.cMVersion[0]?.parameters
+                      responseCmVersion?.addCMVersion?.cMVersion[0]?.parameters
                         .length -
                         1
                     ) {
