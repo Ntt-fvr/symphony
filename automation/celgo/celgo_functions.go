@@ -18,14 +18,6 @@ func compileAst(expr string) (*cel.Ast, error) {
 	return ast, nil
 }
 
-func ConvertToAst(astValue string) (*cel.Ast, error) {
-	ast, iss := environment.Parse(astValue)
-	if iss.Err() != nil {
-		return nil, iss.Err()
-	}
-	return ast, nil
-}
-
 func ConvertToValue(value interface{}) ref.Val {
 	if value == nil {
 		return nil
@@ -43,34 +35,13 @@ func ConvertToNative(value ref.Val) (map[string]interface{}, error) {
 		return nil, err
 	}
 
-	values := result.(map[string]interface{})
-	for k, v := range values {
-		switch v.(type) {
-		case ref.Val:
-			data, err := ConvertToNative(v.(ref.Val))
-			if err != nil {
-				values[k] = v
-			} else {
-				values[k] = data
-			}
-		case map[ref.Val]ref.Val:
-			native := types.DefaultTypeAdapter.NativeToValue(v.(map[ref.Val]ref.Val))
-			data, err := ConvertToNative(native)
-			if err != nil {
-				values[k] = v
-			} else {
-				values[k] = data
-			}
-		}
-	}
-
-	return values, nil
+	return result.(map[string]interface{}), nil
 }
 
 func Evaluate(astKey AstKey, variables map[string]interface{}) (ref.Val, error) {
 	program, exists := programs[astKey.Key]
 	if !exists {
-		ast, err := ConvertToAst(astKey.AstValue)
+		ast, err := compileAst(astKey.AstValue)
 		if err != nil {
 			return nil, err
 		}
