@@ -454,21 +454,24 @@ func TestWaitForSignalBlock(t *testing.T) {
 	require.NoError(t, err)
 
 	filter := "signalFilter"
+	signalModule := block.SignalModuleASSURANCE
+	typeWait := block.SignalTypeCRCREATED
 
 	b, err := mr.AddWaitForSignalBlock(ctx, flowDraft.ID, models.WaitForSignalBlockInput{
-		Cid:          "waitForSignal",
-		SignalModule: block.SignalModuleASSURANCE,
-		Type:         block.SignalTypeCRCREATED,
-		CustomFilter: &filter,
-		Blocked:      bool(false),
+		Cid:              "waitForSignal",
+		SignalModule:     block.SignalModuleASSURANCE,
+		Type:             block.SignalTypeCRCREATED,
+		CustomFilter:     &filter,
+		Blocked:          bool(false),
+		BasicDefinitions: &models.BaseBlockInput{},
 	})
 	require.NoError(t, err)
 	details, err := br.Details(ctx, b)
 	require.NoError(t, err)
 	waitForSignal, ok := details.(*models.WaitForSignalBlock)
 	require.True(t, ok)
-	require.Equal(t, equipmentType1Port1Name, waitForSignal.SignalModule)
-	require.Equal(t, block.SignalTypeCRCREATED, waitForSignal.Type)
+	require.Equal(t, &signalModule, waitForSignal.SignalModule)
+	require.Equal(t, &typeWait, waitForSignal.Type)
 	require.Equal(t, &filter, waitForSignal.CustomFilter)
 	require.Equal(t, bool(false), waitForSignal.Blocked)
 }
