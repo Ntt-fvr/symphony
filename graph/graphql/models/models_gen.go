@@ -2083,6 +2083,7 @@ type TimerBlockInput struct {
 	EnableExpressionL *bool                             `json:"enableExpressionL"`
 	Expression        *string                           `json:"expression"`
 	Params            []*VariableExpressionInput        `json:"params"`
+	BasicDefinitions  *BaseBlockInput                   `json:"basicDefinitions"`
 	UIRepresentation  *flowschema.BlockUIRepresentation `json:"uiRepresentation"`
 }
 

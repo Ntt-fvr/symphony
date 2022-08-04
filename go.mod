@@ -33,7 +33,7 @@ require (
 	github.com/go-sql-driver/mysql v1.6.0
 	github.com/gobuffalo/envy v1.10.1 // indirect
 	github.com/gobuffalo/packd v1.0.1 // indirect
-	github.com/golang-module/carbon v1.6.9 // indirect
+	github.com/golang-module/carbon v1.6.9
 	github.com/google/addlicense v1.0.0
 	github.com/google/cel-go v0.12.0
 	github.com/google/uuid v1.3.0
