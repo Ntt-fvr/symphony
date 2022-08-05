@@ -1,10 +1,8 @@
 name: Continuous Integration
 on:
-  pull_request:
-    types:
-    - closed
-    branches:  
-      - epic/docomo
+  push:
+    branches:
+      - feature/devops_back_docomo
     paths-ignore:
       - infra/**
       - skaffold/**
@@ -12,8 +10,8 @@ on:
       - app/mobile/**
 
 env: 
-  ECR_REGISTRY: 357464976842.dkr.ecr.us-west-2.amazonaws.com
-  ECR_REPOSITORY: symphony
+  ECR_REGISTRY: 837232691946.dkr.ecr.us-east-2.amazonaws.com
+  ECR_REPOSITORY: symphony-ecr-aws-dev
 
 jobs: 
   build-artifact:

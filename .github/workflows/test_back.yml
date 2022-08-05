@@ -1,8 +1,11 @@
 name: Test Back
 on:
-  push:
-    branches:
-      - feature/devops_back_docomo
+  pull_request:
+      types:
+      - closed
+      branches:  
+       - feature/devops_back_docomo
+
     paths-ignore:
       - infra/**
       - skaffold/**
@@ -13,32 +16,33 @@ jobs:
   sonarqube:
      runs-on: ubuntu-latest
      steps:
-       - uses: actions/checkout@v2
+      - uses: actions/checkout@v2
          with:
            fetch-depth: 0   
-       - name: Sonar Scan
+      - name: Test go
          run: |
                go version &&
                go test -coverprofile=coverage.out -covermode=count -json > report.json ./...
                exit 0
-       - name: lista archivos
+      - name: lista archivos
          run: ls -la && pwd
-       - uses: sonarsource/sonarqube-scan-action@master 
-         with:
-             projectBaseDir: .
-             args: >
-               -Dsonar.projectKey=everisopennetworks_symphony
-               -Dsonar.go.coverage.reportPaths=**/*coverage.out
-               -Dsonar.go.tests.reportPaths=report.json      
-         env:
-           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
-       - name: SonarQube Quality Gate check
-         uses: sonarsource/sonarqube-quality-gate-action@master
-         timeout-minutes: 5
-         env:
+      - name: Sonar Scan   
+        uses: sonarsource/sonarqube-scan-action@master 
+        with:
+            projectBaseDir: .
+            args: >
+              -Dsonar.projectKey=everisopennetworks_symphony
+              -Dsonar.go.coverage.reportPaths=**/*coverage.out
+              -Dsonar.go.tests.reportPaths=report.json      
+        env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-         with:
-           scanMetadataReportFile: .scannerwork/report-task.txt
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+      - name: SonarQube Quality Gate check
+        uses: sonarsource/sonarqube-quality-gate-action@master
+        timeout-minutes: 5
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        with:
+          scanMetadataReportFile: .scannerwork/report-task.txt
            # Force to fail step after specific time
-           timeout-minutes: 2
+          timeout-minutes: 2
