@@ -33,3 +33,5 @@ bindings:
     type: symphony_automation/enum.TimerBehavior
   AuthType:
     type: symphony_automation/enum.AuthType
+  AdditionMethod:
+    type: symphony_automation/enum.AdditionMethod

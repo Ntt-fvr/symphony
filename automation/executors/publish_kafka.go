@@ -2,6 +2,7 @@ package executors
 
 import (
 	"encoding/json"
+	"errors"
 	"strings"
 
 	"github.com/confluentinc/confluent-kafka-go/kafka"
@@ -61,7 +62,12 @@ func (b *ExecutorKafkaBlock) runLogic() error {
 			return err
 		}
 
-		message = native
+		value, ok := native.(map[string]interface{})
+		if !ok {
+			return errors.New("malformed message")
+		}
+
+		message = value
 	}
 
 	messageBytes, err := json.Marshal(message)

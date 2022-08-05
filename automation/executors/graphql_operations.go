@@ -376,17 +376,22 @@ func createExecutorBaseBlock(
 ) ExecutorBaseBlock {
 
 	return ExecutorBaseBlock{
-		Tenant:          tenant,
-		Type:            blockType,
-		BlockID:         block.Id,
-		FlowInstanceID:  flowInstanceID,
-		MaxAttempts:     block.MaxAttemps,
-		BackOffRate:     block.BackoffRate,
-		ErrorHandling:   block.EnableErrorHandling,
-		RetryPolicy:     block.EnableRetryPolicy,
-		RetryInterval:   block.RetryInterval,
-		RetryUnit:       block.Units,
-		Transformations: transformations,
+		Tenant:           tenant,
+		Type:             blockType,
+		BlockID:          block.Id,
+		FlowInstanceID:   flowInstanceID,
+		MaxAttempts:      block.MaxAttemps,
+		BackOffRate:      block.BackoffRate,
+		ErrorHandling:    block.EnableErrorHandling,
+		RetryPolicy:      block.EnableRetryPolicy,
+		RetryInterval:    block.RetryInterval,
+		RetryUnit:        block.Units,
+		AddInputToOutput: block.AddInputToOutput,
+		AdditionMethod:   block.AdditionMethod,
+		Transformations:  transformations,
+		Input:            map[string]interface{}{},
+		State:            map[string]interface{}{},
+		Output:           map[string]interface{}{},
 	}
 }
 

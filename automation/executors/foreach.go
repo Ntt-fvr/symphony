@@ -74,9 +74,11 @@ func (b *ExecutorForEachBlock) runLogic() error {
 		output = append(output, input)
 	}
 
-	b.Input[b.Key] = output
+	for k, v := range b.Input {
+		b.Output[k] = v
+	}
 
-	b.Output = b.Input
+	b.Output[b.Key] = output
 
 	return nil
 }

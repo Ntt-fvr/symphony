@@ -6,8 +6,9 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/facebookincubator/symphony/automation/enum"
+	"symphony_automation/enum"
 	"time"
+
 	"github.com/Khan/genqlient/graphql"
 )
 
@@ -85,6 +86,8 @@ type BaseBlock struct {
 	Units                           enum.RetryUnit      `json:"units"`
 	MaxAttemps                      int                 `json:"maxAttemps"`
 	BackoffRate                     int                 `json:"backoffRate"`
+	AddInputToOutput                bool                `json:"addInputToOutput"`
+	AdditionMethod                  enum.AdditionMethod `json:"additionMethod"`
 	Details                         BlockDetail         `json:"-"`
 	NextBlocks                      []NextBlock         `json:"nextBlocks"`
 }
@@ -151,6 +154,12 @@ func (v *BaseBlock) GetMaxAttemps() int { return v.MaxAttemps }
 
 // GetBackoffRate returns BaseBlock.BackoffRate, and is useful for accessing the field via an interface.
 func (v *BaseBlock) GetBackoffRate() int { return v.BackoffRate }
+
+// GetAddInputToOutput returns BaseBlock.AddInputToOutput, and is useful for accessing the field via an interface.
+func (v *BaseBlock) GetAddInputToOutput() bool { return v.AddInputToOutput }
+
+// GetAdditionMethod returns BaseBlock.AdditionMethod, and is useful for accessing the field via an interface.
+func (v *BaseBlock) GetAdditionMethod() enum.AdditionMethod { return v.AdditionMethod }
 
 // GetDetails returns BaseBlock.Details, and is useful for accessing the field via an interface.
 func (v *BaseBlock) GetDetails() BlockDetail { return v.Details }
@@ -230,6 +239,10 @@ type __premarshalBaseBlock struct {
 
 	BackoffRate int `json:"backoffRate"`
 
+	AddInputToOutput bool `json:"addInputToOutput"`
+
+	AdditionMethod enum.AdditionMethod `json:"additionMethod"`
+
 	Details json.RawMessage `json:"details"`
 
 	NextBlocks []NextBlock `json:"nextBlocks"`
@@ -265,6 +278,8 @@ func (v *BaseBlock) __premarshalJSON() (*__premarshalBaseBlock, error) {
 	retval.Units = v.Units
 	retval.MaxAttemps = v.MaxAttemps
 	retval.BackoffRate = v.BackoffRate
+	retval.AddInputToOutput = v.AddInputToOutput
+	retval.AdditionMethod = v.AdditionMethod
 	{
 
 		dst := &retval.Details
@@ -1136,6 +1151,8 @@ query FlowInstanceQuery ($flowInstanceID: ID!) {
 					units
 					maxAttemps
 					backoffRate
+					addInputToOutput
+					additionMethod
 					details {
 						__typename
 						... on StartBlock {
