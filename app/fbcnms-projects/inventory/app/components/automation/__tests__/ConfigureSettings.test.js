@@ -39,6 +39,7 @@ describe('Suite Test Components /configureSettings/: ', () => {
       settings: {
         customFilter: 'testValue',
       },
+      setPorts: () => {},
     },
   };
 
@@ -102,6 +103,7 @@ describe('Suite Test Components /configureSettings/: ', () => {
         setSettings: function (value) {
           return value;
         },
+        setPorts: () => {},
       };
       return (
         <div>

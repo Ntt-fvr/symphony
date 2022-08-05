@@ -8,8 +8,9 @@ import (
 	"context"
 	"strconv"
 	"testing"
-	"github.com/facebookincubator/symphony/pkg/ent/checklistitemdefinition"
 	"time"
+
+	"github.com/facebookincubator/symphony/pkg/ent/flowinstance"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
 	pkgmodels "github.com/facebookincubator/symphony/pkg/exporter/models"
 
@@ -253,6 +254,8 @@ func TestAddDeleteFlowDraft(t *testing.T) {
 	require.NoError(t, err)
 	_, err = qr.Node(ctx, flowDraft.ID)
 	require.Error(t, err)
+	_, err = mr.DeleteFlowDraft(ctx, 123)
+	require.Error(t, err)
 }
 
 func TestPublishDraftToNewFlow(t *testing.T) {
@@ -269,6 +272,11 @@ func TestPublishDraftToNewFlow(t *testing.T) {
 			Type: enum.VariableTypeInt,
 		},
 	}
+	_, err := mr.AddFlowDraft(ctx, models.AddFlowDraftInput{
+		Description: &description,
+	})
+	require.Error(t, err)
+
 	flowDraft, err := mr.AddFlowDraft(ctx, models.AddFlowDraftInput{
 		Name:                name,
 		Description:         &description,
@@ -303,6 +311,14 @@ func TestPublishDraftToNewFlow(t *testing.T) {
 	require.Equal(t, endParamDefinitions, flw.EndParamDefinitions)
 	require.Equal(t, flow.StatusPublished, flw.Status)
 	require.Equal(t, flow.NewInstancesPolicyEnabled, flw.NewInstancesPolicy)
+
+	_, err = mr.AddFlowDraft(ctx, models.AddFlowDraftInput{
+		Name:                name,
+		Description:         &description,
+		EndParamDefinitions: endParamDefinitions,
+	})
+	require.Error(t, err)
+
 	draft, err := flw.QueryDraft().Only(ctx)
 	require.NoError(t, err)
 	require.NotNil(t, draft)
@@ -344,6 +360,17 @@ func TestCreateDraftFromExistingFlowAndPublish(t *testing.T) {
 	err = r.client.FlowDraft.DeleteOne(firstDraft).Exec(ctx)
 	require.NoError(t, err)
 	draft, err := mr.AddFlowDraft(ctx, models.AddFlowDraftInput{
+		Name:   "New name",
+		FlowID: pointer.ToInt(123),
+		EndParamDefinitions: []*flowschema.VariableDefinition{
+			{
+				Key:  "param",
+				Type: enum.VariableTypeString,
+			},
+		},
+	})
+	require.Error(t, err)
+	draft, err = mr.AddFlowDraft(ctx, models.AddFlowDraftInput{
 		Name:   "New name",
 		FlowID: pointer.ToInt(mainFlow.ID),
 		EndParamDefinitions: []*flowschema.VariableDefinition{
@@ -426,7 +453,6 @@ func TestCreateDraftFromExistingFlowAndPublish(t *testing.T) {
 	require.NoError(t, err)
 }
 
-/*
 func TestStartFlow(t *testing.T) {
 	r := newTestResolver(t)
 	defer r.Close()
@@ -439,6 +465,9 @@ func TestStartFlow(t *testing.T) {
 	require.NoError(t, err)
 	_, err = draft.QueryFlow().Only(ctx)
 	require.NoError(t, err)
+
+	_, err = mr.PublishFlow(ctx, models.PublishFlowInput{FlowDraftID: 123, FlowInstancesPolicy: flow.NewInstancesPolicyEnabled})
+	require.Error(t, err)
 
 	flw, err := mr.PublishFlow(ctx, models.PublishFlowInput{FlowDraftID: draft.ID, FlowInstancesPolicy: flow.NewInstancesPolicyEnabled})
 	require.NoError(t, err)
@@ -490,6 +519,47 @@ func TestStartComplexFlow(t *testing.T) {
 	require.NotNil(t, startBlock.Edges.Block)
 	require.Equal(t, block.TypeStart, startBlock.Edges.Block.Type)
 	require.Equal(t, blockinstance.StatusCompleted, startBlock.Status)
+}
+
+func TestEditFlowIntance(t *testing.T) {
+	r := newTestResolver(t)
+	defer r.Close()
+	ctx := viewertest.NewContext(context.Background(), r.client)
+	mr := r.Mutation()
+
+	inputParams := []*flowschema.VariableValue{
+		{
+			VariableDefinitionKey: "param",
+			Value:                 "23",
+		},
+	}
+
+	draft, err := mr.AddFlowDraft(ctx, models.AddFlowDraftInput{
+		Name: "Flow with no start",
+	})
+	require.NoError(t, err)
+
+	flw, err := mr.PublishFlow(ctx, models.PublishFlowInput{FlowDraftID: draft.ID, FlowInstancesPolicy: flow.NewInstancesPolicyEnabled})
+	require.NoError(t, err)
+
+	flowIntance, err := mr.StartFlow(ctx, models.StartFlowInput{
+		FlowID:    flw.ID,
+		StartDate: time.Now(),
+		Params:    inputParams,
+	})
+	require.NoError(t, err)
+
+	_, err = mr.EditFlowInstance(ctx, &models.EditFlowInstanceInput{
+		ID:          flowIntance.ID,
+		StartParams: inputParams,
+	})
+	require.NoError(t, err)
+
+	_, err = mr.EditFlowInstance(ctx, &models.EditFlowInstanceInput{
+		ID: 123,
+	})
+	require.Error(t, err)
+
 }
 
 func TestAddBlockInstancesOfFlowInstance(t *testing.T) {
@@ -748,7 +818,13 @@ func TestImportEmptyFlow(t *testing.T) {
 			t.Fatalf("block type not found: %v", blk.Type)
 		}
 	}
-	connectors, err := fdr.Connectors(ctx, newDraft)
+
+	flw, err := mr.PublishFlow(ctx, models.PublishFlowInput{FlowDraftID: draft.ID, FlowInstancesPolicy: flow.NewInstancesPolicyEnabled})
+	require.NoError(t, err)
+	connectors, err := r.Flow().Connectors(ctx, flw)
+	require.NoError(t, err)
+
+	connectors, err = fdr.Connectors(ctx, newDraft)
 	require.NoError(t, err)
 	require.Len(t, connectors, 3)
 	for _, connector := range connectors {

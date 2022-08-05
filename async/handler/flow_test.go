@@ -26,6 +26,7 @@ import (
 	"go.uber.org/cadence/mocks"
 )
 
+// Error Post "/start": unsupported protocol scheme ""
 func TestWorkflowCreated(t *testing.T) {
 	c := mocks.Client{}
 	var (
@@ -57,7 +58,7 @@ func TestWorkflowCreated(t *testing.T) {
 	flwInstance, err := entClient.FlowInstance.Create().
 		SetFlowID(flw.ID).
 		SetStartDate(time.Now()).
-		SetStartParams([]*flowschema.VariableValue{}).
+		SetStartParams([]*flowschema.VariableValue{{}}).
 		Save(ctx)
 	require.NoError(t, err)
 	require.Equal(t, worker.AutomationTaskListName, workflowName)
