@@ -2,7 +2,7 @@ name: Test Back
 on:
   push:
     branches:
-      - docomo_test_sonar
+      - feature/devops_back_docomo
     paths-ignore:
       - infra/**
       - skaffold/**
