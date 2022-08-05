@@ -1,1 +1,0 @@
- 2goXIhr-graph/graphql/resolver/automation_activity.go
