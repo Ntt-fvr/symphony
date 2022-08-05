@@ -103,6 +103,30 @@ func (suite *CellGoTestSuite) TestMapUnflatten() {
 	suite.runCellGo(el, vars, expected)
 }
 
+func (suite *CellGoTestSuite) TestComplexTransformation() {
+	el := "{'slice': ['abc', input.changeId], 'query': 'mutation UpdateChangeRequest($updateChangeRequestInput: UpdateChangeRequestInput!) { updateChangeRequest(input: $updateChangeRequestInput) { changeRequest { status id }}}', 'variables': { 'updateChangeRequestInput': { 'set': { 'status': 'SCHEDULED'}, 'filter': { 'id': [input.changeId] }}}}"
+	vars := map[string]interface{}{
+		"input": map[string]interface{}{
+			"changeId": "value1",
+		},
+	}
+	expected := map[string]interface{}{
+		"slice": []interface{}{"abc", "value1"},
+		"query": "mutation UpdateChangeRequest($updateChangeRequestInput: UpdateChangeRequestInput!) { updateChangeRequest(input: $updateChangeRequestInput) { changeRequest { status id }}}",
+		"variables": map[string]interface{}{
+			"updateChangeRequestInput": map[string]interface{}{
+				"set": map[string]interface{}{
+					"status": "SCHEDULED",
+				},
+				"filter": map[string]interface{}{
+					"id": []interface{}{"value1"},
+				},
+			},
+		},
+	}
+	suite.runCellGo(el, vars, expected)
+}
+
 func (suite *CellGoTestSuite) TestDateNowAndFormat() {
 	el := "{\"test\": time.now().format(input.format, input.tz)}"
 	vars := map[string]interface{}{
@@ -170,12 +194,32 @@ func (suite *CellGoTestSuite) TestCelgoCompileAndEvaluateError() {
 
 func (suite *CellGoTestSuite) TestCelgoConvertToNativeNil() {
 	v, _ := ConvertToNative(nil)
-	suite.Require().EqualValues(v, map[string]interface{}{})
+	suite.Require().EqualValues(v, nil)
 }
 
 func (suite *CellGoTestSuite) TestCelgoConvertToNativeError() {
-	_, err := ConvertToNative(types.String("abc"))
+	_, err := ConvertToNative(types.Timestamp{Time: time.Now()})
 	suite.Require().Error(err)
+}
+
+func (suite *CellGoTestSuite) TestCelgoConvertToNativeInt() {
+	_, err := ConvertToNative(types.Int(1))
+	suite.Require().NoError(err)
+}
+
+func (suite *CellGoTestSuite) TestCelgoConvertToNativeBool() {
+	_, err := ConvertToNative(types.Bool(true))
+	suite.Require().NoError(err)
+}
+
+func (suite *CellGoTestSuite) TestCelgoConvertToNativeDouble() {
+	_, err := ConvertToNative(types.Double(0.5))
+	suite.Require().NoError(err)
+}
+
+func (suite *CellGoTestSuite) TestCelgoConvertToNativeUint() {
+	_, err := ConvertToNative(types.Uint(1))
+	suite.Require().NoError(err)
 }
 
 func TestCellGoTestSuite(t *testing.T) {

@@ -10,6 +10,13 @@ import (
 
 var programs = map[string]cel.Program{}
 
+var (
+	boolType   = reflect.TypeOf((*types.Bool)(nil)).Elem()
+	doubleType = reflect.TypeOf((*types.Double)(nil)).Elem()
+	intType    = reflect.TypeOf((*types.Int)(nil)).Elem()
+	stringType = reflect.TypeOf((*types.String)(nil)).Elem()
+)
+
 func compileAst(expr string) (*cel.Ast, error) {
 	ast, iss := environment.Compile(expr)
 	if iss.Err() != nil {
@@ -25,17 +32,56 @@ func ConvertToValue(value interface{}) ref.Val {
 	return types.DefaultTypeAdapter.NativeToValue(value)
 }
 
-func ConvertToNative(value ref.Val) (map[string]interface{}, error) {
+func ConvertToNative(value ref.Val) (interface{}, error) {
 	if value == nil {
-		return map[string]interface{}{}, nil
+		return nil, nil
 	}
 
-	result, err := value.ConvertToNative(reflect.TypeOf(map[string]interface{}{}))
-	if err != nil {
-		return nil, err
+	if !types.IsPrimitiveType(value) {
+		result, err := value.ConvertToNative(reflect.TypeOf(map[string]interface{}{}))
+		if err != nil {
+			return nil, err
+		}
+		values := result.(map[string]interface{})
+		for k, v := range values {
+			switch v.(type) {
+			case map[ref.Val]ref.Val:
+				native := types.DefaultTypeAdapter.NativeToValue(v.(map[ref.Val]ref.Val))
+				data, err := ConvertToNative(native)
+				if err != nil {
+					values[k] = v
+				} else {
+					values[k] = data
+				}
+			case []ref.Val:
+				val := v.([]ref.Val)
+				r := make([]interface{}, len(val))
+				for j, v2 := range val {
+					data, err := ConvertToNative(v2)
+					if err != nil {
+						r[j] = v2
+					} else {
+						r[j] = data
+					}
+				}
+				values[k] = r
+			}
+		}
+		return values, nil
+	} else {
+		switch reflect.TypeOf(value) {
+		case stringType:
+			return string(value.(types.String)), nil
+		case intType:
+			return int64(value.(types.Int)), nil
+		case doubleType:
+			return float64(value.(types.Double)), nil
+		case boolType:
+			return bool(value.(types.Bool)), nil
+		default:
+			return value.(ref.Val).Value(), nil
+		}
 	}
-
-	return result.(map[string]interface{}), nil
 }
 
 func Evaluate(astKey AstKey, variables map[string]interface{}) (ref.Val, error) {
