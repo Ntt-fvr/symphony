@@ -21,26 +21,28 @@ export type ActionTemplateType = "AUTOMATION_FLOW" | "CONFIGURATION_PARAMETER" |
 export type ChangeItemStatus = "CANCELLED" | "FAILED" | "IN_EXECUTION" | "PENDING" | "SUCCESSFUL" | "%future added value";
 export type LifecycleStatus = "INSTALLING" | "OPERATING" | "PLANNING" | "RETIRING" | "%future added value";
 export type OperationalSubStatus = "NOT_WORKING" | "WORKING" | "%future added value";
+export type ParameterHasFilter = "booleanValue" | "createTime" | "floatValue" | "intValue" | "latitudeValue" | "longitudeValue" | "parameterType" | "previous" | "rangeFromValue" | "rangeToValue" | "stringValue" | "updateTime" | "versionCMs" | "%future added value";
 export type ParameterKind = "bool" | "date" | "datetime_local" | "email" | "enum" | "float" | "gps_location" | "int" | "range" | "string" | "%future added value";
 export type PlanningSubStatus = "ACTIVATED" | "DESACTIVATED" | "%future added value";
 export type TypePlanningSubStatus = "DESIGNED" | "FEASIBILITY_CHECKED" | "ORDERED" | "PROPOSED" | "%future added value";
 export type UsageSubStatus = "ASSIGNED" | "AVAILABLE" | "NO_AVAILABLE" | "RESERVED" | "TERMINATING" | "%future added value";
 export type VersionStatus = "CURRENT" | "REPLACED" | "%future added value";
-export type AddCMVersionInput = {|
-  createTime?: ?any,
-  parameters: $ReadOnlyArray<ParameterRef>,
-  previous?: ?CMVersionRef,
-  resource: ResourceRef,
-  status: VersionStatus,
-  updateTime?: ?any,
-  validFrom?: ?any,
-  validTo?: ?any,
+export type UpdateParameterInput = {|
+  filter: ParameterFilter,
+  remove?: ?ParameterPatch,
+  set?: ?ParameterPatch,
 |};
-export type ParameterRef = {|
+export type ParameterFilter = {|
+  and?: ?$ReadOnlyArray<?ParameterFilter>,
+  has?: ?$ReadOnlyArray<?ParameterHasFilter>,
+  id?: ?$ReadOnlyArray<string>,
+  not?: ?ParameterFilter,
+  or?: ?$ReadOnlyArray<?ParameterFilter>,
+|};
+export type ParameterPatch = {|
   booleanValue?: ?boolean,
   createTime?: ?any,
   floatValue?: ?number,
-  id?: ?string,
   intValue?: ?number,
   latitudeValue?: ?number,
   longitudeValue?: ?number,
@@ -82,12 +84,21 @@ export type ConfigurationParameterTypeRef = {|
   type?: ?ParameterKind,
   updateTime?: ?any,
 |};
-export type ConfigParamTagRef = {|
+export type ParameterRef = {|
+  booleanValue?: ?boolean,
   createTime?: ?any,
+  floatValue?: ?number,
   id?: ?string,
-  name?: ?string,
-  parameters?: ?$ReadOnlyArray<?ConfigurationParameterTypeRef>,
+  intValue?: ?number,
+  latitudeValue?: ?number,
+  longitudeValue?: ?number,
+  parameterType?: ?ConfigurationParameterTypeRef,
+  previous?: ?ParameterRef,
+  rangeFromValue?: ?number,
+  rangeToValue?: ?number,
+  stringValue?: ?string,
   updateTime?: ?any,
+  versionCMs?: ?$ReadOnlyArray<?CMVersionRef>,
 |};
 export type CMVersionRef = {|
   createTime?: ?any,
@@ -233,65 +244,54 @@ export type ResourcePropertyRef = {|
   stringValue?: ?string,
   updateTime?: ?any,
 |};
-export type AddCMVersionMutationVariables = {|
-  input: $ReadOnlyArray<AddCMVersionInput>
+export type ConfigParamTagRef = {|
+  createTime?: ?any,
+  id?: ?string,
+  name?: ?string,
+  parameters?: ?$ReadOnlyArray<?ConfigurationParameterTypeRef>,
+  updateTime?: ?any,
 |};
-export type AddCMVersionMutationResponse = {|
-  +addCMVersion: ?{|
-    +cMVersion: ?$ReadOnlyArray<?{|
+export type UpdateParameterMutationVariables = {|
+  input: UpdateParameterInput
+|};
+export type UpdateParameterMutationResponse = {|
+  +updateParameter: ?{|
+    +parameter: ?$ReadOnlyArray<?{|
       +id: string,
-      +status: VersionStatus,
-      +resource: {|
+      +floatValue: ?number,
+      +intValue: ?number,
+      +stringValue: ?string,
+      +parameterType: {|
         +id: string,
-        +name: string,
+        +intValue: ?number,
+        +floatValue: ?number,
+        +stringValue: ?string,
       |},
-      +parameters: $ReadOnlyArray<{|
-        +id: string,
-        +parameterType: {|
-          +id: string,
-          +name: string,
-          +type: ParameterKind,
-          +intValue: ?number,
-          +floatValue: ?number,
-          +stringValue: ?string,
-          +booleanValue: ?boolean,
-          +resourceSpecification: string,
-        |},
-      |}>,
     |}>
   |}
 |};
-export type AddCMVersionMutation = {|
-  variables: AddCMVersionMutationVariables,
-  response: AddCMVersionMutationResponse,
+export type UpdateParameterMutation = {|
+  variables: UpdateParameterMutationVariables,
+  response: UpdateParameterMutationResponse,
 |};
 */
 
 
 /*
-mutation AddCMVersionMutation(
-  $input: [AddCMVersionInput!]!
+mutation UpdateParameterMutation(
+  $input: UpdateParameterInput!
 ) {
-  addCMVersion(input: $input) {
-    cMVersion {
+  updateParameter(input: $input) {
+    parameter {
       id
-      status
-      resource {
+      floatValue
+      intValue
+      stringValue
+      parameterType {
         id
-        name
-      }
-      parameters {
-        id
-        parameterType {
-          id
-          name
-          type
-          intValue
-          floatValue
-          stringValue
-          booleanValue
-          resourceSpecification
-        }
+        intValue
+        floatValue
+        stringValue
       }
     }
   }
@@ -317,10 +317,24 @@ v2 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "name",
+  "name": "floatValue",
   "storageKey": null
 },
-v3 = [
+v3 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "intValue",
+  "storageKey": null
+},
+v4 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "stringValue",
+  "storageKey": null
+},
+v5 = [
   {
     "alias": null,
     "args": [
@@ -330,104 +344,35 @@ v3 = [
         "variableName": "input"
       }
     ],
-    "concreteType": "AddCMVersionPayload",
+    "concreteType": "UpdateParameterPayload",
     "kind": "LinkedField",
-    "name": "addCMVersion",
+    "name": "updateParameter",
     "plural": false,
     "selections": [
       {
         "alias": null,
         "args": null,
-        "concreteType": "CMVersion",
+        "concreteType": "Parameter",
         "kind": "LinkedField",
-        "name": "cMVersion",
+        "name": "parameter",
         "plural": true,
         "selections": [
           (v1/*: any*/),
+          (v2/*: any*/),
+          (v3/*: any*/),
+          (v4/*: any*/),
           {
             "alias": null,
             "args": null,
-            "kind": "ScalarField",
-            "name": "status",
-            "storageKey": null
-          },
-          {
-            "alias": null,
-            "args": null,
-            "concreteType": "Resource",
+            "concreteType": "ConfigurationParameterType",
             "kind": "LinkedField",
-            "name": "resource",
+            "name": "parameterType",
             "plural": false,
             "selections": [
               (v1/*: any*/),
-              (v2/*: any*/)
-            ],
-            "storageKey": null
-          },
-          {
-            "alias": null,
-            "args": null,
-            "concreteType": "Parameter",
-            "kind": "LinkedField",
-            "name": "parameters",
-            "plural": true,
-            "selections": [
-              (v1/*: any*/),
-              {
-                "alias": null,
-                "args": null,
-                "concreteType": "ConfigurationParameterType",
-                "kind": "LinkedField",
-                "name": "parameterType",
-                "plural": false,
-                "selections": [
-                  (v1/*: any*/),
-                  (v2/*: any*/),
-                  {
-                    "alias": null,
-                    "args": null,
-                    "kind": "ScalarField",
-                    "name": "type",
-                    "storageKey": null
-                  },
-                  {
-                    "alias": null,
-                    "args": null,
-                    "kind": "ScalarField",
-                    "name": "intValue",
-                    "storageKey": null
-                  },
-                  {
-                    "alias": null,
-                    "args": null,
-                    "kind": "ScalarField",
-                    "name": "floatValue",
-                    "storageKey": null
-                  },
-                  {
-                    "alias": null,
-                    "args": null,
-                    "kind": "ScalarField",
-                    "name": "stringValue",
-                    "storageKey": null
-                  },
-                  {
-                    "alias": null,
-                    "args": null,
-                    "kind": "ScalarField",
-                    "name": "booleanValue",
-                    "storageKey": null
-                  },
-                  {
-                    "alias": null,
-                    "args": null,
-                    "kind": "ScalarField",
-                    "name": "resourceSpecification",
-                    "storageKey": null
-                  }
-                ],
-                "storageKey": null
-              }
+              (v3/*: any*/),
+              (v2/*: any*/),
+              (v4/*: any*/)
             ],
             "storageKey": null
           }
@@ -443,8 +388,8 @@ return {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Fragment",
     "metadata": null,
-    "name": "AddCMVersionMutation",
-    "selections": (v3/*: any*/),
+    "name": "UpdateParameterMutation",
+    "selections": (v5/*: any*/),
     "type": "Mutation",
     "abstractKey": null
   },
@@ -452,20 +397,20 @@ return {
   "operation": {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
-    "name": "AddCMVersionMutation",
-    "selections": (v3/*: any*/)
+    "name": "UpdateParameterMutation",
+    "selections": (v5/*: any*/)
   },
   "params": {
-    "cacheID": "c9ec8df68dabe519478b26d306dac67e",
+    "cacheID": "193fdacfe40b9aac24232fcf9e0ae454",
     "id": null,
     "metadata": {},
-    "name": "AddCMVersionMutation",
+    "name": "UpdateParameterMutation",
     "operationKind": "mutation",
-    "text": "mutation AddCMVersionMutation(\n  $input: [AddCMVersionInput!]!\n) {\n  addCMVersion(input: $input) {\n    cMVersion {\n      id\n      status\n      resource {\n        id\n        name\n      }\n      parameters {\n        id\n        parameterType {\n          id\n          name\n          type\n          intValue\n          floatValue\n          stringValue\n          booleanValue\n          resourceSpecification\n        }\n      }\n    }\n  }\n}\n"
+    "text": "mutation UpdateParameterMutation(\n  $input: UpdateParameterInput!\n) {\n  updateParameter(input: $input) {\n    parameter {\n      id\n      floatValue\n      intValue\n      stringValue\n      parameterType {\n        id\n        intValue\n        floatValue\n        stringValue\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = '0f3baa46b4134e3f295704ed9cbdbd46';
+(node/*: any*/).hash = '1fe288aa940f4ba85048607587c4cc4d';
 
 module.exports = node;

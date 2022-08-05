@@ -15,7 +15,8 @@
 /*::
 import type { ConcreteRequest } from 'relay-runtime';
 export type ActionTypeId = "update_inventory" | "update_workforce" | "work_order" | "worker" | "%future added value";
-export type AuthType = "BASIC" | "ODIC" | "%future added value";
+export type AdditionMethod = "COMBINE" | "DISCARD_RESULT" | "%future added value";
+export type AuthType = "BASIC" | "OIDC" | "%future added value";
 export type EntryPointRole = "DEFAULT" | "%future added value";
 export type ExitPointRole = "CHOICE" | "DEFAULT" | "%future added value";
 export type GoToType = "DESTINATION" | "ORIGIN" | "%future added value";
@@ -81,6 +82,8 @@ export type ChoiceBlockInput = {|
   uiRepresentation?: ?BlockUIRepresentationInput,
 |};
 export type BaseBlockInput = {|
+  addInputToOutput?: ?boolean,
+  additionMethod?: ?AdditionMethod,
   backoffRate?: ?number,
   enableErrorHandling?: ?boolean,
   enableInputStateTransformation: boolean,

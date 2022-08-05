@@ -8,7 +8,10 @@
  * @format
  */
 
-import type {AddCMVersionMutationVariables} from '../../mutations/__generated__/AddCMVersionMutation.graphql';
+import type {
+  AddCMVersionMutationResponse,
+  AddCMVersionMutationVariables,
+} from '../../mutations/__generated__/AddCMVersionMutation.graphql';
 import type {AddEditResourceInLocationQuery} from './__generated__/AddEditResourceInLocationQuery.graphql';
 import type {
   AddResourceMutationResponse,
@@ -19,6 +22,7 @@ import type {
   TypePlanningSubStatus,
   UsageSubStatus,
 } from '../../mutations/__generated__/AddResourceMutation.graphql';
+import type {UpdateParameterMutationVariables} from '../../mutations/__generated__/UpdateParameterMutation.graphql';
 import type {UpdateResourceMutationVariables} from '../../mutations/__generated__/UpdateResourceMutation.graphql';
 import type {UpdateResourcePropertyMutationVariables} from '../../mutations/__generated__/UpdateResourcePropertyMutation.graphql';
 
@@ -36,6 +40,7 @@ import PropertyTypesTableDispatcher from '../form/context/property_types/Propert
 import React, {useState} from 'react';
 import SaveDialogConfirm from '../configure/SaveDialogConfirm';
 import TextField from '@material-ui/core/TextField';
+import UpdateParameterMutation from '../../mutations/UpdateParameterMutation';
 import UpdateResourceMutation from '../../mutations/UpdateResourceMutation';
 import UpdateResourcePropertyMutation from '../../mutations/UpdateResourcePropertyMutation';
 import inventoryTheme from '../../common/theme';
@@ -198,7 +203,6 @@ const AddEditResourceInLocation = (props: Props) => {
     })
     .map(o => omit(o, ['name', 'type', 'id', 'propertyType']));
 
-  //CM Version date
   const DATE_FORMAT = 'YYYY-MM-DD[T]HH:mm:ss';
 
   function handleCreateForm() {
@@ -221,27 +225,60 @@ const AddEditResourceInLocation = (props: Props) => {
       ],
     };
 
-    const response: MutationCallbacks<AddResourceMutationResponse> = {
-      onCompleted: response => {
+    const responseFnResource: MutationCallbacks<AddResourceMutationResponse> = {
+      onCompleted: responseResource => {
         const cmVersionVariables: AddCMVersionMutationVariables = {
           input: [
             {
               createTime: createdTime,
               resource: {
-                id: response.addResource?.resource[0]?.id,
+                id: responseResource.addResource?.resource[0]?.id,
               },
               parameters: convertParametersMap(dataPropertyType),
               status: 'CURRENT',
             },
           ],
         };
-        AddCMVersionMutation(cmVersionVariables, {
-          onCompleted: () => isCompleted(),
-        });
-        isCompleted();
+
+        const responseFnCmVersion: MutationCallbacks<AddCMVersionMutationResponse> = {
+          onCompleted: responseCmVersion => {
+            responseCmVersion?.addCMVersion?.cMVersion[0]?.parameters.map(
+              (parameter, i) => {
+                const responseParameter: UpdateParameterMutationVariables = {
+                  input: {
+                    filter: {
+                      id: parameter?.id ?? '',
+                    },
+                    set: {
+                      stringValue:
+                        parameter?.parameterType?.stringValue ?? null,
+                      intValue: parameter?.parameterType?.intValue ?? null,
+                      floatValue: parameter?.parameterType?.floatValue ?? null,
+                    },
+                  },
+                };
+                UpdateParameterMutation(responseParameter, {
+                  onCompleted: () => {
+                    if (
+                      i ===
+                      responseCmVersion?.addCMVersion?.cMVersion[0]?.parameters
+                        .length -
+                        1
+                    ) {
+                      isCompleted();
+                    }
+                  },
+                });
+              },
+            );
+          },
+        };
+
+        AddCMVersionMutation(cmVersionVariables, responseFnCmVersion);
       },
     };
-    AddResourceMutation(variables, response);
+
+    AddResourceMutation(variables, responseFnResource);
     setResourceType({data: {}});
     closeFormAddEdit();
   }
