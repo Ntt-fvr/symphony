@@ -742,18 +742,6 @@ type CounterListInput struct {
 	Mandatory bool `json:"mandatory"`
 }
 
-type DecisionBlock struct {
-	EntryPoint       *ent.EntryPoint  `json:"entryPoint"`
-	DefaultExitPoint *ent.ExitPoint   `json:"defaultExitPoint"`
-	Routes           []*DecisionRoute `json:"routes"`
-}
-
-type DecisionBlockInput struct {
-	Cid              string                            `json:"cid"`
-	Routes           []*DecisionRouteInput             `json:"routes"`
-	UIRepresentation *flowschema.BlockUIRepresentation `json:"uiRepresentation"`
-}
-
 type DecisionRoute struct {
 	ExitPoint *ent.ExitPoint `json:"exitPoint"`
 }
@@ -1900,20 +1888,6 @@ type StartFlowInput struct {
 	Params    []*flowschema.VariableValue `json:"params"`
 }
 
-type SubflowBlock struct {
-	Flow       *ent.Flow                        `json:"flow"`
-	Params     []*flowschema.VariableExpression `json:"params"`
-	EntryPoint *ent.EntryPoint                  `json:"entryPoint"`
-	ExitPoint  *ent.ExitPoint                   `json:"exitPoint"`
-}
-
-type SubflowBlockInput struct {
-	Cid              string                            `json:"cid"`
-	FlowID           int                               `json:"flowId"`
-	Params           []*VariableExpressionInput        `json:"params"`
-	UIRepresentation *flowschema.BlockUIRepresentation `json:"uiRepresentation"`
-}
-
 type SurveyCellScanData struct {
 	NetworkType           surveycellscan.NetworkType `json:"networkType"`
 	SignalStrength        int                        `json:"signalStrength"`
@@ -2105,17 +2079,6 @@ type TriggerBlockInput struct {
 	Cid              string                            `json:"cid"`
 	TriggerType      flowschema.TriggerTypeID          `json:"triggerType"`
 	Params           []*VariableExpressionInput        `json:"params"`
-	UIRepresentation *flowschema.BlockUIRepresentation `json:"uiRepresentation"`
-}
-
-type TrueFalseBlock struct {
-	EntryPoint     *ent.EntryPoint `json:"entryPoint"`
-	TrueExitPoint  *ent.ExitPoint  `json:"trueExitPoint"`
-	FalseExitPoint *ent.ExitPoint  `json:"falseExitPoint"`
-}
-
-type TrueFalseBlockInput struct {
-	Cid              string                            `json:"cid"`
 	UIRepresentation *flowschema.BlockUIRepresentation `json:"uiRepresentation"`
 }
 

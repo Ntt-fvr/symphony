@@ -3472,18 +3472,6 @@ input DateTimeRange {
   min: DateTime!
 }
 
-type DecisionBlock {
-  defaultExitPoint: ExitPoint!
-  entryPoint: EntryPoint!
-  routes: [DecisionRoute!]!
-}
-
-input DecisionBlockInput {
-  cid: String!
-  routes: [DecisionRouteInput!]
-  uiRepresentation: BlockUIRepresentationInput
-}
-
 type DecisionRoute {
   exitPoint: ExitPoint
 }
@@ -11591,20 +11579,6 @@ input StringTermFilter {
   anyofterms: String
 }
 
-type SubflowBlock {
-  entryPoint: EntryPoint!
-  exitPoint: ExitPoint!
-  flow: Flow
-  params: [VariableExpression!]!
-}
-
-input SubflowBlockInput {
-  cid: String!
-  flowId: ID!
-  params: [VariableExpressionInput!]!
-  uiRepresentation: BlockUIRepresentationInput
-}
-
 type Subscriber {
   callback: String
   id: ID!
@@ -12131,17 +12105,6 @@ type TriggerType {
 
 enum TriggerTypeId {
   work_order
-}
-
-type TrueFalseBlock {
-  entryPoint: EntryPoint!
-  falseExitPoint: ExitPoint!
-  trueExitPoint: ExitPoint!
-}
-
-input TrueFalseBlockInput {
-  cid: String!
-  uiRepresentation: BlockUIRepresentationInput
 }
 
 enum TypePlanningSubStatus {
