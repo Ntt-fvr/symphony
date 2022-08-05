@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/facebookincubator/symphony/automation/celgo"
+	"github.com/facebookincubator/symphony/automation/model"
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/block"
 	"github.com/facebookincubator/symphony/pkg/ent/blockinstance"
@@ -16,11 +17,6 @@ import (
 	"net/http"
 )
 
-type SignalRequest struct {
-	FlowInstanceId int         `json:"workflowID" binding:"required"`
-	Input          interface{} `json:"input,omitempty"`
-}
-
 func HandleAutomationSignal(ctx context.Context, _ log.Logger, evt ev.EventObject) error {
 
 	entry, ok := evt.(event.SignalEvent)
@@ -28,10 +24,17 @@ func HandleAutomationSignal(ctx context.Context, _ log.Logger, evt ev.EventObjec
 	if !ok || entry.Type != block.SignalTypeWOUPDATED {
 		return nil
 	}
+
+	client := ent.FromContext(ctx)
+
 	if entry.FlowInstanceId > 0 {
-		return sendSignalRequestToFlow(entry.FlowInstanceId, entry)
+		flowInstance, err := client.FlowInstance.Get(ctx, entry.FlowInstanceId)
+		if err != nil {
+			return err
+		}
+
+		return sendSignalRequestToFlow(flowInstance, entry)
 	} else {
-		client := ent.FromContext(ctx)
 		flowInstances, err := client.FlowInstance.Query().Where(
 			flowinstance.StatusEQ(flowinstance.StatusRunning),
 			flowinstance.HasBlocksWith(
@@ -66,7 +69,7 @@ func HandleAutomationSignal(ctx context.Context, _ log.Logger, evt ev.EventObjec
 
 				value, ok := result.Value().(bool)
 				if ok && value {
-					err = sendSignalRequestToFlow(flowInstance.ID, entry)
+					err = sendSignalRequestToFlow(flowInstance, entry)
 					if err != nil {
 						continue
 					}
@@ -78,11 +81,12 @@ func HandleAutomationSignal(ctx context.Context, _ log.Logger, evt ev.EventObjec
 	return nil
 }
 
-func sendSignalRequestToFlow(flowInstanceId int, entry event.SignalEvent) error {
+func sendSignalRequestToFlow(flowInstance *ent.FlowInstance, entry event.SignalEvent) error {
 	url := "http://automation/api/flow/1.0/signal"
-	bodyObject := &SignalRequest{
-		FlowInstanceId: flowInstanceId,
-		Input:          entry.Payload,
+	bodyObject := &model.SignalRequest{
+		WorkflowID: flowInstance.BssCode,
+		RunID:      flowInstance.ServiceInstanceCode,
+		Input:      entry.Payload,
 	}
 
 	body, _ := json.Marshal(bodyObject)
