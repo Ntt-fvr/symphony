@@ -26,6 +26,7 @@ func CreateUrlMappings() {
 		{
 			v1 := flow.Group("/1.0")
 			{
+				v1.GET("/health")
 				v1.POST("/start", flowStart)
 				v1.POST("/pause", flowPauseSignal)
 				v1.POST("/resume", flowResumeSignal)
