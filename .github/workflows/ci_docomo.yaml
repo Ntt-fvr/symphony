@@ -1,8 +1,10 @@
 name: Continuous Integration
 on:
-  push:
-    branches:
-      - feature/devops_back_docomo
+  pull_request:
+    types:
+    - closed
+    branches:  
+      - epic/docomo
     paths-ignore:
       - infra/**
       - skaffold/**
@@ -10,8 +12,8 @@ on:
       - app/mobile/**
 
 env: 
-  ECR_REGISTRY: 837232691946.dkr.ecr.us-east-2.amazonaws.com
-  ECR_REPOSITORY: symphony-ecr-aws-dev
+  ECR_REGISTRY: 357464976842.dkr.ecr.us-west-2.amazonaws.com
+  ECR_REPOSITORY: symphony
 
 jobs: 
   build-artifact:
@@ -78,15 +80,15 @@ jobs:
       - name: Configure AWS Credentials for build and deploy ECR 42
         uses: aws-actions/configure-aws-credentials@v1
         with:
-          aws-access-key-id: ${{ secrets.ECR_ACCESS_ID }}
-          aws-secret-access-key: ${{ secrets.ECR_SECRET_KEY }}
-          aws-region: us-east-2
+          aws-access-key-id: ${{ secrets.ECR_SYMPHONY_DOCOMO_ID }}
+          aws-secret-access-key: ${{ secrets.ECR_SYMPHONY_DOCOMO_KEY }}
+          aws-region: us-west-2
 
       - name: Amazon ECR "Login" Action for GitHub Actions
         uses: aws-actions/amazon-ecr-login@v1
         
       - name: Login ECR
-        run: aws ecr get-login-password --region us-east-2 | docker login --username AWS --password-stdin $ECR_REGISTRY
+        run: aws ecr get-login-password --region us-west-2 | docker login --username AWS --password-stdin $ECR_REGISTRY
 
       - name: Getting Lastest version in ECR
         run: echo "LATEST=$(aws ecr list-images --repository-name $ECR_REPOSITORY | jq '.imageIds | map (.imageTag) | .[]' | grep ${{ matrix.image }} | sed 's/"//g' | head -n 1)" >> $GITHUB_ENV
