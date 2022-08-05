@@ -1,26 +1,29 @@
-// Copyright (c) 2004-present Facebook All rights reserved.
-// Use of this source code is governed by a BSD-style
-// license that can be found in the LICENSE file.
-
 package authz_test
 
 import (
 	"context"
 	"testing"
+	"time"
 
 	"github.com/facebookincubator/symphony/pkg/authz/models"
+	"github.com/facebookincubator/symphony/pkg/viewer"
 	"github.com/facebookincubator/symphony/pkg/viewer/viewertest"
 )
 
 func TestFlowWritePolicyRule(t *testing.T) {
 	c := viewertest.NewTestClient(t)
 	ctx := viewertest.NewContext(context.Background(), c)
+	author := viewer.FromContext(ctx).(*viewer.UserViewer).User()
 	flow := c.Flow.Create().
+		SetCreationDate(time.Now()).
 		SetName("Flow").
+		SetAuthor(author).
 		SaveX(ctx)
 	createBlock := func(ctx context.Context) error {
 		_, err := c.Flow.Create().
 			SetName("New Flow").
+			SetCreationDate(time.Now()).
+			SetAuthor(author).
 			Save(ctx)
 		return err
 	}
@@ -46,11 +49,16 @@ func TestFlowWritePolicyRule(t *testing.T) {
 func TestFlowDraftWritePolicyRule(t *testing.T) {
 	c := viewertest.NewTestClient(t)
 	ctx := viewertest.NewContext(context.Background(), c)
+	author := viewer.FromContext(ctx).(*viewer.UserViewer).User()
 	flow := c.Flow.Create().
 		SetName("Flow").
+		SetCreationDate(time.Now()).
+		SetAuthor(author).
 		SaveX(ctx)
 	flow2 := c.Flow.Create().
 		SetName("Flow 2").
+		SetCreationDate(time.Now()).
+		SetAuthor(author).
 		SaveX(ctx)
 	flowDraft := c.FlowDraft.Create().
 		SetName("Flow Draft").
