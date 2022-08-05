@@ -6125,24 +6125,24 @@ type DecisionRoute {
   exitPoint: ExitPoint
 }
 
-type DecisionBlock {
-  entryPoint: EntryPoint!
-  defaultExitPoint: ExitPoint!
-  routes: [DecisionRoute!]!
-}
+#type DecisionBlock {
+#  entryPoint: EntryPoint!
+#  defaultExitPoint: ExitPoint!
+#  routes: [DecisionRoute!]!
+#}
 
-type TrueFalseBlock {
-  entryPoint: EntryPoint!
-  trueExitPoint: ExitPoint!
-  falseExitPoint: ExitPoint!
-}
+#type TrueFalseBlock {
+#  entryPoint: EntryPoint!
+#  trueExitPoint: ExitPoint!
+#  falseExitPoint: ExitPoint!
+#}
 
-type SubflowBlock {
-  flow: Flow
-  params: [VariableExpression!]!
-  entryPoint: EntryPoint!
-  exitPoint: ExitPoint!
-}
+#type SubflowBlock {
+#  flow: Flow
+#  params: [VariableExpression!]!
+#  entryPoint: EntryPoint!
+#  exitPoint: ExitPoint!
+#}
 
 type GotoBlock {
   target: Block
@@ -6336,16 +6336,16 @@ input DecisionRouteInput {
   condition: VariableExpressionInput!
 }
 
-input DecisionBlockInput {
-  cid: String!
-  routes: [DecisionRouteInput!]
-  uiRepresentation: BlockUIRepresentationInput
-}
+#input DecisionBlockInput {
+#  cid: String!
+#  routes: [DecisionRouteInput!]
+#  uiRepresentation: BlockUIRepresentationInput
+#}
 
-input TrueFalseBlockInput {
-  cid: String!
-  uiRepresentation: BlockUIRepresentationInput
-}
+#input TrueFalseBlockInput {
+#  cid: String!
+#  uiRepresentation: BlockUIRepresentationInput
+#}
 
 input GotoBlockInput {
   cid: String!
@@ -6354,12 +6354,12 @@ input GotoBlockInput {
   uiRepresentation: BlockUIRepresentationInput
 }
 
-input SubflowBlockInput {
-  cid: String!
-  flowId: ID!
-  params: [VariableExpressionInput!]!
-  uiRepresentation: BlockUIRepresentationInput
-}
+#input SubflowBlockInput {
+#  cid: String!
+#  flowId: ID!
+#  params: [VariableExpressionInput!]!
+#  uiRepresentation: BlockUIRepresentationInput
+#}
 
 input TriggerBlockInput {
   cid: String!

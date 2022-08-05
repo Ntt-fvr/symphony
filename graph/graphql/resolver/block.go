@@ -240,7 +240,7 @@ func (r blockResolver) Details(ctx context.Context, obj *ent.Block) (models.Bloc
 			Datetime:          obj.TimerSpecificDate,
 		}, nil
 	case block.TypeExecuteFlow:
-		subflow, _ := obj.Flow(ctx)
+		subflow, _ := obj.SubFlow(ctx)
 		if err != nil {
 			return nil, err
 		}
@@ -408,11 +408,11 @@ func getBlockVariables(ctx context.Context, inputVariables []*models.VariableExp
 			})
 		case enum.DecisionDefinition:
 			vars = append(vars, &flowschema.VariableExpression{
-				BlockID:               blockID,
-				Type:                  variable.Type,
-				VariableDefinitionKey: *variable.VariableDefinitionKey,
-				Expression:            variable.Expression,
-				BlockVariables:        blockVariables,
+				BlockID: blockID,
+				Type:    variable.Type,
+				// VariableDefinitionKey: *variable.VariableDefinitionKey,
+				Expression:     variable.Expression,
+				BlockVariables: blockVariables,
 			})
 		}
 	}
