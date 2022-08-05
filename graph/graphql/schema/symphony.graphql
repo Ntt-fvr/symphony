@@ -6440,6 +6440,7 @@ input TimerBlockInput {
   enableExpressionL: Boolean
   expression: String
   params: [VariableExpressionInput!]
+  basicDefinitions: BaseBlockInput!
   uiRepresentation: BlockUIRepresentationInput
 }
 

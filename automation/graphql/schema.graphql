@@ -72,6 +72,11 @@ enum RetryUnit {
     HOURS
 }
 
+enum AdditionMethod {
+    COMBINE
+    DISCARD_RESULT
+}
+
 input EditFlowInstanceInput {
     id: ID!
     bssCode: String
@@ -239,6 +244,8 @@ type Block {
     units: RetryUnit
     maxAttemps: Int
     backoffRate: Int
+    addInputToOutput: Boolean!
+    additionMethod: AdditionMethod
 }
 
 type FlowExecutionTemplate {

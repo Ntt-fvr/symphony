@@ -859,6 +859,7 @@ func (r mutationResolver) AddExecuteFlowBlock(ctx context.Context, flowDraftID i
 
 func (r mutationResolver) AddTimerBlock(ctx context.Context, flowDraftID int, input models.TimerBlockInput) (*ent.Block, error) {
 	mutation := addBlockMutation(ctx, input.Cid, block.TypeTimer, flowDraftID, input.UIRepresentation)
+	addBlockBasicDefinitions(ctx, mutation, *input.BasicDefinitions)
 	b, err := mutation.Save(ctx)
 	if err != nil {
 		return nil, err

@@ -35,7 +35,7 @@ func globalFunctions() []cel.EnvOption {
 						if err != nil {
 							return types.NewStringInterfaceMap(types.DefaultTypeAdapter, map[string]interface{}{})
 						}
-						flatten, err := flat.Flatten(native, flatOptions)
+						flatten, err := flat.Flatten(native.(map[string]interface{}), flatOptions)
 						if err != nil {
 							return types.NewStringInterfaceMap(types.DefaultTypeAdapter, map[string]interface{}{})
 						}
@@ -53,7 +53,7 @@ func globalFunctions() []cel.EnvOption {
 						if err != nil {
 							return types.NewStringInterfaceMap(types.DefaultTypeAdapter, map[string]interface{}{})
 						}
-						flatten, err := flat.Unflatten(native, unFlatOptions)
+						flatten, err := flat.Unflatten(native.(map[string]interface{}), unFlatOptions)
 						if err != nil {
 							return types.NewStringInterfaceMap(types.DefaultTypeAdapter, map[string]interface{}{})
 						}

@@ -31,6 +31,9 @@ require (
 	github.com/facebookincubator/ent-contrib v0.0.0-20201210145028-3c4e794cc516
 	github.com/gin-gonic/gin v1.8.1
 	github.com/go-sql-driver/mysql v1.6.0
+	github.com/gobuffalo/envy v1.10.1 // indirect
+	github.com/gobuffalo/packd v1.0.1 // indirect
+	github.com/golang-module/carbon v1.6.9
 	github.com/google/addlicense v1.0.0
 	github.com/google/cel-go v0.12.0
 	github.com/google/uuid v1.3.0
@@ -47,6 +50,7 @@ require (
 	github.com/prometheus/client_golang v1.9.0
 	github.com/prometheus/common v0.15.0
 	github.com/prometheus/procfs v0.7.3 // indirect
+	github.com/rogpeppe/go-internal v1.8.1 // indirect
 	github.com/scylladb/go-set v1.0.2
 	github.com/shurcooL/graphql v0.0.0-20200928012149-18c5c3165e3a
 	github.com/sirupsen/logrus v1.8.1 // indirect

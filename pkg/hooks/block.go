@@ -290,7 +290,7 @@ func (h Flower) VerifyInputParamsHook() ent.Hook {
 					return nil, fmt.Errorf("failed to fetch flow end param definitions: %w", err)
 				}
 				definitions = endParamDefinitions
-			case block.TypeSubFlow:
+			case block.TypeExecuteFlow:
 				subFlow, err := h.getSubFlow(ctx, mutation)
 				if err != nil {
 					return nil, fmt.Errorf("failed to fetch sub flow: %w", err)
