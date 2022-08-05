@@ -16,10 +16,6 @@ import (
 	"strings"
 )
 
-const (
-	invokeParamKey = "param"
-)
-
 type ExecutorInvokeRestAPIBlock struct {
 	ExecutorBaseBlock
 	Timeout          int
@@ -74,16 +70,19 @@ func (b *ExecutorInvokeRestAPIBlock) runLogic() error {
 		if err != nil {
 			return err
 		}
-		for key, value := range requestHeaders {
-			var headerValue string
-			switch value.(type) {
-			case string:
-				headerValue = value.(string)
-			default:
-				headerValue = fmt.Sprintf("%v", value)
-			}
 
-			request.Header.Add(key, headerValue)
+		if requestHeaders != nil {
+			for key, value := range requestHeaders {
+				var headerValue string
+				switch value.(type) {
+				case string:
+					headerValue = value.(string)
+				default:
+					headerValue = fmt.Sprintf("%v", value)
+				}
+
+				request.Header.Add(key, headerValue)
+			}
 		}
 	}
 
@@ -124,7 +123,6 @@ func (b *ExecutorInvokeRestAPIBlock) runLogic() error {
 	}
 
 	output := map[string]interface{}{
-		"lastInput": b.Input,
 		"invokeResponse": map[string]interface{}{
 			"requestBody":  requestBody,
 			"responseBody": responseBody,
@@ -138,79 +136,73 @@ func (b *ExecutorInvokeRestAPIBlock) runLogic() error {
 }
 
 func (b *ExecutorInvokeRestAPIBlock) getUrl() (*string, error) {
-	native, err := b.getNativeValue(b.Url)
+	if len(b.Url) == 0 {
+		return nil, errors.New("url not found")
+	}
+
+	native, err := b.processExpressionLanguage(b.Url)
 	if err != nil {
 		return nil, err
 	}
 
-	requestUrl, ok := native[invokeParamKey].(string)
-	if ok {
-		if len(requestUrl) <= 0 {
-			return nil, errors.New("url not found")
-		}
-
-		return &requestUrl, nil
+	requestUrl, ok := native.(string)
+	if !ok {
+		return nil, errors.New("malformed url")
 	}
-	return nil, errors.New("malformed url")
+	return &requestUrl, nil
 }
 
 func (b *ExecutorInvokeRestAPIBlock) getBody() (map[string]interface{}, error) {
-	var invokeBody string
-	if len(b.Body) > 0 {
-		invokeBody = b.Body
-	} else {
-		invokeBody = "{}"
+	if len(b.Body) == 0 {
+		return nil, nil
 	}
 
-	native, err := b.getNativeValue(invokeBody)
+	native, err := b.processExpressionLanguage(b.Body)
 	if err != nil {
 		return nil, err
 	}
 
-	body, ok := native[invokeParamKey].(map[string]interface{})
-	if ok {
-		return body, nil
+	body, ok := native.(map[string]interface{})
+	if !ok {
+		return nil, errors.New("malformed body")
 	}
-
-	return nil, errors.New("malformed body")
+	return body, nil
 }
 
 func (b *ExecutorInvokeRestAPIBlock) getHeaders() (map[string]interface{}, error) {
-	var invokeHeaders string
-	if len(b.Headers) > 0 {
-		headers := make([]string, 0)
-		for key, value := range b.Headers {
-			var headerKey string
-			if !strings.HasPrefix(key, "'") {
-				headerKey = fmt.Sprintf("'%s'", key)
-			} else {
-				headerKey = key
-			}
-
-			header := strings.Join([]string{headerKey, value}, ":")
-			headers = append(headers, header)
-		}
-
-		values := strings.Join(headers, ",")
-		invokeHeaders = fmt.Sprintf("{%s}", values)
-	} else {
-		invokeHeaders = "{}"
+	if b.Headers == nil || len(b.Headers) == 0 {
+		return nil, nil
 	}
 
-	native, err := b.getNativeValue(invokeHeaders)
+	headers := make([]string, 0)
+	for key, value := range b.Headers {
+		var headerKey string
+		if !strings.HasPrefix(key, "'") {
+			headerKey = fmt.Sprintf("'%s'", key)
+		} else {
+			headerKey = key
+		}
+
+		header := strings.Join([]string{headerKey, value}, ":")
+		headers = append(headers, header)
+	}
+
+	values := strings.Join(headers, ",")
+	invokeHeaders := fmt.Sprintf("{%s}", values)
+
+	native, err := b.processExpressionLanguage(invokeHeaders)
 	if err != nil {
 		return nil, err
 	}
 
-	body, ok := native[invokeParamKey].(map[string]interface{})
-	if ok {
-		return body, nil
+	headerValues, ok := native.(map[string]interface{})
+	if !ok {
+		return nil, errors.New("malformed headers")
 	}
-
-	return nil, errors.New("malformed body")
+	return headerValues, nil
 }
 
-func (b *ExecutorInvokeRestAPIBlock) getNativeValue(value string) (map[string]interface{}, error) {
+func (b *ExecutorInvokeRestAPIBlock) processExpressionLanguage(expression string) (interface{}, error) {
 	inputVariable := celgo.ConvertToValue(b.Input)
 	stateVariable := celgo.ConvertToValue(b.State)
 
@@ -218,8 +210,6 @@ func (b *ExecutorInvokeRestAPIBlock) getNativeValue(value string) (map[string]in
 		celgo.InputVariable: inputVariable,
 		celgo.StateVariable: stateVariable,
 	}
-
-	expression := fmt.Sprintf(`{'%s': %s}`, invokeParamKey, value)
 
 	result, err := celgo.CompileAndEvaluate(expression, variables)
 	if err != nil {

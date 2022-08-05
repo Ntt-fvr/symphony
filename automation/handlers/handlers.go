@@ -3,6 +3,10 @@ package handlers
 import (
 	"context"
 	"fmt"
+	"net/http"
+	"strconv"
+	"time"
+
 	"github.com/facebookincubator/symphony/automation/cadence/builder"
 	"github.com/facebookincubator/symphony/automation/cadence/flow"
 	"github.com/facebookincubator/symphony/automation/enum"
@@ -11,9 +15,6 @@ import (
 	"github.com/google/uuid"
 	"go.uber.org/cadence/client"
 	"go.uber.org/zap"
-	"net/http"
-	"strconv"
-	"time"
 )
 
 func flowStart(c *gin.Context) {

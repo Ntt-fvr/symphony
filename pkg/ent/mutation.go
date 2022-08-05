@@ -4044,6 +4044,9 @@ type BlockMutation struct {
 	foreach_key                        *string
 	foreach_start_blockID              *int
 	addforeach_start_blockID           *int
+	goto_type                          *block.GotoType
+	add_input_to_output                *bool
+	addition_method                    *block.AdditionMethod
 	clearedFields                      map[string]struct{}
 	flow                               *int
 	clearedflow                        bool
@@ -6874,6 +6877,156 @@ func (m *BlockMutation) ResetForeachStartBlockID() {
 	delete(m.clearedFields, block.FieldForeachStartBlockID)
 }
 
+// SetGotoType sets the goto_type field.
+func (m *BlockMutation) SetGotoType(bt block.GotoType) {
+	m.goto_type = &bt
+}
+
+// GotoType returns the goto_type value in the mutation.
+func (m *BlockMutation) GotoType() (r block.GotoType, exists bool) {
+	v := m.goto_type
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldGotoType returns the old goto_type value of the Block.
+// If the Block object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *BlockMutation) OldGotoType(ctx context.Context) (v block.GotoType, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldGotoType is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldGotoType requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldGotoType: %w", err)
+	}
+	return oldValue.GotoType, nil
+}
+
+// ClearGotoType clears the value of goto_type.
+func (m *BlockMutation) ClearGotoType() {
+	m.goto_type = nil
+	m.clearedFields[block.FieldGotoType] = struct{}{}
+}
+
+// GotoTypeCleared returns if the field goto_type was cleared in this mutation.
+func (m *BlockMutation) GotoTypeCleared() bool {
+	_, ok := m.clearedFields[block.FieldGotoType]
+	return ok
+}
+
+// ResetGotoType reset all changes of the "goto_type" field.
+func (m *BlockMutation) ResetGotoType() {
+	m.goto_type = nil
+	delete(m.clearedFields, block.FieldGotoType)
+}
+
+// SetAddInputToOutput sets the add_input_to_output field.
+func (m *BlockMutation) SetAddInputToOutput(b bool) {
+	m.add_input_to_output = &b
+}
+
+// AddInputToOutput returns the add_input_to_output value in the mutation.
+func (m *BlockMutation) AddInputToOutput() (r bool, exists bool) {
+	v := m.add_input_to_output
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldAddInputToOutput returns the old add_input_to_output value of the Block.
+// If the Block object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *BlockMutation) OldAddInputToOutput(ctx context.Context) (v *bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldAddInputToOutput is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldAddInputToOutput requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldAddInputToOutput: %w", err)
+	}
+	return oldValue.AddInputToOutput, nil
+}
+
+// ClearAddInputToOutput clears the value of add_input_to_output.
+func (m *BlockMutation) ClearAddInputToOutput() {
+	m.add_input_to_output = nil
+	m.clearedFields[block.FieldAddInputToOutput] = struct{}{}
+}
+
+// AddInputToOutputCleared returns if the field add_input_to_output was cleared in this mutation.
+func (m *BlockMutation) AddInputToOutputCleared() bool {
+	_, ok := m.clearedFields[block.FieldAddInputToOutput]
+	return ok
+}
+
+// ResetAddInputToOutput reset all changes of the "add_input_to_output" field.
+func (m *BlockMutation) ResetAddInputToOutput() {
+	m.add_input_to_output = nil
+	delete(m.clearedFields, block.FieldAddInputToOutput)
+}
+
+// SetAdditionMethod sets the addition_method field.
+func (m *BlockMutation) SetAdditionMethod(bm block.AdditionMethod) {
+	m.addition_method = &bm
+}
+
+// AdditionMethod returns the addition_method value in the mutation.
+func (m *BlockMutation) AdditionMethod() (r block.AdditionMethod, exists bool) {
+	v := m.addition_method
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldAdditionMethod returns the old addition_method value of the Block.
+// If the Block object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *BlockMutation) OldAdditionMethod(ctx context.Context) (v block.AdditionMethod, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldAdditionMethod is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldAdditionMethod requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldAdditionMethod: %w", err)
+	}
+	return oldValue.AdditionMethod, nil
+}
+
+// ClearAdditionMethod clears the value of addition_method.
+func (m *BlockMutation) ClearAdditionMethod() {
+	m.addition_method = nil
+	m.clearedFields[block.FieldAdditionMethod] = struct{}{}
+}
+
+// AdditionMethodCleared returns if the field addition_method was cleared in this mutation.
+func (m *BlockMutation) AdditionMethodCleared() bool {
+	_, ok := m.clearedFields[block.FieldAdditionMethod]
+	return ok
+}
+
+// ResetAdditionMethod reset all changes of the "addition_method" field.
+func (m *BlockMutation) ResetAdditionMethod() {
+	m.addition_method = nil
+	delete(m.clearedFields, block.FieldAdditionMethod)
+}
+
 // SetFlowID sets the flow edge to Flow by id.
 func (m *BlockMutation) SetFlowID(id int) {
 	m.flow = &id
@@ -7281,7 +7434,7 @@ func (m *BlockMutation) Type() string {
 // this mutation. Note that, in order to get all numeric
 // fields that were in/decremented, call AddedFields().
 func (m *BlockMutation) Fields() []string {
-	fields := make([]string, 0, 53)
+	fields := make([]string, 0, 56)
 	if m.create_time != nil {
 		fields = append(fields, block.FieldCreateTime)
 	}
@@ -7441,6 +7594,15 @@ func (m *BlockMutation) Fields() []string {
 	if m.foreach_start_blockID != nil {
 		fields = append(fields, block.FieldForeachStartBlockID)
 	}
+	if m.goto_type != nil {
+		fields = append(fields, block.FieldGotoType)
+	}
+	if m.add_input_to_output != nil {
+		fields = append(fields, block.FieldAddInputToOutput)
+	}
+	if m.addition_method != nil {
+		fields = append(fields, block.FieldAdditionMethod)
+	}
 	return fields
 }
 
@@ -7555,6 +7717,12 @@ func (m *BlockMutation) Field(name string) (ent.Value, bool) {
 		return m.ForeachKey()
 	case block.FieldForeachStartBlockID:
 		return m.ForeachStartBlockID()
+	case block.FieldGotoType:
+		return m.GotoType()
+	case block.FieldAddInputToOutput:
+		return m.AddInputToOutput()
+	case block.FieldAdditionMethod:
+		return m.AdditionMethod()
 	}
 	return nil, false
 }
@@ -7670,6 +7838,12 @@ func (m *BlockMutation) OldField(ctx context.Context, name string) (ent.Value, e
 		return m.OldForeachKey(ctx)
 	case block.FieldForeachStartBlockID:
 		return m.OldForeachStartBlockID(ctx)
+	case block.FieldGotoType:
+		return m.OldGotoType(ctx)
+	case block.FieldAddInputToOutput:
+		return m.OldAddInputToOutput(ctx)
+	case block.FieldAdditionMethod:
+		return m.OldAdditionMethod(ctx)
 	}
 	return nil, fmt.Errorf("unknown Block field %s", name)
 }
@@ -8050,6 +8224,27 @@ func (m *BlockMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetForeachStartBlockID(v)
 		return nil
+	case block.FieldGotoType:
+		v, ok := value.(block.GotoType)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetGotoType(v)
+		return nil
+	case block.FieldAddInputToOutput:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetAddInputToOutput(v)
+		return nil
+	case block.FieldAdditionMethod:
+		v, ok := value.(block.AdditionMethod)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetAdditionMethod(v)
+		return nil
 	}
 	return fmt.Errorf("unknown Block field %s", name)
 }
@@ -8302,6 +8497,15 @@ func (m *BlockMutation) ClearedFields() []string {
 	if m.FieldCleared(block.FieldForeachStartBlockID) {
 		fields = append(fields, block.FieldForeachStartBlockID)
 	}
+	if m.FieldCleared(block.FieldGotoType) {
+		fields = append(fields, block.FieldGotoType)
+	}
+	if m.FieldCleared(block.FieldAddInputToOutput) {
+		fields = append(fields, block.FieldAddInputToOutput)
+	}
+	if m.FieldCleared(block.FieldAdditionMethod) {
+		fields = append(fields, block.FieldAdditionMethod)
+	}
 	return fields
 }
 
@@ -8462,6 +8666,15 @@ func (m *BlockMutation) ClearField(name string) error {
 		return nil
 	case block.FieldForeachStartBlockID:
 		m.ClearForeachStartBlockID()
+		return nil
+	case block.FieldGotoType:
+		m.ClearGotoType()
+		return nil
+	case block.FieldAddInputToOutput:
+		m.ClearAddInputToOutput()
+		return nil
+	case block.FieldAdditionMethod:
+		m.ClearAdditionMethod()
 		return nil
 	}
 	return fmt.Errorf("unknown Block nullable field %s", name)
@@ -8630,6 +8843,15 @@ func (m *BlockMutation) ResetField(name string) error {
 		return nil
 	case block.FieldForeachStartBlockID:
 		m.ResetForeachStartBlockID()
+		return nil
+	case block.FieldGotoType:
+		m.ResetGotoType()
+		return nil
+	case block.FieldAddInputToOutput:
+		m.ResetAddInputToOutput()
+		return nil
+	case block.FieldAdditionMethod:
+		m.ResetAdditionMethod()
 		return nil
 	}
 	return fmt.Errorf("unknown Block field %s", name)

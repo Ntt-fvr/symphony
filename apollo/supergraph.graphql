@@ -1,3 +1,4 @@
+
 schema
   @core(feature: "https://specs.apollo.dev/core/v0.2"),
   @core(feature: "https://specs.apollo.dev/join/v0.1", for: EXECUTION)
@@ -221,6 +222,7 @@ input ActionSchedulerFilter {
   id: [ID!]
   not: ActionSchedulerFilter
   or: [ActionSchedulerFilter]
+  status: ActionSchedulerStatus_hash
 }
 
 enum ActionSchedulerHasFilter {
@@ -292,6 +294,11 @@ input ActionSchedulerRef {
 enum ActionSchedulerStatus {
   ACTIVED
   DEACTIVATED
+}
+
+input ActionSchedulerStatus_hash {
+  eq: ActionSchedulerStatus
+  in: [ActionSchedulerStatus]
 }
 
 enum ActionSchedulerType {
@@ -1299,8 +1306,6 @@ input AddResourcePropertyInput {
   createTime: DateTime
   floatValue: Float
   intValue: Int
-  isInstanceProperty: Boolean
-  isMandatory: Boolean
   latitudeValue: Float
   longitudeValue: Float
   rangeFromValue: Float
@@ -1643,6 +1648,11 @@ input AddWorkerTypeInput {
   propertyTypes: [PropertyTypeInput!]
 }
 
+enum AdditionMethod {
+  COMBINE
+  DISCARD_RESULT
+}
+
 type AdministrativePolicy {
   access: BasicPermissionRule!
 }
@@ -1923,7 +1933,7 @@ input AuthRule {
 
 enum AuthType {
   BASIC
-  ODIC
+  OIDC
 }
 
 type AutomationActivity implements Node {
@@ -1965,6 +1975,8 @@ input AutomationPolicyInput {
 }
 
 input BaseBlockInput {
+  addInputToOutput: Boolean
+  additionMethod: AdditionMethod
   backoffRate: Int
   enableErrorHandling: Boolean
   enableInputStateTransformation: Boolean!
@@ -2000,6 +2012,8 @@ input BasicPermissionRuleInput {
 }
 
 type Block implements Node {
+  addInputToOutput: Boolean!
+  additionMethod: AdditionMethod
   backoffRate: Int
   cid: String!
   details: BlockDetails!
@@ -3456,18 +3470,6 @@ input DateTimeFilter {
 input DateTimeRange {
   max: DateTime!
   min: DateTime!
-}
-
-type DecisionBlock {
-  defaultExitPoint: ExitPoint!
-  entryPoint: EntryPoint!
-  routes: [DecisionRoute!]!
-}
-
-input DecisionBlockInput {
-  cid: String!
-  routes: [DecisionRouteInput!]
-  uiRepresentation: BlockUIRepresentationInput
 }
 
 type DecisionRoute {
@@ -5507,6 +5509,7 @@ enum GoToType {
 type GotoBlock {
   entryPoint: EntryPoint!
   target: Block
+  type: GoToType!
 }
 
 input GotoBlockInput {
@@ -8546,7 +8549,7 @@ type Query {
   getParty(id: String!): Party @join__field(graph: DGRAPHSERVICE)
   getPlace(placeId: ID!): Place @join__field(graph: DGRAPHSERVICE)
   getRelatedEntity(id: String!): RelatedEntity @join__field(graph: DGRAPHSERVICE)
-  getResource(externalId: String, id: ID): Resource @join__field(graph: DGRAPHSERVICE)
+  getResource(id: ID, name: String): Resource @join__field(graph: DGRAPHSERVICE)
   getResourceOrderIM(id: ID!): ResourceOrderIM @join__field(graph: DGRAPHSERVICE)
   getResourceOrderItem(id: String!): ResourceOrderItem @join__field(graph: DGRAPHSERVICE)
   getResourceProperty(id: ID!): ResourceProperty @join__field(graph: DGRAPHSERVICE)
@@ -9772,8 +9775,6 @@ type ResourceProperty implements DefaultConfig {
   floatValue: Float
   id: ID!
   intValue: Int
-  isInstanceProperty: Boolean
-  isMandatory: Boolean
   latitudeValue: Float
   longitudeValue: Float
   rangeFromValue: Float
@@ -9838,8 +9839,6 @@ enum ResourcePropertyHasFilter {
   createTime
   floatValue
   intValue
-  isInstanceProperty
-  isMandatory
   latitudeValue
   longitudeValue
   rangeFromValue
@@ -9890,8 +9889,6 @@ input ResourcePropertyPatch {
   createTime: DateTime
   floatValue: Float
   intValue: Int
-  isInstanceProperty: Boolean
-  isMandatory: Boolean
   latitudeValue: Float
   longitudeValue: Float
   rangeFromValue: Float
@@ -9909,8 +9906,6 @@ input ResourcePropertyRef {
   floatValue: Float
   id: ID
   intValue: Int
-  isInstanceProperty: Boolean
-  isMandatory: Boolean
   latitudeValue: Float
   longitudeValue: Float
   rangeFromValue: Float
@@ -11584,20 +11579,6 @@ input StringTermFilter {
   anyofterms: String
 }
 
-type SubflowBlock {
-  entryPoint: EntryPoint!
-  exitPoint: ExitPoint!
-  flow: Flow
-  params: [VariableExpression!]!
-}
-
-input SubflowBlockInput {
-  cid: String!
-  flowId: ID!
-  params: [VariableExpressionInput!]!
-  uiRepresentation: BlockUIRepresentationInput
-}
-
 type Subscriber {
   callback: String
   id: ID!
@@ -12075,6 +12056,7 @@ type TimerBlock {
 }
 
 input TimerBlockInput {
+  basicDefinitions: BaseBlockInput!
   behavior: TimerBehavior!
   cid: String!
   enableExpressionL: Boolean
@@ -12123,17 +12105,6 @@ type TriggerType {
 
 enum TriggerTypeId {
   work_order
-}
-
-type TrueFalseBlock {
-  entryPoint: EntryPoint!
-  falseExitPoint: ExitPoint!
-  trueExitPoint: ExitPoint!
-}
-
-input TrueFalseBlockInput {
-  cid: String!
-  uiRepresentation: BlockUIRepresentationInput
 }
 
 enum TypePlanningSubStatus {

@@ -68,6 +68,8 @@ query FlowInstanceQuery($flowInstanceID: ID!) {
                     units
                     maxAttemps
                     backoffRate
+                    addInputToOutput
+                    additionMethod
                     # @genqlient(typename: "BlockDetail")
                     details {
                         __typename

@@ -212,3 +212,14 @@ const (
 func (tb TimerBehavior) String() string {
 	return string(tb)
 }
+
+type AdditionMethod string
+
+const (
+	AdditionMethodCombine       AdditionMethod = "COMBINE"
+	AdditionMethodDiscardResult AdditionMethod = "DISCARD_RESULT"
+)
+
+func (am AdditionMethod) String() string {
+	return string(am)
+}

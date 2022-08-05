@@ -15,13 +15,14 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func CreateResourceSpecifications(ctx context.Context, t *testing.T, mr generated.MutationResolver) (int, int, int, int, int) {
-	resourceTypeID_1, resourceTypeID_2, reconciliationRuleID_1, reconciliationRuleID_2 := CreateResourceTypes(ctx, t, mr)
+func CreateResourceSpecifications(ctx context.Context, t *testing.T, mr generated.MutationResolver) (int, int, int) {
+	resourceTypeID_1, resourceTypeID_2 := CreateResourceTypes(ctx, t, mr)
+	//resourceTypeID_1, resourceTypeID_2, reconciliationRuleID_1, reconciliationRuleID_2 := CreateResourceTypes(ctx, t, mr)
 
 	resourceSpecification_1, err := mr.AddResourceSpecification(ctx, models.AddResourceSpecificationInput{
-		Name:               "ResourceSpecification_1",
-		ReconciliationRule: reconciliationRuleID_1,
-		ResourceType:       resourceTypeID_1,
+		Name: "ResourceSpecification_1",
+		//ReconciliationRule: reconciliationRuleID_1,
+		ResourceType: resourceTypeID_1,
 		ResourcePropertyTypes: []*models.AddResourcePropertyTypeInput{
 			{
 				Name: "resourcePropertyType1",
@@ -31,7 +32,8 @@ func CreateResourceSpecifications(ctx context.Context, t *testing.T, mr generate
 	})
 	require.NoError(t, err)
 
-	return resourceSpecification_1.ID, resourceTypeID_1, resourceTypeID_2, reconciliationRuleID_1, reconciliationRuleID_2
+	return resourceSpecification_1.ID, resourceTypeID_1, resourceTypeID_2
+	//return resourceSpecification_1.ID, resourceTypeID_1, resourceTypeID_2, reconciliationRuleID_1, reconciliationRuleID_2
 }
 
 func TestAddResourceSpecification(t *testing.T) {
@@ -42,12 +44,13 @@ func TestAddResourceSpecification(t *testing.T) {
 
 	mr := r.Mutation()
 
-	_, resourceTypeID_1, _, reconciliationRuleID_1, _ := CreateResourceSpecifications(ctx, t, mr)
+	_, resourceTypeID_1, _ := CreateResourceSpecifications(ctx, t, mr)
+	//_, resourceTypeID_1, _, reconciliationRuleID_1, _ := CreateResourceSpecifications(ctx, t, mr)
 
 	_, err := mr.AddResourceSpecification(ctx, models.AddResourceSpecificationInput{
-		Name:               "ResourceSpecification_2",
-		ReconciliationRule: reconciliationRuleID_1,
-		ResourceType:       resourceTypeID_1,
+		Name: "ResourceSpecification_2",
+		//ReconciliationRule: reconciliationRuleID_1,
+		ResourceType: resourceTypeID_1,
 		ResourcePropertyTypes: []*models.AddResourcePropertyTypeInput{
 			{
 				Name: "resourcePropertyType1",
@@ -58,9 +61,9 @@ func TestAddResourceSpecification(t *testing.T) {
 	require.NoError(t, err)
 
 	_, err = mr.AddResourceSpecification(ctx, models.AddResourceSpecificationInput{
-		Name:               "ResourceSpecification_3",
-		ReconciliationRule: 123,
-		ResourceType:       resourceTypeID_1,
+		Name: "ResourceSpecification_2",
+		//ReconciliationRule: 123,
+		ResourceType: resourceTypeID_1,
 		ResourcePropertyTypes: []*models.AddResourcePropertyTypeInput{
 			{
 				Name: "resourcePropertyType1",
@@ -80,21 +83,22 @@ func TestEditResourceSpecification(t *testing.T) {
 
 	mr := r.Mutation()
 
-	resourceSpecificationID_1, resourceTypeID_1, _, reconciliationRuleID_1, _ := CreateResourceSpecifications(ctx, t, mr)
+	resourceSpecificationID_1, resourceTypeID_1, _ := CreateResourceSpecifications(ctx, t, mr)
+	//resourceSpecificationID_1, resourceTypeID_1, _, reconciliationRuleID_1, _ := CreateResourceSpecifications(ctx, t, mr)
 
 	_, err := mr.EditResourceSpecification(ctx, models.EditResourceSpecificationInput{
-		ID:                 resourceSpecificationID_1,
-		Name:               "ResourceSpecification_1",
-		ReconciliationRule: &reconciliationRuleID_1,
-		ResourceType:       &resourceTypeID_1,
+		ID:   resourceSpecificationID_1,
+		Name: "ResourceSpecification_1",
+		//ReconciliationRule: &reconciliationRuleID_1,
+		ResourceType: &resourceTypeID_1,
 	})
 	require.NoError(t, err)
 
 	_, err = mr.EditResourceSpecification(ctx, models.EditResourceSpecificationInput{
-		ID:                 123,
-		Name:               "ResourceSpecification_2",
-		ReconciliationRule: &reconciliationRuleID_1,
-		ResourceType:       &resourceTypeID_1,
+		ID:   123,
+		Name: "ResourceSpecification_2",
+		//ReconciliationRule: &reconciliationRuleID_1,
+		ResourceType: &resourceTypeID_1,
 	})
 	require.Error(t, err)
 }
@@ -106,7 +110,8 @@ func TestRemoveResourceSpecification(t *testing.T) {
 
 	mr := r.Mutation()
 
-	resourceSpecificationID_1, _, _, _, _ := CreateResourceSpecifications(ctx, t, mr)
+	resourceSpecificationID_1, _, _ := CreateResourceSpecifications(ctx, t, mr)
+	//resourceSpecificationID_1, _, _, _, _ := CreateResourceSpecifications(ctx, t, mr)
 
 	_, err := mr.RemoveResourceSpecification(ctx, resourceSpecificationID_1)
 	require.NoError(t, err)

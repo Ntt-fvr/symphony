@@ -5957,6 +5957,14 @@ enum RetryUnit {
   HOURS
 }
 
+enum AdditionMethod
+@goModel(
+    model: "github.com/facebookincubator/symphony/pkg/ent/block.AdditionMethod"       
+  ){
+  COMBINE
+  DISCARD_RESULT
+}
+
 # Block definitions
 
 type Block implements Node {
@@ -5987,6 +5995,8 @@ type Block implements Node {
   maxAttemps: Int 
   backoffRate: Int
   instances: [BlockInstance!]
+  addInputToOutput: Boolean!
+  additionMethod: AdditionMethod
 }
 
 type BlockVariable
@@ -6103,27 +6113,28 @@ type DecisionRoute {
   exitPoint: ExitPoint
 }
 
-type DecisionBlock {
-  entryPoint: EntryPoint!
-  defaultExitPoint: ExitPoint!
-  routes: [DecisionRoute!]!
-}
+#type DecisionBlock {
+#  entryPoint: EntryPoint!
+#  defaultExitPoint: ExitPoint!
+#  routes: [DecisionRoute!]!
+#}
 
-type TrueFalseBlock {
-  entryPoint: EntryPoint!
-  trueExitPoint: ExitPoint!
-  falseExitPoint: ExitPoint!
-}
+#type TrueFalseBlock {
+#  entryPoint: EntryPoint!
+#  trueExitPoint: ExitPoint!
+#  falseExitPoint: ExitPoint!
+#}
 
-type SubflowBlock {
-  flow: Flow
-  params: [VariableExpression!]!
-  entryPoint: EntryPoint!
-  exitPoint: ExitPoint!
-}
+#type SubflowBlock {
+#  flow: Flow
+#  params: [VariableExpression!]!
+#  entryPoint: EntryPoint!
+#  exitPoint: ExitPoint!
+#}
 
 type GotoBlock {
   target: Block
+  type: GoToType!
   entryPoint: EntryPoint!
 }
 
@@ -6142,7 +6153,10 @@ type ActionBlock {
   workerType: WorkerType
 }
 
-enum GoToType{
+enum GoToType
+@goModel(
+  model: "github.com/facebookincubator/symphony/pkg/ent/block.GotoType"
+  ) {
   ORIGIN
   DESTINATION
 }
@@ -6193,7 +6207,7 @@ enum  AuthType
   model: "github.com/facebookincubator/symphony/pkg/ent/block.AuthType"
   ) {
   BASIC
-  ODIC
+  OIDC
 }
 
 type InvokeRestAPIBlock {
@@ -6310,16 +6324,16 @@ input DecisionRouteInput {
   condition: VariableExpressionInput!
 }
 
-input DecisionBlockInput {
-  cid: String!
-  routes: [DecisionRouteInput!]
-  uiRepresentation: BlockUIRepresentationInput
-}
+#input DecisionBlockInput {
+#  cid: String!
+#  routes: [DecisionRouteInput!]
+#  uiRepresentation: BlockUIRepresentationInput
+#}
 
-input TrueFalseBlockInput {
-  cid: String!
-  uiRepresentation: BlockUIRepresentationInput
-}
+#input TrueFalseBlockInput {
+#  cid: String!
+#  uiRepresentation: BlockUIRepresentationInput
+#}
 
 input GotoBlockInput {
   cid: String!
@@ -6328,12 +6342,12 @@ input GotoBlockInput {
   uiRepresentation: BlockUIRepresentationInput
 }
 
-input SubflowBlockInput {
-  cid: String!
-  flowId: ID!
-  params: [VariableExpressionInput!]!
-  uiRepresentation: BlockUIRepresentationInput
-}
+#input SubflowBlockInput {
+#  cid: String!
+#  flowId: ID!
+#  params: [VariableExpressionInput!]!
+#  uiRepresentation: BlockUIRepresentationInput
+#}
 
 input TriggerBlockInput {
   cid: String!
@@ -6386,6 +6400,8 @@ input BaseBlockInput {
   outputStateParamDefinitions: String
   enableErrorHandling: Boolean
   enableRetryPolicy: Boolean
+  addInputToOutput: Boolean
+  additionMethod: AdditionMethod
   retryInterval: Int
   units: RetryUnit
   maxAttemps: Int
@@ -6412,6 +6428,7 @@ input TimerBlockInput {
   enableExpressionL: Boolean
   expression: String
   params: [VariableExpressionInput!]
+  basicDefinitions: BaseBlockInput!
   uiRepresentation: BlockUIRepresentationInput
 }
 

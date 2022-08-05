@@ -586,24 +586,26 @@ type AutomationActivityFilterInput struct {
 }
 
 type BaseBlockInput struct {
-	EnableInputTransformation       bool                 `json:"enableInputTransformation"`
-	InputTransfStrategy             *enum.TransfStrategy `json:"inputTransfStrategy"`
-	InputParamDefinitions           *string              `json:"inputParamDefinitions"`
-	EnableOutputTransformation      bool                 `json:"enableOutputTransformation"`
-	OutputTransfStrategy            *enum.TransfStrategy `json:"outputTransfStrategy"`
-	OutputParamDefinitions          *string              `json:"outputParamDefinitions"`
-	EnableInputStateTransformation  bool                 `json:"enableInputStateTransformation"`
-	InputStateTransfStrategy        *enum.TransfStrategy `json:"inputStateTransfStrategy"`
-	InputStateParamDefinitions      *string              `json:"inputStateParamDefinitions"`
-	EnableOutputStateTransformation bool                 `json:"enableOutputStateTransformation"`
-	OutputStateTransfStrategy       *enum.TransfStrategy `json:"outputStateTransfStrategy"`
-	OutputStateParamDefinitions     *string              `json:"outputStateParamDefinitions"`
-	EnableErrorHandling             *bool                `json:"enableErrorHandling"`
-	EnableRetryPolicy               *bool                `json:"enableRetryPolicy"`
-	RetryInterval                   *int                 `json:"retryInterval"`
-	Units                           *RetryUnit           `json:"units"`
-	MaxAttemps                      *int                 `json:"maxAttemps"`
-	BackoffRate                     *int                 `json:"backoffRate"`
+	EnableInputTransformation       bool                  `json:"enableInputTransformation"`
+	InputTransfStrategy             *enum.TransfStrategy  `json:"inputTransfStrategy"`
+	InputParamDefinitions           *string               `json:"inputParamDefinitions"`
+	EnableOutputTransformation      bool                  `json:"enableOutputTransformation"`
+	OutputTransfStrategy            *enum.TransfStrategy  `json:"outputTransfStrategy"`
+	OutputParamDefinitions          *string               `json:"outputParamDefinitions"`
+	EnableInputStateTransformation  bool                  `json:"enableInputStateTransformation"`
+	InputStateTransfStrategy        *enum.TransfStrategy  `json:"inputStateTransfStrategy"`
+	InputStateParamDefinitions      *string               `json:"inputStateParamDefinitions"`
+	EnableOutputStateTransformation bool                  `json:"enableOutputStateTransformation"`
+	OutputStateTransfStrategy       *enum.TransfStrategy  `json:"outputStateTransfStrategy"`
+	OutputStateParamDefinitions     *string               `json:"outputStateParamDefinitions"`
+	EnableErrorHandling             *bool                 `json:"enableErrorHandling"`
+	EnableRetryPolicy               *bool                 `json:"enableRetryPolicy"`
+	AddInputToOutput                *bool                 `json:"addInputToOutput"`
+	AdditionMethod                  *block.AdditionMethod `json:"additionMethod"`
+	RetryInterval                   *int                  `json:"retryInterval"`
+	Units                           *RetryUnit            `json:"units"`
+	MaxAttemps                      *int                  `json:"maxAttemps"`
+	BackoffRate                     *int                  `json:"backoffRate"`
 }
 
 type BlockVariableInput struct {
@@ -738,18 +740,6 @@ type CounterFilterInput struct {
 type CounterListInput struct {
 	CounterFk int  `json:"counterFk"`
 	Mandatory bool `json:"mandatory"`
-}
-
-type DecisionBlock struct {
-	EntryPoint       *ent.EntryPoint  `json:"entryPoint"`
-	DefaultExitPoint *ent.ExitPoint   `json:"defaultExitPoint"`
-	Routes           []*DecisionRoute `json:"routes"`
-}
-
-type DecisionBlockInput struct {
-	Cid              string                            `json:"cid"`
-	Routes           []*DecisionRouteInput             `json:"routes"`
-	UIRepresentation *flowschema.BlockUIRepresentation `json:"uiRepresentation"`
 }
 
 type DecisionRoute struct {
@@ -1403,6 +1393,7 @@ type GeneralFilterInput struct {
 
 type GotoBlock struct {
 	Target     *ent.Block      `json:"target"`
+	Type       block.GotoType  `json:"type"`
 	EntryPoint *ent.EntryPoint `json:"entryPoint"`
 }
 
@@ -1411,7 +1402,7 @@ func (GotoBlock) IsBlockDetails() {}
 type GotoBlockInput struct {
 	Cid              string                            `json:"cid"`
 	TargetBlockCid   *string                           `json:"targetBlockCid"`
-	Type             GoToType                          `json:"type"`
+	Type             block.GotoType                    `json:"type"`
 	UIRepresentation *flowschema.BlockUIRepresentation `json:"uiRepresentation"`
 }
 
@@ -1897,20 +1888,6 @@ type StartFlowInput struct {
 	Params    []*flowschema.VariableValue `json:"params"`
 }
 
-type SubflowBlock struct {
-	Flow       *ent.Flow                        `json:"flow"`
-	Params     []*flowschema.VariableExpression `json:"params"`
-	EntryPoint *ent.EntryPoint                  `json:"entryPoint"`
-	ExitPoint  *ent.ExitPoint                   `json:"exitPoint"`
-}
-
-type SubflowBlockInput struct {
-	Cid              string                            `json:"cid"`
-	FlowID           int                               `json:"flowId"`
-	Params           []*VariableExpressionInput        `json:"params"`
-	UIRepresentation *flowschema.BlockUIRepresentation `json:"uiRepresentation"`
-}
-
 type SurveyCellScanData struct {
 	NetworkType           surveycellscan.NetworkType `json:"networkType"`
 	SignalStrength        int                        `json:"signalStrength"`
@@ -2080,6 +2057,7 @@ type TimerBlockInput struct {
 	EnableExpressionL *bool                             `json:"enableExpressionL"`
 	Expression        *string                           `json:"expression"`
 	Params            []*VariableExpressionInput        `json:"params"`
+	BasicDefinitions  *BaseBlockInput                   `json:"basicDefinitions"`
 	UIRepresentation  *flowschema.BlockUIRepresentation `json:"uiRepresentation"`
 }
 
@@ -2101,17 +2079,6 @@ type TriggerBlockInput struct {
 	Cid              string                            `json:"cid"`
 	TriggerType      flowschema.TriggerTypeID          `json:"triggerType"`
 	Params           []*VariableExpressionInput        `json:"params"`
-	UIRepresentation *flowschema.BlockUIRepresentation `json:"uiRepresentation"`
-}
-
-type TrueFalseBlock struct {
-	EntryPoint     *ent.EntryPoint `json:"entryPoint"`
-	TrueExitPoint  *ent.ExitPoint  `json:"trueExitPoint"`
-	FalseExitPoint *ent.ExitPoint  `json:"falseExitPoint"`
-}
-
-type TrueFalseBlockInput struct {
-	Cid              string                            `json:"cid"`
 	UIRepresentation *flowschema.BlockUIRepresentation `json:"uiRepresentation"`
 }
 
@@ -2707,47 +2674,6 @@ func (e *FormulaFilterType) UnmarshalGQL(v interface{}) error {
 }
 
 func (e FormulaFilterType) MarshalGQL(w io.Writer) {
-	fmt.Fprint(w, strconv.Quote(e.String()))
-}
-
-type GoToType string
-
-const (
-	GoToTypeOrigin      GoToType = "ORIGIN"
-	GoToTypeDestination GoToType = "DESTINATION"
-)
-
-var AllGoToType = []GoToType{
-	GoToTypeOrigin,
-	GoToTypeDestination,
-}
-
-func (e GoToType) IsValid() bool {
-	switch e {
-	case GoToTypeOrigin, GoToTypeDestination:
-		return true
-	}
-	return false
-}
-
-func (e GoToType) String() string {
-	return string(e)
-}
-
-func (e *GoToType) UnmarshalGQL(v interface{}) error {
-	str, ok := v.(string)
-	if !ok {
-		return fmt.Errorf("enums must be strings")
-	}
-
-	*e = GoToType(str)
-	if !e.IsValid() {
-		return fmt.Errorf("%s is not a valid GoToType", str)
-	}
-	return nil
-}
-
-func (e GoToType) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 

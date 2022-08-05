@@ -279,7 +279,6 @@ func newHandlers(bucket *blob.Bucket, flags *cliFlags, client *worker.Client, te
 	}, handler.WithTransaction(false)), handler.New(handler.HandleConfig{
 		Name: "flow",
 		Handler: handler.NewFlowHandler(
-			client.GetCadenceClient(worker.FlowDomainName.String()),
 			flags.AutomationURL,
 		),
 	}, handler.WithTransaction(false)), handler.New(handler.HandleConfig{

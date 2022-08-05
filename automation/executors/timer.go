@@ -29,7 +29,6 @@ func (b *ExecutorTimerBlock) runLogic() error {
 	var variables map[string]interface{}
 
 	if b.EnableExpression {
-
 		inputVariable = celgo.ConvertToValue(b.Input)
 		stateVariable = celgo.ConvertToValue(b.State)
 

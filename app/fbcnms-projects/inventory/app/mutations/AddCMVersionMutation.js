@@ -30,6 +30,7 @@ const mutation = graphql`
           name
         }
         parameters {
+          id
           parameterType {
             id
             name
