@@ -516,6 +516,47 @@ func TestStartComplexFlow(t *testing.T) {
 	require.NoError(t, err)
 }
 
+func TestEditFlowIntance(t *testing.T) {
+	r := newTestResolver(t)
+	defer r.Close()
+	ctx := viewertest.NewContext(context.Background(), r.client)
+	mr := r.Mutation()
+
+	inputParams := []*flowschema.VariableValue{
+		{
+			VariableDefinitionKey: "param",
+			Value:                 "23",
+		},
+	}
+
+	draft, err := mr.AddFlowDraft(ctx, models.AddFlowDraftInput{
+		Name: "Flow with no start",
+	})
+	require.NoError(t, err)
+
+	flw, err := mr.PublishFlow(ctx, models.PublishFlowInput{FlowDraftID: draft.ID, FlowInstancesPolicy: flow.NewInstancesPolicyEnabled})
+	require.NoError(t, err)
+
+	flowIntance, err := mr.StartFlow(ctx, models.StartFlowInput{
+		FlowID:    flw.ID,
+		StartDate: time.Now(),
+		Params:    inputParams,
+	})
+	require.NoError(t, err)
+
+	_, err = mr.EditFlowInstance(ctx, &models.EditFlowInstanceInput{
+		ID:          flowIntance.ID,
+		StartParams: inputParams,
+	})
+	require.NoError(t, err)
+
+	_, err = mr.EditFlowInstance(ctx, &models.EditFlowInstanceInput{
+		ID: 123,
+	})
+	require.Error(t, err)
+
+}
+
 func TestAddBlockInstancesOfFlowInstance(t *testing.T) {
 	r := newTestResolver(t)
 	defer r.Close()
