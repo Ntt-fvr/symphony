@@ -12,6 +12,8 @@ import (
 	"time"
 
 	"github.com/facebookincubator/symphony/pkg/ent/flow"
+	"github.com/facebookincubator/symphony/pkg/flowengine/flowschema"
+	"github.com/facebookincubator/symphony/pkg/viewer"
 
 	"github.com/facebookincubator/symphony/async/handler"
 	"github.com/facebookincubator/symphony/async/worker"
@@ -24,38 +26,43 @@ import (
 	"go.uber.org/cadence/mocks"
 )
 
+// Error Post "/start": unsupported protocol scheme ""
 func TestWorkflowCreated(t *testing.T) {
 	c := mocks.Client{}
 	var (
 		workflowID, workflowName string
-		workflowInput            worker.RunFlowInput
+		workflowInput            int
 	)
-	c.On("StartWorkflow", mock.Anything, mock.Anything, mock.Anything, mock.Anything).
+	c.On("StartWorkflow", mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything).
 		Run(func(args mock.Arguments) {
 			workflowID = args.Get(1).(client.StartWorkflowOptions).ID
-			workflowName = args.Get(2).(string)
-			workflowInput = args.Get(3).(worker.RunFlowInput)
+			workflowName = args.Get(3).(string)
+			workflowInput = args.Get(4).(int)
 		}).
 		Return(nil, nil).
 		Once()
 	flowHandler := handler.NewFlowHandler(&c, "")
 	entClient := viewertest.NewTestClient(t)
 	ctx := viewertest.NewContext(context.Background(), entClient)
+	user, _ := viewer.FromContext(ctx).(*viewer.UserViewer)
 	entClient.Use(event.LogHook(flowHandler.Handle, log.NewNopLogger()))
 	flw, err := entClient.Flow.Create().
 		SetName("Flow").
 		SetStatus(flow.StatusPublished).
+		SetCreationDate(time.Now()).
+		SetAuthor(user.User()).
 		SetNewInstancesPolicy(flow.NewInstancesPolicyEnabled).
 		Save(ctx)
 	require.NoError(t, err)
+
 	flwInstance, err := entClient.FlowInstance.Create().
-		SetFlow(flw).
-		SetBssCode("CODE123").
+		SetFlowID(flw.ID).
 		SetStartDate(time.Now()).
+		SetStartParams([]*flowschema.VariableValue{{}}).
 		Save(ctx)
 	require.NoError(t, err)
-	require.Equal(t, worker.RunFlowWorkflowName, workflowName)
-	require.Equal(t, flwInstance.ID, workflowInput.FlowInstanceID)
+	require.Equal(t, worker.AutomationTaskListName, workflowName)
+	require.Equal(t, flwInstance.ID, workflowInput)
 	parts := strings.Split(workflowID, "/")
 	require.Len(t, parts, 2)
 	require.Equal(t, viewertest.DefaultTenant, parts[0])
