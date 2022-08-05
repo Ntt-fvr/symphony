@@ -1,0 +1,6 @@
+projectKey=docomo_test
+serverUrl=https://sonarqube.devsecopsopennetworks.com
+serverVersion=9.3.0.51899
+dashboardUrl=https://sonarqube.devsecopsopennetworks.com/dashboard?id=docomo_test
+ceTaskId=AYJqmIlBMvi-549Fxtbp
+ceTaskUrl=https://sonarqube.devsecopsopennetworks.com/api/ce/task?id=AYJqmIlBMvi-549Fxtbp
