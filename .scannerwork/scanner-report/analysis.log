@@ -1,0 +1,42 @@
+SonarQube plugins:
+  - Python Code Quality and Security 3.9.0.9230 (python)
+  - Go Code Quality and Security 1.9.0.3429 (go)
+  - JaCoCo 1.1.1.1157 (jacoco)
+  - Kotlin Code Quality and Security 2.9.0.1147 (kotlin)
+  - IaC Code Quality and Security 1.5.0.1600 (iac)
+  - JavaScript/TypeScript Code Quality and Security 8.8.0.17228 (javascript)
+  - Ruby Code Quality and Security 1.9.0.3429 (ruby)
+  - Scala Code Quality and Security 1.9.0.3429 (sonarscala)
+  - C# Code Quality and Security 8.34.0.42011 (csharp)
+  - Java Code Quality and Security 7.7.0.28547 (java)
+  - HTML Code Quality and Security 3.6.0.3106 (web)
+  - Flex Code Quality and Security 2.7.0.2865 (flex)
+  - XML Code Quality and Security 2.5.0.3376 (xml)
+  - PHP Code Quality and Security 3.22.1.8626 (php)
+  - Text file Code Quality and Security 1.0.0.120 (text)
+  - VB.NET Code Quality and Security 8.34.0.42011 (vbnet)
+  - Configuration detection fot Code Quality and Security 1.2.0.267 (config)
+Global server settings:
+  - sonar.core.id=EA8D9556-AX9wYJeXFigmKPZVvjpd
+  - sonar.core.startTime=2022-03-10T14:48:36+0000
+  - sonar.forceAuthentication=true
+  - sonar.go.coverage.reportPaths=coverage.out
+  - sonar.go.tests.reportPaths=report.json
+  - sonar.qualitygate.ignoreSmallChanges=false
+Project server settings:
+Project scanner properties:
+  - sonar.go.coverage.reportPaths=coverage.out
+  - sonar.go.tests.reportPaths=report.json
+  - sonar.host.url=https://sonarqube.devsecopsopennetworks.com/
+  - sonar.java.binaries=*
+  - sonar.login=******
+  - sonar.projectBaseDir=/home/harvey/Escritorio/property/symphony
+  - sonar.projectKey=docomo_test
+  - sonar.scanner.app=ScannerCLI
+  - sonar.scanner.appVersion=4.7.0.2747
+  - sonar.sourceEncoding=UTF-8
+  - sonar.sources=async/handler/block_activities.go, async/handler/flow_activities.go, async/handler/automation_signal.go, async/handler/server.go, graph/graphql/resolver/block.go, graph/graphql/resolver/automation_activity.go, graph/graphql/resolver/flow.go, graph/graphql/resolver/variables.go, graph/graphql/resolver/workorder.go, graph/graphql/resolver/resource_specification_relationship_resolver.go, graph/graphql/resolver/subscription.go, graph/graphql/resolver/property_resolver.go, graph/graphql/resolver/resource_property_type_resolver.go, graph/graphql/resolver/resource_specification_items_resolver.go, graph/graphql/resolver/resource_specification_resolver.go, graph/graphql/resolver/resource_type_relationship_resolver.go, graph/graphql/resolver/resource_type_resolver.go, graph/graphql/resolver/location.go, graph/resolverutil/resource_type_filters.go, graph/resolverutil/resource_specification_relationship_filters.go, graph/resolverutil/resource_specification_items_filters.go, graph/resolverutil/r...
+  - sonar.test.inclusions=**/*_test.go
+  - sonar.tests=automation,async/handler/server_test.go, graph/graphql/resolver/block_test.go, graph/graphql/resolver/flow_test.go, graph/graphql/resolver/variables_test.go, graph/graphql/resolver/workorder_test.go, graph/graphql/resolver/workorder_type_test.go, graph/graphql/resolver/resource_specification_relationship_resolver_test.go, graph/graphql/resolver/resource_specification_resolver_test.go, graph/graphql/resolver/resource_type_resolver_test.go, graph/graphql/resolver/subscription_test.go, graph/graphql/resolver/resource_specification_items_resolver_test.go, graph/graphql/resolver/resource_type_relationship_resolver_test.go, graph/graphql/resolver/location_search_test.go, graph/graphql/resolver/location_test.go, graph/graphql/resolver/location_type_test.go, pkg/event/event_test.go, pkg/event/workorder_test.go, pkg/hooks/points_test.go, pkg/flowengine/variables_test.go, async/worker/flow_test.go, pkg/authz/flow_rules_test.go, pkg/hooks/block_test.go, pkg/hooks/flow_test.go, async/worker/con...
+  - sonar.verbose=true
+  - sonar.working.directory=/home/harvey/Escritorio/property/symphony/.scannerwork

@@ -1,0 +1,1 @@
+. 2goXæhr*automation/executors/graphql_operations.go

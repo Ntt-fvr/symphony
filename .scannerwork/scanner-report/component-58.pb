@@ -1,0 +1,1 @@
+: (2goXährautomation/celgo/celgo_test.go

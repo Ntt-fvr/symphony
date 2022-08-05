@@ -1,0 +1,50 @@
+// Copyright (c) 2004-present Facebook All rights reserved.
+// Use of this source code is governed by a BSD-style
+// license that can be found in the LICENSE file.
+
+package resolverutil
+
+import (
+	"github.com/facebookincubator/symphony/graph/graphql/models"
+	"github.com/facebookincubator/symphony/pkg/ent"
+	"github.com/facebookincubator/symphony/pkg/ent/resourcespecification"
+	"github.com/facebookincubator/symphony/pkg/ent/resourcetype"
+	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
+	"github.com/pkg/errors"
+)
+
+func handleResourceSpecificationFilter(q *ent.ResourceSpecificationQuery, filter *models.ResourceSpecificationFilterInput) (*ent.ResourceSpecificationQuery, error) {
+	switch filter.FilterType {
+	case models.ResourceSpecificationFilterTypeID:
+		return resourceSpecificationIDFilter(q, filter)
+	case models.ResourceSpecificationFilterTypeName:
+		return resourceSpecificationNameFilter(q, filter)
+	case models.ResourceSpecificationFilterTypeResourceType:
+		return resourceSpecificationResourceTypeFilter(q, filter)
+	default:
+		return nil, errors.Errorf("filter type is not supported: %s", filter.FilterType)
+	}
+}
+
+func resourceSpecificationIDFilter(q *ent.ResourceSpecificationQuery, filter *models.ResourceSpecificationFilterInput) (*ent.ResourceSpecificationQuery, error) {
+	if filter.Operator == enum.FilterOperatorIsOneOf && filter.IDSet != nil {
+		return q.Where(resourcespecification.IDIn(filter.IDSet...)), nil
+	}
+	return nil, errors.Errorf("operation is not supported: %s", filter.Operator)
+}
+
+func resourceSpecificationNameFilter(q *ent.ResourceSpecificationQuery, filter *models.ResourceSpecificationFilterInput) (*ent.ResourceSpecificationQuery, error) {
+	if filter.Operator == enum.FilterOperatorContains && filter.StringValue != nil {
+		return q.Where(resourcespecification.NameContainsFold(*filter.StringValue)), nil
+	} else if filter.Operator == enum.FilterOperatorIsOneOf && filter.StringSet != nil {
+		return q.Where(resourcespecification.NameIn(filter.StringSet...)), nil
+	}
+	return nil, errors.Errorf("operation is not supported: %s", filter.Operator)
+}
+
+func resourceSpecificationResourceTypeFilter(q *ent.ResourceSpecificationQuery, filter *models.ResourceSpecificationFilterInput) (*ent.ResourceSpecificationQuery, error) {
+	if filter.Operator == enum.FilterOperatorIsOneOf && filter.IDSet != nil {
+		return q.Where(resourcespecification.HasResourcetypeWith(resourcetype.IDIn(filter.IDSet...))), nil
+	}
+	return nil, errors.Errorf("operation is not supported: %s", filter.Operator)
+}
