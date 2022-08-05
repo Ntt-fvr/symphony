@@ -2,10 +2,12 @@ package executors
 
 import (
 	"encoding/json"
+	"errors"
+	"strings"
+
 	"github.com/confluentinc/confluent-kafka-go/kafka"
 	"github.com/facebookincubator/symphony/automation/celgo"
 	"github.com/facebookincubator/symphony/automation/enum"
-	"strings"
 )
 
 type ExecutorKafkaBlock struct {
@@ -60,7 +62,12 @@ func (b *ExecutorKafkaBlock) runLogic() error {
 			return err
 		}
 
-		message = native
+		value, ok := native.(map[string]interface{})
+		if !ok {
+			return errors.New("malformed message")
+		}
+
+		message = value
 	}
 
 	messageBytes, err := json.Marshal(message)

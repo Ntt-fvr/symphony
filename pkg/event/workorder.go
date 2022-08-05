@@ -31,7 +31,7 @@ type WorkOrderStatusChangedPayload struct {
 	WorkOrder *ent.WorkOrder    `json:"workOrder"`
 }
 
-// SignalWorkOrderStatusChangedPayload is the payload of WorkOrderStatusChanged event.
+// SignalEvent SignalWorkOrderStatusChangedPayload is the payload of WorkOrderStatusChanged event.
 /*
 {
     "signalModule": "one of Signal Module Enum values",

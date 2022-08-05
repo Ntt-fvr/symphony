@@ -185,7 +185,7 @@ func mathGlobalFunctions() []cel.EnvOption {
 				cel.UnaryBinding(
 					func(value ref.Val) ref.Val {
 						x := getDouble(value)
-						return types.Double(math.Atanh(x))
+						return types.Double(math.Tanh(x))
 					},
 				),
 			),
@@ -338,11 +338,7 @@ func mathGlobalFunctions() []cel.EnvOption {
 				[]*cel.Type{cel.IntType}, cel.DoubleType,
 				cel.UnaryBinding(
 					func(value ref.Val) ref.Val {
-						switch v := value.Value(); v.(type) {
-						case int64:
-							return types.Double(math.Pow10(int(v.(int64))))
-						}
-						return value
+						return types.Double(math.Pow10(int(value.Value().(int64))))
 					},
 				),
 			),

@@ -3,6 +3,7 @@ package executors
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	jsonPatch "github.com/evanphx/json-patch"
 	"github.com/facebookincubator/symphony/automation/celgo"
 	"github.com/facebookincubator/symphony/automation/enum"
@@ -61,6 +62,8 @@ type ExecutorBaseBlock struct {
 	RetryPolicy      bool
 	RetryInterval    int
 	RetryUnit        enum.RetryUnit
+	AddInputToOutput bool
+	AdditionMethod   enum.AdditionMethod
 	Transformations  BlockTransformations
 	Input            map[string]interface{}
 	Output           map[string]interface{}
@@ -159,6 +162,15 @@ func (b *ExecutorBaseBlock) execute() (*ExecutorResult, error) {
 	if err != nil {
 		b.updateBlockFailed(err.Error())
 		return nil, err
+	}
+
+	if b.AddInputToOutput {
+		switch b.AdditionMethod {
+		case enum.AdditionMethodCombine:
+			b.Output["lastInput"] = b.Input
+		case enum.AdditionMethodDiscardResult:
+			b.Output = b.Input
+		}
 	}
 
 	blockResult := ExecutorResult{
@@ -275,7 +287,16 @@ func (b *ExecutorBaseBlock) evaluateTransformation(
 		return nil, err
 	}
 
-	return celgo.ConvertToNative(result)
+	native, err := celgo.ConvertToNative(result)
+	if err != nil {
+		return nil, err
+	}
+
+	value, ok := native.(map[string]interface{})
+	if !ok {
+		return nil, errors.New("malformed expression")
+	}
+	return value, nil
 }
 
 func (b *ExecutorBaseBlock) transformation(

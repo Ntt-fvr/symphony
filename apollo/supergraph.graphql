@@ -1,3 +1,4 @@
+
 schema
   @core(feature: "https://specs.apollo.dev/core/v0.2"),
   @core(feature: "https://specs.apollo.dev/join/v0.1", for: EXECUTION)
@@ -1305,8 +1306,6 @@ input AddResourcePropertyInput {
   createTime: DateTime
   floatValue: Float
   intValue: Int
-  isInstanceProperty: Boolean
-  isMandatory: Boolean
   latitudeValue: Float
   longitudeValue: Float
   rangeFromValue: Float
@@ -8562,7 +8561,7 @@ type Query {
   getParty(id: String!): Party @join__field(graph: DGRAPHSERVICE)
   getPlace(placeId: ID!): Place @join__field(graph: DGRAPHSERVICE)
   getRelatedEntity(id: String!): RelatedEntity @join__field(graph: DGRAPHSERVICE)
-  getResource(externalId: String, id: ID): Resource @join__field(graph: DGRAPHSERVICE)
+  getResource(id: ID, name: String): Resource @join__field(graph: DGRAPHSERVICE)
   getResourceOrderIM(id: ID!): ResourceOrderIM @join__field(graph: DGRAPHSERVICE)
   getResourceOrderItem(id: String!): ResourceOrderItem @join__field(graph: DGRAPHSERVICE)
   getResourceProperty(id: ID!): ResourceProperty @join__field(graph: DGRAPHSERVICE)
@@ -9788,8 +9787,6 @@ type ResourceProperty implements DefaultConfig {
   floatValue: Float
   id: ID!
   intValue: Int
-  isInstanceProperty: Boolean
-  isMandatory: Boolean
   latitudeValue: Float
   longitudeValue: Float
   rangeFromValue: Float
@@ -9854,8 +9851,6 @@ enum ResourcePropertyHasFilter {
   createTime
   floatValue
   intValue
-  isInstanceProperty
-  isMandatory
   latitudeValue
   longitudeValue
   rangeFromValue
@@ -9906,8 +9901,6 @@ input ResourcePropertyPatch {
   createTime: DateTime
   floatValue: Float
   intValue: Int
-  isInstanceProperty: Boolean
-  isMandatory: Boolean
   latitudeValue: Float
   longitudeValue: Float
   rangeFromValue: Float
@@ -9925,8 +9918,6 @@ input ResourcePropertyRef {
   floatValue: Float
   id: ID
   intValue: Int
-  isInstanceProperty: Boolean
-  isMandatory: Boolean
   latitudeValue: Float
   longitudeValue: Float
   rangeFromValue: Float
@@ -12091,6 +12082,7 @@ type TimerBlock {
 }
 
 input TimerBlockInput {
+  basicDefinitions: BaseBlockInput!
   behavior: TimerBehavior!
   cid: String!
   enableExpressionL: Boolean
