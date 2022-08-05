@@ -431,6 +431,7 @@ func TestTimerBlock(t *testing.T) {
 		EnableExpressionL: &block.DefaultBlockFlow,
 		Expression:        &expression,
 		Behavior:          block.TimerBehaviorFIXED_INTERVAL,
+		BasicDefinitions:  &models.BaseBlockInput{},
 	})
 	require.NoError(t, err)
 	details, err := br.Details(ctx, b)
