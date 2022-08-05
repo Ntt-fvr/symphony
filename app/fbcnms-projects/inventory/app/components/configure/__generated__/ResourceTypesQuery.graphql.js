@@ -44,6 +44,7 @@ export type ResourceTypesQueryResponse = {|
         |},
         +resourceType: ?{|
           +id: string,
+          +name: string,
           +resourceTypeClass: ResourceTypeClassKind,
         |},
         +resourcePropertyTypes: $ReadOnlyArray<?{|
@@ -112,6 +113,7 @@ query ResourceTypesQuery {
         }
         resourceType {
           id
+          name
           resourceTypeClass
         }
         resourcePropertyTypes {
@@ -273,6 +275,7 @@ v4 = [
                 "plural": false,
                 "selections": [
                   (v0/*: any*/),
+                  (v1/*: any*/),
                   (v2/*: any*/)
                 ],
                 "storageKey": null
@@ -462,16 +465,16 @@ return {
     "selections": (v4/*: any*/)
   },
   "params": {
-    "cacheID": "2a630671b60e6eee7a2d69a1d94e58bd",
+    "cacheID": "e481bb8094032b922ded019ad2b3286f",
     "id": null,
     "metadata": {},
     "name": "ResourceTypesQuery",
     "operationKind": "query",
-    "text": "query ResourceTypesQuery {\n  resourceTypes {\n    edges {\n      node {\n        id\n        name\n        resourceTypeBaseType\n        resourceTypeClass\n        resourceSpecification {\n          id\n          name\n        }\n      }\n    }\n  }\n  resourceSpecifications {\n    edges {\n      node {\n        id\n        name\n        vendor {\n          id\n          name\n        }\n        resourceType {\n          id\n          resourceTypeClass\n        }\n        resourcePropertyTypes {\n          id\n          name\n          type\n          nodeType\n          index\n          stringValue\n          intValue\n          booleanValue\n          floatValue\n          latitudeValue\n          longitudeValue\n          rangeFromValue\n          rangeToValue\n          isEditable\n          isMandatory\n          isInstanceProperty\n          isDeleted\n          category\n        }\n      }\n    }\n  }\n  vendors {\n    edges {\n      node {\n        id\n        name\n      }\n    }\n  }\n}\n"
+    "text": "query ResourceTypesQuery {\n  resourceTypes {\n    edges {\n      node {\n        id\n        name\n        resourceTypeBaseType\n        resourceTypeClass\n        resourceSpecification {\n          id\n          name\n        }\n      }\n    }\n  }\n  resourceSpecifications {\n    edges {\n      node {\n        id\n        name\n        vendor {\n          id\n          name\n        }\n        resourceType {\n          id\n          name\n          resourceTypeClass\n        }\n        resourcePropertyTypes {\n          id\n          name\n          type\n          nodeType\n          index\n          stringValue\n          intValue\n          booleanValue\n          floatValue\n          latitudeValue\n          longitudeValue\n          rangeFromValue\n          rangeToValue\n          isEditable\n          isMandatory\n          isInstanceProperty\n          isDeleted\n          category\n        }\n      }\n    }\n  }\n  vendors {\n    edges {\n      node {\n        id\n        name\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = '8c5ba75b97d1ff7a4fb140ec5c29c82c';
+(node/*: any*/).hash = 'debeea1cb604091fcc70052ed0d95816';
 
 module.exports = node;

@@ -220,7 +220,9 @@ const AddEditResourceInLocation = (props: Props) => {
           planningSubStatus: resourceType.data.planningSubStatus,
           usageSubStatus: resourceType.data.usageSubStatus,
           operationalSubStatus: resourceType.data.operationalSubStatus,
-          resourceProperties: spliceProperties,
+          resourceProperties: !spliceProperties[0].stringValue
+            ? null
+            : spliceProperties,
         },
       ],
     };
@@ -448,11 +450,7 @@ const AddEditResourceInLocation = (props: Props) => {
                   </>
                 ) : null}
               </Grid>
-              <Grid item xs={12}>
-                <CardHeader className={classes.cardHeader}>
-                  Properties
-                </CardHeader>
-              </Grid>
+
               <AddEditPropertyList propertyTypes={propertyTypes} />
               <Grid
                 className={classes.header}

@@ -13,7 +13,6 @@ export type PropertyType = {|
   name: string,
   index?: ?number,
   isDeleted?: ?boolean,
-  options?: string,
   resourceSpecification?: string,
 |};
 
@@ -73,7 +72,6 @@ export function reducer(
       return editPropertyType(state, action.id, pt => ({
         ...pt,
         name: action.name,
-        options: action.options,
         resourceSpecification: action.resourceSpecification,
       }));
     default:
