@@ -6,10 +6,10 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"symphony_automation/enum"
 	"time"
 
 	"github.com/Khan/genqlient/graphql"
+	"github.com/facebookincubator/symphony/automation/enum"
 )
 
 // APIHeader includes the requested fields of the GraphQL type VariableValue.
