@@ -1,1 +1,0 @@
-G (2goXëhr,graph/graphql/resolver/location_type_test.go

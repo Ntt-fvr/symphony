@@ -66,6 +66,10 @@ jobs:
             context: .
             file: apollo/router/Dockerfile
             version-file: apollo/
+          - image: automation
+            context: .
+            file: automation/Dockerfile
+            version-file: automation/  
 
     steps:
       - uses: actions/checkout@v2
@@ -93,6 +97,7 @@ jobs:
         run: |
           echo "Latest " ${{ env.LATEST}}
           echo "Actual " ${{ env.ACTUAL}}
+
       - id: step-to-true
         name: Setting estatus to true
         if : ${{ env.LATEST!=env.ACTUAL }}

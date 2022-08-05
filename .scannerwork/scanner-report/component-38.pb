@@ -1,1 +1,0 @@
-& 2goXlhr#automation/celgo/celgo_functions.go
