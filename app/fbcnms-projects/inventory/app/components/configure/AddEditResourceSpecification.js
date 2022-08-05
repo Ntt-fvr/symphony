@@ -9,17 +9,17 @@
  */
 
 import type {AddResourceSpecificationMutationVariables} from '../../mutations/__generated__/AddResourceSpecificationMutation.graphql';
-import type {AddResourceSpecificationRelationshipListMutationVariables} from '../../mutations/__generated__/AddResourceSpecificationRelationshipListMutation.graphql';
 import type {EditResourceSpecificationMutationVariables} from '../../mutations/__generated__/EditResourceSpecificationMutation.graphql';
+import type {EditResourceSpecificationRelationshipMutationVariables} from '../../mutations/__generated__/EditResourceSpecificationRelationshipMutation.graphql';
 import type {ResourceSpecifications} from './EditResourceTypeItem';
 
 import AddResourceSpecificationMutation from '../../mutations/AddResourceSpecificationMutation';
-import AddResourceSpecificationRelationshipListMutation from '../../mutations/AddResourceSpecificationRelationshipListMutation';
 import Button from '@material-ui/core/Button';
 import Card from '@symphony/design-system/components/Card/Card';
 import CardHeader from '@symphony/design-system/components/Card/CardHeader';
 import ConfigureTitleSubItem from '../assurance/common/ConfigureTitleSubItem';
 import EditResourceSpecificationMutation from '../../mutations/EditResourceSpecificationMutation';
+import EditResourceSpecificationRelationshipMutation from '../../mutations/EditResourceSpecificationRelationshipMutation';
 import ExpandingPanel from '@fbcnms/ui/components/ExpandingPanel';
 import ExperimentalPropertyTypesTable from '../form/ExperimentalPropertyTypesTable';
 import Grid from '@material-ui/core/Grid';
@@ -30,7 +30,6 @@ import RelationshipTypeItem from './RelationshipTypeItem';
 import SaveDialogConfirm from './SaveDialogConfirm';
 import TableConfigureAction from '../action_catalog/TableConfigureAction';
 import TextField from '@material-ui/core/TextField';
-import fbt from 'fbt';
 import inventoryTheme from '../../common/theme';
 import {camelCase, omit, startCase} from 'lodash';
 import {convertPropertyTypeToMutationInput} from '../../common/PropertyType';
@@ -91,6 +90,7 @@ export const AddEditResourceSpecification = (props: Props) => {
     filterData,
     vendorData,
   } = props;
+  const classes = useStyles();
   const [dialogSaveForm, setDialogSaveForm] = useState(false);
   const [dialogCancelForm, setDialogCancelForm] = useState(false);
   const [dataCallback, setDataCallback] = useState();
@@ -98,7 +98,6 @@ export const AddEditResourceSpecification = (props: Props) => {
   const callback = data => {
     setDataCallback(data);
   };
-  const classes = useStyles();
 
   const [
     resourceSpecification,
@@ -195,10 +194,10 @@ export const AddEditResourceSpecification = (props: Props) => {
       },
     });
 
-    const variablesPort: AddResourceSpecificationRelationshipListMutationVariables = {
+    const relationshipItems: EditResourceSpecificationRelationshipMutationVariables = {
       input: convertTableTypeToMutationInput(dataCallback),
     };
-    AddResourceSpecificationRelationshipListMutation(variablesPort, {
+    EditResourceSpecificationRelationshipMutation(relationshipItems, {
       onCompleted: () => {
         isCompleted();
       },
@@ -215,10 +214,8 @@ export const AddEditResourceSpecification = (props: Props) => {
         alignItems="center">
         <Grid item xs>
           <ConfigureTitleSubItem
-            title={
-              fbt('Resources/', '') + ` ${editMode ? dataForm.name + '/' : ''}`
-            }
-            tag={' Resource specification'}
+            title={` ${editMode ? dataForm?.resourceType?.name + '/' : ''}`}
+            tag={dataForm.name ?? ''}
           />
         </Grid>
         <Grid>

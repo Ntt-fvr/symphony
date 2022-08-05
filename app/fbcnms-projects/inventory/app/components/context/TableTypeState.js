@@ -9,12 +9,11 @@
  */
 
 export type TableType = {|
-  id: string,
+  id?: ?string,
   name: string,
   index?: ?number,
   isDeleted?: ?boolean,
-  options?: string,
-  resourceSpecification?: string,
+  resourceSpecification?: ?string,
 |};
 
 import type {TableDispatcherActionType} from './TableDispatcherActionType';
@@ -25,30 +24,24 @@ import {isTempId} from '../../common/EntUtils';
 import {useReducer} from 'react';
 export type TableState = Array<TableType>;
 
-export const getInitialTableType = (index: number): TableType => ({
+export const getInitialTableType = (): TableType => ({
   id: generateTempId(),
   name: '',
-  index: index,
-  options: '',
   resourceSpecification: '',
 });
 
-export const useTableTypesReducer = (initialTableType: Array<TableType>) => {
-  return useReducer<TableState, TableDispatcherActionType, Array<TableType>>(
+export const useTableTypesReducer = (initialTableType: T) => {
+  return useReducer<TableState, TableDispatcherActionType, T>(
     reducer,
     initialTableType,
     getInitialState,
   );
 };
 
-export const toMutableTableType = (
-  immutableTableType: TableType,
-): TableType => ({
-  id: undefined,
+export const toMutableTableType = (immutableTableType: T): T => ({
+  id: immutableTableType.name,
   name: immutableTableType.name,
   index: immutableTableType.index,
-  isDeleted: immutableTableType.isDeleted,
-  options: immutableTableType.options,
   resourceSpecification: immutableTableType.resourceSpecification,
 });
 

@@ -224,10 +224,7 @@ export const EditResourceTypeItem = (props: Props) => {
         justify="flex-end"
         alignItems="center">
         <Grid item xs>
-          <ConfigureTitleSubItem
-            title={fbt('Resources/', '')}
-            tag={` ${formValues.name}`}
-          />
+          <ConfigureTitleSubItem title={''} tag={` ${formValues.name}`} />
         </Grid>
         <Grid>
           <Button

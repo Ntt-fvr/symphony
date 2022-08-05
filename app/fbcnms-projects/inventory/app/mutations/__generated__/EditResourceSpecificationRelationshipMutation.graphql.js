@@ -14,16 +14,17 @@
 
 /*::
 import type { ConcreteRequest } from 'relay-runtime';
-export type AddResourceSpecificationRelationshipInput = {|
+export type EditResourceSpecificationRelationshipInput = {|
+  id?: ?string,
   name: string,
-  resourceSpecification: string,
+  resourceSpecification?: ?string,
   resourceSpecificationList?: ?$ReadOnlyArray<?string>,
 |};
-export type AddResourceSpecificationRelationshipListMutationVariables = {|
-  input: $ReadOnlyArray<AddResourceSpecificationRelationshipInput>
+export type EditResourceSpecificationRelationshipMutationVariables = {|
+  input: $ReadOnlyArray<EditResourceSpecificationRelationshipInput>
 |};
-export type AddResourceSpecificationRelationshipListMutationResponse = {|
-  +addResourceSpecificationRelationshipList: $ReadOnlyArray<{|
+export type EditResourceSpecificationRelationshipMutationResponse = {|
+  +editResourceSpecificationRelationship: $ReadOnlyArray<{|
     +id: string,
     +name: string,
     +resourceSpecification: {|
@@ -32,18 +33,18 @@ export type AddResourceSpecificationRelationshipListMutationResponse = {|
     |},
   |}>
 |};
-export type AddResourceSpecificationRelationshipListMutation = {|
-  variables: AddResourceSpecificationRelationshipListMutationVariables,
-  response: AddResourceSpecificationRelationshipListMutationResponse,
+export type EditResourceSpecificationRelationshipMutation = {|
+  variables: EditResourceSpecificationRelationshipMutationVariables,
+  response: EditResourceSpecificationRelationshipMutationResponse,
 |};
 */
 
 
 /*
-mutation AddResourceSpecificationRelationshipListMutation(
-  $input: [AddResourceSpecificationRelationshipInput!]!
+mutation EditResourceSpecificationRelationshipMutation(
+  $input: [EditResourceSpecificationRelationshipInput!]!
 ) {
-  addResourceSpecificationRelationshipList(input: $input) {
+  editResourceSpecificationRelationship(input: $input) {
     id
     name
     resourceSpecification {
@@ -88,7 +89,7 @@ v3 = [
     ],
     "concreteType": "ResourceSpecificationRelationship",
     "kind": "LinkedField",
-    "name": "addResourceSpecificationRelationshipList",
+    "name": "editResourceSpecificationRelationship",
     "plural": true,
     "selections": [
       (v1/*: any*/),
@@ -115,7 +116,7 @@ return {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Fragment",
     "metadata": null,
-    "name": "AddResourceSpecificationRelationshipListMutation",
+    "name": "EditResourceSpecificationRelationshipMutation",
     "selections": (v3/*: any*/),
     "type": "Mutation",
     "abstractKey": null
@@ -124,20 +125,20 @@ return {
   "operation": {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
-    "name": "AddResourceSpecificationRelationshipListMutation",
+    "name": "EditResourceSpecificationRelationshipMutation",
     "selections": (v3/*: any*/)
   },
   "params": {
-    "cacheID": "d54c9e0d8f2c37352461f12f89ec0d56",
+    "cacheID": "df0a3f7e2e97164e8b89b862dbf7a193",
     "id": null,
     "metadata": {},
-    "name": "AddResourceSpecificationRelationshipListMutation",
+    "name": "EditResourceSpecificationRelationshipMutation",
     "operationKind": "mutation",
-    "text": "mutation AddResourceSpecificationRelationshipListMutation(\n  $input: [AddResourceSpecificationRelationshipInput!]!\n) {\n  addResourceSpecificationRelationshipList(input: $input) {\n    id\n    name\n    resourceSpecification {\n      id\n      name\n    }\n  }\n}\n"
+    "text": "mutation EditResourceSpecificationRelationshipMutation(\n  $input: [EditResourceSpecificationRelationshipInput!]!\n) {\n  editResourceSpecificationRelationship(input: $input) {\n    id\n    name\n    resourceSpecification {\n      id\n      name\n    }\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = '3663f5e649791865800caa25116515ff';
+(node/*: any*/).hash = '3a98d51029a41c52d64c5a79521b5c54';
 
 module.exports = node;
