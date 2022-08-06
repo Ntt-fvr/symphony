@@ -39,7 +39,7 @@ describe('Suite Test Components /publishToKafka/: ', () => {
     };
 
     render(<TestComponent />);
-    const text = screen.getByText(/publishToKafka/i);
+    const text = screen.getByText(/Kafka/i);
     expect(text).toBeInTheDocument();
   });
 

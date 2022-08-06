@@ -36,7 +36,7 @@ describe('Suite Test Components /waitSignal/: ', () => {
     };
 
     render(<TestComponent />);
-    const text = screen.getByText(/triggerBlock.wait-signal/i);
+    const text = screen.getByText(/wait/i);
     expect(text).toBeInTheDocument();
   });
 
