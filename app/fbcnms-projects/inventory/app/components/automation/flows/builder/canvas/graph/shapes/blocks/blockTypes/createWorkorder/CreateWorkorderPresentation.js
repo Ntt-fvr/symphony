@@ -10,14 +10,14 @@
 
 import * as React from 'react';
 import CreateWorkorderIcon from './CreateWorkorderIcon';
+import fbt from 'fbt';
 import {BasePresentation} from '../BasePresentation';
-import {Typography} from '@material-ui/core';
 
 export default function CreateWorkorderPresentation() {
   return (
     <BasePresentation
       icon={CreateWorkorderIcon}
-      text={<Typography variant="caption">Create Work Order</Typography>}
+      text={fbt('Create Work Order', '')}
     />
   );
 }

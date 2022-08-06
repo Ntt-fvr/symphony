@@ -12,7 +12,6 @@ import (
 	"time"
 
 	"github.com/facebook/ent/dialect/sql"
-	"github.com/facebookincubator/symphony/pkg/ent/flowinstance"
 	"github.com/facebookincubator/symphony/pkg/ent/location"
 	"github.com/facebookincubator/symphony/pkg/ent/organization"
 	"github.com/facebookincubator/symphony/pkg/ent/project"
@@ -49,12 +48,10 @@ type WorkOrder struct {
 	CloseDate *time.Time `json:"close_date,omitempty"`
 	// Duration holds the value of the "duration" field.
 	Duration *float64 `json:"duration,omitempty"`
-	// ScheduledAt holds the value of the "scheduled_at" field.
-	ScheduledAt *time.Time `json:"scheduled_at,omitempty"`
+	// SchedulledAt holds the value of the "schedulled_at" field.
+	SchedulledAt *time.Time `json:"schedulled_at,omitempty"`
 	// DueDate holds the value of the "due_date" field.
 	DueDate *time.Time `json:"due_date,omitempty"`
-	// IsNameEditable holds the value of the "is_name_editable" field.
-	IsNameEditable bool `json:"is_name_editable,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the WorkOrderQuery when eager-loading is set.
 	Edges                      WorkOrderEdges `json:"edges"`
@@ -65,7 +62,6 @@ type WorkOrder struct {
 	work_order_location        *int
 	work_order_owner           *int
 	work_order_assignee        *int
-	work_order_flow_instance   *int
 }
 
 // WorkOrderEdges holds the relations/edges for other nodes in the graph.
@@ -102,11 +98,9 @@ type WorkOrderEdges struct {
 	Assignee *User
 	// Appointment holds the value of the appointment edge.
 	Appointment []*Appointment
-	// FlowInstance holds the value of the flow_instance edge.
-	FlowInstance *FlowInstance
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [17]bool
+	loadedTypes [16]bool
 }
 
 // TypeOrErr returns the Type value or an error if the edge
@@ -288,20 +282,6 @@ func (e WorkOrderEdges) AppointmentOrErr() ([]*Appointment, error) {
 	return nil, &NotLoadedError{edge: "appointment"}
 }
 
-// FlowInstanceOrErr returns the FlowInstance value or an error if the edge
-// was not loaded in eager-loading, or loaded but was not found.
-func (e WorkOrderEdges) FlowInstanceOrErr() (*FlowInstance, error) {
-	if e.loadedTypes[16] {
-		if e.FlowInstance == nil {
-			// The edge flow_instance was loaded in eager-loading,
-			// but was not found.
-			return nil, &NotFoundError{label: flowinstance.Label}
-		}
-		return e.FlowInstance, nil
-	}
-	return nil, &NotLoadedError{edge: "flow_instance"}
-}
-
 // scanValues returns the types for scanning values from sql.Rows.
 func (*WorkOrder) scanValues() []interface{} {
 	return []interface{}{
@@ -317,9 +297,8 @@ func (*WorkOrder) scanValues() []interface{} {
 		&sql.NullInt64{},   // index
 		&sql.NullTime{},    // close_date
 		&sql.NullFloat64{}, // duration
-		&sql.NullTime{},    // scheduled_at
+		&sql.NullTime{},    // schedulled_at
 		&sql.NullTime{},    // due_date
-		&sql.NullBool{},    // is_name_editable
 	}
 }
 
@@ -333,7 +312,6 @@ func (*WorkOrder) fkValues() []interface{} {
 		&sql.NullInt64{}, // work_order_location
 		&sql.NullInt64{}, // work_order_owner
 		&sql.NullInt64{}, // work_order_assignee
-		&sql.NullInt64{}, // work_order_flow_instance
 	}
 }
 
@@ -409,10 +387,10 @@ func (wo *WorkOrder) assignValues(values ...interface{}) error {
 		*wo.Duration = value.Float64
 	}
 	if value, ok := values[11].(*sql.NullTime); !ok {
-		return fmt.Errorf("unexpected type %T for field scheduled_at", values[11])
+		return fmt.Errorf("unexpected type %T for field schedulled_at", values[11])
 	} else if value.Valid {
-		wo.ScheduledAt = new(time.Time)
-		*wo.ScheduledAt = value.Time
+		wo.SchedulledAt = new(time.Time)
+		*wo.SchedulledAt = value.Time
 	}
 	if value, ok := values[12].(*sql.NullTime); !ok {
 		return fmt.Errorf("unexpected type %T for field due_date", values[12])
@@ -420,12 +398,7 @@ func (wo *WorkOrder) assignValues(values ...interface{}) error {
 		wo.DueDate = new(time.Time)
 		*wo.DueDate = value.Time
 	}
-	if value, ok := values[13].(*sql.NullBool); !ok {
-		return fmt.Errorf("unexpected type %T for field is_name_editable", values[13])
-	} else if value.Valid {
-		wo.IsNameEditable = value.Bool
-	}
-	values = values[14:]
+	values = values[13:]
 	if len(values) == len(workorder.ForeignKeys) {
 		if value, ok := values[0].(*sql.NullInt64); !ok {
 			return fmt.Errorf("unexpected type %T for edge-field organization_work_order_fk", value)
@@ -468,12 +441,6 @@ func (wo *WorkOrder) assignValues(values ...interface{}) error {
 		} else if value.Valid {
 			wo.work_order_assignee = new(int)
 			*wo.work_order_assignee = int(value.Int64)
-		}
-		if value, ok := values[7].(*sql.NullInt64); !ok {
-			return fmt.Errorf("unexpected type %T for edge-field work_order_flow_instance", value)
-		} else if value.Valid {
-			wo.work_order_flow_instance = new(int)
-			*wo.work_order_flow_instance = int(value.Int64)
 		}
 	}
 	return nil
@@ -559,11 +526,6 @@ func (wo *WorkOrder) QueryAppointment() *AppointmentQuery {
 	return (&WorkOrderClient{config: wo.config}).QueryAppointment(wo)
 }
 
-// QueryFlowInstance queries the flow_instance edge of the WorkOrder.
-func (wo *WorkOrder) QueryFlowInstance() *FlowInstanceQuery {
-	return (&WorkOrderClient{config: wo.config}).QueryFlowInstance(wo)
-}
-
 // Update returns a builder for updating this WorkOrder.
 // Note that, you need to call WorkOrder.Unwrap() before calling this method, if this WorkOrder
 // was returned from a transaction, and the transaction was committed or rolled back.
@@ -617,16 +579,14 @@ func (wo *WorkOrder) String() string {
 		builder.WriteString(", duration=")
 		builder.WriteString(fmt.Sprintf("%v", *v))
 	}
-	if v := wo.ScheduledAt; v != nil {
-		builder.WriteString(", scheduled_at=")
+	if v := wo.SchedulledAt; v != nil {
+		builder.WriteString(", schedulled_at=")
 		builder.WriteString(v.Format(time.ANSIC))
 	}
 	if v := wo.DueDate; v != nil {
 		builder.WriteString(", due_date=")
 		builder.WriteString(v.Format(time.ANSIC))
 	}
-	builder.WriteString(", is_name_editable=")
-	builder.WriteString(fmt.Sprintf("%v", wo.IsNameEditable))
 	builder.WriteByte(')')
 	return builder.String()
 }

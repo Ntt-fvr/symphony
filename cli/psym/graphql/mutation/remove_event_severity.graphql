@@ -1,3 +1,0 @@
-mutation removeEventSeverity($id: ID!) {
-  removeEventSeverity(id: $id)
-}

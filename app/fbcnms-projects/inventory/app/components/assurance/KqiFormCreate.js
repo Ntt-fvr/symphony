@@ -11,9 +11,10 @@
 import type {AddKqiMutationVariables} from '../../mutations/__generated__/AddKqiMutation.graphql';
 
 import AddKqiMutation from '../../mutations/AddKqiMutation';
-import ButtonSaveDelete from './common/ButtonSaveDelete';
+import Button from '@material-ui/core/Button';
 import Card from '@symphony/design-system/components/Card/Card';
 import Event from '@material-ui/icons/Event';
+import FormField from '@symphony/design-system/components/FormField/FormField';
 import Grid from '@material-ui/core/Grid';
 import IconButton from '@material-ui/core/IconButton';
 import InputAdornment from '@material-ui/core/InputAdornment';
@@ -85,6 +86,11 @@ const useStyles = makeStyles(() => ({
   },
   gridStyleTitle: {
     paddingBottom: '31px',
+  },
+  option: {
+    width: '111px',
+    height: '36px',
+    alignSelf: 'flex-end',
   },
   inputId: {
     '@media (min-width:426px) and (max-width: 768px)': {
@@ -211,20 +217,34 @@ const KqiFormCreate = (props: Props) => {
         direction="row"
         justify="flex-end"
         alignItems="center">
-        <Grid item xs>
+        <Grid>
           <Text variant="h6" weight={'bold'}>
             {fbt('Create KQI', ' ')}
           </Text>
         </Grid>
-        <Grid>
-          <ButtonSaveDelete variant="outlined" onClick={() => returnTableKqi()}>
-            Cancel
-          </ButtonSaveDelete>
+        <Grid item xs>
+          <FormField>
+            <Button
+              style={{marginRight: '1rem'}}
+              className={classes.option}
+              variant="outlined"
+              color="primary"
+              onClick={() => returnTableKqi()}>
+              Cancel
+            </Button>
+          </FormField>
         </Grid>
         <Grid>
-          <ButtonSaveDelete onClick={handleClick} disabled={handleDisable}>
-            Save
-          </ButtonSaveDelete>
+          <FormField>
+            <Button
+              onClick={handleClick}
+              className={classes.option}
+              variant="contained"
+              color="primary"
+              disabled={handleDisable}>
+              Save
+            </Button>
+          </FormField>
         </Grid>
       </Grid>
       <Grid className={classes.container} item xs>

@@ -78,40 +78,6 @@ fragment AddEditWorkerTypeCard_workerType on WorkerType {
     isInstanceProperty
     isDeleted
     category
-    parentPropertyType {
-      id
-      name
-    }
-    dependencePropertyTypes {
-      id
-      name
-      type
-      nodeType
-      index
-      stringValue
-      intValue
-      booleanValue
-      floatValue
-      latitudeValue
-      longitudeValue
-      rangeFromValue
-      rangeToValue
-      isEditable
-      isMandatory
-      isInstanceProperty
-      isDeleted
-      category
-      propertyTypeValues {
-        id
-        isDeleted
-        name
-        parentPropertyTypeValue {
-          id
-          isDeleted
-          name
-        }
-      }
-    }
   }
 }
 */
@@ -183,119 +149,7 @@ v6 = [
     "name": "first",
     "value": 500
   }
-],
-v7 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "type",
-  "storageKey": null
-},
-v8 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "nodeType",
-  "storageKey": null
-},
-v9 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "index",
-  "storageKey": null
-},
-v10 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "stringValue",
-  "storageKey": null
-},
-v11 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "intValue",
-  "storageKey": null
-},
-v12 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "booleanValue",
-  "storageKey": null
-},
-v13 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "floatValue",
-  "storageKey": null
-},
-v14 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "latitudeValue",
-  "storageKey": null
-},
-v15 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "longitudeValue",
-  "storageKey": null
-},
-v16 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "rangeFromValue",
-  "storageKey": null
-},
-v17 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "rangeToValue",
-  "storageKey": null
-},
-v18 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "isEditable",
-  "storageKey": null
-},
-v19 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "isMandatory",
-  "storageKey": null
-},
-v20 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "isInstanceProperty",
-  "storageKey": null
-},
-v21 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "isDeleted",
-  "storageKey": null
-},
-v22 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "category",
-  "storageKey": null
-};
+];
 return {
   "fragment": {
     "argumentDefinitions": [],
@@ -394,90 +248,116 @@ return {
                     "selections": [
                       (v0/*: any*/),
                       (v1/*: any*/),
-                      (v7/*: any*/),
-                      (v8/*: any*/),
-                      (v9/*: any*/),
-                      (v10/*: any*/),
-                      (v11/*: any*/),
-                      (v12/*: any*/),
-                      (v13/*: any*/),
-                      (v14/*: any*/),
-                      (v15/*: any*/),
-                      (v16/*: any*/),
-                      (v17/*: any*/),
-                      (v18/*: any*/),
-                      (v19/*: any*/),
-                      (v20/*: any*/),
-                      (v21/*: any*/),
-                      (v22/*: any*/),
                       {
                         "alias": null,
                         "args": null,
-                        "concreteType": "PropertyType",
-                        "kind": "LinkedField",
-                        "name": "parentPropertyType",
-                        "plural": false,
-                        "selections": [
-                          (v0/*: any*/),
-                          (v1/*: any*/)
-                        ],
+                        "kind": "ScalarField",
+                        "name": "type",
                         "storageKey": null
                       },
                       {
                         "alias": null,
                         "args": null,
-                        "concreteType": "PropertyType",
-                        "kind": "LinkedField",
-                        "name": "dependencePropertyTypes",
-                        "plural": true,
-                        "selections": [
-                          (v0/*: any*/),
-                          (v1/*: any*/),
-                          (v7/*: any*/),
-                          (v8/*: any*/),
-                          (v9/*: any*/),
-                          (v10/*: any*/),
-                          (v11/*: any*/),
-                          (v12/*: any*/),
-                          (v13/*: any*/),
-                          (v14/*: any*/),
-                          (v15/*: any*/),
-                          (v16/*: any*/),
-                          (v17/*: any*/),
-                          (v18/*: any*/),
-                          (v19/*: any*/),
-                          (v20/*: any*/),
-                          (v21/*: any*/),
-                          (v22/*: any*/),
-                          {
-                            "alias": null,
-                            "args": null,
-                            "concreteType": "PropertyTypeValue",
-                            "kind": "LinkedField",
-                            "name": "propertyTypeValues",
-                            "plural": true,
-                            "selections": [
-                              (v0/*: any*/),
-                              (v21/*: any*/),
-                              (v1/*: any*/),
-                              {
-                                "alias": null,
-                                "args": null,
-                                "concreteType": "PropertyTypeValue",
-                                "kind": "LinkedField",
-                                "name": "parentPropertyTypeValue",
-                                "plural": true,
-                                "selections": [
-                                  (v0/*: any*/),
-                                  (v21/*: any*/),
-                                  (v1/*: any*/)
-                                ],
-                                "storageKey": null
-                              }
-                            ],
-                            "storageKey": null
-                          }
-                        ],
+                        "kind": "ScalarField",
+                        "name": "nodeType",
+                        "storageKey": null
+                      },
+                      {
+                        "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
+                        "name": "index",
+                        "storageKey": null
+                      },
+                      {
+                        "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
+                        "name": "stringValue",
+                        "storageKey": null
+                      },
+                      {
+                        "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
+                        "name": "intValue",
+                        "storageKey": null
+                      },
+                      {
+                        "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
+                        "name": "booleanValue",
+                        "storageKey": null
+                      },
+                      {
+                        "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
+                        "name": "floatValue",
+                        "storageKey": null
+                      },
+                      {
+                        "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
+                        "name": "latitudeValue",
+                        "storageKey": null
+                      },
+                      {
+                        "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
+                        "name": "longitudeValue",
+                        "storageKey": null
+                      },
+                      {
+                        "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
+                        "name": "rangeFromValue",
+                        "storageKey": null
+                      },
+                      {
+                        "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
+                        "name": "rangeToValue",
+                        "storageKey": null
+                      },
+                      {
+                        "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
+                        "name": "isEditable",
+                        "storageKey": null
+                      },
+                      {
+                        "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
+                        "name": "isMandatory",
+                        "storageKey": null
+                      },
+                      {
+                        "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
+                        "name": "isInstanceProperty",
+                        "storageKey": null
+                      },
+                      {
+                        "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
+                        "name": "isDeleted",
+                        "storageKey": null
+                      },
+                      {
+                        "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
+                        "name": "category",
                         "storageKey": null
                       }
                     ],
@@ -507,7 +387,7 @@ return {
     ]
   },
   "params": {
-    "cacheID": "fd7c2f500a58e152c6bd32c62895ae55",
+    "cacheID": "d9b5246b4b7fe9f659d5958f3d1c39e8",
     "id": null,
     "metadata": {
       "connection": [
@@ -523,7 +403,7 @@ return {
     },
     "name": "WorkerTypesQuery",
     "operationKind": "query",
-    "text": "query WorkerTypesQuery {\n  workerTypes(first: 500) {\n    edges {\n      node {\n        id\n        name\n        description\n        ...AddEditWorkerTypeCard_workerType\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n}\n\nfragment AddEditWorkerTypeCard_workerType on WorkerType {\n  id\n  name\n  description\n  propertyTypes {\n    id\n    name\n    type\n    nodeType\n    index\n    stringValue\n    intValue\n    booleanValue\n    floatValue\n    latitudeValue\n    longitudeValue\n    rangeFromValue\n    rangeToValue\n    isEditable\n    isMandatory\n    isInstanceProperty\n    isDeleted\n    category\n    parentPropertyType {\n      id\n      name\n    }\n    dependencePropertyTypes {\n      id\n      name\n      type\n      nodeType\n      index\n      stringValue\n      intValue\n      booleanValue\n      floatValue\n      latitudeValue\n      longitudeValue\n      rangeFromValue\n      rangeToValue\n      isEditable\n      isMandatory\n      isInstanceProperty\n      isDeleted\n      category\n      propertyTypeValues {\n        id\n        isDeleted\n        name\n        parentPropertyTypeValue {\n          id\n          isDeleted\n          name\n        }\n      }\n    }\n  }\n}\n"
+    "text": "query WorkerTypesQuery {\n  workerTypes(first: 500) {\n    edges {\n      node {\n        id\n        name\n        description\n        ...AddEditWorkerTypeCard_workerType\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n}\n\nfragment AddEditWorkerTypeCard_workerType on WorkerType {\n  id\n  name\n  description\n  propertyTypes {\n    id\n    name\n    type\n    nodeType\n    index\n    stringValue\n    intValue\n    booleanValue\n    floatValue\n    latitudeValue\n    longitudeValue\n    rangeFromValue\n    rangeToValue\n    isEditable\n    isMandatory\n    isInstanceProperty\n    isDeleted\n    category\n  }\n}\n"
   }
 };
 })();

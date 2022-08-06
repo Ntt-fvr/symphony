@@ -1,8 +1,0 @@
-mutation editKpi($input: EditKpiInput!) {
-  editKpi(input: $input) {
-    id
-    name
-    description
-    status
-  }
-}

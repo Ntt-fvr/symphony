@@ -1,3 +1,0 @@
-mutation removeCounterFormula($id: ID!) {
-  removeCounterFormula(id: $id)
-}

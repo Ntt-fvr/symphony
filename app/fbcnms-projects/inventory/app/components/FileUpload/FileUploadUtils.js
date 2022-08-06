@@ -33,7 +33,6 @@ export async function uploadFile(
       onProgress && onProgress(id, file, percentCompleted);
     },
   };
-
   await axios.put(signingResponse.data.URL, file, config);
 
   onUpload(file, signingResponse.data.key);

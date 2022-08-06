@@ -13,40 +13,19 @@ import type {IBaseShapeAttributes, IShape} from '../facades/shapes/BaseShape';
 import type {Paper} from '../facades/Paper';
 
 import BaseBlock from './blocks/BaseBlock';
-import Choice, {
-  TYPE as ChoiceType,
-} from '../facades/shapes/vertexes/logic/Choice';
 import CreateWorkorder, {
   TYPE as CreateWorkorderType,
 } from '../facades/shapes/vertexes/actions/CreateWorkorder';
+import Decision, {
+  TYPE as DecisionType,
+} from '../facades/shapes/vertexes/logic/Decision';
 import End, {
   TYPE as EndType,
 } from '../facades/shapes/vertexes/administrative/End';
-import ExecuteFlow, {
-  TYPE as ExecuteFlowType,
-} from '../facades/shapes/vertexes/actions/ExecuteFlow';
-import ExecuteNetworkAction, {
-  TYPE as ExecuteNetworkActionType,
-} from '../facades/shapes/vertexes/actions/ExecuteNetworkAction';
-import ForEachLoop, {
-  TYPE as ForEachLoopType,
-} from '../facades/shapes/vertexes/logic/ForEachLoop';
 import GoTo, {TYPE as GoToType} from '../facades/shapes/vertexes/logic/GoTo';
-import InvokeRestApi, {
-  TYPE as InvokeRestApiType,
-} from '../facades/shapes/vertexes/actions/InvokeRestApi';
 import ManualStart, {
   TYPE as ManualStartType,
 } from '../facades/shapes/vertexes/administrative/ManualStart';
-import Parallel, {
-  TYPE as ParallelType,
-} from '../facades/shapes/vertexes/logic/Parallel';
-import Timer, {
-  TYPE as TimerType,
-} from '../facades/shapes/vertexes/triggers/Timer';
-import TriggerStart, {
-  TYPE as TriggerStartType,
-} from '../facades/shapes/vertexes/triggers/TriggerStart';
 import TriggerWorkforce, {
   TYPE as TriggerWorkforceType,
 } from '../facades/shapes/vertexes/triggers/TriggerWorkforce';
@@ -59,15 +38,9 @@ import UpdateInventory, {
 import UpdateWorkforce, {
   TYPE as UpdateWorkforceType,
 } from '../facades/shapes/vertexes/actions/UpdateWorkforce';
-import WaitSignal, {
-  TYPE as WaitSignalType,
-} from '../facades/shapes/vertexes/triggers/WaitSignal';
 import Worker, {
   TYPE as WorkerType,
 } from '../facades/shapes/vertexes/actions/Worker';
-import PublishToKafka, {
-  TYPE as PublishToKafkaType,
-} from '../facades/shapes/vertexes/actions/PublishToKafka';
 import nullthrows from '@fbcnms/util/nullthrows';
 import {getCellType} from '../facades/shapes/BaseShape';
 
@@ -80,21 +53,12 @@ const VERTEXES = {
   [WorkerType]: Worker,
   [UpdateInventoryType]: UpdateInventory,
   [UpdateWorkforceType]: UpdateWorkforce,
-  [ExecuteFlowType]: ExecuteFlow,
-  [InvokeRestApiType]: InvokeRestApi,
-  [ExecuteNetworkActionType]: ExecuteNetworkAction,
-  [PublishToKafkaType]: PublishToKafka,
   // Triggers
-  [TimerType]: Timer,
   [TriggerWorkforceType]: TriggerWorkforce,
-  [TriggerStartType]: TriggerStart,
-  [WaitSignalType]: WaitSignal,
   // Logic
-  [ChoiceType]: Choice,
+  [DecisionType]: Decision,
   [GoToType]: GoTo,
   [TrueFalseType]: TrueFalse,
-  [ForEachLoopType]: ForEachLoop,
-  [ParallelType]: Parallel,
 };
 const VERTEX_TYPES = Object.keys(VERTEXES);
 

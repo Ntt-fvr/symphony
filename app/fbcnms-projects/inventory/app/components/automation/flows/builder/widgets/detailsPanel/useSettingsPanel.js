@@ -15,7 +15,6 @@ import FlowTitle from './flowSettings/FlowTitle';
 import SelectionSettings from './selectionSettings/SelectionSettings';
 import fbt from 'fbt';
 import {FormContextProvider} from '../../../../../../common/FormContext';
-import {Grid, Typography} from '@material-ui/core';
 import {makeStyles} from '@material-ui/styles';
 import {useDialogShowingContext} from '@symphony/design-system/components/Dialog/DialogShowingContext';
 import {useEffect} from 'react';
@@ -23,7 +22,6 @@ import {useFormAlertsContext} from '@symphony/design-system/components/Form/Form
 import {useGraphSelection} from '../selection/GraphSelectionContext';
 import {useKeyboardShortcuts} from '../keyboardShortcuts/KeyboardShortcutsContext';
 import {useReadOnlyMode} from '../readOnlyModeContext';
-import FlowInstanceDetails from '../../tools/FlowInstanceDetails';
 
 type SettingsPanelType = $ReadOnly<{|
   title: React.Node,
@@ -40,7 +38,6 @@ export default function useSettingsPanel(): SettingsPanelType {
   const classes = useStyles();
   const selection = useGraphSelection();
   const selectionCount = selection.selectedElements.length;
-  const {isReadOnly} = useReadOnlyMode();
 
   const keyboardShortcutsContext = useKeyboardShortcuts();
 
@@ -49,19 +46,8 @@ export default function useSettingsPanel(): SettingsPanelType {
     children: <FlowSettings />,
   });
 
-  const readOnlyDetails = () =>({
-    title: <FlowTitle className={classes.title} isReadOnly={isReadOnly}/>,
-    children: <FlowInstanceDetails />
-  })
-
   const singleSelectionDetails = () => ({
-    title: (
-      <Grid item xs zeroMinWidth>
-        <Typography variant={'h6'} noWrap>
-          {selection.selectedElements[0]?.name || 'Block Settings'}
-        </Typography>
-      </Grid>
-    ),
+    title: 'Block Settings',
     children: <BlockSettings block={selection.selectedElements[0]} />,
   });
 
@@ -70,8 +56,8 @@ export default function useSettingsPanel(): SettingsPanelType {
     children: <SelectionSettings selection={selection} />,
   });
 
-  const details = isReadOnly ? readOnlyDetails():
-    selectionCount === 0 
+  const details =
+    selectionCount === 0
       ? noSelectionDetails()
       : selectionCount === 1
       ? singleSelectionDetails()

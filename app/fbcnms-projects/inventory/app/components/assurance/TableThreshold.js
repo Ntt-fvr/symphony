@@ -159,7 +159,6 @@ export default function DenseTable(props: Props) {
         thresholdName: row.threshold.name,
         eventSeverityId: row.eventSeverity.id,
         ruleLimit: row.ruleLimit,
-        ruleType: row.ruleType,
       },
     });
     editRule();

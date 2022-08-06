@@ -2,7 +2,6 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-//go:build integration
 // +build integration
 
 package tests
@@ -603,7 +602,7 @@ func TestExecuteWorkOrder(t *testing.T) {
 	require.NoError(t, err)
 }
 
-/*func TestPossibleProperties(t *testing.T) {
+func TestPossibleProperties(t *testing.T) {
 	c := newClient(t, testTenant, testUser)
 
 	_, err := c.addEquipmentType(
@@ -640,7 +639,7 @@ func TestExecuteWorkOrder(t *testing.T) {
 	err = c.graph.Query(context.Background(), &q, vars)
 	require.NoError(t, err)
 	require.Len(t, q.Properties, 2)
-}*/
+}
 
 func TestViewer(t *testing.T) {
 	c := newClient(t, testTenant, testUser)

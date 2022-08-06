@@ -1,7 +1,0 @@
-mutation EditKpiCategory($input: EditKpiCategoryInput!){
-  editKpiCategory(input: $input){
-   id
-    name
-    
-  }
-}

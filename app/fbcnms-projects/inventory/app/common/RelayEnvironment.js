@@ -28,7 +28,7 @@ function handleDeactivatedUser(error) {
 
 function fetchQuery(operation, variables) {
   return axios
-    .post('/apollo', {
+    .post('/graph/query', {
       query: operation.text,
       variables,
     })

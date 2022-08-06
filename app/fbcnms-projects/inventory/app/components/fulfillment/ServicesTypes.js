@@ -14,19 +14,19 @@ import fbt from 'fbt';
 // COMPONENTS //
 import Button from '@symphony/design-system/components/Button';
 import ConfigureTitle from './common/ConfigureTitle';
-import ServiceTypeCard from './ServicesTypeCard';
-import ServicesTypeCardDetails from './ServicesTypeCardDetails';
 import {Grid, List} from '@material-ui/core';
 import {makeStyles} from '@material-ui/styles';
-import {useHistory} from 'react-router-dom';
 
-const useStyles = makeStyles(() => ({
+import ServiceTypeCard from './ServicesTypeCard';
+import ServicesTypeCardDetails from './ServicesTypeCardDetails';
+
+const useStyles = makeStyles(theme => ({
   root: {
     flexGrow: '1',
-    margin: '30px',
+    margin: '40px',
   },
-  headerTitle: {
-    margin: '0 0 20px 0',
+  paper: {
+    padding: theme.spacing(2),
   },
   title: {
     marginLeft: '0.3rem',
@@ -42,60 +42,38 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-const dataObjet = [
-  {
-    Id: '112',
-    Type: 'CFS',
-    Description: 'CFS Access',
-    AssociatedServices: '2 RFS',
-    ExternalId: 'C000000005',
-    HasStarted: false,
-    IsBundle: false,
-    IsServiceEnabled: false,
-    IsStateful: false,
-    Name: 'CFS_ACC_001',
-    SchemaLocation:
-      'https://mycsp.com:8080/tmf-api/schema/Service/vCPE.schema.json',
-    ServiceDate: '2018-01-15T12:26:11.747Z',
-    ServiceState: 'Planned',
-    ServiceType: 'BSA',
-    State: 'Planned',
-  },
-  {
-    Id: '113',
-    Type: 'TFD',
-    Description: 'TFD Access',
-    AssociatedServices: '3 RFS',
-    ExternalId: 'C000000007',
-    HasStarted: true,
-    IsBundle: false,
-    IsServiceEnabled: true,
-    IsStateful: false,
-    Name: 'TFD_ACC_002',
-    SchemaLocation:
-      'https://mycsp.com:8080/tmf-api/schema/Service/vCPE.schema.json',
-    ServiceDate: '2018-01-15T12:26:11.747Z',
-    ServiceState: 'Planned',
-    ServiceType: 'ASB',
-    State: 'Planned',
-  },
-];
+const handleClickAdd = () => {
+  console.log('Agregar service');
+};
+
+const st = 'Service type';
+const str = 'CFS';
+const si = 'Service ID';
+const sir = '112';
+const de = 'Description';
+const der = 'CFS Access';
+const as = 'Associated services';
+const asr = '2 RFS';
 
 const ServicesTypes = () => {
   const classes = useStyles();
   const [showEditCard, setShowEditCard] = useState(false);
-  const [dataEdit, setDataEdit] = useState<any>({});
-  const history = useHistory();
 
-  const getHandlerData = (dataObjet: any) => {
+  const showServicesTypeCardDetails = () => {
+    console.log('view');
     setShowEditCard(true);
-    setDataEdit(dataObjet);
   };
   if (showEditCard) {
     return (
       <ServicesTypeCardDetails
-        handlerData={dataEdit}
-        dataService={dataObjet.map(item => item)}
+        serviceType={st}
+        serviceTypeRes={str}
+        serviceId={si}
+        serviceIdRes={sir}
+        description={de}
+        descriptionRes={der}
+        associatedServices={as}
+        associatedServicesRes={asr}
       />
     );
   }
@@ -113,22 +91,33 @@ const ServicesTypes = () => {
           />
         </Grid>
         <Grid xs={2} className={classes.containerButton}>
-          <Button className={classes.button}>Add Service</Button>
+          <Button onClick={handleClickAdd} className={classes.button}>
+            Add Service
+          </Button>
         </Grid>
-        <Grid item xs={12}>
+        <Grid className={classes.paper} item xs={12}>
           <List disablePadding>
-            {dataObjet.map(item => (
-              <ServiceTypeCard
-                key={item.Id}
-                open={() => {
-                  getHandlerData({item});
-                  history.push(
-                    `/fulfillment/fulfillmentCatalog/services?idService=${item.Id}`,
-                  );
-                }}
-                {...item}
-              />
-            ))}
+            <ServiceTypeCard
+              serviceType={st}
+              serviceTypeRes={str}
+              serviceId={si}
+              serviceIdRes={sir}
+              description={de}
+              descriptionRes={der}
+              associatedServices={as}
+              associatedServicesRes={asr}
+              open={() => showServicesTypeCardDetails()}
+            />
+            <ServiceTypeCard
+              serviceType={st}
+              serviceTypeRes={'str'}
+              serviceId={si}
+              serviceIdRes={'sir'}
+              description={de}
+              descriptionRes={'der'}
+              associatedServices={as}
+              associatedServicesRes={'asr'}
+            />
           </List>
         </Grid>
       </Grid>

@@ -42,17 +42,6 @@ export type PropertyType = {|
     id: string,
     name: ?string,
   |},
-  parentPropertyType?: ?(PropertyType[]),
-  dependencePropertyTypes?: ?(PropertyType[]),
-  propertyTypeValues?: ?(PropertyTypeValues[]),
-|};
-
-export type PropertyTypeValues = {|
-  id: string,
-  name: string,
-  parentPropertyTypeValue: ?(PropertyTypeValues[]),
-  propertyType?: PropertyType,
-  propertyTypeValues?: ?(PropertyTypeValues[]),
 |};
 
 export const getPropertyDefaultValue = (propertyType: PropertyType) => {
@@ -133,9 +122,6 @@ export const toMutablePropertyType = (
   isMandatory: immutablePropertyType.isMandatory,
   isListable: immutablePropertyType.isListable,
   isDeleted: immutablePropertyType.isDeleted,
-  dependencePropertyTypes: immutablePropertyType.dependencePropertyTypes,
-  propertyTypeValues: immutablePropertyType.propertyTypeValues,
-  parentPropertyType: immutablePropertyType.parentPropertyType,
 });
 
 export const convertPropertyTypeToMutationInput = (

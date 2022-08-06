@@ -9,20 +9,18 @@
  */
 import type {TabProps} from '@symphony/design-system/components/Tabs/TabsBar';
 
+import AppContext from '@fbcnms/ui/context/AppContext';
 import EquipmentPortTypes from '../components/configure/EquipmentPortTypes';
 import EquipmentTypes from '../components/configure/EquipmentTypes';
 import InventoryErrorBoundary from '../common/InventoryErrorBoundary';
 import InventorySuspense from '../common/InventorySuspense';
 import LocationTypes from '../components/configure/LocationTypes';
-import React, {useEffect, useMemo, useState} from 'react';
-import ResourceTypes from '../components/configure/ResourceTypes';
+import React, {useContext, useEffect, useMemo, useState} from 'react';
 import ServiceTypes from '../components/configure/ServiceTypes';
 import TabsBar from '@symphony/design-system/components/Tabs/TabsBar';
 import fbt from 'fbt';
-import useFeatureFlag from '@fbcnms/ui/context/useFeatureFlag';
 import {LogEvents, ServerLogger} from '../common/LoggingUtils';
 import {Redirect, Route, Switch} from 'react-router-dom';
-import {RelationshipsTypes} from '../components/configure/RelationshipsTypes';
 import {makeStyles} from '@material-ui/styles';
 import {useHistory, useLocation} from 'react-router';
 import {useRelativeUrl} from '@fbcnms/ui/hooks/useRouter';
@@ -62,24 +60,16 @@ export default function Configure() {
   const history = useHistory();
   const location = useLocation();
   const classes = useStyles();
-  const resourcesRelationshipsEnabled = useFeatureFlag(
-    'enable_resource_catalog_&_relationships',
-  );
-  const servicesEnabled = useFeatureFlag('services');
-  const equipmentPortsFlag = useFeatureFlag('equipment_&_ports_module');
+  const servicesEnabled = useContext(AppContext).isFeatureEnabled('services');
   const tabBars: Array<RouteTab> = useMemo(
     () => [
-      ...(equipmentPortsFlag
-        ? [
-            {
-              id: 'equipment_types',
-              tab: {
-                label: fbt('EQUIPMENT', ''),
-              },
-              path: 'equipment_types',
-            },
-          ]
-        : []),
+      {
+        id: 'equipment_types',
+        tab: {
+          label: fbt('EQUIPMENT', ''),
+        },
+        path: 'equipment_types',
+      },
       {
         id: 'location_types',
         tab: {
@@ -87,39 +77,13 @@ export default function Configure() {
         },
         path: 'location_types',
       },
-      ...(resourcesRelationshipsEnabled
-        ? [
-            {
-              id: 'resource_types',
-              tab: {
-                label: fbt('RESOURCES', ''),
-              },
-              path: 'resource_types',
-            },
-          ]
-        : []),
-      ...(resourcesRelationshipsEnabled
-        ? [
-            {
-              id: 'relationships_types',
-              tab: {
-                label: fbt('RELATIONSHIPS', ''),
-              },
-              path: 'relationships_types',
-            },
-          ]
-        : []),
-      ...(equipmentPortsFlag
-        ? [
-            {
-              id: 'port_types',
-              tab: {
-                label: fbt('PORTS', ''),
-              },
-              path: 'port_types',
-            },
-          ]
-        : []),
+      {
+        id: 'port_types',
+        tab: {
+          label: fbt('PORTS', ''),
+        },
+        path: 'port_types',
+      },
       ...(servicesEnabled
         ? [
             {
@@ -167,14 +131,6 @@ export default function Configure() {
             <Route
               path={relativeUrl('/location_types')}
               component={LocationTypes}
-            />
-            <Route
-              path={relativeUrl('/resource_types')}
-              component={ResourceTypes}
-            />
-            <Route
-              path={relativeUrl('/relationships_types')}
-              component={RelationshipsTypes}
             />
             <Route
               path={relativeUrl('/port_types')}

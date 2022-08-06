@@ -10,7 +10,6 @@ import (
 	"strings"
 	"sync"
 	"testing"
-	"time"
 
 	"github.com/99designs/gqlgen/client"
 	"github.com/facebookincubator/symphony/graph/graphql/models"
@@ -18,7 +17,6 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/flowinstance"
 	"github.com/facebookincubator/symphony/pkg/ev"
 	evmocks "github.com/facebookincubator/symphony/pkg/ev/mocks"
-	"github.com/facebookincubator/symphony/pkg/flowengine/flowschema"
 	"github.com/facebookincubator/symphony/pkg/viewer/viewertest"
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
@@ -217,9 +215,7 @@ func TestSubscriptionFlowInstance(t *testing.T) {
 	flw, err := mr.PublishFlow(ctx, models.PublishFlowInput{FlowDraftID: draft.ID, FlowInstancesPolicy: flow.NewInstancesPolicyEnabled})
 	require.NoError(t, err)
 	flowInstance, err := mr.StartFlow(ctx, models.StartFlowInput{
-		FlowID:    flw.ID,
-		StartDate: time.Now(),
-		Params:    []*flowschema.VariableValue{},
+		FlowID: flw.ID,
 	})
 	require.NoError(t, err)
 	err = resolver.client.FlowInstance.UpdateOne(flowInstance).

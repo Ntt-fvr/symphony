@@ -10,7 +10,6 @@ import (
 	"time"
 
 	"github.com/facebookincubator/symphony/pkg/ent/activity"
-	pkgmodels "github.com/facebookincubator/symphony/pkg/exporter/models"
 
 	"github.com/facebookincubator/symphony/graph/graphql/models"
 	"github.com/facebookincubator/symphony/graph/resolverutil"
@@ -95,18 +94,6 @@ func (r workOrderResolver) Files(ctx context.Context, obj *ent.WorkOrder) ([]*en
 	return r.fileOfType(ctx, obj, file.TypeFile)
 }
 
-func (workOrderResolver) ScheduledAt(ctx context.Context, workOrder *ent.WorkOrder) (*time.Time, error) {
-	return workOrder.ScheduledAt, nil
-}
-
-func (workOrderResolver) Appointments(ctx context.Context, workOrder *ent.WorkOrder) ([]*ent.Appointment, error) {
-	appointments, err := workOrder.QueryAppointment().All(ctx)
-	if err != nil {
-		return nil, fmt.Errorf("has occurred error on process: %w", err)
-	}
-	return appointments, nil
-}
-
 func (r mutationResolver) AddWorkOrder(
 	ctx context.Context,
 	input models.AddWorkOrderInput,
@@ -162,9 +149,7 @@ func (r mutationResolver) internalAddWorkOrder(
 		SetNillableAssigneeID(input.AssigneeID).
 		SetNillableOrganizationID(input.OrganizationFk).
 		SetNillableDuration(input.Duration).
-		SetNillableDueDate(input.DueDate).
-		SetNillableScheduledAt(input.ScheduledAt).
-		SetNillableFlowInstanceID(input.FlowInstanceID)
+		SetNillableDueDate(input.DueDate)
 	if input.OwnerID != nil {
 		mutation = mutation.SetOwnerID(*input.OwnerID)
 	} else {
@@ -221,19 +206,15 @@ func (r mutationResolver) EditWorkOrder(
 	}
 	mutation := client.WorkOrder.
 		UpdateOne(wo).
+		SetName(input.Name).
 		SetNillableDescription(input.Description).
 		SetNillableIndex(input.Index).
 		SetNillableStatus(input.Status).
 		SetNillablePriority(input.Priority).
 		SetNillableOrganizationID(input.OrganizationFk).
 		SetNillableDuration(input.Duration).
-		SetNillableDueDate(input.DueDate).
-		SetNillableScheduledAt(input.ScheduledAt).
-		SetNillableIsNameEditable(input.IsNameEditable).
-		SetNillableFlowInstanceID(input.FlowInstanceID)
-	if wo.IsNameEditable {
-		mutation.SetName(input.Name)
-	}
+		SetNillableDueDate(input.DueDate)
+
 	if input.AssigneeID != nil {
 		mutation.SetAssigneeID(*input.AssigneeID)
 	} else {
@@ -603,7 +584,7 @@ func (r mutationResolver) AddWorkOrderType(
 	}
 	if err := r.AddPropertyTypes(ctx, func(ptc *ent.PropertyTypeCreate) {
 		ptc.SetWorkOrderTypeID(typ.ID)
-	}, input.Properties); err != nil {
+	}, input.Properties...); err != nil {
 		return nil, err
 	}
 	err = r.addWorkOrderTypeCategoryDefinitions(ctx, input, typ.ID)
@@ -625,17 +606,11 @@ func (r mutationResolver) EditWorkOrderType(
 		return nil, errors.Wrapf(err, "updating work order template: id=%q", input.ID)
 	}
 	for _, p := range input.Properties {
-		var edited []*pkgmodels.PropertyTypeInput
 		if p.ID == nil {
-			edited = append(edited, p)
-			if err := r.AddPropertyTypes(ctx, func(ptc *ent.PropertyTypeCreate) {
-				ptc.SetWorkOrderTypeID(wot.ID)
-			}, edited); err != nil {
+			if err := r.AddPropertyTypes(ctx, func(b *ent.PropertyTypeCreate) { b.SetWorkOrderTypeID(input.ID) }, p); err != nil {
 				return nil, err
 			}
-		} else if err := r.updatePropType(ctx, func(ptc *ent.PropertyTypeCreate) {
-			ptc.SetWorkOrderTypeID(wot.ID)
-		}, p); err != nil {
+		} else if err := r.updatePropType(ctx, p); err != nil {
 			return nil, err
 		}
 	}

@@ -4,10 +4,8 @@
 # license that can be found in the LICENSE file.
 
 from gql.transport.exceptions import TransportServerError
-from psym.api.recommendations import remove_recommendations
 
 from psym.common.constant import __version__
-from psym.graphql.mutation.remove_recommendations import removeRecommendations
 
 from .api.equipment_type import _populate_equipment_types
 from .api.location_type import _populate_location_types
@@ -67,153 +65,10 @@ equipment = client.add_equipment(
 
 class UserDeactivatedException(Exception):
     pass
+
+
 class PsymClient(SymphonyClient):
-    from.api.counter_family import (
-        add_counter_family,
-        edit_counter_family,
-        get_counter_families,
-        remove_counter_family,
-    )
-    from.api.counter_formula import (add_counter_formula,)
 
-    from.api.counter import (
-        add_counter,
-        edit_counter,
-        get_counters,
-        remove_counter,
-    )
-    from.api.domain import (
-        add_domain,
-        edit_domain,
-        get_domains,
-        remove_domain,
-    )
-    from.api.event_severity import (
-        add_event_severity,
-        edit_event_severity,
-        get_event_severities,
-        remove_event_severity,
-    )
-    from.api.formula import (
-        add_formula,
-        edit_formula,
-        get_formulas,
-        remove_formula,
-    )
-    from.api.kpi_category import (
-        add_kpi_category,
-        get_kpi_categories,
-        delete_kpi_category,
-        edit_kpi_category,
-    )
-    from.api.kpi import (
-        add_kpi,
-        edit_kpi,
-        get_kpis,
-        remove_kpi,
-    )
-    from.api.kqi_category import (
-        add_kqi_category,
-        edit_kqi_category,
-        delete_kqi_category,
-        get_kqi_categories,
-    )
-    from.api.kqi_perspective import (
-        add_kqi_perspective,
-        edit_kqi_perspective,
-        delete_kqi_perspective,
-        get_kqi_perspectives,
-
-    )
-    from.api.kqi_source import (
-        add_kqi_source,
-        edit_kqi_source,
-        delete_kqi_source,
-        get_kqi_sources,
-
-    )
-    from.api.kqi_temporal_frecuency import (
-            add_kqi_temporal_frecuency,
-            edit_kqi_temporal_frecuency,
-            delete_kqi_temporal_frecuency,
-            get_kqi_temporal_frecuencies,
-
-        )
-    from.api.network_type import (
-            add_network_type,
-            edit_network_type,
-            get_network_types,
-            remove_network_type,
-        )
-    from.api.recommendation_category import (
-            add_recommendations_category,
-            edit_recommendations_category,
-            get_recommendations_categories,
-            remove_recommendations_category,
-        )
-    from.api.recommendation_sources import (
-            add_recommendations_sources,
-            edit_recommendations_sources,
-            get_recommendations_sources,
-            remove_recommendations_sources,
-        )
-    from.api.recommendations import (
-            add_recommendations, 
-            edit_recommendations,
-            get_recommendations,
-            remove_recommendations
-            )
-    from.api.rule_limit import (
-            add_rule_limit,
-            edit_rule_limit,
-            remove_rule_limit,
-            )
-    from.api.rule_type import (
-            add_rule_type,
-            edit_rule_type,
-            get_rule_types,
-            remove_rule_type,
-
-        )
-    from.api.rule import (
-            add_rule,
-            )
-    from.api.tech import (
-            add_tech,
-            edit_tech,
-            get_tech,
-            remove_tech,
-        )
-    from.api.threshold import (
-            add_threshold,
-            edit_threshold,
-            get_thresholds,
-            remove_threshold,
-        )
-    from.api.vendor import (
-            add_vendor,
-            edit_vendor,
-            get_vendors,
-            remove_vendor,
-        )
-    from.api.comparator import (
-        add_comparator,
-        edit_comparator,
-        get_comparators,
-        remove_comparator,)
-    from.api.alarm_status import (
-        add_alarm_status,
-        edit_alarm_status,
-        get_alarm_statuses,
-        remove_alarm_status,
-        )
-    from.api.organization import (
-        add_organization, 
-        edit_organization, 
-        get_organizations, 
-        remove_organization,
-        get_organization_by_name,
-        )
     from .api.file import add_location_image, delete_document, add_file, add_files
     from .api.document_category import get_document_category_by_names
     from .api.location_type import (
@@ -316,13 +171,11 @@ class PsymClient(SymphonyClient):
     from .api.user import (
         add_user,
         get_user,
-        edit_user_for_password_and_role,
         edit_user,
         deactivate_user,
         activate_user,
         get_users,
         get_active_users,
-        get_user_by_email,
     )
     from .api.property_type import (
         get_property_type_id,
@@ -344,7 +197,6 @@ class PsymClient(SymphonyClient):
         add_work_order,
         get_work_orders,
         get_work_order_by_id,
-        get_work_order_by_name,
         edit_work_order,
         delete_work_order,
     )

@@ -55,18 +55,6 @@ func (r mutationResolver) AddKqiTarget(ctx context.Context, input models.AddKqiT
 		}
 		return nil, fmt.Errorf("has occurred error on process: %w", err)
 	}
-
-	if input.KqiComparator != nil {
-		_, err := r.AddKqiComparator(ctx, models.AddKqiComparatorInput{
-			KqiTargetFk:    &typ.ID,
-			ComparatorFk:   input.KqiComparator.ComparatorFk,
-			Number:         input.KqiComparator.Number,
-			ComparatorType: input.KqiComparator.ComparatorType,
-		})
-		if err != nil {
-			return nil, fmt.Errorf("has occurred error on process register Kqi Comparator: %w", err)
-		}
-	}
 	return typ, nil
 }
 

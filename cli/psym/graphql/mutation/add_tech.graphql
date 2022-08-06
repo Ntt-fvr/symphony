@@ -1,7 +1,0 @@
-mutation addTech($input: AddTechInput!) {
-  addTech(input: $input) {
-    id
-    name
-    domainFk{id}
-  }
-}

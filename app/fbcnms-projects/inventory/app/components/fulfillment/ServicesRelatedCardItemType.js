@@ -11,92 +11,134 @@
 import React from 'react';
 
 // DESING SYSTEM //
-import type {MouseEventHandler} from '@symphony/design-system/components/Core/Clickable';
+import Card from '@symphony/design-system/components/Card/Card';
+
+import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutline';
 
 import Button from '@symphony/design-system/components/Button';
-import Card from '@symphony/design-system/components/Card/Card';
-import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutline';
-import DynamicPropertyTypes from './common/DynamicPropertyTypes';
 import Grid from '@material-ui/core/Grid';
 import IconButton from '@symphony/design-system/components/IconButton';
 import Text from '@symphony/design-system/components/Text';
-import symphony from '@symphony/design-system/theme/symphony';
+import classNames from 'classnames';
 import {EditIcon} from '@symphony/design-system/icons';
 import {makeStyles} from '@material-ui/styles';
+
+import DynamicPropertyTypes from './common/DynamicPropertyTypes';
+
+import type {MouseEventHandler} from '@symphony/design-system/components/Core/Clickable';
+
+import symphony from '@symphony/design-system/theme/symphony';
 
 const useStyles = makeStyles(() => ({
   root: {
     marginBottom: '5px',
   },
+  container: {
+    display: 'flex',
+    alignItems: 'center',
+  },
+  insideContainer: {
+    padding: '0px 20px 0px 0px',
+    // border: '1px solid red',
+  },
   bold: {
     fontWeight: 'bold',
   },
+
   editIcon: {
-    paddingLeft: '10px',
+    paddingLeft: '2rem',
   },
   deleteIcon: {
+    margin: '0px',
     color: symphony.palette.D300,
   },
   inside: {
-    margin: 'auto 0',
+    margin: '2px 0',
+    display: 'flex',
+    alignItems: 'center',
+    // border: '1px solid red',
+  },
+  serviceType: {
+    justifyContent: 'flex-start',
+  },
+  serviceId: {
+    justifyContent: 'center',
+  },
+  Description: {
+    justifyContent: 'flex-end',
   },
   contIconViewDetail: {
-    paddingRight: '5px',
-    justifyContent: 'center',
+    paddingLeft: '',
+    justifyContent: 'flex-end',
+  },
+  view: {
+    paddingLeft: '2rem',
+  },
+  inter: {
+    // border: '1px solid red',
   },
 }));
 
 type Props = $ReadOnly<{|
-  handlerData: any,
+  serviceType?: string,
+  serviceTypeRes?: string,
+  serviceIdInter?: string,
+  serviceIdInterRes?: string,
+  descriptionInter?: string,
+  descriptionInterRes?: string,
   viewDetails?: MouseEventHandler,
 |}>;
 
 const ServicesRelatedCardItemType = (props: Props) => {
-  const {viewDetails, handlerData} = props;
+  const {
+    serviceType,
+    serviceTypeRes,
+    serviceIdInter,
+    serviceIdInterRes,
+    descriptionInter,
+    descriptionInterRes,
+    viewDetails,
+  } = props;
   const classes = useStyles();
 
   return (
     <div className={classes.root}>
-      <Card variant={'none'} margins={'none'}>
-        <Grid container>
-          <Grid sm={3} className={classes.inside}>
-            <DynamicPropertyTypes
-              name="Service Type"
-              txt={handlerData.item.Type}
-            />
+      <Card variant={'none'} margins={'none'} className={classes.container}>
+        <Grid container className={classes.insideContainer}>
+          <Grid
+            xs={3}
+            className={classNames(classes.inside, classes.serviceType)}>
+            <DynamicPropertyTypes name={serviceType} txt={serviceTypeRes} />
           </Grid>
-          <Grid sm={3} className={classes.inside}>
-            <DynamicPropertyTypes name="Service Id" txt={handlerData.item.Id} />
-          </Grid>
-          <Grid sm={3} md={3} lg={4} className={classes.inside}>
+
+          <Grid
+            xs={3}
+            className={classNames(classes.inside, classes.serviceId)}>
             <DynamicPropertyTypes
-              name="Description"
-              txt={handlerData.item.Description}
+              name={serviceIdInter}
+              txt={serviceIdInterRes}
             />
           </Grid>
 
           <Grid
-            container
-            alignContent="center"
-            justify="flex-end"
-            sm={2}
-            md={1}
-            className={classes.contIconViewDetail}>
+            xs={3}
+            className={classNames(classes.inside, classes.Description)}>
+            <DynamicPropertyTypes
+              name={descriptionInter}
+              txt={descriptionInterRes}
+            />
+          </Grid>
+          <Grid
+            xs={3}
+            className={classNames(classes.inside, classes.contIconViewDetail)}>
             <DeleteOutlinedIcon className={classes.deleteIcon} />
-
             <IconButton className={classes.editIcon} icon={EditIcon} />
-          </Grid>
-          <Grid
-            container
-            alignContent="center"
-            justify="flex-end"
-            sm={1}
-            md={2}
-            lg={1}
-            className={classes.contIconViewDetail}>
-            <Button variant="text" onClick={viewDetails}>
-              <Text useEllipsis={true} weight={'bold'} color={'primary'}>
-                View details
+            <Button
+              variant="text"
+              className={classes.view}
+              onClick={viewDetails}>
+              <Text weight={'bold'} color={'primary'}>
+                {'View details'}
               </Text>
             </Button>
           </Grid>

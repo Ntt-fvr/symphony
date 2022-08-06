@@ -21,8 +21,7 @@ import (
 )
 
 const (
-	TaskListName           = "async"
-	AutomationTaskListName = "automation"
+	TaskListName = "async"
 )
 
 // DomainFactory returns workers of specific domain with all workflows and activities registered

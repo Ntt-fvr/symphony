@@ -17,8 +17,8 @@ import type { ConcreteRequest } from 'relay-runtime';
 type ServiceCard_service$ref = any;
 export type AddBulkServiceLinksAndPortsInput = {|
   id: string,
-  linkIds?: ?$ReadOnlyArray<string>,
   portIds?: ?$ReadOnlyArray<string>,
+  linkIds?: ?$ReadOnlyArray<string>,
 |};
 export type AddBulkServiceLinksAndPortsMutationVariables = {|
   input: AddBulkServiceLinksAndPortsInput

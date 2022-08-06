@@ -87,9 +87,6 @@ func (ExitPoint) Fields() []ent.Field {
 			Nillable(),
 		field.JSON("condition", &flowschema.VariableExpression{}).
 			Optional(),
-		field.Int("index").
-			Annotations(entgql.OrderField("INDEX")).
-			Optional(),
 	}
 }
 

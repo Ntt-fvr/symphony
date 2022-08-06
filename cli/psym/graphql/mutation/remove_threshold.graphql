@@ -1,3 +1,0 @@
-mutation removeThreshold($id: ID!) {
-  removeThreshold(id: $id)
-}

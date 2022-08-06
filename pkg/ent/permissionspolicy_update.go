@@ -79,26 +79,6 @@ func (ppu *PermissionsPolicyUpdate) ClearIsGlobal() *PermissionsPolicyUpdate {
 	return ppu
 }
 
-// SetIsMulticontractor sets the is_multicontractor field.
-func (ppu *PermissionsPolicyUpdate) SetIsMulticontractor(b bool) *PermissionsPolicyUpdate {
-	ppu.mutation.SetIsMulticontractor(b)
-	return ppu
-}
-
-// SetNillableIsMulticontractor sets the is_multicontractor field if the given value is not nil.
-func (ppu *PermissionsPolicyUpdate) SetNillableIsMulticontractor(b *bool) *PermissionsPolicyUpdate {
-	if b != nil {
-		ppu.SetIsMulticontractor(*b)
-	}
-	return ppu
-}
-
-// ClearIsMulticontractor clears the value of is_multicontractor.
-func (ppu *PermissionsPolicyUpdate) ClearIsMulticontractor() *PermissionsPolicyUpdate {
-	ppu.mutation.ClearIsMulticontractor()
-	return ppu
-}
-
 // SetInventoryPolicy sets the inventory_policy field.
 func (ppu *PermissionsPolicyUpdate) SetInventoryPolicy(mpi *models.InventoryPolicyInput) *PermissionsPolicyUpdate {
 	ppu.mutation.SetInventoryPolicy(mpi)
@@ -358,19 +338,6 @@ func (ppu *PermissionsPolicyUpdate) sqlSave(ctx context.Context) (n int, err err
 			Column: permissionspolicy.FieldIsGlobal,
 		})
 	}
-	if value, ok := ppu.mutation.IsMulticontractor(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeBool,
-			Value:  value,
-			Column: permissionspolicy.FieldIsMulticontractor,
-		})
-	}
-	if ppu.mutation.IsMulticontractorCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeBool,
-			Column: permissionspolicy.FieldIsMulticontractor,
-		})
-	}
 	if value, ok := ppu.mutation.InventoryPolicy(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeJSON,
@@ -592,26 +559,6 @@ func (ppuo *PermissionsPolicyUpdateOne) SetNillableIsGlobal(b *bool) *Permission
 // ClearIsGlobal clears the value of is_global.
 func (ppuo *PermissionsPolicyUpdateOne) ClearIsGlobal() *PermissionsPolicyUpdateOne {
 	ppuo.mutation.ClearIsGlobal()
-	return ppuo
-}
-
-// SetIsMulticontractor sets the is_multicontractor field.
-func (ppuo *PermissionsPolicyUpdateOne) SetIsMulticontractor(b bool) *PermissionsPolicyUpdateOne {
-	ppuo.mutation.SetIsMulticontractor(b)
-	return ppuo
-}
-
-// SetNillableIsMulticontractor sets the is_multicontractor field if the given value is not nil.
-func (ppuo *PermissionsPolicyUpdateOne) SetNillableIsMulticontractor(b *bool) *PermissionsPolicyUpdateOne {
-	if b != nil {
-		ppuo.SetIsMulticontractor(*b)
-	}
-	return ppuo
-}
-
-// ClearIsMulticontractor clears the value of is_multicontractor.
-func (ppuo *PermissionsPolicyUpdateOne) ClearIsMulticontractor() *PermissionsPolicyUpdateOne {
-	ppuo.mutation.ClearIsMulticontractor()
 	return ppuo
 }
 
@@ -870,19 +817,6 @@ func (ppuo *PermissionsPolicyUpdateOne) sqlSave(ctx context.Context) (_node *Per
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeBool,
 			Column: permissionspolicy.FieldIsGlobal,
-		})
-	}
-	if value, ok := ppuo.mutation.IsMulticontractor(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeBool,
-			Value:  value,
-			Column: permissionspolicy.FieldIsMulticontractor,
-		})
-	}
-	if ppuo.mutation.IsMulticontractorCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeBool,
-			Column: permissionspolicy.FieldIsMulticontractor,
 		})
 	}
 	if value, ok := ppuo.mutation.InventoryPolicy(); ok {

@@ -60,37 +60,9 @@ func (ru *RuleUpdate) SetStartDateTime(t time.Time) *RuleUpdate {
 	return ru
 }
 
-// SetNillableStartDateTime sets the startDateTime field if the given value is not nil.
-func (ru *RuleUpdate) SetNillableStartDateTime(t *time.Time) *RuleUpdate {
-	if t != nil {
-		ru.SetStartDateTime(*t)
-	}
-	return ru
-}
-
-// ClearStartDateTime clears the value of startDateTime.
-func (ru *RuleUpdate) ClearStartDateTime() *RuleUpdate {
-	ru.mutation.ClearStartDateTime()
-	return ru
-}
-
 // SetEndDateTime sets the endDateTime field.
 func (ru *RuleUpdate) SetEndDateTime(t time.Time) *RuleUpdate {
 	ru.mutation.SetEndDateTime(t)
-	return ru
-}
-
-// SetNillableEndDateTime sets the endDateTime field if the given value is not nil.
-func (ru *RuleUpdate) SetNillableEndDateTime(t *time.Time) *RuleUpdate {
-	if t != nil {
-		ru.SetEndDateTime(*t)
-	}
-	return ru
-}
-
-// ClearEndDateTime clears the value of endDateTime.
-func (ru *RuleUpdate) ClearEndDateTime() *RuleUpdate {
-	ru.mutation.ClearEndDateTime()
 	return ru
 }
 
@@ -405,22 +377,10 @@ func (ru *RuleUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: rule.FieldStartDateTime,
 		})
 	}
-	if ru.mutation.StartDateTimeCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeTime,
-			Column: rule.FieldStartDateTime,
-		})
-	}
 	if value, ok := ru.mutation.EndDateTime(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeTime,
 			Value:  value,
-			Column: rule.FieldEndDateTime,
-		})
-	}
-	if ru.mutation.EndDateTimeCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeTime,
 			Column: rule.FieldEndDateTime,
 		})
 	}
@@ -672,37 +632,9 @@ func (ruo *RuleUpdateOne) SetStartDateTime(t time.Time) *RuleUpdateOne {
 	return ruo
 }
 
-// SetNillableStartDateTime sets the startDateTime field if the given value is not nil.
-func (ruo *RuleUpdateOne) SetNillableStartDateTime(t *time.Time) *RuleUpdateOne {
-	if t != nil {
-		ruo.SetStartDateTime(*t)
-	}
-	return ruo
-}
-
-// ClearStartDateTime clears the value of startDateTime.
-func (ruo *RuleUpdateOne) ClearStartDateTime() *RuleUpdateOne {
-	ruo.mutation.ClearStartDateTime()
-	return ruo
-}
-
 // SetEndDateTime sets the endDateTime field.
 func (ruo *RuleUpdateOne) SetEndDateTime(t time.Time) *RuleUpdateOne {
 	ruo.mutation.SetEndDateTime(t)
-	return ruo
-}
-
-// SetNillableEndDateTime sets the endDateTime field if the given value is not nil.
-func (ruo *RuleUpdateOne) SetNillableEndDateTime(t *time.Time) *RuleUpdateOne {
-	if t != nil {
-		ruo.SetEndDateTime(*t)
-	}
-	return ruo
-}
-
-// ClearEndDateTime clears the value of endDateTime.
-func (ruo *RuleUpdateOne) ClearEndDateTime() *RuleUpdateOne {
-	ruo.mutation.ClearEndDateTime()
 	return ruo
 }
 
@@ -1015,22 +947,10 @@ func (ruo *RuleUpdateOne) sqlSave(ctx context.Context) (_node *Rule, err error) 
 			Column: rule.FieldStartDateTime,
 		})
 	}
-	if ruo.mutation.StartDateTimeCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeTime,
-			Column: rule.FieldStartDateTime,
-		})
-	}
 	if value, ok := ruo.mutation.EndDateTime(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeTime,
 			Value:  value,
-			Column: rule.FieldEndDateTime,
-		})
-	}
-	if ruo.mutation.EndDateTimeCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeTime,
 			Column: rule.FieldEndDateTime,
 		})
 	}

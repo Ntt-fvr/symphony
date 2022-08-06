@@ -16,12 +16,12 @@
 import type { ConcreteRequest } from 'relay-runtime';
 export type ImageEntity = "CHECKLIST_ITEM" | "EQUIPMENT" | "LOCATION" | "SITE_SURVEY" | "USER" | "WORK_ORDER" | "%future added value";
 export type AddHyperlinkInput = {|
-  category?: ?string,
-  displayName?: ?string,
-  documentCategoryId?: ?string,
-  entityId: string,
   entityType: ImageEntity,
+  entityId: string,
   url: string,
+  displayName?: ?string,
+  category?: ?string,
+  documentCategoryId?: ?string,
 |};
 export type AddHyperlinkMutationVariables = {|
   input: AddHyperlinkInput

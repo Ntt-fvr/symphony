@@ -16,7 +16,6 @@ import (
 	"github.com/facebook/ent/dialect/sql"
 	"github.com/facebook/ent/dialect/sql/sqlgraph"
 	"github.com/facebook/ent/schema/field"
-	"github.com/facebookincubator/symphony/pkg/ent/automationactivity"
 	"github.com/facebookincubator/symphony/pkg/ent/blockinstance"
 	"github.com/facebookincubator/symphony/pkg/ent/flow"
 	"github.com/facebookincubator/symphony/pkg/ent/flowexecutiontemplate"
@@ -37,7 +36,6 @@ type FlowInstanceQuery struct {
 	withTemplate           *FlowExecutionTemplateQuery
 	withBlocks             *BlockInstanceQuery
 	withParentSubflowBlock *BlockInstanceQuery
-	withFlowActivities     *AutomationActivityQuery
 	withFKs                bool
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
@@ -149,28 +147,6 @@ func (fiq *FlowInstanceQuery) QueryParentSubflowBlock() *BlockInstanceQuery {
 			sqlgraph.From(flowinstance.Table, flowinstance.FieldID, selector),
 			sqlgraph.To(blockinstance.Table, blockinstance.FieldID),
 			sqlgraph.Edge(sqlgraph.O2O, true, flowinstance.ParentSubflowBlockTable, flowinstance.ParentSubflowBlockColumn),
-		)
-		fromU = sqlgraph.SetNeighbors(fiq.driver.Dialect(), step)
-		return fromU, nil
-	}
-	return query
-}
-
-// QueryFlowActivities chains the current query on the flow_activities edge.
-func (fiq *FlowInstanceQuery) QueryFlowActivities() *AutomationActivityQuery {
-	query := &AutomationActivityQuery{config: fiq.config}
-	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
-		if err := fiq.prepareQuery(ctx); err != nil {
-			return nil, err
-		}
-		selector := fiq.sqlQuery()
-		if err := selector.Err(); err != nil {
-			return nil, err
-		}
-		step := sqlgraph.NewStep(
-			sqlgraph.From(flowinstance.Table, flowinstance.FieldID, selector),
-			sqlgraph.To(automationactivity.Table, automationactivity.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, flowinstance.FlowActivitiesTable, flowinstance.FlowActivitiesColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(fiq.driver.Dialect(), step)
 		return fromU, nil
@@ -358,7 +334,6 @@ func (fiq *FlowInstanceQuery) Clone() *FlowInstanceQuery {
 		withTemplate:           fiq.withTemplate.Clone(),
 		withBlocks:             fiq.withBlocks.Clone(),
 		withParentSubflowBlock: fiq.withParentSubflowBlock.Clone(),
-		withFlowActivities:     fiq.withFlowActivities.Clone(),
 		// clone intermediate query.
 		sql:  fiq.sql.Clone(),
 		path: fiq.path,
@@ -406,17 +381,6 @@ func (fiq *FlowInstanceQuery) WithParentSubflowBlock(opts ...func(*BlockInstance
 		opt(query)
 	}
 	fiq.withParentSubflowBlock = query
-	return fiq
-}
-
-//  WithFlowActivities tells the query-builder to eager-loads the nodes that are connected to
-// the "flow_activities" edge. The optional arguments used to configure the query builder of the edge.
-func (fiq *FlowInstanceQuery) WithFlowActivities(opts ...func(*AutomationActivityQuery)) *FlowInstanceQuery {
-	query := &AutomationActivityQuery{config: fiq.config}
-	for _, opt := range opts {
-		opt(query)
-	}
-	fiq.withFlowActivities = query
 	return fiq
 }
 
@@ -490,12 +454,11 @@ func (fiq *FlowInstanceQuery) sqlAll(ctx context.Context) ([]*FlowInstance, erro
 		nodes       = []*FlowInstance{}
 		withFKs     = fiq.withFKs
 		_spec       = fiq.querySpec()
-		loadedTypes = [5]bool{
+		loadedTypes = [4]bool{
 			fiq.withFlow != nil,
 			fiq.withTemplate != nil,
 			fiq.withBlocks != nil,
 			fiq.withParentSubflowBlock != nil,
-			fiq.withFlowActivities != nil,
 		}
 	)
 	if fiq.withFlow != nil || fiq.withTemplate != nil || fiq.withParentSubflowBlock != nil {
@@ -629,35 +592,6 @@ func (fiq *FlowInstanceQuery) sqlAll(ctx context.Context) ([]*FlowInstance, erro
 			for i := range nodes {
 				nodes[i].Edges.ParentSubflowBlock = n
 			}
-		}
-	}
-
-	if query := fiq.withFlowActivities; query != nil {
-		fks := make([]driver.Value, 0, len(nodes))
-		nodeids := make(map[int]*FlowInstance)
-		for i := range nodes {
-			fks = append(fks, nodes[i].ID)
-			nodeids[nodes[i].ID] = nodes[i]
-			nodes[i].Edges.FlowActivities = []*AutomationActivity{}
-		}
-		query.withFKs = true
-		query.Where(predicate.AutomationActivity(func(s *sql.Selector) {
-			s.Where(sql.InValues(flowinstance.FlowActivitiesColumn, fks...))
-		}))
-		neighbors, err := query.All(ctx)
-		if err != nil {
-			return nil, err
-		}
-		for _, n := range neighbors {
-			fk := n.flow_instance_flow_activities
-			if fk == nil {
-				return nil, fmt.Errorf(`foreign-key "flow_instance_flow_activities" is nil for node %v`, n.ID)
-			}
-			node, ok := nodeids[*fk]
-			if !ok {
-				return nil, fmt.Errorf(`unexpected foreign-key "flow_instance_flow_activities" returned %v for node %v`, *fk, n.ID)
-			}
-			node.Edges.FlowActivities = append(node.Edges.FlowActivities, n)
 		}
 	}
 

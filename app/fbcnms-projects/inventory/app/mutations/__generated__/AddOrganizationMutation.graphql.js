@@ -15,8 +15,8 @@
 /*::
 import type { ConcreteRequest } from 'relay-runtime';
 export type AddOrganizationInput = {|
-  description: string,
   name: string,
+  description: string,
 |};
 export type AddOrganizationMutationVariables = {|
   input: AddOrganizationInput

@@ -15,29 +15,27 @@
 /*::
 import type { ConcreteRequest } from 'relay-runtime';
 export type EditLocationInput = {|
-  externalID?: ?string,
   id: string,
+  name: string,
   latitude: number,
   longitude: number,
-  name: string,
   properties?: ?$ReadOnlyArray<PropertyInput>,
+  externalID?: ?string,
 |};
 export type PropertyInput = {|
-  booleanValue?: ?boolean,
-  dependenceProperties?: ?$ReadOnlyArray<PropertyInput>,
-  floatValue?: ?number,
   id?: ?string,
+  propertyTypeID: string,
+  stringValue?: ?string,
   intValue?: ?number,
-  isEditable?: ?boolean,
-  isInstanceProperty?: ?boolean,
+  booleanValue?: ?boolean,
+  floatValue?: ?number,
   latitudeValue?: ?number,
   longitudeValue?: ?number,
-  nodeIDValue?: ?string,
-  propertyTypeID: string,
-  propertyTypeValueID?: ?string,
   rangeFromValue?: ?number,
   rangeToValue?: ?number,
-  stringValue?: ?string,
+  nodeIDValue?: ?string,
+  isEditable?: ?boolean,
+  isInstanceProperty?: ?boolean,
 |};
 export type EditLocationMutationVariables = {|
   input: EditLocationInput

@@ -26,8 +26,6 @@ const (
 	FieldUpdateTime = "update_time"
 	// FieldStatus holds the string denoting the status field in the database.
 	FieldStatus = "status"
-	// FieldStartParams holds the string denoting the start_params field in the database.
-	FieldStartParams = "start_params"
 	// FieldOutputParams holds the string denoting the output_params field in the database.
 	FieldOutputParams = "output_params"
 	// FieldIncompletionReason holds the string denoting the incompletion_reason field in the database.
@@ -49,8 +47,6 @@ const (
 	EdgeBlocks = "blocks"
 	// EdgeParentSubflowBlock holds the string denoting the parent_subflow_block edge name in mutations.
 	EdgeParentSubflowBlock = "parent_subflow_block"
-	// EdgeFlowActivities holds the string denoting the flow_activities edge name in mutations.
-	EdgeFlowActivities = "flow_activities"
 
 	// Table holds the table name of the flowinstance in the database.
 	Table = "flow_instances"
@@ -82,13 +78,6 @@ const (
 	ParentSubflowBlockInverseTable = "block_instances"
 	// ParentSubflowBlockColumn is the table column denoting the parent_subflow_block relation/edge.
 	ParentSubflowBlockColumn = "block_instance_subflow_instance"
-	// FlowActivitiesTable is the table the holds the flow_activities relation/edge.
-	FlowActivitiesTable = "automation_activities"
-	// FlowActivitiesInverseTable is the table name for the AutomationActivity entity.
-	// It exists in this package in order to avoid circular dependency with the "automationactivity" package.
-	FlowActivitiesInverseTable = "automation_activities"
-	// FlowActivitiesColumn is the table column denoting the flow_activities relation/edge.
-	FlowActivitiesColumn = "flow_instance_flow_activities"
 )
 
 // Columns holds all SQL columns for flowinstance fields.
@@ -97,7 +86,6 @@ var Columns = []string{
 	FieldCreateTime,
 	FieldUpdateTime,
 	FieldStatus,
-	FieldStartParams,
 	FieldOutputParams,
 	FieldIncompletionReason,
 	FieldBssCode,
@@ -148,21 +136,15 @@ var (
 // Status defines the type for the status enum field.
 type Status string
 
-// StatusRunning is the default Status.
-const DefaultStatus = StatusRunning
+// StatusInProgress is the default Status.
+const DefaultStatus = StatusInProgress
 
 // Status values.
 const (
-	StatusRunning   Status = "RUNNING"
-	StatusFailed    Status = "FAILED"
-	StatusFailing   Status = "FAILING"
-	StatusCompleted Status = "COMPLETED"
-	StatusCancelled Status = "CANCELED"
-	StatusCanceling Status = "CANCELING"
-	StatusPaused    Status = "PAUSED"
-	StatusPausing   Status = "PAUSING"
-	StatusClosed    Status = "CLOSED"
-	StatusResuming  Status = "RESUMING"
+	StatusInProgress Status = "IN_PROGRESS"
+	StatusFailed     Status = "FAILED"
+	StatusCompleted  Status = "COMPLETED"
+	StatusCancelled  Status = "CANCELED"
 )
 
 func (s Status) String() string {
@@ -172,7 +154,7 @@ func (s Status) String() string {
 // StatusValidator is a validator for the "status" field enum values. It is called by the builders before save.
 func StatusValidator(s Status) error {
 	switch s {
-	case StatusRunning, StatusFailed, StatusFailing, StatusCompleted, StatusCancelled, StatusCanceling, StatusPaused, StatusPausing, StatusClosed, StatusResuming:
+	case StatusInProgress, StatusFailed, StatusCompleted, StatusCancelled:
 		return nil
 	default:
 		return fmt.Errorf("flowinstance: invalid enum value for status field: %q", s)

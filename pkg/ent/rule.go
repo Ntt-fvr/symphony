@@ -32,9 +32,9 @@ type Rule struct {
 	// GracePeriod holds the value of the "gracePeriod" field.
 	GracePeriod int `json:"gracePeriod,omitempty"`
 	// StartDateTime holds the value of the "startDateTime" field.
-	StartDateTime *time.Time `json:"startDateTime,omitempty"`
+	StartDateTime time.Time `json:"startDateTime,omitempty"`
 	// EndDateTime holds the value of the "endDateTime" field.
-	EndDateTime *time.Time `json:"endDateTime,omitempty"`
+	EndDateTime time.Time `json:"endDateTime,omitempty"`
 	// Status holds the value of the "status" field.
 	Status bool `json:"status,omitempty"`
 	// EventTypeName holds the value of the "eventTypeName" field.
@@ -178,14 +178,12 @@ func (r *Rule) assignValues(values ...interface{}) error {
 	if value, ok := values[4].(*sql.NullTime); !ok {
 		return fmt.Errorf("unexpected type %T for field startDateTime", values[4])
 	} else if value.Valid {
-		r.StartDateTime = new(time.Time)
-		*r.StartDateTime = value.Time
+		r.StartDateTime = value.Time
 	}
 	if value, ok := values[5].(*sql.NullTime); !ok {
 		return fmt.Errorf("unexpected type %T for field endDateTime", values[5])
 	} else if value.Valid {
-		r.EndDateTime = new(time.Time)
-		*r.EndDateTime = value.Time
+		r.EndDateTime = value.Time
 	}
 	if value, ok := values[6].(*sql.NullBool); !ok {
 		return fmt.Errorf("unexpected type %T for field status", values[6])
@@ -285,14 +283,10 @@ func (r *Rule) String() string {
 	builder.WriteString(r.Name)
 	builder.WriteString(", gracePeriod=")
 	builder.WriteString(fmt.Sprintf("%v", r.GracePeriod))
-	if v := r.StartDateTime; v != nil {
-		builder.WriteString(", startDateTime=")
-		builder.WriteString(v.Format(time.ANSIC))
-	}
-	if v := r.EndDateTime; v != nil {
-		builder.WriteString(", endDateTime=")
-		builder.WriteString(v.Format(time.ANSIC))
-	}
+	builder.WriteString(", startDateTime=")
+	builder.WriteString(r.StartDateTime.Format(time.ANSIC))
+	builder.WriteString(", endDateTime=")
+	builder.WriteString(r.EndDateTime.Format(time.ANSIC))
 	builder.WriteString(", status=")
 	builder.WriteString(fmt.Sprintf("%v", r.Status))
 	if v := r.EventTypeName; v != nil {

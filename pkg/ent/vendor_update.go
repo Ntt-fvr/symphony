@@ -16,7 +16,6 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/counter"
 	"github.com/facebookincubator/symphony/pkg/ent/predicate"
 	"github.com/facebookincubator/symphony/pkg/ent/recommendations"
-	"github.com/facebookincubator/symphony/pkg/ent/resourcespecification"
 	"github.com/facebookincubator/symphony/pkg/ent/vendor"
 )
 
@@ -69,40 +68,6 @@ func (vu *VendorUpdate) AddVendorsRecomendations(r ...*Recommendations) *VendorU
 	return vu.AddVendorsRecomendationIDs(ids...)
 }
 
-// SetResourceSpecificationID sets the resource_specification edge to ResourceSpecification by id.
-func (vu *VendorUpdate) SetResourceSpecificationID(id int) *VendorUpdate {
-	vu.mutation.SetResourceSpecificationID(id)
-	return vu
-}
-
-// SetNillableResourceSpecificationID sets the resource_specification edge to ResourceSpecification by id if the given value is not nil.
-func (vu *VendorUpdate) SetNillableResourceSpecificationID(id *int) *VendorUpdate {
-	if id != nil {
-		vu = vu.SetResourceSpecificationID(*id)
-	}
-	return vu
-}
-
-// SetResourceSpecification sets the resource_specification edge to ResourceSpecification.
-func (vu *VendorUpdate) SetResourceSpecification(r *ResourceSpecification) *VendorUpdate {
-	return vu.SetResourceSpecificationID(r.ID)
-}
-
-// AddVendorRIDs adds the vendor_rs edge to ResourceSpecification by ids.
-func (vu *VendorUpdate) AddVendorRIDs(ids ...int) *VendorUpdate {
-	vu.mutation.AddVendorRIDs(ids...)
-	return vu
-}
-
-// AddVendorRs adds the vendor_rs edges to ResourceSpecification.
-func (vu *VendorUpdate) AddVendorRs(r ...*ResourceSpecification) *VendorUpdate {
-	ids := make([]int, len(r))
-	for i := range r {
-		ids[i] = r[i].ID
-	}
-	return vu.AddVendorRIDs(ids...)
-}
-
 // Mutation returns the VendorMutation object of the builder.
 func (vu *VendorUpdate) Mutation() *VendorMutation {
 	return vu.mutation
@@ -148,33 +113,6 @@ func (vu *VendorUpdate) RemoveVendorsRecomendations(r ...*Recommendations) *Vend
 		ids[i] = r[i].ID
 	}
 	return vu.RemoveVendorsRecomendationIDs(ids...)
-}
-
-// ClearResourceSpecification clears the "resource_specification" edge to type ResourceSpecification.
-func (vu *VendorUpdate) ClearResourceSpecification() *VendorUpdate {
-	vu.mutation.ClearResourceSpecification()
-	return vu
-}
-
-// ClearVendorRs clears all "vendor_rs" edges to type ResourceSpecification.
-func (vu *VendorUpdate) ClearVendorRs() *VendorUpdate {
-	vu.mutation.ClearVendorRs()
-	return vu
-}
-
-// RemoveVendorRIDs removes the vendor_rs edge to ResourceSpecification by ids.
-func (vu *VendorUpdate) RemoveVendorRIDs(ids ...int) *VendorUpdate {
-	vu.mutation.RemoveVendorRIDs(ids...)
-	return vu
-}
-
-// RemoveVendorRs removes vendor_rs edges to ResourceSpecification.
-func (vu *VendorUpdate) RemoveVendorRs(r ...*ResourceSpecification) *VendorUpdate {
-	ids := make([]int, len(r))
-	for i := range r {
-		ids[i] = r[i].ID
-	}
-	return vu.RemoveVendorRIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -393,95 +331,6 @@ func (vu *VendorUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if vu.mutation.ResourceSpecificationCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2O,
-			Inverse: true,
-			Table:   vendor.ResourceSpecificationTable,
-			Columns: []string{vendor.ResourceSpecificationColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: resourcespecification.FieldID,
-				},
-			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := vu.mutation.ResourceSpecificationIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2O,
-			Inverse: true,
-			Table:   vendor.ResourceSpecificationTable,
-			Columns: []string{vendor.ResourceSpecificationColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: resourcespecification.FieldID,
-				},
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
-	}
-	if vu.mutation.VendorRsCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   vendor.VendorRsTable,
-			Columns: []string{vendor.VendorRsColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: resourcespecification.FieldID,
-				},
-			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := vu.mutation.RemovedVendorRsIDs(); len(nodes) > 0 && !vu.mutation.VendorRsCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   vendor.VendorRsTable,
-			Columns: []string{vendor.VendorRsColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: resourcespecification.FieldID,
-				},
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := vu.mutation.VendorRsIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   vendor.VendorRsTable,
-			Columns: []string{vendor.VendorRsColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: resourcespecification.FieldID,
-				},
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
-	}
 	if n, err = sqlgraph.UpdateNodes(ctx, vu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{vendor.Label}
@@ -536,40 +385,6 @@ func (vuo *VendorUpdateOne) AddVendorsRecomendations(r ...*Recommendations) *Ven
 	return vuo.AddVendorsRecomendationIDs(ids...)
 }
 
-// SetResourceSpecificationID sets the resource_specification edge to ResourceSpecification by id.
-func (vuo *VendorUpdateOne) SetResourceSpecificationID(id int) *VendorUpdateOne {
-	vuo.mutation.SetResourceSpecificationID(id)
-	return vuo
-}
-
-// SetNillableResourceSpecificationID sets the resource_specification edge to ResourceSpecification by id if the given value is not nil.
-func (vuo *VendorUpdateOne) SetNillableResourceSpecificationID(id *int) *VendorUpdateOne {
-	if id != nil {
-		vuo = vuo.SetResourceSpecificationID(*id)
-	}
-	return vuo
-}
-
-// SetResourceSpecification sets the resource_specification edge to ResourceSpecification.
-func (vuo *VendorUpdateOne) SetResourceSpecification(r *ResourceSpecification) *VendorUpdateOne {
-	return vuo.SetResourceSpecificationID(r.ID)
-}
-
-// AddVendorRIDs adds the vendor_rs edge to ResourceSpecification by ids.
-func (vuo *VendorUpdateOne) AddVendorRIDs(ids ...int) *VendorUpdateOne {
-	vuo.mutation.AddVendorRIDs(ids...)
-	return vuo
-}
-
-// AddVendorRs adds the vendor_rs edges to ResourceSpecification.
-func (vuo *VendorUpdateOne) AddVendorRs(r ...*ResourceSpecification) *VendorUpdateOne {
-	ids := make([]int, len(r))
-	for i := range r {
-		ids[i] = r[i].ID
-	}
-	return vuo.AddVendorRIDs(ids...)
-}
-
 // Mutation returns the VendorMutation object of the builder.
 func (vuo *VendorUpdateOne) Mutation() *VendorMutation {
 	return vuo.mutation
@@ -615,33 +430,6 @@ func (vuo *VendorUpdateOne) RemoveVendorsRecomendations(r ...*Recommendations) *
 		ids[i] = r[i].ID
 	}
 	return vuo.RemoveVendorsRecomendationIDs(ids...)
-}
-
-// ClearResourceSpecification clears the "resource_specification" edge to type ResourceSpecification.
-func (vuo *VendorUpdateOne) ClearResourceSpecification() *VendorUpdateOne {
-	vuo.mutation.ClearResourceSpecification()
-	return vuo
-}
-
-// ClearVendorRs clears all "vendor_rs" edges to type ResourceSpecification.
-func (vuo *VendorUpdateOne) ClearVendorRs() *VendorUpdateOne {
-	vuo.mutation.ClearVendorRs()
-	return vuo
-}
-
-// RemoveVendorRIDs removes the vendor_rs edge to ResourceSpecification by ids.
-func (vuo *VendorUpdateOne) RemoveVendorRIDs(ids ...int) *VendorUpdateOne {
-	vuo.mutation.RemoveVendorRIDs(ids...)
-	return vuo
-}
-
-// RemoveVendorRs removes vendor_rs edges to ResourceSpecification.
-func (vuo *VendorUpdateOne) RemoveVendorRs(r ...*ResourceSpecification) *VendorUpdateOne {
-	ids := make([]int, len(r))
-	for i := range r {
-		ids[i] = r[i].ID
-	}
-	return vuo.RemoveVendorRIDs(ids...)
 }
 
 // Save executes the query and returns the updated entity.
@@ -850,95 +638,6 @@ func (vuo *VendorUpdateOne) sqlSave(ctx context.Context) (_node *Vendor, err err
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: recommendations.FieldID,
-				},
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
-	}
-	if vuo.mutation.ResourceSpecificationCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2O,
-			Inverse: true,
-			Table:   vendor.ResourceSpecificationTable,
-			Columns: []string{vendor.ResourceSpecificationColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: resourcespecification.FieldID,
-				},
-			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := vuo.mutation.ResourceSpecificationIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2O,
-			Inverse: true,
-			Table:   vendor.ResourceSpecificationTable,
-			Columns: []string{vendor.ResourceSpecificationColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: resourcespecification.FieldID,
-				},
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
-	}
-	if vuo.mutation.VendorRsCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   vendor.VendorRsTable,
-			Columns: []string{vendor.VendorRsColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: resourcespecification.FieldID,
-				},
-			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := vuo.mutation.RemovedVendorRsIDs(); len(nodes) > 0 && !vuo.mutation.VendorRsCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   vendor.VendorRsTable,
-			Columns: []string{vendor.VendorRsColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: resourcespecification.FieldID,
-				},
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := vuo.mutation.VendorRsIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   vendor.VendorRsTable,
-			Columns: []string{vendor.VendorRsColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: resourcespecification.FieldID,
 				},
 			},
 		}

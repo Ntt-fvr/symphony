@@ -1,3 +1,0 @@
-mutation removeTech($id: ID!) {
-  removeTech(id: $id)
-}

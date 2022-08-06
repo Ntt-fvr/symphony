@@ -28,10 +28,6 @@ const (
 	EdgeVendorFk = "vendor_fk"
 	// EdgeVendorsRecomendations holds the string denoting the vendors_recomendations edge name in mutations.
 	EdgeVendorsRecomendations = "vendors_recomendations"
-	// EdgeResourceSpecification holds the string denoting the resource_specification edge name in mutations.
-	EdgeResourceSpecification = "resource_specification"
-	// EdgeVendorRs holds the string denoting the vendor_rs edge name in mutations.
-	EdgeVendorRs = "vendor_rs"
 
 	// Table holds the table name of the vendor in the database.
 	Table = "vendors"
@@ -49,20 +45,6 @@ const (
 	VendorsRecomendationsInverseTable = "recommendations"
 	// VendorsRecomendationsColumn is the table column denoting the vendors_recomendations relation/edge.
 	VendorsRecomendationsColumn = "vendor_vendors_recomendations"
-	// ResourceSpecificationTable is the table the holds the resource_specification relation/edge.
-	ResourceSpecificationTable = "vendors"
-	// ResourceSpecificationInverseTable is the table name for the ResourceSpecification entity.
-	// It exists in this package in order to avoid circular dependency with the "resourcespecification" package.
-	ResourceSpecificationInverseTable = "resource_specifications"
-	// ResourceSpecificationColumn is the table column denoting the resource_specification relation/edge.
-	ResourceSpecificationColumn = "resource_specification_resource_specification_vendor"
-	// VendorRsTable is the table the holds the vendor_rs relation/edge.
-	VendorRsTable = "resource_specifications"
-	// VendorRsInverseTable is the table name for the ResourceSpecification entity.
-	// It exists in this package in order to avoid circular dependency with the "resourcespecification" package.
-	VendorRsInverseTable = "resource_specifications"
-	// VendorRsColumn is the table column denoting the vendor_rs relation/edge.
-	VendorRsColumn = "vendor_vendor_rs"
 )
 
 // Columns holds all SQL columns for vendor fields.
@@ -73,20 +55,10 @@ var Columns = []string{
 	FieldName,
 }
 
-// ForeignKeys holds the SQL foreign-keys that are owned by the Vendor type.
-var ForeignKeys = []string{
-	"resource_specification_resource_specification_vendor",
-}
-
 // ValidColumn reports if the column name is valid (part of the table columns).
 func ValidColumn(column string) bool {
 	for i := range Columns {
 		if column == Columns[i] {
-			return true
-		}
-	}
-	for i := range ForeignKeys {
-		if column == ForeignKeys[i] {
 			return true
 		}
 	}

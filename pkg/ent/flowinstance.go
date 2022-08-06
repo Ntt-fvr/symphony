@@ -31,8 +31,6 @@ type FlowInstance struct {
 	UpdateTime time.Time `json:"update_time,omitempty"`
 	// Status holds the value of the "status" field.
 	Status flowinstance.Status `json:"status,omitempty"`
-	// StartParams holds the value of the "start_params" field.
-	StartParams []*flowschema.VariableValue `json:"start_params,omitempty"`
 	// OutputParams holds the value of the "output_params" field.
 	OutputParams []*flowschema.VariableValue `json:"output_params,omitempty"`
 	// IncompletionReason holds the value of the "incompletion_reason" field.
@@ -63,11 +61,9 @@ type FlowInstanceEdges struct {
 	Blocks []*BlockInstance
 	// ParentSubflowBlock holds the value of the parent_subflow_block edge.
 	ParentSubflowBlock *BlockInstance
-	// FlowActivities holds the value of the flow_activities edge.
-	FlowActivities []*AutomationActivity
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [5]bool
+	loadedTypes [4]bool
 }
 
 // FlowOrErr returns the Flow value or an error if the edge
@@ -121,15 +117,6 @@ func (e FlowInstanceEdges) ParentSubflowBlockOrErr() (*BlockInstance, error) {
 	return nil, &NotLoadedError{edge: "parent_subflow_block"}
 }
 
-// FlowActivitiesOrErr returns the FlowActivities value or an error if the edge
-// was not loaded in eager-loading.
-func (e FlowInstanceEdges) FlowActivitiesOrErr() ([]*AutomationActivity, error) {
-	if e.loadedTypes[4] {
-		return e.FlowActivities, nil
-	}
-	return nil, &NotLoadedError{edge: "flow_activities"}
-}
-
 // scanValues returns the types for scanning values from sql.Rows.
 func (*FlowInstance) scanValues() []interface{} {
 	return []interface{}{
@@ -137,7 +124,6 @@ func (*FlowInstance) scanValues() []interface{} {
 		&sql.NullTime{},   // create_time
 		&sql.NullTime{},   // update_time
 		&sql.NullString{}, // status
-		&[]byte{},         // start_params
 		&[]byte{},         // output_params
 		&sql.NullString{}, // incompletion_reason
 		&sql.NullString{}, // bss_code
@@ -185,47 +171,39 @@ func (fi *FlowInstance) assignValues(values ...interface{}) error {
 	}
 
 	if value, ok := values[3].(*[]byte); !ok {
-		return fmt.Errorf("unexpected type %T for field start_params", values[3])
-	} else if value != nil && len(*value) > 0 {
-		if err := json.Unmarshal(*value, &fi.StartParams); err != nil {
-			return fmt.Errorf("unmarshal field start_params: %v", err)
-		}
-	}
-
-	if value, ok := values[4].(*[]byte); !ok {
-		return fmt.Errorf("unexpected type %T for field output_params", values[4])
+		return fmt.Errorf("unexpected type %T for field output_params", values[3])
 	} else if value != nil && len(*value) > 0 {
 		if err := json.Unmarshal(*value, &fi.OutputParams); err != nil {
 			return fmt.Errorf("unmarshal field output_params: %v", err)
 		}
 	}
-	if value, ok := values[5].(*sql.NullString); !ok {
-		return fmt.Errorf("unexpected type %T for field incompletion_reason", values[5])
+	if value, ok := values[4].(*sql.NullString); !ok {
+		return fmt.Errorf("unexpected type %T for field incompletion_reason", values[4])
 	} else if value.Valid {
 		fi.IncompletionReason = value.String
 	}
-	if value, ok := values[6].(*sql.NullString); !ok {
-		return fmt.Errorf("unexpected type %T for field bss_code", values[6])
+	if value, ok := values[5].(*sql.NullString); !ok {
+		return fmt.Errorf("unexpected type %T for field bss_code", values[5])
 	} else if value.Valid {
 		fi.BssCode = value.String
 	}
-	if value, ok := values[7].(*sql.NullString); !ok {
-		return fmt.Errorf("unexpected type %T for field service_instance_code", values[7])
+	if value, ok := values[6].(*sql.NullString); !ok {
+		return fmt.Errorf("unexpected type %T for field service_instance_code", values[6])
 	} else if value.Valid {
 		fi.ServiceInstanceCode = value.String
 	}
-	if value, ok := values[8].(*sql.NullTime); !ok {
-		return fmt.Errorf("unexpected type %T for field start_date", values[8])
+	if value, ok := values[7].(*sql.NullTime); !ok {
+		return fmt.Errorf("unexpected type %T for field start_date", values[7])
 	} else if value.Valid {
 		fi.StartDate = value.Time
 	}
-	if value, ok := values[9].(*sql.NullTime); !ok {
-		return fmt.Errorf("unexpected type %T for field end_date", values[9])
+	if value, ok := values[8].(*sql.NullTime); !ok {
+		return fmt.Errorf("unexpected type %T for field end_date", values[8])
 	} else if value.Valid {
 		fi.EndDate = new(time.Time)
 		*fi.EndDate = value.Time
 	}
-	values = values[10:]
+	values = values[9:]
 	if len(values) == len(flowinstance.ForeignKeys) {
 		if value, ok := values[0].(*sql.NullInt64); !ok {
 			return fmt.Errorf("unexpected type %T for edge-field block_instance_subflow_instance", value)
@@ -269,11 +247,6 @@ func (fi *FlowInstance) QueryParentSubflowBlock() *BlockInstanceQuery {
 	return (&FlowInstanceClient{config: fi.config}).QueryParentSubflowBlock(fi)
 }
 
-// QueryFlowActivities queries the flow_activities edge of the FlowInstance.
-func (fi *FlowInstance) QueryFlowActivities() *AutomationActivityQuery {
-	return (&FlowInstanceClient{config: fi.config}).QueryFlowActivities(fi)
-}
-
 // Update returns a builder for updating this FlowInstance.
 // Note that, you need to call FlowInstance.Unwrap() before calling this method, if this FlowInstance
 // was returned from a transaction, and the transaction was committed or rolled back.
@@ -303,8 +276,6 @@ func (fi *FlowInstance) String() string {
 	builder.WriteString(fi.UpdateTime.Format(time.ANSIC))
 	builder.WriteString(", status=")
 	builder.WriteString(fmt.Sprintf("%v", fi.Status))
-	builder.WriteString(", start_params=")
-	builder.WriteString(fmt.Sprintf("%v", fi.StartParams))
 	builder.WriteString(", output_params=")
 	builder.WriteString(fmt.Sprintf("%v", fi.OutputParams))
 	builder.WriteString(", incompletion_reason=")

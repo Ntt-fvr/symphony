@@ -492,34 +492,6 @@ func HasPropertiesTypeWith(preds ...predicate.PropertyType) predicate.PropertyCa
 	})
 }
 
-// HasResourcePropertiesType applies the HasEdge predicate on the "resource_properties_type" edge.
-func HasResourcePropertiesType() predicate.PropertyCategory {
-	return predicate.PropertyCategory(func(s *sql.Selector) {
-		step := sqlgraph.NewStep(
-			sqlgraph.From(Table, FieldID),
-			sqlgraph.To(ResourcePropertiesTypeTable, FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, ResourcePropertiesTypeTable, ResourcePropertiesTypeColumn),
-		)
-		sqlgraph.HasNeighbors(s, step)
-	})
-}
-
-// HasResourcePropertiesTypeWith applies the HasEdge predicate on the "resource_properties_type" edge with a given conditions (other predicates).
-func HasResourcePropertiesTypeWith(preds ...predicate.ResourcePropertyType) predicate.PropertyCategory {
-	return predicate.PropertyCategory(func(s *sql.Selector) {
-		step := sqlgraph.NewStep(
-			sqlgraph.From(Table, FieldID),
-			sqlgraph.To(ResourcePropertiesTypeInverseTable, FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, ResourcePropertiesTypeTable, ResourcePropertiesTypeColumn),
-		)
-		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
-			for _, p := range preds {
-				p(s)
-			}
-		})
-	})
-}
-
 // HasParameterCatalog applies the HasEdge predicate on the "parameter_catalog" edge.
 func HasParameterCatalog() predicate.PropertyCategory {
 	return predicate.PropertyCategory(func(s *sql.Selector) {

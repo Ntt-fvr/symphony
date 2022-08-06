@@ -26,50 +26,36 @@ export type FlowInstanceOrder = {|
 |};
 export type FlowInstanceFilterInput = {|
   filterType: FlowInstanceFilterType,
-  idSet?: ?$ReadOnlyArray<string>,
-  maxDepth?: ?number,
   operator: FilterOperator,
-  propertyValue?: ?PropertyTypeInput,
-  stringSet?: ?$ReadOnlyArray<string>,
   stringValue?: ?string,
+  idSet?: ?$ReadOnlyArray<string>,
+  stringSet?: ?$ReadOnlyArray<string>,
+  propertyValue?: ?PropertyTypeInput,
   timeValue?: ?any,
+  maxDepth?: ?number,
 |};
 export type PropertyTypeInput = {|
-  booleanValue?: ?boolean,
-  category?: ?string,
-  dependencePropertyTypes?: ?$ReadOnlyArray<?PropertyTypeInput>,
-  externalId?: ?string,
-  floatValue?: ?number,
   id?: ?string,
+  externalId?: ?string,
+  name: string,
+  type: PropertyKind,
+  nodeType?: ?string,
   index?: ?number,
+  category?: ?string,
+  stringValue?: ?string,
   intValue?: ?number,
-  isDeleted?: ?boolean,
-  isEditable?: ?boolean,
-  isInstanceProperty?: ?boolean,
-  isListable?: ?boolean,
-  isMandatory?: ?boolean,
+  booleanValue?: ?boolean,
+  floatValue?: ?number,
   latitudeValue?: ?number,
   longitudeValue?: ?number,
-  name: string,
-  nodeType?: ?string,
-  propertyCategoryID?: ?string,
-  propertyTypeValues?: ?$ReadOnlyArray<?AddPropertyTypeValueInput>,
   rangeFromValue?: ?number,
   rangeToValue?: ?number,
-  stringValue?: ?string,
-  type: PropertyKind,
-|};
-export type AddPropertyTypeValueInput = {|
-  id?: ?string,
+  isEditable?: ?boolean,
+  isInstanceProperty?: ?boolean,
+  isMandatory?: ?boolean,
   isDeleted?: ?boolean,
-  name: string,
-  parentPropertyType?: ?$ReadOnlyArray<?ParentPropertyTypeValueInput>,
-  parentPropertyTypeValue?: ?$ReadOnlyArray<?string>,
-  propertyType?: ?string,
-|};
-export type ParentPropertyTypeValueInput = {|
-  parentPropertyType?: ?string,
-  parentPropertyTypeValue?: ?string,
+  propertyCategoryID?: ?string,
+  isListable?: ?boolean,
 |};
 export type AutomationFlowInstancesQueryRendererQueryVariables = {|
   limit?: ?number,
@@ -104,6 +90,7 @@ fragment FlowInstancesView_query_10glCF on Query {
         status
         startDate
         endDate
+        bssCode
         serviceInstanceCode
         template {
           id
@@ -248,6 +235,13 @@ return {
                     "alias": null,
                     "args": null,
                     "kind": "ScalarField",
+                    "name": "bssCode",
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
                     "name": "serviceInstanceCode",
                     "storageKey": null
                   },
@@ -333,12 +327,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "3162e801d5fa2ec3580f23b830a854f7",
+    "cacheID": "908534bed0dd802f5f6581e76989313e",
     "id": null,
     "metadata": {},
     "name": "AutomationFlowInstancesQueryRendererQuery",
     "operationKind": "query",
-    "text": "query AutomationFlowInstancesQueryRendererQuery(\n  $limit: Int\n  $orderBy: FlowInstanceOrder\n  $filters: [FlowInstanceFilterInput!]!\n) {\n  ...FlowInstancesView_query_10glCF\n}\n\nfragment FlowInstancesView_query_10glCF on Query {\n  flowInstances(first: $limit, orderBy: $orderBy, filterBy: $filters) {\n    totalCount\n    edges {\n      node {\n        id\n        status\n        startDate\n        endDate\n        serviceInstanceCode\n        template {\n          id\n          name\n        }\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n}\n"
+    "text": "query AutomationFlowInstancesQueryRendererQuery(\n  $limit: Int\n  $orderBy: FlowInstanceOrder\n  $filters: [FlowInstanceFilterInput!]!\n) {\n  ...FlowInstancesView_query_10glCF\n}\n\nfragment FlowInstancesView_query_10glCF on Query {\n  flowInstances(first: $limit, orderBy: $orderBy, filterBy: $filters) {\n    totalCount\n    edges {\n      node {\n        id\n        status\n        startDate\n        endDate\n        bssCode\n        serviceInstanceCode\n        template {\n          id\n          name\n        }\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n}\n"
   }
 };
 })();

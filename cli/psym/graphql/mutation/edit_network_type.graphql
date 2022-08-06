@@ -1,6 +1,0 @@
-mutation editNetworkType($input: EditNetworkTypeInput!) {
-  editNetworkType(input: $input) {
-    id
-    name
-  }
-}

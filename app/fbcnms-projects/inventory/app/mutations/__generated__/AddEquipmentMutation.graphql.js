@@ -16,31 +16,29 @@
 import type { ConcreteRequest } from 'relay-runtime';
 type EquipmentTable_equipments$ref = any;
 export type AddEquipmentInput = {|
-  externalId?: ?string,
-  location?: ?string,
   name: string,
+  type: string,
+  location?: ?string,
   parent?: ?string,
   positionDefinition?: ?string,
   properties?: ?$ReadOnlyArray<PropertyInput>,
-  type: string,
   workOrder?: ?string,
+  externalId?: ?string,
 |};
 export type PropertyInput = {|
-  booleanValue?: ?boolean,
-  dependenceProperties?: ?$ReadOnlyArray<PropertyInput>,
-  floatValue?: ?number,
   id?: ?string,
+  propertyTypeID: string,
+  stringValue?: ?string,
   intValue?: ?number,
-  isEditable?: ?boolean,
-  isInstanceProperty?: ?boolean,
+  booleanValue?: ?boolean,
+  floatValue?: ?number,
   latitudeValue?: ?number,
   longitudeValue?: ?number,
-  nodeIDValue?: ?string,
-  propertyTypeID: string,
-  propertyTypeValueID?: ?string,
   rangeFromValue?: ?number,
   rangeToValue?: ?number,
-  stringValue?: ?string,
+  nodeIDValue?: ?string,
+  isEditable?: ?boolean,
+  isInstanceProperty?: ?boolean,
 |};
 export type AddEquipmentMutationVariables = {|
   input: AddEquipmentInput

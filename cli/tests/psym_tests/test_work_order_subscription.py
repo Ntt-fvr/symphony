@@ -6,7 +6,7 @@
 
 import time
 from typing import Any, Dict, List
-from unittest import skip
+
 from psym.api.work_order import add_work_order
 from psym.api.work_order_type import add_work_order_type
 from psym.common.data_class import PropertyDefinition
@@ -16,7 +16,7 @@ from ..utils.base_test import BaseTest
 from ..utils.constant import TEST_USER_EMAIL, TestMode
 from .subscription_client import SubscriptionClient
 
-@skip("fixme")
+
 class TestWorkOrderSubscription(BaseTest):
     def setUp(self) -> None:
         super().setUp()

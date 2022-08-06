@@ -15,14 +15,14 @@
 /*::
 import type { ConcreteRequest } from 'relay-runtime';
 export type EditAlarmFilterInput = {|
-  alarmStatus?: ?string,
-  beginTime: any,
-  enable: boolean,
-  endTime: any,
   id: string,
   name: string,
   networkResource: string,
+  enable: boolean,
+  beginTime: any,
+  endTime: any,
   reason: string,
+  alarmStatus?: ?string,
 |};
 export type EditAlarmFilterMutationVariables = {|
   input: EditAlarmFilterInput

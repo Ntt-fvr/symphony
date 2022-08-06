@@ -50,7 +50,6 @@ const Clickable = (props: Props, forwardedRef: TRefFor<HTMLElement>) => {
     disabled: disabledProp,
     tooltip,
     className,
-    ...rest
   } = props;
   const disabled = disabledProp === true;
   const classes = useStyles();
@@ -65,8 +64,7 @@ const Clickable = (props: Props, forwardedRef: TRefFor<HTMLElement>) => {
       ref={forwardedRef}
       onClick={!disabled ? onClick : undefined}
       onMouseDown={!disabled ? onMouseDown : undefined}
-      title={tooltip}
-      {...rest}>
+      title={tooltip}>
       {children}
     </div>
   );

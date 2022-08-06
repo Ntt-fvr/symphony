@@ -15,9 +15,9 @@
 /*::
 import type { ConcreteRequest } from 'relay-runtime';
 export type EditCounterInput = {|
-  externalID: string,
   id: string,
   name: string,
+  externalID: string,
   networkManagerSystem: string,
   vendorFk: string,
 |};

@@ -12,17 +12,12 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/activity"
 	"github.com/facebookincubator/symphony/pkg/ent/appointment"
-	"github.com/facebookincubator/symphony/pkg/ent/automationactivity"
-	"github.com/facebookincubator/symphony/pkg/ent/block"
 	"github.com/facebookincubator/symphony/pkg/ent/blockinstance"
 	"github.com/facebookincubator/symphony/pkg/ent/checklistitem"
 	"github.com/facebookincubator/symphony/pkg/ent/file"
 	"github.com/facebookincubator/symphony/pkg/ent/flow"
 	"github.com/facebookincubator/symphony/pkg/ent/flowinstance"
 	"github.com/facebookincubator/symphony/pkg/ent/project"
-	"github.com/facebookincubator/symphony/pkg/ent/resourcepropertytype"
-	"github.com/facebookincubator/symphony/pkg/ent/resourcetype"
-	"github.com/facebookincubator/symphony/pkg/ent/resourcetyperelationship"
 	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
 	"github.com/facebookincubator/symphony/pkg/ent/service"
 	"github.com/facebookincubator/symphony/pkg/ent/servicetype"
@@ -93,13 +88,11 @@ type AddAppointmentInput struct {
 }
 
 type AddBlockInstanceInput struct {
-	Status     *blockinstance.Status       `json:"status"`
-	Inputs     []*flowschema.VariableValue `json:"inputs"`
-	Outputs    []*flowschema.VariableValue `json:"outputs"`
-	InputJSON  *string                     `json:"inputJSON"`
-	OutputJSON *string                     `json:"outputJSON"`
-	BlockID    int                         `json:"blockId"`
-	StartDate  time.Time                   `json:"startDate"`
+	Status    *blockinstance.Status       `json:"status"`
+	Inputs    []*flowschema.VariableValue `json:"inputs"`
+	Outputs   []*flowschema.VariableValue `json:"outputs"`
+	BlockID   int                         `json:"blockId"`
+	StartDate time.Time                   `json:"startDate"`
 }
 
 type AddBulkServiceLinksAndPortsInput struct {
@@ -173,17 +166,6 @@ type AddEventSeverityInput struct {
 	Name string `json:"name"`
 }
 
-type AddFilesInput struct {
-	ImgKey             string    `json:"imgKey"`
-	FileName           string    `json:"fileName"`
-	FileSize           int       `json:"fileSize"`
-	Modified           time.Time `json:"modified"`
-	ContentType        string    `json:"contentType"`
-	Category           *string   `json:"category"`
-	Annotation         *string   `json:"annotation"`
-	DocumentCategoryID *int      `json:"documentCategoryId"`
-}
-
 type AddFloorPlanInput struct {
 	Name             string         `json:"name"`
 	LocationID       int            `json:"locationID"`
@@ -253,7 +235,7 @@ type AddKqiCategoryInput struct {
 }
 
 type AddKqiComparatorInput struct {
-	KqiTargetFk    *int    `json:"kqiTargetFk"`
+	KqiTargetFk    int     `json:"kqiTargetFk"`
 	ComparatorFk   int     `json:"comparatorFk"`
 	Number         float64 `json:"number"`
 	ComparatorType string  `json:"comparatorType"`
@@ -280,15 +262,14 @@ type AddKqiSourceInput struct {
 }
 
 type AddKqiTargetInput struct {
-	Name             string                 `json:"name"`
-	Impact           string                 `json:"impact"`
-	Period           float64                `json:"period"`
-	AllowedVariation float64                `json:"allowedVariation"`
-	InitTime         time.Time              `json:"initTime"`
-	EndTime          time.Time              `json:"endTime"`
-	Status           bool                   `json:"status"`
-	Kqi              int                    `json:"kqi"`
-	KqiComparator    *AddKqiComparatorInput `json:"kqiComparator"`
+	Name             string    `json:"name"`
+	Impact           string    `json:"impact"`
+	Period           float64   `json:"period"`
+	AllowedVariation float64   `json:"allowedVariation"`
+	InitTime         time.Time `json:"initTime"`
+	EndTime          time.Time `json:"endTime"`
+	Status           bool      `json:"status"`
+	Kqi              int       `json:"kqi"`
 }
 
 type AddKqiTemporalFrequencyInput struct {
@@ -332,15 +313,14 @@ type AddOrganizationInput struct {
 }
 
 type AddPermissionsPolicyInput struct {
-	Name              string                         `json:"name"`
-	Description       *string                        `json:"description"`
-	IsGlobal          *bool                          `json:"isGlobal"`
-	IsMulticontractor *bool                          `json:"isMulticontractor"`
-	InventoryInput    *models1.InventoryPolicyInput  `json:"inventoryInput"`
-	WorkforceInput    *models1.WorkforcePolicyInput  `json:"workforceInput"`
-	AutomationInput   *models1.AutomationPolicyInput `json:"automationInput"`
-	AssuranceInput    *models1.AssurancePolicyInput  `json:"assuranceInput"`
-	Groups            []int                          `json:"groups"`
+	Name            string                         `json:"name"`
+	Description     *string                        `json:"description"`
+	IsGlobal        *bool                          `json:"isGlobal"`
+	InventoryInput  *models1.InventoryPolicyInput  `json:"inventoryInput"`
+	WorkforceInput  *models1.WorkforcePolicyInput  `json:"workforceInput"`
+	AutomationInput *models1.AutomationPolicyInput `json:"automationInput"`
+	AssuranceInput  *models1.AssurancePolicyInput  `json:"assuranceInput"`
+	Groups          []int                          `json:"groups"`
 }
 
 type AddProjectInput struct {
@@ -390,77 +370,18 @@ type AddRecommendationsSourcesInput struct {
 	Name string `json:"name"`
 }
 
-type AddResourcePropertyTypeInput struct {
-	ID                    *int                      `json:"id"`
-	ExternalID            *string                   `json:"externalId"`
-	Name                  string                    `json:"name"`
-	Type                  resourcepropertytype.Type `json:"type"`
-	NodeType              *string                   `json:"nodeType"`
-	Index                 *int                      `json:"index"`
-	Category              *string                   `json:"category"`
-	RawValue              *string                   `json:"rawValue"`
-	StringValue           *string                   `json:"stringValue"`
-	IntValue              *int                      `json:"intValue"`
-	BooleanValue          *bool                     `json:"booleanValue"`
-	FloatValue            *float64                  `json:"floatValue"`
-	LatitudeValue         *float64                  `json:"latitudeValue"`
-	LongitudeValue        *float64                  `json:"longitudeValue"`
-	RangeFromValue        *float64                  `json:"rangeFromValue"`
-	RangeToValue          *float64                  `json:"rangeToValue"`
-	IsEditable            *bool                     `json:"isEditable"`
-	IsInstanceProperty    *bool                     `json:"isInstanceProperty"`
-	IsMandatory           *bool                     `json:"isMandatory"`
-	IsDeleted             *bool                     `json:"isDeleted"`
-	PropertyCategory      *int                      `json:"propertyCategory"`
-	IsListable            *bool                     `json:"isListable"`
-	ResourceSpecification *int                      `json:"resourceSpecification"`
-}
-
-type AddResourceSpecificationInput struct {
-	Name                  string                          `json:"name"`
-	Quantity              *int                            `json:"quantity"`
-	ResourceType          int                             `json:"resourceType"`
-	ResourcePropertyTypes []*AddResourcePropertyTypeInput `json:"resourcePropertyTypes"`
-	Vendor                *int                            `json:"vendor"`
-}
-
-type AddResourceSpecificationItemsInput struct {
-	ResourceSpecificationRelationship int  `json:"resourceSpecificationRelationship"`
-	ResourceSpecification             *int `json:"resourceSpecification"`
-}
-
-type AddResourceSpecificationRelationshipInput struct {
-	Name                      string `json:"name"`
-	ResourceSpecification     int    `json:"resourceSpecification"`
-	ResourceSpecificationList []*int `json:"resourceSpecificationList"`
-}
-
-type AddResourceTypeInput struct {
-	Name                 string                            `json:"name"`
-	ResourceTypeBaseType resourcetype.ResourceTypeBaseType `json:"resourceTypeBaseType"`
-	ResourceTypeClass    resourcetype.ResourceTypeClass    `json:"resourceTypeClass"`
-}
-
-type AddResourceTypeRelationshipInput struct {
-	ResourceRelationshipType         resourcetyperelationship.ResourceRelationshipType         `json:"resourceRelationshipType"`
-	ResourceRelationshipMultiplicity resourcetyperelationship.ResourceRelationshipMultiplicity `json:"resourceRelationshipMultiplicity"`
-	LocationType                     *int                                                      `json:"locationType"`
-	ResourceTypeA                    int                                                       `json:"resourceTypeA"`
-	ResourceTypeB                    *int                                                      `json:"resourceTypeB"`
-}
-
 type AddRuleInput struct {
-	Name            string     `json:"name"`
-	GracePeriod     int        `json:"gracePeriod"`
-	StartDateTime   *time.Time `json:"startDateTime"`
-	EndDateTime     *time.Time `json:"endDateTime"`
-	RuleType        int        `json:"ruleType"`
-	EventTypeName   *string    `json:"eventTypeName"`
-	SpecificProblem *string    `json:"specificProblem"`
-	AdditionalInfo  *string    `json:"additionalInfo"`
-	Status          bool       `json:"status"`
-	EventSeverity   int        `json:"eventSeverity"`
-	Threshold       int        `json:"threshold"`
+	Name            string    `json:"name"`
+	GracePeriod     int       `json:"gracePeriod"`
+	StartDateTime   time.Time `json:"startDateTime"`
+	EndDateTime     time.Time `json:"endDateTime"`
+	RuleType        int       `json:"ruleType"`
+	EventTypeName   *string   `json:"eventTypeName"`
+	SpecificProblem *string   `json:"specificProblem"`
+	AdditionalInfo  *string   `json:"additionalInfo"`
+	Status          bool      `json:"status"`
+	EventSeverity   int       `json:"eventSeverity"`
+	Threshold       int       `json:"threshold"`
 }
 
 type AddRuleLimitInput struct {
@@ -521,9 +442,6 @@ type AddWorkOrderInput struct {
 	Priority            *workorder.Priority       `json:"priority"`
 	Duration            *float64                  `json:"duration"`
 	DueDate             *time.Time                `json:"dueDate"`
-	ScheduledAt         *time.Time                `json:"scheduledAt"`
-	IsNameEditable      *bool                     `json:"isNameEditable"`
-	FlowInstanceID      *int                      `json:"flowInstanceId"`
 }
 
 type AddWorkOrderTypeInput struct {
@@ -575,39 +493,6 @@ type AlarmStatusInput struct {
 	Name string `json:"name"`
 }
 
-type ArchiveFlowInput struct {
-	FlowID int `json:"flowID"`
-}
-
-type AutomationActivityFilterInput struct {
-	Limit          int                             `json:"limit"`
-	OrderDirection ent.OrderDirection              `json:"orderDirection"`
-	ActivityType   automationactivity.ActivityType `json:"activityType"`
-}
-
-type BaseBlockInput struct {
-	EnableInputTransformation       bool                  `json:"enableInputTransformation"`
-	InputTransfStrategy             *enum.TransfStrategy  `json:"inputTransfStrategy"`
-	InputParamDefinitions           *string               `json:"inputParamDefinitions"`
-	EnableOutputTransformation      bool                  `json:"enableOutputTransformation"`
-	OutputTransfStrategy            *enum.TransfStrategy  `json:"outputTransfStrategy"`
-	OutputParamDefinitions          *string               `json:"outputParamDefinitions"`
-	EnableInputStateTransformation  bool                  `json:"enableInputStateTransformation"`
-	InputStateTransfStrategy        *enum.TransfStrategy  `json:"inputStateTransfStrategy"`
-	InputStateParamDefinitions      *string               `json:"inputStateParamDefinitions"`
-	EnableOutputStateTransformation bool                  `json:"enableOutputStateTransformation"`
-	OutputStateTransfStrategy       *enum.TransfStrategy  `json:"outputStateTransfStrategy"`
-	OutputStateParamDefinitions     *string               `json:"outputStateParamDefinitions"`
-	EnableErrorHandling             *bool                 `json:"enableErrorHandling"`
-	EnableRetryPolicy               *bool                 `json:"enableRetryPolicy"`
-	AddInputToOutput                *bool                 `json:"addInputToOutput"`
-	AdditionMethod                  *block.AdditionMethod `json:"additionMethod"`
-	RetryInterval                   *int                  `json:"retryInterval"`
-	Units                           *RetryUnit            `json:"units"`
-	MaxAttemps                      *int                  `json:"maxAttemps"`
-	BackoffRate                     *int                  `json:"backoffRate"`
-}
-
 type BlockVariableInput struct {
 	BlockCid                  string                      `json:"blockCid"`
 	Type                      enum.VariableExpressionType `json:"type"`
@@ -657,23 +542,6 @@ type CheckListItemInput struct {
 	YesNoResponse      *checklistitem.YesNoVal              `json:"yesNoResponse"`
 	WifiData           []*SurveyWiFiScanData                `json:"wifiData"`
 	CellData           []*SurveyCellScanData                `json:"cellData"`
-}
-
-type ChoiceBlock struct {
-	EntryPoint       *ent.EntryPoint  `json:"entryPoint"`
-	DefaultExitPoint *ent.ExitPoint   `json:"defaultExitPoint"`
-	Rules            []*DecisionRoute `json:"rules"`
-}
-
-func (ChoiceBlock) IsBlockDetails() {}
-
-type ChoiceBlockInput struct {
-	Cid              string                            `json:"cid"`
-	EntryPoint       *EntryPointInput                  `json:"entryPoint"`
-	DefaultExitPoint *ExitPointInput                   `json:"defaultExitPoint"`
-	Routes           []*DecisionRouteInput             `json:"routes"`
-	BasicDefinitions *BaseBlockInput                   `json:"basicDefinitions"`
-	UIRepresentation *flowschema.BlockUIRepresentation `json:"uiRepresentation"`
 }
 
 type ClockActivity struct {
@@ -742,13 +610,26 @@ type CounterListInput struct {
 	Mandatory bool `json:"mandatory"`
 }
 
+type DecisionBlock struct {
+	EntryPoint       *ent.EntryPoint  `json:"entryPoint"`
+	DefaultExitPoint *ent.ExitPoint   `json:"defaultExitPoint"`
+	Routes           []*DecisionRoute `json:"routes"`
+}
+
+func (DecisionBlock) IsBlockDetails() {}
+
+type DecisionBlockInput struct {
+	Cid              string                            `json:"cid"`
+	Routes           []*DecisionRouteInput             `json:"routes"`
+	UIRepresentation *flowschema.BlockUIRepresentation `json:"uiRepresentation"`
+}
+
 type DecisionRoute struct {
 	ExitPoint *ent.ExitPoint `json:"exitPoint"`
 }
 
 type DecisionRouteInput struct {
 	Cid       *string                  `json:"cid"`
-	Index     *int                     `json:"index"`
 	Condition *VariableExpressionInput `json:"condition"`
 }
 
@@ -764,12 +645,6 @@ type DomainFilterInput struct {
 type DomainInput struct {
 	ID   int    `json:"id"`
 	Name string `json:"name"`
-}
-
-type DuplicateFlowInput struct {
-	FlowID      int     `json:"flowID"`
-	Name        string  `json:"name"`
-	Description *string `json:"description"`
 }
 
 type EditAlarmFilterInput struct {
@@ -790,11 +665,11 @@ type EditAlarmStatusInput struct {
 
 type EditAppointmentInput struct {
 	ID          int                 `json:"id"`
-	AssigneeID  *int                `json:"assigneeID"`
-	WorkorderID *int                `json:"workorderID"`
-	Date        *time.Time          `json:"date"`
+	AssigneeID  int                 `json:"assigneeID"`
+	WorkorderID int                 `json:"workorderID"`
+	Date        time.Time           `json:"date"`
 	Status      *appointment.Status `json:"status"`
-	Duration    *float64            `json:"duration"`
+	Duration    float64             `json:"duration"`
 }
 
 type EditBlockInput struct {
@@ -807,8 +682,6 @@ type EditBlockInstanceInput struct {
 	Status        *blockinstance.Status       `json:"status"`
 	Inputs        []*flowschema.VariableValue `json:"inputs"`
 	Outputs       []*flowschema.VariableValue `json:"outputs"`
-	InputJSON     *string                     `json:"inputJSON"`
-	OutputJSON    *string                     `json:"outputJSON"`
 	FailureReason *string                     `json:"failure_reason"`
 	EndDate       *time.Time                  `json:"endDate"`
 }
@@ -878,12 +751,10 @@ type EditEventSeverityInput struct {
 }
 
 type EditFlowInstanceInput struct {
-	ID                  int                         `json:"id"`
-	ServiceInstanceCode *string                     `json:"serviceInstanceCode"`
-	Status              *flowinstance.Status        `json:"status"`
-	BssCode             *string                     `json:"bssCode"`
-	EndDate             *time.Time                  `json:"endDate"`
-	StartParams         []*flowschema.VariableValue `json:"startParams"`
+	ID                  int                  `json:"id"`
+	ServiceInstanceCode *string              `json:"serviceInstanceCode"`
+	Status              *flowinstance.Status `json:"status"`
+	EndDate             *time.Time           `json:"endDate"`
 }
 
 type EditFormulaInput struct {
@@ -1011,16 +882,15 @@ type EditParameterCatalogInput struct {
 }
 
 type EditPermissionsPolicyInput struct {
-	ID                int                            `json:"id"`
-	Name              *string                        `json:"name"`
-	Description       *string                        `json:"description"`
-	IsGlobal          *bool                          `json:"isGlobal"`
-	IsMulticontractor *bool                          `json:"isMulticontractor"`
-	InventoryInput    *models1.InventoryPolicyInput  `json:"inventoryInput"`
-	WorkforceInput    *models1.WorkforcePolicyInput  `json:"workforceInput"`
-	AutomationInput   *models1.AutomationPolicyInput `json:"automationInput"`
-	AssuranceInput    *models1.AssurancePolicyInput  `json:"assuranceInput"`
-	Groups            []int                          `json:"groups"`
+	ID              int                            `json:"id"`
+	Name            *string                        `json:"name"`
+	Description     *string                        `json:"description"`
+	IsGlobal        *bool                          `json:"isGlobal"`
+	InventoryInput  *models1.InventoryPolicyInput  `json:"inventoryInput"`
+	WorkforceInput  *models1.WorkforcePolicyInput  `json:"workforceInput"`
+	AutomationInput *models1.AutomationPolicyInput `json:"automationInput"`
+	AssuranceInput  *models1.AssurancePolicyInput  `json:"assuranceInput"`
+	Groups          []int                          `json:"groups"`
 }
 
 type EditProjectInput struct {
@@ -1047,17 +917,6 @@ type EditPropertyCategoryInput struct {
 	Name               string `json:"name"`
 	Index              int    `json:"index"`
 	ParameterCatalogID int    `json:"parameterCatalogId"`
-}
-
-type EditPropertyTypeInput struct {
-	ID        int  `json:"id"`
-	IsDeleted bool `json:"isDeleted"`
-}
-
-type EditPropertyTypeValueInput struct {
-	ID        *int   `json:"id"`
-	Name      string `json:"name"`
-	IsDeleted *bool  `json:"isDeleted"`
 }
 
 type EditRecommendationsCategoryInput struct {
@@ -1091,44 +950,6 @@ type EditRecommendationsSourcesInput struct {
 type EditReportFilterInput struct {
 	ID   int    `json:"id"`
 	Name string `json:"name"`
-}
-
-type EditResourceSpecificationInput struct {
-	ID                    int                             `json:"id"`
-	Name                  string                          `json:"name"`
-	Quantity              *int                            `json:"quantity"`
-	ResourceType          *int                            `json:"resourceType"`
-	ResourcePropertyTypes []*AddResourcePropertyTypeInput `json:"resourcePropertyTypes"`
-	Vendor                *int                            `json:"vendor"`
-}
-
-type EditResourceSpecificationItemsInput struct {
-	ID                                int  `json:"id"`
-	ResourceSpecificationRelationship *int `json:"resourceSpecificationRelationship"`
-	ResourceSpecification             *int `json:"resourceSpecification"`
-}
-
-type EditResourceSpecificationRelationshipInput struct {
-	ID                        *int   `json:"id"`
-	Name                      string `json:"name"`
-	ResourceSpecification     *int   `json:"resourceSpecification"`
-	ResourceSpecificationList []*int `json:"resourceSpecificationList"`
-}
-
-type EditResourceTypeInput struct {
-	ID                   int                               `json:"id"`
-	Name                 string                            `json:"name"`
-	ResourceTypeBaseType resourcetype.ResourceTypeBaseType `json:"resourceTypeBaseType"`
-	ResourceTypeClass    resourcetype.ResourceTypeClass    `json:"resourceTypeClass"`
-}
-
-type EditResourceTypeRelationshipInput struct {
-	ID                               int                                                       `json:"id"`
-	ResourceRelationshipType         resourcetyperelationship.ResourceRelationshipType         `json:"resourceRelationshipType"`
-	ResourceRelationshipMultiplicity resourcetyperelationship.ResourceRelationshipMultiplicity `json:"resourceRelationshipMultiplicity"`
-	LocationType                     *int                                                      `json:"locationType"`
-	ResourceTypeA                    int                                                       `json:"resourceTypeA"`
-	ResourceTypeB                    *int                                                      `json:"resourceTypeB"`
 }
 
 type EditRuleInput struct {
@@ -1214,9 +1035,6 @@ type EditWorkOrderInput struct {
 	LocationID          *int                      `json:"locationId"`
 	Duration            *float64                  `json:"duration"`
 	DueDate             *time.Time                `json:"dueDate"`
-	ScheduledAt         *time.Time                `json:"scheduledAt"`
-	IsNameEditable      *bool                     `json:"isNameEditable"`
-	FlowInstanceID      *int                      `json:"flowInstanceId"`
 }
 
 type EditWorkOrderTypeInput struct {
@@ -1293,25 +1111,6 @@ type EventSeverityFilterInput struct {
 	StringSet   []string                `json:"stringSet"`
 }
 
-type ExecuteFlowBlock struct {
-	Flow       *ent.Flow                        `json:"flow"`
-	Params     []*flowschema.VariableExpression `json:"params"`
-	EntryPoint *ent.EntryPoint                  `json:"entryPoint"`
-	ExitPoint  *ent.ExitPoint                   `json:"exitPoint"`
-}
-
-func (ExecuteFlowBlock) IsBlockDetails() {}
-
-type ExecuteFlowBlockInput struct {
-	Cid              string                            `json:"cid"`
-	EntryPoint       *EntryPointInput                  `json:"entryPoint"`
-	ExitPoint        *ExitPointInput                   `json:"exitPoint"`
-	Flow             int                               `json:"flow"`
-	Params           []*VariableExpressionInput        `json:"params"`
-	BasicDefinitions *BaseBlockInput                   `json:"basicDefinitions"`
-	UIRepresentation *flowschema.BlockUIRepresentation `json:"uiRepresentation"`
-}
-
 type ExitPointInput struct {
 	Role *flowschema.ExitPointRole `json:"role"`
 	Cid  *string                   `json:"cid"`
@@ -1329,17 +1128,6 @@ type FileInput struct {
 	Annotation       *string    `json:"annotation"`
 }
 
-type FlowFilterInput struct {
-	FilterType  FlowFilterType      `json:"filterType"`
-	Operator    enum.FilterOperator `json:"operator"`
-	StringValue *string             `json:"stringValue"`
-	CmType      *flow.CmType        `json:"cmType"`
-	IDSet       []int               `json:"idSet"`
-	StringSet   []string            `json:"stringSet"`
-	TimeValue   *time.Time          `json:"timeValue"`
-	MaxDepth    *int                `json:"maxDepth"`
-}
-
 type FlowInstanceFilterInput struct {
 	FilterType    FlowInstanceFilterType    `json:"filterType"`
 	Operator      enum.FilterOperator       `json:"operator"`
@@ -1350,14 +1138,6 @@ type FlowInstanceFilterInput struct {
 	TimeValue     *time.Time                `json:"timeValue"`
 	MaxDepth      *int                      `json:"maxDepth"`
 }
-
-type ForEachBlock struct {
-	EntryPoint        *ent.EntryPoint `json:"entryPoint"`
-	InternalExitPoint *ent.ExitPoint  `json:"internalExitPoint"`
-	ExitPoint         *ent.ExitPoint  `json:"exitPoint"`
-}
-
-func (ForEachBlock) IsBlockDetails() {}
 
 type FormulaFilterInput struct {
 	FilterType  FormulaFilterType   `json:"filterType"`
@@ -1393,7 +1173,6 @@ type GeneralFilterInput struct {
 
 type GotoBlock struct {
 	Target     *ent.Block      `json:"target"`
-	Type       block.GotoType  `json:"type"`
 	EntryPoint *ent.EntryPoint `json:"entryPoint"`
 }
 
@@ -1402,7 +1181,6 @@ func (GotoBlock) IsBlockDetails() {}
 type GotoBlockInput struct {
 	Cid              string                            `json:"cid"`
 	TargetBlockCid   *string                           `json:"targetBlockCid"`
-	Type             block.GotoType                    `json:"type"`
 	UIRepresentation *flowschema.BlockUIRepresentation `json:"uiRepresentation"`
 }
 
@@ -1413,77 +1191,13 @@ type ImportFlowDraftInput struct {
 	EndParamDefinitions []*flowschema.VariableDefinition `json:"endParamDefinitions"`
 	StartBlock          *StartBlockInput                 `json:"startBlock"`
 	EndBlocks           []*EndBlockInput                 `json:"endBlocks"`
+	DecisionBlocks      []*DecisionBlockInput            `json:"decisionBlocks"`
 	GotoBlocks          []*GotoBlockInput                `json:"gotoBlocks"`
+	SubflowBlocks       []*SubflowBlockInput             `json:"subflowBlocks"`
 	TriggerBlocks       []*TriggerBlockInput             `json:"triggerBlocks"`
 	ActionBlocks        []*ActionBlockInput              `json:"actionBlocks"`
-	ChoiceBlocks        []*ChoiceBlockInput              `json:"choiceBlocks"`
-	ExecuteFlowBlocks   []*ExecuteFlowBlockInput         `json:"executeFlowBlocks"`
-	TimerBlocks         []*TimerBlockInput               `json:"timerBlocks"`
-	WaitForSignalBlocks []*WaitForSignalBlockInput       `json:"waitForSignalBlocks"`
-	InvokeRestAPIBlocks []*InvokeRestAPIBlockInput       `json:"invokeRestAPIBlocks"`
-	KafkaBlocks         []*KafkaBlockInput               `json:"kafkaBlocks"`
+	TrueFalseBlocks     []*TrueFalseBlockInput           `json:"trueFalseBlocks"`
 	Connectors          []*ConnectorInput                `json:"connectors"`
-}
-
-type InvokeRestAPIBlock struct {
-	EntryPoint        *ent.EntryPoint             `json:"entryPoint"`
-	Method            block.URLMethod             `json:"method"`
-	URL               string                      `json:"url"`
-	ConnectionTimeOut int                         `json:"connectionTimeOut"`
-	Body              string                      `json:"body"`
-	Headers           []*flowschema.VariableValue `json:"headers"`
-	AuthType          *block.AuthType             `json:"authType"`
-	User              *string                     `json:"user"`
-	Password          *string                     `json:"password"`
-	ClientID          *string                     `json:"clientId"`
-	ClientSecret      *string                     `json:"clientSecret"`
-	OidcURL           *string                     `json:"oidcUrl"`
-	ExitPoint         *ent.ExitPoint              `json:"exitPoint"`
-}
-
-func (InvokeRestAPIBlock) IsBlockDetails() {}
-
-type InvokeRestAPIBlockInput struct {
-	Cid               string                            `json:"cid"`
-	EntryPoint        *EntryPointInput                  `json:"entryPoint"`
-	ExitPoint         *ExitPointInput                   `json:"exitPoint"`
-	Method            block.URLMethod                   `json:"method"`
-	URL               string                            `json:"url"`
-	ConnectionTimeOut int                               `json:"connectionTimeOut"`
-	Body              string                            `json:"body"`
-	Headers           []*flowschema.VariableValue       `json:"headers"`
-	AuthType          *block.AuthType                   `json:"authType"`
-	User              *string                           `json:"user"`
-	Password          *string                           `json:"password"`
-	ClientID          *string                           `json:"clientId"`
-	ClientSecret      *string                           `json:"clientSecret"`
-	OidcURL           *string                           `json:"oidcUrl"`
-	BasicDefinitions  *BaseBlockInput                   `json:"basicDefinitions"`
-	Params            []*VariableExpressionInput        `json:"params"`
-	UIRepresentation  *flowschema.BlockUIRepresentation `json:"uiRepresentation"`
-}
-
-type KafkaBlock struct {
-	EntryPoint *ent.EntryPoint       `json:"entryPoint"`
-	ExitPoint  *ent.ExitPoint        `json:"exitPoint"`
-	Brokers    []string              `json:"brokers"`
-	Topic      string                `json:"topic"`
-	Message    string                `json:"message"`
-	Type       enum.KafkaMessageType `json:"type"`
-}
-
-func (KafkaBlock) IsBlockDetails() {}
-
-type KafkaBlockInput struct {
-	Cid              string                            `json:"cid"`
-	EntryPoint       *EntryPointInput                  `json:"entryPoint"`
-	ExitPoint        *ExitPointInput                   `json:"exitPoint"`
-	Brokers          []string                          `json:"brokers"`
-	Topic            string                            `json:"topic"`
-	Message          string                            `json:"message"`
-	Type             enum.KafkaMessageType             `json:"type"`
-	BasicDefinitions *BaseBlockInput                   `json:"basicDefinitions"`
-	UIRepresentation *flowschema.BlockUIRepresentation `json:"uiRepresentation"`
 }
 
 type KpiCategoryFilterInput struct {
@@ -1596,14 +1310,6 @@ type OrganizationFilterInput struct {
 	StringSet   []string               `json:"stringSet"`
 }
 
-type ParallelBlock struct {
-	EntryPoint        *ent.EntryPoint `json:"entryPoint"`
-	InternalExitPoint *ent.ExitPoint  `json:"internalExitPoint"`
-	ExitPoint         *ent.ExitPoint  `json:"exitPoint"`
-}
-
-func (ParallelBlock) IsBlockDetails() {}
-
 type PermissionsPolicyFilterInput struct {
 	FilterType  PermissionsPolicyFilterType `json:"filterType"`
 	Operator    enum.FilterOperator         `json:"operator"`
@@ -1636,36 +1342,24 @@ type PropertiesByCategories struct {
 }
 
 type PropertyInput struct {
-	ID                   *int             `json:"id"`
-	PropertyTypeID       int              `json:"propertyTypeID"`
-	StringValue          *string          `json:"stringValue"`
-	IntValue             *int             `json:"intValue"`
-	BooleanValue         *bool            `json:"booleanValue"`
-	FloatValue           *float64         `json:"floatValue"`
-	LatitudeValue        *float64         `json:"latitudeValue"`
-	LongitudeValue       *float64         `json:"longitudeValue"`
-	RangeFromValue       *float64         `json:"rangeFromValue"`
-	RangeToValue         *float64         `json:"rangeToValue"`
-	NodeIDValue          *int             `json:"nodeIDValue"`
-	IsEditable           *bool            `json:"isEditable"`
-	IsInstanceProperty   *bool            `json:"isInstanceProperty"`
-	DependenceProperties []*PropertyInput `json:"dependenceProperties"`
-	PropertyTypeValueID  *int             `json:"propertyTypeValueID"`
-}
-
-type PropertyTypeValueFilterInput struct {
-	FilterType  PropertyTypeValueFilterType `json:"filterType"`
-	Operator    enum.FilterOperator         `json:"operator"`
-	StringValue *string                     `json:"stringValue"`
-	IDSet       []int                       `json:"idSet"`
-	MaxDepth    *int                        `json:"maxDepth"`
-	StringSet   []string                    `json:"stringSet"`
+	ID                 *int     `json:"id"`
+	PropertyTypeID     int      `json:"propertyTypeID"`
+	StringValue        *string  `json:"stringValue"`
+	IntValue           *int     `json:"intValue"`
+	BooleanValue       *bool    `json:"booleanValue"`
+	FloatValue         *float64 `json:"floatValue"`
+	LatitudeValue      *float64 `json:"latitudeValue"`
+	LongitudeValue     *float64 `json:"longitudeValue"`
+	RangeFromValue     *float64 `json:"rangeFromValue"`
+	RangeToValue       *float64 `json:"rangeToValue"`
+	NodeIDValue        *int     `json:"nodeIDValue"`
+	IsEditable         *bool    `json:"isEditable"`
+	IsInstanceProperty *bool    `json:"isInstanceProperty"`
 }
 
 type PublishFlowInput struct {
 	FlowDraftID         int                     `json:"flowDraftID"`
 	FlowInstancesPolicy flow.NewInstancesPolicy `json:"flowInstancesPolicy"`
-	CmType              *flow.CmType            `json:"cmType"`
 }
 
 type PythonPackage struct {
@@ -1716,53 +1410,6 @@ type ReportFilterInput struct {
 	Name    string                `json:"name"`
 	Entity  FilterEntity          `json:"entity"`
 	Filters []*GeneralFilterInput `json:"filters"`
-}
-
-type ResourceSpecificationFilterInput struct {
-	FilterType  ResourceSpecificationFilterType `json:"filterType"`
-	Operator    enum.FilterOperator             `json:"operator"`
-	StringValue *string                         `json:"stringValue"`
-	IDSet       []int                           `json:"idSet"`
-	MaxDepth    *int                            `json:"maxDepth"`
-	StringSet   []string                        `json:"stringSet"`
-}
-
-type ResourceSpecificationItemsFilterInput struct {
-	FilterType ResourceSpecificationItemsFilterType `json:"filterType"`
-	Operator   enum.FilterOperator                  `json:"operator"`
-	IDSet      []int                                `json:"idSet"`
-	MaxDepth   *int                                 `json:"maxDepth"`
-}
-
-type ResourceSpecificationRelationshipFilterInput struct {
-	FilterType  ResourceSpecificationRelationshipFilterType `json:"filterType"`
-	Operator    enum.FilterOperator                         `json:"operator"`
-	StringValue *string                                     `json:"stringValue"`
-	IDSet       []int                                       `json:"idSet"`
-	MaxDepth    *int                                        `json:"maxDepth"`
-	StringSet   []string                                    `json:"stringSet"`
-}
-
-type ResourceTypeFilterInput struct {
-	FilterType        ResourceTypeFilterType             `json:"filterType"`
-	Operator          enum.FilterOperator                `json:"operator"`
-	StringValue       *string                            `json:"stringValue"`
-	TypeClassValue    *resourcetype.ResourceTypeClass    `json:"typeClassValue"`
-	TypeBaseTypeValue *resourcetype.ResourceTypeBaseType `json:"typeBaseTypeValue"`
-	IDSet             []int                              `json:"idSet"`
-	MaxDepth          *int                               `json:"maxDepth"`
-	StringSet         []string                           `json:"stringSet"`
-}
-
-type ResourceTypeRelationshipFilterInput struct {
-	FilterType        ResourceTypeRelationshipFilterType                         `json:"filterType"`
-	Operator          enum.FilterOperator                                        `json:"operator"`
-	StringValue       *string                                                    `json:"stringValue"`
-	MultiplicityValue *resourcetyperelationship.ResourceRelationshipMultiplicity `json:"multiplicityValue"`
-	TypeValue         *resourcetyperelationship.ResourceRelationshipType         `json:"typeValue"`
-	IDSet             []int                                                      `json:"idSet"`
-	MaxDepth          *int                                                       `json:"maxDepth"`
-	StringSet         []string                                                   `json:"stringSet"`
 }
 
 type RuleInput struct {
@@ -1883,9 +1530,25 @@ type StartBlockInput struct {
 
 type StartFlowInput struct {
 	FlowID    int                         `json:"flowID"`
-	BssCode   *string                     `json:"bssCode"`
+	BssCode   string                      `json:"bssCode"`
 	StartDate time.Time                   `json:"startDate"`
 	Params    []*flowschema.VariableValue `json:"params"`
+}
+
+type SubflowBlock struct {
+	Flow       *ent.Flow                        `json:"flow"`
+	Params     []*flowschema.VariableExpression `json:"params"`
+	EntryPoint *ent.EntryPoint                  `json:"entryPoint"`
+	ExitPoint  *ent.ExitPoint                   `json:"exitPoint"`
+}
+
+func (SubflowBlock) IsBlockDetails() {}
+
+type SubflowBlockInput struct {
+	Cid              string                            `json:"cid"`
+	FlowID           int                               `json:"flowId"`
+	Params           []*VariableExpressionInput        `json:"params"`
+	UIRepresentation *flowschema.BlockUIRepresentation `json:"uiRepresentation"`
 }
 
 type SurveyCellScanData struct {
@@ -2036,31 +1699,6 @@ type ThresholdInput struct {
 	Kpi         int          `json:"kpi"`
 }
 
-type TimerBlock struct {
-	Behavior          block.TimerBehavior `json:"behavior"`
-	Seconds           *int                `json:"seconds"`
-	Datetime          *time.Time          `json:"datetime"`
-	EnableExpressionL *bool               `json:"enableExpressionL"`
-	Expression        *string             `json:"expression"`
-	ExitPoint         *ent.ExitPoint      `json:"exitPoint"`
-}
-
-func (TimerBlock) IsBlockDetails() {}
-
-type TimerBlockInput struct {
-	Cid               string                            `json:"cid"`
-	ExitPoint         *ExitPointInput                   `json:"exitPoint"`
-	EntryPoint        *EntryPointInput                  `json:"entryPoint"`
-	Behavior          block.TimerBehavior               `json:"behavior"`
-	Seconds           *int                              `json:"seconds"`
-	SpecificDatetime  *time.Time                        `json:"specificDatetime"`
-	EnableExpressionL *bool                             `json:"enableExpressionL"`
-	Expression        *string                           `json:"expression"`
-	Params            []*VariableExpressionInput        `json:"params"`
-	BasicDefinitions  *BaseBlockInput                   `json:"basicDefinitions"`
-	UIRepresentation  *flowschema.BlockUIRepresentation `json:"uiRepresentation"`
-}
-
 type TopologyLink struct {
 	Type   TopologyLinkType `json:"type"`
 	Source ent.Noder        `json:"source"`
@@ -2079,6 +1717,19 @@ type TriggerBlockInput struct {
 	Cid              string                            `json:"cid"`
 	TriggerType      flowschema.TriggerTypeID          `json:"triggerType"`
 	Params           []*VariableExpressionInput        `json:"params"`
+	UIRepresentation *flowschema.BlockUIRepresentation `json:"uiRepresentation"`
+}
+
+type TrueFalseBlock struct {
+	EntryPoint     *ent.EntryPoint `json:"entryPoint"`
+	TrueExitPoint  *ent.ExitPoint  `json:"trueExitPoint"`
+	FalseExitPoint *ent.ExitPoint  `json:"falseExitPoint"`
+}
+
+func (TrueFalseBlock) IsBlockDetails() {}
+
+type TrueFalseBlockInput struct {
+	Cid              string                            `json:"cid"`
 	UIRepresentation *flowschema.BlockUIRepresentation `json:"uiRepresentation"`
 }
 
@@ -2137,30 +1788,6 @@ type VendorFilterInput struct {
 	IDSet       []int               `json:"idSet"`
 	MaxDepth    *int                `json:"maxDepth"`
 	StringSet   []string            `json:"stringSet"`
-}
-
-type WaitForSignalBlock struct {
-	EntryPoint   *ent.EntryPoint     `json:"entryPoint"`
-	ExitPoint    *ent.ExitPoint      `json:"exitPoint"`
-	Type         *block.SignalType   `json:"type"`
-	SignalModule *block.SignalModule `json:"signalModule"`
-	CustomFilter *string             `json:"customFilter"`
-	Blocked      bool                `json:"blocked"`
-}
-
-func (WaitForSignalBlock) IsBlockDetails() {}
-
-type WaitForSignalBlockInput struct {
-	Cid              string                            `json:"cid"`
-	EntryPoint       *EntryPointInput                  `json:"entryPoint"`
-	ExitPoint        *ExitPointInput                   `json:"exitPoint"`
-	Type             block.SignalType                  `json:"type"`
-	SignalModule     block.SignalModule                `json:"signalModule"`
-	CustomFilter     *string                           `json:"customFilter"`
-	Blocked          bool                              `json:"blocked"`
-	Params           []*VariableExpressionInput        `json:"params"`
-	BasicDefinitions *BaseBlockInput                   `json:"basicDefinitions"`
-	UIRepresentation *flowschema.BlockUIRepresentation `json:"uiRepresentation"`
 }
 
 type WorkOrderDefinitionInput struct {
@@ -2546,47 +2173,6 @@ func (e *FilterEntity) UnmarshalGQL(v interface{}) error {
 }
 
 func (e FilterEntity) MarshalGQL(w io.Writer) {
-	fmt.Fprint(w, strconv.Quote(e.String()))
-}
-
-type FlowFilterType string
-
-const (
-	FlowFilterTypeFlowName   FlowFilterType = "FLOW_NAME"
-	FlowFilterTypeFlowCmType FlowFilterType = "FLOW_CM_TYPE"
-)
-
-var AllFlowFilterType = []FlowFilterType{
-	FlowFilterTypeFlowName,
-	FlowFilterTypeFlowCmType,
-}
-
-func (e FlowFilterType) IsValid() bool {
-	switch e {
-	case FlowFilterTypeFlowName, FlowFilterTypeFlowCmType:
-		return true
-	}
-	return false
-}
-
-func (e FlowFilterType) String() string {
-	return string(e)
-}
-
-func (e *FlowFilterType) UnmarshalGQL(v interface{}) error {
-	str, ok := v.(string)
-	if !ok {
-		return fmt.Errorf("enums must be strings")
-	}
-
-	*e = FlowFilterType(str)
-	if !e.IsValid() {
-		return fmt.Errorf("%s is not a valid FlowFilterType", str)
-	}
-	return nil
-}
-
-func (e FlowFilterType) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 
@@ -3211,45 +2797,6 @@ func (e ProjectFilterType) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 
-type PropertyTypeValueFilterType string
-
-const (
-	PropertyTypeValueFilterTypeName PropertyTypeValueFilterType = "NAME"
-)
-
-var AllPropertyTypeValueFilterType = []PropertyTypeValueFilterType{
-	PropertyTypeValueFilterTypeName,
-}
-
-func (e PropertyTypeValueFilterType) IsValid() bool {
-	switch e {
-	case PropertyTypeValueFilterTypeName:
-		return true
-	}
-	return false
-}
-
-func (e PropertyTypeValueFilterType) String() string {
-	return string(e)
-}
-
-func (e *PropertyTypeValueFilterType) UnmarshalGQL(v interface{}) error {
-	str, ok := v.(string)
-	if !ok {
-		return fmt.Errorf("enums must be strings")
-	}
-
-	*e = PropertyTypeValueFilterType(str)
-	if !e.IsValid() {
-		return fmt.Errorf("%s is not a valid PropertyTypeValueFilterType", str)
-	}
-	return nil
-}
-
-func (e PropertyTypeValueFilterType) MarshalGQL(w io.Writer) {
-	fmt.Fprint(w, strconv.Quote(e.String()))
-}
-
 type RecommendationsCategoryFilterType string
 
 const (
@@ -3392,266 +2939,6 @@ func (e *RecommendationsSourcesFilterType) UnmarshalGQL(v interface{}) error {
 }
 
 func (e RecommendationsSourcesFilterType) MarshalGQL(w io.Writer) {
-	fmt.Fprint(w, strconv.Quote(e.String()))
-}
-
-type ResourceSpecificationFilterType string
-
-const (
-	ResourceSpecificationFilterTypeID           ResourceSpecificationFilterType = "ID"
-	ResourceSpecificationFilterTypeName         ResourceSpecificationFilterType = "NAME"
-	ResourceSpecificationFilterTypeResourceType ResourceSpecificationFilterType = "RESOURCE_TYPE"
-)
-
-var AllResourceSpecificationFilterType = []ResourceSpecificationFilterType{
-	ResourceSpecificationFilterTypeID,
-	ResourceSpecificationFilterTypeName,
-	ResourceSpecificationFilterTypeResourceType,
-}
-
-func (e ResourceSpecificationFilterType) IsValid() bool {
-	switch e {
-	case ResourceSpecificationFilterTypeID, ResourceSpecificationFilterTypeName, ResourceSpecificationFilterTypeResourceType:
-		return true
-	}
-	return false
-}
-
-func (e ResourceSpecificationFilterType) String() string {
-	return string(e)
-}
-
-func (e *ResourceSpecificationFilterType) UnmarshalGQL(v interface{}) error {
-	str, ok := v.(string)
-	if !ok {
-		return fmt.Errorf("enums must be strings")
-	}
-
-	*e = ResourceSpecificationFilterType(str)
-	if !e.IsValid() {
-		return fmt.Errorf("%s is not a valid ResourceSpecificationFilterType", str)
-	}
-	return nil
-}
-
-func (e ResourceSpecificationFilterType) MarshalGQL(w io.Writer) {
-	fmt.Fprint(w, strconv.Quote(e.String()))
-}
-
-type ResourceSpecificationItemsFilterType string
-
-const (
-	ResourceSpecificationItemsFilterTypeResourceSpecificationRelationship ResourceSpecificationItemsFilterType = "RESOURCE_SPECIFICATION_RELATIONSHIP"
-	ResourceSpecificationItemsFilterTypeResourceSpecification             ResourceSpecificationItemsFilterType = "RESOURCE_SPECIFICATION"
-)
-
-var AllResourceSpecificationItemsFilterType = []ResourceSpecificationItemsFilterType{
-	ResourceSpecificationItemsFilterTypeResourceSpecificationRelationship,
-	ResourceSpecificationItemsFilterTypeResourceSpecification,
-}
-
-func (e ResourceSpecificationItemsFilterType) IsValid() bool {
-	switch e {
-	case ResourceSpecificationItemsFilterTypeResourceSpecificationRelationship, ResourceSpecificationItemsFilterTypeResourceSpecification:
-		return true
-	}
-	return false
-}
-
-func (e ResourceSpecificationItemsFilterType) String() string {
-	return string(e)
-}
-
-func (e *ResourceSpecificationItemsFilterType) UnmarshalGQL(v interface{}) error {
-	str, ok := v.(string)
-	if !ok {
-		return fmt.Errorf("enums must be strings")
-	}
-
-	*e = ResourceSpecificationItemsFilterType(str)
-	if !e.IsValid() {
-		return fmt.Errorf("%s is not a valid ResourceSpecificationItemsFilterType", str)
-	}
-	return nil
-}
-
-func (e ResourceSpecificationItemsFilterType) MarshalGQL(w io.Writer) {
-	fmt.Fprint(w, strconv.Quote(e.String()))
-}
-
-type ResourceSpecificationRelationshipFilterType string
-
-const (
-	ResourceSpecificationRelationshipFilterTypeName                  ResourceSpecificationRelationshipFilterType = "NAME"
-	ResourceSpecificationRelationshipFilterTypeResourceSpecification ResourceSpecificationRelationshipFilterType = "RESOURCE_SPECIFICATION"
-)
-
-var AllResourceSpecificationRelationshipFilterType = []ResourceSpecificationRelationshipFilterType{
-	ResourceSpecificationRelationshipFilterTypeName,
-	ResourceSpecificationRelationshipFilterTypeResourceSpecification,
-}
-
-func (e ResourceSpecificationRelationshipFilterType) IsValid() bool {
-	switch e {
-	case ResourceSpecificationRelationshipFilterTypeName, ResourceSpecificationRelationshipFilterTypeResourceSpecification:
-		return true
-	}
-	return false
-}
-
-func (e ResourceSpecificationRelationshipFilterType) String() string {
-	return string(e)
-}
-
-func (e *ResourceSpecificationRelationshipFilterType) UnmarshalGQL(v interface{}) error {
-	str, ok := v.(string)
-	if !ok {
-		return fmt.Errorf("enums must be strings")
-	}
-
-	*e = ResourceSpecificationRelationshipFilterType(str)
-	if !e.IsValid() {
-		return fmt.Errorf("%s is not a valid ResourceSpecificationRelationshipFilterType", str)
-	}
-	return nil
-}
-
-func (e ResourceSpecificationRelationshipFilterType) MarshalGQL(w io.Writer) {
-	fmt.Fprint(w, strconv.Quote(e.String()))
-}
-
-type ResourceTypeFilterType string
-
-const (
-	ResourceTypeFilterTypeName                 ResourceTypeFilterType = "NAME"
-	ResourceTypeFilterTypeResourceTypeClass    ResourceTypeFilterType = "RESOURCE_TYPE_CLASS"
-	ResourceTypeFilterTypeResourceTypeBaseType ResourceTypeFilterType = "RESOURCE_TYPE_BASE_TYPE"
-)
-
-var AllResourceTypeFilterType = []ResourceTypeFilterType{
-	ResourceTypeFilterTypeName,
-	ResourceTypeFilterTypeResourceTypeClass,
-	ResourceTypeFilterTypeResourceTypeBaseType,
-}
-
-func (e ResourceTypeFilterType) IsValid() bool {
-	switch e {
-	case ResourceTypeFilterTypeName, ResourceTypeFilterTypeResourceTypeClass, ResourceTypeFilterTypeResourceTypeBaseType:
-		return true
-	}
-	return false
-}
-
-func (e ResourceTypeFilterType) String() string {
-	return string(e)
-}
-
-func (e *ResourceTypeFilterType) UnmarshalGQL(v interface{}) error {
-	str, ok := v.(string)
-	if !ok {
-		return fmt.Errorf("enums must be strings")
-	}
-
-	*e = ResourceTypeFilterType(str)
-	if !e.IsValid() {
-		return fmt.Errorf("%s is not a valid ResourceTypeFilterType", str)
-	}
-	return nil
-}
-
-func (e ResourceTypeFilterType) MarshalGQL(w io.Writer) {
-	fmt.Fprint(w, strconv.Quote(e.String()))
-}
-
-type ResourceTypeRelationshipFilterType string
-
-const (
-	ResourceTypeRelationshipFilterTypeResourceRelationshipMultiplicity ResourceTypeRelationshipFilterType = "RESOURCE_RELATIONSHIP_MULTIPLICITY"
-	ResourceTypeRelationshipFilterTypeResourceRelationshipLocationType ResourceTypeRelationshipFilterType = "RESOURCE_RELATIONSHIP_LOCATION_TYPE"
-	ResourceTypeRelationshipFilterTypeResourceRelationshipType         ResourceTypeRelationshipFilterType = "RESOURCE_RELATIONSHIP_TYPE"
-	ResourceTypeRelationshipFilterTypeResourceRelationshipTypeA        ResourceTypeRelationshipFilterType = "RESOURCE_RELATIONSHIP_TYPE_A"
-	ResourceTypeRelationshipFilterTypeResourceRelationshipTypeB        ResourceTypeRelationshipFilterType = "RESOURCE_RELATIONSHIP_TYPE_B"
-	ResourceTypeRelationshipFilterTypeResourceRelationshipResource     ResourceTypeRelationshipFilterType = "RESOURCE_RELATIONSHIP_RESOURCE"
-)
-
-var AllResourceTypeRelationshipFilterType = []ResourceTypeRelationshipFilterType{
-	ResourceTypeRelationshipFilterTypeResourceRelationshipMultiplicity,
-	ResourceTypeRelationshipFilterTypeResourceRelationshipLocationType,
-	ResourceTypeRelationshipFilterTypeResourceRelationshipType,
-	ResourceTypeRelationshipFilterTypeResourceRelationshipTypeA,
-	ResourceTypeRelationshipFilterTypeResourceRelationshipTypeB,
-	ResourceTypeRelationshipFilterTypeResourceRelationshipResource,
-}
-
-func (e ResourceTypeRelationshipFilterType) IsValid() bool {
-	switch e {
-	case ResourceTypeRelationshipFilterTypeResourceRelationshipMultiplicity, ResourceTypeRelationshipFilterTypeResourceRelationshipLocationType, ResourceTypeRelationshipFilterTypeResourceRelationshipType, ResourceTypeRelationshipFilterTypeResourceRelationshipTypeA, ResourceTypeRelationshipFilterTypeResourceRelationshipTypeB, ResourceTypeRelationshipFilterTypeResourceRelationshipResource:
-		return true
-	}
-	return false
-}
-
-func (e ResourceTypeRelationshipFilterType) String() string {
-	return string(e)
-}
-
-func (e *ResourceTypeRelationshipFilterType) UnmarshalGQL(v interface{}) error {
-	str, ok := v.(string)
-	if !ok {
-		return fmt.Errorf("enums must be strings")
-	}
-
-	*e = ResourceTypeRelationshipFilterType(str)
-	if !e.IsValid() {
-		return fmt.Errorf("%s is not a valid ResourceTypeRelationshipFilterType", str)
-	}
-	return nil
-}
-
-func (e ResourceTypeRelationshipFilterType) MarshalGQL(w io.Writer) {
-	fmt.Fprint(w, strconv.Quote(e.String()))
-}
-
-type RetryUnit string
-
-const (
-	RetryUnitSeconds RetryUnit = "SECONDS"
-	RetryUnitMinutes RetryUnit = "MINUTES"
-	RetryUnitHours   RetryUnit = "HOURS"
-)
-
-var AllRetryUnit = []RetryUnit{
-	RetryUnitSeconds,
-	RetryUnitMinutes,
-	RetryUnitHours,
-}
-
-func (e RetryUnit) IsValid() bool {
-	switch e {
-	case RetryUnitSeconds, RetryUnitMinutes, RetryUnitHours:
-		return true
-	}
-	return false
-}
-
-func (e RetryUnit) String() string {
-	return string(e)
-}
-
-func (e *RetryUnit) UnmarshalGQL(v interface{}) error {
-	str, ok := v.(string)
-	if !ok {
-		return fmt.Errorf("enums must be strings")
-	}
-
-	*e = RetryUnit(str)
-	if !e.IsValid() {
-		return fmt.Errorf("%s is not a valid RetryUnit", str)
-	}
-	return nil
-}
-
-func (e RetryUnit) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 

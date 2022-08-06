@@ -16,17 +16,17 @@
 import type { ConcreteRequest } from 'relay-runtime';
 export type SurveyQuestionType = "BOOL" | "CELLULAR" | "COORDS" | "DATE" | "EMAIL" | "FLOAT" | "INTEGER" | "PHONE" | "PHOTO" | "TEXT" | "TEXTAREA" | "WIFI" | "%future added value";
 export type SurveyTemplateCategoryInput = {|
-  categoryDescription: string,
-  categoryTitle: string,
   id?: ?string,
+  categoryTitle: string,
+  categoryDescription: string,
   surveyTemplateQuestions?: ?$ReadOnlyArray<?SurveyTemplateQuestionInput>,
 |};
 export type SurveyTemplateQuestionInput = {|
   id?: ?string,
-  index: number,
-  questionDescription: string,
   questionTitle: string,
+  questionDescription: string,
   questionType: SurveyQuestionType,
+  index: number,
 |};
 export type EditLocationTypeSurveyTemplateCategoriesMutationVariables = {|
   id: string,

@@ -1,6 +1,0 @@
-mutation addRuleType($input: AddRuleTypeInput!) {
-  addRuleType(input: $input) {
-    id
-    name
-  }
-}

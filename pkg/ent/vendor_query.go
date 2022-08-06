@@ -19,7 +19,6 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/counter"
 	"github.com/facebookincubator/symphony/pkg/ent/predicate"
 	"github.com/facebookincubator/symphony/pkg/ent/recommendations"
-	"github.com/facebookincubator/symphony/pkg/ent/resourcespecification"
 	"github.com/facebookincubator/symphony/pkg/ent/vendor"
 )
 
@@ -34,9 +33,6 @@ type VendorQuery struct {
 	// eager-loading edges.
 	withVendorFk              *CounterQuery
 	withVendorsRecomendations *RecommendationsQuery
-	withResourceSpecification *ResourceSpecificationQuery
-	withVendorRs              *ResourceSpecificationQuery
-	withFKs                   bool
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -103,50 +99,6 @@ func (vq *VendorQuery) QueryVendorsRecomendations() *RecommendationsQuery {
 			sqlgraph.From(vendor.Table, vendor.FieldID, selector),
 			sqlgraph.To(recommendations.Table, recommendations.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, vendor.VendorsRecomendationsTable, vendor.VendorsRecomendationsColumn),
-		)
-		fromU = sqlgraph.SetNeighbors(vq.driver.Dialect(), step)
-		return fromU, nil
-	}
-	return query
-}
-
-// QueryResourceSpecification chains the current query on the resource_specification edge.
-func (vq *VendorQuery) QueryResourceSpecification() *ResourceSpecificationQuery {
-	query := &ResourceSpecificationQuery{config: vq.config}
-	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
-		if err := vq.prepareQuery(ctx); err != nil {
-			return nil, err
-		}
-		selector := vq.sqlQuery()
-		if err := selector.Err(); err != nil {
-			return nil, err
-		}
-		step := sqlgraph.NewStep(
-			sqlgraph.From(vendor.Table, vendor.FieldID, selector),
-			sqlgraph.To(resourcespecification.Table, resourcespecification.FieldID),
-			sqlgraph.Edge(sqlgraph.O2O, true, vendor.ResourceSpecificationTable, vendor.ResourceSpecificationColumn),
-		)
-		fromU = sqlgraph.SetNeighbors(vq.driver.Dialect(), step)
-		return fromU, nil
-	}
-	return query
-}
-
-// QueryVendorRs chains the current query on the vendor_rs edge.
-func (vq *VendorQuery) QueryVendorRs() *ResourceSpecificationQuery {
-	query := &ResourceSpecificationQuery{config: vq.config}
-	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
-		if err := vq.prepareQuery(ctx); err != nil {
-			return nil, err
-		}
-		selector := vq.sqlQuery()
-		if err := selector.Err(); err != nil {
-			return nil, err
-		}
-		step := sqlgraph.NewStep(
-			sqlgraph.From(vendor.Table, vendor.FieldID, selector),
-			sqlgraph.To(resourcespecification.Table, resourcespecification.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, vendor.VendorRsTable, vendor.VendorRsColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(vq.driver.Dialect(), step)
 		return fromU, nil
@@ -332,8 +284,6 @@ func (vq *VendorQuery) Clone() *VendorQuery {
 		predicates:                append([]predicate.Vendor{}, vq.predicates...),
 		withVendorFk:              vq.withVendorFk.Clone(),
 		withVendorsRecomendations: vq.withVendorsRecomendations.Clone(),
-		withResourceSpecification: vq.withResourceSpecification.Clone(),
-		withVendorRs:              vq.withVendorRs.Clone(),
 		// clone intermediate query.
 		sql:  vq.sql.Clone(),
 		path: vq.path,
@@ -359,28 +309,6 @@ func (vq *VendorQuery) WithVendorsRecomendations(opts ...func(*RecommendationsQu
 		opt(query)
 	}
 	vq.withVendorsRecomendations = query
-	return vq
-}
-
-//  WithResourceSpecification tells the query-builder to eager-loads the nodes that are connected to
-// the "resource_specification" edge. The optional arguments used to configure the query builder of the edge.
-func (vq *VendorQuery) WithResourceSpecification(opts ...func(*ResourceSpecificationQuery)) *VendorQuery {
-	query := &ResourceSpecificationQuery{config: vq.config}
-	for _, opt := range opts {
-		opt(query)
-	}
-	vq.withResourceSpecification = query
-	return vq
-}
-
-//  WithVendorRs tells the query-builder to eager-loads the nodes that are connected to
-// the "vendor_rs" edge. The optional arguments used to configure the query builder of the edge.
-func (vq *VendorQuery) WithVendorRs(opts ...func(*ResourceSpecificationQuery)) *VendorQuery {
-	query := &ResourceSpecificationQuery{config: vq.config}
-	for _, opt := range opts {
-		opt(query)
-	}
-	vq.withVendorRs = query
 	return vq
 }
 
@@ -452,28 +380,16 @@ func (vq *VendorQuery) prepareQuery(ctx context.Context) error {
 func (vq *VendorQuery) sqlAll(ctx context.Context) ([]*Vendor, error) {
 	var (
 		nodes       = []*Vendor{}
-		withFKs     = vq.withFKs
 		_spec       = vq.querySpec()
-		loadedTypes = [4]bool{
+		loadedTypes = [2]bool{
 			vq.withVendorFk != nil,
 			vq.withVendorsRecomendations != nil,
-			vq.withResourceSpecification != nil,
-			vq.withVendorRs != nil,
 		}
 	)
-	if vq.withResourceSpecification != nil {
-		withFKs = true
-	}
-	if withFKs {
-		_spec.Node.Columns = append(_spec.Node.Columns, vendor.ForeignKeys...)
-	}
 	_spec.ScanValues = func() []interface{} {
 		node := &Vendor{config: vq.config}
 		nodes = append(nodes, node)
 		values := node.scanValues()
-		if withFKs {
-			values = append(values, node.fkValues()...)
-		}
 		return values
 	}
 	_spec.Assign = func(values ...interface{}) error {
@@ -546,60 +462,6 @@ func (vq *VendorQuery) sqlAll(ctx context.Context) ([]*Vendor, error) {
 				return nil, fmt.Errorf(`unexpected foreign-key "vendor_vendors_recomendations" returned %v for node %v`, *fk, n.ID)
 			}
 			node.Edges.VendorsRecomendations = append(node.Edges.VendorsRecomendations, n)
-		}
-	}
-
-	if query := vq.withResourceSpecification; query != nil {
-		ids := make([]int, 0, len(nodes))
-		nodeids := make(map[int][]*Vendor)
-		for i := range nodes {
-			if fk := nodes[i].resource_specification_resource_specification_vendor; fk != nil {
-				ids = append(ids, *fk)
-				nodeids[*fk] = append(nodeids[*fk], nodes[i])
-			}
-		}
-		query.Where(resourcespecification.IDIn(ids...))
-		neighbors, err := query.All(ctx)
-		if err != nil {
-			return nil, err
-		}
-		for _, n := range neighbors {
-			nodes, ok := nodeids[n.ID]
-			if !ok {
-				return nil, fmt.Errorf(`unexpected foreign-key "resource_specification_resource_specification_vendor" returned %v`, n.ID)
-			}
-			for i := range nodes {
-				nodes[i].Edges.ResourceSpecification = n
-			}
-		}
-	}
-
-	if query := vq.withVendorRs; query != nil {
-		fks := make([]driver.Value, 0, len(nodes))
-		nodeids := make(map[int]*Vendor)
-		for i := range nodes {
-			fks = append(fks, nodes[i].ID)
-			nodeids[nodes[i].ID] = nodes[i]
-			nodes[i].Edges.VendorRs = []*ResourceSpecification{}
-		}
-		query.withFKs = true
-		query.Where(predicate.ResourceSpecification(func(s *sql.Selector) {
-			s.Where(sql.InValues(vendor.VendorRsColumn, fks...))
-		}))
-		neighbors, err := query.All(ctx)
-		if err != nil {
-			return nil, err
-		}
-		for _, n := range neighbors {
-			fk := n.vendor_vendor_rs
-			if fk == nil {
-				return nil, fmt.Errorf(`foreign-key "vendor_vendor_rs" is nil for node %v`, n.ID)
-			}
-			node, ok := nodeids[*fk]
-			if !ok {
-				return nil, fmt.Errorf(`unexpected foreign-key "vendor_vendor_rs" returned %v for node %v`, *fk, n.ID)
-			}
-			node.Edges.VendorRs = append(node.Edges.VendorRs, n)
 		}
 	}
 

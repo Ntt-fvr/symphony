@@ -66,25 +66,14 @@ func (Flow) Fields() []ent.Field {
 		field.Enum("status").
 			NamedValues(
 				"Published", "PUBLISHED",
-				"Draft", "DRAFT",
+				"Unpublished", "UNPUBLISHED",
 				"Archived", "ARCHIVED",
-				"On_Hold", "ON_HOLD",
-				"Deleted", "DELETED",
-			).Default("DRAFT"),
+			).Default("UNPUBLISHED"),
 		field.Enum("newInstancesPolicy").
 			NamedValues(
 				"Enabled", "ENABLED",
 				"Disabled", "DISABLED",
 			).Default("DISABLED"),
-		field.Enum("cm_type").NamedValues(
-			"initial_config", "INITIAL_CONFIG",
-			"general_cr", "GENERAL_CR",
-			"sync_parameters", "SYNC_PARAMETERS",
-		).Default("INITIAL_CONFIG").Annotations(entgql.OrderField("CM_TYPE")),
-		field.Time("creation_date").
-			Annotations(
-				entgql.OrderField("CREATED_AT"),
-			),
 	}
 }
 
@@ -93,14 +82,6 @@ func (Flow) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.To("draft", FlowDraft.Type).
 			Unique(),
-		edge.To("author", User.Type).
-			Required().
-			Unique().
-			Annotations(entgql.Bind()),
-		edge.To("editor", User.Type).
-			Annotations(entgql.Bind()),
-		edge.From("instance", FlowInstance.Type).
-			Ref("flow"),
 	}
 }
 
@@ -194,25 +175,16 @@ func (FlowInstance) Fields() []ent.Field {
 	return []ent.Field{
 		field.Enum("status").
 			NamedValues(
-				"Running", "RUNNING",
+				"InProgress", "IN_PROGRESS",
 				"Failed", "FAILED",
-				"Failing", "FAILING",
 				"Completed", "COMPLETED",
 				"Cancelled", "CANCELED",
-				"Canceling", "CANCELING",
-				"Paused", "PAUSED",
-				"Pausing", "PAUSING",
-				"Closed", "CLOSED",
-				"Resuming", "RESUMING",
-			).Default("RUNNING"),
-		field.JSON("start_params", []*flowschema.VariableValue{}).
-			Optional(),
+			).Default("IN_PROGRESS"),
 		field.JSON("output_params", []*flowschema.VariableValue{}).
 			Optional(),
 		field.String("incompletion_reason").
 			Optional(),
-		field.String("bss_code").
-			Optional(),
+		field.String("bss_code"),
 		field.String("service_instance_code").
 			Optional(),
 		field.Time("start_date").
@@ -251,7 +223,6 @@ func (FlowInstance) Edges() []ent.Edge {
 		edge.From("parent_subflow_block", BlockInstance.Type).
 			Unique().
 			Ref("subflow_instance"),
-		edge.To("flow_activities", AutomationActivity.Type),
 	}
 }
 
@@ -260,7 +231,6 @@ func (FlowInstance) Hooks() []ent.Hook {
 	return []ent.Hook{
 		hooks.DenyCreationOfInstanceOfDisabledFlowHook(),
 		hooks.CopyFlowToFlowExecutionTemplateHook(),
-		//hooks.FlowInstanceAutomationActivity(),
 	}
 }
 

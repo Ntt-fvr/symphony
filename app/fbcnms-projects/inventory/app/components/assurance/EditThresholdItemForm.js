@@ -21,9 +21,10 @@ import type {EditThresholdMutationVariables} from '../../mutations/__generated__
 import EditTresholdMutation from '../../mutations/EditThresholdMutation';
 
 // DESIGN SYSTEM //
-import ButtonSaveDelete from './common/ButtonSaveDelete';
+import Button from '@symphony/design-system/components/Button';
 import Card from '@symphony/design-system/components/Card/Card';
 import ConfigureTitleSubItem from './common/ConfigureTitleSubItem';
+import FormField from '@symphony/design-system/components/FormField/FormField';
 import Grid from '@material-ui/core/Grid';
 import Switch from '@symphony/design-system/components/switch/Switch';
 import Text from '@symphony/design-system/components/Text';
@@ -105,6 +106,11 @@ const useStyles = makeStyles(() => ({
   },
   action: {
     paddingRight: '1.3rem',
+  },
+  addThreshold: {
+    marginRight: '1.5rem',
+    width: '98px',
+    alignSelf: 'flex-end',
   },
   title: {
     marginLeft: '10px',
@@ -214,23 +220,29 @@ const EditThresholdItemForm = (props: Props) => {
             />
           </Grid>
           <Grid>
-            <ButtonSaveDelete
-              variant={'outlined'}
-              onClick={() => {
-                hideEditThresholdForm();
-              }}>
-              Cancel
-            </ButtonSaveDelete>
+            <FormField>
+              <Button
+                className={classes.addThreshold}
+                onClick={() => {
+                  handleClick();
+                  hideEditThresholdForm();
+                }}
+                disabled={handleDisable}>
+                Save
+              </Button>
+            </FormField>
           </Grid>
           <Grid>
-            <ButtonSaveDelete
-              onClick={() => {
-                handleClick();
-                hideEditThresholdForm();
-              }}
-              disabled={handleDisable}>
-              Save
-            </ButtonSaveDelete>
+            <FormField>
+              <Button
+                className={classes.addThreshold}
+                onClick={() => {
+                  hideEditThresholdForm();
+                }}
+                skin="brightGray">
+                Cancel
+              </Button>
+            </FormField>
           </Grid>
         </Grid>
         <Grid item xs={12} sm={12} lg={12} xl={12}>

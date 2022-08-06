@@ -17,68 +17,54 @@ import type { ConcreteRequest } from 'relay-runtime';
 type EquipmentTypeItem_equipmentType$ref = any;
 export type PropertyKind = "bool" | "date" | "datetime_local" | "email" | "enum" | "float" | "gps_location" | "int" | "node" | "range" | "string" | "%future added value";
 export type EditEquipmentTypeInput = {|
-  category?: ?string,
   id: string,
   name: string,
-  ports?: ?$ReadOnlyArray<EquipmentPortInput>,
+  category?: ?string,
   positions?: ?$ReadOnlyArray<EquipmentPositionInput>,
+  ports?: ?$ReadOnlyArray<EquipmentPortInput>,
   properties?: ?$ReadOnlyArray<PropertyTypeInput>,
 |};
+export type EquipmentPositionInput = {|
+  id?: ?string,
+  name: string,
+  index?: ?number,
+  visibleLabel?: ?string,
+|};
 export type EquipmentPortInput = {|
+  id?: ?string,
+  name: string,
+  index?: ?number,
+  visibleLabel?: ?string,
+  portTypeID?: ?string,
   bandwidth?: ?string,
   connectedPorts?: ?$ReadOnlyArray<EquipmentPortConnectionInput>,
-  id?: ?string,
-  index?: ?number,
-  name: string,
-  portTypeID?: ?string,
-  visibleLabel?: ?string,
 |};
 export type EquipmentPortConnectionInput = {|
   id?: ?string,
   name?: ?string,
 |};
-export type EquipmentPositionInput = {|
-  id?: ?string,
-  index?: ?number,
-  name: string,
-  visibleLabel?: ?string,
-|};
 export type PropertyTypeInput = {|
-  booleanValue?: ?boolean,
-  category?: ?string,
-  dependencePropertyTypes?: ?$ReadOnlyArray<?PropertyTypeInput>,
-  externalId?: ?string,
-  floatValue?: ?number,
   id?: ?string,
+  externalId?: ?string,
+  name: string,
+  type: PropertyKind,
+  nodeType?: ?string,
   index?: ?number,
+  category?: ?string,
+  stringValue?: ?string,
   intValue?: ?number,
-  isDeleted?: ?boolean,
-  isEditable?: ?boolean,
-  isInstanceProperty?: ?boolean,
-  isListable?: ?boolean,
-  isMandatory?: ?boolean,
+  booleanValue?: ?boolean,
+  floatValue?: ?number,
   latitudeValue?: ?number,
   longitudeValue?: ?number,
-  name: string,
-  nodeType?: ?string,
-  propertyCategoryID?: ?string,
-  propertyTypeValues?: ?$ReadOnlyArray<?AddPropertyTypeValueInput>,
   rangeFromValue?: ?number,
   rangeToValue?: ?number,
-  stringValue?: ?string,
-  type: PropertyKind,
-|};
-export type AddPropertyTypeValueInput = {|
-  id?: ?string,
+  isEditable?: ?boolean,
+  isInstanceProperty?: ?boolean,
+  isMandatory?: ?boolean,
   isDeleted?: ?boolean,
-  name: string,
-  parentPropertyType?: ?$ReadOnlyArray<?ParentPropertyTypeValueInput>,
-  parentPropertyTypeValue?: ?$ReadOnlyArray<?string>,
-  propertyType?: ?string,
-|};
-export type ParentPropertyTypeValueInput = {|
-  parentPropertyType?: ?string,
-  parentPropertyTypeValue?: ?string,
+  propertyCategoryID?: ?string,
+  isListable?: ?boolean,
 |};
 export type EditEquipmentTypeMutationVariables = {|
   input: EditEquipmentTypeInput

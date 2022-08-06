@@ -18,8 +18,7 @@ export const extractEntityIdFromUrl = (
     | 'projectType'
     | 'service'
     | 'serviceType'
-    | 'flowinstance'
-    | 'resource',
+    | 'flowinstance',
   searchParams: string,
 ): ?string => {
   const query = new URLSearchParams(searchParams);

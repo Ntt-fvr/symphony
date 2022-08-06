@@ -1,3 +1,0 @@
-mutation removeKqiSource($id: ID!) {
-  removeKqiSource(id: $id)
-}

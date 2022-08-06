@@ -15,15 +15,15 @@
 /*::
 import type { ConcreteRequest } from 'relay-runtime';
 export type AddKqiInput = {|
+  name: string,
   description: string,
-  endDateTime: any,
   formula: string,
+  startDateTime: any,
+  endDateTime: any,
   kqiCategory: string,
   kqiPerspective: string,
   kqiSource: string,
   kqiTemporalFrequency: string,
-  name: string,
-  startDateTime: any,
 |};
 export type AddKqiMutationVariables = {|
   input: AddKqiInput

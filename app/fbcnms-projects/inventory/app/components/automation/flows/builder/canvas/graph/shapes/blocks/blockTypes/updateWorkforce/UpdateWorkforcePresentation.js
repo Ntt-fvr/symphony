@@ -10,14 +10,14 @@
 
 import React from 'react';
 import UpdateWorkforceIcon from './UpdateWorkforceIcon';
+import fbt from 'fbt';
 import {BasePresentation} from '../BasePresentation';
-import {Typography} from '@material-ui/core';
 
 export default function UpdateWorkforcePresentation() {
   return (
     <BasePresentation
       icon={UpdateWorkforceIcon}
-      text={<Typography variant="caption">Update Workforce</Typography>}
+      text={fbt('Update Workforce', '')}
     />
   );
 }

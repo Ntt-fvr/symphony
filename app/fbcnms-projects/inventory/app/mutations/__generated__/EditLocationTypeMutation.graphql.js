@@ -18,55 +18,41 @@ type AddEditLocationTypeCard_editingLocationType$ref = any;
 type LocationTypeItem_locationType$ref = any;
 export type PropertyKind = "bool" | "date" | "datetime_local" | "email" | "enum" | "float" | "gps_location" | "int" | "node" | "range" | "string" | "%future added value";
 export type EditLocationTypeInput = {|
-  documentCategories?: ?$ReadOnlyArray<DocumentCategoryInput>,
   id: string,
-  isSite?: ?boolean,
+  name: string,
   mapType?: ?string,
   mapZoomLevel?: ?number,
-  name: string,
+  isSite?: ?boolean,
+  documentCategories?: ?$ReadOnlyArray<DocumentCategoryInput>,
   properties?: ?$ReadOnlyArray<PropertyTypeInput>,
 |};
 export type DocumentCategoryInput = {|
   id?: ?string,
-  index: number,
   name: string,
+  index: number,
 |};
 export type PropertyTypeInput = {|
-  booleanValue?: ?boolean,
-  category?: ?string,
-  dependencePropertyTypes?: ?$ReadOnlyArray<?PropertyTypeInput>,
-  externalId?: ?string,
-  floatValue?: ?number,
   id?: ?string,
+  externalId?: ?string,
+  name: string,
+  type: PropertyKind,
+  nodeType?: ?string,
   index?: ?number,
+  category?: ?string,
+  stringValue?: ?string,
   intValue?: ?number,
-  isDeleted?: ?boolean,
-  isEditable?: ?boolean,
-  isInstanceProperty?: ?boolean,
-  isListable?: ?boolean,
-  isMandatory?: ?boolean,
+  booleanValue?: ?boolean,
+  floatValue?: ?number,
   latitudeValue?: ?number,
   longitudeValue?: ?number,
-  name: string,
-  nodeType?: ?string,
-  propertyCategoryID?: ?string,
-  propertyTypeValues?: ?$ReadOnlyArray<?AddPropertyTypeValueInput>,
   rangeFromValue?: ?number,
   rangeToValue?: ?number,
-  stringValue?: ?string,
-  type: PropertyKind,
-|};
-export type AddPropertyTypeValueInput = {|
-  id?: ?string,
+  isEditable?: ?boolean,
+  isInstanceProperty?: ?boolean,
+  isMandatory?: ?boolean,
   isDeleted?: ?boolean,
-  name: string,
-  parentPropertyType?: ?$ReadOnlyArray<?ParentPropertyTypeValueInput>,
-  parentPropertyTypeValue?: ?$ReadOnlyArray<?string>,
-  propertyType?: ?string,
-|};
-export type ParentPropertyTypeValueInput = {|
-  parentPropertyType?: ?string,
-  parentPropertyTypeValue?: ?string,
+  propertyCategoryID?: ?string,
+  isListable?: ?boolean,
 |};
 export type EditLocationTypeMutationVariables = {|
   input: EditLocationTypeInput

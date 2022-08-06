@@ -128,7 +128,6 @@ export function useLocationTypeNodesOnDocuments(): $ReadOnlyArray<LocationTypeNo
   // $FlowFixMe[incompatible-variance] $FlowFixMe T74239404 Found via relay types
   return locationTypes;
 }
-
 // TODO : location con id parameters
 export function useLocationTypePropertyCategoryQuery(): $ReadOnlyArray<DocumentCategoryNode> {
   const response = useLazyLoadQuery<LocationTypePropertyCategoryNodesQuery>(

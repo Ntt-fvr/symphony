@@ -69,9 +69,11 @@ func addWorkOrderTemplate(
 	if err != nil {
 		return nil, fmt.Errorf("creating work order template: %w", err)
 	}
-	_, err = createTemplatePropertyType(ctx, client, workOrderType.Edges.PropertyTypes, workOrderTemplate.ID, PropertyTypeParentWorkOrder)
-	if err != nil {
-		return nil, fmt.Errorf("creating property type: %w", err)
+	for _, pt := range workOrderType.Edges.PropertyTypes {
+		_, err := createTemplatePropertyType(ctx, client, pt, workOrderTemplate.ID, PropertyTypeParentWorkOrder)
+		if err != nil {
+			return nil, fmt.Errorf("creating property type: %w", err)
+		}
 	}
 	for _, categoryInput := range workOrderType.Edges.CheckListCategoryDefinitions {
 		cd, err := client.CheckListCategoryDefinition.Create().

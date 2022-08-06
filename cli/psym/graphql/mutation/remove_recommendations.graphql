@@ -1,3 +1,0 @@
-mutation removeRecommendations($id: ID!) {
-  removeRecommendations(id: $id)
-}

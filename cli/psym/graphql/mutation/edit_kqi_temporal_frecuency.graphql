@@ -1,6 +1,0 @@
-mutation editKqiTemporalFrequency($input: EditKqiTemporalFrequencyInput!) {
-  editKqiTemporalFrequency(input: $input) {
-    id
-    name
-  }
-}

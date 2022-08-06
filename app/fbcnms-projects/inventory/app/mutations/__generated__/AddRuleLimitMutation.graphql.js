@@ -15,9 +15,9 @@
 /*::
 import type { ConcreteRequest } from 'relay-runtime';
 export type AddRuleLimitInput = {|
-  comparator: string,
-  limitType: string,
   number: number,
+  limitType: string,
+  comparator: string,
   rule: string,
 |};
 export type AddRuleLimitMutationVariables = {|

@@ -45,6 +45,7 @@ import LocationMapSnippet from '../location/LocationMapSnippet';
 import LocationTypeahead from '../typeahead/LocationTypeahead';
 import NameDescriptionSection from '../../common/NameDescriptionSection';
 import ProjectTypeahead from '../typeahead/ProjectTypeahead';
+import PropertyValueInput from '../form/PropertyValueInput';
 import React, {useContext, useMemo, useReducer, useState} from 'react';
 import Select from '@symphony/design-system/components/Select/Select';
 import Strings from '@fbcnms/strings/Strings';
@@ -54,7 +55,6 @@ import UploadIcon from '@symphony/design-system/icons/Actions/UploadIcon';
 import WorkOrderDetailsPane from './WorkOrderDetailsPane';
 import WorkOrderHeader from './WorkOrderHeader';
 import fbt from 'fbt';
-import moment from 'moment';
 import symphony from '@symphony/design-system/theme/symphony';
 import withAlert from '@fbcnms/ui/components/Alert/withAlert';
 import {NAVIGATION_OPTIONS} from '../location/LocationBreadcrumbsTitle';
@@ -74,9 +74,7 @@ import SelectAvailabilityAssignee, {
   AppointmentData,
 } from './SelectAvailabilityAssignee';
 
-import LoadingIndicator from '../../common/LoadingIndicator';
-import PropertyTypeInput from '../../common/property_combo/PropertyTypeInput';
-import useFeatureFlag from '@fbcnms/ui/context/useFeatureFlag';
+
 import {isChecklistItemDone} from '../checklist/ChecklistUtils.js';
 import {useDocumentCategoryByLocationTypeNodes} from '../../common/LocationType';
 import {useSnackbar} from 'notistack';
@@ -172,10 +170,6 @@ const WorkOrderDetails = ({
   const [workOrder, setWorkOrder] = useState<WorkOrderDetails_workOrder>(
     propsWorkOrder,
   );
-  const [loading, setLoading] = useState<boolean>(false);
-
-  const featureFlagFilters = useFeatureFlag('scheduling_filter_dates');
-
   const locationTypeID = workOrder.location?.locationType.id;
 
   const locationType = !!locationTypeID
@@ -343,7 +337,7 @@ const WorkOrderDetails = ({
         contentType: file.type,
       },
     };
-     
+
     const updater = store => {
       const newNode = store.getRootField('addImage');
       const workOrderProxy = store.get(workOrderId);
@@ -602,347 +596,335 @@ const WorkOrderDetails = ({
     saveAppointment: false,
   });
 
-  const _propertyChangedHandler = index => property =>
-    // $FlowFixMe - known techdebt with Property/PropertyType flow definitions
-    setProperties(prevProperties => [
-      ...prevProperties.slice(0, index),
-      property,
-      ...prevProperties.slice(index + 1),
-    ]);
-
-  if (loading) {
-    return <LoadingIndicator />;
-  } else {
-    return (
-      <div className={classes.root}>
-        <FormContextProvider
-          permissions={{
-            entity: 'workorder',
-            action: 'update',
-            workOrderTypeId: propsWorkOrder.workOrderType.id,
-            ignorePermissions: isOwner || isAssignee,
-          }}>
-          <WorkOrderHeader
-            workOrderName={propsWorkOrder.name}
-            workOrder={workOrder}
-            properties={properties}
-            checkListCategories={editingCategories}
-            locationId={locationId}
-            onWorkOrderRemoved={onWorkOrderRemoved}
-            onCancelClicked={onCancelClicked}
-            appointmentData={appointmentData}
-            setLoading={setLoading}
-            onPriorityChanged={value => _setWorkOrderDetail('priority', value)}
-            onStatusChanged={setWorkOrderStatus}
-          />
-          <FormContext.Consumer>
-            {form => {
-              form.alerts.editLock.check({
-                fieldId: 'status',
-                fieldDisplayName: 'Status',
-                value: propsWorkOrder.status,
-                checkCallback: value =>
-                  value === closedStatus.value || value === canceledStatus.value
-                    ? `Work order is on '${closedStatus.label}' state`
-                    : '',
-              });
-              return (
-                <div className={classes.cards}>
-                  <Grid container spacing={2}>
-                    <Grid item xs={8} sm={8} lg={8} xl={8}>
-                      <ExpandingPanel title="Details">
-                        <NameDescriptionSection
-                          name={workOrder.name}
-                          description={workOrder.description}
-                          onNameChange={value =>
-                            _setWorkOrderDetail('name', value)
-                          }
-                          onDescriptionChange={value =>
-                            _setWorkOrderDetail('description', value)
-                          }
-                        />
-                        <Grid
-                          container
-                          spacing={2}
-                          className={classes.propertiesGrid}>
-                          <Grid item xs={12} sm={6} lg={4} xl={4}>
-                            <FormField label="Project">
-                              <ProjectTypeahead
-                                className={classes.gridInput}
-                                selectedProject={
-                                  workOrder.project
-                                    ? {
-                                        id: workOrder.project.id,
-                                        name: workOrder.project.name,
-                                      }
-                                    : null
-                                }
-                                margin="dense"
-                                onProjectSelection={project =>
-                                  _setWorkOrderDetail('project', project)
-                                }
-                              />
-                            </FormField>
-                          </Grid>
-                          <Grid item xs={12} sm={6} lg={4} xl={4}>
-                            <FormField label="Type">
-                              <TextInput
-                                disabled={true}
-                                className={classes.gridInput}
-                                value={workOrder.workOrderType.name}
-                              />
-                            </FormField>
-                          </Grid>
-                          <Grid item xs={12} sm={6} lg={4} xl={4}>
-                            <FormField label="Priority">
-                              <Select
-                                options={priorityValues}
-                                selectedValue={workOrder.priority}
-                                onChange={value =>
-                                  _setWorkOrderDetail('priority', value)
-                                }
-                              />
-                            </FormField>
-                          </Grid>
-                          <Grid item xs={12} sm={6} lg={4} xl={4}>
-                            <FormField
-                              label="Status"
-                              disabled={form.alerts.error.detected}>
-                              <Select
-                                options={filteredStatusValues}
-                                selectedValue={workOrder.status}
-                                onChange={value => setWorkOrderStatus(value)}
-                              />
-                            </FormField>
-                          </Grid>
-                          <Grid item xs={12} sm={6} lg={4} xl={4}>
-                            <FormField label="Created On">
-                              <TextInput
-                                type="date"
-                                className={classes.gridInput}
-                                value={formatDateForTextInput(
-                                  workOrder.creationDate,
-                                )}
-                              />
-                            </FormField>
-                          </Grid>
-                          <Grid item xs={12} sm={6} lg={4} xl={4}>
-                            <FormField label="Due Date">
-                              <TextInput
-                                type="date"
-                                className={classes.gridInput}
-                                value={formatDateForTextInput(
-                                  workOrder.installDate,
-                                )}
-                                onChange={event => {
-                                  const value =
-                                    event.target.value !== ''
-                                      ? new Date(
-                                          event.target.value,
-                                        ).toISOString()
-                                      : '';
-                                  _setWorkOrderDetail('installDate', value);
-                                }}
-                              />
-                            </FormField>
-                          </Grid>
-                          <Grid item xs={12} sm={6} lg={4} xl={4}>
-                            <FormField label="Location">
-                              <LocationTypeahead
-                                headline={null}
-                                className={classes.gridInput}
-                                margin="dense"
-                                selectedLocation={
-                                  location
-                                    ? {
-                                        id: location.id,
-                                        name: location.name,
-                                      }
-                                    : null
-                                }
-                                onLocationSelection={location =>
-                                  setLocationId(location?.id ?? null)
-                                }
-                              />
-                            </FormField>
-                          </Grid>
-                          {featureFlagFilters && (
-                            <Grid item xs={12} sm={6} lg={4} xl={4}>
-                              <FormField label="Scheduled at">
-                                <TextInput
-                                  type="datetime"
-                                  className={classes.gridInput}
-                                  value={
-                                    moment(workOrder.scheduledAt).isValid()
-                                      ? moment(workOrder.scheduledAt).format(
-                                          'YYYY-MM-DD HH:mm',
-                                        )
-                                      : 'No Scheduled'
-                                  }
-                                  disabled={true}
-                                />
-                              </FormField>
-                            </Grid>
-                          )}
-                          {properties.map((property, index) => (
-                            <PropertyTypeInput
-                              key={property.id}
-                              elementType={workOrder}
-                              property={property}
-                              mandatoryPropertiesOnCloseEnabled={
-                                mandatoryPropertiesOnCloseEnabled
+  return (
+    <div className={classes.root}>
+      <FormContextProvider
+        permissions={{
+          entity: 'workorder',
+          action: 'update',
+          workOrderTypeId: propsWorkOrder.workOrderType.id,
+          ignorePermissions: isOwner || isAssignee,
+        }}>
+        <WorkOrderHeader
+          workOrderName={propsWorkOrder.name}
+          workOrder={workOrder}
+          properties={properties}
+          checkListCategories={editingCategories}
+          locationId={locationId}
+          onWorkOrderRemoved={onWorkOrderRemoved}
+          onCancelClicked={onCancelClicked}
+          appointmentData={appointmentData}
+          onPriorityChanged={value => _setWorkOrderDetail('priority', value)}
+          onStatusChanged={setWorkOrderStatus}
+        />
+        <FormContext.Consumer>
+          {form => {
+            form.alerts.editLock.check({
+              fieldId: 'status',
+              fieldDisplayName: 'Status',
+              value: propsWorkOrder.status,
+              checkCallback: value =>
+                value === closedStatus.value || value === canceledStatus.value
+                  ? `Work order is on '${closedStatus.label}' state`
+                  : '',
+            });
+            return (
+              <div className={classes.cards}>
+                <Grid container spacing={2}>
+                  <Grid item xs={8} sm={8} lg={8} xl={8}>
+                    <ExpandingPanel title="Details">
+                      <NameDescriptionSection
+                        name={workOrder.name}
+                        description={workOrder.description}
+                        onNameChange={value =>
+                          _setWorkOrderDetail('name', value)
+                        }
+                        onDescriptionChange={value =>
+                          _setWorkOrderDetail('description', value)
+                        }
+                      />
+                      <Grid
+                        container
+                        spacing={2}
+                        className={classes.propertiesGrid}>
+                        <Grid item xs={12} sm={6} lg={4} xl={4}>
+                          <FormField label="Project">
+                            <ProjectTypeahead
+                              className={classes.gridInput}
+                              selectedProject={
+                                workOrder.project
+                                  ? {
+                                      id: workOrder.project.id,
+                                      name: workOrder.project.name,
+                                    }
+                                  : null
                               }
-                              properties={properties}
-                              classes={classes}
-                              index={index}
+                              margin="dense"
+                              onProjectSelection={project =>
+                                _setWorkOrderDetail('project', project)
+                              }
+                            />
+                          </FormField>
+                        </Grid>
+                        <Grid item xs={12} sm={6} lg={4} xl={4}>
+                          <FormField label="Type">
+                            <TextInput
+                              disabled={true}
+                              className={classes.gridInput}
+                              value={workOrder.workOrderType.name}
+                            />
+                          </FormField>
+                        </Grid>
+                        <Grid item xs={12} sm={6} lg={4} xl={4}>
+                          <FormField label="Priority">
+                            <Select
+                              options={priorityValues}
+                              selectedValue={workOrder.priority}
+                              onChange={value =>
+                                _setWorkOrderDetail('priority', value)
+                              }
+                            />
+                          </FormField>
+                        </Grid>
+                        <Grid item xs={12} sm={6} lg={4} xl={4}>
+                          <FormField
+                            label="Status"
+                            disabled={form.alerts.error.detected}>
+                            <Select
+                              options={filteredStatusValues}
+                              selectedValue={workOrder.status}
+                              onChange={value => setWorkOrderStatus(value)}
+                            />
+                          </FormField>
+                        </Grid>
+                        <Grid item xs={12} sm={6} lg={4} xl={4}>
+                          <FormField label="Created On">
+                            <TextInput
+                              type="date"
+                              className={classes.gridInput}
+                              value={formatDateForTextInput(
+                                workOrder.creationDate,
+                              )}
+                            />
+                          </FormField>
+                        </Grid>
+                        <Grid item xs={12} sm={6} lg={4} xl={4}>
+                          <FormField label="Due Date">
+                            <TextInput
+                              type="date"
+                              className={classes.gridInput}
+                              value={formatDateForTextInput(
+                                workOrder.installDate,
+                              )}
+                              onChange={event => {
+                                const value =
+                                  event.target.value !== ''
+                                    ? new Date(event.target.value).toISOString()
+                                    : '';
+                                _setWorkOrderDetail('installDate', value);
+                              }}
+                            />
+                          </FormField>
+                        </Grid>
+                        <Grid item xs={12} sm={6} lg={4} xl={4}>
+                          <FormField label="Location">
+                            <LocationTypeahead
+                              headline={null}
+                              className={classes.gridInput}
+                              margin="dense"
+                              selectedLocation={
+                                location
+                                  ? {
+                                      id: location.id,
+                                      name: location.name,
+                                    }
+                                  : null
+                              }
+                              onLocationSelection={location =>
+                                setLocationId(location?.id ?? null)
+                              }
+                            />
+                          </FormField>
+                        </Grid>
+                        <Grid item xs={12} sm={6} lg={4} xl={4}>
+                          <FormField label="Scheduled at">
+                            <TextInput
+                              type="date"
+                              className={classes.gridInput}
+                            />
+                          </FormField>
+                        </Grid>
+                        {properties.map((property, index) => (
+                          <Grid
+                            key={property.id}
+                            item
+                            xs={12}
+                            sm={6}
+                            lg={4}
+                            xl={4}>
+                            <PropertyValueInput
                               required={
                                 !!property.propertyType.isMandatory &&
                                 (workOrder.status === closedStatus.value ||
                                   !mandatoryPropertiesOnCloseEnabled)
                               }
-                              _propertyChangedHandler={_propertyChangedHandler}
+                              disabled={
+                                !property.propertyType.isInstanceProperty
+                              }
+                              label={property.propertyType.name}
+                              className={classes.gridInput}
+                              inputType="Property"
+                              property={property}
+                              onChange={property =>
+                                setProperties(prevProperties => [
+                                  ...prevProperties.slice(0, index),
+                                  property,
+                                  ...prevProperties.slice(index + 1),
+                                ])
+                              }
+                              headlineVariant="form"
+                              fullWidth={true}
                             />
-                          ))}
-                        </Grid>
-                        <>
-                          {location && (
-                            <>
-                              <div className={classes.separator} />
-                              <Text weight="regular" variant="subtitle2">
-                                Location
-                              </Text>
-                              <LocationBreadcrumbsTitle
-                                // $FlowFixMe[incompatible-variance] $FlowFixMe T74239404 Found via relay types
-                                // $FlowFixMe[prop-missing] $FlowFixMe T74239404 Found via relay types
-                                // $FlowFixMe[incompatible-type] $FlowFixMe T74239404 Found via relay types
-                                locationDetails={location}
-                                size="small"
-                                navigateOnClick={NAVIGATION_OPTIONS.NEW_TAB}
-                              />
-                              <Grid container spacing={2}>
-                                <Grid item xs={12} md={12}>
-                                  <LocationMapSnippet
-                                    className={classes.map}
-                                    location={{
-                                      id: location.id,
-                                      name: location.name,
-                                      latitude: location.latitude,
-                                      longitude: location.longitude,
-                                      locationType: {
-                                        mapType: location.locationType.mapType,
-                                        mapZoomLevel: (
-                                          location.locationType.mapZoomLevel ||
-                                          8
-                                        ).toString(),
-                                      },
-                                    }}
-                                  />
-                                </Grid>
+                          </Grid>
+                        ))}
+                      </Grid>
+                      <>
+                        {location && (
+                          <>
+                            <div className={classes.separator} />
+                            <Text weight="regular" variant="subtitle2">
+                              Location
+                            </Text>
+                            <LocationBreadcrumbsTitle
+                              // $FlowFixMe[incompatible-variance] $FlowFixMe T74239404 Found via relay types
+                              // $FlowFixMe[prop-missing] $FlowFixMe T74239404 Found via relay types
+                              // $FlowFixMe[incompatible-type] $FlowFixMe T74239404 Found via relay types
+                              locationDetails={location}
+                              size="small"
+                              navigateOnClick={NAVIGATION_OPTIONS.NEW_TAB}
+                            />
+                            <Grid container spacing={2}>
+                              <Grid item xs={12} md={12}>
+                                <LocationMapSnippet
+                                  className={classes.map}
+                                  location={{
+                                    id: location.id,
+                                    name: location.name,
+                                    latitude: location.latitude,
+                                    longitude: location.longitude,
+                                    locationType: {
+                                      mapType: location.locationType.mapType,
+                                      mapZoomLevel: (
+                                        location.locationType.mapZoomLevel || 8
+                                      ).toString(),
+                                    },
+                                  }}
+                                />
                               </Grid>
-                            </>
+                            </Grid>
+                          </>
+                        )}
+                      </>
+                    </ExpandingPanel>
+                    {actionsEnabled && (
+                      <ExpandingPanel title="Actions">
+                        <WorkOrderDetailsPane workOrder={workOrder} />
+                      </ExpandingPanel>
+                    )}
+                    <ExpandingPanel
+                      title="Attachments"
+                      rightContent={
+                        <div className={classes.uploadButtonContainer}>
+                          {!!locationType ? (
+                            <IconButton
+                              icon={ApplyIcon}
+                              disabled={state.isApplyButtonEnabled === false}
+                              onClick={() => {
+                                linkFiles();
+                              }}
+                            />
+                          ) : null}
+                          <AddHyperlinkButton
+                            className={classes.minimizedButton}
+                            variant="text"
+                            entityType="WORK_ORDER"
+                            categories={[]}
+                            allowCategories={false}
+                            entityId={workOrder.id}>
+                            <IconButton icon={LinkIcon} />
+                          </AddHyperlinkButton>
+                          {isLoadingDocument ? (
+                            <CircularProgress size={24} />
+                          ) : (
+                            <FileUploadButton
+                              onFileUploaded={onDocumentUploaded}
+                              onProgress={() => setIsLoadingDocument(true)}>
+                              {openFileUploadDialog => (
+                                <IconButton
+                                  className={classes.minimizedButton}
+                                  onClick={openFileUploadDialog}
+                                  icon={UploadIcon}
+                                />
+                              )}
+                            </FileUploadButton>
                           )}
-                        </>
-                      </ExpandingPanel>
-                      {actionsEnabled && (
-                        <ExpandingPanel title="Actions">
-                          <WorkOrderDetailsPane workOrder={workOrder} />
-                        </ExpandingPanel>
-                      )}
-                      <ExpandingPanel
-                        title="Attachments"
-                        rightContent={
-                          <div className={classes.uploadButtonContainer}>
-                            {!!locationType ? (
-                              <IconButton
-                                icon={ApplyIcon}
-                                disabled={state.isApplyButtonEnabled === false}
-                                onClick={() => {
-                                  linkFiles();
-                                }}
-                              />
-                            ) : null}
-                            <AddHyperlinkButton
-                              className={classes.minimizedButton}
-                              variant="text"
-                              entityType="WORK_ORDER"
-                              categories={[]}
-                              allowCategories={false}
-                              entityId={workOrder.id}>
-                              <IconButton icon={LinkIcon} />
-                            </AddHyperlinkButton>
-                            {isLoadingDocument ? (
-                              <CircularProgress size={24} />
-                            ) : (
-                              <FileUploadButton
-                                onFileUploaded={onDocumentUploaded}
-                                onProgress={() => setIsLoadingDocument(true)}>
-                                {openFileUploadDialog => (
-                                  <IconButton
-                                    className={classes.minimizedButton}
-                                    onClick={openFileUploadDialog}
-                                    icon={UploadIcon}
-                                  />
-                                )}
-                              </FileUploadButton>
-                            )}
-                          </div>
-                        }>
-                        <EntityDocumentsTable
-                          entityType="WORK_ORDER"
-                          entityId={workOrder.id}
-                          // $FlowFixMe[incompatible-type] $FlowFixMe T74239404 Found via relay types
-                          files={[
-                            ...propsWorkOrder.files,
-                            ...propsWorkOrder.images,
-                          ]}
-                          categories={locationType || [{id: '', name: ''}]}
-                          hyperlinks={propsWorkOrder.hyperlinks}
-                          onChecked={countDispatch}
-                          linkToLocationOptions={!!locationType}
-                        />
-                      </ExpandingPanel>
-                      <ChecklistCategoriesMutateDispatchContext.Provider
-                        value={dispatch}>
-                        <CheckListCategoryExpandingPanel
-                          categories={editingCategories}
-                        />
-                      </ChecklistCategoriesMutateDispatchContext.Provider>
-                    </Grid>
-                    <Grid item xs={4} sm={4} lg={4} xl={4}>
-                      <SelectAvailabilityAssignee
-                        workOrder={workOrder}
-                        isOwner={isOwner}
-                        isAssignee={isAssignee}
-                        title={'Team'}
-                        setAppointmentData={setAppointmentData}
-                        _setWorkOrderDetail={_setWorkOrderDetail}
-                        propsWorkOrder={propsWorkOrder}
+                        </div>
+                      }>
+                      <EntityDocumentsTable
+                        entityType="WORK_ORDER"
+                        entityId={workOrder.id}
+                        // $FlowFixMe[incompatible-type] $FlowFixMe T74239404 Found via relay types
+                        files={[
+                          ...propsWorkOrder.files,
+                          ...propsWorkOrder.images,
+                        ]}
+                        categories={locationType || [{id: '', name: ''}]}
+                        hyperlinks={propsWorkOrder.hyperlinks}
+                        onChecked={countDispatch}
+                        linkToLocationOptions={!!locationType}
                       />
-
-                      <ExpandingPanel
-                        title={fbt('Activity & Comments', '')}
-                        detailsPaneClass={classes.commentsBoxContainer}
-                        className={classes.card}>
-                        <CommentsActivitiesBox
-                          boxElementsClass={classes.inExpandingPanelFix}
-                          commentsLogClass={classes.commentsLog}
-                          relatedEntityId={propsWorkOrder.id}
-                          relatedEntityType="WORK_ORDER"
-                          // $FlowFixMe[incompatible-type] $FlowFixMe T74239404 Found via relay types
-                          comments={propsWorkOrder.comments}
-                          activities={propsWorkOrder.activities}
-                        />
-                      </ExpandingPanel>
-                    </Grid>
+                    </ExpandingPanel>
+                    <ChecklistCategoriesMutateDispatchContext.Provider
+                      value={dispatch}>
+                      <CheckListCategoryExpandingPanel
+                        categories={editingCategories}
+                      />
+                    </ChecklistCategoriesMutateDispatchContext.Provider>
                   </Grid>
-                </div>
-              );
-            }}
-          </FormContext.Consumer>
-        </FormContextProvider>
-      </div>
-    );
-  }
+                  <Grid item xs={4} sm={4} lg={4} xl={4}>
+                    <SelectAvailabilityAssignee
+                      workOrder={workOrder}
+                      isOwner={isOwner}
+                      isAssignee={isAssignee}
+                      title={'Team'}
+                      setAppointmentData={setAppointmentData}
+                      _setWorkOrderDetail={_setWorkOrderDetail}
+                      propsWorkOrder={propsWorkOrder}
+                    />
+
+                    <ExpandingPanel
+                      title={fbt('Activity & Comments', '')}
+                      detailsPaneClass={classes.commentsBoxContainer}
+                      className={classes.card}>
+                      <CommentsActivitiesBox
+                        boxElementsClass={classes.inExpandingPanelFix}
+                        commentsLogClass={classes.commentsLog}
+                        relatedEntityId={propsWorkOrder.id}
+                        relatedEntityType="WORK_ORDER"
+                        // $FlowFixMe[incompatible-type] $FlowFixMe T74239404 Found via relay types
+                        comments={propsWorkOrder.comments}
+                        activities={propsWorkOrder.activities}
+                      />
+                    </ExpandingPanel>
+                  </Grid>
+                </Grid>
+              </div>
+            );
+          }}
+        </FormContext.Consumer>
+      </FormContextProvider>
+    </div>
+  );
 };
 
 export default withRouter(
@@ -953,7 +935,6 @@ export default withRouter(
           id
           name
           description
-          scheduledAt
           organizationFk {
             id
             name

@@ -15,9 +15,9 @@
 /*::
 import type { ConcreteRequest } from 'relay-runtime';
 export type EditThresholdInput = {|
-  description: string,
   id: string,
   name: string,
+  description: string,
   status: boolean,
 |};
 export type EditThresholdMutationVariables = {|

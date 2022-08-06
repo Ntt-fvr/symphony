@@ -1,6 +1,0 @@
-mutation addVendor($input: AddVendorInput!) {
-  addVendor(input: $input) {
-    id
-    name
-  }
-}

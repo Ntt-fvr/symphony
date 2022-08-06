@@ -1,8 +1,0 @@
-mutation editOrganization($input: EditOrganizationInput!) {
-  editOrganization(input: $input) {
-    id
-    name
-    description
-
-  }
-}

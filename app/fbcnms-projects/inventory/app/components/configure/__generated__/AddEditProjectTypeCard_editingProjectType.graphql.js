@@ -49,51 +49,6 @@ export type AddEditProjectTypeCard_editingProjectType = {|
     +isMandatory: ?boolean,
     +isInstanceProperty: ?boolean,
     +isDeleted: ?boolean,
-    +category: ?string,
-    +dependencePropertyTypes: $ReadOnlyArray<?{|
-      +id: string,
-      +name: string,
-      +type: PropertyKind,
-      +nodeType: ?string,
-      +index: ?number,
-      +stringValue: ?string,
-      +intValue: ?number,
-      +booleanValue: ?boolean,
-      +floatValue: ?number,
-      +latitudeValue: ?number,
-      +longitudeValue: ?number,
-      +rangeFromValue: ?number,
-      +rangeToValue: ?number,
-      +isEditable: ?boolean,
-      +isMandatory: ?boolean,
-      +isInstanceProperty: ?boolean,
-      +isDeleted: ?boolean,
-      +category: ?string,
-      +propertyTypeValues: ?$ReadOnlyArray<{|
-        +id: string,
-        +isDeleted: ?boolean,
-        +name: string,
-        +parentPropertyTypeValue: ?$ReadOnlyArray<?{|
-          +id: string,
-          +isDeleted: ?boolean,
-          +name: string,
-        |}>,
-      |}>,
-    |}>,
-    +propertyTypeValues: ?$ReadOnlyArray<{|
-      +id: string,
-      +isDeleted: ?boolean,
-      +name: string,
-      +parentPropertyTypeValue: ?$ReadOnlyArray<?{|
-        +id: string,
-        +isDeleted: ?boolean,
-        +name: string,
-      |}>,
-    |}>,
-    +parentPropertyType: ?{|
-      +id: string,
-      +name: string,
-    |},
   |}>,
   +$refType: AddEditProjectTypeCard_editingProjectType$ref,
 |};
@@ -119,146 +74,6 @@ v1 = {
   "args": null,
   "kind": "ScalarField",
   "name": "name",
-  "storageKey": null
-},
-v2 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "type",
-  "storageKey": null
-},
-v3 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "nodeType",
-  "storageKey": null
-},
-v4 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "index",
-  "storageKey": null
-},
-v5 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "stringValue",
-  "storageKey": null
-},
-v6 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "intValue",
-  "storageKey": null
-},
-v7 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "booleanValue",
-  "storageKey": null
-},
-v8 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "floatValue",
-  "storageKey": null
-},
-v9 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "latitudeValue",
-  "storageKey": null
-},
-v10 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "longitudeValue",
-  "storageKey": null
-},
-v11 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "rangeFromValue",
-  "storageKey": null
-},
-v12 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "rangeToValue",
-  "storageKey": null
-},
-v13 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "isEditable",
-  "storageKey": null
-},
-v14 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "isMandatory",
-  "storageKey": null
-},
-v15 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "isInstanceProperty",
-  "storageKey": null
-},
-v16 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "isDeleted",
-  "storageKey": null
-},
-v17 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "category",
-  "storageKey": null
-},
-v18 = {
-  "alias": null,
-  "args": null,
-  "concreteType": "PropertyTypeValue",
-  "kind": "LinkedField",
-  "name": "propertyTypeValues",
-  "plural": true,
-  "selections": [
-    (v0/*: any*/),
-    (v16/*: any*/),
-    (v1/*: any*/),
-    {
-      "alias": null,
-      "args": null,
-      "concreteType": "PropertyTypeValue",
-      "kind": "LinkedField",
-      "name": "parentPropertyTypeValue",
-      "plural": true,
-      "selections": [
-        (v0/*: any*/),
-        (v16/*: any*/),
-        (v1/*: any*/)
-      ],
-      "storageKey": null
-    }
-  ],
   "storageKey": null
 };
 return {
@@ -316,64 +131,109 @@ return {
       "selections": [
         (v0/*: any*/),
         (v1/*: any*/),
-        (v2/*: any*/),
-        (v3/*: any*/),
-        (v4/*: any*/),
-        (v5/*: any*/),
-        (v6/*: any*/),
-        (v7/*: any*/),
-        (v8/*: any*/),
-        (v9/*: any*/),
-        (v10/*: any*/),
-        (v11/*: any*/),
-        (v12/*: any*/),
-        (v13/*: any*/),
-        (v14/*: any*/),
-        (v15/*: any*/),
-        (v16/*: any*/),
-        (v17/*: any*/),
         {
           "alias": null,
           "args": null,
-          "concreteType": "PropertyType",
-          "kind": "LinkedField",
-          "name": "dependencePropertyTypes",
-          "plural": true,
-          "selections": [
-            (v0/*: any*/),
-            (v1/*: any*/),
-            (v2/*: any*/),
-            (v3/*: any*/),
-            (v4/*: any*/),
-            (v5/*: any*/),
-            (v6/*: any*/),
-            (v7/*: any*/),
-            (v8/*: any*/),
-            (v9/*: any*/),
-            (v10/*: any*/),
-            (v11/*: any*/),
-            (v12/*: any*/),
-            (v13/*: any*/),
-            (v14/*: any*/),
-            (v15/*: any*/),
-            (v16/*: any*/),
-            (v17/*: any*/),
-            (v18/*: any*/)
-          ],
+          "kind": "ScalarField",
+          "name": "type",
           "storageKey": null
         },
-        (v18/*: any*/),
         {
           "alias": null,
           "args": null,
-          "concreteType": "PropertyType",
-          "kind": "LinkedField",
-          "name": "parentPropertyType",
-          "plural": false,
-          "selections": [
-            (v0/*: any*/),
-            (v1/*: any*/)
-          ],
+          "kind": "ScalarField",
+          "name": "nodeType",
+          "storageKey": null
+        },
+        {
+          "alias": null,
+          "args": null,
+          "kind": "ScalarField",
+          "name": "index",
+          "storageKey": null
+        },
+        {
+          "alias": null,
+          "args": null,
+          "kind": "ScalarField",
+          "name": "stringValue",
+          "storageKey": null
+        },
+        {
+          "alias": null,
+          "args": null,
+          "kind": "ScalarField",
+          "name": "intValue",
+          "storageKey": null
+        },
+        {
+          "alias": null,
+          "args": null,
+          "kind": "ScalarField",
+          "name": "booleanValue",
+          "storageKey": null
+        },
+        {
+          "alias": null,
+          "args": null,
+          "kind": "ScalarField",
+          "name": "floatValue",
+          "storageKey": null
+        },
+        {
+          "alias": null,
+          "args": null,
+          "kind": "ScalarField",
+          "name": "latitudeValue",
+          "storageKey": null
+        },
+        {
+          "alias": null,
+          "args": null,
+          "kind": "ScalarField",
+          "name": "longitudeValue",
+          "storageKey": null
+        },
+        {
+          "alias": null,
+          "args": null,
+          "kind": "ScalarField",
+          "name": "rangeFromValue",
+          "storageKey": null
+        },
+        {
+          "alias": null,
+          "args": null,
+          "kind": "ScalarField",
+          "name": "rangeToValue",
+          "storageKey": null
+        },
+        {
+          "alias": null,
+          "args": null,
+          "kind": "ScalarField",
+          "name": "isEditable",
+          "storageKey": null
+        },
+        {
+          "alias": null,
+          "args": null,
+          "kind": "ScalarField",
+          "name": "isMandatory",
+          "storageKey": null
+        },
+        {
+          "alias": null,
+          "args": null,
+          "kind": "ScalarField",
+          "name": "isInstanceProperty",
+          "storageKey": null
+        },
+        {
+          "alias": null,
+          "args": null,
+          "kind": "ScalarField",
+          "name": "isDeleted",
           "storageKey": null
         }
       ],
@@ -385,6 +245,6 @@ return {
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = '62d0f0dc238ba60c266d73ef5c0f76e6';
+(node/*: any*/).hash = '5ca97f35079eff8213de17a78ba0e716';
 
 module.exports = node;

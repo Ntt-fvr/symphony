@@ -20,7 +20,6 @@
     "@opencensus/nodejs": "^0.0.22",
     "@opencensus/propagation-b3": "^0.0.22",
     "dotenv": "^6.0.0",
-    "cors": "^2.8.5",
     "graphql": "^15.0.0",
     "graphql-request": "^3.3.0",
     "http-proxy-middleware": "^0.21.0"

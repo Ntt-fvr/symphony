@@ -22,7 +22,6 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/property"
 	"github.com/facebookincubator/symphony/pkg/ent/propertycategory"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
-	"github.com/facebookincubator/symphony/pkg/ent/propertytypevalue"
 	"github.com/facebookincubator/symphony/pkg/ent/servicetype"
 	"github.com/facebookincubator/symphony/pkg/ent/workertype"
 	"github.com/facebookincubator/symphony/pkg/ent/workordertemplate"
@@ -517,55 +516,6 @@ func (ptc *PropertyTypeCreate) SetNillableWorkerTypeID(id *int) *PropertyTypeCre
 // SetWorkerType sets the worker_type edge to WorkerType.
 func (ptc *PropertyTypeCreate) SetWorkerType(w *WorkerType) *PropertyTypeCreate {
 	return ptc.SetWorkerTypeID(w.ID)
-}
-
-// AddPropertyTypeValueIDs adds the property_type_values edge to PropertyTypeValue by ids.
-func (ptc *PropertyTypeCreate) AddPropertyTypeValueIDs(ids ...int) *PropertyTypeCreate {
-	ptc.mutation.AddPropertyTypeValueIDs(ids...)
-	return ptc
-}
-
-// AddPropertyTypeValues adds the property_type_values edges to PropertyTypeValue.
-func (ptc *PropertyTypeCreate) AddPropertyTypeValues(p ...*PropertyTypeValue) *PropertyTypeCreate {
-	ids := make([]int, len(p))
-	for i := range p {
-		ids[i] = p[i].ID
-	}
-	return ptc.AddPropertyTypeValueIDs(ids...)
-}
-
-// SetParentPropertyTypeID sets the parent_property_type edge to PropertyType by id.
-func (ptc *PropertyTypeCreate) SetParentPropertyTypeID(id int) *PropertyTypeCreate {
-	ptc.mutation.SetParentPropertyTypeID(id)
-	return ptc
-}
-
-// SetNillableParentPropertyTypeID sets the parent_property_type edge to PropertyType by id if the given value is not nil.
-func (ptc *PropertyTypeCreate) SetNillableParentPropertyTypeID(id *int) *PropertyTypeCreate {
-	if id != nil {
-		ptc = ptc.SetParentPropertyTypeID(*id)
-	}
-	return ptc
-}
-
-// SetParentPropertyType sets the parent_property_type edge to PropertyType.
-func (ptc *PropertyTypeCreate) SetParentPropertyType(p *PropertyType) *PropertyTypeCreate {
-	return ptc.SetParentPropertyTypeID(p.ID)
-}
-
-// AddPropertyTypeIDs adds the property_type edge to PropertyType by ids.
-func (ptc *PropertyTypeCreate) AddPropertyTypeIDs(ids ...int) *PropertyTypeCreate {
-	ptc.mutation.AddPropertyTypeIDs(ids...)
-	return ptc
-}
-
-// AddPropertyType adds the property_type edges to PropertyType.
-func (ptc *PropertyTypeCreate) AddPropertyType(p ...*PropertyType) *PropertyTypeCreate {
-	ids := make([]int, len(p))
-	for i := range p {
-		ids[i] = p[i].ID
-	}
-	return ptc.AddPropertyTypeIDs(ids...)
 }
 
 // SetPropertyCategoryID sets the property_category edge to PropertyCategory by id.
@@ -1099,63 +1049,6 @@ func (ptc *PropertyTypeCreate) createSpec() (*PropertyType, *sqlgraph.CreateSpec
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: workertype.FieldID,
-				},
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges = append(_spec.Edges, edge)
-	}
-	if nodes := ptc.mutation.PropertyTypeValuesIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   propertytype.PropertyTypeValuesTable,
-			Columns: []string{propertytype.PropertyTypeValuesColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: propertytypevalue.FieldID,
-				},
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges = append(_spec.Edges, edge)
-	}
-	if nodes := ptc.mutation.ParentPropertyTypeIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: true,
-			Table:   propertytype.ParentPropertyTypeTable,
-			Columns: []string{propertytype.ParentPropertyTypeColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: propertytype.FieldID,
-				},
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges = append(_spec.Edges, edge)
-	}
-	if nodes := ptc.mutation.PropertyTypeIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   propertytype.PropertyTypeTable,
-			Columns: []string{propertytype.PropertyTypeColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: propertytype.FieldID,
 				},
 			},
 		}

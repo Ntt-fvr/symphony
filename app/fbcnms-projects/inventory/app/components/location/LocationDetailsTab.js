@@ -13,22 +13,19 @@ import type {Location} from '../../common/Location.js';
 
 import Card from '@symphony/design-system/components/Card/Card';
 import CardHeader from '@symphony/design-system/components/Card/CardHeader';
+import DynamicPropertiesGrid from '../DynamicPropertiesGrid';
 import DynamicPropertyCategoriesTable from '../DynamicPropertyCategoriesTable';
 import LocationDetailsCard from './LocationDetailsCard';
 import LocationEquipmentCard from './LocationEquipmentCard';
 import React from 'react';
-import ResourceCard from '../resource/ResourceCard';
-import useFeatureFlag from '@fbcnms/ui/context/useFeatureFlag';
 import {makeStyles} from '@material-ui/styles';
+
 type Props = $ReadOnly<{|
   location: Location,
-  locationId: string,
   selectedWorkOrderId: ?string,
   onEquipmentSelected: Equipment => void,
   onWorkOrderSelected: (workOrderId: string) => void,
-  onResourceSelected: () => void,
   onAddEquipment: () => void,
-  onAddResource: (selectedResourceType: {}) => void,
 |}>;
 
 const useStyles = makeStyles(_theme => ({
@@ -41,21 +38,21 @@ const LocationDetailsTab = (props: Props) => {
   const classes = useStyles();
   const {
     location,
-    locationId,
     selectedWorkOrderId,
     onEquipmentSelected,
     onWorkOrderSelected,
-    onResourceSelected,
     onAddEquipment,
-    onAddResource,
   } = props;
-  const resourceCardFlag = useFeatureFlag('resource_inventory');
+
+  const propTypes = location.locationType.propertyTypes;
+
   return (
     <div>
       <LocationDetailsCard className={classes.card} location={location} />
       <Card className={classes.card}>
         <CardHeader>Properties</CardHeader>
-        <DynamicPropertyCategoriesTable />
+        <DynamicPropertyCategoriesTable
+        />
       </Card>
       <LocationEquipmentCard
         className={classes.card}
@@ -65,13 +62,6 @@ const LocationDetailsTab = (props: Props) => {
         onWorkOrderSelected={onWorkOrderSelected}
         onAddEquipment={onAddEquipment}
       />
-      {resourceCardFlag && (
-        <ResourceCard
-          selectedLocationId={locationId}
-          onResourceSelected={onResourceSelected}
-          onAddResource={onAddResource}
-        />
-      )}
     </div>
   );
 };

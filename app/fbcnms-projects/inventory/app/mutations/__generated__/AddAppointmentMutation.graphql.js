@@ -15,11 +15,11 @@
 /*::
 import type { ConcreteRequest } from 'relay-runtime';
 export type AddAppointmentInput = {|
-  assigneeID: string,
   creatorId?: ?string,
+  assigneeID: string,
+  workorderID: string,
   date: any,
   duration: number,
-  workorderID: string,
 |};
 export type AddAppointmentMutationVariables = {|
   input: AddAppointmentInput

@@ -148,7 +148,6 @@ func NewService(cfg Config, opts ...Option) (*Service, error) {
 			Filter:   o.filters,
 		}
 	}
-
 	if cfg.OnError == nil {
 		cfg.OnError = func(context.Context, error) {}
 	}

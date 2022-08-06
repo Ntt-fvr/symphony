@@ -34,6 +34,3 @@ class AddWorkOrderInput(DataClassJsonMixin):
     organizationFk: Optional[str] = None
     status: Optional[WorkOrderStatus] = None
     priority: Optional[WorkOrderPriority] = None
-    duration: Optional[Number] = None
-    dueDate: Optional[datetime] = None
-    #scheduledAt: Optional[datetime] = None

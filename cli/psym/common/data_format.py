@@ -480,7 +480,6 @@ def format_to_work_order(work_order_fragment: WorkOrderFragment) -> WorkOrder:
         else None,
         status=work_order_fragment.status,
         priority=work_order_fragment.priority,
-        organization=work_order_fragment.organizationFk
     )
 
 

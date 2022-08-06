@@ -12,7 +12,7 @@ import FormAction from '@symphony/design-system/components/Form/FormAction';
 import IconButton from '@symphony/design-system/components/IconButton';
 import React, {useCallback} from 'react';
 import RenameFlowDialog from '../RenameFlowDialog';
-import {Grid, Typography} from '@material-ui/core';
+import Text from '@symphony/design-system/components/Text';
 import {POSITION} from '@symphony/design-system/components/Dialog/DialogFrame';
 import {RenameOneLineIcon} from '@symphony/design-system/icons';
 import {makeStyles} from '@material-ui/styles';
@@ -22,21 +22,25 @@ import {useFlowData} from '../../../../data/FlowDataContext';
 const useStyles = makeStyles(() => ({
   root: {
     display: 'flex',
-    alignItems: 'center',
+    alignItems: 'flex-start',
+    marginBottom: '6px',
     '&:hover $renameButton': {
       opacity: 1,
     },
+  },
+  name: {
+    width: '320px',
+    marginRight: '16px',
   },
   renameButton: {
     opacity: 0,
   },
 }));
 
-export default function FlowTitle(props) {
+export default function FlowTitle() {
   const classes = useStyles();
   const flowData = useFlowData();
   const dialogShowingContext = useDialogShowingContext();
-  const {isReadOnly} = props;
 
   const hide = useCallback(() => {
     dialogShowingContext.hideDialog();
@@ -66,13 +70,9 @@ export default function FlowTitle(props) {
 
   return (
     <div className={classes.root}>
-      <Grid item xs zeroMinWidth>
-        <Typography variant={'h6'} noWrap>
-          {isReadOnly
-            ? flowData.flowDraft?.id
-            : flowData.flowDraft?.name}
-        </Typography>
-      </Grid>
+      <div className={classes.name}>
+        <Text variant="h6">{flowData.flowDraft?.name ?? null}</Text>
+      </div>
       <FormAction hideOnEditLocks={true}>
         <IconButton
           className={classes.renameButton}
