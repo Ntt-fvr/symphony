@@ -1,6 +1,0 @@
-mutation addRecommendationsSources($input: AddRecommendationsSourcesInput!) {
-  addRecommendationsSources(input: $input) {
-    id
-    name
-  }
-}

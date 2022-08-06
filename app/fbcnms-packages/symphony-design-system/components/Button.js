@@ -442,7 +442,6 @@ const Button = (props: Props, forwardedRef: TRefFor<HTMLElement>) => {
     rightIcon: RightIcon = null,
     rightIconClass = null,
     tooltip: tooltipProp,
-    ...rest
   } = props;
   const classes = useStyles();
 
@@ -479,7 +478,6 @@ const Button = (props: Props, forwardedRef: TRefFor<HTMLElement>) => {
       disabled={disabled}
       onClick={onClick}
       onMouseDown={onMouseDown}
-      {...rest}
       ref={forwardedRef}>
       {LeftIcon ? (
         <LeftIcon

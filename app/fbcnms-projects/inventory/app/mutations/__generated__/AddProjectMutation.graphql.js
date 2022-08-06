@@ -16,30 +16,28 @@
 import type { ConcreteRequest } from 'relay-runtime';
 export type ProjectPriority = "HIGH" | "LOW" | "MEDIUM" | "NONE" | "URGENT" | "%future added value";
 export type AddProjectInput = {|
-  creatorId?: ?string,
-  description?: ?string,
-  location?: ?string,
   name: string,
+  description?: ?string,
   priority?: ?ProjectPriority,
-  properties?: ?$ReadOnlyArray<PropertyInput>,
+  creatorId?: ?string,
   type: string,
+  location?: ?string,
+  properties?: ?$ReadOnlyArray<PropertyInput>,
 |};
 export type PropertyInput = {|
-  booleanValue?: ?boolean,
-  dependenceProperties?: ?$ReadOnlyArray<PropertyInput>,
-  floatValue?: ?number,
   id?: ?string,
+  propertyTypeID: string,
+  stringValue?: ?string,
   intValue?: ?number,
-  isEditable?: ?boolean,
-  isInstanceProperty?: ?boolean,
+  booleanValue?: ?boolean,
+  floatValue?: ?number,
   latitudeValue?: ?number,
   longitudeValue?: ?number,
-  nodeIDValue?: ?string,
-  propertyTypeID: string,
-  propertyTypeValueID?: ?string,
   rangeFromValue?: ?number,
   rangeToValue?: ?number,
-  stringValue?: ?string,
+  nodeIDValue?: ?string,
+  isEditable?: ?boolean,
+  isInstanceProperty?: ?boolean,
 |};
 export type AddProjectMutationVariables = {|
   input: AddProjectInput

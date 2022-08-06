@@ -16,8 +16,8 @@
 import type { ConcreteRequest } from 'relay-runtime';
 export type EditPropertyCategoryInput = {|
   id?: ?string,
-  index: number,
   name: string,
+  index: number,
   parameterCatalogId: string,
 |};
 export type EditPropertyCategoryTypeMutationVariables = {|

@@ -43,9 +43,6 @@ fragment WorkOrderFragment on WorkOrder {
     assignedTo{
         id
     }
-    organizationFk{
-        id
-    }
     status
     priority
 }
@@ -74,10 +71,6 @@ class WorkOrderFragment(DataClassJsonMixin):
     class User(DataClassJsonMixin):
         id: str
 
-    @dataclass(frozen=True)
-    class Organization(DataClassJsonMixin):
-        id: str
-
     id: str
     name: str
     description: Optional[str]
@@ -87,6 +80,5 @@ class WorkOrderFragment(DataClassJsonMixin):
     properties: List[Property]
     owner: User
     assignedTo: Optional[User]
-    organizationFk: Optional[Organization]
     status: WorkOrderStatus = _field(metadata=enum_field_metadata(WorkOrderStatus))
     priority: WorkOrderPriority = _field(metadata=enum_field_metadata(WorkOrderPriority))

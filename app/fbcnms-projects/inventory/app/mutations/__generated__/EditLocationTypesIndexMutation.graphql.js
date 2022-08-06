@@ -17,8 +17,8 @@ import type { ConcreteRequest } from 'relay-runtime';
 type AddEditLocationTypeCard_editingLocationType$ref = any;
 type LocationTypeItem_locationType$ref = any;
 export type LocationTypeIndex = {|
-  index: number,
   locationTypeID: string,
+  index: number,
 |};
 export type EditLocationTypesIndexMutationVariables = {|
   locationTypeIndex: $ReadOnlyArray<?LocationTypeIndex>

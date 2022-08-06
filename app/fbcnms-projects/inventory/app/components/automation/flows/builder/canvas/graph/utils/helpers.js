@@ -23,14 +23,10 @@ import type {
   VertexPort,
 } from '../facades/shapes/vertexes/BaseVertext';
 
-import {TYPE as ForEachLoopType} from '../facades/shapes/vertexes/logic/ForEachLoop';
-import {TYPE as ParallelType} from '../facades/shapes/vertexes/logic/Parallel';
-
 import jss from 'jss';
 import symphony from '@symphony/design-system/theme/symphony';
 import {Events} from '../facades/Helpers';
 import {PORTS_GROUPS} from '../facades/shapes/vertexes/BaseVertext';
-import {validatorConectionBlock} from './linkValidator';
 
 const connectorDefaultColor = symphony.palette.secondary;
 export const {classes} = jss
@@ -45,9 +41,6 @@ export const {classes} = jss
       isSelected: {
         stroke: symphony.palette.primary,
       },
-      failed: {
-        stroke: 'red',
-      }
     },
     {link: true},
   )
@@ -124,17 +117,21 @@ function isLinkValid(flow: ?FlowWrapper, newLink: ILinkModel) {
   }
   const portSource = getLinkEndpointPort(flow, newLink.attributes.source);
   const portTarget = getLinkEndpointPort(flow, newLink.attributes.target);
+
   if (portSource == null || portTarget == null) {
     return false;
   }
+
   if (portSource.group === portTarget.group) {
     return false;
   }
+
   if (portSource.group === PORTS_GROUPS.INPUT) {
     const originalSource = newLink.attributes.source;
     newLink.source(newLink.attributes.target);
     newLink.target(originalSource);
   }
+
   return true;
 }
 
@@ -167,6 +164,7 @@ export function buildPaperConnectionValidation(
     }
 
     const blockInputPort = block.getInputPort();
+
     return portId === blockInputPort?.id;
   };
 
@@ -193,38 +191,12 @@ export function buildPaperConnectionValidation(
       if (sourceBlockId === targetBlockId) {
         return false;
       }
-      const sourcePortId = magnetS.getAttribute('port');
 
+      const sourcePortId = magnetS.getAttribute('port');
       const sourceBlock = flowWrapper.current?.blocks.get(sourceBlockId);
 
       const targetPortId = magnetT.getAttribute('port');
-
       const targetBlock = flowWrapper.current?.blocks.get(targetBlockId);
-
-      const coupledBlocksList = flowWrapper.current?.paper.model.attributes.cells.models.filter(
-        block =>
-          block.attributes.type === ParallelType ||
-          block.attributes.type === ForEachLoopType,
-      );
-
-      if (
-        (isOutputPort(sourceBlock, sourcePortId) &&
-          isInputPort(targetBlock, targetPortId)) ||
-        (isInputPort(sourceBlock, sourcePortId) &&
-          isOutputPort(targetBlock, targetPortId))
-      ) {
-        if (coupledBlocksList.length > 0) {
-          const validationConection = validatorConectionBlock(
-            coupledBlocksList,
-            targetBlock,
-            sourceBlock,
-            (isInputPort: () => boolean),
-            targetPortId,
-            sourcePortId,
-          );
-          return validationConection;
-        }
-      }
 
       return (
         (isOutputPort(sourceBlock, sourcePortId) &&
@@ -311,11 +283,4 @@ function getHighestIndexerForBaseName(
       return getHigherIndexer(topIndex, block.name, specificBlockNameRegEx);
     }, -1) + 1
   );
-}
-
-export function getValidateEmbedding(childView: mixed, parentView: mixed) {
-  const embedding: ?boolean = parentView.model.embedding;
-  if (embedding) {
-    return embedding;
-  }
 }

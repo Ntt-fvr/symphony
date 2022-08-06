@@ -47,8 +47,6 @@ export interface ILinkModel extends IShape {
   +getTargetElement: () => ?IVertexModel;
   +attr: KeyValuePair => void;
   +remove: () => void;
-  +appendLabel: ({}) => void;
-  +connector: (string)=> void;
 }
 
 export type ILinkView = $ReadOnly<{|

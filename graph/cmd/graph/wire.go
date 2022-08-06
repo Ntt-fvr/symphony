@@ -2,8 +2,7 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-//go:build wireinject
-// +build wireinject
+//+build wireinject
 
 package main
 
@@ -77,8 +76,6 @@ func newApplication(ctx context.Context, flags *cliFlags) (*application, func(),
 			new(graphhttp.Config),
 			"*",
 		),
-		//ev.ProvideAutomationEmitter,
-		//provideAutomationEmitterFactory,
 	)
 	return nil, nil, nil
 }

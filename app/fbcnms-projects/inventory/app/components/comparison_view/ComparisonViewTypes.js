@@ -25,8 +25,6 @@ export const EntityTypeMap = Object.freeze({
   service: 'service',
   alert: 'alert',
   flow_instance: 'flow_instance',
-  resource: 'resource',
-  parameter_selector: 'parameter_selector',
 });
 
 export type EntityType = $Values<typeof EntityTypeMap>;

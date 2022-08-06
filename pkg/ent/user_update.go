@@ -16,7 +16,6 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/appointment"
 	"github.com/facebookincubator/symphony/pkg/ent/feature"
 	"github.com/facebookincubator/symphony/pkg/ent/file"
-	"github.com/facebookincubator/symphony/pkg/ent/flow"
 	"github.com/facebookincubator/symphony/pkg/ent/organization"
 	"github.com/facebookincubator/symphony/pkg/ent/predicate"
 	"github.com/facebookincubator/symphony/pkg/ent/project"
@@ -299,21 +298,6 @@ func (uu *UserUpdate) AddAppointment(a ...*Appointment) *UserUpdate {
 	return uu.AddAppointmentIDs(ids...)
 }
 
-// AddAuthoredFlowIDs adds the authored_flow edge to Flow by ids.
-func (uu *UserUpdate) AddAuthoredFlowIDs(ids ...int) *UserUpdate {
-	uu.mutation.AddAuthoredFlowIDs(ids...)
-	return uu
-}
-
-// AddAuthoredFlow adds the authored_flow edges to Flow.
-func (uu *UserUpdate) AddAuthoredFlow(f ...*Flow) *UserUpdate {
-	ids := make([]int, len(f))
-	for i := range f {
-		ids[i] = f[i].ID
-	}
-	return uu.AddAuthoredFlowIDs(ids...)
-}
-
 // Mutation returns the UserMutation object of the builder.
 func (uu *UserUpdate) Mutation() *UserMutation {
 	return uu.mutation
@@ -497,27 +481,6 @@ func (uu *UserUpdate) RemoveAppointment(a ...*Appointment) *UserUpdate {
 		ids[i] = a[i].ID
 	}
 	return uu.RemoveAppointmentIDs(ids...)
-}
-
-// ClearAuthoredFlow clears all "authored_flow" edges to type Flow.
-func (uu *UserUpdate) ClearAuthoredFlow() *UserUpdate {
-	uu.mutation.ClearAuthoredFlow()
-	return uu
-}
-
-// RemoveAuthoredFlowIDs removes the authored_flow edge to Flow by ids.
-func (uu *UserUpdate) RemoveAuthoredFlowIDs(ids ...int) *UserUpdate {
-	uu.mutation.RemoveAuthoredFlowIDs(ids...)
-	return uu
-}
-
-// RemoveAuthoredFlow removes authored_flow edges to Flow.
-func (uu *UserUpdate) RemoveAuthoredFlow(f ...*Flow) *UserUpdate {
-	ids := make([]int, len(f))
-	for i := range f {
-		ids[i] = f[i].ID
-	}
-	return uu.RemoveAuthoredFlowIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -1208,60 +1171,6 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if uu.mutation.AuthoredFlowCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: true,
-			Table:   user.AuthoredFlowTable,
-			Columns: []string{user.AuthoredFlowColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: flow.FieldID,
-				},
-			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := uu.mutation.RemovedAuthoredFlowIDs(); len(nodes) > 0 && !uu.mutation.AuthoredFlowCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: true,
-			Table:   user.AuthoredFlowTable,
-			Columns: []string{user.AuthoredFlowColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: flow.FieldID,
-				},
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := uu.mutation.AuthoredFlowIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: true,
-			Table:   user.AuthoredFlowTable,
-			Columns: []string{user.AuthoredFlowColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: flow.FieldID,
-				},
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
-	}
 	if n, err = sqlgraph.UpdateNodes(ctx, uu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{user.Label}
@@ -1540,21 +1449,6 @@ func (uuo *UserUpdateOne) AddAppointment(a ...*Appointment) *UserUpdateOne {
 	return uuo.AddAppointmentIDs(ids...)
 }
 
-// AddAuthoredFlowIDs adds the authored_flow edge to Flow by ids.
-func (uuo *UserUpdateOne) AddAuthoredFlowIDs(ids ...int) *UserUpdateOne {
-	uuo.mutation.AddAuthoredFlowIDs(ids...)
-	return uuo
-}
-
-// AddAuthoredFlow adds the authored_flow edges to Flow.
-func (uuo *UserUpdateOne) AddAuthoredFlow(f ...*Flow) *UserUpdateOne {
-	ids := make([]int, len(f))
-	for i := range f {
-		ids[i] = f[i].ID
-	}
-	return uuo.AddAuthoredFlowIDs(ids...)
-}
-
 // Mutation returns the UserMutation object of the builder.
 func (uuo *UserUpdateOne) Mutation() *UserMutation {
 	return uuo.mutation
@@ -1738,27 +1632,6 @@ func (uuo *UserUpdateOne) RemoveAppointment(a ...*Appointment) *UserUpdateOne {
 		ids[i] = a[i].ID
 	}
 	return uuo.RemoveAppointmentIDs(ids...)
-}
-
-// ClearAuthoredFlow clears all "authored_flow" edges to type Flow.
-func (uuo *UserUpdateOne) ClearAuthoredFlow() *UserUpdateOne {
-	uuo.mutation.ClearAuthoredFlow()
-	return uuo
-}
-
-// RemoveAuthoredFlowIDs removes the authored_flow edge to Flow by ids.
-func (uuo *UserUpdateOne) RemoveAuthoredFlowIDs(ids ...int) *UserUpdateOne {
-	uuo.mutation.RemoveAuthoredFlowIDs(ids...)
-	return uuo
-}
-
-// RemoveAuthoredFlow removes authored_flow edges to Flow.
-func (uuo *UserUpdateOne) RemoveAuthoredFlow(f ...*Flow) *UserUpdateOne {
-	ids := make([]int, len(f))
-	for i := range f {
-		ids[i] = f[i].ID
-	}
-	return uuo.RemoveAuthoredFlowIDs(ids...)
 }
 
 // Save executes the query and returns the updated entity.
@@ -2439,60 +2312,6 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: appointment.FieldID,
-				},
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
-	}
-	if uuo.mutation.AuthoredFlowCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: true,
-			Table:   user.AuthoredFlowTable,
-			Columns: []string{user.AuthoredFlowColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: flow.FieldID,
-				},
-			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := uuo.mutation.RemovedAuthoredFlowIDs(); len(nodes) > 0 && !uuo.mutation.AuthoredFlowCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: true,
-			Table:   user.AuthoredFlowTable,
-			Columns: []string{user.AuthoredFlowColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: flow.FieldID,
-				},
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := uuo.mutation.AuthoredFlowIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: true,
-			Table:   user.AuthoredFlowTable,
-			Columns: []string{user.AuthoredFlowColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: flow.FieldID,
 				},
 			},
 		}

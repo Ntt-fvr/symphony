@@ -18,7 +18,6 @@ const (
 	ExitPointRoleDecision ExitPointRole = "DECISION"
 	ExitPointRoleTrue     ExitPointRole = "TRUE"
 	ExitPointRoleFalse    ExitPointRole = "FALSE"
-	ExitPointRoleChoice   ExitPointRole = "CHOICE"
 )
 
 // Values returns exit point role possible values.
@@ -28,7 +27,6 @@ func (ExitPointRole) Values() []string {
 		ExitPointRoleDecision.String(),
 		ExitPointRoleTrue.String(),
 		ExitPointRoleFalse.String(),
-		ExitPointRoleChoice.String(),
 	}
 }
 

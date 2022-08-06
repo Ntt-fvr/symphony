@@ -16,7 +16,7 @@
 import type { ConcreteRequest } from 'relay-runtime';
 export type ActionTypeId = "update_inventory" | "update_workforce" | "work_order" | "worker" | "%future added value";
 export type BlockInstanceStatus = "COMPLETED" | "FAILED" | "IN_PROGRESS" | "PENDING" | "WAITING" | "%future added value";
-export type FlowInstanceStatus = "CANCELED" | "CANCELING" | "CLOSED" | "COMPLETED" | "FAILED" | "FAILING" | "PAUSED" | "PAUSING" | "RESUMING" | "RUNNING" | "%future added value";
+export type FlowInstanceStatus = "CANCELED" | "COMPLETED" | "FAILED" | "IN_PROGRESS" | "%future added value";
 export type FlowInstanceCardQueryVariables = {|
   flowInstanceId: string
 |};
@@ -26,6 +26,7 @@ export type FlowInstanceCardQueryResponse = {|
     +status?: FlowInstanceStatus,
     +startDate?: any,
     +endDate?: ?any,
+    +bssCode?: string,
     +serviceInstanceCode?: ?string,
     +template?: {|
       +id: string,
@@ -80,6 +81,7 @@ query FlowInstanceCardQuery(
       status
       startDate
       endDate
+      bssCode
       serviceInstanceCode
       template {
         id
@@ -167,17 +169,24 @@ v6 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "serviceInstanceCode",
+  "name": "bssCode",
   "storageKey": null
 },
 v7 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "name",
+  "name": "serviceInstanceCode",
   "storageKey": null
 },
 v8 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "name",
+  "storageKey": null
+},
+v9 = {
   "alias": null,
   "args": null,
   "concreteType": "FlowExecutionTemplate",
@@ -186,38 +195,38 @@ v8 = {
   "plural": false,
   "selections": [
     (v2/*: any*/),
-    (v7/*: any*/)
+    (v8/*: any*/)
   ],
   "storageKey": null
 },
-v9 = {
+v10 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "cid",
   "storageKey": null
 },
-v10 = [
-  (v7/*: any*/)
+v11 = [
+  (v8/*: any*/)
 ],
-v11 = {
+v12 = {
   "alias": null,
   "args": null,
   "concreteType": "BlockUIRepresentation",
   "kind": "LinkedField",
   "name": "uiRepresentation",
   "plural": false,
-  "selections": (v10/*: any*/),
+  "selections": (v11/*: any*/),
   "storageKey": null
 },
-v12 = {
+v13 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "__typename",
   "storageKey": null
 },
-v13 = {
+v14 = {
   "alias": null,
   "args": null,
   "concreteType": "ActionType",
@@ -229,8 +238,8 @@ v13 = {
   ],
   "storageKey": null
 },
-v14 = [
-  (v7/*: any*/),
+v15 = [
+  (v8/*: any*/),
   (v2/*: any*/)
 ];
 return {
@@ -256,7 +265,8 @@ return {
               (v4/*: any*/),
               (v5/*: any*/),
               (v6/*: any*/),
-              (v8/*: any*/),
+              (v7/*: any*/),
+              (v9/*: any*/),
               {
                 "alias": null,
                 "args": null,
@@ -278,8 +288,8 @@ return {
                     "plural": false,
                     "selections": [
                       (v2/*: any*/),
-                      (v9/*: any*/),
-                      (v11/*: any*/),
+                      (v10/*: any*/),
+                      (v12/*: any*/),
                       {
                         "alias": null,
                         "args": null,
@@ -288,11 +298,11 @@ return {
                         "name": "details",
                         "plural": false,
                         "selections": [
-                          (v12/*: any*/),
+                          (v13/*: any*/),
                           {
                             "kind": "InlineFragment",
                             "selections": [
-                              (v13/*: any*/),
+                              (v14/*: any*/),
                               {
                                 "alias": null,
                                 "args": null,
@@ -300,7 +310,7 @@ return {
                                 "kind": "LinkedField",
                                 "name": "workerType",
                                 "plural": false,
-                                "selections": (v10/*: any*/),
+                                "selections": (v11/*: any*/),
                                 "storageKey": null
                               },
                               {
@@ -310,7 +320,7 @@ return {
                                 "kind": "LinkedField",
                                 "name": "workOrderType",
                                 "plural": false,
-                                "selections": (v10/*: any*/),
+                                "selections": (v11/*: any*/),
                                 "storageKey": null
                               }
                             ],
@@ -351,7 +361,7 @@ return {
         "name": "node",
         "plural": false,
         "selections": [
-          (v12/*: any*/),
+          (v13/*: any*/),
           (v2/*: any*/),
           {
             "kind": "InlineFragment",
@@ -360,7 +370,8 @@ return {
               (v4/*: any*/),
               (v5/*: any*/),
               (v6/*: any*/),
-              (v8/*: any*/),
+              (v7/*: any*/),
+              (v9/*: any*/),
               {
                 "alias": null,
                 "args": null,
@@ -382,8 +393,8 @@ return {
                     "plural": false,
                     "selections": [
                       (v2/*: any*/),
-                      (v9/*: any*/),
-                      (v11/*: any*/),
+                      (v10/*: any*/),
+                      (v12/*: any*/),
                       {
                         "alias": null,
                         "args": null,
@@ -392,11 +403,11 @@ return {
                         "name": "details",
                         "plural": false,
                         "selections": [
-                          (v12/*: any*/),
+                          (v13/*: any*/),
                           {
                             "kind": "InlineFragment",
                             "selections": [
-                              (v13/*: any*/),
+                              (v14/*: any*/),
                               {
                                 "alias": null,
                                 "args": null,
@@ -404,7 +415,7 @@ return {
                                 "kind": "LinkedField",
                                 "name": "workerType",
                                 "plural": false,
-                                "selections": (v14/*: any*/),
+                                "selections": (v15/*: any*/),
                                 "storageKey": null
                               },
                               {
@@ -414,7 +425,7 @@ return {
                                 "kind": "LinkedField",
                                 "name": "workOrderType",
                                 "plural": false,
-                                "selections": (v14/*: any*/),
+                                "selections": (v15/*: any*/),
                                 "storageKey": null
                               }
                             ],
@@ -440,16 +451,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "5e841a723db9bba0a186c22b9baa480b",
+    "cacheID": "f643d10545fda580135ba2c9b625c290",
     "id": null,
     "metadata": {},
     "name": "FlowInstanceCardQuery",
     "operationKind": "query",
-    "text": "query FlowInstanceCardQuery(\n  $flowInstanceId: ID!\n) {\n  flowInstance: node(id: $flowInstanceId) {\n    __typename\n    ... on FlowInstance {\n      id\n      status\n      startDate\n      endDate\n      serviceInstanceCode\n      template {\n        id\n        name\n      }\n      blocks {\n        id\n        status\n        startDate\n        endDate\n        block {\n          id\n          cid\n          uiRepresentation {\n            name\n          }\n          details {\n            __typename\n            ... on ActionBlock {\n              actionType {\n                id\n              }\n              workerType {\n                name\n                id\n              }\n              workOrderType {\n                name\n                id\n              }\n            }\n          }\n        }\n      }\n    }\n    id\n  }\n}\n"
+    "text": "query FlowInstanceCardQuery(\n  $flowInstanceId: ID!\n) {\n  flowInstance: node(id: $flowInstanceId) {\n    __typename\n    ... on FlowInstance {\n      id\n      status\n      startDate\n      endDate\n      bssCode\n      serviceInstanceCode\n      template {\n        id\n        name\n      }\n      blocks {\n        id\n        status\n        startDate\n        endDate\n        block {\n          id\n          cid\n          uiRepresentation {\n            name\n          }\n          details {\n            __typename\n            ... on ActionBlock {\n              actionType {\n                id\n              }\n              workerType {\n                name\n                id\n              }\n              workOrderType {\n                name\n                id\n              }\n            }\n          }\n        }\n      }\n    }\n    id\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = 'a5f91b28b05773d64a3274a29329ad56';
+(node/*: any*/).hash = '18539c14a6c155e6a1b864fca8ee4eb2';
 
 module.exports = node;

@@ -149,17 +149,6 @@ const KpiQuery = graphql`
             id
             name
           }
-          counterformulaFk {
-            id
-            mandatory
-            counterFk {
-              id
-              name
-            }
-            formulaFk {
-              id
-            }
-          }
         }
       }
     }
@@ -313,9 +302,6 @@ const KpiTypes = () => {
                 handleEditFormulaClick={handleEditFormulaClick}
                 parentEditCallback={handleEditCallback}
                 isCompleted={isCompleted}
-                dataFormulaTable={dataKpis.formulas?.edges.map(
-                  item => item.node,
-                )}
                 {...item.node}
               />
             ))}

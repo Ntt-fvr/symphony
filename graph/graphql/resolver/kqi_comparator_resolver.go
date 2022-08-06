@@ -39,7 +39,7 @@ func (r mutationResolver) AddKqiComparator(ctx context.Context, input models.Add
 		KqiComparator.Create().
 		SetNumber(input.Number).
 		SetComparatorType(input.ComparatorType).
-		SetNillableKqitargetcomparatorfkID(input.KqiTargetFk).
+		SetKqitargetcomparatorfkID(input.KqiTargetFk).
 		SetComparatorkqitargetfkID(input.ComparatorFk).
 		Save(ctx)
 	if err != nil {

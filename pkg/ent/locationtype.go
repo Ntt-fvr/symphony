@@ -47,13 +47,11 @@ type LocationTypeEdges struct {
 	PropertyTypes []*PropertyType
 	// SurveyTemplateCategories holds the value of the survey_template_categories edge.
 	SurveyTemplateCategories []*SurveyTemplateCategory
-	// ResourceRelationshipLocation holds the value of the resource_relationship_location edge.
-	ResourceRelationshipLocation []*ResourceTypeRelationship
 	// DocumentCategory holds the value of the document_category edge.
 	DocumentCategory []*DocumentCategory
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [5]bool
+	loadedTypes [4]bool
 }
 
 // LocationsOrErr returns the Locations value or an error if the edge
@@ -83,19 +81,10 @@ func (e LocationTypeEdges) SurveyTemplateCategoriesOrErr() ([]*SurveyTemplateCat
 	return nil, &NotLoadedError{edge: "survey_template_categories"}
 }
 
-// ResourceRelationshipLocationOrErr returns the ResourceRelationshipLocation value or an error if the edge
-// was not loaded in eager-loading.
-func (e LocationTypeEdges) ResourceRelationshipLocationOrErr() ([]*ResourceTypeRelationship, error) {
-	if e.loadedTypes[3] {
-		return e.ResourceRelationshipLocation, nil
-	}
-	return nil, &NotLoadedError{edge: "resource_relationship_location"}
-}
-
 // DocumentCategoryOrErr returns the DocumentCategory value or an error if the edge
 // was not loaded in eager-loading.
 func (e LocationTypeEdges) DocumentCategoryOrErr() ([]*DocumentCategory, error) {
-	if e.loadedTypes[4] {
+	if e.loadedTypes[3] {
 		return e.DocumentCategory, nil
 	}
 	return nil, &NotLoadedError{edge: "document_category"}
@@ -178,11 +167,6 @@ func (lt *LocationType) QueryPropertyTypes() *PropertyTypeQuery {
 // QuerySurveyTemplateCategories queries the survey_template_categories edge of the LocationType.
 func (lt *LocationType) QuerySurveyTemplateCategories() *SurveyTemplateCategoryQuery {
 	return (&LocationTypeClient{config: lt.config}).QuerySurveyTemplateCategories(lt)
-}
-
-// QueryResourceRelationshipLocation queries the resource_relationship_location edge of the LocationType.
-func (lt *LocationType) QueryResourceRelationshipLocation() *ResourceTypeRelationshipQuery {
-	return (&LocationTypeClient{config: lt.config}).QueryResourceRelationshipLocation(lt)
 }
 
 // QueryDocumentCategory queries the document_category edge of the LocationType.

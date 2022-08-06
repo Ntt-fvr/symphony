@@ -66,24 +66,15 @@ func (r mutationResolver) EditAppointment(
 	if err != nil {
 		return nil, errors.Wrap(err, "querying appointment")
 	}
-	sd, _ := time.ParseDuration(strconv.FormatFloat(*input.Duration, 'f', -1, 64) + "h")
+	sd, _ := time.ParseDuration(strconv.FormatFloat(input.Duration, 'f', -1, 64) + "h")
 	mutation := client.Appointment.
 		UpdateOne(a).
+		SetAssigneeID(input.AssigneeID).
+		SetWorkorderID(input.WorkorderID).
+		SetStart(input.Date).
+		SetEnd(input.Date.Add(sd)).
+		SetDuration(input.Duration).
 		SetNillableStatus(input.Status)
-
-	if input.AssigneeID != nil {
-		mutation = mutation.SetAssigneeID(*input.AssigneeID)
-	}
-	if input.WorkorderID != nil {
-		mutation = mutation.SetWorkorderID(*input.WorkorderID)
-	}
-	if input.Date != nil && input.Duration != nil {
-		mutation = mutation.SetStart(*input.Date).
-			SetEnd(input.Date.Add(sd)).
-			SetDuration(*input.Duration)
-	} else if input.Date != nil && input.Duration == nil {
-		return nil, fmt.Errorf("both `date` and `duration` are required to set the appointment")
-	}
 
 	return mutation.Save(ctx)
 }

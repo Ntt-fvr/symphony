@@ -10,14 +10,11 @@
 
 import React from 'react';
 import TrueFalseIcon from './TrueFalseIcon';
+import fbt from 'fbt';
 import {BasePresentation} from '../BasePresentation';
-import {Typography} from '@material-ui/core';
 
 export default function TrueFalsePresentation() {
   return (
-    <BasePresentation
-      icon={TrueFalseIcon}
-      text={<Typography variant="caption">True / False</Typography>}
-    />
+    <BasePresentation icon={TrueFalseIcon} text={fbt('True / False', '')} />
   );
 }

@@ -10,14 +10,9 @@
 
 import * as React from 'react';
 import EndIcon from './EndIcon';
+import fbt from 'fbt';
 import {BasePresentation} from '../BasePresentation';
-import {Typography} from '@material-ui/core';
 
-export default function ChoicePresentation() {
-  return (
-    <BasePresentation
-      icon={EndIcon}
-      text={<Typography variant="caption">End</Typography>}
-    />
-  );
+export default function DecisionPresentation() {
+  return <BasePresentation icon={EndIcon} text={fbt('End', '')} />;
 }

@@ -1,6 +1,0 @@
-mutation addComparator($input: AddComparatorInput!) {
-  addComparator(input: $input) {
-    id
-    name
-  }
-}

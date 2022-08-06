@@ -327,44 +327,6 @@ func (r queryResolver) Counters(
 		)
 }
 
-func (r queryResolver) ResourceSpecificationRelationships(
-	ctx context.Context,
-	after *ent.Cursor, first *int,
-	before *ent.Cursor, last *int,
-	orderBy *ent.ResourceSpecificationRelationshipOrder,
-	filterBy []*models.ResourceSpecificationRelationshipFilterInput,
-) (*ent.ResourceSpecificationRelationshipConnection, error) {
-	return r.ClientFrom(ctx).
-		ResourceSpecificationRelationship.
-		Query().
-		Paginate(ctx, after, first, before, last,
-			ent.WithResourceSpecificationRelationshipOrder(orderBy),
-			ent.WithResourceSpecificationRelationshipFilter(
-				func(query *ent.ResourceSpecificationRelationshipQuery) (*ent.ResourceSpecificationRelationshipQuery, error) {
-					return resolverutil.ResourceSpecificationRelationshipFilter(query, filterBy)
-				},
-			),
-		)
-}
-
-func (r queryResolver) ResourceSpecificationItems(
-	ctx context.Context,
-	after *ent.Cursor, first *int,
-	before *ent.Cursor, last *int,
-	filterBy []*models.ResourceSpecificationItemsFilterInput,
-) (*ent.ResourceSpecificationItemsConnection, error) {
-	return r.ClientFrom(ctx).
-		ResourceSpecificationItems.
-		Query().
-		Paginate(ctx, after, first, before, last,
-			ent.WithResourceSpecificationItemsFilter(
-				func(query *ent.ResourceSpecificationItemsQuery) (*ent.ResourceSpecificationItemsQuery, error) {
-					return resolverutil.ResourceSpecificationItemsFilter(query, filterBy)
-				},
-			),
-		)
-}
-
 func (r queryResolver) Kpis(
 	ctx context.Context,
 	after *ent.Cursor, first *int,
@@ -652,65 +614,6 @@ func (r queryResolver) NetworkTypes(
 			ent.WithNetworkTypeFilter(
 				func(query *ent.NetworkTypeQuery) (*ent.NetworkTypeQuery, error) {
 					return resolverutil.NetworkTypeFilter(query, filterBy)
-				},
-			),
-		)
-}
-
-func (r queryResolver) ResourceTypes(
-	ctx context.Context,
-	after *ent.Cursor, first *int,
-	before *ent.Cursor, last *int,
-	orderBy *ent.ResourceTypeOrder,
-	filterBy []*models.ResourceTypeFilterInput,
-) (*ent.ResourceTypeConnection, error) {
-	return r.ClientFrom(ctx).
-		ResourceType.
-		Query().
-		Paginate(ctx, after, first, before, last,
-			ent.WithResourceTypeOrder(orderBy),
-			ent.WithResourceTypeFilter(
-				func(query *ent.ResourceTypeQuery) (*ent.ResourceTypeQuery, error) {
-					return resolverutil.ResourceTypeFilter(query, filterBy)
-				},
-			),
-		)
-}
-
-func (r queryResolver) ResourceTypeRelationships(
-	ctx context.Context,
-	after *ent.Cursor, first *int,
-	before *ent.Cursor, last *int,
-	orderBy *ent.ResourceTypeRelationshipOrder,
-	filterBy []*models.ResourceTypeRelationshipFilterInput,
-) (*ent.ResourceTypeRelationshipConnection, error) {
-	return r.ClientFrom(ctx).
-		ResourceTypeRelationship.
-		Query().
-		Paginate(ctx, after, first, before, last,
-			ent.WithResourceTypeRelationshipOrder(orderBy),
-			ent.WithResourceTypeRelationshipFilter(
-				func(query *ent.ResourceTypeRelationshipQuery) (*ent.ResourceTypeRelationshipQuery, error) {
-					return resolverutil.ResourceTypeRelationshipFilter(query, filterBy)
-				},
-			),
-		)
-}
-func (r queryResolver) ResourceSpecifications(
-	ctx context.Context,
-	after *ent.Cursor, first *int,
-	before *ent.Cursor, last *int,
-	orderBy *ent.ResourceSpecificationOrder,
-	filterBy []*models.ResourceSpecificationFilterInput,
-) (*ent.ResourceSpecificationConnection, error) {
-	return r.ClientFrom(ctx).
-		ResourceSpecification.
-		Query().
-		Paginate(ctx, after, first, before, last,
-			ent.WithResourceSpecificationOrder(orderBy),
-			ent.WithResourceSpecificationFilter(
-				func(query *ent.ResourceSpecificationQuery) (*ent.ResourceSpecificationQuery, error) {
-					return resolverutil.ResourceSpecificationFilter(query, filterBy)
 				},
 			),
 		)
@@ -1281,16 +1184,13 @@ func (r queryResolver) UsersAvailability(
 
 	for _, us := range u {
 		qaps := r.ClientFrom(ctx).User.QueryAppointment(us).
-			Where(appointment.And(
-				appointment.Or(
-					appointment.And(
-						appointment.StartLTE(slotFilterBy.SlotStartDate),
-						appointment.EndGT(slotFilterBy.SlotStartDate)),
-					appointment.And(
-						appointment.StartGTE(slotFilterBy.SlotStartDate),
-						appointment.StartLTE(slotFilterBy.SlotEndDate))),
-				appointment.StatusEQ(appointment.StatusActive))).
-			Order(ent.Asc(appointment.FieldStart))
+			Where(appointment.Or(
+				appointment.And(
+					appointment.StartLTE(slotFilterBy.SlotStartDate),
+					appointment.EndGT(slotFilterBy.SlotStartDate)),
+				appointment.And(
+					appointment.StartGTE(slotFilterBy.SlotStartDate),
+					appointment.StartLTE(slotFilterBy.SlotEndDate)))).Order(ent.Asc(appointment.FieldStart))
 
 		aps := qaps.AllX(ctx)
 		naps, err := qaps.Count(ctx)
@@ -1358,43 +1258,6 @@ func (r queryResolver) UsersAvailability(
 		}
 	}
 	return users, nil
-}
-
-func (r queryResolver) PropertyTypeValues(
-	ctx context.Context,
-	after *ent.Cursor, first *int,
-	before *ent.Cursor, last *int,
-	orderBy *ent.PropertyTypeValueOrder,
-	filterBy []*models.PropertyTypeValueFilterInput,
-) (*ent.PropertyTypeValueConnection, error) {
-	return r.ClientFrom(ctx).
-		PropertyTypeValue.
-		Query().
-		Paginate(ctx, after, first, before, last,
-			ent.WithPropertyTypeValueOrder(orderBy),
-			ent.WithPropertyTypeValueFilter(
-				func(query *ent.PropertyTypeValueQuery) (*ent.PropertyTypeValueQuery, error) {
-					return resolverutil.PropertyTypeValueFilter(query, filterBy)
-				},
-			),
-		)
-}
-
-func (r queryResolver) Flows(
-	ctx context.Context,
-	after *ent.Cursor, first *int,
-	before *ent.Cursor, last *int,
-	orderBy *ent.FlowOrder,
-	filterBy []*models.FlowFilterInput,
-) (*ent.FlowConnection, error) {
-	return r.ClientFrom(ctx).Flow.Query().
-		Paginate(ctx, after, first, before, last,
-			ent.WithFlowOrder(orderBy),
-			ent.WithFlowFilter(
-				func(query *ent.FlowQuery) (*ent.FlowQuery, error) {
-					return resolverutil.FlowsFilter(query, filterBy)
-				},
-			))
 }
 
 func (r queryResolver) PropertiesByCategories(ctx context.Context, filterBy []*pkgmodels.PropertiesByCategoryFilterInput) ([]*models.PropertiesByCategories, error) {

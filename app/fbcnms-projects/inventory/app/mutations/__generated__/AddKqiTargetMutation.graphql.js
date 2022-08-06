@@ -15,21 +15,14 @@
 /*::
 import type { ConcreteRequest } from 'relay-runtime';
 export type AddKqiTargetInput = {|
-  allowedVariation: number,
-  endTime: any,
-  impact: string,
-  initTime: any,
-  kqi: string,
-  kqiComparator?: ?AddKqiComparatorInput,
   name: string,
+  impact: string,
   period: number,
+  allowedVariation: number,
+  initTime: any,
+  endTime: any,
   status: boolean,
-|};
-export type AddKqiComparatorInput = {|
-  comparatorFk: string,
-  comparatorType: string,
-  kqiTargetFk?: ?string,
-  number: number,
+  kqi: string,
 |};
 export type AddKqiTargetMutationVariables = {|
   input: AddKqiTargetInput

@@ -9,13 +9,6 @@
  */
 
 export {default as AddIcon} from './Actions/AddIcon';
-export {default as PanToolsIcon} from './Actions/PanToolsIcon';
-export {default as GridIcon} from './Actions/GridIcon';
-export {default as UndoIcon} from './Actions/UndoIcon';
-export {default as RedoIcon} from './Actions/RedoIcon';
-export {default as DuplicateFlowIcon} from './Actions/DuplicateFlowIcon';
-export {default as MenuCloseIcon} from './Actions/MenuCloseIcon';
-export {default as EditFlowIcon} from './Actions/EditFlowIcon';
 export {default as AssignIcon} from './Actions/AssignIcon';
 export {default as Bookmark} from './Actions/Bookmark';
 export {default as BookmarkFilled} from './Actions/BookmarkFilled';
@@ -74,7 +67,6 @@ export {default as WifiIcon} from './Indications/WifiIcon';
 export {default as WorkOrdersIcon} from './Indications/WorkOrdersIcon';
 export {default as YesNoIcon} from './Indications/YesNoIcon';
 
-export {default as BackFlow} from './Navigation/BackFlow';
 export {default as ArrowDownIcon} from './Navigation/ArrowDownIcon';
 export {default as ArrowLeftIcon} from './Navigation/ArrowLeftIcon';
 export {default as ArrowRightIcon} from './Navigation/ArrowRightIcon';

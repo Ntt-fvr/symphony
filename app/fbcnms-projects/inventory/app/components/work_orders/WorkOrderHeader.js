@@ -89,7 +89,6 @@ type Props = $ReadOnly<{|
   onPriorityChanged: (value: string) => void,
   onStatusChanged: (value: GraphQLWorkOrderStatus) => void,
   appointmentData: AppointmentData,
-  setLoading: () => void,
 |}>;
 
 const WorkOrderHeader = (props: Props) => {
@@ -106,7 +105,6 @@ const WorkOrderHeader = (props: Props) => {
     onCancelClicked,
     onPriorityChanged,
     onStatusChanged,
-    setLoading,
   } = props;
 
   const skin = getSkinFromStatus(workOrder.status);
@@ -178,7 +176,6 @@ const WorkOrderHeader = (props: Props) => {
             checkListCategories={checkListCategories}
             appointmentData={appointmentData}
             locationId={locationId}
-            setLoading={setLoading}
           />
         </div>
       </div>

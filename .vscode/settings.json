@@ -14,7 +14,4 @@
     "flow.pathToFlow": "${workspaceRoot}/node_modules/.bin/flow",
     "javascript.format.enable": false,
     "typescript.validate.enable": false,
-    "python.analysis.extraPaths": [
-        "./cli"
-    ],
 }

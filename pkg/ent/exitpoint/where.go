@@ -119,13 +119,6 @@ func Cid(v string) predicate.ExitPoint {
 	})
 }
 
-// Index applies equality check predicate on the "index" field. It's identical to IndexEQ.
-func Index(v int) predicate.ExitPoint {
-	return predicate.ExitPoint(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldIndex), v))
-	})
-}
-
 // CreateTimeEQ applies the EQ predicate on the "create_time" field.
 func CreateTimeEQ(v time.Time) predicate.ExitPoint {
 	return predicate.ExitPoint(func(s *sql.Selector) {
@@ -464,96 +457,6 @@ func ConditionIsNil() predicate.ExitPoint {
 func ConditionNotNil() predicate.ExitPoint {
 	return predicate.ExitPoint(func(s *sql.Selector) {
 		s.Where(sql.NotNull(s.C(FieldCondition)))
-	})
-}
-
-// IndexEQ applies the EQ predicate on the "index" field.
-func IndexEQ(v int) predicate.ExitPoint {
-	return predicate.ExitPoint(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldIndex), v))
-	})
-}
-
-// IndexNEQ applies the NEQ predicate on the "index" field.
-func IndexNEQ(v int) predicate.ExitPoint {
-	return predicate.ExitPoint(func(s *sql.Selector) {
-		s.Where(sql.NEQ(s.C(FieldIndex), v))
-	})
-}
-
-// IndexIn applies the In predicate on the "index" field.
-func IndexIn(vs ...int) predicate.ExitPoint {
-	v := make([]interface{}, len(vs))
-	for i := range v {
-		v[i] = vs[i]
-	}
-	return predicate.ExitPoint(func(s *sql.Selector) {
-		// if not arguments were provided, append the FALSE constants,
-		// since we can't apply "IN ()". This will make this predicate falsy.
-		if len(v) == 0 {
-			s.Where(sql.False())
-			return
-		}
-		s.Where(sql.In(s.C(FieldIndex), v...))
-	})
-}
-
-// IndexNotIn applies the NotIn predicate on the "index" field.
-func IndexNotIn(vs ...int) predicate.ExitPoint {
-	v := make([]interface{}, len(vs))
-	for i := range v {
-		v[i] = vs[i]
-	}
-	return predicate.ExitPoint(func(s *sql.Selector) {
-		// if not arguments were provided, append the FALSE constants,
-		// since we can't apply "IN ()". This will make this predicate falsy.
-		if len(v) == 0 {
-			s.Where(sql.False())
-			return
-		}
-		s.Where(sql.NotIn(s.C(FieldIndex), v...))
-	})
-}
-
-// IndexGT applies the GT predicate on the "index" field.
-func IndexGT(v int) predicate.ExitPoint {
-	return predicate.ExitPoint(func(s *sql.Selector) {
-		s.Where(sql.GT(s.C(FieldIndex), v))
-	})
-}
-
-// IndexGTE applies the GTE predicate on the "index" field.
-func IndexGTE(v int) predicate.ExitPoint {
-	return predicate.ExitPoint(func(s *sql.Selector) {
-		s.Where(sql.GTE(s.C(FieldIndex), v))
-	})
-}
-
-// IndexLT applies the LT predicate on the "index" field.
-func IndexLT(v int) predicate.ExitPoint {
-	return predicate.ExitPoint(func(s *sql.Selector) {
-		s.Where(sql.LT(s.C(FieldIndex), v))
-	})
-}
-
-// IndexLTE applies the LTE predicate on the "index" field.
-func IndexLTE(v int) predicate.ExitPoint {
-	return predicate.ExitPoint(func(s *sql.Selector) {
-		s.Where(sql.LTE(s.C(FieldIndex), v))
-	})
-}
-
-// IndexIsNil applies the IsNil predicate on the "index" field.
-func IndexIsNil() predicate.ExitPoint {
-	return predicate.ExitPoint(func(s *sql.Selector) {
-		s.Where(sql.IsNull(s.C(FieldIndex)))
-	})
-}
-
-// IndexNotNil applies the NotNil predicate on the "index" field.
-func IndexNotNil() predicate.ExitPoint {
-	return predicate.ExitPoint(func(s *sql.Selector) {
-		s.Where(sql.NotNull(s.C(FieldIndex)))
 	})
 }
 

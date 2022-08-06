@@ -1,8 +1,0 @@
-mutation editCounterFormula($input: EditCounterFormulaInput!) {
-  editCounterFormula(input: $input) {
-    id
-    mandatory
-    formulaFk{id}
-    counterFk{id}
-  }
-}

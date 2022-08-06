@@ -15,15 +15,15 @@
 /*::
 import type { ConcreteRequest } from 'relay-runtime';
 export type EditKqiTargetInput = {|
-  allowedVariation: number,
-  endTime: any,
   id: string,
-  impact: string,
-  initTime: any,
-  kqi: string,
   name: string,
+  impact: string,
   period: number,
+  allowedVariation: number,
+  initTime: any,
+  endTime: any,
   status: boolean,
+  kqi: string,
 |};
 export type EditKqiTargetMutationVariables = {|
   input: EditKqiTargetInput

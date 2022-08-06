@@ -2,12 +2,26 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-//go:build integration
 // +build integration
 
 package tests
 
-/*func TestImportLocations(t *testing.T) {
+import (
+	"bytes"
+	"io"
+	"mime/multipart"
+	"net/http"
+	"os"
+	"testing"
+
+	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
+	pkgmodels "github.com/facebookincubator/symphony/pkg/exporter/models"
+	"github.com/google/uuid"
+	"github.com/stretchr/testify/require"
+	"go.uber.org/zap"
+)
+
+func TestImportLocations(t *testing.T) {
 	organization := uuid.New().String()
 	c := newClient(t, organization, testUser)
 
@@ -148,4 +162,4 @@ func addLocationTypes(t *testing.T, c *client) {
 			require.NoError(t, err)
 		}
 	}
-}*/
+}

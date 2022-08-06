@@ -77,18 +77,6 @@ type UsersGroup implements Node {
   policies: [PermissionsPolicy!]!
 }
 
-type Subscription {
-  workOrderAdded: WorkOrder
-  workOrderDone: WorkOrder
-  workOrderStatusChanged: WorkOrderStatusChangedPayload!
-  flowInstanceDone: FlowInstance!
-  projectAdded: Project
-  projectChanged: Project
-  locationAdded: Location
-  locationChanged: Location
-  AddImage: File
-}
-
 type PermissionSettings
   @goModel(
     model: "github.com/facebookincubator/symphony/pkg/authz/models.PermissionSettings"
@@ -392,7 +380,6 @@ type PermissionsPolicy implements Node {
   name: String!
   description: String
   isGlobal: Boolean!
-  isMulticontractor: Boolean!
   policy: SystemPolicy!
   groups: [UsersGroup!]!
 }
@@ -401,7 +388,6 @@ input AddPermissionsPolicyInput {
   name: String!
   description: String
   isGlobal: Boolean
-  isMulticontractor: Boolean
   inventoryInput: InventoryPolicyInput
   workforceInput: WorkforcePolicyInput
   automationInput: AutomationPolicyInput
@@ -414,7 +400,6 @@ input EditPermissionsPolicyInput {
   name: String
   description: String
   isGlobal: Boolean
-  isMulticontractor: Boolean
   inventoryInput: InventoryPolicyInput
   workforceInput: WorkforcePolicyInput
   automationInput: AutomationPolicyInput
@@ -670,17 +655,6 @@ input AddImageInput {
   documentCategoryId: ID
 }
 
-input AddFilesInput {
-  imgKey: String!
-  fileName: String!
-  fileSize: Int!
-  modified: Time!
-  contentType: String!
-  category: String
-  annotation: String
-  documentCategoryId: ID
-}
-
 type Comment implements Node {
   id: ID!
   author: User!
@@ -707,22 +681,6 @@ enum ActivityField
   DESCRIPTION
   CLOCK_IN
   CLOCK_OUT
-}
-
-enum AutomationActivityField
-  @goModel(
-    model: "github.com/facebookincubator/symphony/pkg/ent/automationactivity.ActivityType"
-  ) {
-  STATUS
-  CREATION_DATE
-}
-
-enum AutomationEntityType
-  @goModel(
-    model: "github.com/facebookincubator/symphony/pkg/ent/automationactivity.AutomationEntityType"
-  ) {
-  STATUS
-  CREATION_DATE
 }
 
 enum ClockOutReason
@@ -764,29 +722,10 @@ type Activity implements Node {
   clockDetails: ClockDetails
 }
 
-type AutomationActivity implements Node {
-  id: ID!
-  author: User
-  activityType: AutomationActivityField!
-  entityType: AutomationEntityType!
-    @goField(name: "AutomationEntityType")
-  oldValue: String
-  newValue: String
-  createTime: Time!
-  flowInstance: FlowInstance
-  blockInstance: BlockInstance
-}
-
 input ActivityFilterInput {
   limit: Int! @numberValue(min: 0)
   orderDirection: OrderDirection!
   activityType: ActivityField!
-}
-
-input AutomationActivityFilterInput {
-  limit: Int! @numberValue(min: 0)
-  orderDirection: OrderDirection!
-  activityType: AutomationActivityField!
 }
 
 # specific equipment instance: e.g. Wifi Access Point X at Location Y.
@@ -936,9 +875,6 @@ input AddWorkOrderInput {
   priority: WorkOrderPriority
   duration: Float
   dueDate: Time
-  scheduledAt: Time
-  isNameEditable: Boolean
-  flowInstanceId: ID
 }
 
 input EditWorkOrderInput {
@@ -959,9 +895,6 @@ input EditWorkOrderInput {
   locationId: ID
   duration: Float
   dueDate: Time
-  scheduledAt: Time
-  isNameEditable: Boolean
-  flowInstanceId: ID
 }
 
 input TechnicianCheckListItemInput {
@@ -1705,23 +1638,6 @@ enum PropertyKind
   node
 }
 
-enum ResourcePropertyKind
-  @goModel(
-    model: "github.com/facebookincubator/symphony/pkg/ent/resourcepropertytype.Type"
-  ) {
-  string
-  int
-  bool
-  float
-  date
-  enum
-  range
-  email
-  gps_location
-  datetime_local
-  node
-}
-
 type PropertyType implements Node {
   id: ID!
   externalId: String
@@ -1745,9 +1661,6 @@ type PropertyType implements Node {
   isDeleted: Boolean
   propertyCategory: PropertyCategory
   isListable: Boolean
-  parentPropertyType: PropertyType @goField(name: "PropertyType") 
-  dependencePropertyTypes: [PropertyType]!
-  propertyTypeValues: [PropertyTypeValue!]
 }
 
 type DocumentCategory implements Node {
@@ -1802,14 +1715,7 @@ input PropertyTypeInput
   isDeleted: Boolean
   propertyCategoryID: ID
   isListable: Boolean
-  dependencePropertyTypes: [PropertyTypeInput]
-  propertyTypeValues: [AddPropertyTypeValueInput]
 }
-
-input EditPropertyTypeInput {
-    id: ID!
-    isDeleted: Boolean!
-  }
 
 input EditIsListableInput {
   id: ID!
@@ -1829,8 +1735,6 @@ type Property implements Node {
   rangeToValue: Float
   nodeValue: NamedNode
   rawValue: String
-  dependenceProperties: [Property!]
-  propertyTypeValue: PropertyTypeValue
 }
 
 input PropertyInput {
@@ -1847,8 +1751,6 @@ input PropertyInput {
   nodeIDValue: ID
   isEditable: Boolean
   isInstanceProperty: Boolean
-  dependenceProperties: [PropertyInput!]
-  propertyTypeValueID: ID
 }
 
 """
@@ -2232,10 +2134,6 @@ type WorkOrder implements Node & NamedNode {
   hyperlinks: [Hyperlink!]!
   closeDate: Time
   organizationFk: Organization
-  scheduledAt: Time
-  Appointments:[Appointment]
-  isNameEditable: Boolean
-  flowInstance: FlowInstance
 }
 
 """
@@ -2888,73 +2786,6 @@ type CounterEdge {
   The counters at the end of the edge.
   """
   node: Counter
-  """
-  A cursor for use in pagination.
-  """
-  cursor: Cursor!
-}
-
-"""
-Properties by which ResourceSpecificationRelationships connections can be ordered.
-"""
-enum ResourceSpecificationRelationshipOrderField {
-  """
-  Order ResourceSpecificationRelationships by name.
-  """
-  NAME
-
-  """
-  Order ResourceSpecificationRelationships by creation time.
-  """
-  CREATED_AT
-
-  """
-  Order ResourceSpecificationRelationships by update time.
-  """
-  UPDATED_AT
-}
-
-"""
-Ordering options for ResourceSpecificationRelationships connections.
-"""
-input ResourceSpecificationRelationshipOrder {
-  """
-  The ordering direction.
-  """
-  direction: OrderDirection!
-
-  """
-  The field to order ResourceSpecificationRelationships by.
-  """
-  field: ResourceSpecificationRelationshipOrderField
-}
-
-"""
-A connection to a list of ResourceSpecificationRelationships.
-"""
-type ResourceSpecificationRelationshipConnection {
-  """
-  Total ResourceSpecificationRelationships of projects in all pages.
-  """
-  totalCount: Int!
-  """
-  A list of ResourceSpecificationRelationships edges.
-  """
-  edges: [ResourceSpecificationRelationshipEdge!]!
-  """
-  Information to aid in pagination.
-  """
-  pageInfo: PageInfo!
-}
-
-"""
-A ResourceSpecificationRelationships edge in a connection.
-"""
-type ResourceSpecificationRelationshipEdge {
-  """
-  The ResourceSpecificationRelationships at the end of the edge.
-  """
-  node: ResourceSpecificationRelationship
   """
   A cursor for use in pagination.
   """
@@ -3766,7 +3597,7 @@ type KqiEdge {
   """
   cursor: Cursor!
 }
-
+################################ conection Organization ###############################################
 """
 Properties by which Organization connections can be ordered.
 """
@@ -3834,8 +3665,9 @@ type OrganizationEdge {
   cursor: Cursor!
 }
 
+################################ conection recommendations ###############################################
 """
-Properties by which Recommendations connections can be ordered.
+Properties by which RecPropertyCategoryNodeommendations connections can be ordered.
 """
 enum RecommendationsOrderField {
   """
@@ -3901,6 +3733,7 @@ type RecommendationsEdge {
   cursor: Cursor!
 }
 
+################################ conection recommendationsSources ###############################################
 """
 Properties by which RecommendationsSources connections can be ordered.
 """
@@ -3968,6 +3801,7 @@ type RecommendationsSourcesEdge {
   cursor: Cursor!
 }
 
+################################ conection recommendationsCategory ###############################################
 """
 Properties by which RecommendationsCategory connections can be ordered.
 """
@@ -4369,74 +4203,6 @@ type KqiTargetEdge {
   """
   cursor: Cursor!
 }
-
-"""
-Properties by which PropertyTypeValues connections can be ordered.
-"""
-enum PropertyTypeValueOrderField {
-  """
-  Order propertyTypeValue by name.
-  """
-  NAME
-
-  """
-  Order propertyTypeValue by creation time.
-  """
-  CREATED_AT
-
-  """
-  Order propertyTypeValue by update time.
-  """
-  UPDATED_AT
-}
-
-"""
-Ordering options for propertyTypeValues connections.
-"""
-input PropertyTypeValueOrder {
-  """
-  The ordering direction.
-  """
-  direction: OrderDirection!
-
-  """
-  The field to order kpi's by.
-  """
-  field: PropertyTypeValueOrderField
-}
-
-"""
-A connection to a list of kpi's.
-"""
-type PropertyTypeValueConnection {
-  """
-  Total kpi's of projects in all pages.
-  """
-  totalCount: Int!
-  """
-  A list of kpi's edges.
-  """
-  edges: [PropertyTypeValueEdge!]!
-  """
-  Information to aid in pagination.
-  """
-  pageInfo: PageInfo!
-}
-
-"""
-A kpi's edge in a connection.
-"""
-type PropertyTypeValueEdge {
-  """
-  The kpi's at the end of the edge.
-  """
-  node: PropertyTypeValue
-  """
-  A cursor for use in pagination.
-  """
-  cursor: Cursor!
-}
-
 """
 Properties by which formulas connections can be ordered.
 """
@@ -4570,6 +4336,7 @@ type TechEdge {
   cursor: Cursor!
 }
 
+
 """
 Properties by which network types connections can be ordered.
 """
@@ -4631,305 +4398,6 @@ type NetworkTypeEdge {
   The network types at the end of the edge.
   """
   node: NetworkType
-  """
-  A cursor for use in pagination.
-  """
-  cursor: Cursor!
-}
-
-"""
-Properties by which ResourceType connections can be ordered.
-"""
-enum ResourceTypeOrderField {
-  """
-  Order ResourceType by name.
-  """
-  NAME
-
-  """
-  Order ResourceType by TypeClass.
-  """
-  RESOURCE_TYPE_CLASS
-  
-  """
-  Order ResourceType by BaseType.
-  """
-  RESOURCE_TYPE_BASE_TYPE
-
-  """
-  Order ResourceType by creation time.
-  """
-  CREATED_AT
-
-  """
-  Order ResourceType by update time.
-  """
-  UPDATED_AT
-}
-
-"""
-Ordering options for ResourceType connections.
-"""
-input ResourceTypeOrder {
-  """
-  The ordering direction.
-  """
-  direction: OrderDirection!
-
-  """
-  The field to order ResourceType by.
-  """
-  field: ResourceTypeOrderField
-}
-
-"""
-A connection to a list of ResourceType.
-"""
-type ResourceTypeConnection {
-  """
-  Total ResourceType of projects in all pages.
-  """
-  totalCount: Int!
-  """
-  A list of ResourceType edges.
-  """
-  edges: [ResourceTypeEdge!]!
-  """
-  Information to aid in pagination.
-  """
-  pageInfo: PageInfo!
-}
-
-"""
-A ResourceType edge in a connection.
-"""
-type ResourceTypeEdge {
-  """
-  The ResourceType at the end of the edge.
-  """
-  node: ResourceType
-  """
-  A cursor for use in pagination.
-  """
-  cursor: Cursor!
-}
-
-enum FlowOrderField {
-  """
-  Order Flow by name.
-  """
-  NAME
-
-  """
-  Order Flow by CMType.
-  """
-  CM_TYPE
-
-  """
-  Order Flow by creation time.
-  """
-  CREATED_AT
-}
-
-"""
-Ordering options for ResourceType connections.
-"""
-input FlowOrder {
-  """
-  The ordering direction.
-  """
-  direction: OrderDirection!
-
-  """
-  The field to order ResourceType by.
-  """
-  field: FlowOrderField
-}
-
-"""
-Properties by which ResourceTypeRelationship connections can be ordered.
-"""
-enum ResourceTypeRelationshipOrderField {
-  """
-  Order ResourceTypeRelationship by ResourceTypeA.
-  """
-  RESOURCE_TYPE_A
-
-  """
-  Order ResourceTypeRelationship by ResourceTypeB.
-  """
-  RESOURCE_TYPE_B
-
-  """
-  Order ResourceTypeRelationship by LocationType.
-  """
-  LOCATION_TYPE
-
-  """
-  Order ResourceTypeRelationship by ResourceRelationshipType.
-  """
-  RESOURCE_RELATIONSHIP_TYPE
-
-  """
-  Order ResourceTypeRelationship by ResourceRelationshipMultiplicity.
-  """
-  RESOURCE_RELATIONSHIP_MULTIPLICITY
-
-  """
-  Order ResourceTypeRelationship by creation time.
-  """
-  CREATED_AT
-
-  """
-  Order ResourceTypeRelationship by update time.
-  """
-  UPDATED_AT
-}
-
-"""
-Ordering options for ResourceTypeRelationship connections.
-"""
-input ResourceTypeRelationshipOrder {
-  """
-  The ordering direction.
-  """
-  direction: OrderDirection!
-
-  """
-  The field to order ResourceTypeRelationship by.
-  """
-  field: ResourceTypeRelationshipOrderField
-}
-
-"""
-A connection to a list of ResourceTypeRelationship.
-"""
-type ResourceTypeRelationshipConnection {
-  """
-  Total ResourceTypeRelationship of projects in all pages.
-  """
-  totalCount: Int!
-  """
-  A list of ResourceTypeRelationship edges.
-  """
-  edges: [ResourceTypeRelationshipEdge!]!
-  """
-  Information to aid in pagination.
-  """
-  pageInfo: PageInfo!
-}
-
-"""
-A ResourceTypeRelationship edge in a connection.
-"""
-type ResourceTypeRelationshipEdge {
-  """
-  The ResourceTypeRelationship at the end of the edge.
-  """
-  node: ResourceTypeRelationship
-  """
-  A cursor for use in pagination.
-  """
-  cursor: Cursor!
-}
-"""
-Properties by which ResourceSpecification connections can be ordered.
-"""
-enum ResourceSpecificationOrderField {
-  """
-  Order ResourceSpecification by name.
-  """
-  NAME
-
-  """
-  Order ResourceType by name.
-  """
-  RESOURCE_TYPE
-
-  """
-  Order ResourceSpecification by creation time.
-  """
-  CREATED_AT
-
-  """
-  Order ResourceSpecification by update time.
-  """
-  UPDATED_AT
-}
-
-"""
-Ordering options for ResourceSpecification connections.
-"""
-input ResourceSpecificationOrder {
-  """
-  The ordering direction.
-  """
-  direction: OrderDirection!
-
-  """
-  The field to order ResourceSpecification by.
-  """
-  field: ResourceSpecificationOrderField
-}
-
-"""
-A connection to a list of ResourceSpecification.
-"""
-type ResourceSpecificationConnection {
-  """
-  Total ResourceSpecification of projects in all pages.
-  """
-  totalCount: Int!
-  """
-  A list of ResourceSpecification edges.
-  """
-  edges: [ResourceSpecificationEdge!]!
-  """
-  Information to aid in pagination.
-  """
-  pageInfo: PageInfo!
-}
-
-"""
-A ResourceSpecification edge in a connection.
-"""
-type ResourceSpecificationEdge {
-  """
-  The ResourceSpecification at the end of the edge.
-  """
-  node: ResourceSpecification
-  """
-  A cursor for use in pagination.
-  """
-  cursor: Cursor!
-}
-
-"""
-A connection to a list of ResourceSpecificationItems.
-"""
-type ResourceSpecificationItemsConnection {
-  """
-  Total ResourceSpecificationItems of projects in all pages.
-  """
-  totalCount: Int!
-  """
-  A list of ResourceSpecificationItems edges.
-  """
-  edges: [ResourceSpecificationItemsEdge!]!
-  """
-  Information to aid in pagination.
-  """
-  pageInfo: PageInfo!
-}
-
-"""
-A ResourceSpecificationItems edge in a connection.
-"""
-type ResourceSpecificationItemsEdge {
-  """
-  The ResourceSpecificationItems at the end of the edge.
-  """
-  node: ResourceSpecificationItems
   """
   A cursor for use in pagination.
   """
@@ -5955,28 +5423,6 @@ type TriggerType
   variables: [VariableDefinition!]!
 }
 
-enum TransfStrategy
-@goModel(
-    model: "github.com/facebookincubator/symphony/pkg/ent/schema/enum.TransfStrategy"
-  ){
-  REPLACE
-  MERGE
-}
-
-enum RetryUnit {
-  SECONDS
-  MINUTES
-  HOURS
-}
-
-enum AdditionMethod
-@goModel(
-    model: "github.com/facebookincubator/symphony/pkg/ent/block.AdditionMethod"       
-  ){
-  COMBINE
-  DISCARD_RESULT
-}
-
 # Block definitions
 
 type Block implements Node {
@@ -5988,27 +5434,6 @@ type Block implements Node {
   inputParamDefinitions: [VariableDefinition!]!
   outputParamDefinitions: [VariableDefinition!]!
   uiRepresentation: BlockUIRepresentation
-  enableInputTransformation: Boolean!
-  inputTransfStrategy: TransfStrategy
-  inputTransformation: String
-  enableOutputTransformation: Boolean!
-  outputTransfStrategy: TransfStrategy
-  outputTransformation: String
-  enableInputStateTransformation: Boolean!
-  inputStateTransfStrategy: TransfStrategy
-  inputStateTransformation: String
-  enableOutputStateTransformation: Boolean!
-  outputStateTransfStrategy: TransfStrategy
-  outputStateTransformation: String
-  enableErrorHandling: Boolean
-  enableRetryPolicy: Boolean
-  retryInterval: Int
-  units: RetryUnit
-  maxAttemps: Int 
-  backoffRate: Int
-  instances: [BlockInstance!]
-  addInputToOutput: Boolean!
-  additionMethod: AdditionMethod
 }
 
 type BlockVariable
@@ -6092,7 +5517,7 @@ enum ExitPointRole
     model: "github.com/facebookincubator/symphony/pkg/flowengine/flowschema.ExitPointRole"
   ) {
   DEFAULT
-  CHOICE
+  DECISION
 }
 
 type ExitPoint implements Node {
@@ -6101,7 +5526,6 @@ type ExitPoint implements Node {
   cid: String
   nextEntryPoints: [EntryPoint!]!
   condition: VariableExpression
-  index: Int
 }
 
 type EntryPoint implements Node {
@@ -6125,28 +5549,27 @@ type DecisionRoute {
   exitPoint: ExitPoint
 }
 
-#type DecisionBlock {
-#  entryPoint: EntryPoint!
-#  defaultExitPoint: ExitPoint!
-#  routes: [DecisionRoute!]!
-#}
+type DecisionBlock {
+  entryPoint: EntryPoint!
+  defaultExitPoint: ExitPoint!
+  routes: [DecisionRoute!]!
+}
 
-#type TrueFalseBlock {
-#  entryPoint: EntryPoint!
-#  trueExitPoint: ExitPoint!
-#  falseExitPoint: ExitPoint!
-#}
+type TrueFalseBlock {
+  entryPoint: EntryPoint!
+  trueExitPoint: ExitPoint!
+  falseExitPoint: ExitPoint!
+}
 
-#type SubflowBlock {
-#  flow: Flow
-#  params: [VariableExpression!]!
-#  entryPoint: EntryPoint!
-#  exitPoint: ExitPoint!
-#}
+type SubflowBlock {
+  flow: Flow
+  params: [VariableExpression!]!
+  entryPoint: EntryPoint!
+  exitPoint: ExitPoint!
+}
 
 type GotoBlock {
   target: Block
-  type: GoToType!
   entryPoint: EntryPoint!
 }
 
@@ -6165,162 +5588,19 @@ type ActionBlock {
   workerType: WorkerType
 }
 
-enum GoToType
-@goModel(
-  model: "github.com/facebookincubator/symphony/pkg/ent/block.GotoType"
-  ) {
-  ORIGIN
-  DESTINATION
-}
-
-type ChoiceBlock {
-  entryPoint: EntryPoint!
-  defaultExitPoint: ExitPoint!
-  rules: [DecisionRoute!]!
-}
-
-enum TimerBehavior
-@goModel(
-  model: "github.com/facebookincubator/symphony/pkg/ent/block.TimerBehavior"
-  ) {
-  FIXED_INTERVAL
-  SPECIFIC_DATETIME
-}
-
-type TimerBlock {
-  behavior: TimerBehavior!
-  seconds: Int
-  datetime: Time
-  enableExpressionL: Boolean
-  expression: String
-  exitPoint: ExitPoint!
-}
-
-type ExecuteFlowBlock {
-  flow: Flow
-  params: [VariableExpression!]!
-  entryPoint: EntryPoint!
-  exitPoint: ExitPoint!
-}
-
-enum UrlMethod 
-@goModel(
-  model: "github.com/facebookincubator/symphony/pkg/ent/block.URLMethod"
-  ) {
-  GET
-  POST
-  PUT
-  DELETE
-  PATCH
-}
-
-enum  AuthType
-@goModel(
-  model: "github.com/facebookincubator/symphony/pkg/ent/block.AuthType"
-  ) {
-  BASIC
-  OIDC
-}
-
-type InvokeRestAPIBlock {
-  entryPoint: EntryPoint!
-  method: UrlMethod!
-  url: String!
-  connectionTimeOut: Int!
-  body: String!
-  headers: [VariableValue!]!
-  authType: AuthType
-  user: String
-  password: String
-  clientId: String
-  clientSecret: String
-  oidcUrl: String
-  exitPoint: ExitPoint!
-}
-
-type ForEachBlock {
-  entryPoint: EntryPoint!
-  internalExitPoint: ExitPoint! 
-  exitPoint: ExitPoint!
-}
-
-type ParallelBlock {
-  entryPoint: EntryPoint!
-  internalExitPoint: ExitPoint!
-  exitPoint: ExitPoint!
-}
-
-enum SignalType 
-@goModel(
-  model: "github.com/facebookincubator/symphony/pkg/ent/block.SignalType"
-  ){
-  WOCREATED
-  CRCREATED
-  PR_CREATED
-  MOICREATED
-  WOUPDATED
-  CRUPDATED
-  PR_UPDATED
-  MOIUPDATED
-}
-
-enum SignalModule 
-@goModel(
-  model: "github.com/facebookincubator/symphony/pkg/ent/block.SignalModule"
-  ){
-  INVENTORY
-  CM
-  WFM
-  ASSURANCE
-}
-
-type WaitForSignalBlock {
-  entryPoint: EntryPoint!
-  exitPoint: ExitPoint!
-  type: SignalType
-  signalModule: SignalModule
-  customFilter: String
-  blocked: Boolean!
-}
-
-enum KafkaMessageType
-@goModel(
-    model: "github.com/facebookincubator/symphony/pkg/ent/schema/enum.KafkaMessageType"
-  ){
-  EXPRESSION
-	INPUT
-	STATE
-}
-
-type KafkaBlock {
-  entryPoint: EntryPoint!
-  exitPoint: ExitPoint!
-  brokers: [String!]
-  topic: String!
-  message: String!
-  type: KafkaMessageType!
-}
-
 union BlockDetails =
     StartBlock
   | EndBlock
+  | DecisionBlock
   | GotoBlock
+  | SubflowBlock
   | TriggerBlock
   | ActionBlock
-  | ChoiceBlock
-  | TimerBlock
-  | WaitForSignalBlock
-  | InvokeRestAPIBlock
-  | ExecuteFlowBlock
-  | ForEachBlock
-  | ParallelBlock
-  | KafkaBlock
-
-
+  | TrueFalseBlock
 
 input StartBlockInput {
   cid: String!
-  paramDefinitions: [VariableDefinitionInput!]
+  paramDefinitions: [VariableDefinitionInput!]!
   uiRepresentation: BlockUIRepresentationInput
 }
 
@@ -6332,34 +5612,32 @@ input EndBlockInput {
 
 input DecisionRouteInput {
   cid: String
-  index: Int
   condition: VariableExpressionInput!
 }
 
-#input DecisionBlockInput {
-#  cid: String!
-#  routes: [DecisionRouteInput!]
-#  uiRepresentation: BlockUIRepresentationInput
-#}
+input DecisionBlockInput {
+  cid: String!
+  routes: [DecisionRouteInput!]
+  uiRepresentation: BlockUIRepresentationInput
+}
 
-#input TrueFalseBlockInput {
-#  cid: String!
-#  uiRepresentation: BlockUIRepresentationInput
-#}
+input TrueFalseBlockInput {
+  cid: String!
+  uiRepresentation: BlockUIRepresentationInput
+}
 
 input GotoBlockInput {
   cid: String!
   targetBlockCid: String
-  type: GoToType!
   uiRepresentation: BlockUIRepresentationInput
 }
 
-#input SubflowBlockInput {
-#  cid: String!
-#  flowId: ID!
-#  params: [VariableExpressionInput!]!
-#  uiRepresentation: BlockUIRepresentationInput
-#}
+input SubflowBlockInput {
+  cid: String!
+  flowId: ID!
+  params: [VariableExpressionInput!]!
+  uiRepresentation: BlockUIRepresentationInput
+}
 
 input TriggerBlockInput {
   cid: String!
@@ -6397,108 +5675,6 @@ type Connector {
   target: EntryPoint!
 }
 
-input BaseBlockInput {
-  enableInputTransformation: Boolean!
-  inputTransfStrategy: TransfStrategy
-  inputParamDefinitions: String
-  enableOutputTransformation: Boolean!
-  outputTransfStrategy: TransfStrategy
-  outputParamDefinitions: String
-  enableInputStateTransformation: Boolean!
-  inputStateTransfStrategy: TransfStrategy
-  inputStateParamDefinitions: String
-  enableOutputStateTransformation: Boolean!
-  outputStateTransfStrategy: TransfStrategy
-  outputStateParamDefinitions: String
-  enableErrorHandling: Boolean
-  enableRetryPolicy: Boolean
-  addInputToOutput: Boolean
-  additionMethod: AdditionMethod
-  retryInterval: Int
-  units: RetryUnit
-  maxAttemps: Int
-  backoffRate: Int
-}
-
-
-input ChoiceBlockInput {
-  cid: String!
-  entryPoint: EntryPointInput
-  defaultExitPoint: ExitPointInput
-  routes: [DecisionRouteInput!]
-  basicDefinitions: BaseBlockInput!
-  uiRepresentation: BlockUIRepresentationInput
-}
-
-input TimerBlockInput {
-  cid: String!
-  exitPoint: ExitPointInput
-  entryPoint: EntryPointInput
-  behavior: TimerBehavior!
-  seconds: Int
-  specificDatetime: Time
-  enableExpressionL: Boolean
-  expression: String
-  params: [VariableExpressionInput!]
-  basicDefinitions: BaseBlockInput!
-  uiRepresentation: BlockUIRepresentationInput
-}
-
-input WaitForSignalBlockInput {
-  cid: String!
-  entryPoint: EntryPointInput
-  exitPoint: ExitPointInput
-  type: SignalType!
-  signalModule: SignalModule!
-  customFilter: String
-  blocked: Boolean!
-  params: [VariableExpressionInput!]
-  basicDefinitions: BaseBlockInput!
-  uiRepresentation: BlockUIRepresentationInput
-}
-
-input InvokeRestAPIBlockInput {
-  cid: String!
-  entryPoint: EntryPointInput
-  exitPoint: ExitPointInput
-  method: UrlMethod!
-  url: String!
-  connectionTimeOut: Int!
-  body: String!
-  headers: [VariableValueInput]!
-  authType: AuthType
-  user: String
-  password: String
-  clientId: String
-  clientSecret: String
-  oidcUrl: String
-  basicDefinitions: BaseBlockInput!
-  params: [VariableExpressionInput!]
-  uiRepresentation: BlockUIRepresentationInput
-}
-
-input ExecuteFlowBlockInput {
-  cid: String!
-  entryPoint: EntryPointInput
-  exitPoint: ExitPointInput
-  flow: ID!
-  params: [VariableExpressionInput!]!
-  basicDefinitions: BaseBlockInput!
-  uiRepresentation: BlockUIRepresentationInput
-}
-
-input KafkaBlockInput {
-  cid: String!
-  entryPoint: EntryPointInput
-  exitPoint: ExitPointInput
-  brokers: [String!]
-  topic: String!
-  message: String!
-  type: KafkaMessageType!
-  basicDefinitions: BaseBlockInput!
-  uiRepresentation: BlockUIRepresentationInput
-}
-
 input ImportFlowDraftInput {
   id: ID!
   name: String!
@@ -6506,15 +5682,12 @@ input ImportFlowDraftInput {
   endParamDefinitions: [VariableDefinitionInput!]!
   startBlock: StartBlockInput
   endBlocks: [EndBlockInput!]
+  decisionBlocks: [DecisionBlockInput!]
   gotoBlocks: [GotoBlockInput!]
+  subflowBlocks: [SubflowBlockInput!]
   triggerBlocks: [TriggerBlockInput!]
   actionBlocks: [ActionBlockInput!]
-  choiceBlocks: [ChoiceBlockInput!]
-  executeFlowBlocks: [ExecuteFlowBlockInput!]
-  timerBlocks: [TimerBlockInput!]
-  waitForSignalBlocks: [WaitForSignalBlockInput!]
-  invokeRestAPIBlocks: [InvokeRestAPIBlockInput!]
-  kafkaBlocks: [KafkaBlockInput!]
+  trueFalseBlocks: [TrueFalseBlockInput!]
   connectors: [ConnectorInput!]
 }
 
@@ -6528,10 +5701,8 @@ input EditBlockInput {
 enum FlowStatus
   @goModel(model: "github.com/facebookincubator/symphony/pkg/ent/flow.Status") {
   PUBLISHED
+  UNPUBLISHED
   ARCHIVED
-  ON_HOLD
-  DRAFT
-  DELETED
 }
 
 enum FlowNewInstancesPolicy
@@ -6542,15 +5713,6 @@ enum FlowNewInstancesPolicy
   DISABLED
 }
 
-enum FlowCMType
-  @goModel(
-    model: "github.com/facebookincubator/symphony/pkg/ent/flow.CmType"
-  ){
-    INITIAL_CONFIG
-    GENERAL_CR
-    SYNC_PARAMETERS
-  }
-
 type Flow implements Node {
   id: ID!
   name: String!
@@ -6558,33 +5720,9 @@ type Flow implements Node {
   endParamDefinitions: [VariableDefinition!]!
   status: FlowStatus!
   newInstancesPolicy: FlowNewInstancesPolicy!
-  cmType: FlowCMType
   blocks: [Block!]!
   connectors: [Connector!]!
   draft: FlowDraft
-  runningInstances: Int!
-  failedInstances: Int!
-  author: User!
-  creationDate: Time!
-  editor: User!
-  updateTime: Time!
-}
-
-enum FlowFilterType {
-  FLOW_NAME
-  FLOW_CM_TYPE
-}
-
-
-input FlowFilterInput {
-  filterType: FlowFilterType!
-  operator: FilterOperator!
-  stringValue: String
-  cmType: FlowCMType
-  idSet: [ID!]
-  stringSet: [String!]
-  timeValue: Time
-  maxDepth: Int = 5
 }
 
 type FlowDraft implements Node {
@@ -6622,16 +5760,10 @@ enum FlowInstanceStatus
   @goModel(
     model: "github.com/facebookincubator/symphony/pkg/ent/flowinstance.Status"
   ) {
-  RUNNING
-  RESUMING
+  IN_PROGRESS
   FAILED
-  FAILING
   COMPLETED
   CANCELED
-  CANCELING
-  PAUSED
-  PAUSING
-  CLOSED
 }
 
 type FlowExecutionTemplate implements Node {
@@ -6670,16 +5802,12 @@ type BlockInstance implements Node {
   block: Block!
   startDate: Time!
   endDate: Time
-  activities(filter: AutomationActivityFilterInput): [AutomationActivity!]!
-    @goField(forceResolver: true)
 }
 
 input AddBlockInstanceInput {
-  status: BlockInstanceStatus,
+  status: BlockInstanceStatus
   inputs: [VariableValueInput!]
   outputs: [VariableValueInput!]
-  inputJSON: String 
-  outputJSON: String
   blockId: ID!
   startDate: Time!
 }
@@ -6689,34 +5817,26 @@ input EditBlockInstanceInput {
   status: BlockInstanceStatus
   inputs: [VariableValueInput!]
   outputs: [VariableValueInput!]
-  inputJSON: String
-  outputJSON: String
   failure_reason: String
   endDate: Time
 }
 
 type FlowInstance implements Node {
   id: ID!
-  bssCode: String
+  bssCode: String!
   serviceInstanceCode: String
   status: FlowInstanceStatus!
   template: FlowExecutionTemplate!
   blocks: [BlockInstance!]!
   startDate: Time!
   endDate: Time
-  startParams: [VariableValue!]
-  incompletion_reason: String
-  activities(filter: AutomationActivityFilterInput): [AutomationActivity!]!
-    @goField(forceResolver: true)
 }
 
 input EditFlowInstanceInput {
   id: ID!
   serviceInstanceCode: String
   status: FlowInstanceStatus
-  bssCode: String
   endDate: Time
-  startParams: [VariableValueInput]
 }
 
 input AddFlowDraftInput {
@@ -6729,17 +5849,6 @@ input AddFlowDraftInput {
 input PublishFlowInput {
   flowDraftID: ID!
   flowInstancesPolicy: FlowNewInstancesPolicy!
-  cmType: FlowCMType
-}
-
-input ArchiveFlowInput {
-  flowID: ID!
-}
-
-input DuplicateFlowInput {
-  flowID: ID!
-  name: String!
-  description: String
 }
 
 input VariableValueInput
@@ -6752,7 +5861,7 @@ input VariableValueInput
 
 input StartFlowInput {
   flowID: ID!
-  bssCode: String
+  bssCode: String!
   startDate: Time!
   params: [VariableValueInput]!
 }
@@ -7150,7 +6259,16 @@ type Query {
     """
     name: String
   ): FlowDraftConnection!
-  
+  flows(
+    after: Cursor
+    first: Int @numberValue(min: 0)
+    before: Cursor
+    last: Int @numberValue(min: 0)
+    """
+    Filter flows by case sensitive name.
+    """
+    name: String
+  ): FlowConnection!
   flowInstances(
     after: Cursor
     first: Int @numberValue(min: 0)
@@ -7195,27 +6313,11 @@ type Query {
     """
     orderBy: CounterOrder
 
-    """
-    Filtering options for the returned counters.
-    """
+    
+    #Filtering options for the returned counters.
+    
     filterBy: [CounterFilterInput!]
   ): CounterConnection!
-
-  flows(
-
-    after: Cursor
-    
-    first: Int @numberValue(min: 0)
-    
-    before: Cursor
-    
-    last: Int @numberValue(min: 0)
-    
-    orderBy: FlowOrder
-    
-    filterBy: [FlowFilterInput!]
-  
-  ): FlowConnection!
   
   """
   A list of kpis.
@@ -7246,9 +6348,9 @@ type Query {
     """
     orderBy: KpiOrder
 
-    """
-    Filtering options for the returned kpis.
-    """
+    
+    #Filtering options for the returned kpis.
+    
     filterBy: [KpiFilterInput!]
   ): KpiConnection!
 
@@ -7281,9 +6383,9 @@ type Query {
     """
     orderBy: KpiCategoryOrder
 
-    """
-    Filtering options for the returned kpiCategoriess.
-    """
+    
+    #Filtering options for the returned kpiCategoriess.
+    
     filterBy: [KpiCategoryFilterInput!]
   ): KpiCategoryConnection!
 
@@ -7316,9 +6418,9 @@ type Query {
     """
     orderBy: ThresholdOrder
 
-    """
-    Filtering options for the returned counters.
-    """
+    
+    #Filtering options for the returned counters.
+    
     filterBy: [ThresholdFilterInput!]
   ): ThresholdConnection!
   
@@ -7351,11 +6453,12 @@ type Query {
     """
     orderBy: AlarmFilterOrder
 
-    """
-    Filtering options for the returned counters.
-    """
+    
+    #Filtering options for the returned counters.
+    
     filterBy: [AlarmFilterFilterInput!]
   ): AlarmFilterConnection!
+
   
   """
   A list of domains.
@@ -7386,9 +6489,9 @@ type Query {
     """
     orderBy: DomainOrder
 
-    """
-    Filtering options for the returned domains.
-    """
+    
+    #Filtering options for the returned domains.
+    
     filterBy: [DomainFilterInput!]
   ): DomainConnection!
 
@@ -7421,9 +6524,9 @@ type Query {
     """
     orderBy: VendorOrder
 
-    """
-    Filtering options for the returned vendors.
-    """
+    
+    #Filtering options for the returned vendors.
+    
     filterBy: [VendorFilterInput!]
   ): VendorConnection!
 
@@ -7456,11 +6559,12 @@ type Query {
     """
     orderBy: CounterFamilyOrder
 
-    """
-    Filtering options for the returned counterFamilies.
-    """
+    
+    #Filtering options for the returned counterFamilies.
+    
     filterBy: [CounterFamilyFilterInput!]
   ): CounterFamilyConnection!
+
   
   """
   A list of ruleTypes.
@@ -7491,9 +6595,9 @@ type Query {
     """
     orderBy: RuleTypeOrder
 
-    """
-    Filtering options for the returned ruleTypes.
-    """
+    
+    #Filtering options for the returned ruleTypes.
+    
     filterBy: [RuleTypeFilterInput!]
   ): RuleTypeConnection!
 
@@ -7526,15 +6630,16 @@ type Query {
     """
     orderBy: EventSeverityOrder
 
-    """
-    Filtering options for the returned eventSeverities.
-    """
+    
+    #Filtering options for the returned eventSeverities.
+    
     filterBy: [EventSeverityFilterInput!]
   ): EventSeverityConnection!
   
   """
   A list of comparator.
   """
+  
   comparators(
     """
     Returns the elements in the list that come after the specified cursor.
@@ -7561,15 +6666,16 @@ type Query {
     """
     orderBy: ComparatorOrder
 
-    """
-    Filtering options for the returned comparator.
-    """
+    
+    #Filtering options for the returned comparator.
+    
     filterBy: [ComparatorFilterInput!]
   ): ComparatorConnection!
 
   """
   A list of alarmStatus.
-  """  
+  """
+  
   alarmStatus(
     """
     Returns the elements in the list that come after the specified cursor.
@@ -7596,9 +6702,9 @@ type Query {
     """
     orderBy: AlarmStatusOrder
 
-    """
-    Filtering options for the returned alarmStatus.
-    """
+    
+    #Filtering options for the returned alarmStatus.
+    
     filterBy: [AlarmStatusFilterInput!]
   ): AlarmStatusConnection!
 
@@ -7631,9 +6737,9 @@ type Query {
     """
     orderBy: KqiOrder
 
-    """
-    Filtering options for the returned counters.
-    """
+    
+    #Filtering options for the returned counters.
+    
     filterBy: [KqiFilterInput!]
   ): KqiConnection!
   
@@ -7666,9 +6772,9 @@ type Query {
     """
     orderBy: KqiCategoryOrder
 
-    """
-    Filtering options for the returned kqiCategories.
-    """
+    
+    #Filtering options for the returned kqiCategories.
+    
     filterBy: [KqiCategoryFilterInput!]
   ): KqiCategoryConnection!
 
@@ -7701,9 +6807,9 @@ type Query {
     """
     orderBy: KqiPerspectiveOrder
 
-    """
-    Filtering options for the returned kqiPerspectives.
-    """
+    
+    #Filtering options for the returned kqiPerspectives.
+    
     filterBy: [KqiPerspectiveFilterInput!]
   ): KqiPerspectiveConnection!
 
@@ -7736,9 +6842,9 @@ type Query {
     """
     orderBy: KqiTemporalFrequencyOrder
 
-    """
-    Filtering options for the returned kqiTemporalFrequency.
-    """
+    
+    #Filtering options for the returned kqiTemporalFrequency.
+    
     filterBy: [KqiTemporalFrequencyFilterInput!]
   ): KqiTemporalFrequencyConnection!
 
@@ -7771,9 +6877,9 @@ type Query {
     """
     orderBy: KqiSourceOrder
 
-    """
-    Filtering options for the returned kqiSource.
-    """
+    
+    #Filtering options for the returned kqiSource.
+    
     filterBy: [KqiSourceFilterInput!]
   ): KqiSourceConnection!
 
@@ -7806,15 +6912,15 @@ type Query {
     """
     orderBy: KqiTargetOrder
 
-    """
-    Filtering options for the returned kqiTarget.
-    """
+    
+    #Filtering options for the returned kqiTarget.
     filterBy: [KqiTargetFilterInput!]
   ): KqiTargetConnection!
 
   """
   A list of organization.
   """
+  
   organizations(
     """
     Returns the elements in the list that come after the specified cursor.
@@ -7841,12 +6947,11 @@ type Query {
     """
     orderBy: OrganizationOrder
 
-    """
-    Filtering options for the returned organization.
-    """
+    
+    #Filtering options for the returned organization.
+    
     filterBy: [OrganizationFilterInput!]
   ): OrganizationConnection!
-
   """
   A list of Recommendations.
   """
@@ -7876,12 +6981,11 @@ type Query {
     """
     orderBy: RecommendationsOrder
 
-    """
-    Filtering options for the returned counters.
-    """
+    
+    #Filtering options for the returned counters.
+    
     filterBy: [RecommendationsFilterInput!]
   ): RecommendationsConnection!
-
   """
   A list of RecommendationsSources.
   """
@@ -7911,12 +7015,11 @@ type Query {
     """
     orderBy: RecommendationsSourcesOrder
 
-    """
-    Filtering options for the returned counters.
-    """
+    
+    #Filtering options for the returned counters.
+    
     filterBy: [RecommendationsSourcesFilterInput!]
   ): RecommendationsSourcesConnection!
-
   """
   A list of RecommendationsCategories.
   """
@@ -7946,13 +7049,12 @@ type Query {
     """
     orderBy: RecommendationsCategoryOrder
 
-    """
-    Filtering options for the returned counters.
-    """
+    
+    #Filtering options for the returned counters.
+    
     filterBy: [RecommendationsCategoryFilterInput!]
   ): RecommendationsCategoryConnection!
-
-  """
+     """
   A list of formulas.
   """
   formulas(
@@ -7981,48 +7083,13 @@ type Query {
     """
     orderBy: FormulaOrder
 
-    """
-    Filtering options for the returned formulas.
-    """
+    
+    #Filtering options for the returned formulas.
+    
     filterBy: [FormulaFilterInput!]
   ): FormulaConnection!
 
-  """
-  A list of propertyTypeValue.
-  """
-  propertyTypeValues(
     """
-    Returns the elements in the list that come after the specified cursor.
-    """
-    after: Cursor
-
-    """
-    Returns the first _n_ elements from the list.
-    """
-    first: Int @numberValue(min: 0)
-
-    """
-    Returns the elements in the list that come before the specified cursor.
-    """
-    before: Cursor
-
-    """
-    Returns the last _n_ elements from the list.
-    """
-    last: Int @numberValue(min: 0)
-
-    """
-    Ordering options for the returned networkTypes.
-    """
-    orderBy: PropertyTypeValueOrder
-
-    """
-    Filtering options for the returned networkTypes.
-    """
-    filterBy: [PropertyTypeValueFilterInput!]
-  ): PropertyTypeValueConnection!
-  
-  """
   A list of techs.
   """
   techs(
@@ -8051,9 +7118,9 @@ type Query {
     """
     orderBy: TechOrder
 
-    """
-    Filtering options for the returned techs.
-    """
+    
+    #Filtering options for the returned techs.
+    
     filterBy: [TechFilterInput!]
   ): TechConnection!
 
@@ -8086,9 +7153,9 @@ type Query {
     """
     orderBy: NetworkTypeOrder
 
-    """
-    Filtering options for the returned networkTypes.
-    """
+    
+    #Filtering options for the returned networkTypes.
+    
     filterBy: [NetworkTypeFilterInput!]
   ): NetworkTypeConnection!
  
@@ -8105,7 +7172,6 @@ type Query {
     duration: Float!
     regularHours: RegularHoursInput!
   ): [UserAvailability!]
-  
   propertyCategories(
     """
     Returns the elements in the list that come after the specified cursor.
@@ -8151,176 +7217,7 @@ type Query {
   last: Int @numberValue(min: 0)
   ): ParameterCatalogConnection!
   propertiesByCategories(filterBy: [PropertiesByCategoryFilterInput!]): [PropertiesByCategories]!
-
-  """
-  A list of resourceSpecificationItems.
-  """
-  resourceSpecificationItems(
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
-    after: Cursor
-
-    """
-    Returns the first _n_ elements from the list.
-    """
-    first: Int @numberValue(min: 0)
-
-    """
-    Returns the elements in the list that come before the specified cursor.
-    """
-    before: Cursor
-
-    """
-    Returns the last _n_ elements from the list.
-    """
-    last: Int @numberValue(min: 0)
-
-    #Filtering options for the returned ResourceSpecificationItems.
-    filterBy: [ResourceSpecificationItemsFilterInput!]
-  ): ResourceSpecificationItemsConnection!
-
-  """
-  A list of resourceSpecificationRelationships.
-  """
-  resourceSpecificationRelationships(
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
-    after: Cursor
-
-    """
-    Returns the first _n_ elements from the list.
-    """
-    first: Int @numberValue(min: 0)
-
-    """
-    Returns the elements in the list that come before the specified cursor.
-    """
-    before: Cursor
-
-    """
-    Returns the last _n_ elements from the list.
-    """
-    last: Int @numberValue(min: 0)
-
-    """
-    Ordering options for the returned resourceSpecificationRelationships.
-    """
-    orderBy: ResourceSpecificationRelationshipOrder
-
-    
-    #Filtering options for the returned resourceSpecificationRelationships.
-    
-    filterBy: [ResourceSpecificationRelationshipFilterInput!]
-  ): ResourceSpecificationRelationshipConnection!
-
-  """
-  A list of resourceTypeRelationships.
-  """
-  resourceTypeRelationships(
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
-    after: Cursor
-
-    """
-    Returns the first _n_ elements from the list.
-    """
-    first: Int @numberValue(min: 0)
-
-    """
-    Returns the elements in the list that come before the specified cursor.
-    """
-    before: Cursor
-
-    """
-    Returns the last _n_ elements from the list.
-    """
-    last: Int @numberValue(min: 0)
-
-    """
-    Ordering options for the returned resourceTypeRelationships.
-    """
-    orderBy: ResourceTypeRelationshipOrder
-
-    
-    #Filtering options for the returned resourceTypeRelationships.
-    
-    filterBy: [ResourceTypeRelationshipFilterInput!]
-  ): ResourceTypeRelationshipConnection!
-
-  """
-  A list of resourceSpecifications.
-  """
-  resourceSpecifications(
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
-    after: Cursor
-
-    """
-    Returns the first _n_ elements from the list.
-    """
-    first: Int @numberValue(min: 0)
-
-    """
-    Returns the elements in the list that come before the specified cursor.
-    """
-    before: Cursor
-
-    """
-    Returns the last _n_ elements from the list.
-    """
-    last: Int @numberValue(min: 0)
-
-    """
-    Ordering options for the returned resourceSpecifications.
-    """
-    orderBy: ResourceSpecificationOrder
-
-    
-    #Filtering options for the returned resourceSpecifications.
-    
-    filterBy: [ResourceSpecificationFilterInput!]
-  ): ResourceSpecificationConnection!
-
-  """
-  A list of resourceTypes.
-  """
-  resourceTypes(
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
-    after: Cursor
-
-    """
-    Returns the first _n_ elements from the list.
-    """
-    first: Int @numberValue(min: 0)
-
-    """
-    Returns the elements in the list that come before the specified cursor.
-    """
-    before: Cursor
-
-    """
-    Returns the last _n_ elements from the list.
-    """
-    last: Int @numberValue(min: 0)
-
-    """
-    Ordering options for the returned resourceTypes.
-    """
-    orderBy: ResourceTypeOrder
-
-    
-    #Filtering options for the returned resourceTypes.
-    
-    filterBy: [ResourceTypeFilterInput!]
-  ): ResourceTypeConnection!
 }
-
 
 type Mutation {
   editUser(input: EditUserInput!): User!
@@ -8406,7 +7303,6 @@ type Mutation {
   ): EquipmentPosition!
   addComment(input: CommentInput!): Comment!
   addImage(input: AddImageInput!): File!
-  addFiles(input: AddFilesInput!): File!
   addHyperlink(input: AddHyperlinkInput!): Hyperlink!
   deleteHyperlink(id: ID!): Hyperlink!
   deleteImage(
@@ -8517,23 +7413,18 @@ type Mutation {
   deletePermissionsPolicy(id: ID!): Boolean!
   addStartBlock(flowDraftId: ID!, input: StartBlockInput!): Block!
   addEndBlock(flowDraftId: ID!, input: EndBlockInput!): Block!
+  addDecisionBlock(flowDraftId: ID!, input: DecisionBlockInput!): Block!
   addGotoBlock(flowDraftId: ID!, input: GotoBlockInput!): Block!
+  addSubflowBlock(flowDraftId: ID!, input: SubflowBlockInput!): Block!
   addTriggerBlock(flowDraftId: ID!, input: TriggerBlockInput!): Block!
   addActionBlock(flowDraftId: ID!, input: ActionBlockInput!): Block!
-  addChoiceBlock(flowDraftId: ID!, input: ChoiceBlockInput!): Block!
-  addExecuteFlowBlock(flowDraftId: ID!, input: ExecuteFlowBlockInput!): Block!
-  addTimerBlock(flowDraftId: ID!, input: TimerBlockInput!): Block!
-  addInvokeRestAPIBlock(flowDraftId: ID!, input: InvokeRestAPIBlockInput!): Block!
-  addWaitForSignalBlock(flowDraftId: ID!, input: WaitForSignalBlockInput!): Block!
-  addKafkaBlock(flowDraftId: ID!, input: KafkaBlockInput!): Block!
+  addTrueFalseBlock(flowDraftId: ID!, input: TrueFalseBlockInput!): Block!
   editBlock(input: EditBlockInput!): Block!
   deleteBlock(id: ID!): Boolean!
   addConnector(flowDraftId: ID!, input: ConnectorInput!): Connector!
   deleteConnector(flowDraftId: ID!, input: ConnectorInput!): Boolean!
   addFlowDraft(input: AddFlowDraftInput!): FlowDraft!
   publishFlow(input: PublishFlowInput!): Flow!
-  archiveFlow(input: ArchiveFlowInput!): Flow!
-  duplicateFlow(input: DuplicateFlowInput!): Flow!
   deleteFlowDraft(id: ID!): Boolean!
   importFlowDraft(input: ImportFlowDraftInput!): FlowDraft!
   startFlow(input: StartFlowInput!): FlowInstance!
@@ -8604,15 +7495,6 @@ type Mutation {
   addOrganization(input: AddOrganizationInput!):Organization!
   editOrganization(input: EditOrganizationInput!): Organization!
   removeOrganization(id: ID!): ID!
-  addResourceType(input: AddResourceTypeInput!):ResourceType!
-  editResourceType(input: EditResourceTypeInput!): ResourceType!
-  removeResourceType(id: ID!): ID!
-  addResourceTypeRelationship(input: AddResourceTypeRelationshipInput!):ResourceTypeRelationship!
-  editResourceTypeRelationship(input: EditResourceTypeRelationshipInput!): ResourceTypeRelationship!
-  removeResourceTypeRelationship(id: ID!): ID!
-  addResourceSpecification(input: AddResourceSpecificationInput!):ResourceSpecification!
-  editResourceSpecification(input: EditResourceSpecificationInput!): ResourceSpecification!
-  removeResourceSpecification(id: ID!): ID!
   addKqi(input: AddKqiInput!):Kqi!
   editKqi(input: EditKqiInput!): Kqi!
   removeKqi(id: ID!): ID!
@@ -8652,17 +7534,6 @@ type Mutation {
   editParametersCatalog(parametersCatalog: [EditParameterCatalogInput]!): [ParameterCatalog!]
   removeParameterCatalog(entityType: ParameterCatalogEntity!, id: ID!): ID!
   editIsListable(input: EditIsListableInput!): PropertyType!
-  addResourceSpecificationRelationshipList(input: [AddResourceSpecificationRelationshipInput!]!):[ResourceSpecificationRelationship!]!
-  addResourceSpecificationRelationship(input: AddResourceSpecificationRelationshipInput!): ResourceSpecificationRelationship!
-  editResourceSpecificationRelationship(input: [EditResourceSpecificationRelationshipInput!]!): [ResourceSpecificationRelationship!]!
-  removeResourceSpecificationRelationship(id: ID!): ID!
-  addResourceSpecificationItems(input: AddResourceSpecificationItemsInput!): ResourceSpecificationItems!
-  editResourceSpecificationItems(input: EditResourceSpecificationItemsInput!): ResourceSpecificationItems!
-  removeResourceSpecificationItems(id: ID!): ID!
-  addPropertyTypeValue(input: AddPropertyTypeValueInput!): PropertyTypeValue!
-  editPropertyTypeValue(input: EditPropertyTypeValueInput!): PropertyTypeValue!
-  removePropertyTypeValue(id: ID!): ID!
-  editPropertyType(input: EditPropertyTypeInput!): PropertyType!
 }
 
 """
@@ -8686,6 +7557,18 @@ type WorkOrderStatusChangedPayload
   The work order of which status was modified.
   """
   workOrder: WorkOrder!
+}
+
+type Subscription {
+  workOrderAdded: WorkOrder
+  workOrderDone: WorkOrder
+  workOrderStatusChanged: WorkOrderStatusChangedPayload!
+  flowInstanceDone: FlowInstance!
+  projectAdded: Project
+  projectChanged: Project
+  locationAdded: Location
+  locationChanged: Location
+  AddImage: File
 }
 
 type Counter implements Node {
@@ -8754,7 +7637,6 @@ type Vendor implements Node {
   id: ID!
   name: String!
   vendorRecommendations: [Recommendations!]
-  resourceSpecification: [ResourceSpecification!]
 }
 
 input AddVendorInput {
@@ -8802,53 +7684,6 @@ enum DomainFilterType {
 
 input DomainFilterInput {
   filterType: DomainFilterType!
-  operator: FilterOperator!
-  stringValue: String
-  idSet: [ID!]
-  maxDepth: Int = 5
-  stringSet: [String!]
-}
-
-type PropertyTypeValue implements Node {
-  id: ID!
-  name: String!
-  isDeleted: Boolean
-  propertyType: PropertyType
-  parentPropertyTypeValue: [PropertyTypeValue]
-}
-
-input AddPropertyTypeValueInput
-  @goModel(
-    model: "github.com/facebookincubator/symphony/pkg/exporter/models.AddPropertyTypeValueInput"
-  ) {
-  id: ID
-  name: String!
-  isDeleted: Boolean
-  propertyType: ID
-  parentPropertyTypeValue: [String]
-  parentPropertyType: [ParentPropertyTypeValueInput]
-}
-
-input ParentPropertyTypeValueInput
-  @goModel(
-    model: "github.com/facebookincubator/symphony/pkg/exporter/models.ParentPropertyValueInput"
-  ) {
-  parentPropertyTypeValue: String
-  parentPropertyType: ID
-}
-
-input EditPropertyTypeValueInput {
-  id: ID
-  name: String!
-  isDeleted: Boolean
-}
-
-enum PropertyTypeValueFilterType {
-  NAME
-}
-
-input PropertyTypeValueFilterInput {
-  filterType: PropertyTypeValueFilterType!
   operator: FilterOperator!
   stringValue: String
   idSet: [ID!]
@@ -9175,8 +8010,8 @@ input RuleInput {
 input AddRuleInput {
   name: String!
   gracePeriod: Int!
-  startDateTime: Time
-  endDateTime: Time
+  startDateTime: Time!
+  endDateTime: Time!
   ruleType: ID!
   eventTypeName: String
   specificProblem: String
@@ -9506,7 +8341,6 @@ input AddKqiTargetInput {
   endTime: Time!
   status: Boolean!
   kqi: ID!
-  kqiComparator: AddKqiComparatorInput
 }
 
 input EditKqiTargetInput {
@@ -9543,7 +8377,7 @@ type KqiComparator implements Node {
 }
 
 input AddKqiComparatorInput {
-  kqiTargetFk: ID
+  kqiTargetFk: ID!
   comparatorFk: ID!
   number: Float!
   comparatorType: String!
@@ -9556,6 +8390,8 @@ input EditKqiComparatorInput {
   number: Float!
   comparatorType: String!
 }
+
+##################### RECOMMENDATIONS #######################
 
 type Recommendations implements Node {
   id: ID!
@@ -9615,7 +8451,7 @@ input EditRecommendationsInput {
   userApprobed: ID
   vendor: ID!
 }
-
+######################## filter ###################
 enum RecommendationsFilterType {
   EXTERNALID
   RESOURCE
@@ -9701,133 +8537,7 @@ input RecommendationsCategoryFilterInput {
   stringSet: [String!]
 }
 
-enum ResourceTypeClassKind
-  @goModel(
-  model: "github.com/facebookincubator/symphony/pkg/ent/resourcetype.ResourceTypeClass"
-  ) {
-  EQUIPMENT
-	SLOT
-	RACK
-	PORT
-	CARD
-  VLAN
-  NETWORK_FUNCTION
-}
-
-enum ResourceTypeBaseTypeKind
-  @goModel(
-  model: "github.com/facebookincubator/symphony/pkg/ent/resourcetype.ResourceTypeBaseType"
-  ) {
-  LOGICAL_RESOURCE
-	PHYSICAL_RESOURCE
-	VIRTUAL_RESOURCE
-}
-
-type ResourceType implements Node {
-  id: ID!
-  name: String!
-  resourceTypeBaseType: ResourceTypeBaseTypeKind!
-  resourceTypeClass: ResourceTypeClassKind!
-  resourceSpecification: [ResourceSpecification]
-}
-
-input AddResourceTypeInput {  
-  name: String!
-  resourceTypeBaseType: ResourceTypeBaseTypeKind!
-  resourceTypeClass: ResourceTypeClassKind!
-}
-
-input EditResourceTypeInput {
-  id: ID!
-  name: String!
-  resourceTypeBaseType: ResourceTypeBaseTypeKind!
-  resourceTypeClass: ResourceTypeClassKind!
-}
-
-enum ResourceTypeFilterType {
-  NAME
-  RESOURCE_TYPE_CLASS
-  RESOURCE_TYPE_BASE_TYPE
-}
-
-input ResourceTypeFilterInput {
-  filterType: ResourceTypeFilterType!
-  operator: FilterOperator!
-  stringValue: String
-  typeClassValue: ResourceTypeClassKind
-  typeBaseTypeValue: ResourceTypeBaseTypeKind
-  idSet: [ID!]
-  maxDepth: Int = 5
-  stringSet: [String!]
-}
-
-enum ResourceRelationshipTypeKind
-  @goModel(
-  model: "github.com/facebookincubator/symphony/pkg/ent/resourcetyperelationship.ResourceRelationshipType"
-  ) {
-  BELONGS_TO
-  LOCATED_IN
-  PHYSICAL_LINK
-  LOGICAL_LINK
-  CROSS_CONNECTION
-}
-
-enum ResourceRelationshipMultiplicityKind
-  @goModel(
-  model: "github.com/facebookincubator/symphony/pkg/ent/resourcetyperelationship.ResourceRelationshipMultiplicity"
-  ) {
-  ONE_TO_ONE
-  ONE_TO_MANY
-  MANY_TO_ONE
-  MANY_TO_MANY
-}
-
-type ResourceTypeRelationship implements Node {
-  id: ID!
-  resourceRelationshipType: ResourceRelationshipTypeKind!
-  resourceRelationshipMultiplicity: ResourceRelationshipMultiplicityKind!
-  locationType: LocationType
-  resourceTypeA: ResourceType!
-  resourceTypeB: ResourceType
-}
-
-input AddResourceTypeRelationshipInput {
-  resourceRelationshipType: ResourceRelationshipTypeKind!
-  resourceRelationshipMultiplicity:ResourceRelationshipMultiplicityKind!
-  locationType: ID
-  resourceTypeA: ID!
-  resourceTypeB: ID
-}
-
-input EditResourceTypeRelationshipInput {
-  id: ID!
-  resourceRelationshipType: ResourceRelationshipTypeKind!
-  resourceRelationshipMultiplicity: ResourceRelationshipMultiplicityKind!
-  locationType: ID
-  resourceTypeA: ID!
-  resourceTypeB: ID
-}
-
-enum ResourceTypeRelationshipFilterType {
-  RESOURCE_RELATIONSHIP_MULTIPLICITY
-  RESOURCE_RELATIONSHIP_LOCATION_TYPE
-  RESOURCE_RELATIONSHIP_TYPE
-  RESOURCE_RELATIONSHIP_TYPE_A
-  RESOURCE_RELATIONSHIP_TYPE_B
-  RESOURCE_RELATIONSHIP_RESOURCE
-}
-
-input ResourceTypeRelationshipFilterInput {
-  filterType: ResourceTypeRelationshipFilterType!
-  operator: FilterOperator!
-  stringValue: String
-  multiplicityValue: ResourceRelationshipMultiplicityKind
-  typeValue: ResourceRelationshipTypeKind
-  idSet: [ID!]
-  maxDepth: Int = 5
-  stringSet: [String!]
-}
-
+## scheduling
 """
 A connection to a list of appoinments.
 """
@@ -9896,7 +8606,6 @@ type Appointment implements Node {
   start: Time!
   end: Time!
   duration: Float!
-  status: AppointmentStatus!
 }
 input AddAppointmentInput {
   creatorId: ID
@@ -9907,11 +8616,11 @@ input AddAppointmentInput {
 }
 input EditAppointmentInput {
   id: ID!
-  assigneeID: ID
-  workorderID: ID
-  date: Time
+  assigneeID: ID!
+  workorderID: ID!
+  date: Time!
   status: AppointmentStatus
-  duration: Float
+  duration: Float!
 }
 type UserAvailability {
   user: User!
@@ -9953,159 +8662,4 @@ enum AppointmentStatus
   ) {
   ACTIVE
   CANCELED
-}
-
-type ResourceSpecification implements Node {
-  id: ID!
-  name: String!  
-  quantity: Int
-  resourceType: ResourceType
-  resourcePropertyTypes: [ResourcePropertyType]!  
-  resourceSpecificationRelationship: [ResourceSpecificationRelationship]
-  resourceSpecificationItems: [ResourceSpecificationItems]
-  vendor: Vendor
-}
-input AddResourceSpecificationInput {  
-  name: String!
-  quantity: Int
-  resourceType: ID!
-  resourcePropertyTypes: [AddResourcePropertyTypeInput]
-  vendor: ID
-}
-input EditResourceSpecificationInput {
-  id: ID!
-  name: String!
-  quantity: Int
-  resourceType: ID 
-  resourcePropertyTypes: [AddResourcePropertyTypeInput]
-  vendor: ID
-}
-enum ResourceSpecificationFilterType {
-  ID
-  NAME  
-  RESOURCE_TYPE
-}
-
-input ResourceSpecificationFilterInput {
-  filterType: ResourceSpecificationFilterType!
-  operator: FilterOperator!
-  stringValue: String
-  idSet: [ID!]
-  maxDepth: Int = 5
-  stringSet: [String!]  
-}
-
-type ResourceSpecificationRelationship implements Node {
-  id: ID!
-  name: String!
-  resourceSpecification: ResourceSpecification!
-  resourceSpecificationItems: [ResourceSpecificationItems]
-}
-
-input AddResourceSpecificationRelationshipInput {  
-  name: String!
-  resourceSpecification: ID!
-  resourceSpecificationList: [ID]
-}
-
-input EditResourceSpecificationRelationshipInput {
-  id: ID
-  name: String!
-  resourceSpecification: ID
-  resourceSpecificationList: [ID]
-}
-
-enum ResourceSpecificationRelationshipFilterType {
-  NAME
-  RESOURCE_SPECIFICATION
-}
-
-input ResourceSpecificationRelationshipFilterInput {
-  filterType: ResourceSpecificationRelationshipFilterType!
-  operator: FilterOperator!
-  stringValue: String
-  idSet: [ID!]
-  maxDepth: Int = 5
-  stringSet: [String!]
-}
-
-type ResourceSpecificationItems implements Node {
-  id: ID!
-  resourceSpecificationRelationship: ResourceSpecificationRelationship!
-  resourceSpecification: ResourceSpecification
-}
-
-input AddResourceSpecificationItemsInput {  
-  resourceSpecificationRelationship: ID!
-  resourceSpecification: ID
-}
-
-input EditResourceSpecificationItemsInput {
-  id: ID!
-  resourceSpecificationRelationship: ID
-  resourceSpecification: ID
-}
-
-enum ResourceSpecificationItemsFilterType {
-  RESOURCE_SPECIFICATION_RELATIONSHIP
-  RESOURCE_SPECIFICATION
-}
-
-input ResourceSpecificationItemsFilterInput {
-  filterType: ResourceSpecificationItemsFilterType!
-  operator: FilterOperator!
-  idSet: [ID!]
-  maxDepth: Int = 5
-}
-
-type ResourcePropertyType implements Node {
-  id: ID!
-  externalId: String
-  name: String!
-  type: ResourcePropertyKind!
-  nodeType: String
-  index: Int
-  category: String
-  rawValue: String
-  stringValue: String
-  intValue: Int
-  booleanValue: Boolean
-  floatValue: Float
-  latitudeValue: Float
-  longitudeValue: Float
-  rangeFromValue: Float
-  rangeToValue: Float
-  isEditable: Boolean
-  isInstanceProperty: Boolean
-  isMandatory: Boolean
-  isDeleted: Boolean
-  propertyCategory: PropertyCategory
-  isListable: Boolean
-  resourceSpecification: ResourceSpecification!
-}
-
-input AddResourcePropertyTypeInput {
-  id: ID
-  externalId: String
-  name: String!
-  type: ResourcePropertyKind!
-  nodeType: String
-  index: Int
-  category: String
-  rawValue: String
-  stringValue: String
-  intValue: Int
-  booleanValue: Boolean
-  floatValue: Float
-  latitudeValue: Float
-  longitudeValue: Float
-  rangeFromValue: Float
-  rangeToValue: Float
-  isEditable: Boolean
-  isInstanceProperty: Boolean
-  isMandatory: Boolean
-  isDeleted: Boolean
-  propertyCategory: ID
-  isListable: Boolean
-  resourceSpecification: ID
 }

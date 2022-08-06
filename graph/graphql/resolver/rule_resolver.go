@@ -49,8 +49,8 @@ func (r mutationResolver) AddRule(ctx context.Context, input models.AddRuleInput
 		Rule.Create().
 		SetName(input.Name).
 		SetGracePeriod(input.GracePeriod).
-		SetNillableStartDateTime(input.StartDateTime).
-		SetNillableEndDateTime(input.EndDateTime).
+		SetStartDateTime(input.StartDateTime).
+		SetEndDateTime(input.EndDateTime).
 		SetThresholdID(input.Threshold).
 		SetRuletypeID(input.RuleType).
 		SetStatus(input.Status).
@@ -122,12 +122,12 @@ func (r mutationResolver) EditRule(ctx context.Context, input models.EditRuleInp
 		name = input.Name
 		change = true
 	}
-	if start != input.StartDateTime {
-		*start = *input.StartDateTime
+	if start != *input.StartDateTime {
+		start = *input.StartDateTime
 		change = true
 	}
-	if end != input.EndDateTime {
-		*end = *input.EndDateTime
+	if end != *input.EndDateTime {
+		end = *input.EndDateTime
 		change = true
 	}
 	if grace != *input.GracePeriod {
@@ -168,8 +168,8 @@ func (r mutationResolver) EditRule(ctx context.Context, input models.EditRuleInp
 			UpdateOne(et).
 			SetName(name).
 			SetGracePeriod(grace).
-			SetNillableStartDateTime(start).
-			SetNillableEndDateTime(end).
+			SetStartDateTime(start).
+			SetEndDateTime(end).
 			SetThresholdID(thresholdid).
 			SetRuletypeID(rtypeid).
 			SetStatus(status).

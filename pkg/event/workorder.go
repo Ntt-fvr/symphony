@@ -8,9 +8,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"time"
-
-	"github.com/facebookincubator/symphony/pkg/ent/block"
 
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/hook"
@@ -29,35 +26,6 @@ type WorkOrderStatusChangedPayload struct {
 	From      *workorder.Status `json:"from"`
 	To        workorder.Status  `json:"to"`
 	WorkOrder *ent.WorkOrder    `json:"workOrder"`
-}
-
-// SignalEvent SignalWorkOrderStatusChangedPayload is the payload of WorkOrderStatusChanged event.
-/*
-{
-    "signalModule": "one of Signal Module Enum values",
-    "signalType": "one of Signal Type Enum values",
-    "timestamp": "",
-    "flowInstanceID":
-    "payload": {
-        "key1": "value1",
-        "key2": {
-            "key21": {
-            }
-        },
-        "key3": []
-    }
-}*/
-type SignalEvent struct {
-	Module         string           `json:"signalModule"`
-	Type           block.SignalType `json:"signalType"`
-	Timestamp      int64            `json:"timestamp"`
-	FlowInstanceId int              `json:"flowInstanceID"`
-	Payload        *WOPayload       `json:"payload"`
-}
-
-type WOPayload struct {
-	WorkOrder  *ent.WorkOrder  `json:"workOrder"`
-	Properties []*ent.Property `json:"properties"`
 }
 
 // Hook returns the hook which generates events from mutations.
@@ -171,22 +139,6 @@ func (e *Eventer) workOrderStatusChangedHook() ent.Hook {
 					To:        workOrder.Status,
 					WorkOrder: workOrder,
 				})
-				properties, _ := workOrder.Properties(ctx)
-				flowId, err := workOrder.FlowInstance(ctx)
-				signal := &SignalEvent{
-					Module:    block.SignalModuleWFM.String(),
-					Type:      block.SignalTypeWOUPDATED,
-					Timestamp: time.Now().UnixMilli() / 1000,
-					Payload: &WOPayload{
-						WorkOrder:  workOrder,
-						Properties: properties,
-					},
-				}
-				if err != nil {
-					signal.FlowInstanceId = flowId.ID
-				}
-
-				e.emit(ctx, Automation, signal)
 			}
 			return value, nil
 		})

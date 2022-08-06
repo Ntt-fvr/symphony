@@ -22,7 +22,6 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/comment"
 	"github.com/facebookincubator/symphony/pkg/ent/equipment"
 	"github.com/facebookincubator/symphony/pkg/ent/file"
-	"github.com/facebookincubator/symphony/pkg/ent/flowinstance"
 	"github.com/facebookincubator/symphony/pkg/ent/hyperlink"
 	"github.com/facebookincubator/symphony/pkg/ent/link"
 	"github.com/facebookincubator/symphony/pkg/ent/location"
@@ -61,7 +60,6 @@ type WorkOrderQuery struct {
 	withOwner               *UserQuery
 	withAssignee            *UserQuery
 	withAppointment         *AppointmentQuery
-	withFlowInstance        *FlowInstanceQuery
 	withFKs                 bool
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
@@ -444,28 +442,6 @@ func (woq *WorkOrderQuery) QueryAppointment() *AppointmentQuery {
 	return query
 }
 
-// QueryFlowInstance chains the current query on the flow_instance edge.
-func (woq *WorkOrderQuery) QueryFlowInstance() *FlowInstanceQuery {
-	query := &FlowInstanceQuery{config: woq.config}
-	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
-		if err := woq.prepareQuery(ctx); err != nil {
-			return nil, err
-		}
-		selector := woq.sqlQuery()
-		if err := selector.Err(); err != nil {
-			return nil, err
-		}
-		step := sqlgraph.NewStep(
-			sqlgraph.From(workorder.Table, workorder.FieldID, selector),
-			sqlgraph.To(flowinstance.Table, flowinstance.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, false, workorder.FlowInstanceTable, workorder.FlowInstanceColumn),
-		)
-		fromU = sqlgraph.SetNeighbors(woq.driver.Dialect(), step)
-		return fromU, nil
-	}
-	return query
-}
-
 // First returns the first WorkOrder entity in the query. Returns *NotFoundError when no workorder was found.
 func (woq *WorkOrderQuery) First(ctx context.Context) (*WorkOrder, error) {
 	nodes, err := woq.Limit(1).All(ctx)
@@ -658,7 +634,6 @@ func (woq *WorkOrderQuery) Clone() *WorkOrderQuery {
 		withOwner:               woq.withOwner.Clone(),
 		withAssignee:            woq.withAssignee.Clone(),
 		withAppointment:         woq.withAppointment.Clone(),
-		withFlowInstance:        woq.withFlowInstance.Clone(),
 		// clone intermediate query.
 		sql:  woq.sql.Clone(),
 		path: woq.path,
@@ -841,17 +816,6 @@ func (woq *WorkOrderQuery) WithAppointment(opts ...func(*AppointmentQuery)) *Wor
 	return woq
 }
 
-//  WithFlowInstance tells the query-builder to eager-loads the nodes that are connected to
-// the "flow_instance" edge. The optional arguments used to configure the query builder of the edge.
-func (woq *WorkOrderQuery) WithFlowInstance(opts ...func(*FlowInstanceQuery)) *WorkOrderQuery {
-	query := &FlowInstanceQuery{config: woq.config}
-	for _, opt := range opts {
-		opt(query)
-	}
-	woq.withFlowInstance = query
-	return woq
-}
-
 // GroupBy used to group vertices by one or more fields/columns.
 // It is often used with aggregate functions, like: count, max, mean, min, sum.
 //
@@ -922,7 +886,7 @@ func (woq *WorkOrderQuery) sqlAll(ctx context.Context) ([]*WorkOrder, error) {
 		nodes       = []*WorkOrder{}
 		withFKs     = woq.withFKs
 		_spec       = woq.querySpec()
-		loadedTypes = [17]bool{
+		loadedTypes = [16]bool{
 			woq.withType != nil,
 			woq.withTemplate != nil,
 			woq.withEquipment != nil,
@@ -939,10 +903,9 @@ func (woq *WorkOrderQuery) sqlAll(ctx context.Context) ([]*WorkOrder, error) {
 			woq.withOwner != nil,
 			woq.withAssignee != nil,
 			woq.withAppointment != nil,
-			woq.withFlowInstance != nil,
 		}
 	)
-	if woq.withType != nil || woq.withTemplate != nil || woq.withOrganization != nil || woq.withLocation != nil || woq.withProject != nil || woq.withOwner != nil || woq.withAssignee != nil || woq.withFlowInstance != nil {
+	if woq.withType != nil || woq.withTemplate != nil || woq.withOrganization != nil || woq.withLocation != nil || woq.withProject != nil || woq.withOwner != nil || woq.withAssignee != nil {
 		withFKs = true
 	}
 	if withFKs {
@@ -1405,31 +1368,6 @@ func (woq *WorkOrderQuery) sqlAll(ctx context.Context) ([]*WorkOrder, error) {
 				return nil, fmt.Errorf(`unexpected foreign-key "work_order_appointment" returned %v for node %v`, *fk, n.ID)
 			}
 			node.Edges.Appointment = append(node.Edges.Appointment, n)
-		}
-	}
-
-	if query := woq.withFlowInstance; query != nil {
-		ids := make([]int, 0, len(nodes))
-		nodeids := make(map[int][]*WorkOrder)
-		for i := range nodes {
-			if fk := nodes[i].work_order_flow_instance; fk != nil {
-				ids = append(ids, *fk)
-				nodeids[*fk] = append(nodeids[*fk], nodes[i])
-			}
-		}
-		query.Where(flowinstance.IDIn(ids...))
-		neighbors, err := query.All(ctx)
-		if err != nil {
-			return nil, err
-		}
-		for _, n := range neighbors {
-			nodes, ok := nodeids[n.ID]
-			if !ok {
-				return nil, fmt.Errorf(`unexpected foreign-key "work_order_flow_instance" returned %v`, n.ID)
-			}
-			for i := range nodes {
-				nodes[i].Edges.FlowInstance = n
-			}
 		}
 	}
 

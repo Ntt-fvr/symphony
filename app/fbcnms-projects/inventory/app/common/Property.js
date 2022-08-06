@@ -12,17 +12,17 @@ import type {FragmentReference} from 'relay-runtime';
 import type {PropertyFormField_property} from '../components/form/__generated__/PropertyFormField_property.graphql';
 import type {PropertyType} from './PropertyType';
 
+import DateTimeFormat from './DateTimeFormat.js';
+import {toMutablePropertyType} from './PropertyType';
+import {graphql, fetchQuery} from 'relay-runtime';
 import type {
   PropertyByCategoriesQuery,
-  PropertyByCategoriesQueryResponse,
+  PropertiesByCategoryFilterInput,
   PropertyByCategoriesQueryVariables,
+  PropertyByCategoriesQueryResponse,
 } from './__generated__/PropertyByCategoriesQuery.graphql';
-
-import DateTimeFormat from './DateTimeFormat.js';
-import RelayEnvironment from './RelayEnvironment';
-import {fetchQuery, graphql} from 'relay-runtime';
-import {toMutablePropertyType} from './PropertyType';
 import {useLazyLoadQuery} from 'react-relay/hooks';
+import RelayEnvironment from './RelayEnvironment';
 
 export type Property = {|
   id?: ?string,
@@ -105,7 +105,6 @@ export const toPropertyInput = (properties: Array<Property>): Array<any> => {
     .map(property => ({
       ...property,
       propertyTypeID: property.propertyType.id,
-      propertyTypeValue: undefined,
     }))
     .map(propInput => {
       const {propertyType: _, ...newPropInput} = propInput;
@@ -140,7 +139,6 @@ export const toMutableProperty = (
   longitudeValue: immutableProperty.longitudeValue,
   rangeFromValue: immutableProperty.rangeFromValue,
   rangeToValue: immutableProperty.rangeToValue,
-  propertyTypeValue: immutableProperty.propertyTypeValue,
   nodeValue:
     immutableProperty.nodeValue != null
       ? {
@@ -245,5 +243,5 @@ export function fetchPropertyByCategories(
     RelayEnvironment,
     propertyByCategoriesQuery,
     input,
-  );
+  )
 }

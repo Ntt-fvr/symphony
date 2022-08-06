@@ -98,7 +98,7 @@ func ValidColumn(column string) bool {
 //	import _ "github.com/facebookincubator/symphony/pkg/ent/runtime"
 //
 var (
-	Hooks  [2]ent.Hook
+	Hooks  [1]ent.Hook
 	Policy ent.Policy
 	// DefaultCreateTime holds the default value on creation for the create_time field.
 	DefaultCreateTime func() time.Time
@@ -116,8 +116,8 @@ const DefaultStatus = StatusActive
 
 // Status values.
 const (
-	StatusActive   Status = "ACTIVE"
-	StatusCanceled Status = "CANCELED"
+	StatusActive    Status = "ACTIVE"
+	StatusCancelled Status = "CANCELLED"
 )
 
 func (s Status) String() string {
@@ -127,7 +127,7 @@ func (s Status) String() string {
 // StatusValidator is a validator for the "status" field enum values. It is called by the builders before save.
 func StatusValidator(s Status) error {
 	switch s {
-	case StatusActive, StatusCanceled:
+	case StatusActive, StatusCancelled:
 		return nil
 	default:
 		return fmt.Errorf("appointment: invalid enum value for status field: %q", s)

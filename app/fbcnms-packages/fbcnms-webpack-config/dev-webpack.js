@@ -52,22 +52,7 @@ function createDevWebpackConfig(options: Options) {
         ? `/${options.projectName}/static/dist/`
         : '/static/dist/',
     },
-    plugins: options.hot
-      ? [
-          new webpack.DefinePlugin({
-            'process.env.RECAPTCHA_KEY': JSON.stringify(
-              process.env.RECAPTCHA_KEY,
-            ),
-          }),
-          new webpack.HotModuleReplacementPlugin(),
-        ]
-      : [
-          new webpack.DefinePlugin({
-            'process.env.RECAPTCHA_KEY': JSON.stringify(
-              process.env.RECAPTCHA_KEY,
-            ),
-          }),
-        ],
+    plugins: options.hot ? [new webpack.HotModuleReplacementPlugin()] : [],
     module: {
       rules: [
         {

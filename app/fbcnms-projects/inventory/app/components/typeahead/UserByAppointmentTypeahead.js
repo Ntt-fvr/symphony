@@ -17,9 +17,8 @@ import UserViewer from '../admin/userManagement/users/UserViewer';
 import {useUserSearchByAppointment} from '../admin/userManagement/utils/search/UserSearchByAppointmentContext';
 
 type Props = $ReadOnly<{|
-  onUserSelection: (?ShortUser, Date) => void,
-  slotStartDate: Date,
-
+  onUserSelection: (?ShortUser) => void,
+  slotEndDate: Date,
   slotEndDate: Date,
   duration: string,
   className?: string,
@@ -48,19 +47,6 @@ const UserByAppointmentTypeahead = (props: Props) => {
     slotEndDate,
   });
 
-  const userSelection = (shortUser: ShortUser) => {
-    const userSelected = userSearch.results.find(
-      user => user.id === shortUser.entityId,
-    );
-    return onUserSelection(
-      {
-        id: shortUser.entityId,
-        email: shortUser.name,
-      },
-      userSelected.timeAvailability,
-    );
-  };
-
   return (
     <div className={className}>
       <Typeahead
@@ -74,17 +60,17 @@ const UserByAppointmentTypeahead = (props: Props) => {
             name: user.authID,
             type: 'user',
             render: () => (
-              <UserViewer
-                user={user}
-                showPhoto={true}
-                showRole={true}
-                showTimeAvailability={true}
-              />
+              <UserViewer user={user} showPhoto={true} showRole={true} />
             ),
           };
         })}
         onSuggestionsFetchRequested={userSearch.setSearchTerm}
-        onEntitySelected={suggestion => userSelection(suggestion)}
+        onEntitySelected={suggestion =>
+          onUserSelection({
+            id: suggestion.entityId,
+            email: suggestion.name,
+          })
+        }
         onEntriesRequested={() => {}}
         onSuggestionsClearRequested={() => onUserSelection(null)}
         placeholder={headline}

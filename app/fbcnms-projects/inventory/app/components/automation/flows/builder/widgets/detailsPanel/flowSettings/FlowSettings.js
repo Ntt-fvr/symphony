@@ -13,7 +13,6 @@ import FlowRunningInstances from './FlowRunningInstances';
 import FlowStatus from './FlowStatus';
 import React from 'react';
 import symphony from '@symphony/design-system/theme/symphony';
-import {Box} from '@material-ui/core';
 import {makeStyles} from '@material-ui/styles';
 
 const useStyles = makeStyles(() => ({
@@ -35,12 +34,10 @@ export default function FlowSettings() {
   const classes = useStyles();
 
   return (
-    <Box py={3} px={3}>
-      <div className={classes.root}>
-        <FlowStatus className={classes.section} />
-        <FlowDescription className={classes.section} />
-        <FlowRunningInstances className={classes.section} />
-      </div>
-    </Box>
+    <div className={classes.root}>
+      <FlowStatus className={classes.section} />
+      <FlowDescription className={classes.section} />
+      <FlowRunningInstances className={classes.section} />
+    </div>
   );
 }

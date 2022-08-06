@@ -22,50 +22,36 @@ export type OrderDirection = "ASC" | "DESC" | "%future added value";
 export type PropertyKind = "bool" | "date" | "datetime_local" | "email" | "enum" | "float" | "gps_location" | "int" | "node" | "range" | "string" | "%future added value";
 export type FlowInstanceFilterInput = {|
   filterType: FlowInstanceFilterType,
-  idSet?: ?$ReadOnlyArray<string>,
-  maxDepth?: ?number,
   operator: FilterOperator,
-  propertyValue?: ?PropertyTypeInput,
-  stringSet?: ?$ReadOnlyArray<string>,
   stringValue?: ?string,
+  idSet?: ?$ReadOnlyArray<string>,
+  stringSet?: ?$ReadOnlyArray<string>,
+  propertyValue?: ?PropertyTypeInput,
   timeValue?: ?any,
+  maxDepth?: ?number,
 |};
 export type PropertyTypeInput = {|
-  booleanValue?: ?boolean,
-  category?: ?string,
-  dependencePropertyTypes?: ?$ReadOnlyArray<?PropertyTypeInput>,
-  externalId?: ?string,
-  floatValue?: ?number,
   id?: ?string,
+  externalId?: ?string,
+  name: string,
+  type: PropertyKind,
+  nodeType?: ?string,
   index?: ?number,
+  category?: ?string,
+  stringValue?: ?string,
   intValue?: ?number,
-  isDeleted?: ?boolean,
-  isEditable?: ?boolean,
-  isInstanceProperty?: ?boolean,
-  isListable?: ?boolean,
-  isMandatory?: ?boolean,
+  booleanValue?: ?boolean,
+  floatValue?: ?number,
   latitudeValue?: ?number,
   longitudeValue?: ?number,
-  name: string,
-  nodeType?: ?string,
-  propertyCategoryID?: ?string,
-  propertyTypeValues?: ?$ReadOnlyArray<?AddPropertyTypeValueInput>,
   rangeFromValue?: ?number,
   rangeToValue?: ?number,
-  stringValue?: ?string,
-  type: PropertyKind,
-|};
-export type AddPropertyTypeValueInput = {|
-  id?: ?string,
+  isEditable?: ?boolean,
+  isInstanceProperty?: ?boolean,
+  isMandatory?: ?boolean,
   isDeleted?: ?boolean,
-  name: string,
-  parentPropertyType?: ?$ReadOnlyArray<?ParentPropertyTypeValueInput>,
-  parentPropertyTypeValue?: ?$ReadOnlyArray<?string>,
-  propertyType?: ?string,
-|};
-export type ParentPropertyTypeValueInput = {|
-  parentPropertyType?: ?string,
-  parentPropertyTypeValue?: ?string,
+  propertyCategoryID?: ?string,
+  isListable?: ?boolean,
 |};
 export type FlowInstanceOrder = {|
   direction: OrderDirection,
@@ -106,6 +92,7 @@ fragment FlowInstancesView_query_1O5gLD on Query {
         status
         startDate
         endDate
+        bssCode
         serviceInstanceCode
         template {
           id
@@ -266,6 +253,13 @@ return {
                     "alias": null,
                     "args": null,
                     "kind": "ScalarField",
+                    "name": "bssCode",
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
                     "name": "serviceInstanceCode",
                     "storageKey": null
                   },
@@ -351,16 +345,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "dd6803bb1c508d6385c25c91c6e83761",
+    "cacheID": "55f927f814fee1e337dbac8c53f8b817",
     "id": null,
     "metadata": {},
     "name": "FlowInstancesViewPaginationQuery",
     "operationKind": "query",
-    "text": "query FlowInstancesViewPaginationQuery(\n  $cursor: Cursor\n  $filterBy: [FlowInstanceFilterInput!]\n  $first: Int\n  $orderBy: FlowInstanceOrder\n) {\n  ...FlowInstancesView_query_1O5gLD\n}\n\nfragment FlowInstancesView_query_1O5gLD on Query {\n  flowInstances(after: $cursor, first: $first, orderBy: $orderBy, filterBy: $filterBy) {\n    totalCount\n    edges {\n      node {\n        id\n        status\n        startDate\n        endDate\n        serviceInstanceCode\n        template {\n          id\n          name\n        }\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n}\n"
+    "text": "query FlowInstancesViewPaginationQuery(\n  $cursor: Cursor\n  $filterBy: [FlowInstanceFilterInput!]\n  $first: Int\n  $orderBy: FlowInstanceOrder\n) {\n  ...FlowInstancesView_query_1O5gLD\n}\n\nfragment FlowInstancesView_query_1O5gLD on Query {\n  flowInstances(after: $cursor, first: $first, orderBy: $orderBy, filterBy: $filterBy) {\n    totalCount\n    edges {\n      node {\n        id\n        status\n        startDate\n        endDate\n        bssCode\n        serviceInstanceCode\n        template {\n          id\n          name\n        }\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = '37bb699bb1f095dcfb24d5ad6dc75e98';
+(node/*: any*/).hash = '7942d016ca3ac6e6094785f425707d9a';
 
 module.exports = node;

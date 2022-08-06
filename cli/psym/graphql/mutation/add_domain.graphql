@@ -1,6 +1,0 @@
-mutation addDomain($input: AddDomainInput!) {
-  addDomain(input: $input) {
-    id
-    name
-  }
-}

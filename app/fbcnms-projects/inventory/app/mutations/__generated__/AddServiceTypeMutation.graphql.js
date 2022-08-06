@@ -17,55 +17,41 @@ import type { ConcreteRequest } from 'relay-runtime';
 export type DiscoveryMethod = "INVENTORY" | "MANUAL" | "%future added value";
 export type PropertyKind = "bool" | "date" | "datetime_local" | "email" | "enum" | "float" | "gps_location" | "int" | "node" | "range" | "string" | "%future added value";
 export type ServiceTypeCreateData = {|
-  discoveryMethod?: ?DiscoveryMethod,
-  endpoints?: ?$ReadOnlyArray<?ServiceEndpointDefinitionInput>,
+  name: string,
   hasCustomer: boolean,
-  name: string,
   properties?: ?$ReadOnlyArray<?PropertyTypeInput>,
-|};
-export type ServiceEndpointDefinitionInput = {|
-  equipmentTypeID: string,
-  id?: ?string,
-  index: number,
-  name: string,
-  role?: ?string,
+  endpoints?: ?$ReadOnlyArray<?ServiceEndpointDefinitionInput>,
+  discoveryMethod?: ?DiscoveryMethod,
 |};
 export type PropertyTypeInput = {|
-  booleanValue?: ?boolean,
-  category?: ?string,
-  dependencePropertyTypes?: ?$ReadOnlyArray<?PropertyTypeInput>,
-  externalId?: ?string,
-  floatValue?: ?number,
   id?: ?string,
+  externalId?: ?string,
+  name: string,
+  type: PropertyKind,
+  nodeType?: ?string,
   index?: ?number,
+  category?: ?string,
+  stringValue?: ?string,
   intValue?: ?number,
-  isDeleted?: ?boolean,
-  isEditable?: ?boolean,
-  isInstanceProperty?: ?boolean,
-  isListable?: ?boolean,
-  isMandatory?: ?boolean,
+  booleanValue?: ?boolean,
+  floatValue?: ?number,
   latitudeValue?: ?number,
   longitudeValue?: ?number,
-  name: string,
-  nodeType?: ?string,
-  propertyCategoryID?: ?string,
-  propertyTypeValues?: ?$ReadOnlyArray<?AddPropertyTypeValueInput>,
   rangeFromValue?: ?number,
   rangeToValue?: ?number,
-  stringValue?: ?string,
-  type: PropertyKind,
-|};
-export type AddPropertyTypeValueInput = {|
-  id?: ?string,
+  isEditable?: ?boolean,
+  isInstanceProperty?: ?boolean,
+  isMandatory?: ?boolean,
   isDeleted?: ?boolean,
-  name: string,
-  parentPropertyType?: ?$ReadOnlyArray<?ParentPropertyTypeValueInput>,
-  parentPropertyTypeValue?: ?$ReadOnlyArray<?string>,
-  propertyType?: ?string,
+  propertyCategoryID?: ?string,
+  isListable?: ?boolean,
 |};
-export type ParentPropertyTypeValueInput = {|
-  parentPropertyType?: ?string,
-  parentPropertyTypeValue?: ?string,
+export type ServiceEndpointDefinitionInput = {|
+  id?: ?string,
+  name: string,
+  role?: ?string,
+  index: number,
+  equipmentTypeID: string,
 |};
 export type AddServiceTypeMutationVariables = {|
   data: ServiceTypeCreateData

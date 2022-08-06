@@ -17,7 +17,6 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/predicate"
 	"github.com/facebookincubator/symphony/pkg/ent/propertycategory"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
-	"github.com/facebookincubator/symphony/pkg/ent/resourcepropertytype"
 )
 
 // PropertyCategoryUpdate is the builder for updating PropertyCategory entities.
@@ -67,21 +66,6 @@ func (pcu *PropertyCategoryUpdate) AddPropertiesType(p ...*PropertyType) *Proper
 	return pcu.AddPropertiesTypeIDs(ids...)
 }
 
-// AddResourcePropertiesTypeIDs adds the resource_properties_type edge to ResourcePropertyType by ids.
-func (pcu *PropertyCategoryUpdate) AddResourcePropertiesTypeIDs(ids ...int) *PropertyCategoryUpdate {
-	pcu.mutation.AddResourcePropertiesTypeIDs(ids...)
-	return pcu
-}
-
-// AddResourcePropertiesType adds the resource_properties_type edges to ResourcePropertyType.
-func (pcu *PropertyCategoryUpdate) AddResourcePropertiesType(r ...*ResourcePropertyType) *PropertyCategoryUpdate {
-	ids := make([]int, len(r))
-	for i := range r {
-		ids[i] = r[i].ID
-	}
-	return pcu.AddResourcePropertiesTypeIDs(ids...)
-}
-
 // SetParameterCatalogID sets the parameter_catalog edge to ParameterCatalog by id.
 func (pcu *PropertyCategoryUpdate) SetParameterCatalogID(id int) *PropertyCategoryUpdate {
 	pcu.mutation.SetParameterCatalogID(id)
@@ -125,27 +109,6 @@ func (pcu *PropertyCategoryUpdate) RemovePropertiesType(p ...*PropertyType) *Pro
 		ids[i] = p[i].ID
 	}
 	return pcu.RemovePropertiesTypeIDs(ids...)
-}
-
-// ClearResourcePropertiesType clears all "resource_properties_type" edges to type ResourcePropertyType.
-func (pcu *PropertyCategoryUpdate) ClearResourcePropertiesType() *PropertyCategoryUpdate {
-	pcu.mutation.ClearResourcePropertiesType()
-	return pcu
-}
-
-// RemoveResourcePropertiesTypeIDs removes the resource_properties_type edge to ResourcePropertyType by ids.
-func (pcu *PropertyCategoryUpdate) RemoveResourcePropertiesTypeIDs(ids ...int) *PropertyCategoryUpdate {
-	pcu.mutation.RemoveResourcePropertiesTypeIDs(ids...)
-	return pcu
-}
-
-// RemoveResourcePropertiesType removes resource_properties_type edges to ResourcePropertyType.
-func (pcu *PropertyCategoryUpdate) RemoveResourcePropertiesType(r ...*ResourcePropertyType) *PropertyCategoryUpdate {
-	ids := make([]int, len(r))
-	for i := range r {
-		ids[i] = r[i].ID
-	}
-	return pcu.RemoveResourcePropertiesTypeIDs(ids...)
 }
 
 // ClearParameterCatalog clears the "parameter_catalog" edge to type ParameterCatalog.
@@ -330,60 +293,6 @@ func (pcu *PropertyCategoryUpdate) sqlSave(ctx context.Context) (n int, err erro
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if pcu.mutation.ResourcePropertiesTypeCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   propertycategory.ResourcePropertiesTypeTable,
-			Columns: []string{propertycategory.ResourcePropertiesTypeColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: resourcepropertytype.FieldID,
-				},
-			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := pcu.mutation.RemovedResourcePropertiesTypeIDs(); len(nodes) > 0 && !pcu.mutation.ResourcePropertiesTypeCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   propertycategory.ResourcePropertiesTypeTable,
-			Columns: []string{propertycategory.ResourcePropertiesTypeColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: resourcepropertytype.FieldID,
-				},
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := pcu.mutation.ResourcePropertiesTypeIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   propertycategory.ResourcePropertiesTypeTable,
-			Columns: []string{propertycategory.ResourcePropertiesTypeColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: resourcepropertytype.FieldID,
-				},
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
-	}
 	if pcu.mutation.ParameterCatalogCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
@@ -471,21 +380,6 @@ func (pcuo *PropertyCategoryUpdateOne) AddPropertiesType(p ...*PropertyType) *Pr
 	return pcuo.AddPropertiesTypeIDs(ids...)
 }
 
-// AddResourcePropertiesTypeIDs adds the resource_properties_type edge to ResourcePropertyType by ids.
-func (pcuo *PropertyCategoryUpdateOne) AddResourcePropertiesTypeIDs(ids ...int) *PropertyCategoryUpdateOne {
-	pcuo.mutation.AddResourcePropertiesTypeIDs(ids...)
-	return pcuo
-}
-
-// AddResourcePropertiesType adds the resource_properties_type edges to ResourcePropertyType.
-func (pcuo *PropertyCategoryUpdateOne) AddResourcePropertiesType(r ...*ResourcePropertyType) *PropertyCategoryUpdateOne {
-	ids := make([]int, len(r))
-	for i := range r {
-		ids[i] = r[i].ID
-	}
-	return pcuo.AddResourcePropertiesTypeIDs(ids...)
-}
-
 // SetParameterCatalogID sets the parameter_catalog edge to ParameterCatalog by id.
 func (pcuo *PropertyCategoryUpdateOne) SetParameterCatalogID(id int) *PropertyCategoryUpdateOne {
 	pcuo.mutation.SetParameterCatalogID(id)
@@ -529,27 +423,6 @@ func (pcuo *PropertyCategoryUpdateOne) RemovePropertiesType(p ...*PropertyType) 
 		ids[i] = p[i].ID
 	}
 	return pcuo.RemovePropertiesTypeIDs(ids...)
-}
-
-// ClearResourcePropertiesType clears all "resource_properties_type" edges to type ResourcePropertyType.
-func (pcuo *PropertyCategoryUpdateOne) ClearResourcePropertiesType() *PropertyCategoryUpdateOne {
-	pcuo.mutation.ClearResourcePropertiesType()
-	return pcuo
-}
-
-// RemoveResourcePropertiesTypeIDs removes the resource_properties_type edge to ResourcePropertyType by ids.
-func (pcuo *PropertyCategoryUpdateOne) RemoveResourcePropertiesTypeIDs(ids ...int) *PropertyCategoryUpdateOne {
-	pcuo.mutation.RemoveResourcePropertiesTypeIDs(ids...)
-	return pcuo
-}
-
-// RemoveResourcePropertiesType removes resource_properties_type edges to ResourcePropertyType.
-func (pcuo *PropertyCategoryUpdateOne) RemoveResourcePropertiesType(r ...*ResourcePropertyType) *PropertyCategoryUpdateOne {
-	ids := make([]int, len(r))
-	for i := range r {
-		ids[i] = r[i].ID
-	}
-	return pcuo.RemoveResourcePropertiesTypeIDs(ids...)
 }
 
 // ClearParameterCatalog clears the "parameter_catalog" edge to type ParameterCatalog.
@@ -724,60 +597,6 @@ func (pcuo *PropertyCategoryUpdateOne) sqlSave(ctx context.Context) (_node *Prop
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: propertytype.FieldID,
-				},
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
-	}
-	if pcuo.mutation.ResourcePropertiesTypeCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   propertycategory.ResourcePropertiesTypeTable,
-			Columns: []string{propertycategory.ResourcePropertiesTypeColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: resourcepropertytype.FieldID,
-				},
-			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := pcuo.mutation.RemovedResourcePropertiesTypeIDs(); len(nodes) > 0 && !pcuo.mutation.ResourcePropertiesTypeCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   propertycategory.ResourcePropertiesTypeTable,
-			Columns: []string{propertycategory.ResourcePropertiesTypeColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: resourcepropertytype.FieldID,
-				},
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := pcuo.mutation.ResourcePropertiesTypeIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   propertycategory.ResourcePropertiesTypeTable,
-			Columns: []string{propertycategory.ResourcePropertiesTypeColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: resourcepropertytype.FieldID,
 				},
 			},
 		}

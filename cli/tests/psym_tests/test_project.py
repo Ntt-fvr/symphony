@@ -4,7 +4,6 @@
 # license that can be found in the LICENSE file.
 import random
 import string
-from psym.api.organization import add_organization
 
 from psym.api.project import (
     add_project,
@@ -26,13 +25,6 @@ from ..utils.base_test import BaseTest
 class TestProject(BaseTest):
     def setUp(self) -> None:
         super().setUp()
-
-        self.test_organization_created = add_organization(
-            client=self.client,
-            name="organization_1",
-            description="organization"
-        )
-
         user_name = f"{self.random_string()}@fb.com"
         self.user = add_user(client=self.client, email=user_name, password=user_name)
         self.work_order_type = add_work_order_type(
@@ -48,8 +40,6 @@ class TestProject(BaseTest):
                 )
             ],
         )
-
-        
         self.project_type = add_project_type(
             self.client,
             name="Project type name",
@@ -110,7 +100,6 @@ class TestProject(BaseTest):
         self.assertIsNotNone(fetched_properties)
         self.assertEqual(len(fetched_properties), 1)
         self.assertEqual(fetched_properties[0].stringValue, "new test string value")
-
 
         user_name = f"{self.random_string()}@fb.com"
         user = add_user(client=self.client, email=user_name, password=user_name)

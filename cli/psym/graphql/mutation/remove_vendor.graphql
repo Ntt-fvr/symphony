@@ -1,3 +1,0 @@
-mutation removeVendor($id: ID!) {
-  removeVendor(id: $id)
-}

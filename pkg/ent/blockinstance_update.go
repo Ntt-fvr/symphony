@@ -15,7 +15,6 @@ import (
 	"github.com/facebook/ent/dialect/sql"
 	"github.com/facebook/ent/dialect/sql/sqlgraph"
 	"github.com/facebook/ent/schema/field"
-	"github.com/facebookincubator/symphony/pkg/ent/automationactivity"
 	"github.com/facebookincubator/symphony/pkg/ent/block"
 	"github.com/facebookincubator/symphony/pkg/ent/blockinstance"
 	"github.com/facebookincubator/symphony/pkg/ent/flowinstance"
@@ -71,46 +70,6 @@ func (biu *BlockInstanceUpdate) SetOutputs(fv []*flowschema.VariableValue) *Bloc
 // ClearOutputs clears the value of outputs.
 func (biu *BlockInstanceUpdate) ClearOutputs() *BlockInstanceUpdate {
 	biu.mutation.ClearOutputs()
-	return biu
-}
-
-// SetInputJSON sets the input_json field.
-func (biu *BlockInstanceUpdate) SetInputJSON(s string) *BlockInstanceUpdate {
-	biu.mutation.SetInputJSON(s)
-	return biu
-}
-
-// SetNillableInputJSON sets the input_json field if the given value is not nil.
-func (biu *BlockInstanceUpdate) SetNillableInputJSON(s *string) *BlockInstanceUpdate {
-	if s != nil {
-		biu.SetInputJSON(*s)
-	}
-	return biu
-}
-
-// ClearInputJSON clears the value of input_json.
-func (biu *BlockInstanceUpdate) ClearInputJSON() *BlockInstanceUpdate {
-	biu.mutation.ClearInputJSON()
-	return biu
-}
-
-// SetOutputJSON sets the output_json field.
-func (biu *BlockInstanceUpdate) SetOutputJSON(s string) *BlockInstanceUpdate {
-	biu.mutation.SetOutputJSON(s)
-	return biu
-}
-
-// SetNillableOutputJSON sets the output_json field if the given value is not nil.
-func (biu *BlockInstanceUpdate) SetNillableOutputJSON(s *string) *BlockInstanceUpdate {
-	if s != nil {
-		biu.SetOutputJSON(*s)
-	}
-	return biu
-}
-
-// ClearOutputJSON clears the value of output_json.
-func (biu *BlockInstanceUpdate) ClearOutputJSON() *BlockInstanceUpdate {
-	biu.mutation.ClearOutputJSON()
 	return biu
 }
 
@@ -228,21 +187,6 @@ func (biu *BlockInstanceUpdate) SetSubflowInstance(f *FlowInstance) *BlockInstan
 	return biu.SetSubflowInstanceID(f.ID)
 }
 
-// AddBlockActivityIDs adds the block_activities edge to AutomationActivity by ids.
-func (biu *BlockInstanceUpdate) AddBlockActivityIDs(ids ...int) *BlockInstanceUpdate {
-	biu.mutation.AddBlockActivityIDs(ids...)
-	return biu
-}
-
-// AddBlockActivities adds the block_activities edges to AutomationActivity.
-func (biu *BlockInstanceUpdate) AddBlockActivities(a ...*AutomationActivity) *BlockInstanceUpdate {
-	ids := make([]int, len(a))
-	for i := range a {
-		ids[i] = a[i].ID
-	}
-	return biu.AddBlockActivityIDs(ids...)
-}
-
 // Mutation returns the BlockInstanceMutation object of the builder.
 func (biu *BlockInstanceUpdate) Mutation() *BlockInstanceMutation {
 	return biu.mutation
@@ -264,27 +208,6 @@ func (biu *BlockInstanceUpdate) ClearBlock() *BlockInstanceUpdate {
 func (biu *BlockInstanceUpdate) ClearSubflowInstance() *BlockInstanceUpdate {
 	biu.mutation.ClearSubflowInstance()
 	return biu
-}
-
-// ClearBlockActivities clears all "block_activities" edges to type AutomationActivity.
-func (biu *BlockInstanceUpdate) ClearBlockActivities() *BlockInstanceUpdate {
-	biu.mutation.ClearBlockActivities()
-	return biu
-}
-
-// RemoveBlockActivityIDs removes the block_activities edge to AutomationActivity by ids.
-func (biu *BlockInstanceUpdate) RemoveBlockActivityIDs(ids ...int) *BlockInstanceUpdate {
-	biu.mutation.RemoveBlockActivityIDs(ids...)
-	return biu
-}
-
-// RemoveBlockActivities removes block_activities edges to AutomationActivity.
-func (biu *BlockInstanceUpdate) RemoveBlockActivities(a ...*AutomationActivity) *BlockInstanceUpdate {
-	ids := make([]int, len(a))
-	for i := range a {
-		ids[i] = a[i].ID
-	}
-	return biu.RemoveBlockActivityIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -425,32 +348,6 @@ func (biu *BlockInstanceUpdate) sqlSave(ctx context.Context) (n int, err error) 
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeJSON,
 			Column: blockinstance.FieldOutputs,
-		})
-	}
-	if value, ok := biu.mutation.InputJSON(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Value:  value,
-			Column: blockinstance.FieldInputJSON,
-		})
-	}
-	if biu.mutation.InputJSONCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Column: blockinstance.FieldInputJSON,
-		})
-	}
-	if value, ok := biu.mutation.OutputJSON(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Value:  value,
-			Column: blockinstance.FieldOutputJSON,
-		})
-	}
-	if biu.mutation.OutputJSONCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Column: blockinstance.FieldOutputJSON,
 		})
 	}
 	if value, ok := biu.mutation.FailureReason(); ok {
@@ -611,60 +508,6 @@ func (biu *BlockInstanceUpdate) sqlSave(ctx context.Context) (n int, err error) 
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if biu.mutation.BlockActivitiesCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   blockinstance.BlockActivitiesTable,
-			Columns: []string{blockinstance.BlockActivitiesColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: automationactivity.FieldID,
-				},
-			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := biu.mutation.RemovedBlockActivitiesIDs(); len(nodes) > 0 && !biu.mutation.BlockActivitiesCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   blockinstance.BlockActivitiesTable,
-			Columns: []string{blockinstance.BlockActivitiesColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: automationactivity.FieldID,
-				},
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := biu.mutation.BlockActivitiesIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   blockinstance.BlockActivitiesTable,
-			Columns: []string{blockinstance.BlockActivitiesColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: automationactivity.FieldID,
-				},
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
-	}
 	if n, err = sqlgraph.UpdateNodes(ctx, biu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{blockinstance.Label}
@@ -718,46 +561,6 @@ func (biuo *BlockInstanceUpdateOne) SetOutputs(fv []*flowschema.VariableValue) *
 // ClearOutputs clears the value of outputs.
 func (biuo *BlockInstanceUpdateOne) ClearOutputs() *BlockInstanceUpdateOne {
 	biuo.mutation.ClearOutputs()
-	return biuo
-}
-
-// SetInputJSON sets the input_json field.
-func (biuo *BlockInstanceUpdateOne) SetInputJSON(s string) *BlockInstanceUpdateOne {
-	biuo.mutation.SetInputJSON(s)
-	return biuo
-}
-
-// SetNillableInputJSON sets the input_json field if the given value is not nil.
-func (biuo *BlockInstanceUpdateOne) SetNillableInputJSON(s *string) *BlockInstanceUpdateOne {
-	if s != nil {
-		biuo.SetInputJSON(*s)
-	}
-	return biuo
-}
-
-// ClearInputJSON clears the value of input_json.
-func (biuo *BlockInstanceUpdateOne) ClearInputJSON() *BlockInstanceUpdateOne {
-	biuo.mutation.ClearInputJSON()
-	return biuo
-}
-
-// SetOutputJSON sets the output_json field.
-func (biuo *BlockInstanceUpdateOne) SetOutputJSON(s string) *BlockInstanceUpdateOne {
-	biuo.mutation.SetOutputJSON(s)
-	return biuo
-}
-
-// SetNillableOutputJSON sets the output_json field if the given value is not nil.
-func (biuo *BlockInstanceUpdateOne) SetNillableOutputJSON(s *string) *BlockInstanceUpdateOne {
-	if s != nil {
-		biuo.SetOutputJSON(*s)
-	}
-	return biuo
-}
-
-// ClearOutputJSON clears the value of output_json.
-func (biuo *BlockInstanceUpdateOne) ClearOutputJSON() *BlockInstanceUpdateOne {
-	biuo.mutation.ClearOutputJSON()
 	return biuo
 }
 
@@ -875,21 +678,6 @@ func (biuo *BlockInstanceUpdateOne) SetSubflowInstance(f *FlowInstance) *BlockIn
 	return biuo.SetSubflowInstanceID(f.ID)
 }
 
-// AddBlockActivityIDs adds the block_activities edge to AutomationActivity by ids.
-func (biuo *BlockInstanceUpdateOne) AddBlockActivityIDs(ids ...int) *BlockInstanceUpdateOne {
-	biuo.mutation.AddBlockActivityIDs(ids...)
-	return biuo
-}
-
-// AddBlockActivities adds the block_activities edges to AutomationActivity.
-func (biuo *BlockInstanceUpdateOne) AddBlockActivities(a ...*AutomationActivity) *BlockInstanceUpdateOne {
-	ids := make([]int, len(a))
-	for i := range a {
-		ids[i] = a[i].ID
-	}
-	return biuo.AddBlockActivityIDs(ids...)
-}
-
 // Mutation returns the BlockInstanceMutation object of the builder.
 func (biuo *BlockInstanceUpdateOne) Mutation() *BlockInstanceMutation {
 	return biuo.mutation
@@ -911,27 +699,6 @@ func (biuo *BlockInstanceUpdateOne) ClearBlock() *BlockInstanceUpdateOne {
 func (biuo *BlockInstanceUpdateOne) ClearSubflowInstance() *BlockInstanceUpdateOne {
 	biuo.mutation.ClearSubflowInstance()
 	return biuo
-}
-
-// ClearBlockActivities clears all "block_activities" edges to type AutomationActivity.
-func (biuo *BlockInstanceUpdateOne) ClearBlockActivities() *BlockInstanceUpdateOne {
-	biuo.mutation.ClearBlockActivities()
-	return biuo
-}
-
-// RemoveBlockActivityIDs removes the block_activities edge to AutomationActivity by ids.
-func (biuo *BlockInstanceUpdateOne) RemoveBlockActivityIDs(ids ...int) *BlockInstanceUpdateOne {
-	biuo.mutation.RemoveBlockActivityIDs(ids...)
-	return biuo
-}
-
-// RemoveBlockActivities removes block_activities edges to AutomationActivity.
-func (biuo *BlockInstanceUpdateOne) RemoveBlockActivities(a ...*AutomationActivity) *BlockInstanceUpdateOne {
-	ids := make([]int, len(a))
-	for i := range a {
-		ids[i] = a[i].ID
-	}
-	return biuo.RemoveBlockActivityIDs(ids...)
 }
 
 // Save executes the query and returns the updated entity.
@@ -1070,32 +837,6 @@ func (biuo *BlockInstanceUpdateOne) sqlSave(ctx context.Context) (_node *BlockIn
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeJSON,
 			Column: blockinstance.FieldOutputs,
-		})
-	}
-	if value, ok := biuo.mutation.InputJSON(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Value:  value,
-			Column: blockinstance.FieldInputJSON,
-		})
-	}
-	if biuo.mutation.InputJSONCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Column: blockinstance.FieldInputJSON,
-		})
-	}
-	if value, ok := biuo.mutation.OutputJSON(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Value:  value,
-			Column: blockinstance.FieldOutputJSON,
-		})
-	}
-	if biuo.mutation.OutputJSONCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Column: blockinstance.FieldOutputJSON,
 		})
 	}
 	if value, ok := biuo.mutation.FailureReason(); ok {
@@ -1248,60 +989,6 @@ func (biuo *BlockInstanceUpdateOne) sqlSave(ctx context.Context) (_node *BlockIn
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: flowinstance.FieldID,
-				},
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
-	}
-	if biuo.mutation.BlockActivitiesCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   blockinstance.BlockActivitiesTable,
-			Columns: []string{blockinstance.BlockActivitiesColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: automationactivity.FieldID,
-				},
-			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := biuo.mutation.RemovedBlockActivitiesIDs(); len(nodes) > 0 && !biuo.mutation.BlockActivitiesCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   blockinstance.BlockActivitiesTable,
-			Columns: []string{blockinstance.BlockActivitiesColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: automationactivity.FieldID,
-				},
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := biuo.mutation.BlockActivitiesIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   blockinstance.BlockActivitiesTable,
-			Columns: []string{blockinstance.BlockActivitiesColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: automationactivity.FieldID,
 				},
 			},
 		}

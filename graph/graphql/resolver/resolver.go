@@ -7,11 +7,12 @@ package resolver
 import (
 	"context"
 
-	"github.com/facebookincubator/symphony/graph/graphql/generated"
-	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ev"
 	"github.com/facebookincubator/symphony/pkg/flowengine/actions"
 	"github.com/facebookincubator/symphony/pkg/flowengine/triggers"
+
+	"github.com/facebookincubator/symphony/graph/graphql/generated"
+	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/log"
 )
 
@@ -288,30 +289,6 @@ func (r resolver) Recommendations() generated.RecommendationsResolver {
 	return recommendationsResolver{}
 }
 
-func (r resolver) ResourceSpecification() generated.ResourceSpecificationResolver {
-	return resourceSpecificationResolver{}
-}
-
-func (r resolver) ResourceSpecificationItems() generated.ResourceSpecificationItemsResolver {
-	return resourceSpecificationItemsResolver{}
-}
-
 func (r resolver) PropertyCategory() generated.PropertyCategoryResolver {
 	return propertyCategoryResolver{}
-}
-
-func (r resolver) ResourcePropertyType() generated.ResourcePropertyTypeResolver {
-	return resourcePropertyTypeResolver{}
-}
-
-func (r resolver) ResourceSpecificationRelationship() generated.ResourceSpecificationRelationshipResolver {
-	return resourceSpecificationRelationshipResolver{}
-}
-
-func (r resolver) FlowInstance() generated.FlowInstanceResolver {
-	return flowInstanceResolver{}
-}
-
-func (r resolver) BlockInstance() generated.BlockInstanceResolver {
-	return blockInstanceResolver{}
 }

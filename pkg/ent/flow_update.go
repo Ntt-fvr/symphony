@@ -8,9 +8,7 @@ package ent
 
 import (
 	"context"
-	"errors"
 	"fmt"
-	"time"
 
 	"github.com/facebook/ent/dialect/sql"
 	"github.com/facebook/ent/dialect/sql/sqlgraph"
@@ -18,9 +16,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/block"
 	"github.com/facebookincubator/symphony/pkg/ent/flow"
 	"github.com/facebookincubator/symphony/pkg/ent/flowdraft"
-	"github.com/facebookincubator/symphony/pkg/ent/flowinstance"
 	"github.com/facebookincubator/symphony/pkg/ent/predicate"
-	"github.com/facebookincubator/symphony/pkg/ent/user"
 	"github.com/facebookincubator/symphony/pkg/flowengine/flowschema"
 )
 
@@ -103,26 +99,6 @@ func (fu *FlowUpdate) SetNillableNewInstancesPolicy(fip *flow.NewInstancesPolicy
 	return fu
 }
 
-// SetCmType sets the cm_type field.
-func (fu *FlowUpdate) SetCmType(ft flow.CmType) *FlowUpdate {
-	fu.mutation.SetCmType(ft)
-	return fu
-}
-
-// SetNillableCmType sets the cm_type field if the given value is not nil.
-func (fu *FlowUpdate) SetNillableCmType(ft *flow.CmType) *FlowUpdate {
-	if ft != nil {
-		fu.SetCmType(*ft)
-	}
-	return fu
-}
-
-// SetCreationDate sets the creation_date field.
-func (fu *FlowUpdate) SetCreationDate(t time.Time) *FlowUpdate {
-	fu.mutation.SetCreationDate(t)
-	return fu
-}
-
 // AddBlockIDs adds the blocks edge to Block by ids.
 func (fu *FlowUpdate) AddBlockIDs(ids ...int) *FlowUpdate {
 	fu.mutation.AddBlockIDs(ids...)
@@ -157,47 +133,6 @@ func (fu *FlowUpdate) SetDraft(f *FlowDraft) *FlowUpdate {
 	return fu.SetDraftID(f.ID)
 }
 
-// SetAuthorID sets the author edge to User by id.
-func (fu *FlowUpdate) SetAuthorID(id int) *FlowUpdate {
-	fu.mutation.SetAuthorID(id)
-	return fu
-}
-
-// SetAuthor sets the author edge to User.
-func (fu *FlowUpdate) SetAuthor(u *User) *FlowUpdate {
-	return fu.SetAuthorID(u.ID)
-}
-
-// AddEditorIDs adds the editor edge to User by ids.
-func (fu *FlowUpdate) AddEditorIDs(ids ...int) *FlowUpdate {
-	fu.mutation.AddEditorIDs(ids...)
-	return fu
-}
-
-// AddEditor adds the editor edges to User.
-func (fu *FlowUpdate) AddEditor(u ...*User) *FlowUpdate {
-	ids := make([]int, len(u))
-	for i := range u {
-		ids[i] = u[i].ID
-	}
-	return fu.AddEditorIDs(ids...)
-}
-
-// AddInstanceIDs adds the instance edge to FlowInstance by ids.
-func (fu *FlowUpdate) AddInstanceIDs(ids ...int) *FlowUpdate {
-	fu.mutation.AddInstanceIDs(ids...)
-	return fu
-}
-
-// AddInstance adds the instance edges to FlowInstance.
-func (fu *FlowUpdate) AddInstance(f ...*FlowInstance) *FlowUpdate {
-	ids := make([]int, len(f))
-	for i := range f {
-		ids[i] = f[i].ID
-	}
-	return fu.AddInstanceIDs(ids...)
-}
-
 // Mutation returns the FlowMutation object of the builder.
 func (fu *FlowUpdate) Mutation() *FlowMutation {
 	return fu.mutation
@@ -228,54 +163,6 @@ func (fu *FlowUpdate) RemoveBlocks(b ...*Block) *FlowUpdate {
 func (fu *FlowUpdate) ClearDraft() *FlowUpdate {
 	fu.mutation.ClearDraft()
 	return fu
-}
-
-// ClearAuthor clears the "author" edge to type User.
-func (fu *FlowUpdate) ClearAuthor() *FlowUpdate {
-	fu.mutation.ClearAuthor()
-	return fu
-}
-
-// ClearEditor clears all "editor" edges to type User.
-func (fu *FlowUpdate) ClearEditor() *FlowUpdate {
-	fu.mutation.ClearEditor()
-	return fu
-}
-
-// RemoveEditorIDs removes the editor edge to User by ids.
-func (fu *FlowUpdate) RemoveEditorIDs(ids ...int) *FlowUpdate {
-	fu.mutation.RemoveEditorIDs(ids...)
-	return fu
-}
-
-// RemoveEditor removes editor edges to User.
-func (fu *FlowUpdate) RemoveEditor(u ...*User) *FlowUpdate {
-	ids := make([]int, len(u))
-	for i := range u {
-		ids[i] = u[i].ID
-	}
-	return fu.RemoveEditorIDs(ids...)
-}
-
-// ClearInstance clears all "instance" edges to type FlowInstance.
-func (fu *FlowUpdate) ClearInstance() *FlowUpdate {
-	fu.mutation.ClearInstance()
-	return fu
-}
-
-// RemoveInstanceIDs removes the instance edge to FlowInstance by ids.
-func (fu *FlowUpdate) RemoveInstanceIDs(ids ...int) *FlowUpdate {
-	fu.mutation.RemoveInstanceIDs(ids...)
-	return fu
-}
-
-// RemoveInstance removes instance edges to FlowInstance.
-func (fu *FlowUpdate) RemoveInstance(f ...*FlowInstance) *FlowUpdate {
-	ids := make([]int, len(f))
-	for i := range f {
-		ids[i] = f[i].ID
-	}
-	return fu.RemoveInstanceIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -361,14 +248,6 @@ func (fu *FlowUpdate) check() error {
 			return &ValidationError{Name: "newInstancesPolicy", err: fmt.Errorf("ent: validator failed for field \"newInstancesPolicy\": %w", err)}
 		}
 	}
-	if v, ok := fu.mutation.CmType(); ok {
-		if err := flow.CmTypeValidator(v); err != nil {
-			return &ValidationError{Name: "cm_type", err: fmt.Errorf("ent: validator failed for field \"cm_type\": %w", err)}
-		}
-	}
-	if _, ok := fu.mutation.AuthorID(); fu.mutation.AuthorCleared() && !ok {
-		return errors.New("ent: clearing a required unique edge \"author\"")
-	}
 	return nil
 }
 
@@ -442,20 +321,6 @@ func (fu *FlowUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Type:   field.TypeEnum,
 			Value:  value,
 			Column: flow.FieldNewInstancesPolicy,
-		})
-	}
-	if value, ok := fu.mutation.CmType(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeEnum,
-			Value:  value,
-			Column: flow.FieldCmType,
-		})
-	}
-	if value, ok := fu.mutation.CreationDate(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeTime,
-			Value:  value,
-			Column: flow.FieldCreationDate,
 		})
 	}
 	if fu.mutation.BlocksCleared() {
@@ -539,149 +404,6 @@ func (fu *FlowUpdate) sqlSave(ctx context.Context) (n int, err error) {
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: flowdraft.FieldID,
-				},
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
-	}
-	if fu.mutation.AuthorCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: false,
-			Table:   flow.AuthorTable,
-			Columns: []string{flow.AuthorColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: user.FieldID,
-				},
-			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := fu.mutation.AuthorIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: false,
-			Table:   flow.AuthorTable,
-			Columns: []string{flow.AuthorColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: user.FieldID,
-				},
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
-	}
-	if fu.mutation.EditorCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   flow.EditorTable,
-			Columns: []string{flow.EditorColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: user.FieldID,
-				},
-			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := fu.mutation.RemovedEditorIDs(); len(nodes) > 0 && !fu.mutation.EditorCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   flow.EditorTable,
-			Columns: []string{flow.EditorColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: user.FieldID,
-				},
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := fu.mutation.EditorIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   flow.EditorTable,
-			Columns: []string{flow.EditorColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: user.FieldID,
-				},
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
-	}
-	if fu.mutation.InstanceCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: true,
-			Table:   flow.InstanceTable,
-			Columns: []string{flow.InstanceColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: flowinstance.FieldID,
-				},
-			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := fu.mutation.RemovedInstanceIDs(); len(nodes) > 0 && !fu.mutation.InstanceCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: true,
-			Table:   flow.InstanceTable,
-			Columns: []string{flow.InstanceColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: flowinstance.FieldID,
-				},
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := fu.mutation.InstanceIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: true,
-			Table:   flow.InstanceTable,
-			Columns: []string{flow.InstanceColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: flowinstance.FieldID,
 				},
 			},
 		}
@@ -774,26 +496,6 @@ func (fuo *FlowUpdateOne) SetNillableNewInstancesPolicy(fip *flow.NewInstancesPo
 	return fuo
 }
 
-// SetCmType sets the cm_type field.
-func (fuo *FlowUpdateOne) SetCmType(ft flow.CmType) *FlowUpdateOne {
-	fuo.mutation.SetCmType(ft)
-	return fuo
-}
-
-// SetNillableCmType sets the cm_type field if the given value is not nil.
-func (fuo *FlowUpdateOne) SetNillableCmType(ft *flow.CmType) *FlowUpdateOne {
-	if ft != nil {
-		fuo.SetCmType(*ft)
-	}
-	return fuo
-}
-
-// SetCreationDate sets the creation_date field.
-func (fuo *FlowUpdateOne) SetCreationDate(t time.Time) *FlowUpdateOne {
-	fuo.mutation.SetCreationDate(t)
-	return fuo
-}
-
 // AddBlockIDs adds the blocks edge to Block by ids.
 func (fuo *FlowUpdateOne) AddBlockIDs(ids ...int) *FlowUpdateOne {
 	fuo.mutation.AddBlockIDs(ids...)
@@ -828,47 +530,6 @@ func (fuo *FlowUpdateOne) SetDraft(f *FlowDraft) *FlowUpdateOne {
 	return fuo.SetDraftID(f.ID)
 }
 
-// SetAuthorID sets the author edge to User by id.
-func (fuo *FlowUpdateOne) SetAuthorID(id int) *FlowUpdateOne {
-	fuo.mutation.SetAuthorID(id)
-	return fuo
-}
-
-// SetAuthor sets the author edge to User.
-func (fuo *FlowUpdateOne) SetAuthor(u *User) *FlowUpdateOne {
-	return fuo.SetAuthorID(u.ID)
-}
-
-// AddEditorIDs adds the editor edge to User by ids.
-func (fuo *FlowUpdateOne) AddEditorIDs(ids ...int) *FlowUpdateOne {
-	fuo.mutation.AddEditorIDs(ids...)
-	return fuo
-}
-
-// AddEditor adds the editor edges to User.
-func (fuo *FlowUpdateOne) AddEditor(u ...*User) *FlowUpdateOne {
-	ids := make([]int, len(u))
-	for i := range u {
-		ids[i] = u[i].ID
-	}
-	return fuo.AddEditorIDs(ids...)
-}
-
-// AddInstanceIDs adds the instance edge to FlowInstance by ids.
-func (fuo *FlowUpdateOne) AddInstanceIDs(ids ...int) *FlowUpdateOne {
-	fuo.mutation.AddInstanceIDs(ids...)
-	return fuo
-}
-
-// AddInstance adds the instance edges to FlowInstance.
-func (fuo *FlowUpdateOne) AddInstance(f ...*FlowInstance) *FlowUpdateOne {
-	ids := make([]int, len(f))
-	for i := range f {
-		ids[i] = f[i].ID
-	}
-	return fuo.AddInstanceIDs(ids...)
-}
-
 // Mutation returns the FlowMutation object of the builder.
 func (fuo *FlowUpdateOne) Mutation() *FlowMutation {
 	return fuo.mutation
@@ -899,54 +560,6 @@ func (fuo *FlowUpdateOne) RemoveBlocks(b ...*Block) *FlowUpdateOne {
 func (fuo *FlowUpdateOne) ClearDraft() *FlowUpdateOne {
 	fuo.mutation.ClearDraft()
 	return fuo
-}
-
-// ClearAuthor clears the "author" edge to type User.
-func (fuo *FlowUpdateOne) ClearAuthor() *FlowUpdateOne {
-	fuo.mutation.ClearAuthor()
-	return fuo
-}
-
-// ClearEditor clears all "editor" edges to type User.
-func (fuo *FlowUpdateOne) ClearEditor() *FlowUpdateOne {
-	fuo.mutation.ClearEditor()
-	return fuo
-}
-
-// RemoveEditorIDs removes the editor edge to User by ids.
-func (fuo *FlowUpdateOne) RemoveEditorIDs(ids ...int) *FlowUpdateOne {
-	fuo.mutation.RemoveEditorIDs(ids...)
-	return fuo
-}
-
-// RemoveEditor removes editor edges to User.
-func (fuo *FlowUpdateOne) RemoveEditor(u ...*User) *FlowUpdateOne {
-	ids := make([]int, len(u))
-	for i := range u {
-		ids[i] = u[i].ID
-	}
-	return fuo.RemoveEditorIDs(ids...)
-}
-
-// ClearInstance clears all "instance" edges to type FlowInstance.
-func (fuo *FlowUpdateOne) ClearInstance() *FlowUpdateOne {
-	fuo.mutation.ClearInstance()
-	return fuo
-}
-
-// RemoveInstanceIDs removes the instance edge to FlowInstance by ids.
-func (fuo *FlowUpdateOne) RemoveInstanceIDs(ids ...int) *FlowUpdateOne {
-	fuo.mutation.RemoveInstanceIDs(ids...)
-	return fuo
-}
-
-// RemoveInstance removes instance edges to FlowInstance.
-func (fuo *FlowUpdateOne) RemoveInstance(f ...*FlowInstance) *FlowUpdateOne {
-	ids := make([]int, len(f))
-	for i := range f {
-		ids[i] = f[i].ID
-	}
-	return fuo.RemoveInstanceIDs(ids...)
 }
 
 // Save executes the query and returns the updated entity.
@@ -1032,14 +645,6 @@ func (fuo *FlowUpdateOne) check() error {
 			return &ValidationError{Name: "newInstancesPolicy", err: fmt.Errorf("ent: validator failed for field \"newInstancesPolicy\": %w", err)}
 		}
 	}
-	if v, ok := fuo.mutation.CmType(); ok {
-		if err := flow.CmTypeValidator(v); err != nil {
-			return &ValidationError{Name: "cm_type", err: fmt.Errorf("ent: validator failed for field \"cm_type\": %w", err)}
-		}
-	}
-	if _, ok := fuo.mutation.AuthorID(); fuo.mutation.AuthorCleared() && !ok {
-		return errors.New("ent: clearing a required unique edge \"author\"")
-	}
 	return nil
 }
 
@@ -1111,20 +716,6 @@ func (fuo *FlowUpdateOne) sqlSave(ctx context.Context) (_node *Flow, err error) 
 			Type:   field.TypeEnum,
 			Value:  value,
 			Column: flow.FieldNewInstancesPolicy,
-		})
-	}
-	if value, ok := fuo.mutation.CmType(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeEnum,
-			Value:  value,
-			Column: flow.FieldCmType,
-		})
-	}
-	if value, ok := fuo.mutation.CreationDate(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeTime,
-			Value:  value,
-			Column: flow.FieldCreationDate,
 		})
 	}
 	if fuo.mutation.BlocksCleared() {
@@ -1208,149 +799,6 @@ func (fuo *FlowUpdateOne) sqlSave(ctx context.Context) (_node *Flow, err error) 
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: flowdraft.FieldID,
-				},
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
-	}
-	if fuo.mutation.AuthorCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: false,
-			Table:   flow.AuthorTable,
-			Columns: []string{flow.AuthorColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: user.FieldID,
-				},
-			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := fuo.mutation.AuthorIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: false,
-			Table:   flow.AuthorTable,
-			Columns: []string{flow.AuthorColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: user.FieldID,
-				},
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
-	}
-	if fuo.mutation.EditorCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   flow.EditorTable,
-			Columns: []string{flow.EditorColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: user.FieldID,
-				},
-			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := fuo.mutation.RemovedEditorIDs(); len(nodes) > 0 && !fuo.mutation.EditorCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   flow.EditorTable,
-			Columns: []string{flow.EditorColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: user.FieldID,
-				},
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := fuo.mutation.EditorIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   flow.EditorTable,
-			Columns: []string{flow.EditorColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: user.FieldID,
-				},
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
-	}
-	if fuo.mutation.InstanceCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: true,
-			Table:   flow.InstanceTable,
-			Columns: []string{flow.InstanceColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: flowinstance.FieldID,
-				},
-			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := fuo.mutation.RemovedInstanceIDs(); len(nodes) > 0 && !fuo.mutation.InstanceCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: true,
-			Table:   flow.InstanceTable,
-			Columns: []string{flow.InstanceColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: flowinstance.FieldID,
-				},
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := fuo.mutation.InstanceIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: true,
-			Table:   flow.InstanceTable,
-			Columns: []string{flow.InstanceColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: flowinstance.FieldID,
 				},
 			},
 		}

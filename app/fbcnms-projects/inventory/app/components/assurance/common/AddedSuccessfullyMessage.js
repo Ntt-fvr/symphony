@@ -21,8 +21,7 @@ import {makeStyles} from '@material-ui/styles';
 
 const useStyles = makeStyles(() => ({
   root: {
-    padding: '0',
-    marginLeft: '14px'
+    padding: '0 0 14px 0',
   },
   header: {
     margin: '4px',

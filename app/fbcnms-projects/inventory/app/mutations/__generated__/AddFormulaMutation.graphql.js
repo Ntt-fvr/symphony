@@ -15,11 +15,11 @@
 /*::
 import type { ConcreteRequest } from 'relay-runtime';
 export type AddFormulaInput = {|
-  kpiFk: string,
-  networkTypeFk: string,
+  textFormula: string,
   status: boolean,
   techFk: string,
-  textFormula: string,
+  networkTypeFk: string,
+  kpiFk: string,
 |};
 export type AddFormulaMutationVariables = {|
   input: AddFormulaInput

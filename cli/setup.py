@@ -29,7 +29,7 @@ with open(os.path.join(this_directory, "README.md"), encoding="utf-8") as f:
 
 
 setuptools.setup(
-    name="psym_nttdata",
+    name="psym",
     version=find_version("psym", "common", "constant.py"),
     author="Facebook Inc.",
     url="https://github.com/facebookincubator/symphony",

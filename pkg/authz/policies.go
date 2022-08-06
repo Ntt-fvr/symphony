@@ -385,7 +385,6 @@ func permissionPolicies(ctx context.Context, v *viewer.UserViewer) (*models.Inve
 	policies, err := client.PermissionsPolicy.Query().
 		Where(permissionspolicy.Or(
 			permissionspolicy.IsGlobal(true),
-			permissionspolicy.IsMulticontractor(true),
 			permissionspolicy.HasGroupsWith(
 				usersgroup.HasMembersWith(user.ID(userID)),
 				usersgroup.StatusEQ(usersgroup.StatusActive),

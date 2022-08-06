@@ -22,27 +22,16 @@ fragment UserFragment on User {
   id
   authID
   email
-  firstName
-  lastName
   status
   role
-  organizationFk{id}
-  
 }
 
 """]
 
 @dataclass(frozen=True)
 class UserFragment(DataClassJsonMixin):
-    @dataclass(frozen=True)
-    class Organization(DataClassJsonMixin):
-        id: str
-
     id: str
     authID: str
     email: str
-    firstName: str
-    lastName: str
     status: UserStatus = _field(metadata=enum_field_metadata(UserStatus))
     role: UserRole = _field(metadata=enum_field_metadata(UserRole))
-    organizationFk: Optional[Organization]

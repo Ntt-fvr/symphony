@@ -12,7 +12,6 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
 	"github.com/facebookincubator/symphony/pkg/ent/workertype"
-	pkgmodels "github.com/facebookincubator/symphony/pkg/exporter/models"
 	"github.com/pkg/errors"
 	"github.com/vektah/gqlparser/v2/gqlerror"
 )
@@ -32,7 +31,7 @@ func (r mutationResolver) AddWorkerType(ctx context.Context, input models.AddWor
 	}
 	if err := r.AddPropertyTypes(ctx, func(ptc *ent.PropertyTypeCreate) {
 		ptc.SetWorkerTypeID(typ.ID)
-	}, input.PropertyTypes); err != nil {
+	}, input.PropertyTypes...); err != nil {
 		return nil, err
 	}
 	return typ, nil
@@ -61,20 +60,17 @@ func (r mutationResolver) EditWorkerType(ctx context.Context, input models.EditW
 	}
 
 	for _, input := range input.PropertyTypes {
-		var edited []*pkgmodels.PropertyTypeInput
 		if input.ID == nil {
 			if err := r.validateAddedNewPropertyType(input); err != nil {
 				return nil, err
 			}
-			edited = append(edited, input)
-			if err := r.AddPropertyTypes(ctx, func(ptc *ent.PropertyTypeCreate) {
-				ptc.SetWorkerTypeID(et.ID)
-			}, edited); err != nil {
+			if err := r.AddPropertyTypes(ctx,
+				func(b *ent.PropertyTypeCreate) {
+					b.SetWorkerTypeID(et.ID)
+				}, input); err != nil {
 				return nil, err
 			}
-		} else if err := r.updatePropType(ctx, func(ptc *ent.PropertyTypeCreate) {
-			ptc.SetWorkerTypeID(et.ID)
-		}, input); err != nil {
+		} else if err := r.updatePropType(ctx, input); err != nil {
 			return nil, err
 		}
 	}

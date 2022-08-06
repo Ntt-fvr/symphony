@@ -46,10 +46,6 @@ export default createFragmentContainer(PropertyFormField, {
   property: graphql`
     fragment PropertyFormField_property on Property {
       id
-      propertyTypeValue {
-        id
-        name
-      }
       propertyType {
         id
         name
@@ -69,50 +65,6 @@ export default createFragmentContainer(PropertyFormField, {
         isMandatory
         category
         isDeleted
-        parentPropertyType {
-          id
-          name
-        }
-        propertyTypeValues {
-          id
-          isDeleted
-          name
-          parentPropertyTypeValue {
-            id
-            isDeleted
-            name
-          }
-        }
-        dependencePropertyTypes {
-          id
-          name
-          type
-          nodeType
-          index
-          stringValue
-          intValue
-          booleanValue
-          floatValue
-          latitudeValue
-          longitudeValue
-          rangeFromValue
-          rangeToValue
-          isEditable
-          isMandatory
-          isInstanceProperty
-          isDeleted
-          category
-          propertyTypeValues {
-            id
-            isDeleted
-            name
-            parentPropertyTypeValue {
-              id
-              isDeleted
-              name
-            }
-          }
-        }
       }
       stringValue
       intValue

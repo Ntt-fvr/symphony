@@ -64,18 +64,7 @@ func (r mutationResolver) RemoveThreshold(ctx context.Context, id int) (int, err
 	if err != nil {
 		return id, errors.Wrapf(err, "has occurred error on process: %v", err)
 	}
-	rules, _ := t.Rulethreshold(ctx)
-	for _, rule := range rules {
-		rulesLimits, _ := rule.Rulelimitrule(ctx)
-		for _, ruleLimit := range rulesLimits {
-			if err := client.RuleLimit.DeleteOne(ruleLimit).Exec(ctx); err != nil {
-				return id, errors.Wrap(err, "has occurred error on process: %v")
-			}
-		}
-		if err := client.Rule.DeleteOne(rule).Exec(ctx); err != nil {
-			return id, errors.Wrap(err, "has occurred error on process: %v")
-		}
-	}
+	// TODO: borrar o editar los edges relacionados
 
 	if err := client.Threshold.DeleteOne(t).Exec(ctx); err != nil {
 		return id, errors.Wrap(err, "has occurred error on process: %v")

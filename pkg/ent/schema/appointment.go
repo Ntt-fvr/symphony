@@ -12,7 +12,6 @@ import (
 	"github.com/facebookincubator/ent-contrib/entgql"
 	"github.com/facebookincubator/symphony/pkg/authz"
 	"github.com/facebookincubator/symphony/pkg/ent/privacy"
-	"github.com/facebookincubator/symphony/pkg/hooks"
 )
 
 // Appointment defines de appointment schema
@@ -29,7 +28,7 @@ func (Appointment) Fields() []ent.Field {
 		field.Enum("status").
 			NamedValues(
 				"Active", "ACTIVE",
-				"Canceled", "CANCELED",
+				"Cancelled", "CANCELLED",
 			).
 			Default("ACTIVE"),
 		field.Time("creation_date").
@@ -64,11 +63,14 @@ func (Appointment) Policy() ent.Policy {
 			privacy.AlwaysAllowRule(),
 		),
 	)
-}
-
-// Hooks returns Appointment hooks.
-func (Appointment) Hooks() []ent.Hook {
-	return []ent.Hook{
-		hooks.AppointmentHook(),
-	}
+	/*return authz.NewPolicy(
+		authz.WithQueryRules(
+			authz.WorkOrderReadPolicyRule(),
+		),
+		authz.WithMutationRules(
+			authz.WorkOrderWritePolicyRule(),
+			authz.AllowWorkOrderOwnerWrite(),
+			authz.AllowWorkOrderAssigneeWrite(),
+		),
+	)*/
 }

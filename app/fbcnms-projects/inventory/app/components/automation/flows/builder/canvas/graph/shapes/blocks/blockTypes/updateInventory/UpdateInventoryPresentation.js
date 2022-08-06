@@ -10,14 +10,14 @@
 
 import React from 'react';
 import UpdateInventoryIcon from './UpdateInventoryIcon';
+import fbt from 'fbt';
 import {BasePresentation} from '../BasePresentation';
-import {Typography} from '@material-ui/core';
 
 export default function UpdateInventoryPresentation() {
   return (
     <BasePresentation
       icon={UpdateInventoryIcon}
-      text={<Typography variant="caption">Update Inventory</Typography>}
+      text={fbt('Update Inventory', '')}
     />
   );
 }

@@ -56,7 +56,7 @@ const NameInput = (props: Props) => {
       label={title}
       required={true}
       hasError={!!errorText}
-      errorText={'Name cannot be empty'}
+      errorText={errorText}
       validation={{
         id: fieldId,
         value: solidValue,

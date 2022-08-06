@@ -16,10 +16,10 @@
 import type { ConcreteRequest } from 'relay-runtime';
 type ServiceCard_service$ref = any;
 export type AddServiceEndpointInput = {|
-  definition: string,
-  equipmentID: string,
   id: string,
   portId?: ?string,
+  equipmentID: string,
+  definition: string,
 |};
 export type AddServiceEndpointMutationVariables = {|
   input: AddServiceEndpointInput

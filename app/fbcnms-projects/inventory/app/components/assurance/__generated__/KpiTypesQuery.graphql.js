@@ -95,17 +95,6 @@ export type KpiTypesQueryResponse = {|
           +id: string,
           +name: string,
         |},
-        +counterformulaFk: ?$ReadOnlyArray<?{|
-          +id: string,
-          +mandatory: boolean,
-          +counterFk: {|
-            +id: string,
-            +name: string,
-          |},
-          +formulaFk: {|
-            +id: string
-          |},
-        |}>,
       |}
     |}>
   |},
@@ -199,17 +188,6 @@ query KpiTypesQuery {
         kpiFk {
           id
           name
-        }
-        counterformulaFk {
-          id
-          mandatory
-          counterFk {
-            id
-            name
-          }
-          formulaFk {
-            id
-          }
         }
       }
     }
@@ -453,48 +431,7 @@ v11 = {
             (v4/*: any*/),
             (v2/*: any*/),
             (v6/*: any*/),
-            (v5/*: any*/),
-            {
-              "alias": null,
-              "args": null,
-              "concreteType": "CounterFormula",
-              "kind": "LinkedField",
-              "name": "counterformulaFk",
-              "plural": true,
-              "selections": [
-                (v0/*: any*/),
-                {
-                  "alias": null,
-                  "args": null,
-                  "kind": "ScalarField",
-                  "name": "mandatory",
-                  "storageKey": null
-                },
-                {
-                  "alias": null,
-                  "args": null,
-                  "concreteType": "Counter",
-                  "kind": "LinkedField",
-                  "name": "counterFk",
-                  "plural": false,
-                  "selections": (v3/*: any*/),
-                  "storageKey": null
-                },
-                {
-                  "alias": null,
-                  "args": null,
-                  "concreteType": "Formula",
-                  "kind": "LinkedField",
-                  "name": "formulaFk",
-                  "plural": false,
-                  "selections": [
-                    (v0/*: any*/)
-                  ],
-                  "storageKey": null
-                }
-              ],
-              "storageKey": null
-            }
+            (v5/*: any*/)
           ],
           "storageKey": null
         }
@@ -626,16 +563,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "42b322f508fd767e3bbaac6f482394d6",
+    "cacheID": "0e5dd92613ab3d468632d8aa1896c7e9",
     "id": null,
     "metadata": {},
     "name": "KpiTypesQuery",
     "operationKind": "query",
-    "text": "query KpiTypesQuery {\n  kpis {\n    edges {\n      node {\n        id\n        name\n        status\n        description\n        domainFk {\n          id\n          name\n        }\n        formulaFk {\n          id\n          textFormula\n          status\n          kpiFk {\n            id\n            name\n          }\n          techFk {\n            id\n            name\n          }\n          networkTypeFk {\n            id\n            name\n          }\n        }\n        kpiCategoryFK {\n          id\n          name\n        }\n      }\n    }\n  }\n  thresholds {\n    edges {\n      node {\n        name\n        kpi {\n          name\n          id\n        }\n        id\n      }\n    }\n  }\n  networkTypes {\n    edges {\n      node {\n        id\n        name\n      }\n    }\n  }\n  counters {\n    edges {\n      node {\n        id\n        name\n      }\n    }\n  }\n  formulas {\n    edges {\n      node {\n        id\n        networkTypeFk {\n          id\n          name\n        }\n        textFormula\n        status\n        techFk {\n          id\n          name\n        }\n        kpiFk {\n          id\n          name\n        }\n        counterformulaFk {\n          id\n          mandatory\n          counterFk {\n            id\n            name\n          }\n          formulaFk {\n            id\n          }\n        }\n      }\n    }\n  }\n}\n"
+    "text": "query KpiTypesQuery {\n  kpis {\n    edges {\n      node {\n        id\n        name\n        status\n        description\n        domainFk {\n          id\n          name\n        }\n        formulaFk {\n          id\n          textFormula\n          status\n          kpiFk {\n            id\n            name\n          }\n          techFk {\n            id\n            name\n          }\n          networkTypeFk {\n            id\n            name\n          }\n        }\n        kpiCategoryFK {\n          id\n          name\n        }\n      }\n    }\n  }\n  thresholds {\n    edges {\n      node {\n        name\n        kpi {\n          name\n          id\n        }\n        id\n      }\n    }\n  }\n  networkTypes {\n    edges {\n      node {\n        id\n        name\n      }\n    }\n  }\n  counters {\n    edges {\n      node {\n        id\n        name\n      }\n    }\n  }\n  formulas {\n    edges {\n      node {\n        id\n        networkTypeFk {\n          id\n          name\n        }\n        textFormula\n        status\n        techFk {\n          id\n          name\n        }\n        kpiFk {\n          id\n          name\n        }\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = 'd0a3c82ebaa5325f9e30f25766a5db1c';
+(node/*: any*/).hash = '5b00a31e79a5fbb6120c5e5c77b79905';
 
 module.exports = node;

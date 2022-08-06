@@ -19,25 +19,19 @@ import Button from '@symphony/design-system/components/Button';
 import CreateProjectTypeMutation from './mutations/CreateProjectTypeMutation';
 import EditProjectTypeMutation from './mutations/EditProjectTypeMutation';
 import ExpandingPanel from '@fbcnms/ui/components/ExpandingPanel';
-import ExperimentalPropertyTypesTable from '../form/ExperimentalPropertyTypesTable';
 import FormAction from '@symphony/design-system/components/Form/FormAction';
 import NameDescriptionSection from '../../common/NameDescriptionSection';
 import ProjectTypeWorkOrderTemplatesPanel from './ProjectTypeWorkOrderTemplatesPanel';
-import PropertyTypesTableDispatcher from '../form/context/property_types/PropertyTypesTableDispatcher';
+import PropertyTypeTable from '../form/PropertyTypeTable';
 import React, {useCallback, useMemo, useState} from 'react';
 import update from 'immutability-helper';
 import {ConnectionHandler} from 'relay-runtime';
 import {FormContextProvider} from '../../common/FormContext';
 import {createFragmentContainer, graphql} from 'react-relay';
-import {generateTempId, isTempId} from '../../common/EntUtils';
-import {
-  getPropertyTypesWithoutParentsInformation,
-  orderPropertyTypesIndex,
-} from '../../common/property_combo/PropertyComboHelpers';
 import {makeStyles} from '@material-ui/styles';
-import {toMutablePropertyType} from '../../common/PropertyType';
+import {sortByIndex} from '../draggable/DraggableUtils';
 import {useEnqueueSnackbar} from '@fbcnms/ui/hooks/useSnackbar';
-import {usePropertyTypesReducer} from '../form/context/property_types/PropertyTypesTableState';
+
 const useStyles = makeStyles(() => ({
   root: {
     padding: '24px 16px',
@@ -80,25 +74,22 @@ const AddEditProjectTypeCard = (props: Props) => {
   const classes = useStyles();
   const initialProjectTypeInput: EditProjectTypeInput = useMemo(
     () => ({
-      id: editingProjectType?.id ?? generateTempId(),
+      id: editingProjectType?.id ?? '',
       name: editingProjectType?.name ?? '',
       description: editingProjectType?.description ?? undefined,
       workOrders: (editingProjectType?.workOrders ?? [])
         .map(wo => wo?.type)
         .filter(Boolean)
         .map(woType => ({type: woType.id})),
-      properties: [],
+      properties: (editingProjectType?.properties ?? []: any)
+        .slice()
+        .sort(sortByIndex),
     }),
     [editingProjectType],
   );
 
   const [projectTypeInput, setProjectTypeInput] = useState(
     initialProjectTypeInput,
-  );
-  const [propertyTypes, propertyTypesDispatcher] = usePropertyTypesReducer(
-    (editingProjectType?.properties ?? [])
-      .filter(Boolean)
-      .map(toMutablePropertyType),
   );
 
   const deleteTempId = <T: {id: ?string}>(definition: T): T => {
@@ -110,17 +101,14 @@ const AddEditProjectTypeCard = (props: Props) => {
   };
 
   const onAdd = useCallback(() => {
-    const propertyTypesFinal = isTempId(projectTypeInput.id)
-      ? orderPropertyTypesIndex(propertyTypes)
-      : getPropertyTypesWithoutParentsInformation(propertyTypes);
     const variables: CreateProjectTypeMutationVariables = {
       input: {
         name: projectTypeInput.name,
         description: projectTypeInput.description ?? undefined,
         workOrders: projectTypeInput.workOrders,
-        properties: propertyTypesFinal.map(prop => {
-          return deleteTempId(prop);
-        }),
+        properties: (projectTypeInput.properties ?? [])
+          .filter(propType => !!propType.name)
+          .map(deleteTempId),
       },
     };
 
@@ -158,16 +146,13 @@ const AddEditProjectTypeCard = (props: Props) => {
     };
 
     CreateProjectTypeMutation(variables, callbacks, updater);
-  }, [projectTypeInput, onProjectTypeSaved, enqueueSnackbar, propertyTypes]);
+  }, [projectTypeInput, onProjectTypeSaved, enqueueSnackbar]);
 
   const onEdit = useCallback(() => {
     const woDefsMap = new Map();
     (editingProjectType?.workOrders ?? []).forEach(wo =>
       woDefsMap.set(wo?.type?.id, wo?.id),
     );
-    const propertyTypesFinal = isTempId(projectTypeInput.id)
-      ? orderPropertyTypesIndex(propertyTypes)
-      : getPropertyTypesWithoutParentsInformation(propertyTypes);
     const variables: EditProjectTypeMutationVariables = {
       input: {
         id: projectTypeInput.id,
@@ -177,7 +162,9 @@ const AddEditProjectTypeCard = (props: Props) => {
           id: woDefsMap.get(x?.type),
           type: x?.type,
         })),
-        properties: propertyTypesFinal,
+        properties: (projectTypeInput.properties ?? [])
+          .filter(propType => !!propType.name)
+          .map(deleteTempId),
       },
     };
     const callbacks = {
@@ -201,7 +188,6 @@ const AddEditProjectTypeCard = (props: Props) => {
     projectTypeInput.workOrders,
     projectTypeInput.properties,
     enqueueSnackbar,
-    propertyTypes,
     onProjectTypeSaved,
   ]);
 
@@ -289,17 +275,18 @@ const AddEditProjectTypeCard = (props: Props) => {
             }}
           />
           <ExpandingPanel title="Properties">
-            <PropertyTypesTableDispatcher.Provider
-              value={{
-                dispatch: propertyTypesDispatcher,
-                propertyTypes,
-              }}>
-              <ExperimentalPropertyTypesTable
-                supportDelete={true}
-                propertyTypes={propertyTypes}
-                showPropertyCombo={isTempId(projectTypeInput.id)}
-              />
-            </PropertyTypesTableDispatcher.Provider>
+            <PropertyTypeTable
+              supportDelete={true}
+              // eslint-disable-next-line flowtype/no-weak-types
+              propertyTypes={(projectTypeInput.properties ?? []: any)}
+              onPropertiesChanged={properties => {
+                setProjectTypeInput(
+                  update(projectTypeInput, {
+                    properties: {$set: properties},
+                  }),
+                );
+              }}
+            />
           </ExpandingPanel>
         </div>
       </div>
@@ -339,51 +326,6 @@ export default createFragmentContainer(AddEditProjectTypeCard, {
         isMandatory
         isInstanceProperty
         isDeleted
-        category
-        dependencePropertyTypes {
-          id
-          name
-          type
-          nodeType
-          index
-          stringValue
-          intValue
-          booleanValue
-          floatValue
-          latitudeValue
-          longitudeValue
-          rangeFromValue
-          rangeToValue
-          isEditable
-          isMandatory
-          isInstanceProperty
-          isDeleted
-          category
-          propertyTypeValues {
-            id
-            isDeleted
-            name
-            parentPropertyTypeValue {
-              id
-              isDeleted
-              name
-            }
-          }
-        }
-        propertyTypeValues {
-          id
-          isDeleted
-          name
-          parentPropertyTypeValue {
-            id
-            isDeleted
-            name
-          }
-        }
-        parentPropertyType {
-          id
-          name
-        }
       }
     }
   `,

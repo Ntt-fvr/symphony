@@ -25,7 +25,7 @@ class SymphonyClient(Client):
         self,
         email: str,
         password: str,
-        tenant: str,
+        tenant: str = "fb-test",
         app: str = "psym",
         is_local_host: bool = False,
         is_dev_mode: bool = False,

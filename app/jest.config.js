@@ -19,14 +19,14 @@ module.exports = {
     '!**/fbcnms-packages/fbcnms-test/**',
   ],
 
-  coverageReporters: ['json', 'html', 'lcov'],
+  coverageReporters: ['json', 'html'],
   modulePathIgnorePatterns: [],
   projects: [
     {
       name: 'server',
       testEnvironment: 'node',
       testMatch: [
-        //'<rootDir>/__tests__/*.js',
+        '<rootDir>/__tests__/*.js',
         '<rootDir>/fbcnms-projects/**/server/**/__tests__/*.js',
         '<rootDir>/fbcnms-projects/platform-server/**/__tests__/*.js',
         // run app/server shared tests in both node and jsdom environments
@@ -42,19 +42,14 @@ module.exports = {
         '\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$':
           '<rootDir>/__mocks__/fileMock.js',
         '\\.(css|less)$': 'identity-obj-proxy',
-        'react-ace-builds/webpack-resolver-min':
-          '<rootDir>/node_modules/ace-builds',
       },
       name: 'app',
       setupFiles: [require.resolve('@fbcnms/babel-register/polyfill')],
       testEnvironment: 'jsdom',
-      setupFilesAfterEnv: ['<rootDir>/setupTest.js'],
       testMatch: [
-        '<rootDir>/fbcnms-projects/**/app/components/__tests__/*.js',
-        '<rootDir>/fbcnms-projects/**/app/components/automation/__tests__/*.js',
-        '<rootDir>/fbcnms-projects/**/app/components/configuration_management/__tests__/*.js',
-        '<rootDir>/fbcnms-projects/**/app/components/configure/__tests__/*.js',
-        '<rootDir>/fbcnms-projects/**/app/components/**/__tests__/*.js',
+        '<rootDir>/fbcnms-projects/**/app/**/__tests__/*.js',
+        // run app/server shared tests in both node and jsdom environments
+        '<rootDir>/fbcnms-projects/**/shared/**/__tests__/*.js',
       ],
       transform: {
         '^.+\\.js$': 'babel-jest',

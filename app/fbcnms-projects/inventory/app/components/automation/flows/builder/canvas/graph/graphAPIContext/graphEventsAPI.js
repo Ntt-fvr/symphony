@@ -26,7 +26,7 @@ import type {
 } from '../facades/shapes/edges/Link';
 import type {PaperEventCallback} from '../facades/Paper';
 
-import {Events, restrictPosition} from '../facades/Helpers';
+import {Events} from '../facades/Helpers';
 
 export type BlockEventCallback = (IBlock, MouseEvent, number, number) => void;
 export type BlockPortEventCallback = (
@@ -61,8 +61,7 @@ export type BlockPortEvent = 'element:magnet:pointerclick';
 export type ConnectorEvent =
   | 'link:mouseover'
   | 'link:pointerdown'
-  | 'link:pointerup'
-  | 'link:contextmenu';
+  | 'link:pointerup';
 
 export type GraphEventsAPI = $ReadOnly<{|
   onGraphEvent: (GraphEvent, GraphEventCallback) => void,
@@ -113,44 +112,9 @@ function paperOnBlockEvent(event: BlockEvent, handler: BlockEventCallback) {
     if (block == null) {
       return;
     }
-    vertexView.model.attributes.parent &&
-      block.setParent(vertexView.model.attributes.parent);
     handler(block, generalEventArgs, positionX, positionY);
   };
-
   this.current.paper.on(event, wrappedHandler);
-  this.current?.graph.on('change:position', cell => {
-    const graph = this.current?.graph;
-    restrictPosition(cell, graph);
-  });
-
-  this.current?.graph.on('change:embeds', element => {
-    const BIG_SIZE_COUPLED = 'bigSizeCoupled';
-    const MEDIUM_SIZE_COUPLED = 'mediumSizeCoupled';
-    const BLOCK_LIMIT = 4;
-    const BLOCK_LIMIT_BIG = 6;
-
-    const blockList = [...this.current?.blocks]
-      .flat()
-      .filter(item => item?.type?.includes('Block') && item);
-
-    const childrenBlocksList: Array<string> = element.attributes.embeds.filter(
-      el => blockList.find(block => block.id === el),
-    );
-
-    const blockParent = blockList.find(block => block.model.id === element.id);
-
-    if (
-      childrenBlocksList.length > BLOCK_LIMIT &&
-      childrenBlocksList.length < BLOCK_LIMIT_BIG
-    ) {
-      blockParent?.setSize(MEDIUM_SIZE_COUPLED);
-    }
-
-    if (childrenBlocksList.length > BLOCK_LIMIT_BIG) {
-      blockParent?.setSize(BIG_SIZE_COUPLED);
-    }
-  });
 }
 
 function paperOnBlockPortEvent(

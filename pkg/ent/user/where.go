@@ -1201,34 +1201,6 @@ func HasAppointmentWith(preds ...predicate.Appointment) predicate.User {
 	})
 }
 
-// HasAuthoredFlow applies the HasEdge predicate on the "authored_flow" edge.
-func HasAuthoredFlow() predicate.User {
-	return predicate.User(func(s *sql.Selector) {
-		step := sqlgraph.NewStep(
-			sqlgraph.From(Table, FieldID),
-			sqlgraph.To(AuthoredFlowTable, FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, true, AuthoredFlowTable, AuthoredFlowColumn),
-		)
-		sqlgraph.HasNeighbors(s, step)
-	})
-}
-
-// HasAuthoredFlowWith applies the HasEdge predicate on the "authored_flow" edge with a given conditions (other predicates).
-func HasAuthoredFlowWith(preds ...predicate.Flow) predicate.User {
-	return predicate.User(func(s *sql.Selector) {
-		step := sqlgraph.NewStep(
-			sqlgraph.From(Table, FieldID),
-			sqlgraph.To(AuthoredFlowInverseTable, FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, true, AuthoredFlowTable, AuthoredFlowColumn),
-		)
-		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
-			for _, p := range preds {
-				p(s)
-			}
-		})
-	})
-}
-
 // And groups list of predicates with the AND operator between them.
 func And(predicates ...predicate.User) predicate.User {
 	return predicate.User(func(s *sql.Selector) {

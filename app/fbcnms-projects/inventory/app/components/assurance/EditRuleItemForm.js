@@ -16,7 +16,7 @@ import type {RemoveRuleMutationVariables} from '../../mutations/__generated__/Re
 
 import RemoveRuleMutation from '../../mutations/RemoveRuleMutation';
 
-import ButtonSaveDelete from './common/ButtonSaveDelete';
+import Button from '@symphony/design-system/components/Button';
 import Card from '@symphony/design-system/components/Card/Card';
 import Checkbox from '@symphony/design-system/components/Checkbox/Checkbox';
 import ConfigureTitleSubItem from './common/ConfigureTitleSubItem';
@@ -197,6 +197,11 @@ const useStyles = makeStyles(() => ({
     width: '100%',
     minHeight: '36px',
   },
+  actionAddRule: {
+    marginRight: '1.5rem',
+    width: '98px',
+    alignSelf: 'flex-end',
+  },
   selectAlarm: {
     '& .MuiOutlinedInput-root ': {
       color: '#FFFFFF',
@@ -256,7 +261,6 @@ const EditRuleItemForm = (props: Props) => {
   const comparatorLower = useFormInput(rule.ruleLimit[1]?.comparator.id);
   const upper = useFormInput(rule.ruleLimit[0]?.number);
   const lower = useFormInput(rule.ruleLimit[1]?.number);
-  const typeOfRule = useFormInput(rule.ruleType.id);
 
   const [slotStartDate, setSlotStartDate] = useState(
     moment(rule.startDateTime),
@@ -272,7 +276,6 @@ const EditRuleItemForm = (props: Props) => {
     specificProblemRule.value.trim(),
     eventTypeRule.value,
     eventSeverityRules.value,
-    typeOfRule.value,
     comparatorUpper.value,
     comparatorLower.value,
     upper.value,
@@ -287,7 +290,7 @@ const EditRuleItemForm = (props: Props) => {
   };
   const handleDisable = useDisabledButtonEdit(
     dataInputsObject,
-    11,
+    10,
     inputFilter,
   );
 
@@ -308,7 +311,7 @@ const EditRuleItemForm = (props: Props) => {
         gracePeriod: Number(gracePeriodRule.value),
         startDateTime: slotStartDate,
         endDateTime: slotEndDate,
-        ruleType: typeOfRule.value,
+        ruleType: data.ruleTypes.edges[0].node.id,
         eventTypeName: eventTypeRule.value,
         specificProblem: specificProblemRule.value,
         additionalInfo: additionalInfoRule.value,
@@ -356,32 +359,40 @@ const EditRuleItemForm = (props: Props) => {
             />
           </Grid>
           <Grid style={{marginRight: '1rem'}}>
-            <IconButton
-              onClick={() => {
-                handleRemove(rule.id);
-                hideAddRuleForm();
-              }}>
-              <DeleteOutlinedIcon style={{color: symphony.palette.D300}} />
+            <IconButton>
+              <DeleteOutlinedIcon
+                onClick={() => {
+                  handleRemove(rule.id);
+                  hideAddRuleForm();
+                }}
+                style={{color: symphony.palette.D300}}
+              />
             </IconButton>
           </Grid>
           <Grid>
-            <ButtonSaveDelete
-              variant={'outlined'}
-              onClick={() => {
-                hideAddRuleForm();
-              }}>
-              Cancel
-            </ButtonSaveDelete>
+            <FormField>
+              <Button
+                className={classes.actionAddRule}
+                onClick={() => {
+                  handleClick();
+                  hideAddRuleForm();
+                }}
+                disabled={handleDisable}>
+                Save
+              </Button>
+            </FormField>
           </Grid>
           <Grid>
-            <ButtonSaveDelete
-              onClick={() => {
-                handleClick();
-                hideAddRuleForm();
-              }}
-              disabled={handleDisable}>
-              Save
-            </ButtonSaveDelete>
+            <FormField>
+              <Button
+                className={classes.actionAddRule}
+                onClick={() => {
+                  hideAddRuleForm();
+                }}
+                skin="brightGray">
+                Cancel
+              </Button>
+            </FormField>
           </Grid>
         </Grid>
 
@@ -455,22 +466,17 @@ const EditRuleItemForm = (props: Props) => {
                 </form>
               </Grid>
               <Grid item xs={12} md={2}>
-                <FormField className={classes.formField}>
+                <form className={classes.formField} autoComplete="off">
                   <TextField
-                    {...typeOfRule}
                     required
-                    select
-                    label="Type Of Rule"
-                    name="TypeOfRule"
                     variant="outlined"
-                    className={classes.textInput}>
-                    {data.ruleTypes.edges.map((item, index) => (
-                      <MenuItem key={index} value={item.node?.id}>
-                        {item.node?.name}
-                      </MenuItem>
-                    ))}
-                  </TextField>
-                </FormField>
+                    label="Type of Rule"
+                    value="Simple"
+                    className={classes.textInput}
+                    name="TypeOfRule"
+                    disabled
+                  />
+                </form>
               </Grid>
             </Grid>
 

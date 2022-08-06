@@ -32,8 +32,6 @@ type PermissionsPolicy struct {
 	Description string `json:"description,omitempty"`
 	// IsGlobal holds the value of the "is_global" field.
 	IsGlobal bool `json:"is_global,omitempty"`
-	// IsMulticontractor holds the value of the "is_multicontractor" field.
-	IsMulticontractor bool `json:"is_multicontractor,omitempty"`
 	// InventoryPolicy holds the value of the "inventory_policy" field.
 	InventoryPolicy *models.InventoryPolicyInput `json:"inventory_policy,omitempty"`
 	// WorkforcePolicy holds the value of the "workforce_policy" field.
@@ -85,7 +83,6 @@ func (*PermissionsPolicy) scanValues() []interface{} {
 		&sql.NullString{}, // name
 		&sql.NullString{}, // description
 		&sql.NullBool{},   // is_global
-		&sql.NullBool{},   // is_multicontractor
 		&[]byte{},         // inventory_policy
 		&[]byte{},         // workforce_policy
 		&[]byte{},         // automation_policy
@@ -130,38 +127,33 @@ func (pp *PermissionsPolicy) assignValues(values ...interface{}) error {
 	} else if value.Valid {
 		pp.IsGlobal = value.Bool
 	}
-	if value, ok := values[5].(*sql.NullBool); !ok {
-		return fmt.Errorf("unexpected type %T for field is_multicontractor", values[5])
-	} else if value.Valid {
-		pp.IsMulticontractor = value.Bool
-	}
 
-	if value, ok := values[6].(*[]byte); !ok {
-		return fmt.Errorf("unexpected type %T for field inventory_policy", values[6])
+	if value, ok := values[5].(*[]byte); !ok {
+		return fmt.Errorf("unexpected type %T for field inventory_policy", values[5])
 	} else if value != nil && len(*value) > 0 {
 		if err := json.Unmarshal(*value, &pp.InventoryPolicy); err != nil {
 			return fmt.Errorf("unmarshal field inventory_policy: %v", err)
 		}
 	}
 
-	if value, ok := values[7].(*[]byte); !ok {
-		return fmt.Errorf("unexpected type %T for field workforce_policy", values[7])
+	if value, ok := values[6].(*[]byte); !ok {
+		return fmt.Errorf("unexpected type %T for field workforce_policy", values[6])
 	} else if value != nil && len(*value) > 0 {
 		if err := json.Unmarshal(*value, &pp.WorkforcePolicy); err != nil {
 			return fmt.Errorf("unmarshal field workforce_policy: %v", err)
 		}
 	}
 
-	if value, ok := values[8].(*[]byte); !ok {
-		return fmt.Errorf("unexpected type %T for field automation_policy", values[8])
+	if value, ok := values[7].(*[]byte); !ok {
+		return fmt.Errorf("unexpected type %T for field automation_policy", values[7])
 	} else if value != nil && len(*value) > 0 {
 		if err := json.Unmarshal(*value, &pp.AutomationPolicy); err != nil {
 			return fmt.Errorf("unmarshal field automation_policy: %v", err)
 		}
 	}
 
-	if value, ok := values[9].(*[]byte); !ok {
-		return fmt.Errorf("unexpected type %T for field assurance_policy", values[9])
+	if value, ok := values[8].(*[]byte); !ok {
+		return fmt.Errorf("unexpected type %T for field assurance_policy", values[8])
 	} else if value != nil && len(*value) > 0 {
 		if err := json.Unmarshal(*value, &pp.AssurancePolicy); err != nil {
 			return fmt.Errorf("unmarshal field assurance_policy: %v", err)
@@ -213,8 +205,6 @@ func (pp *PermissionsPolicy) String() string {
 	builder.WriteString(pp.Description)
 	builder.WriteString(", is_global=")
 	builder.WriteString(fmt.Sprintf("%v", pp.IsGlobal))
-	builder.WriteString(", is_multicontractor=")
-	builder.WriteString(fmt.Sprintf("%v", pp.IsMulticontractor))
 	builder.WriteString(", inventory_policy=")
 	builder.WriteString(fmt.Sprintf("%v", pp.InventoryPolicy))
 	builder.WriteString(", workforce_policy=")

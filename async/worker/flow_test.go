@@ -5,7 +5,6 @@
 package worker_test
 
 import (
-	"context"
 	"errors"
 	"testing"
 	"time"
@@ -18,7 +17,6 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/flowinstance"
 	"github.com/facebookincubator/symphony/pkg/log/logtest"
 	"github.com/facebookincubator/symphony/pkg/viewer"
-	"github.com/facebookincubator/symphony/pkg/viewer/viewertest"
 
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/suite"
@@ -49,26 +47,16 @@ func (s *FlowTestSuite) AfterTest(_, _ string) {
 }
 
 func (s *FlowTestSuite) prepareFlow() *ent.Flow {
-	entClient := viewertest.NewTestClient(s.T())
-
-	ctx := viewertest.NewContext(context.Background(), entClient)
-
-	user, _ := viewer.FromContext(ctx).(*viewer.UserViewer)
-
-	flw, _ := s.entClient.Flow.Create().
+	flw := s.entClient.Flow.Create().
 		SetName("Flow").
 		SetStatus(flow.StatusPublished).
-		SetCreationDate(time.Now()).
-		SetAuthor(user.User()).
 		SetNewInstancesPolicy(flow.NewInstancesPolicyEnabled).
-		Save(ctx)
-
+		SaveX(s.ctx)
 	s.entClient.Block.Create().
 		SetType(block.TypeStart).
 		SetCid("start").
 		SetFlow(flw).
 		SaveX(s.ctx)
-
 	return flw
 }
 
@@ -90,7 +78,6 @@ func (s *FlowTestSuite) prepareFlowInstance(flw *ent.Flow) *ent.FlowInstance {
 	return flowInstance
 }
 
-//Error preaperFlowIntance
 func (s *FlowTestSuite) TestRunFlow() {
 	flw := s.prepareFlow()
 	flowInstance := s.prepareFlowInstance(flw)
@@ -115,7 +102,6 @@ func (s *FlowTestSuite) TestRunFlowBadInstanceID() {
 	s.Error(s.env.GetWorkflowError())
 }
 
-//Error preaperFlowIntance
 func (s *FlowTestSuite) TestRunFlowTimeout() {
 	flw := s.prepareFlow()
 	flowInstance := s.prepareFlowInstance(flw)

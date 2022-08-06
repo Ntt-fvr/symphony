@@ -15,8 +15,9 @@ import type {MutationCallbacks} from '../../mutations/MutationCallbacks';
 
 import AddKqiComparatorMutation from '../../mutations/AddKqiComparatorMutation';
 import AddKqiTargetMutation from '../../mutations/AddKqiTargetMutation';
-import ButtonSaveDelete from './common/ButtonSaveDelete';
+import Button from '@material-ui/core/Button';
 import Card from '@symphony/design-system/components/Card/Card';
+import FormField from '@symphony/design-system/components/FormField/FormField';
 import Grid from '@material-ui/core/Grid';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import React, {useState} from 'react';
@@ -105,6 +106,11 @@ const useStyles = makeStyles(() => ({
     '@media (max-width: 768px)': {
       display: 'none',
     },
+  },
+  option: {
+    width: '111px',
+    height: '36px',
+    alignSelf: 'flex-end',
   },
 }));
 
@@ -206,20 +212,31 @@ const KqiFormCreateTarget = (props: Props) => {
             {fbt('Create target', ' ')}
           </Text>
         </Grid>
-        <Grid>
-          <ButtonSaveDelete variant="outlined" onClick={() => returnFormEdit()}>
-            Cancel
-          </ButtonSaveDelete>
+        <Grid style={{marginRight: '1rem'}}>
+          <FormField>
+            <Button
+              className={classes.option}
+              variant="outlined"
+              color="primary"
+              onClick={() => returnFormEdit()}>
+              Cancel
+            </Button>
+          </FormField>
         </Grid>
         <Grid>
-          <ButtonSaveDelete
-            onClick={() => {
-              handleClick();
-              returnFormEdit();
-            }}
-            disabled={handleDisable}>
-            Save
-          </ButtonSaveDelete>
+          <FormField>
+            <Button
+              onClick={() => {
+                handleClick();
+                returnFormEdit();
+              }}
+              className={classes.option}
+              variant="contained"
+              color="primary"
+              disabled={handleDisable}>
+              Save
+            </Button>
+          </FormField>
         </Grid>
       </Grid>
       <Grid className={classes.container} item xs>
@@ -343,7 +360,11 @@ const KqiFormCreateTarget = (props: Props) => {
               <Grid item xs={12} className={classes.title}>
                 <Text style={{fontSize: '14px'}}>Active Hours</Text>
               </Grid>
-              <Grid container item xs={12} alignItems="center">
+              <Grid
+                container
+                item
+                xs={12}
+                alignItems="center">
                 <Grid className={classes.subtitle} item xs={3} lg={3} xl={2}>
                   <Text variant="caption">From</Text>
                 </Grid>
@@ -365,7 +386,11 @@ const KqiFormCreateTarget = (props: Props) => {
               </Grid>
             </Grid>
             <Grid item xs={12} sm={6} lg>
-              <Grid container item xs={12} alignItems="center">
+              <Grid
+                container
+                item
+                xs={12}
+                alignItems="center">
                 <Grid className={classes.subtitle} item xs={3} xl={1}>
                   <Text variant="caption">to</Text>
                 </Grid>

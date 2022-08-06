@@ -11,6 +11,7 @@
 import type {Paper} from '../facades/Paper';
 import type {VertexEventCallback} from '../facades/shapes/vertexes/BaseVertext';
 
+import symphony from '@symphony/design-system/theme/symphony';
 import {Events} from '../facades/Helpers';
 
 function stroke(element: HTMLElement, strokeValue?: string): string {
@@ -37,7 +38,7 @@ export function handleMagnetPorts(paper: Paper) {
         element: eventArgs.target,
         originalStroke: stroke(eventArgs.target),
       };
-      stroke(hovered.element, '#3A71EA');
+      stroke(hovered.element, symphony.palette.primary);
       hovered.element.style.cursor = 'pointer';
     }
   };

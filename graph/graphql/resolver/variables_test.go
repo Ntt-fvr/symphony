@@ -8,8 +8,9 @@ import (
 	"context"
 	"testing"
 
-	"github.com/facebookincubator/symphony/graph/graphql/models"
 	"github.com/facebookincubator/symphony/pkg/ent/flow"
+
+	"github.com/facebookincubator/symphony/graph/graphql/models"
 	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
 	"github.com/facebookincubator/symphony/pkg/flowengine/flowschema"
 	"github.com/facebookincubator/symphony/pkg/viewer/viewertest"
@@ -131,12 +132,11 @@ func TestStartBlockParamDefinitionsUsed(t *testing.T) {
 	require.EqualValues(t, outputParams[0], inputParam)
 }
 
-// InputParamDefinitions & OutputParamDefinitions & VariableDefinition always return nil
 func TestSubFlowBlockInputParams(t *testing.T) {
 	r := newTestResolver(t)
 	defer r.Close()
 	ctx := viewertest.NewContext(context.Background(), r.client)
-	mr, br, _ := r.Mutation(), r.Block(), r.VariableExpression()
+	mr, br, ver := r.Mutation(), r.Block(), r.VariableExpression()
 
 	endParamDefinitions := []*flowschema.VariableDefinition{
 		{
@@ -159,7 +159,7 @@ func TestSubFlowBlockInputParams(t *testing.T) {
 		EndParamDefinitions: endParamDefinitions,
 	})
 	require.NoError(t, err)
-	startBlock, err := mr.AddStartBlock(ctx, draft.ID, models.StartBlockInput{
+	_, err = mr.AddStartBlock(ctx, draft.ID, models.StartBlockInput{
 		Cid:              "start",
 		ParamDefinitions: startParamDefinitions,
 	})
@@ -170,34 +170,20 @@ func TestSubFlowBlockInputParams(t *testing.T) {
 		Name: "Flow",
 	})
 	require.NoError(t, err)
-	_, err = mr.AddExecuteFlowBlock(ctx, flowDraft.ID, models.ExecuteFlowBlockInput{
-		Cid:  "sub_flow",
-		Flow: flw.ID,
-		Params: []*models.VariableExpressionInput{
-			{
-				Type:                  enum.VariableDefinition,
-				VariableDefinitionKey: refString("start_param"),
-				PropertyTypeID:        &startBlock.ID,
-				Expression:            "test",
-				BlockVariables: []*models.BlockVariableInput{
-					{
-						BlockCid:              "sub_flow",
-						Type:                  equipmentType1Port1Name,
-						VariableDefinitionKey: refString("start_param"),
-					},
-				}}},
-	},
-	)
+	subFlowBlock, err := mr.AddSubflowBlock(ctx, flowDraft.ID, models.SubflowBlockInput{
+		Cid:    "sub_flow",
+		FlowID: flw.ID,
+	})
 	require.NoError(t, err)
-	//inputParams, err := br.InputParamDefinitions(ctx, subFlowBlock)
-	//require.NoError(t, err)
-	//require.EqualValues(t, inputParams, startParamDefinitions)
-	//outputParams, err := br.OutputParamDefinitions(ctx, subFlowBlock)
-	//require.NoError(t, err)
-	//require.EqualValues(t, outputParams, endParamDefinitions)
-	subFlowBlock2, err := mr.AddExecuteFlowBlock(ctx, flowDraft.ID, models.ExecuteFlowBlockInput{
-		Cid:  "sub_flow2",
-		Flow: flw.ID,
+	inputParams, err := br.InputParamDefinitions(ctx, subFlowBlock)
+	require.NoError(t, err)
+	require.EqualValues(t, inputParams, startParamDefinitions)
+	outputParams, err := br.OutputParamDefinitions(ctx, subFlowBlock)
+	require.NoError(t, err)
+	require.EqualValues(t, outputParams, endParamDefinitions)
+	subFlowBlock2, err := mr.AddSubflowBlock(ctx, flowDraft.ID, models.SubflowBlockInput{
+		Cid:    "sub_flow2",
+		FlowID: flw.ID,
 		Params: []*models.VariableExpressionInput{
 			{
 				Type:                  enum.VariableDefinition,
@@ -209,12 +195,12 @@ func TestSubFlowBlockInputParams(t *testing.T) {
 	require.NoError(t, err)
 	subFlowDetails, err := br.Details(ctx, subFlowBlock2)
 	require.NoError(t, err)
-	subflow, ok := subFlowDetails.(*models.ExecuteFlowBlock)
+	subflow, ok := subFlowDetails.(*models.SubflowBlock)
 	require.True(t, ok)
 	require.Len(t, subflow.Params, 1)
-	// def, err := ver.VariableDefinition(ctx, subflow.Params[0])
-	// require.NoError(t, err)
-	// require.Equal(t, "start_param", def.Key)
-	// require.Equal(t, "start_param", def.Name())
-	// require.Empty(t, subflow.Params[0].BlockVariables)
+	def, err := ver.VariableDefinition(ctx, subflow.Params[0])
+	require.NoError(t, err)
+	require.Equal(t, "start_param", def.Key)
+	require.Equal(t, "start_param", def.Name())
+	require.Empty(t, subflow.Params[0].BlockVariables)
 }

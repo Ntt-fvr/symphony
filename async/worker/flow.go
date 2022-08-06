@@ -7,7 +7,6 @@ package worker
 import (
 	"context"
 	"fmt"
-	"go.uber.org/cadence/activity"
 	"time"
 
 	"github.com/facebookincubator/symphony/pkg/ent"
@@ -124,14 +123,13 @@ func (ff *FlowFactory) ReadStartBlockLocalActivity(ctx context.Context, input Ru
 
 // NewWorkers registers the workflow and all activities to the cadence worker
 func (ff *FlowFactory) NewWorkers(client workflowserviceclient.Interface, workerOptions worker.Options) []worker.Worker {
-	w := worker.New(client, FlowDomainName.String(), AutomationTaskListName, workerOptions)
-
-	w.RegisterWorkflowWithOptions(ff.RunFlowWorkflow, workflow.RegisterOptions{
-		Name: RunFlowWorkflowName,
-	})
-	w.RegisterActivityWithOptions(ff.CompleteFlowActivity, activity.RegisterOptions{})
-
-	return []worker.Worker{w}
+	// w := worker.New(client, FlowDomainName.String(), TaskListName, workerOptions)
+	// w.RegisterWorkflowWithOptions(ff.RunFlowWorkflow, workflow.RegisterOptions{
+	//	Name: RunFlowWorkflowName,
+	// })
+	// w.RegisterActivityWithOptions(ff.CompleteFlowActivity, activity.RegisterOptions{})
+	// return []worker.Worker{w}
+	return nil
 }
 
 // GetDomain returns the factory domain

@@ -81,8 +81,6 @@ func (User) Edges() []ent.Edge {
 			Ref("creator"),
 		edge.To("features", Feature.Type),
 		edge.To("appointment", Appointment.Type),
-		edge.From("authored_flow", Flow.Type).
-			Ref("author"),
 	}
 }
 

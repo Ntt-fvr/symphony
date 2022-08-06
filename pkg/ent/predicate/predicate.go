@@ -22,9 +22,6 @@ type AlarmStatus func(*sql.Selector)
 // Appointment is the predicate function for appointment builders.
 type Appointment func(*sql.Selector)
 
-// AutomationActivity is the predicate function for automationactivity builders.
-type AutomationActivity func(*sql.Selector)
-
 // Block is the predicate function for block builders.
 type Block func(*sql.Selector)
 
@@ -202,9 +199,6 @@ type PropertyCategory func(*sql.Selector)
 // PropertyType is the predicate function for propertytype builders.
 type PropertyType func(*sql.Selector)
 
-// PropertyTypeValue is the predicate function for propertytypevalue builders.
-type PropertyTypeValue func(*sql.Selector)
-
 // Recommendations is the predicate function for recommendations builders.
 type Recommendations func(*sql.Selector)
 
@@ -216,24 +210,6 @@ type RecommendationsSources func(*sql.Selector)
 
 // ReportFilter is the predicate function for reportfilter builders.
 type ReportFilter func(*sql.Selector)
-
-// ResourcePropertyType is the predicate function for resourcepropertytype builders.
-type ResourcePropertyType func(*sql.Selector)
-
-// ResourceSpecification is the predicate function for resourcespecification builders.
-type ResourceSpecification func(*sql.Selector)
-
-// ResourceSpecificationItems is the predicate function for resourcespecificationitems builders.
-type ResourceSpecificationItems func(*sql.Selector)
-
-// ResourceSpecificationRelationship is the predicate function for resourcespecificationrelationship builders.
-type ResourceSpecificationRelationship func(*sql.Selector)
-
-// ResourceType is the predicate function for resourcetype builders.
-type ResourceType func(*sql.Selector)
-
-// ResourceTypeRelationship is the predicate function for resourcetyperelationship builders.
-type ResourceTypeRelationship func(*sql.Selector)
 
 // Rule is the predicate function for rule builders.
 type Rule func(*sql.Selector)

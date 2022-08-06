@@ -82,7 +82,6 @@ type PropertyType struct {
 	project_template_properties             *int
 	project_type_properties                 *int
 	property_category_properties_type       *int
-	property_type_property_type             *int
 	service_type_property_types             *int
 	work_order_template_property_types      *int
 	work_order_type_property_types          *int
@@ -113,17 +112,11 @@ type PropertyTypeEdges struct {
 	ProjectTemplate *ProjectTemplate
 	// WorkerType holds the value of the worker_type edge.
 	WorkerType *WorkerType
-	// PropertyTypeValues holds the value of the property_type_values edge.
-	PropertyTypeValues []*PropertyTypeValue
-	// ParentPropertyType holds the value of the parent_property_type edge.
-	ParentPropertyType *PropertyType
-	// PropertyType holds the value of the property_type edge.
-	PropertyType []*PropertyType
 	// PropertyCategory holds the value of the property_category edge.
 	PropertyCategory *PropertyCategory
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [15]bool
+	loadedTypes [12]bool
 }
 
 // PropertiesOrErr returns the Properties value or an error if the edge
@@ -275,42 +268,10 @@ func (e PropertyTypeEdges) WorkerTypeOrErr() (*WorkerType, error) {
 	return nil, &NotLoadedError{edge: "worker_type"}
 }
 
-// PropertyTypeValuesOrErr returns the PropertyTypeValues value or an error if the edge
-// was not loaded in eager-loading.
-func (e PropertyTypeEdges) PropertyTypeValuesOrErr() ([]*PropertyTypeValue, error) {
-	if e.loadedTypes[11] {
-		return e.PropertyTypeValues, nil
-	}
-	return nil, &NotLoadedError{edge: "property_type_values"}
-}
-
-// ParentPropertyTypeOrErr returns the ParentPropertyType value or an error if the edge
-// was not loaded in eager-loading, or loaded but was not found.
-func (e PropertyTypeEdges) ParentPropertyTypeOrErr() (*PropertyType, error) {
-	if e.loadedTypes[12] {
-		if e.ParentPropertyType == nil {
-			// The edge parent_property_type was loaded in eager-loading,
-			// but was not found.
-			return nil, &NotFoundError{label: propertytype.Label}
-		}
-		return e.ParentPropertyType, nil
-	}
-	return nil, &NotLoadedError{edge: "parent_property_type"}
-}
-
-// PropertyTypeOrErr returns the PropertyType value or an error if the edge
-// was not loaded in eager-loading.
-func (e PropertyTypeEdges) PropertyTypeOrErr() ([]*PropertyType, error) {
-	if e.loadedTypes[13] {
-		return e.PropertyType, nil
-	}
-	return nil, &NotLoadedError{edge: "property_type"}
-}
-
 // PropertyCategoryOrErr returns the PropertyCategory value or an error if the edge
 // was not loaded in eager-loading, or loaded but was not found.
 func (e PropertyTypeEdges) PropertyCategoryOrErr() (*PropertyCategory, error) {
-	if e.loadedTypes[14] {
+	if e.loadedTypes[11] {
 		if e.PropertyCategory == nil {
 			// The edge property_category was loaded in eager-loading,
 			// but was not found.
@@ -359,7 +320,6 @@ func (*PropertyType) fkValues() []interface{} {
 		&sql.NullInt64{}, // project_template_properties
 		&sql.NullInt64{}, // project_type_properties
 		&sql.NullInt64{}, // property_category_properties_type
-		&sql.NullInt64{}, // property_type_property_type
 		&sql.NullInt64{}, // service_type_property_types
 		&sql.NullInt64{}, // work_order_template_property_types
 		&sql.NullInt64{}, // work_order_type_property_types
@@ -537,30 +497,24 @@ func (pt *PropertyType) assignValues(values ...interface{}) error {
 			*pt.property_category_properties_type = int(value.Int64)
 		}
 		if value, ok := values[7].(*sql.NullInt64); !ok {
-			return fmt.Errorf("unexpected type %T for edge-field property_type_property_type", value)
-		} else if value.Valid {
-			pt.property_type_property_type = new(int)
-			*pt.property_type_property_type = int(value.Int64)
-		}
-		if value, ok := values[8].(*sql.NullInt64); !ok {
 			return fmt.Errorf("unexpected type %T for edge-field service_type_property_types", value)
 		} else if value.Valid {
 			pt.service_type_property_types = new(int)
 			*pt.service_type_property_types = int(value.Int64)
 		}
-		if value, ok := values[9].(*sql.NullInt64); !ok {
+		if value, ok := values[8].(*sql.NullInt64); !ok {
 			return fmt.Errorf("unexpected type %T for edge-field work_order_template_property_types", value)
 		} else if value.Valid {
 			pt.work_order_template_property_types = new(int)
 			*pt.work_order_template_property_types = int(value.Int64)
 		}
-		if value, ok := values[10].(*sql.NullInt64); !ok {
+		if value, ok := values[9].(*sql.NullInt64); !ok {
 			return fmt.Errorf("unexpected type %T for edge-field work_order_type_property_types", value)
 		} else if value.Valid {
 			pt.work_order_type_property_types = new(int)
 			*pt.work_order_type_property_types = int(value.Int64)
 		}
-		if value, ok := values[11].(*sql.NullInt64); !ok {
+		if value, ok := values[10].(*sql.NullInt64); !ok {
 			return fmt.Errorf("unexpected type %T for edge-field worker_type_property_types", value)
 		} else if value.Valid {
 			pt.worker_type_property_types = new(int)
@@ -623,21 +577,6 @@ func (pt *PropertyType) QueryProjectTemplate() *ProjectTemplateQuery {
 // QueryWorkerType queries the worker_type edge of the PropertyType.
 func (pt *PropertyType) QueryWorkerType() *WorkerTypeQuery {
 	return (&PropertyTypeClient{config: pt.config}).QueryWorkerType(pt)
-}
-
-// QueryPropertyTypeValues queries the property_type_values edge of the PropertyType.
-func (pt *PropertyType) QueryPropertyTypeValues() *PropertyTypeValueQuery {
-	return (&PropertyTypeClient{config: pt.config}).QueryPropertyTypeValues(pt)
-}
-
-// QueryParentPropertyType queries the parent_property_type edge of the PropertyType.
-func (pt *PropertyType) QueryParentPropertyType() *PropertyTypeQuery {
-	return (&PropertyTypeClient{config: pt.config}).QueryParentPropertyType(pt)
-}
-
-// QueryPropertyType queries the property_type edge of the PropertyType.
-func (pt *PropertyType) QueryPropertyType() *PropertyTypeQuery {
-	return (&PropertyTypeClient{config: pt.config}).QueryPropertyType(pt)
 }
 
 // QueryPropertyCategory queries the property_category edge of the PropertyType.

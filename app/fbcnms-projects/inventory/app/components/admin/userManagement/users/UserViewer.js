@@ -13,7 +13,6 @@ import type {User, UserBase} from '../utils/UserManagementUtils';
 import * as React from 'react';
 import Text from '@symphony/design-system/components/Text';
 import classNames from 'classnames';
-import moment from 'moment';
 import symphony from '@symphony/design-system/theme/symphony';
 import {USER_ROLES, userFullName} from '../utils/UserManagementUtils';
 import {makeStyles} from '@material-ui/styles';
@@ -60,7 +59,6 @@ type Props = $ReadOnly<{|
   showPhoto?: ?boolean,
   showRole?: ?boolean,
   className?: ?string,
-  showTimeAvailability?: ?boolean,
 |}>;
 
 export default function UserViewer(props: Props) {
@@ -70,7 +68,6 @@ export default function UserViewer(props: Props) {
     showPhoto = false,
     showRole = false,
     className,
-    showTimeAvailability = false,
   } = props;
   const classes = useStyles();
 
@@ -99,13 +96,6 @@ export default function UserViewer(props: Props) {
           {showRole ? (
             <Text variant="caption" color="gray">
               {` • ${USER_ROLES[user.role].value}`}
-            </Text>
-          ) : null}
-        </div>
-        <div className={classes.metaData}>
-          {showTimeAvailability ? (
-            <Text variant="caption" color="gray">
-              {moment(user.timeAvailability).format('YYYY-MM-DD HH:mm')}
             </Text>
           ) : null}
         </div>

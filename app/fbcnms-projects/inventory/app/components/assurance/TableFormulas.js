@@ -10,9 +10,8 @@
 
 import React, {useState} from 'react';
 
-import type {EditFormulaMutationVariables} from '../../mutations/__generated__/EditFormulaMutation.graphql';
 import type {RemoveFormulaMutationVariables} from '../../mutations/__generated__/RemoveFormulaMutation.graphql';
-
+import type {EditFormulaMutationVariables} from '../../mutations/__generated__/EditFormulaMutation.graphql';
 import EditFormulaMutation from '../../mutations/EditFormulaMutation';
 
 import type {Formula} from './KpiTypes';
@@ -93,7 +92,7 @@ const DenseTable = (props: Props) => {
   function handleEditCallback(editFormula: {}) {
     parentEditCallback(editFormula);
   }
-
+  
   return (
     <Paper variant="outlined">
       <TableContainer>
@@ -160,7 +159,6 @@ const DenseTable = (props: Props) => {
                         kpiId: row.kpiFk.id,
                         kpiFk: row.kpiFk.name,
                         networkTypes: row.networkTypeFk.id,
-                        counterformulaFk: row.counterformulaFk,
                       });
                       handleEditFormulaClick();
                     }}

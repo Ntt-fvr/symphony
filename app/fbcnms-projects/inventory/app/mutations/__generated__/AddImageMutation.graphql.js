@@ -17,16 +17,16 @@ import type { ConcreteRequest } from 'relay-runtime';
 type FileAttachment_file$ref = any;
 export type ImageEntity = "CHECKLIST_ITEM" | "EQUIPMENT" | "LOCATION" | "SITE_SURVEY" | "USER" | "WORK_ORDER" | "%future added value";
 export type AddImageInput = {|
-  annotation?: ?string,
-  category?: ?string,
-  contentType: string,
-  documentCategoryId?: ?string,
-  entityId: string,
   entityType: ImageEntity,
+  entityId: string,
+  imgKey: string,
   fileName: string,
   fileSize: number,
-  imgKey: string,
   modified: any,
+  contentType: string,
+  category?: ?string,
+  annotation?: ?string,
+  documentCategoryId?: ?string,
 |};
 export type AddImageMutationVariables = {|
   input: AddImageInput

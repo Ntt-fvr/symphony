@@ -23,10 +23,11 @@ import EditKpiMutation from '../../mutations/EditKpiMutation';
 import type {Counter, Formula} from './KpiTypes';
 import type {EditKpiItemFormQuery} from './__generated__/EditKpiItemFormQuery.graphql';
 
-import ButtonSaveDelete from './common/ButtonSaveDelete';
+import Button from '@symphony/design-system/components/Button';
 import Card from '@symphony/design-system/components/Card/Card';
 import ConfigureTitleSubItem from './common/ConfigureTitleSubItem';
 import EditFormulaDialog from './EditFormulaDialog';
+import FormField from '@symphony/design-system/components/FormField/FormField';
 import Switch from '@symphony/design-system/components/switch/Switch';
 import TableFormulas from './TableFormulas';
 import Text from '@symphony/design-system/components/Text';
@@ -107,6 +108,11 @@ const useStyles = makeStyles(() => ({
       overflow: 'auto',
       lineHeight: '1.5',
     },
+  },
+  addKpi: {
+    marginRight: '1.5rem',
+    width: '98px',
+    alignSelf: 'flex-end',
   },
 }));
 
@@ -255,32 +261,39 @@ export const EditKpiItemForm = (props: Props) => {
         <Grid
           className={classes.header}
           container
+          item
           direction="row"
-          justifycontent="flex-end"
+          justifyContent="flex-end"
           alignItems="center">
-          <Grid item xs>
+          <Grid xs>
             <ConfigureTitleSubItem
               title={fbt('KPI Catalog/', 'KPI Catalog')}
               tag={` ${formValues.name}`}
             />
           </Grid>
           <Grid>
-            <ButtonSaveDelete
-              variant={'outlined'}
-              onClick={() => {
-                hideEditKpiForm();
-              }}>
-              Cancel
-            </ButtonSaveDelete>
+            <FormField>
+              <Button
+                className={classes.addKpi}
+                onClick={() => {
+                  handleClick();
+                }}
+                disabled={handleDisable}>
+                Save
+              </Button>
+            </FormField>
           </Grid>
           <Grid>
-            <ButtonSaveDelete
-              onClick={() => {
-                handleClick();
-              }}
-              disabled={handleDisable}>
-              Save
-            </ButtonSaveDelete>
+            <FormField>
+              <Button
+                className={classes.addKpi}
+                onClick={() => {
+                  hideEditKpiForm();
+                }}
+                skin="brightGray">
+                Cancel
+              </Button>
+            </FormField>
           </Grid>
         </Grid>
         <Grid item xs={12} sm={12} lg={12} xl={12}>
@@ -288,10 +301,11 @@ export const EditKpiItemForm = (props: Props) => {
             <Grid
               className={classes.headerCardEdit}
               container
+              item
               direction="row"
-              justifycontent="space-evenly"
+              justifyContent="space-evenly"
               alignItems="center">
-              <Grid item xs>
+              <Grid xs>
                 <Text
                   weight={'bold'}
                   variant={'h6'}
@@ -310,7 +324,7 @@ export const EditKpiItemForm = (props: Props) => {
               </Grid>
             </Grid>
             <Grid container>
-              <Grid item xs={12} sm={12} md={4} lg={4} xl={4}>
+              <Grid xs={12} sm={12} md={4} lg={4} xl={4}>
                 <Grid item xs={12}>
                   <form className={classes.formField} autoComplete="off">
                     <TextField
@@ -398,7 +412,7 @@ export const EditKpiItemForm = (props: Props) => {
                   </form>
                 </Grid>
               </Grid>
-              <Grid item xs={12} sm={12} md={4} lg={4} xl={4}>
+              <Grid xs={12} sm={12} md={4} lg={4} xl={4}>
                 <Grid item xs={12}>
                   <form className={classes.formField} autoComplete="off">
                     <TextField

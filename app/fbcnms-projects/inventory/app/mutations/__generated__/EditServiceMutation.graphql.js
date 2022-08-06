@@ -17,30 +17,28 @@ import type { ConcreteRequest } from 'relay-runtime';
 type ServiceCard_service$ref = any;
 export type ServiceStatus = "DISCONNECTED" | "IN_SERVICE" | "MAINTENANCE" | "PENDING" | "%future added value";
 export type ServiceEditData = {|
-  customerId?: ?string,
-  externalId?: ?string,
   id: string,
   name?: ?string,
-  properties?: ?$ReadOnlyArray<?PropertyInput>,
+  externalId?: ?string,
   status?: ?ServiceStatus,
+  customerId?: ?string,
   upstreamServiceIds?: ?$ReadOnlyArray<string>,
+  properties?: ?$ReadOnlyArray<?PropertyInput>,
 |};
 export type PropertyInput = {|
-  booleanValue?: ?boolean,
-  dependenceProperties?: ?$ReadOnlyArray<PropertyInput>,
-  floatValue?: ?number,
   id?: ?string,
+  propertyTypeID: string,
+  stringValue?: ?string,
   intValue?: ?number,
-  isEditable?: ?boolean,
-  isInstanceProperty?: ?boolean,
+  booleanValue?: ?boolean,
+  floatValue?: ?number,
   latitudeValue?: ?number,
   longitudeValue?: ?number,
-  nodeIDValue?: ?string,
-  propertyTypeID: string,
-  propertyTypeValueID?: ?string,
   rangeFromValue?: ?number,
   rangeToValue?: ?number,
-  stringValue?: ?string,
+  nodeIDValue?: ?string,
+  isEditable?: ?boolean,
+  isInstanceProperty?: ?boolean,
 |};
 export type EditServiceMutationVariables = {|
   data: ServiceEditData

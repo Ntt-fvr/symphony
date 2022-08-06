@@ -22,7 +22,7 @@ import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import Text from '@symphony/design-system/components/Text';
 import classNames from 'classnames';
 import nullthrows from '@fbcnms/util/nullthrows';
-import {makeStyles} from '@material-ui/core/styles';
+import {makeStyles} from '@material-ui/styles';
 import {
   useCallback,
   useImperativeHandle,

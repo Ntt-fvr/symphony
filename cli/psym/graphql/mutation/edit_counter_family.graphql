@@ -1,6 +1,0 @@
-mutation editCounterFamily($input: EditCounterFamilyInput!) {
-  editCounterFamily(input: $input) {
-    id
-    name
-  }
-}

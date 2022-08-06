@@ -146,9 +146,6 @@ function createProductionWebpackConfig(options: Options) {
         : '/static/dist/',
     },
     plugins: [
-      new webpack.DefinePlugin({
-        'process.env.RECAPTCHA_KEY': JSON.stringify(process.env.RECAPTCHA_KEY),
-      }),
       new ManifestPlugin(),
       new BundleAnalyzerPlugin({
         analyzerMode: 'static',

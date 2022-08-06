@@ -32,7 +32,7 @@ import {
   configToFilterQuery,
   doesFilterHasValue,
 } from '../comparison_view/FilterUtils';
-import {makeStyles} from '@material-ui/core/styles';
+import {makeStyles} from '@material-ui/styles';
 import {useEffect, useRef, useState} from 'react';
 
 const useStyles = makeStyles(theme => ({
@@ -42,7 +42,7 @@ const useStyles = makeStyles(theme => ({
     flexDirection: 'row',
     alignItems: 'center',
     width: '100%',
-    backgroundColor: theme.palette?.common?.white,
+    backgroundColor: theme.palette.common.white,
     padding: '8px 14px',
   },
   searchBarContainer: {
@@ -56,7 +56,7 @@ const useStyles = makeStyles(theme => ({
     cursor: 'text',
   },
   headerContainer: {
-    marginRight: theme?.spacing(),
+    marginRight: theme.spacing(),
   },
   placeholder: {
     position: 'absolute',
@@ -71,19 +71,16 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
   },
   filter: {
-    marginRight: theme?.spacing(),
+    marginRight: theme.spacing(),
   },
   typeahead: {
     flexGrow: 1,
   },
   footer: {
     padding: '8px 4px 8px 10px',
-    color: theme?.palette?.grey.A200,
+    color: theme.palette.grey.A200,
     fontWeight: 'bold',
     pointerEvents: 'none',
-  },
-  export:{
-    paddingLeft:'5px',
   },
 }));
 
@@ -103,7 +100,6 @@ type Props = $ReadOnly<{|
   // used when a filter is selected from filter typeahead
   getSelectedFilter: (filterConfig: FilterConfig) => FilterValue,
   entity?: FilterEntity,
-  resourceSpecification?: ?string,
 |}>;
 
 const PowerSearchBar = (props: Props) => {
@@ -120,7 +116,6 @@ const PowerSearchBar = (props: Props) => {
     header,
     footer,
     exportPath,
-    resourceSpecification,
   } = props;
   const [filterValues, setFilterValues] = useState(props.filterValues ?? []);
 
@@ -210,7 +205,6 @@ const PowerSearchBar = (props: Props) => {
                     onNewInputBlurred={value => onFilterBlurred(i, value)}
                     onValueChanged={value => onFilterValueChanged(i, value)}
                     onRemoveFilter={() => removeFilter(i)}
-                    resourceSpecification={resourceSpecification ?? null}
                   />
                 </div>
               );
@@ -260,17 +254,15 @@ const PowerSearchBar = (props: Props) => {
               {footer}
             </Text>
           )}
-          {savedSearch && entity && entity !== 'PROJECT' && entity !== 'SERVICE' && (
+          {savedSearch && entity && entity !== 'PROJECT' && (
             <FilterBookmark filters={filterValues} entity={entity} />
           )}
           {exportPath && (
-            <div className={classes.export}>
             <CSVFileExport
               title="Export"
               exportPath={exportPath}
               filters={filterValues}
             />
-            </div>
           )}
         </div>
       </div>

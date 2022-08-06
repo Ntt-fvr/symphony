@@ -16,18 +16,18 @@
 import type { ConcreteRequest } from 'relay-runtime';
 export type VariableType = "DATE" | "INT" | "LOCATION" | "PROJECT" | "STRING" | "USER" | "WORK_ORDER" | "WORK_ORDER_TYPE" | "%future added value";
 export type AddFlowDraftInput = {|
-  description?: ?string,
-  endParamDefinitions: $ReadOnlyArray<VariableDefinitionInput>,
-  flowID?: ?string,
   name: string,
+  description?: ?string,
+  flowID?: ?string,
+  endParamDefinitions: $ReadOnlyArray<VariableDefinitionInput>,
 |};
 export type VariableDefinitionInput = {|
-  choices?: ?$ReadOnlyArray<string>,
-  defaultValue?: ?string,
   key: string,
+  type: VariableType,
   mandatory?: ?boolean,
   multipleValues?: ?boolean,
-  type: VariableType,
+  choices?: ?$ReadOnlyArray<string>,
+  defaultValue?: ?string,
 |};
 export type AddFlowDraftMutationVariables = {|
   input: AddFlowDraftInput

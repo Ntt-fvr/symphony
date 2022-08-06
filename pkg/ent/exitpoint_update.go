@@ -72,33 +72,6 @@ func (epu *ExitPointUpdate) ClearCondition() *ExitPointUpdate {
 	return epu
 }
 
-// SetIndex sets the index field.
-func (epu *ExitPointUpdate) SetIndex(i int) *ExitPointUpdate {
-	epu.mutation.ResetIndex()
-	epu.mutation.SetIndex(i)
-	return epu
-}
-
-// SetNillableIndex sets the index field if the given value is not nil.
-func (epu *ExitPointUpdate) SetNillableIndex(i *int) *ExitPointUpdate {
-	if i != nil {
-		epu.SetIndex(*i)
-	}
-	return epu
-}
-
-// AddIndex adds i to index.
-func (epu *ExitPointUpdate) AddIndex(i int) *ExitPointUpdate {
-	epu.mutation.AddIndex(i)
-	return epu
-}
-
-// ClearIndex clears the value of index.
-func (epu *ExitPointUpdate) ClearIndex() *ExitPointUpdate {
-	epu.mutation.ClearIndex()
-	return epu
-}
-
 // AddNextEntryPointIDs adds the next_entry_points edge to EntryPoint by ids.
 func (epu *ExitPointUpdate) AddNextEntryPointIDs(ids ...int) *ExitPointUpdate {
 	epu.mutation.AddNextEntryPointIDs(ids...)
@@ -294,26 +267,6 @@ func (epu *ExitPointUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: exitpoint.FieldCondition,
 		})
 	}
-	if value, ok := epu.mutation.Index(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt,
-			Value:  value,
-			Column: exitpoint.FieldIndex,
-		})
-	}
-	if value, ok := epu.mutation.AddedIndex(); ok {
-		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt,
-			Value:  value,
-			Column: exitpoint.FieldIndex,
-		})
-	}
-	if epu.mutation.IndexCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt,
-			Column: exitpoint.FieldIndex,
-		})
-	}
 	if epu.mutation.NextEntryPointsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2M,
@@ -456,33 +409,6 @@ func (epuo *ExitPointUpdateOne) SetCondition(fe *flowschema.VariableExpression) 
 // ClearCondition clears the value of condition.
 func (epuo *ExitPointUpdateOne) ClearCondition() *ExitPointUpdateOne {
 	epuo.mutation.ClearCondition()
-	return epuo
-}
-
-// SetIndex sets the index field.
-func (epuo *ExitPointUpdateOne) SetIndex(i int) *ExitPointUpdateOne {
-	epuo.mutation.ResetIndex()
-	epuo.mutation.SetIndex(i)
-	return epuo
-}
-
-// SetNillableIndex sets the index field if the given value is not nil.
-func (epuo *ExitPointUpdateOne) SetNillableIndex(i *int) *ExitPointUpdateOne {
-	if i != nil {
-		epuo.SetIndex(*i)
-	}
-	return epuo
-}
-
-// AddIndex adds i to index.
-func (epuo *ExitPointUpdateOne) AddIndex(i int) *ExitPointUpdateOne {
-	epuo.mutation.AddIndex(i)
-	return epuo
-}
-
-// ClearIndex clears the value of index.
-func (epuo *ExitPointUpdateOne) ClearIndex() *ExitPointUpdateOne {
-	epuo.mutation.ClearIndex()
 	return epuo
 }
 
@@ -677,26 +603,6 @@ func (epuo *ExitPointUpdateOne) sqlSave(ctx context.Context) (_node *ExitPoint, 
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeJSON,
 			Column: exitpoint.FieldCondition,
-		})
-	}
-	if value, ok := epuo.mutation.Index(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt,
-			Value:  value,
-			Column: exitpoint.FieldIndex,
-		})
-	}
-	if value, ok := epuo.mutation.AddedIndex(); ok {
-		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt,
-			Value:  value,
-			Column: exitpoint.FieldIndex,
-		})
-	}
-	if epuo.mutation.IndexCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt,
-			Column: exitpoint.FieldIndex,
 		})
 	}
 	if epuo.mutation.NextEntryPointsCleared() {

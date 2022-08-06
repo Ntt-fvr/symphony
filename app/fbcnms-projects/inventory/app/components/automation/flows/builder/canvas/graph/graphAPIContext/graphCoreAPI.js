@@ -24,7 +24,6 @@ import {
   blockNameFixer,
   buildPaperConnectionValidation,
   buildPaperInteractivityCheck,
-  getValidateEmbedding,
   handleNewConnections,
 } from '../utils/helpers';
 import {handleMagnetPorts} from '../paper/helpers';
@@ -84,29 +83,15 @@ function graphBindToContainer(containerElement: HTMLElement) {
   const paper = new GraphFactory.Paper({
     el: containerElement,
     model: graph,
-    embeddingMode: true,
     width: '100%',
     height: '100%',
-    gridSize: 30,
-    drawGrid: {
-      name: 'dot',
-      args: [
-        {
-          color: '#9da9be',
-          thickness: 2,
-        },
-      ],
-    },
+    gridSize: 1,
     background: {
       color: symphony.palette.D100,
     },
     ...DEFAULT_LINK_SETTINGS,
     validateConnection: buildPaperConnectionValidation(this),
     interactive: buildPaperInteractivityCheck(this),
-    validateEmbedding: function (childView, parentView) {
-      const embedding = getValidateEmbedding(childView, parentView);
-      return embedding;
-    },
   });
 
   const shapesFactory = new ShapesFactory(paper);
@@ -220,8 +205,7 @@ function graphRemoveConnector(connector: IConnector) {
 }
 
 function graphAddConnector(source: IBlock, target: IBlock) {
-  const sourcePort = source.getOutputPorts()[0]?.id;
-  const connector = source.addConnector(sourcePort, target);
+  const connector = source.addConnector(null, target);
 
   if (connector == null || this.current == null) {
     return;

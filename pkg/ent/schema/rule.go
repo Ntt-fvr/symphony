@@ -23,8 +23,8 @@ func (Rule) Fields() []ent.Field {
 	return []ent.Field{
 		field.String("name").NotEmpty().Unique(),
 		field.Int("gracePeriod"),
-		field.Time("startDateTime").Optional().Nillable(),
-		field.Time("endDateTime").Optional().Nillable(),
+		field.Time("startDateTime"),
+		field.Time("endDateTime"),
 		field.Bool("status"),
 		field.String("eventTypeName").Optional().Nillable(),
 		field.String("specificProblem").Optional().Nillable(),

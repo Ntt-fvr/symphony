@@ -21,7 +21,6 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/locationtype"
 	"github.com/facebookincubator/symphony/pkg/ent/predicate"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
-	"github.com/facebookincubator/symphony/pkg/ent/resourcetyperelationship"
 	"github.com/facebookincubator/symphony/pkg/ent/surveytemplatecategory"
 )
 
@@ -34,11 +33,10 @@ type LocationTypeQuery struct {
 	unique     []string
 	predicates []predicate.LocationType
 	// eager-loading edges.
-	withLocations                    *LocationQuery
-	withPropertyTypes                *PropertyTypeQuery
-	withSurveyTemplateCategories     *SurveyTemplateCategoryQuery
-	withResourceRelationshipLocation *ResourceTypeRelationshipQuery
-	withDocumentCategory             *DocumentCategoryQuery
+	withLocations                *LocationQuery
+	withPropertyTypes            *PropertyTypeQuery
+	withSurveyTemplateCategories *SurveyTemplateCategoryQuery
+	withDocumentCategory         *DocumentCategoryQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -127,28 +125,6 @@ func (ltq *LocationTypeQuery) QuerySurveyTemplateCategories() *SurveyTemplateCat
 			sqlgraph.From(locationtype.Table, locationtype.FieldID, selector),
 			sqlgraph.To(surveytemplatecategory.Table, surveytemplatecategory.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, locationtype.SurveyTemplateCategoriesTable, locationtype.SurveyTemplateCategoriesColumn),
-		)
-		fromU = sqlgraph.SetNeighbors(ltq.driver.Dialect(), step)
-		return fromU, nil
-	}
-	return query
-}
-
-// QueryResourceRelationshipLocation chains the current query on the resource_relationship_location edge.
-func (ltq *LocationTypeQuery) QueryResourceRelationshipLocation() *ResourceTypeRelationshipQuery {
-	query := &ResourceTypeRelationshipQuery{config: ltq.config}
-	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
-		if err := ltq.prepareQuery(ctx); err != nil {
-			return nil, err
-		}
-		selector := ltq.sqlQuery()
-		if err := selector.Err(); err != nil {
-			return nil, err
-		}
-		step := sqlgraph.NewStep(
-			sqlgraph.From(locationtype.Table, locationtype.FieldID, selector),
-			sqlgraph.To(resourcetyperelationship.Table, resourcetyperelationship.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, locationtype.ResourceRelationshipLocationTable, locationtype.ResourceRelationshipLocationColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(ltq.driver.Dialect(), step)
 		return fromU, nil
@@ -348,17 +324,16 @@ func (ltq *LocationTypeQuery) Clone() *LocationTypeQuery {
 		return nil
 	}
 	return &LocationTypeQuery{
-		config:                           ltq.config,
-		limit:                            ltq.limit,
-		offset:                           ltq.offset,
-		order:                            append([]OrderFunc{}, ltq.order...),
-		unique:                           append([]string{}, ltq.unique...),
-		predicates:                       append([]predicate.LocationType{}, ltq.predicates...),
-		withLocations:                    ltq.withLocations.Clone(),
-		withPropertyTypes:                ltq.withPropertyTypes.Clone(),
-		withSurveyTemplateCategories:     ltq.withSurveyTemplateCategories.Clone(),
-		withResourceRelationshipLocation: ltq.withResourceRelationshipLocation.Clone(),
-		withDocumentCategory:             ltq.withDocumentCategory.Clone(),
+		config:                       ltq.config,
+		limit:                        ltq.limit,
+		offset:                       ltq.offset,
+		order:                        append([]OrderFunc{}, ltq.order...),
+		unique:                       append([]string{}, ltq.unique...),
+		predicates:                   append([]predicate.LocationType{}, ltq.predicates...),
+		withLocations:                ltq.withLocations.Clone(),
+		withPropertyTypes:            ltq.withPropertyTypes.Clone(),
+		withSurveyTemplateCategories: ltq.withSurveyTemplateCategories.Clone(),
+		withDocumentCategory:         ltq.withDocumentCategory.Clone(),
 		// clone intermediate query.
 		sql:  ltq.sql.Clone(),
 		path: ltq.path,
@@ -395,17 +370,6 @@ func (ltq *LocationTypeQuery) WithSurveyTemplateCategories(opts ...func(*SurveyT
 		opt(query)
 	}
 	ltq.withSurveyTemplateCategories = query
-	return ltq
-}
-
-//  WithResourceRelationshipLocation tells the query-builder to eager-loads the nodes that are connected to
-// the "resource_relationship_location" edge. The optional arguments used to configure the query builder of the edge.
-func (ltq *LocationTypeQuery) WithResourceRelationshipLocation(opts ...func(*ResourceTypeRelationshipQuery)) *LocationTypeQuery {
-	query := &ResourceTypeRelationshipQuery{config: ltq.config}
-	for _, opt := range opts {
-		opt(query)
-	}
-	ltq.withResourceRelationshipLocation = query
 	return ltq
 }
 
@@ -489,11 +453,10 @@ func (ltq *LocationTypeQuery) sqlAll(ctx context.Context) ([]*LocationType, erro
 	var (
 		nodes       = []*LocationType{}
 		_spec       = ltq.querySpec()
-		loadedTypes = [5]bool{
+		loadedTypes = [4]bool{
 			ltq.withLocations != nil,
 			ltq.withPropertyTypes != nil,
 			ltq.withSurveyTemplateCategories != nil,
-			ltq.withResourceRelationshipLocation != nil,
 			ltq.withDocumentCategory != nil,
 		}
 	)
@@ -602,35 +565,6 @@ func (ltq *LocationTypeQuery) sqlAll(ctx context.Context) ([]*LocationType, erro
 				return nil, fmt.Errorf(`unexpected foreign-key "location_type_survey_template_categories" returned %v for node %v`, *fk, n.ID)
 			}
 			node.Edges.SurveyTemplateCategories = append(node.Edges.SurveyTemplateCategories, n)
-		}
-	}
-
-	if query := ltq.withResourceRelationshipLocation; query != nil {
-		fks := make([]driver.Value, 0, len(nodes))
-		nodeids := make(map[int]*LocationType)
-		for i := range nodes {
-			fks = append(fks, nodes[i].ID)
-			nodeids[nodes[i].ID] = nodes[i]
-			nodes[i].Edges.ResourceRelationshipLocation = []*ResourceTypeRelationship{}
-		}
-		query.withFKs = true
-		query.Where(predicate.ResourceTypeRelationship(func(s *sql.Selector) {
-			s.Where(sql.InValues(locationtype.ResourceRelationshipLocationColumn, fks...))
-		}))
-		neighbors, err := query.All(ctx)
-		if err != nil {
-			return nil, err
-		}
-		for _, n := range neighbors {
-			fk := n.location_type_resource_relationship_location
-			if fk == nil {
-				return nil, fmt.Errorf(`foreign-key "location_type_resource_relationship_location" is nil for node %v`, n.ID)
-			}
-			node, ok := nodeids[*fk]
-			if !ok {
-				return nil, fmt.Errorf(`unexpected foreign-key "location_type_resource_relationship_location" returned %v for node %v`, *fk, n.ID)
-			}
-			node.Edges.ResourceRelationshipLocation = append(node.Edges.ResourceRelationshipLocation, n)
 		}
 	}
 

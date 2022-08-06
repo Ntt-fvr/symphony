@@ -160,10 +160,10 @@ func Duration(v float64) predicate.WorkOrder {
 	})
 }
 
-// ScheduledAt applies equality check predicate on the "scheduled_at" field. It's identical to ScheduledAtEQ.
-func ScheduledAt(v time.Time) predicate.WorkOrder {
+// SchedulledAt applies equality check predicate on the "schedulled_at" field. It's identical to SchedulledAtEQ.
+func SchedulledAt(v time.Time) predicate.WorkOrder {
 	return predicate.WorkOrder(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldScheduledAt), v))
+		s.Where(sql.EQ(s.C(FieldSchedulledAt), v))
 	})
 }
 
@@ -171,13 +171,6 @@ func ScheduledAt(v time.Time) predicate.WorkOrder {
 func DueDate(v time.Time) predicate.WorkOrder {
 	return predicate.WorkOrder(func(s *sql.Selector) {
 		s.Where(sql.EQ(s.C(FieldDueDate), v))
-	})
-}
-
-// IsNameEditable applies equality check predicate on the "is_name_editable" field. It's identical to IsNameEditableEQ.
-func IsNameEditable(v bool) predicate.WorkOrder {
-	return predicate.WorkOrder(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldIsNameEditable), v))
 	})
 }
 
@@ -1101,22 +1094,22 @@ func DurationNotNil() predicate.WorkOrder {
 	})
 }
 
-// ScheduledAtEQ applies the EQ predicate on the "scheduled_at" field.
-func ScheduledAtEQ(v time.Time) predicate.WorkOrder {
+// SchedulledAtEQ applies the EQ predicate on the "schedulled_at" field.
+func SchedulledAtEQ(v time.Time) predicate.WorkOrder {
 	return predicate.WorkOrder(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldScheduledAt), v))
+		s.Where(sql.EQ(s.C(FieldSchedulledAt), v))
 	})
 }
 
-// ScheduledAtNEQ applies the NEQ predicate on the "scheduled_at" field.
-func ScheduledAtNEQ(v time.Time) predicate.WorkOrder {
+// SchedulledAtNEQ applies the NEQ predicate on the "schedulled_at" field.
+func SchedulledAtNEQ(v time.Time) predicate.WorkOrder {
 	return predicate.WorkOrder(func(s *sql.Selector) {
-		s.Where(sql.NEQ(s.C(FieldScheduledAt), v))
+		s.Where(sql.NEQ(s.C(FieldSchedulledAt), v))
 	})
 }
 
-// ScheduledAtIn applies the In predicate on the "scheduled_at" field.
-func ScheduledAtIn(vs ...time.Time) predicate.WorkOrder {
+// SchedulledAtIn applies the In predicate on the "schedulled_at" field.
+func SchedulledAtIn(vs ...time.Time) predicate.WorkOrder {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
@@ -1128,12 +1121,12 @@ func ScheduledAtIn(vs ...time.Time) predicate.WorkOrder {
 			s.Where(sql.False())
 			return
 		}
-		s.Where(sql.In(s.C(FieldScheduledAt), v...))
+		s.Where(sql.In(s.C(FieldSchedulledAt), v...))
 	})
 }
 
-// ScheduledAtNotIn applies the NotIn predicate on the "scheduled_at" field.
-func ScheduledAtNotIn(vs ...time.Time) predicate.WorkOrder {
+// SchedulledAtNotIn applies the NotIn predicate on the "schedulled_at" field.
+func SchedulledAtNotIn(vs ...time.Time) predicate.WorkOrder {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
@@ -1145,49 +1138,49 @@ func ScheduledAtNotIn(vs ...time.Time) predicate.WorkOrder {
 			s.Where(sql.False())
 			return
 		}
-		s.Where(sql.NotIn(s.C(FieldScheduledAt), v...))
+		s.Where(sql.NotIn(s.C(FieldSchedulledAt), v...))
 	})
 }
 
-// ScheduledAtGT applies the GT predicate on the "scheduled_at" field.
-func ScheduledAtGT(v time.Time) predicate.WorkOrder {
+// SchedulledAtGT applies the GT predicate on the "schedulled_at" field.
+func SchedulledAtGT(v time.Time) predicate.WorkOrder {
 	return predicate.WorkOrder(func(s *sql.Selector) {
-		s.Where(sql.GT(s.C(FieldScheduledAt), v))
+		s.Where(sql.GT(s.C(FieldSchedulledAt), v))
 	})
 }
 
-// ScheduledAtGTE applies the GTE predicate on the "scheduled_at" field.
-func ScheduledAtGTE(v time.Time) predicate.WorkOrder {
+// SchedulledAtGTE applies the GTE predicate on the "schedulled_at" field.
+func SchedulledAtGTE(v time.Time) predicate.WorkOrder {
 	return predicate.WorkOrder(func(s *sql.Selector) {
-		s.Where(sql.GTE(s.C(FieldScheduledAt), v))
+		s.Where(sql.GTE(s.C(FieldSchedulledAt), v))
 	})
 }
 
-// ScheduledAtLT applies the LT predicate on the "scheduled_at" field.
-func ScheduledAtLT(v time.Time) predicate.WorkOrder {
+// SchedulledAtLT applies the LT predicate on the "schedulled_at" field.
+func SchedulledAtLT(v time.Time) predicate.WorkOrder {
 	return predicate.WorkOrder(func(s *sql.Selector) {
-		s.Where(sql.LT(s.C(FieldScheduledAt), v))
+		s.Where(sql.LT(s.C(FieldSchedulledAt), v))
 	})
 }
 
-// ScheduledAtLTE applies the LTE predicate on the "scheduled_at" field.
-func ScheduledAtLTE(v time.Time) predicate.WorkOrder {
+// SchedulledAtLTE applies the LTE predicate on the "schedulled_at" field.
+func SchedulledAtLTE(v time.Time) predicate.WorkOrder {
 	return predicate.WorkOrder(func(s *sql.Selector) {
-		s.Where(sql.LTE(s.C(FieldScheduledAt), v))
+		s.Where(sql.LTE(s.C(FieldSchedulledAt), v))
 	})
 }
 
-// ScheduledAtIsNil applies the IsNil predicate on the "scheduled_at" field.
-func ScheduledAtIsNil() predicate.WorkOrder {
+// SchedulledAtIsNil applies the IsNil predicate on the "schedulled_at" field.
+func SchedulledAtIsNil() predicate.WorkOrder {
 	return predicate.WorkOrder(func(s *sql.Selector) {
-		s.Where(sql.IsNull(s.C(FieldScheduledAt)))
+		s.Where(sql.IsNull(s.C(FieldSchedulledAt)))
 	})
 }
 
-// ScheduledAtNotNil applies the NotNil predicate on the "scheduled_at" field.
-func ScheduledAtNotNil() predicate.WorkOrder {
+// SchedulledAtNotNil applies the NotNil predicate on the "schedulled_at" field.
+func SchedulledAtNotNil() predicate.WorkOrder {
 	return predicate.WorkOrder(func(s *sql.Selector) {
-		s.Where(sql.NotNull(s.C(FieldScheduledAt)))
+		s.Where(sql.NotNull(s.C(FieldSchedulledAt)))
 	})
 }
 
@@ -1278,34 +1271,6 @@ func DueDateIsNil() predicate.WorkOrder {
 func DueDateNotNil() predicate.WorkOrder {
 	return predicate.WorkOrder(func(s *sql.Selector) {
 		s.Where(sql.NotNull(s.C(FieldDueDate)))
-	})
-}
-
-// IsNameEditableEQ applies the EQ predicate on the "is_name_editable" field.
-func IsNameEditableEQ(v bool) predicate.WorkOrder {
-	return predicate.WorkOrder(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldIsNameEditable), v))
-	})
-}
-
-// IsNameEditableNEQ applies the NEQ predicate on the "is_name_editable" field.
-func IsNameEditableNEQ(v bool) predicate.WorkOrder {
-	return predicate.WorkOrder(func(s *sql.Selector) {
-		s.Where(sql.NEQ(s.C(FieldIsNameEditable), v))
-	})
-}
-
-// IsNameEditableIsNil applies the IsNil predicate on the "is_name_editable" field.
-func IsNameEditableIsNil() predicate.WorkOrder {
-	return predicate.WorkOrder(func(s *sql.Selector) {
-		s.Where(sql.IsNull(s.C(FieldIsNameEditable)))
-	})
-}
-
-// IsNameEditableNotNil applies the NotNil predicate on the "is_name_editable" field.
-func IsNameEditableNotNil() predicate.WorkOrder {
-	return predicate.WorkOrder(func(s *sql.Selector) {
-		s.Where(sql.NotNull(s.C(FieldIsNameEditable)))
 	})
 }
 
@@ -1748,34 +1713,6 @@ func HasAppointmentWith(preds ...predicate.Appointment) predicate.WorkOrder {
 			sqlgraph.From(Table, FieldID),
 			sqlgraph.To(AppointmentInverseTable, FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, AppointmentTable, AppointmentColumn),
-		)
-		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
-			for _, p := range preds {
-				p(s)
-			}
-		})
-	})
-}
-
-// HasFlowInstance applies the HasEdge predicate on the "flow_instance" edge.
-func HasFlowInstance() predicate.WorkOrder {
-	return predicate.WorkOrder(func(s *sql.Selector) {
-		step := sqlgraph.NewStep(
-			sqlgraph.From(Table, FieldID),
-			sqlgraph.To(FlowInstanceTable, FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, false, FlowInstanceTable, FlowInstanceColumn),
-		)
-		sqlgraph.HasNeighbors(s, step)
-	})
-}
-
-// HasFlowInstanceWith applies the HasEdge predicate on the "flow_instance" edge with a given conditions (other predicates).
-func HasFlowInstanceWith(preds ...predicate.FlowInstance) predicate.WorkOrder {
-	return predicate.WorkOrder(func(s *sql.Selector) {
-		step := sqlgraph.NewStep(
-			sqlgraph.From(Table, FieldID),
-			sqlgraph.To(FlowInstanceInverseTable, FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, false, FlowInstanceTable, FlowInstanceColumn),
 		)
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {
