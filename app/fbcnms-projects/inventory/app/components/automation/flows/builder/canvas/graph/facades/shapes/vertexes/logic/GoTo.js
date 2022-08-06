@@ -26,7 +26,7 @@ const FILL_COLOR = symphony.palette.AUTOMATION.VIOLET;
 
 const TOTAL_SIZE = 72;
 const PADDING = 5;
-const BORDER = 6;
+const BORDER = 4;
 const BORDER_RADIUS = 16;
 
 const INNER_SIZE = TOTAL_SIZE - 2 * PADDING;
@@ -52,7 +52,7 @@ const defaultProperties = {
     },
     image: {
       ...VERTEX_COMMON_DISPLAY.defaultAttrProps,
-      xlinkHref: '/inventory/static/svg/BlockFlowGoTo.svg',
+      xlinkHref: '/inventory/static/svg/BlocksGoTo.svg',
       width: IMAGE_SIZE,
       height: IMAGE_SIZE,
       x: IMAGE_PADDING,

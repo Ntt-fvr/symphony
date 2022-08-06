@@ -1,0 +1,7 @@
+mutation editTech($input: EditTechInput!) {
+  editTech(input: $input) {
+    id
+    name
+    domainFk{id}
+  }
+}

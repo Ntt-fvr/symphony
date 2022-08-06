@@ -42,10 +42,12 @@ const (
 	FieldCloseDate = "close_date"
 	// FieldDuration holds the string denoting the duration field in the database.
 	FieldDuration = "duration"
-	// FieldSchedulledAt holds the string denoting the schedulled_at field in the database.
-	FieldSchedulledAt = "schedulled_at"
+	// FieldScheduledAt holds the string denoting the scheduled_at field in the database.
+	FieldScheduledAt = "scheduled_at"
 	// FieldDueDate holds the string denoting the due_date field in the database.
 	FieldDueDate = "due_date"
+	// FieldIsNameEditable holds the string denoting the is_name_editable field in the database.
+	FieldIsNameEditable = "is_name_editable"
 
 	// EdgeType holds the string denoting the type edge name in mutations.
 	EdgeType = "type"
@@ -79,6 +81,8 @@ const (
 	EdgeAssignee = "assignee"
 	// EdgeAppointment holds the string denoting the appointment edge name in mutations.
 	EdgeAppointment = "appointment"
+	// EdgeFlowInstance holds the string denoting the flow_instance edge name in mutations.
+	EdgeFlowInstance = "flow_instance"
 
 	// Table holds the table name of the workorder in the database.
 	Table = "work_orders"
@@ -194,6 +198,13 @@ const (
 	AppointmentInverseTable = "appointments"
 	// AppointmentColumn is the table column denoting the appointment relation/edge.
 	AppointmentColumn = "work_order_appointment"
+	// FlowInstanceTable is the table the holds the flow_instance relation/edge.
+	FlowInstanceTable = "work_orders"
+	// FlowInstanceInverseTable is the table name for the FlowInstance entity.
+	// It exists in this package in order to avoid circular dependency with the "flowinstance" package.
+	FlowInstanceInverseTable = "flow_instances"
+	// FlowInstanceColumn is the table column denoting the flow_instance relation/edge.
+	FlowInstanceColumn = "work_order_flow_instance"
 )
 
 // Columns holds all SQL columns for workorder fields.
@@ -210,8 +221,9 @@ var Columns = []string{
 	FieldIndex,
 	FieldCloseDate,
 	FieldDuration,
-	FieldSchedulledAt,
+	FieldScheduledAt,
 	FieldDueDate,
+	FieldIsNameEditable,
 }
 
 // ForeignKeys holds the SQL foreign-keys that are owned by the WorkOrder type.
@@ -223,6 +235,7 @@ var ForeignKeys = []string{
 	"work_order_location",
 	"work_order_owner",
 	"work_order_assignee",
+	"work_order_flow_instance",
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -257,6 +270,8 @@ var (
 	UpdateDefaultUpdateTime func() time.Time
 	// NameValidator is a validator for the "name" field. It is called by the builders before save.
 	NameValidator func(string) error
+	// DefaultIsNameEditable holds the default value on creation for the is_name_editable field.
+	DefaultIsNameEditable bool
 )
 
 // Status defines the type for the status enum field.

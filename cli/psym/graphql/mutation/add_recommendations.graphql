@@ -1,0 +1,22 @@
+mutation addRecommendations($input: AddRecommendationsInput!) {
+  addRecommendations(input: $input) {
+		id
+    externalID
+    resource
+    alarmType
+    shortDescription
+    longDescription
+    command
+    priority
+    status
+    runbook
+    used
+    recommendationsSources{id}
+    recommendationsCategory{id}
+    userApprobed{id}
+    userCreate{id}
+    vendor{id}
+    
+  }
+}
+

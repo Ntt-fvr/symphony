@@ -35,6 +35,7 @@ export type WorkOrderDetails_workOrder = {|
   +id: string,
   +name: string,
   +description: ?string,
+  +scheduledAt: ?any,
   +organizationFk: ?{|
     +id: string,
     +name: string,
@@ -73,6 +74,10 @@ export type WorkOrderDetails_workOrder = {|
   +priority: WorkOrderPriority,
   +properties: $ReadOnlyArray<?{|
     +id: string,
+    +propertyTypeValue: ?{|
+      +id: string,
+      +name: string,
+    |},
     +propertyType: {|
       +id: string,
       +name: string,
@@ -92,6 +97,50 @@ export type WorkOrderDetails_workOrder = {|
       +isMandatory: ?boolean,
       +category: ?string,
       +isDeleted: ?boolean,
+      +parentPropertyType: ?{|
+        +id: string,
+        +name: string,
+      |},
+      +propertyTypeValues: ?$ReadOnlyArray<{|
+        +id: string,
+        +isDeleted: ?boolean,
+        +name: string,
+        +parentPropertyTypeValue: ?$ReadOnlyArray<?{|
+          +id: string,
+          +isDeleted: ?boolean,
+          +name: string,
+        |}>,
+      |}>,
+      +dependencePropertyTypes: $ReadOnlyArray<?{|
+        +id: string,
+        +name: string,
+        +type: PropertyKind,
+        +nodeType: ?string,
+        +index: ?number,
+        +stringValue: ?string,
+        +intValue: ?number,
+        +booleanValue: ?boolean,
+        +floatValue: ?number,
+        +latitudeValue: ?number,
+        +longitudeValue: ?number,
+        +rangeFromValue: ?number,
+        +rangeToValue: ?number,
+        +isEditable: ?boolean,
+        +isMandatory: ?boolean,
+        +isInstanceProperty: ?boolean,
+        +isDeleted: ?boolean,
+        +category: ?string,
+        +propertyTypeValues: ?$ReadOnlyArray<{|
+          +id: string,
+          +isDeleted: ?boolean,
+          +name: string,
+          +parentPropertyTypeValue: ?$ReadOnlyArray<?{|
+            +id: string,
+            +isDeleted: ?boolean,
+            +name: string,
+          |}>,
+        |}>,
+      |}>,
     |},
     +stringValue: ?string,
     +intValue: ?number,
@@ -254,109 +303,165 @@ v5 = [
     "storageKey": null
   }
 ],
-v6 = {
+v6 = [
+  (v0/*: any*/),
+  (v1/*: any*/)
+],
+v7 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "type",
   "storageKey": null
 },
-v7 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "index",
-  "storageKey": null
-},
 v8 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "stringValue",
+  "name": "nodeType",
   "storageKey": null
 },
 v9 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "intValue",
+  "name": "index",
   "storageKey": null
 },
 v10 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "booleanValue",
+  "name": "stringValue",
   "storageKey": null
 },
 v11 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "floatValue",
+  "name": "intValue",
   "storageKey": null
 },
 v12 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "latitudeValue",
+  "name": "booleanValue",
   "storageKey": null
 },
 v13 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "longitudeValue",
+  "name": "floatValue",
   "storageKey": null
 },
 v14 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "rangeFromValue",
+  "name": "latitudeValue",
   "storageKey": null
 },
 v15 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "rangeToValue",
+  "name": "longitudeValue",
   "storageKey": null
 },
 v16 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "isMandatory",
+  "name": "rangeFromValue",
   "storageKey": null
 },
 v17 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
+  "name": "rangeToValue",
+  "storageKey": null
+},
+v18 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "isEditable",
+  "storageKey": null
+},
+v19 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "isInstanceProperty",
+  "storageKey": null
+},
+v20 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "isMandatory",
+  "storageKey": null
+},
+v21 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
   "name": "category",
   "storageKey": null
 },
-v18 = [
-  (v0/*: any*/),
-  (v1/*: any*/)
-],
-v19 = [
+v22 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "isDeleted",
+  "storageKey": null
+},
+v23 = {
+  "alias": null,
+  "args": null,
+  "concreteType": "PropertyTypeValue",
+  "kind": "LinkedField",
+  "name": "propertyTypeValues",
+  "plural": true,
+  "selections": [
+    (v0/*: any*/),
+    (v22/*: any*/),
+    (v1/*: any*/),
+    {
+      "alias": null,
+      "args": null,
+      "concreteType": "PropertyTypeValue",
+      "kind": "LinkedField",
+      "name": "parentPropertyTypeValue",
+      "plural": true,
+      "selections": [
+        (v0/*: any*/),
+        (v22/*: any*/),
+        (v1/*: any*/)
+      ],
+      "storageKey": null
+    }
+  ],
+  "storageKey": null
+},
+v24 = [
   {
     "args": null,
     "kind": "FragmentSpread",
     "name": "EntityDocumentsTable_files"
   }
 ],
-v20 = {
+v25 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "title",
   "storageKey": null
 },
-v21 = {
+v26 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
@@ -372,6 +477,13 @@ return {
     (v0/*: any*/),
     (v1/*: any*/),
     (v2/*: any*/),
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "scheduledAt",
+      "storageKey": null
+    },
     {
       "alias": null,
       "args": null,
@@ -523,6 +635,16 @@ return {
         {
           "alias": null,
           "args": null,
+          "concreteType": "PropertyTypeValue",
+          "kind": "LinkedField",
+          "name": "propertyTypeValue",
+          "plural": false,
+          "selections": (v6/*: any*/),
+          "storageKey": null
+        },
+        {
+          "alias": null,
+          "args": null,
           "concreteType": "PropertyType",
           "kind": "LinkedField",
           "name": "propertyType",
@@ -530,14 +652,6 @@ return {
           "selections": [
             (v0/*: any*/),
             (v1/*: any*/),
-            (v6/*: any*/),
-            {
-              "alias": null,
-              "args": null,
-              "kind": "ScalarField",
-              "name": "nodeType",
-              "storageKey": null
-            },
             (v7/*: any*/),
             (v8/*: any*/),
             (v9/*: any*/),
@@ -547,40 +661,65 @@ return {
             (v13/*: any*/),
             (v14/*: any*/),
             (v15/*: any*/),
-            {
-              "alias": null,
-              "args": null,
-              "kind": "ScalarField",
-              "name": "isEditable",
-              "storageKey": null
-            },
-            {
-              "alias": null,
-              "args": null,
-              "kind": "ScalarField",
-              "name": "isInstanceProperty",
-              "storageKey": null
-            },
             (v16/*: any*/),
             (v17/*: any*/),
+            (v18/*: any*/),
+            (v19/*: any*/),
+            (v20/*: any*/),
+            (v21/*: any*/),
+            (v22/*: any*/),
             {
               "alias": null,
               "args": null,
-              "kind": "ScalarField",
-              "name": "isDeleted",
+              "concreteType": "PropertyType",
+              "kind": "LinkedField",
+              "name": "parentPropertyType",
+              "plural": false,
+              "selections": (v6/*: any*/),
+              "storageKey": null
+            },
+            (v23/*: any*/),
+            {
+              "alias": null,
+              "args": null,
+              "concreteType": "PropertyType",
+              "kind": "LinkedField",
+              "name": "dependencePropertyTypes",
+              "plural": true,
+              "selections": [
+                (v0/*: any*/),
+                (v1/*: any*/),
+                (v7/*: any*/),
+                (v8/*: any*/),
+                (v9/*: any*/),
+                (v10/*: any*/),
+                (v11/*: any*/),
+                (v12/*: any*/),
+                (v13/*: any*/),
+                (v14/*: any*/),
+                (v15/*: any*/),
+                (v16/*: any*/),
+                (v17/*: any*/),
+                (v18/*: any*/),
+                (v20/*: any*/),
+                (v19/*: any*/),
+                (v22/*: any*/),
+                (v21/*: any*/),
+                (v23/*: any*/)
+              ],
               "storageKey": null
             }
           ],
           "storageKey": null
         },
-        (v8/*: any*/),
-        (v9/*: any*/),
-        (v11/*: any*/),
         (v10/*: any*/),
-        (v12/*: any*/),
+        (v11/*: any*/),
         (v13/*: any*/),
+        (v12/*: any*/),
         (v14/*: any*/),
         (v15/*: any*/),
+        (v16/*: any*/),
+        (v17/*: any*/),
         {
           "alias": null,
           "args": null,
@@ -588,7 +727,7 @@ return {
           "kind": "LinkedField",
           "name": "nodeValue",
           "plural": false,
-          "selections": (v18/*: any*/),
+          "selections": (v6/*: any*/),
           "storageKey": null
         }
       ],
@@ -601,7 +740,7 @@ return {
       "kind": "LinkedField",
       "name": "images",
       "plural": true,
-      "selections": (v19/*: any*/),
+      "selections": (v24/*: any*/),
       "storageKey": null
     },
     {
@@ -611,7 +750,7 @@ return {
       "kind": "LinkedField",
       "name": "files",
       "plural": true,
-      "selections": (v19/*: any*/),
+      "selections": (v24/*: any*/),
       "storageKey": null
     },
     {
@@ -679,7 +818,7 @@ return {
           "kind": "LinkedField",
           "name": "type",
           "plural": false,
-          "selections": (v18/*: any*/),
+          "selections": (v6/*: any*/),
           "storageKey": null
         }
       ],
@@ -694,7 +833,7 @@ return {
       "plural": true,
       "selections": [
         (v0/*: any*/),
-        (v20/*: any*/),
+        (v25/*: any*/),
         (v2/*: any*/),
         {
           "alias": null,
@@ -705,10 +844,10 @@ return {
           "plural": true,
           "selections": [
             (v0/*: any*/),
-            (v7/*: any*/),
-            (v16/*: any*/),
-            (v6/*: any*/),
+            (v9/*: any*/),
             (v20/*: any*/),
+            (v7/*: any*/),
+            (v25/*: any*/),
             {
               "alias": null,
               "args": null,
@@ -730,7 +869,7 @@ return {
               "name": "enumValues",
               "storageKey": null
             },
-            (v8/*: any*/),
+            (v10/*: any*/),
             {
               "alias": null,
               "args": null,
@@ -803,7 +942,7 @@ return {
                   "name": "storeKey",
                   "storageKey": null
                 },
-                (v17/*: any*/),
+                (v21/*: any*/),
                 {
                   "alias": null,
                   "args": null,
@@ -837,7 +976,7 @@ return {
                   "name": "signalStrength",
                   "storageKey": null
                 },
-                (v21/*: any*/),
+                (v26/*: any*/),
                 {
                   "alias": null,
                   "args": null,
@@ -957,7 +1096,7 @@ return {
               "plural": true,
               "selections": [
                 (v0/*: any*/),
-                (v21/*: any*/),
+                (v26/*: any*/),
                 {
                   "alias": null,
                   "args": null,
@@ -1036,6 +1175,6 @@ return {
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = '40290a5b16bcf837c2d31ba5332e4e64';
+(node/*: any*/).hash = '05eebced3564947e9c1dbe9b5b9dcd0a';
 
 module.exports = node;

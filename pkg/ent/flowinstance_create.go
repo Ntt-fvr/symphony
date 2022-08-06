@@ -14,6 +14,7 @@ import (
 
 	"github.com/facebook/ent/dialect/sql/sqlgraph"
 	"github.com/facebook/ent/schema/field"
+	"github.com/facebookincubator/symphony/pkg/ent/automationactivity"
 	"github.com/facebookincubator/symphony/pkg/ent/blockinstance"
 	"github.com/facebookincubator/symphony/pkg/ent/flow"
 	"github.com/facebookincubator/symphony/pkg/ent/flowexecutiontemplate"
@@ -70,6 +71,12 @@ func (fic *FlowInstanceCreate) SetNillableStatus(f *flowinstance.Status) *FlowIn
 	return fic
 }
 
+// SetStartParams sets the start_params field.
+func (fic *FlowInstanceCreate) SetStartParams(fv []*flowschema.VariableValue) *FlowInstanceCreate {
+	fic.mutation.SetStartParams(fv)
+	return fic
+}
+
 // SetOutputParams sets the output_params field.
 func (fic *FlowInstanceCreate) SetOutputParams(fv []*flowschema.VariableValue) *FlowInstanceCreate {
 	fic.mutation.SetOutputParams(fv)
@@ -93,6 +100,14 @@ func (fic *FlowInstanceCreate) SetNillableIncompletionReason(s *string) *FlowIns
 // SetBssCode sets the bss_code field.
 func (fic *FlowInstanceCreate) SetBssCode(s string) *FlowInstanceCreate {
 	fic.mutation.SetBssCode(s)
+	return fic
+}
+
+// SetNillableBssCode sets the bss_code field if the given value is not nil.
+func (fic *FlowInstanceCreate) SetNillableBssCode(s *string) *FlowInstanceCreate {
+	if s != nil {
+		fic.SetBssCode(*s)
+	}
 	return fic
 }
 
@@ -194,6 +209,21 @@ func (fic *FlowInstanceCreate) SetParentSubflowBlock(b *BlockInstance) *FlowInst
 	return fic.SetParentSubflowBlockID(b.ID)
 }
 
+// AddFlowActivityIDs adds the flow_activities edge to AutomationActivity by ids.
+func (fic *FlowInstanceCreate) AddFlowActivityIDs(ids ...int) *FlowInstanceCreate {
+	fic.mutation.AddFlowActivityIDs(ids...)
+	return fic
+}
+
+// AddFlowActivities adds the flow_activities edges to AutomationActivity.
+func (fic *FlowInstanceCreate) AddFlowActivities(a ...*AutomationActivity) *FlowInstanceCreate {
+	ids := make([]int, len(a))
+	for i := range a {
+		ids[i] = a[i].ID
+	}
+	return fic.AddFlowActivityIDs(ids...)
+}
+
 // Mutation returns the FlowInstanceMutation object of the builder.
 func (fic *FlowInstanceCreate) Mutation() *FlowInstanceMutation {
 	return fic.mutation
@@ -276,9 +306,6 @@ func (fic *FlowInstanceCreate) check() error {
 			return &ValidationError{Name: "status", err: fmt.Errorf("ent: validator failed for field \"status\": %w", err)}
 		}
 	}
-	if _, ok := fic.mutation.BssCode(); !ok {
-		return &ValidationError{Name: "bss_code", err: errors.New("ent: missing required field \"bss_code\"")}
-	}
 	if _, ok := fic.mutation.StartDate(); !ok {
 		return &ValidationError{Name: "start_date", err: errors.New("ent: missing required field \"start_date\"")}
 	}
@@ -335,6 +362,14 @@ func (fic *FlowInstanceCreate) createSpec() (*FlowInstance, *sqlgraph.CreateSpec
 			Column: flowinstance.FieldStatus,
 		})
 		_node.Status = value
+	}
+	if value, ok := fic.mutation.StartParams(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeJSON,
+			Value:  value,
+			Column: flowinstance.FieldStartParams,
+		})
+		_node.StartParams = value
 	}
 	if value, ok := fic.mutation.OutputParams(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -452,6 +487,25 @@ func (fic *FlowInstanceCreate) createSpec() (*FlowInstance, *sqlgraph.CreateSpec
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: blockinstance.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := fic.mutation.FlowActivitiesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   flowinstance.FlowActivitiesTable,
+			Columns: []string{flowinstance.FlowActivitiesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: automationactivity.FieldID,
 				},
 			},
 		}

@@ -1,0 +1,275 @@
+# @genqlient(for: "AddBlockInstanceInput.inputJSON", omitempty: true, pointer: true)
+# @genqlient(for: "AddBlockInstanceInput.outputJSON", omitempty: true, pointer: true)
+mutation AddBlockInstance(
+    $flowInstanceID: ID!,
+    $blockInput: AddBlockInstanceInput!
+) {
+    addBlockInstance(flowInstanceId: $flowInstanceID, input: $blockInput) {
+        id
+    }
+}
+
+# @genqlient(for: "EditBlockInstanceInput.status", omitempty: true, pointer: true)
+# @genqlient(for: "EditBlockInstanceInput.inputJSON", omitempty: true, pointer: true)
+# @genqlient(for: "EditBlockInstanceInput.outputJSON", omitempty: true, pointer: true)
+# @genqlient(for: "EditBlockInstanceInput.failure_reason", omitempty: true, pointer: true)
+# @genqlient(for: "EditBlockInstanceInput.endDate", omitempty: true, pointer: true)
+mutation EditBlockInstance(
+    $blockInput: EditBlockInstanceInput!
+) {
+    editBlockInstance(input: $blockInput) {
+        id
+    }
+}
+
+# @genqlient(for: "EditFlowInstanceInput.bssCode", omitempty: true, pointer: true)
+# @genqlient(for: "EditFlowInstanceInput.serviceInstanceCode", omitempty: true, pointer: true)
+# @genqlient(for: "EditFlowInstanceInput.status", omitempty: true, pointer: true)
+# @genqlient(for: "EditFlowInstanceInput.endDate", omitempty: true, pointer: true)
+mutation EditFlowInstance(
+    $flowInput: EditFlowInstanceInput!
+) {
+    editFlowInstance(input: $flowInput) {
+        id
+    }
+}
+
+query FlowInstanceQuery($flowInstanceID: ID!) {
+    # @genqlient(typename: "FlowInstance")
+    flowInstance: node(id: $flowInstanceID) {
+        __typename
+        ... on FlowInstance {
+            id
+            startParams {
+                variableDefinitionKey
+                value
+            }
+            # @genqlient(typename: "FlowTemplate")
+            template {
+                id
+                # @genqlient(typename: "BaseBlock")
+                blocks {
+                    id
+                    enableInputTransformation
+                    inputTransfStrategy
+                    inputTransformation
+                    enableOutputTransformation
+                    outputTransfStrategy
+                    outputTransformation
+                    enableInputStateTransformation
+                    inputStateTransfStrategy
+                    inputStateTransformation
+                    enableOutputStateTransformation
+                    outputStateTransfStrategy
+                    outputStateTransformation
+                    enableErrorHandling
+                    enableRetryPolicy
+                    retryInterval
+                    units
+                    maxAttemps
+                    backoffRate
+                    addInputToOutput
+                    additionMethod
+                    # @genqlient(typename: "BlockDetail")
+                    details {
+                        __typename
+                        ... on StartBlock {
+                            # @genqlient(typename: "ExitPoint")
+                            exitPoint {
+                                # @genqlient(typename: "EntryPoint")
+                                nextEntryPoints {
+                                    # @genqlient(typename: "ParentBlock")
+                                    parentBlock {
+                                        id
+                                    }
+                                }
+                            }
+                        }
+                        ... on EndBlock {
+                            # @genqlient(typename: "Param")
+                            params {
+                                expression
+                            }
+                        }
+                        ... on GotoBlock {
+                            # @genqlient(typename: "GotoTarget")
+                            target {
+                                id
+                            }
+                        }
+                        ... on ChoiceBlock {
+                            # @genqlient(typename: "ChoiceRule")
+                            rules {
+                                # @genqlient(typename: "ChoiceRuleExitPoint")
+                                exitPoint {
+                                    index
+                                    # @genqlient(typename: "ChoiceRuleCondition")
+                                    condition {
+                                        expression
+                                    }
+                                    # @genqlient(typename: "EntryPoint")
+                                    nextEntryPoints {
+                                        # @genqlient(typename: "ParentBlock")
+                                        parentBlock {
+                                            id
+                                        }
+                                    }
+                                }
+                            }
+                            # @genqlient(typename: "ChoiceDefaultExitPoint")
+                            defaultExitPoint {
+                                # @genqlient(typename: "EntryPoint")
+                                nextEntryPoints {
+                                    # @genqlient(typename: "ParentBlock")
+                                    parentBlock {
+                                        id
+                                    }
+                                }
+                            }
+                        }
+                        ... on ExecuteFlowBlock {
+                            # @genqlient(typename: "SubFlow")
+                            flow {
+                                id
+                            }
+                            # @genqlient(typename: "ExitPoint")
+                            exitPoint {
+                                # @genqlient(typename: "EntryPoint")
+                                nextEntryPoints {
+                                    # @genqlient(typename: "ParentBlock")
+                                    parentBlock {
+                                        id
+                                    }
+                                }
+                            }
+                        }
+                        ... on ForEachBlock {
+                            # @genqlient(typename: "InternalExitPoint")
+                            internalExitPoint {
+                                # @genqlient(typename: "EntryPoint")
+                                nextEntryPoints {
+                                    # @genqlient(typename: "ParentBlock")
+                                    parentBlock {
+                                        id
+                                    }
+                                }
+                            }
+                            # @genqlient(typename: "ExitPoint")
+                            exitPoint {
+                                # @genqlient(typename: "EntryPoint")
+                                nextEntryPoints {
+                                    # @genqlient(typename: "ParentBlock")
+                                    parentBlock {
+                                        id
+                                    }
+                                }
+                            }
+                        }
+                        ... on KafkaBlock {
+                            brokers
+                            topic
+                            message
+                            messageType: type
+                            # @genqlient(typename: "ExitPoint")
+                            exitPoint {
+                                # @genqlient(typename: "EntryPoint")
+                                nextEntryPoints {
+                                    # @genqlient(typename: "ParentBlock")
+                                    parentBlock {
+                                        id
+                                    }
+                                }
+                            }
+                        }
+                        ... on InvokeRestAPIBlock {
+                            authType
+                            user
+                            password
+                            clientId
+                            clientSecret
+                            oidcUrl
+                            url
+                            method
+                            body
+                            timeout: connectionTimeOut
+                            # @genqlient(typename: "APIHeader")
+                            headers {
+                                key: variableDefinitionKey
+                                value
+                            }
+                            # @genqlient(typename: "ExitPoint")
+                            exitPoint {
+                                # @genqlient(typename: "EntryPoint")
+                                nextEntryPoints {
+                                    # @genqlient(typename: "ParentBlock")
+                                    parentBlock {
+                                        id
+                                    }
+                                }
+                            }
+                        }
+                        ... on ParallelBlock {
+                            # @genqlient(typename: "InternalExitPoint")
+                            internalExitPoint {
+                                # @genqlient(typename: "EntryPoint")
+                                nextEntryPoints {
+                                    # @genqlient(typename: "ParentBlock")
+                                    parentBlock {
+                                        id
+                                    }
+                                }
+                            }
+                            # @genqlient(typename: "ExitPoint")
+                            exitPoint {
+                                # @genqlient(typename: "EntryPoint")
+                                nextEntryPoints {
+                                    # @genqlient(typename: "ParentBlock")
+                                    parentBlock {
+                                        id
+                                    }
+                                }
+                            }
+                        }
+                        ... on TimerBlock {
+                            behavior
+                            seconds
+                            datetime
+                            enableExpressionL
+                            expression
+                            # @genqlient(typename: "ExitPoint")
+                            exitPoint {
+                                # @genqlient(typename: "EntryPoint")
+                                nextEntryPoints {
+                                    # @genqlient(typename: "ParentBlock")
+                                    parentBlock {
+                                        id
+                                    }
+                                }
+                            }
+                        }
+                        ... on WaitForSignalBlock {
+                            type
+                            signalModule
+                            customFilter
+                            blocked
+                            # @genqlient(typename: "ExitPoint")
+                            exitPoint {
+                                # @genqlient(typename: "EntryPoint")
+                                nextEntryPoints {
+                                    # @genqlient(typename: "ParentBlock")
+                                    parentBlock {
+                                        id
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    # @genqlient(typename: "NextBlock")
+                    nextBlocks {
+                        id
+                    }
+                }
+            }
+        }
+    }
+}

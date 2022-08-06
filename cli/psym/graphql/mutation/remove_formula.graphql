@@ -1,0 +1,3 @@
+mutation removeFormula($id: ID!) {
+  removeFormula(id: $id)
+}

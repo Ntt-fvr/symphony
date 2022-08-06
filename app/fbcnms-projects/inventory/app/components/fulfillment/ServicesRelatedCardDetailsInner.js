@@ -15,24 +15,22 @@ import Accordion from '@material-ui/core/Accordion';
 import AccordionDetails from '@material-ui/core/AccordionDetails';
 import AccordionSummary from '@material-ui/core/AccordionSummary';
 import Breadcrumbs from '@fbcnms/ui/components/Breadcrumbs';
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-
 import DynamicPropertyTypes from './common/DynamicPropertyTypes';
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import Grid from '@material-ui/core/Grid';
 import LinearScaleIcon from '@material-ui/icons/LinearScale';
-import Text from '@symphony/design-system/components/Text';
-import {makeStyles} from '@material-ui/styles';
-
+import ServicesTypeCardDetails from './ServicesTypeCardDetails';
 import ServicesTypes from './ServicesTypes';
+import Text from '@symphony/design-system/components/Text';
 import fbt from 'fbt';
 import symphony from '@symphony/design-system/theme/symphony';
-
-import ServicesTypeCardDetails from './ServicesTypeCardDetails';
+import {makeStyles} from '@material-ui/styles';
+import {useHistory} from 'react-router-dom';
 
 const useStyles = makeStyles(() => ({
   root: {
     flexGrow: '1',
-    margin: '40px',
+    margin: '30px',
     '&. MuiAccordionSummary-content': {
       margin: '4px 0',
     },
@@ -46,22 +44,18 @@ const useStyles = makeStyles(() => ({
   ServiceIdDescription: {
     display: 'flex',
     alignItems: 'center',
-    justifyContent: 'space-between',
   },
   inline: {
     display: 'flex',
     alignItems: 'center',
     flexGrow: 1,
   },
-  serviceId: {
-    paddingLeft: '2rem',
-  },
   AccordionDetails: {
     margin: '0 70px',
   },
   iconContainer: {
     borderRadius: '50%',
-    marginRight: '1.5rem',
+    marginRight: '10px',
     backgroundColor: symphony.palette.D50,
     color: symphony.palette.D500,
     width: '48px',
@@ -74,11 +68,17 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-const ServicesRelatedCardDetailsInner = () => {
+type Props = $ReadOnly<{|
+  handlerData: any,
+|}>;
+
+const ServicesRelatedCardDetailsInner = (props: Props) => {
+  const {handlerData} = props;
   const classes = useStyles();
   const [open, setOpen] = useState(false);
   const [returnServiceTypes, setReturnServiceTypes] = useState(false);
   const [returnServiceAndRelated, setReturnServiceAndRelated] = useState(false);
+  const history = useHistory();
 
   const showServicesTypes = () => {
     setReturnServiceTypes(true);
@@ -87,10 +87,13 @@ const ServicesRelatedCardDetailsInner = () => {
     return <ServicesTypes />;
   }
   const showServicesAndRelated = () => {
+    history.push(
+      `/fulfillment/fulfillmentCatalog/services?idService=${handlerData.item.Id}`,
+    );
     setReturnServiceAndRelated(true);
   };
   if (returnServiceAndRelated) {
-    return <ServicesTypeCardDetails />;
+    return <ServicesTypeCardDetails handlerData={handlerData} />;
   }
   return (
     <div className={classes.root}>
@@ -98,13 +101,13 @@ const ServicesRelatedCardDetailsInner = () => {
         <Breadcrumbs
           breadcrumbs={[
             {
-              id: 'initial',
+              id: 'Services',
               name: 'Services',
               onClick: () => showServicesTypes(),
             },
             {
-              id: 'id',
-              name: `CFS ID 112`,
+              id: handlerData.item.Id,
+              name: `${handlerData.item.Type} ID ${handlerData.item.Id}`,
               onClick: () => showServicesAndRelated(),
             },
             true && {
@@ -132,27 +135,22 @@ const ServicesRelatedCardDetailsInner = () => {
           aria-controls="panel1a-content"
           id="panel1a-header">
           <Grid container>
-            <Grid xs={4}>
+            <Grid sm={4}>
               <div className={classes.inline}>
                 <div className={classes.iconContainer}>
                   <LinearScaleIcon />
                 </div>
-                <Text variant={'h6'} weight={'bold'}>
+                <Text variant="h6" weight="bold">
                   RFS
                 </Text>
               </div>
             </Grid>
 
-            <Grid xs={7} className={classes.ServiceIdDescription}>
-              <DynamicPropertyTypes
-                className={classes.serviceId}
-                name={'Service ID'}
-                txt={'57'}
-              />
-              <DynamicPropertyTypes
-                name={'Description'}
-                txt={'RFS Last Mile'}
-              />
+            <Grid sm={4} className={classes.ServiceIdDescription}>
+              <DynamicPropertyTypes name="Service ID" txt="57" />
+            </Grid>
+            <Grid sm={4} className={classes.ServiceIdDescription}>
+              <DynamicPropertyTypes name="Description" txt="RFS Last Mile" />
             </Grid>
           </Grid>
         </AccordionSummary>
@@ -160,20 +158,17 @@ const ServicesRelatedCardDetailsInner = () => {
         <AccordionDetails className={classes.AccordionDetails}>
           <Grid container spacing={0}>
             <Grid xs={6}>
-              <DynamicPropertyTypes
-                name={'Description'}
-                txt={'RFS Last Mile'}
-              />
-              <DynamicPropertyTypes name={'HasStarted'} txt={'False'} />
-              <DynamicPropertyTypes name={'IsBundle'} txt={'False'} />
-              <DynamicPropertyTypes name={'IsServiceEnabled'} txt={'False'} />
-              <DynamicPropertyTypes name={'IsStateful'} txt={'Planed'} />
+              <DynamicPropertyTypes name="Description" txt={'RFS Last Mile'} />
+              <DynamicPropertyTypes name="HasStarted" txt={'False'} />
+              <DynamicPropertyTypes name="IsBundle" txt={'False'} />
+              <DynamicPropertyTypes name="IsServiceEnabled" txt={'False'} />
+              <DynamicPropertyTypes name="IsStateful" txt={'Planed'} />
             </Grid>
-            <Grid xs={6} className={''}>
-              <DynamicPropertyTypes name={'Name'} txt={'RFS_LM_001'} />
-              <DynamicPropertyTypes name={'ServiceState'} txt={'Planned'} />
-              <DynamicPropertyTypes name={'ServiceType'} txt={'BSA'} />
-              <DynamicPropertyTypes name={'State'} txt={'Planned'} />
+            <Grid xs={6}>
+              <DynamicPropertyTypes name="Name" txt={'RFS_LM_001'} />
+              <DynamicPropertyTypes name="ServiceState" txt={'Planned'} />
+              <DynamicPropertyTypes name="ServiceType" txt={'BSA'} />
+              <DynamicPropertyTypes name="State" txt={'Planned'} />
             </Grid>
           </Grid>
         </AccordionDetails>

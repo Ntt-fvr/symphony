@@ -14,13 +14,12 @@ import fbt from 'fbt';
 
 import ConfigureTitleSubItem from './common/ConfigureTitleSubItem';
 
-import Button from '@material-ui/core/Button';
+import ButtonSaveDelete from './common/ButtonSaveDelete';
 import Card from '@symphony/design-system/components/Card/Card';
-import FormField from '@symphony/design-system/components/FormField/FormField';
 import Grid from '@material-ui/core/Grid';
 import Text from '@symphony/design-system/components/Text';
 import TextField from '@material-ui/core/TextField';
-import {MenuItem, Select} from '@material-ui/core';
+import {MenuItem} from '@material-ui/core';
 
 import DialogConfirmDelete from './DialogConfirmDelete';
 
@@ -41,14 +40,14 @@ import type {RemoveKqiMutationVariables} from '../../mutations/__generated__/Rem
 
 import EditKqiMutation from '../../mutations/EditKqiMutation';
 
+import Event from '@material-ui/icons/Event';
+import MomentUtils from '@date-io/moment';
 import RemoveKqiMutation from '../../mutations/RemoveKqiMutation';
 import moment from 'moment';
+import {DateTimePicker, MuiPickersUtilsProvider} from '@material-ui/pickers';
 import {useDisabledButtonEdit} from './common/useDisabledButton';
 import {useFormInput} from './common/useFormInput';
 import {useValidationEdit} from './common/useValidation';
-import {DateTimePicker, MuiPickersUtilsProvider} from '@material-ui/pickers';
-import MomentUtils from '@date-io/moment';
-import Event from '@material-ui/icons/Event';
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -106,11 +105,6 @@ const useStyles = makeStyles(() => ({
   },
   gridStyleTitle: {
     paddingBottom: '31px',
-  },
-  option: {
-    width: '111px',
-    height: '36px',
-    alignSelf: 'flex-end',
   },
   calendar: {
     '@media (max-width: 768px)': {
@@ -368,28 +362,14 @@ const KqiFormEdit = (props: Props) => {
           </IconButton>
         </Grid>
         <Grid>
-          <FormField>
-            <Button
-              style={{marginRight: '1rem'}}
-              className={classes.option}
-              variant="outlined"
-              color="primary"
-              onClick={() => returnTableKqi()}>
-              Cancel
-            </Button>
-          </FormField>
+          <ButtonSaveDelete variant="outlined" onClick={() => returnTableKqi()}>
+            Cancel
+          </ButtonSaveDelete>
         </Grid>
         <Grid>
-          <FormField>
-            <Button
-              onClick={handleClick}
-              className={classes.option}
-              variant="contained"
-              color="primary"
-              disabled={handleDisable}>
-              Save
-            </Button>
-          </FormField>
+          <ButtonSaveDelete onClick={handleClick} disabled={handleDisable}>
+            Save
+          </ButtonSaveDelete>
         </Grid>
       </Grid>
       <Grid className={classes.container} item xs>
@@ -409,7 +389,6 @@ const KqiFormEdit = (props: Props) => {
             <Grid item xs={12} sm={12} lg={6}>
               <TextField
                 disabled
-                className={classes.textInput}
                 label="ID"
                 variant="outlined"
                 name="id"

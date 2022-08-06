@@ -19,8 +19,11 @@ import Text from '@symphony/design-system/components/Text';
 
 import type {EditFormulaMutationVariables} from '../../mutations/__generated__/EditFormulaMutation.graphql';
 
+import type {EditCounterFormulaMutationVariables} from '../../mutations/__generated__/EditCounterFormulaMutation.graphql';
+
 import Chip from '@material-ui/core/Chip';
 import CloseIcon from '@material-ui/icons/Close';
+import EditCounterFormulaMutation from '../../mutations/EditCounterFormulaMutation';
 import EditFormulaMutation from '../../mutations/EditFormulaMutation';
 import FormField from '@symphony/design-system/components/FormField/FormField';
 import InputAdornment from '@material-ui/core/InputAdornment';
@@ -122,8 +125,14 @@ type Props = $ReadOnly<{|
 |}>;
 
 const EditFormulaDialog = (props: Props) => {
-  const {onClose, dataFormula, isCompleted, dataCounter} = props;
-  const [checked, setChecked] = useState();
+  const {onClose, dataFormula, isCompleted} = props;
+  const dataCounterFormula = dataFormula.data.counterformulaFk;
+  const [checkedItems, setCheckedItems] = useState(
+    dataCounterFormula.map(item => {
+      return {...item, checked: item.mandatory};
+    }),
+  );
+
   const [textFormulaSearch, setTextFormulaSearch] = useState<TextFormula>({});
   const classes = useStyles();
   const textFormula = useFormInput(dataFormula.data.textFormula);
@@ -136,9 +145,9 @@ const EditFormulaDialog = (props: Props) => {
   }
 
   const searchCountersFiltered = !textFormulaSearch.search
-    ? dataCounter
-    : dataCounter?.filter(item =>
-        item.name
+    ? dataCounterFormula
+    : dataCounterFormula?.filter(item =>
+        item.counterFk?.name
           .toString()
           .toLowerCase()
           .includes(textFormulaSearch.search.toLocaleLowerCase()),
@@ -162,6 +171,24 @@ const EditFormulaDialog = (props: Props) => {
     };
     EditFormulaMutation(variables, {onCompleted: () => isCompleted()});
   }
+
+  const handleChangeCheck = (checked, item) => {
+    const variables: EditCounterFormulaMutationVariables = {
+      input: {
+        id: item.id,
+        mandatory: checked,
+        counterFk: item.counterFk.id,
+        formulaFk: item.formulaFk.id,
+      },
+    };
+    EditCounterFormulaMutation(variables, {
+      onCompleted: () =>
+        setCheckedItems([
+          ...checkedItems.filter(oldItem => item.id !== oldItem.id),
+          {...item, checked},
+        ]),
+    });
+  };
 
   return (
     <Dialog
@@ -233,22 +260,26 @@ const EditFormulaDialog = (props: Props) => {
                     <Grid item xs={3} lg={2}>
                       <Switch
                         title={''}
-                        checked={item.checked}
-                        onChange={setChecked}
+                        checked={
+                          checkedItems.find(
+                            itemChecked => item.id === itemChecked.id,
+                          ).checked
+                        }
+                        onChange={checked => handleChangeCheck(checked, item)}
                       />
                     </Grid>
                     <Grid item xs={9} lg={10}>
                       <Chip
                         color="primary"
                         key={index}
-                        label={item.name}
+                        label={item.counterFk?.name}
                         style={{
                           backgroundColor: item.color,
-                          color: 'black',
+                          color: symphony.palette.white,
                           fontWeight: '500',
                         }}
                         draggable="true"
-                        onDragStart={e => onDragStart(e, item.name)}
+                        onDragStart={e => onDragStart(e, item.counterFk?.name)}
                       />
                     </Grid>
                   </Grid>

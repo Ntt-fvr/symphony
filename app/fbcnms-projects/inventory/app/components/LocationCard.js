@@ -27,7 +27,9 @@ type Props = $ReadOnly<{|
   selectedWorkOrderId: ?string,
   onEquipmentSelected: Equipment => void,
   onWorkOrderSelected: (?string) => void,
+  onResourceSelected: () => void,
   onAddEquipment: () => void,
+  onAddResource: (selectedResourceType: {}) => void,
   onLocationMoved: (movedLocation: LocationMenu_location) => void,
   onLocationRemoved: (removedLocation: LocationMenu_location) => void,
 |}>;
@@ -64,8 +66,10 @@ class LocationCard extends React.Component<Props> {
             selectedWorkOrderId={this.props.selectedWorkOrderId}
             onEquipmentSelected={this.props.onEquipmentSelected}
             onWorkOrderSelected={this.props.onWorkOrderSelected}
+            onResourceSelected={this.props.onResourceSelected}
             onEdit={this.props.onEdit}
             onAddEquipment={this.props.onAddEquipment}
+            onAddResource={this.props.onAddResource}
             onLocationMoved={this.props.onLocationMoved}
             onLocationRemoved={this.props.onLocationRemoved}
           />

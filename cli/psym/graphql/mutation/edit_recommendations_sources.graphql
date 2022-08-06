@@ -1,0 +1,6 @@
+mutation editRecommendationsSources($input: EditRecommendationsSourcesInput!) {
+  editRecommendationsSources(input: $input) {
+    id
+    name
+  }
+}

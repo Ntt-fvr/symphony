@@ -510,7 +510,7 @@ func GetInputVariableDefinitions(ctx context.Context, b *ent.Block, triggerFacto
 			return nil, err
 		}
 		variableDefinitions = append(variableDefinitions, allDefinitions...)
-	case block.TypeSubFlow:
+	case block.TypeExecuteFlow:
 		subFlowStart, err := b.QuerySubFlow().
 			QueryBlocks().
 			Where(block.TypeEQ(block.TypeStart)).
@@ -555,7 +555,7 @@ func GetOutputVariableDefinitions(ctx context.Context, b *ent.Block, triggerFact
 			return nil, err
 		}
 		variableDefinitions = append(variableDefinitions, allDefinitions...)
-	case block.TypeSubFlow:
+	case block.TypeExecuteFlow:
 		subFlow, err := b.QuerySubFlow().
 			Only(ctx)
 		if err != nil {

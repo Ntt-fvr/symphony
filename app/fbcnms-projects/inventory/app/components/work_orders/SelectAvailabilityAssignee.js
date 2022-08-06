@@ -1,4 +1,12 @@
-/*[object Object]*/
+/**
+ * Copyright 2004-present Facebook. All Rights Reserved.
+ *
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree.
+ *
+ * @flow
+ * @format
+ */
 
 import type {WorkOrderDetails_workOrder} from './__generated__/WorkOrderDetails_workOrder.graphql';
 
@@ -8,10 +16,8 @@ import MomentUtils from '@date-io/moment';
 import moment from 'moment';
 
 import Button from '@symphony/design-system/components/Button';
-import CalendarTodayIcon from '@material-ui/core/SvgIcon';
 import ExpandingPanel from '@fbcnms/ui/components/ExpandingPanel';
 import FormField from '@symphony/design-system/components/FormField/FormField';
-import FormFieldWithPermissions from '../../common/FormFieldWithPermissions';
 import OrganizationTypeahead from '../typeahead/OrganizationTypeahead';
 import React, {useEffect, useState} from 'react';
 import Select from '@symphony/design-system/components/Select/Select';
@@ -58,9 +64,10 @@ const useStyles = makeStyles(() => ({
   card: {
     display: 'flex',
     flexDirection: 'column',
+    marginBottom: '16px',
   },
   filterSection: {
-    backgroundColor: symphony.palette.background,
+    backgroundColor: '#F9F9F9',
     height: 'inherit',
     width: 'inherit',
     margin: '0px -24px',
@@ -111,9 +118,9 @@ const SelectAvailabilityAssignee = (props: Props) => {
     setAppointment(false);
   }, []);
 
-  const setInfo = (label: string, user: ShortUser) => {
+  const setInfo = (label: string, user: ShortUser, startDate: string) => {
     _setWorkOrderDetail(label, user);
-    setAppointment(true);
+    setAppointment(true, startDate);
   };
 
   const applyFilters = () => {
@@ -125,10 +132,13 @@ const SelectAvailabilityAssignee = (props: Props) => {
     setAppointment(false);
   };
 
-  const setAppointment = saveAppointment => {
+  const setAppointment = (
+    saveAppointment,
+    selectedDate = slotStartDate.toISOString(),
+  ) => {
     setAppointmentData({
       duration,
-      date: slotStartDate.toISOString(),
+      date: selectedDate,
       saveAppointment: saveAppointment,
     });
   };
@@ -155,12 +165,6 @@ const SelectAvailabilityAssignee = (props: Props) => {
     <ExpandingPanel title={title} className={classes.card}>
       {featureFlagFilters && (
         <div className={classes.card}>
-          <Button
-            variant="text"
-            leftIcon={CalendarTodayIcon}
-            className={classes.calendarButton}>
-            View Calendar
-          </Button>
           <div className={classes.filterSection}>
             <p className={classes.secondaryText}>
               Filter time and duration (optional)
@@ -170,6 +174,7 @@ const SelectAvailabilityAssignee = (props: Props) => {
                 <DateTimePicker
                   variant="inline"
                   inputVariant="outlined"
+                  minDate={moment()}
                   value={slotStartDate}
                   onChange={setSlotStartDate}
                   onClose={orderDatesValidation}
@@ -195,7 +200,6 @@ const SelectAvailabilityAssignee = (props: Props) => {
             <FormField label="Duration">
               <Select
                 options={[
-                  {key: '0 hr', label: '0 hr', value: '0'},
                   {key: '0.5 hr', label: '0.5 hr', value: '0.5'},
                   {key: '1 hr', label: '1 hr', value: '1'},
                   {key: '1.5 hr', label: '1.5 hr', value: '1.5'},
@@ -239,7 +243,7 @@ const SelectAvailabilityAssignee = (props: Props) => {
           />
         </FormField>
       )}
-      <FormFieldWithPermissions
+      <FormField
         className={classes.input}
         label="Owner"
         permissions={{
@@ -247,15 +251,13 @@ const SelectAvailabilityAssignee = (props: Props) => {
           action: 'transferOwnership',
           workOrderTypeId: propsWorkOrder?.workOrderType.id,
           ignorePermissions: isOwner,
-        }}
-        required={true}
-        validation={{id: 'owner', value: workOrder.owner?.id}}>
+        }}>
         <UserTypeahead
           selectedUser={workOrder.owner?.id ? workOrder.owner : null}
           onUserSelection={user => _setWorkOrderDetail('owner', user)}
           margin="dense"
         />
-      </FormFieldWithPermissions>
+      </FormField>
       <FormField
         label="Assignee"
         className={classes.input}
@@ -268,7 +270,9 @@ const SelectAvailabilityAssignee = (props: Props) => {
         {useFilters ? (
           <UserByAppointmentTypeahead
             selectedUser={workOrder.assignedTo || undefined}
-            onUserSelection={user => setInfo('assignedTo', user)}
+            onUserSelection={(user, startDate) =>
+              setInfo('assignedTo', user, startDate)
+            }
             slotStartDate={slotStartDate.toISOString()}
             slotEndDate={slotEndDate.toISOString()}
             duration={duration}

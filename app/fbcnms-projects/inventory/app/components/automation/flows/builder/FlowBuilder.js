@@ -8,11 +8,13 @@
  * @format
  */
 
-import AddFlowDialog from '../view/AddFlowDialog';
+import AddFlowDialog from '../view/dialogs/AddFlowDialog';
 import BlocksBar from './tools/blocksBar/BlocksBar';
 import BottomBar from './tools/BottomBar';
 import Canvas from './canvas/Canvas';
+import MenuRules from './tools/blocksBar/MenuRules';
 import FlowHeader from './tools/FlowHeader';
+import LeftBar from './tools/blocksBar/LeftBar';
 import React, {useEffect, useMemo, useState} from 'react';
 import TopBar from './tools/TopBar';
 import usePaperGrab from './widgets/navigation/usePaperGrab';
@@ -37,6 +39,9 @@ const useStyles = makeStyles(() => ({
     display: 'flex',
     flexGrow: 1,
     userSelect: 'none',
+    '& g.joint-element:hover': {
+      stroke: '#3A71EA',
+    },
   },
   workspace: {
     position: 'relative',
@@ -79,6 +84,7 @@ export default function FlowBuilder() {
   const history = useHistory();
   const queryParams = new URLSearchParams(location.search);
   const flowId = queryParams.get('flowId');
+  const readOnly = location.pathname.includes('flowinstance');
 
   const isNewFlowDraft = flowId?.startsWith(NEW_FLOW_PARAM) || false;
   const isOnPlayground = flowId?.startsWith(TESTING_PURPOSES) || false;
@@ -93,25 +99,24 @@ export default function FlowBuilder() {
   }, [isNewFlowDraft, isOnPlayground]);
 
   return (
-    <ReadOnlyModeContextProvider isReadOnly={false}>
+    <ReadOnlyModeContextProvider isReadOnly={readOnly}>
       <GraphContextProvider>
         <KeyboardShortcutsContextProvider>
           <FlowDataContextProvider
-            flowId={isNewFlowDraft || isOnPlayground ? null : flowId}>
+            flowId={isNewFlowDraft || isOnPlayground ? null : flowId}
+            isReadOnly={readOnly}>
             <DialogShowingContextProvider>
               <GraphSelectionContextProvider>
                 <CopyPasteContextProvider>
-                  <DetailsPanelContextProvider>
-                    <FlowBuilderLayout />
-                    <AddFlowDialog
-                      open={dialogOpen}
-                      onClose={hideDialog}
-                      onSave={flowId => {
-                        setDialogOpen(false);
-                        history.push(InventoryAPIUrls.flow(flowId));
-                      }}
-                    />
-                  </DetailsPanelContextProvider>
+                  <FlowBuilderLayout />
+                  <AddFlowDialog
+                    open={dialogOpen}
+                    onClose={hideDialog}
+                    onSave={flowId => {
+                      setDialogOpen(false);
+                      history.push(InventoryAPIUrls.flow(flowId));
+                    }}
+                  />
                 </CopyPasteContextProvider>
               </GraphSelectionContextProvider>
             </DialogShowingContextProvider>
@@ -139,6 +144,8 @@ function FlowBuilderLayout() {
       <div className={classes.workspace}>
         <TopBar />
         <Canvas />
+        <LeftBar isReadOnly={isReadOnly} />
+        <MenuRules />
         <BottomBar />
       </div>
     </div>

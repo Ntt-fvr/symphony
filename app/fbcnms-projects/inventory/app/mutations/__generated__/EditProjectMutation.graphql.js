@@ -17,29 +17,31 @@ import type { ConcreteRequest } from 'relay-runtime';
 export type ProjectPriority = "HIGH" | "LOW" | "MEDIUM" | "NONE" | "URGENT" | "%future added value";
 export type PropertyKind = "bool" | "date" | "datetime_local" | "email" | "enum" | "float" | "gps_location" | "int" | "node" | "range" | "string" | "%future added value";
 export type EditProjectInput = {|
-  id: string,
-  name: string,
-  description?: ?string,
-  priority?: ?ProjectPriority,
   creatorId?: ?string,
-  type: string,
+  description?: ?string,
+  id: string,
   location?: ?string,
+  name: string,
+  priority?: ?ProjectPriority,
   properties?: ?$ReadOnlyArray<PropertyInput>,
+  type: string,
 |};
 export type PropertyInput = {|
-  id?: ?string,
-  propertyTypeID: string,
-  stringValue?: ?string,
-  intValue?: ?number,
   booleanValue?: ?boolean,
+  dependenceProperties?: ?$ReadOnlyArray<PropertyInput>,
   floatValue?: ?number,
-  latitudeValue?: ?number,
-  longitudeValue?: ?number,
-  rangeFromValue?: ?number,
-  rangeToValue?: ?number,
-  nodeIDValue?: ?string,
+  id?: ?string,
+  intValue?: ?number,
   isEditable?: ?boolean,
   isInstanceProperty?: ?boolean,
+  latitudeValue?: ?number,
+  longitudeValue?: ?number,
+  nodeIDValue?: ?string,
+  propertyTypeID: string,
+  propertyTypeValueID?: ?string,
+  rangeFromValue?: ?number,
+  rangeToValue?: ?number,
+  stringValue?: ?string,
 |};
 export type EditProjectMutationVariables = {|
   input: EditProjectInput

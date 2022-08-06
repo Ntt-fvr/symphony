@@ -1,0 +1,6 @@
+mutation addAlarmStatus($input: AddAlarmStatusInput!) {
+  addAlarmStatus(input: $input) {
+    id
+    name
+  }
+}

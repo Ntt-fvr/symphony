@@ -20,6 +20,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/comment"
 	"github.com/facebookincubator/symphony/pkg/ent/equipment"
 	"github.com/facebookincubator/symphony/pkg/ent/file"
+	"github.com/facebookincubator/symphony/pkg/ent/flowinstance"
 	"github.com/facebookincubator/symphony/pkg/ent/hyperlink"
 	"github.com/facebookincubator/symphony/pkg/ent/link"
 	"github.com/facebookincubator/symphony/pkg/ent/location"
@@ -177,16 +178,16 @@ func (woc *WorkOrderCreate) SetNillableDuration(f *float64) *WorkOrderCreate {
 	return woc
 }
 
-// SetSchedulledAt sets the schedulled_at field.
-func (woc *WorkOrderCreate) SetSchedulledAt(t time.Time) *WorkOrderCreate {
-	woc.mutation.SetSchedulledAt(t)
+// SetScheduledAt sets the scheduled_at field.
+func (woc *WorkOrderCreate) SetScheduledAt(t time.Time) *WorkOrderCreate {
+	woc.mutation.SetScheduledAt(t)
 	return woc
 }
 
-// SetNillableSchedulledAt sets the schedulled_at field if the given value is not nil.
-func (woc *WorkOrderCreate) SetNillableSchedulledAt(t *time.Time) *WorkOrderCreate {
+// SetNillableScheduledAt sets the scheduled_at field if the given value is not nil.
+func (woc *WorkOrderCreate) SetNillableScheduledAt(t *time.Time) *WorkOrderCreate {
 	if t != nil {
-		woc.SetSchedulledAt(*t)
+		woc.SetScheduledAt(*t)
 	}
 	return woc
 }
@@ -201,6 +202,20 @@ func (woc *WorkOrderCreate) SetDueDate(t time.Time) *WorkOrderCreate {
 func (woc *WorkOrderCreate) SetNillableDueDate(t *time.Time) *WorkOrderCreate {
 	if t != nil {
 		woc.SetDueDate(*t)
+	}
+	return woc
+}
+
+// SetIsNameEditable sets the is_name_editable field.
+func (woc *WorkOrderCreate) SetIsNameEditable(b bool) *WorkOrderCreate {
+	woc.mutation.SetIsNameEditable(b)
+	return woc
+}
+
+// SetNillableIsNameEditable sets the is_name_editable field if the given value is not nil.
+func (woc *WorkOrderCreate) SetNillableIsNameEditable(b *bool) *WorkOrderCreate {
+	if b != nil {
+		woc.SetIsNameEditable(*b)
 	}
 	return woc
 }
@@ -465,6 +480,25 @@ func (woc *WorkOrderCreate) AddAppointment(a ...*Appointment) *WorkOrderCreate {
 	return woc.AddAppointmentIDs(ids...)
 }
 
+// SetFlowInstanceID sets the flow_instance edge to FlowInstance by id.
+func (woc *WorkOrderCreate) SetFlowInstanceID(id int) *WorkOrderCreate {
+	woc.mutation.SetFlowInstanceID(id)
+	return woc
+}
+
+// SetNillableFlowInstanceID sets the flow_instance edge to FlowInstance by id if the given value is not nil.
+func (woc *WorkOrderCreate) SetNillableFlowInstanceID(id *int) *WorkOrderCreate {
+	if id != nil {
+		woc = woc.SetFlowInstanceID(*id)
+	}
+	return woc
+}
+
+// SetFlowInstance sets the flow_instance edge to FlowInstance.
+func (woc *WorkOrderCreate) SetFlowInstance(f *FlowInstance) *WorkOrderCreate {
+	return woc.SetFlowInstanceID(f.ID)
+}
+
 // Mutation returns the WorkOrderMutation object of the builder.
 func (woc *WorkOrderCreate) Mutation() *WorkOrderMutation {
 	return woc.mutation
@@ -532,6 +566,10 @@ func (woc *WorkOrderCreate) defaults() {
 	if _, ok := woc.mutation.Priority(); !ok {
 		v := workorder.DefaultPriority
 		woc.mutation.SetPriority(v)
+	}
+	if _, ok := woc.mutation.IsNameEditable(); !ok {
+		v := workorder.DefaultIsNameEditable
+		woc.mutation.SetIsNameEditable(v)
 	}
 }
 
@@ -688,13 +726,13 @@ func (woc *WorkOrderCreate) createSpec() (*WorkOrder, *sqlgraph.CreateSpec) {
 		})
 		_node.Duration = &value
 	}
-	if value, ok := woc.mutation.SchedulledAt(); ok {
+	if value, ok := woc.mutation.ScheduledAt(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeTime,
 			Value:  value,
-			Column: workorder.FieldSchedulledAt,
+			Column: workorder.FieldScheduledAt,
 		})
-		_node.SchedulledAt = &value
+		_node.ScheduledAt = &value
 	}
 	if value, ok := woc.mutation.DueDate(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -703,6 +741,14 @@ func (woc *WorkOrderCreate) createSpec() (*WorkOrder, *sqlgraph.CreateSpec) {
 			Column: workorder.FieldDueDate,
 		})
 		_node.DueDate = &value
+	}
+	if value, ok := woc.mutation.IsNameEditable(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Value:  value,
+			Column: workorder.FieldIsNameEditable,
+		})
+		_node.IsNameEditable = value
 	}
 	if nodes := woc.mutation.TypeIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -1000,6 +1046,25 @@ func (woc *WorkOrderCreate) createSpec() (*WorkOrder, *sqlgraph.CreateSpec) {
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: appointment.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := woc.mutation.FlowInstanceIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: false,
+			Table:   workorder.FlowInstanceTable,
+			Columns: []string{workorder.FlowInstanceColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: flowinstance.FieldID,
 				},
 			},
 		}

@@ -57,6 +57,7 @@ export type WorkOrder = {
   owner: ShortUser,
   creationDate: string,
   installDate: ?string,
+  scheduledAt: ?string,
   status: GraphQLStatusType,
   priority: PriorityType,
   equipmentToAdd: Array<Equipment>,

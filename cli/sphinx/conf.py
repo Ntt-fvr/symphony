@@ -71,3 +71,5 @@ autosectionlable_prefix_document = True
 # Napoleon settings
 napoleon_google_docstring = True
 napoleon_numpy_docstring = True
+
+master_doc="index"

@@ -1,0 +1,9 @@
+mutation editThreshold($input: EditThresholdInput!) {
+  editThreshold(input: $input) {
+    id
+    name
+    description
+    status
+    kpi{id}
+  }
+}

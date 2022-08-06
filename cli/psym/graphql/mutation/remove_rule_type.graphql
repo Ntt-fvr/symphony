@@ -1,0 +1,3 @@
+mutation removeRuleType($id: ID!) {
+  removeRuleType(id: $id)
+}

@@ -38,6 +38,8 @@ const (
 	EdgePropertyTypes = "property_types"
 	// EdgeSurveyTemplateCategories holds the string denoting the survey_template_categories edge name in mutations.
 	EdgeSurveyTemplateCategories = "survey_template_categories"
+	// EdgeResourceRelationshipLocation holds the string denoting the resource_relationship_location edge name in mutations.
+	EdgeResourceRelationshipLocation = "resource_relationship_location"
 	// EdgeDocumentCategory holds the string denoting the document_category edge name in mutations.
 	EdgeDocumentCategory = "document_category"
 
@@ -64,6 +66,13 @@ const (
 	SurveyTemplateCategoriesInverseTable = "survey_template_categories"
 	// SurveyTemplateCategoriesColumn is the table column denoting the survey_template_categories relation/edge.
 	SurveyTemplateCategoriesColumn = "location_type_survey_template_categories"
+	// ResourceRelationshipLocationTable is the table the holds the resource_relationship_location relation/edge.
+	ResourceRelationshipLocationTable = "resource_type_relationships"
+	// ResourceRelationshipLocationInverseTable is the table name for the ResourceTypeRelationship entity.
+	// It exists in this package in order to avoid circular dependency with the "resourcetyperelationship" package.
+	ResourceRelationshipLocationInverseTable = "resource_type_relationships"
+	// ResourceRelationshipLocationColumn is the table column denoting the resource_relationship_location relation/edge.
+	ResourceRelationshipLocationColumn = "location_type_resource_relationship_location"
 	// DocumentCategoryTable is the table the holds the document_category relation/edge.
 	DocumentCategoryTable = "document_categories"
 	// DocumentCategoryInverseTable is the table name for the DocumentCategory entity.

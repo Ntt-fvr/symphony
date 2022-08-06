@@ -12,16 +12,13 @@
 import type {
   ExtendedMouseEvent,
   KeyValuePair,
+  PortPosition,
   Position,
   Primitive,
   Size,
 } from '../../Helpers';
 import type {Graph} from '../../Graph';
-import type {
-  IBaseShapeAttributes,
-  IShape,
-  IShapeView,
-} from '../../shapes/BaseShape';
+import type {IBaseShapeAttributes, IShape, IShapeView} from '../BaseShape';
 import type {Paper} from '../../Paper';
 
 import symphony from '@symphony/design-system/theme/symphony';
@@ -35,16 +32,32 @@ export const VERTEX_COMMON_DISPLAY = {
     label: {
       ...defaultAttrProps,
       text: 'manual action',
-      textVerticalAnchor: 'middle',
-      textAnchor: 'center',
-      refY: '115%',
-      fontSize: 14,
+      textAnchor: 'middle',
+      refX2: 41,
+      refY2: 74,
+      fontSize: 12,
+      fontWeight: 'bold',
       fill: symphony.palette.secondary,
       strokeWidth: 0,
+      pointerEvents: 'none',
+    },
+    background: {
+      ...defaultAttrProps,
+      fill: 'white',
+      refX2: 2,
+      refY2: 71,
+      ry: 7,
+      rx: 7,
+      width: 77,
+      height: 18,
     },
   },
   defaultAttrProps,
   markup: [
+    {
+      tagName: 'rect',
+      selector: 'background',
+    },
     {
       tagName: 'text',
       selector: 'label',
@@ -52,15 +65,43 @@ export const VERTEX_COMMON_DISPLAY = {
   ],
 };
 
-// export const DISPLAY_SETTINGS = {
-//   body: {
-//     stroke: {
-//       default: symphony.palette.white,
-//       hovered: symphony.palette.B700,
-//       selected: symphony.palette.primary,
-//     },
-//   },
-// };
+export const BIG_VERTEX_COMMON_DISPLAY = {
+  attrs: {
+    label: {
+      ...defaultAttrProps,
+      text: 'manual action',
+      textAnchor: 'middle',
+      refX2: 41,
+      refY2: 74,
+      fontSize: 12,
+      fontWeight: 'bold',
+      fill: symphony.palette.secondary,
+      strokeWidth: 0,
+      pointerEvents: 'none',
+    },
+    background: {
+      ...defaultAttrProps,
+      fill: 'white',
+      refX2: -20,
+      refY2: 71,
+      ry: 7,
+      rx: 7,
+      width: 120,
+      height: 18,
+    },
+  },
+  defaultAttrProps,
+  markup: [
+    {
+      tagName: 'rect',
+      selector: 'background',
+    },
+    {
+      tagName: 'text',
+      selector: 'label',
+    },
+  ],
+};
 
 export type VertexDescriptor = $ReadOnly<{|
   id: string,
@@ -110,8 +151,10 @@ export interface IVertexModel extends IShape {
   +position: (number, number) => void;
   +resize: (number, number) => void;
   +attr: (KeyValuePair | string, ?Primitive) => ?Primitive;
+  +portProp: (KeyValuePair | string, ?Primitive, PortPosition) => ?Primitive;
   +addTo: Graph => void;
   +remove: () => void;
+  +removePort: string => void;
   +getEmbeddedCells: () => $ReadOnlyArray<IVertexModel>;
   +embed: IVertexModel => void;
   +unembed: IVertexModel => void;
@@ -120,6 +163,7 @@ export interface IVertexModel extends IShape {
   +addPort: KeyValuePair => void;
   +getPorts: () => $ReadOnlyArray<Port>;
   +clone: (options?: ?KeyValuePair) => IVertexModel;
+  +embedding: ?boolean;
 }
 
 export type IVertexView = $ReadOnly<{|
@@ -138,9 +182,12 @@ type PortsGroupInitValue = $ReadOnly<{|
 
 function getDefaultPortMarkup(
   strokeColor: string,
-  horizontalAlign: number = 0,
+  horizontalAlign?: number,
+  defaultCoordinatesX?: number,
 ) {
-  return `<circle r="7" cx="${horizontalAlign}" stroke-width="4" stroke="${strokeColor}" fill="white" magnet="true"/>`;
+  return `<circle r="7" cx="${
+    horizontalAlign || defaultCoordinatesX || 0
+  }" cy="0" stroke-width="4" stroke="${strokeColor}" fill="white" magnet="true"/>`;
 }
 
 export const PORTS_GROUPS = {
@@ -157,10 +204,12 @@ function getPortsArray(
   const inputPortsCount = settings?.count ?? 1;
   return Array(inputPortsCount).fill({group: groupName});
 }
+
 type InitObjectType = {
   ...KeyValuePair,
   id?: ?string,
 };
+
 export function getInitObject(
   backgroundColor: string,
   ports?: {
@@ -168,23 +217,33 @@ export function getInitObject(
     output?: PortsGroupInitValue,
   },
   id?: ?string,
+  horizontalPortLeftAlign?: number,
+  horizontalPortRightAlign?: number,
+  position?: string,
 ): InitObjectType {
   const inputPorts = getPortsArray(ports?.input, PORTS_GROUPS.INPUT);
   const outputPorts = getPortsArray(ports?.output, PORTS_GROUPS.OUTPUT);
   const portsArray = inputPorts.concat(outputPorts);
+  const defaultCoordinatesX = 9;
 
   return {
     ports: {
       groups: {
         input: {
-          position: 'left',
+          position: `${position || 'left'}`,
           markup:
-            ports?.input?.markup ?? getDefaultPortMarkup(backgroundColor, 9),
+            ports?.input?.markup ??
+            getDefaultPortMarkup(
+              backgroundColor,
+              horizontalPortLeftAlign,
+              defaultCoordinatesX,
+            ),
         },
         output: {
-          position: 'right',
+          position: `${position || 'right'}`,
           markup:
-            ports?.output?.markup ?? getDefaultPortMarkup(backgroundColor),
+            ports?.output?.markup ??
+            getDefaultPortMarkup(backgroundColor, horizontalPortRightAlign),
         },
       },
       items: portsArray,
@@ -192,3 +251,47 @@ export function getInitObject(
     id: id ?? undefined,
   };
 }
+
+export const originSize = {
+  width: 437,
+  height: 298,
+  bodyY2: 86,
+  backgroundY2: 157,
+  labelY2: 160,
+  imageY2: 81,
+  resizeWidth: 394,
+  resizeHeigth: 234,
+};
+
+export const mediumSize = {
+  width: 437,
+  height: 420,
+  bodyY2: 141,
+  backgroundY2: 210,
+  labelY2: 213,
+  imageY2: 137,
+  resizeWidth: 394,
+  resizeHeigth: 344,
+};
+
+export const bigSize = {
+  width: 637,
+  resizeWidth: 594,
+  resizeHeigth: 344,
+};
+
+export const portsOriginPosition = {
+  cyLeft: 58,
+  cxRight: 410,
+  cyRight: -59,
+};
+
+export const portsMediumPosition = {
+  cyLeft: 86,
+  cxRight: 410,
+  cyRight: -86,
+};
+
+export const portsBigPosition = {
+  cxRight: 610,
+};

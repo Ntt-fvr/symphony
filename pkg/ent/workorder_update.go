@@ -21,6 +21,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/comment"
 	"github.com/facebookincubator/symphony/pkg/ent/equipment"
 	"github.com/facebookincubator/symphony/pkg/ent/file"
+	"github.com/facebookincubator/symphony/pkg/ent/flowinstance"
 	"github.com/facebookincubator/symphony/pkg/ent/hyperlink"
 	"github.com/facebookincubator/symphony/pkg/ent/link"
 	"github.com/facebookincubator/symphony/pkg/ent/location"
@@ -201,23 +202,23 @@ func (wou *WorkOrderUpdate) ClearDuration() *WorkOrderUpdate {
 	return wou
 }
 
-// SetSchedulledAt sets the schedulled_at field.
-func (wou *WorkOrderUpdate) SetSchedulledAt(t time.Time) *WorkOrderUpdate {
-	wou.mutation.SetSchedulledAt(t)
+// SetScheduledAt sets the scheduled_at field.
+func (wou *WorkOrderUpdate) SetScheduledAt(t time.Time) *WorkOrderUpdate {
+	wou.mutation.SetScheduledAt(t)
 	return wou
 }
 
-// SetNillableSchedulledAt sets the schedulled_at field if the given value is not nil.
-func (wou *WorkOrderUpdate) SetNillableSchedulledAt(t *time.Time) *WorkOrderUpdate {
+// SetNillableScheduledAt sets the scheduled_at field if the given value is not nil.
+func (wou *WorkOrderUpdate) SetNillableScheduledAt(t *time.Time) *WorkOrderUpdate {
 	if t != nil {
-		wou.SetSchedulledAt(*t)
+		wou.SetScheduledAt(*t)
 	}
 	return wou
 }
 
-// ClearSchedulledAt clears the value of schedulled_at.
-func (wou *WorkOrderUpdate) ClearSchedulledAt() *WorkOrderUpdate {
-	wou.mutation.ClearSchedulledAt()
+// ClearScheduledAt clears the value of scheduled_at.
+func (wou *WorkOrderUpdate) ClearScheduledAt() *WorkOrderUpdate {
+	wou.mutation.ClearScheduledAt()
 	return wou
 }
 
@@ -238,6 +239,26 @@ func (wou *WorkOrderUpdate) SetNillableDueDate(t *time.Time) *WorkOrderUpdate {
 // ClearDueDate clears the value of due_date.
 func (wou *WorkOrderUpdate) ClearDueDate() *WorkOrderUpdate {
 	wou.mutation.ClearDueDate()
+	return wou
+}
+
+// SetIsNameEditable sets the is_name_editable field.
+func (wou *WorkOrderUpdate) SetIsNameEditable(b bool) *WorkOrderUpdate {
+	wou.mutation.SetIsNameEditable(b)
+	return wou
+}
+
+// SetNillableIsNameEditable sets the is_name_editable field if the given value is not nil.
+func (wou *WorkOrderUpdate) SetNillableIsNameEditable(b *bool) *WorkOrderUpdate {
+	if b != nil {
+		wou.SetIsNameEditable(*b)
+	}
+	return wou
+}
+
+// ClearIsNameEditable clears the value of is_name_editable.
+func (wou *WorkOrderUpdate) ClearIsNameEditable() *WorkOrderUpdate {
+	wou.mutation.ClearIsNameEditable()
 	return wou
 }
 
@@ -501,6 +522,25 @@ func (wou *WorkOrderUpdate) AddAppointment(a ...*Appointment) *WorkOrderUpdate {
 	return wou.AddAppointmentIDs(ids...)
 }
 
+// SetFlowInstanceID sets the flow_instance edge to FlowInstance by id.
+func (wou *WorkOrderUpdate) SetFlowInstanceID(id int) *WorkOrderUpdate {
+	wou.mutation.SetFlowInstanceID(id)
+	return wou
+}
+
+// SetNillableFlowInstanceID sets the flow_instance edge to FlowInstance by id if the given value is not nil.
+func (wou *WorkOrderUpdate) SetNillableFlowInstanceID(id *int) *WorkOrderUpdate {
+	if id != nil {
+		wou = wou.SetFlowInstanceID(*id)
+	}
+	return wou
+}
+
+// SetFlowInstance sets the flow_instance edge to FlowInstance.
+func (wou *WorkOrderUpdate) SetFlowInstance(f *FlowInstance) *WorkOrderUpdate {
+	return wou.SetFlowInstanceID(f.ID)
+}
+
 // Mutation returns the WorkOrderMutation object of the builder.
 func (wou *WorkOrderUpdate) Mutation() *WorkOrderMutation {
 	return wou.mutation
@@ -737,6 +777,12 @@ func (wou *WorkOrderUpdate) RemoveAppointment(a ...*Appointment) *WorkOrderUpdat
 	return wou.RemoveAppointmentIDs(ids...)
 }
 
+// ClearFlowInstance clears the "flow_instance" edge to type FlowInstance.
+func (wou *WorkOrderUpdate) ClearFlowInstance() *WorkOrderUpdate {
+	wou.mutation.ClearFlowInstance()
+	return wou
+}
+
 // Save executes the query and returns the number of nodes affected by the update operation.
 func (wou *WorkOrderUpdate) Save(ctx context.Context) (int, error) {
 	var (
@@ -958,17 +1004,17 @@ func (wou *WorkOrderUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: workorder.FieldDuration,
 		})
 	}
-	if value, ok := wou.mutation.SchedulledAt(); ok {
+	if value, ok := wou.mutation.ScheduledAt(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeTime,
 			Value:  value,
-			Column: workorder.FieldSchedulledAt,
+			Column: workorder.FieldScheduledAt,
 		})
 	}
-	if wou.mutation.SchedulledAtCleared() {
+	if wou.mutation.ScheduledAtCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeTime,
-			Column: workorder.FieldSchedulledAt,
+			Column: workorder.FieldScheduledAt,
 		})
 	}
 	if value, ok := wou.mutation.DueDate(); ok {
@@ -982,6 +1028,19 @@ func (wou *WorkOrderUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeTime,
 			Column: workorder.FieldDueDate,
+		})
+	}
+	if value, ok := wou.mutation.IsNameEditable(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Value:  value,
+			Column: workorder.FieldIsNameEditable,
+		})
+	}
+	if wou.mutation.IsNameEditableCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Column: workorder.FieldIsNameEditable,
 		})
 	}
 	if wou.mutation.TypeCleared() {
@@ -1715,6 +1774,41 @@ func (wou *WorkOrderUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if wou.mutation.FlowInstanceCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: false,
+			Table:   workorder.FlowInstanceTable,
+			Columns: []string{workorder.FlowInstanceColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: flowinstance.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := wou.mutation.FlowInstanceIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: false,
+			Table:   workorder.FlowInstanceTable,
+			Columns: []string{workorder.FlowInstanceColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: flowinstance.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	if n, err = sqlgraph.UpdateNodes(ctx, wou.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{workorder.Label}
@@ -1887,23 +1981,23 @@ func (wouo *WorkOrderUpdateOne) ClearDuration() *WorkOrderUpdateOne {
 	return wouo
 }
 
-// SetSchedulledAt sets the schedulled_at field.
-func (wouo *WorkOrderUpdateOne) SetSchedulledAt(t time.Time) *WorkOrderUpdateOne {
-	wouo.mutation.SetSchedulledAt(t)
+// SetScheduledAt sets the scheduled_at field.
+func (wouo *WorkOrderUpdateOne) SetScheduledAt(t time.Time) *WorkOrderUpdateOne {
+	wouo.mutation.SetScheduledAt(t)
 	return wouo
 }
 
-// SetNillableSchedulledAt sets the schedulled_at field if the given value is not nil.
-func (wouo *WorkOrderUpdateOne) SetNillableSchedulledAt(t *time.Time) *WorkOrderUpdateOne {
+// SetNillableScheduledAt sets the scheduled_at field if the given value is not nil.
+func (wouo *WorkOrderUpdateOne) SetNillableScheduledAt(t *time.Time) *WorkOrderUpdateOne {
 	if t != nil {
-		wouo.SetSchedulledAt(*t)
+		wouo.SetScheduledAt(*t)
 	}
 	return wouo
 }
 
-// ClearSchedulledAt clears the value of schedulled_at.
-func (wouo *WorkOrderUpdateOne) ClearSchedulledAt() *WorkOrderUpdateOne {
-	wouo.mutation.ClearSchedulledAt()
+// ClearScheduledAt clears the value of scheduled_at.
+func (wouo *WorkOrderUpdateOne) ClearScheduledAt() *WorkOrderUpdateOne {
+	wouo.mutation.ClearScheduledAt()
 	return wouo
 }
 
@@ -1924,6 +2018,26 @@ func (wouo *WorkOrderUpdateOne) SetNillableDueDate(t *time.Time) *WorkOrderUpdat
 // ClearDueDate clears the value of due_date.
 func (wouo *WorkOrderUpdateOne) ClearDueDate() *WorkOrderUpdateOne {
 	wouo.mutation.ClearDueDate()
+	return wouo
+}
+
+// SetIsNameEditable sets the is_name_editable field.
+func (wouo *WorkOrderUpdateOne) SetIsNameEditable(b bool) *WorkOrderUpdateOne {
+	wouo.mutation.SetIsNameEditable(b)
+	return wouo
+}
+
+// SetNillableIsNameEditable sets the is_name_editable field if the given value is not nil.
+func (wouo *WorkOrderUpdateOne) SetNillableIsNameEditable(b *bool) *WorkOrderUpdateOne {
+	if b != nil {
+		wouo.SetIsNameEditable(*b)
+	}
+	return wouo
+}
+
+// ClearIsNameEditable clears the value of is_name_editable.
+func (wouo *WorkOrderUpdateOne) ClearIsNameEditable() *WorkOrderUpdateOne {
+	wouo.mutation.ClearIsNameEditable()
 	return wouo
 }
 
@@ -2187,6 +2301,25 @@ func (wouo *WorkOrderUpdateOne) AddAppointment(a ...*Appointment) *WorkOrderUpda
 	return wouo.AddAppointmentIDs(ids...)
 }
 
+// SetFlowInstanceID sets the flow_instance edge to FlowInstance by id.
+func (wouo *WorkOrderUpdateOne) SetFlowInstanceID(id int) *WorkOrderUpdateOne {
+	wouo.mutation.SetFlowInstanceID(id)
+	return wouo
+}
+
+// SetNillableFlowInstanceID sets the flow_instance edge to FlowInstance by id if the given value is not nil.
+func (wouo *WorkOrderUpdateOne) SetNillableFlowInstanceID(id *int) *WorkOrderUpdateOne {
+	if id != nil {
+		wouo = wouo.SetFlowInstanceID(*id)
+	}
+	return wouo
+}
+
+// SetFlowInstance sets the flow_instance edge to FlowInstance.
+func (wouo *WorkOrderUpdateOne) SetFlowInstance(f *FlowInstance) *WorkOrderUpdateOne {
+	return wouo.SetFlowInstanceID(f.ID)
+}
+
 // Mutation returns the WorkOrderMutation object of the builder.
 func (wouo *WorkOrderUpdateOne) Mutation() *WorkOrderMutation {
 	return wouo.mutation
@@ -2423,6 +2556,12 @@ func (wouo *WorkOrderUpdateOne) RemoveAppointment(a ...*Appointment) *WorkOrderU
 	return wouo.RemoveAppointmentIDs(ids...)
 }
 
+// ClearFlowInstance clears the "flow_instance" edge to type FlowInstance.
+func (wouo *WorkOrderUpdateOne) ClearFlowInstance() *WorkOrderUpdateOne {
+	wouo.mutation.ClearFlowInstance()
+	return wouo
+}
+
 // Save executes the query and returns the updated entity.
 func (wouo *WorkOrderUpdateOne) Save(ctx context.Context) (*WorkOrder, error) {
 	var (
@@ -2642,17 +2781,17 @@ func (wouo *WorkOrderUpdateOne) sqlSave(ctx context.Context) (_node *WorkOrder, 
 			Column: workorder.FieldDuration,
 		})
 	}
-	if value, ok := wouo.mutation.SchedulledAt(); ok {
+	if value, ok := wouo.mutation.ScheduledAt(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeTime,
 			Value:  value,
-			Column: workorder.FieldSchedulledAt,
+			Column: workorder.FieldScheduledAt,
 		})
 	}
-	if wouo.mutation.SchedulledAtCleared() {
+	if wouo.mutation.ScheduledAtCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeTime,
-			Column: workorder.FieldSchedulledAt,
+			Column: workorder.FieldScheduledAt,
 		})
 	}
 	if value, ok := wouo.mutation.DueDate(); ok {
@@ -2666,6 +2805,19 @@ func (wouo *WorkOrderUpdateOne) sqlSave(ctx context.Context) (_node *WorkOrder, 
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeTime,
 			Column: workorder.FieldDueDate,
+		})
+	}
+	if value, ok := wouo.mutation.IsNameEditable(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Value:  value,
+			Column: workorder.FieldIsNameEditable,
+		})
+	}
+	if wouo.mutation.IsNameEditableCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Column: workorder.FieldIsNameEditable,
 		})
 	}
 	if wouo.mutation.TypeCleared() {
@@ -3391,6 +3543,41 @@ func (wouo *WorkOrderUpdateOne) sqlSave(ctx context.Context) (_node *WorkOrder, 
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: appointment.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if wouo.mutation.FlowInstanceCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: false,
+			Table:   workorder.FlowInstanceTable,
+			Columns: []string{workorder.FlowInstanceColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: flowinstance.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := wouo.mutation.FlowInstanceIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: false,
+			Table:   workorder.FlowInstanceTable,
+			Columns: []string{workorder.FlowInstanceColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: flowinstance.FieldID,
 				},
 			},
 		}

@@ -166,12 +166,15 @@ func (WorkOrder) Fields() []ent.Field {
 		field.Float("duration").
 			Optional().
 			Nillable(),
-		field.Time("schedulled_at").
+		field.Time("scheduled_at").
 			Optional().
 			Nillable(),
 		field.Time("due_date").
 			Optional().
 			Nillable(),
+		field.Bool("is_name_editable").
+			Optional().
+			Default(true),
 	}
 }
 
@@ -216,6 +219,8 @@ func (WorkOrder) Edges() []ent.Edge {
 			Annotations(entgql.MapsTo("assignedTo")).
 			Unique(),
 		edge.To("appointment", Appointment.Type),
+		edge.To("flow_instance", FlowInstance.Type).
+			Unique(),
 	}
 }
 

@@ -83,7 +83,7 @@ type Props = $ReadOnly<{|
     id: string,
     name: string,
   },
-  formulaFk: Array<Formula>,
+  dataFormulaTable: Array<Formula>,
   deleteItem: () => void,
   description: string,
   threshold: Array<KpiThreshold>,
@@ -102,7 +102,7 @@ const KpiTypeItem = (props: Props) => {
     domainFk,
     kpiCategoryFK,
     description,
-    formulaFk,
+    dataFormulaTable,
     threshold,
     edit,
     deleteItem,
@@ -115,6 +115,10 @@ const KpiTypeItem = (props: Props) => {
   const [dialogOpen, setDialogOpen] = useState(false);
 
   const thresholdFromKpi = threshold.find(({node}) => node.kpi?.name === name);
+
+  const filterFormulaTableById = dataFormulaTable?.filter(
+    kpiData => kpiData?.kpiFk?.id === id,
+  );
 
   const handleClick = event => {
     event.stopPropagation();
@@ -255,7 +259,7 @@ const KpiTypeItem = (props: Props) => {
             </Grid>
             <Grid item xs={9}>
               <TableFormulas
-                formulas={formulaFk}
+                formulas={filterFormulaTableById}
                 handleEditFormulaClick={handleEditFormulaClick}
                 parentEditCallback={parentEditCallback}
                 isCompleted={isCompleted}

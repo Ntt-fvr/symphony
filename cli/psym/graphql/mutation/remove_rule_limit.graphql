@@ -1,0 +1,4 @@
+mutation removeRuleLimit($id: ID!) {
+  removeRuleLimit(id: $id)
+}
+

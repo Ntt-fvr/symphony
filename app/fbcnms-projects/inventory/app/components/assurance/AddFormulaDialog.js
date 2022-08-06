@@ -18,6 +18,7 @@ import React, {useState} from 'react';
 import Text from '@symphony/design-system/components/Text';
 
 import type {AddFormulaMutationVariables} from '../../mutations/__generated__/AddFormulaMutation.graphql';
+
 import AddFormulaMutation from '../../mutations/AddFormulaMutation';
 import CloseIcon from '@material-ui/icons/Close';
 import Switch from '@symphony/design-system/components/switch/Switch';
@@ -26,6 +27,7 @@ import Chip from '@material-ui/core/Chip';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import SearchIcon from '@material-ui/icons/Search';
 import TextField from '@material-ui/core/TextField';
+import addCounterFormulaListMutation from '../../mutations/AddCounterFormulaListMutation';
 import symphony from '@symphony/design-system/theme/symphony';
 import {makeStyles} from '@material-ui/styles';
 
@@ -137,7 +139,11 @@ const AddFormulaDialog = (props: Props) => {
     isCompleted,
     changeChecking,
   } = props;
-  const [checked, setChecked] = useState();
+  const [checkedItems, setCheckedItems] = useState(
+    dataCounter.map(item => {
+      return {...item, checked: false};
+    }),
+  );
   const [textFormula, setTextFormula] = useState<TextFormula>({});
   const classes = useStyles();
 
@@ -173,11 +179,33 @@ const AddFormulaDialog = (props: Props) => {
       },
     };
     AddFormulaMutation(variables, {
-      onCompleted: () => {
-        isCompleted();
+      onCompleted: response => {
+        addCounterFormula(response.addFormula.id);
       },
     });
   }
+
+  const addCounterFormula = formulaFk => {
+    const counterList = checkedItems.map(item => {
+      return {counterFk: item.id, mandatory: item.checked};
+    });
+    const variables = {
+      input: {
+        formulaFk,
+        counterList,
+      },
+    };
+    addCounterFormulaListMutation(variables, {
+      onCompleted: () => isCompleted(),
+    });
+  };
+
+  const handleChangeCheck = (checked, item) => {
+    setCheckedItems([
+      ...checkedItems.filter(oldItem => item.id !== oldItem.id),
+      {...item, checked},
+    ]);
+  };
 
   return (
     <Dialog
@@ -249,8 +277,13 @@ const AddFormulaDialog = (props: Props) => {
                     <Grid item xs={3} lg={2}>
                       <Switch
                         title={''}
-                        checked={item.checked}
-                        onChange={setChecked}
+                        id={item.id}
+                        checked={
+                          checkedItems.find(
+                            itemChecked => item.id === itemChecked.id,
+                          ).checked
+                        }
+                        onChange={checked => handleChangeCheck(checked, item)}
                       />
                     </Grid>
                     <Grid item xs={9} lg={10}>
@@ -288,6 +321,7 @@ const AddFormulaDialog = (props: Props) => {
           className={classes.option}
           variant="outlined"
           color="primary"
+          disabled={!textFormula.formula || textFormula.formula?.length <= 0}
           onClick={() => {
             handleClick();
             onClose();

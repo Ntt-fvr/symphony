@@ -250,6 +250,11 @@ export const arrayConfigs = [
     enabledByDefault: false,
   },
   {
+    id: 'enable_resource_catalog_&_relationships',
+    title: 'Resource Catalog & Relationships',
+    enabledByDefault: true,
+  },
+  {
     id: 'scheduling_filter_dates',
     title: 'Scheduling',
     enabledByDefault: false,
@@ -260,9 +265,29 @@ export const arrayConfigs = [
     enabledByDefault: false,
   },
   {
+    id: 'equipment_&_ports_module',
+    title: 'Enable Equipment & Ports',
+    enabledByDefault: true,
+  },
+  {
     id: 'ipt_import_project',
     title: 'IPT import projects',
     enabledByDefault: false,
+  },
+  {
+    id: 'property_combo',
+    title: 'Property Combo',
+    enabledByDefault: false,
+  },
+  {
+    id: 'resource_inventory',
+    title: 'Resource Inventory',
+    enabledByDefault: true,
+  },
+  {
+    id: 'resource_port_management',
+    title: 'Port management',
+    enabledByDefault: true,
   },
 ];
 

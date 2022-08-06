@@ -14,6 +14,7 @@ import (
 // event log events.
 const (
 	EntMutation = "ent:mutation"
+	Automation  = "automation"
 )
 
 // LogEntry holds an information on a single ent mutation that happened

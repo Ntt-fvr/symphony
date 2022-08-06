@@ -35,3 +35,6 @@ class EditWorkOrderInput(DataClassJsonMixin):
     priority: Optional[WorkOrderPriority] = None
     projectId: Optional[str] = None
     locationId: Optional[str] = None
+    duration: Optional[Number] = None
+    dueDate: Optional[datetime] = None
+    #scheduledAt: Optional[datetime] = None

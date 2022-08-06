@@ -582,6 +582,20 @@ func StartDateTimeLTE(v time.Time) predicate.Rule {
 	})
 }
 
+// StartDateTimeIsNil applies the IsNil predicate on the "startDateTime" field.
+func StartDateTimeIsNil() predicate.Rule {
+	return predicate.Rule(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldStartDateTime)))
+	})
+}
+
+// StartDateTimeNotNil applies the NotNil predicate on the "startDateTime" field.
+func StartDateTimeNotNil() predicate.Rule {
+	return predicate.Rule(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldStartDateTime)))
+	})
+}
+
 // EndDateTimeEQ applies the EQ predicate on the "endDateTime" field.
 func EndDateTimeEQ(v time.Time) predicate.Rule {
 	return predicate.Rule(func(s *sql.Selector) {
@@ -655,6 +669,20 @@ func EndDateTimeLT(v time.Time) predicate.Rule {
 func EndDateTimeLTE(v time.Time) predicate.Rule {
 	return predicate.Rule(func(s *sql.Selector) {
 		s.Where(sql.LTE(s.C(FieldEndDateTime), v))
+	})
+}
+
+// EndDateTimeIsNil applies the IsNil predicate on the "endDateTime" field.
+func EndDateTimeIsNil() predicate.Rule {
+	return predicate.Rule(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldEndDateTime)))
+	})
+}
+
+// EndDateTimeNotNil applies the NotNil predicate on the "endDateTime" field.
+func EndDateTimeNotNil() predicate.Rule {
+	return predicate.Rule(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldEndDateTime)))
 	})
 }
 

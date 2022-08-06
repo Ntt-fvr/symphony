@@ -57,7 +57,7 @@ func getOrCreateExitPoint(ctx context.Context, exitPoint *ent.ExitPoint, newBloc
 		exitpoint.HasParentBlockWith(block.ID(newBlock.ID)),
 		exitpoint.RoleEQ(exitPoint.Role),
 	}
-	if exitPoint.Cid != nil {
+	if exitPoint.Cid != nil && exitPoint.Role != flowschema.ExitPointRoleDefault {
 		predicates = append(predicates, exitpoint.Cid(*exitPoint.Cid))
 	} else {
 		predicates = append(predicates, exitpoint.CidIsNil())
@@ -69,14 +69,22 @@ func getOrCreateExitPoint(ctx context.Context, exitPoint *ent.ExitPoint, newBloc
 		if !ent.IsNotFound(err) {
 			return nil, fmt.Errorf("failed to get new exit point: %w", err)
 		}
-		newExitPoint, err = client.ExitPoint.Create().
+		mutation := client.Debug().ExitPoint.Create().
 			SetParentBlock(newBlock).
 			SetRole(exitPoint.Role).
-			SetNillableCid(exitPoint.Cid).
-			Save(ctx)
+			SetNillableCid(exitPoint.Cid)
+
+		if newBlock.Type == block.TypeChoice && exitPoint.Role == flowschema.ExitPointRoleChoice {
+			mutation = mutation.SetCondition(exitPoint.Condition).
+				SetIndex(exitPoint.Index)
+		}
+		newExitPoint, err = mutation.Save(ctx)
+
 		if err != nil {
 			return nil, fmt.Errorf("failed to create new exit point: %w", err)
 		}
+	} else {
+		newExitPoint.Update().SetNillableCid(exitPoint.Cid).SaveX(ctx)
 	}
 	return newExitPoint, nil
 }
@@ -139,6 +147,38 @@ func CopyBlocks(ctx context.Context, blocksQuery *ent.BlockQuery, addToFlow func
 			SetNillableTriggerType(blk.TriggerType).
 			SetNillableActionType(blk.ActionType).
 			SetUIRepresentation(blk.UIRepresentation)
+
+		switch blk.Type {
+		case block.TypeInvokeRestAPI:
+			blockCreate = blockCreate.SetBody(*blk.Body).
+				SetConnectionTimeout(*blk.ConnectionTimeout).
+				SetHeaders(blk.Headers).
+				SetURL(*blk.URL).
+				SetURLMethod(*blk.URLMethod).
+				SetAuthType(blk.AuthType).
+				SetNillableUser(&blk.User).
+				SetNillablePassword(&blk.Password).
+				SetNillableClientID(&blk.ClientID).
+				SetNillableClientSecret(&blk.ClientSecret).
+				SetNillableOidcURL(&blk.OidcURL)
+		case block.TypeTimer:
+			blockCreate = blockCreate.SetEnableTimerExpression(*blk.EnableTimerExpression).
+				SetNillableTimerExpression(blk.TimerExpression).
+				SetTimerBehavior(*blk.TimerBehavior).
+				SetNillableSeconds(blk.Seconds).
+				SetNillableTimerSpecificDate(blk.TimerSpecificDate)
+		case block.TypeWaitForSignal:
+			blockCreate = blockCreate.SetSignalModule(blk.SignalModule).
+				SetSignalType(blk.SignalType).
+				SetNillableCustomFilter(&blk.CustomFilter).
+				SetBlockFlow(blk.BlockFlow)
+		case block.TypeKafka:
+			blockCreate = blockCreate.SetKafkaBrokers(blk.KafkaBrokers).
+				SetKafkaTopic(blk.KafkaTopic).
+				SetKafkaMessage(blk.KafkaMessage).
+				SetKafkaMessageType(blk.KafkaMessageType)
+		}
+
 		addToFlow(blockCreate)
 		if blk.Edges.SubFlow != nil {
 			blockCreate.SetSubFlow(blk.Edges.SubFlow)
@@ -170,7 +210,8 @@ func CopyBlocks(ctx context.Context, blocksQuery *ent.BlockQuery, addToFlow func
 	for _, blk := range blocks {
 		newBlock := oldToNewBlock[blk.ID]
 		switch newBlock.Type {
-		case block.TypeEnd, block.TypeDecision, block.TypeSubFlow, block.TypeTrigger, block.TypeAction, block.TypeTrueFalse:
+		case block.TypeEnd, block.TypeDecision, block.TypeSubFlow, block.TypeTrigger, block.TypeAction, block.TypeTrueFalse,
+			block.TypeChoice, block.TypeExecuteFlow, block.TypeInvokeRestAPI, block.TypeTimer, block.TypeWaitForSignal, block.TypeForEach, block.TypeParallel, block.TypeKafka:
 			if err := copyInputParams(ctx, blk, oldToNewBlock); err != nil {
 				return err
 			}

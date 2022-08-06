@@ -7,7 +7,6 @@ package handler
 import (
 	"context"
 	"fmt"
-
 	"github.com/facebookincubator/symphony/pkg/authz"
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/user"
@@ -23,7 +22,7 @@ import (
 // ServiceName is the current service name.
 const ServiceName = "async"
 
-// NewServer is the events server.
+// Server NewServer is the events server.
 type Server struct {
 	service      *ev.Service
 	logger       log.Logger
@@ -59,7 +58,7 @@ func NewServer(cfg Config) *Server {
 				cfg.Logger.For(ctx).Error("cannot handle event", zap.Error(err))
 			},
 		},
-		ev.WithEvent(event.EntMutation),
+		ev.WithEvent(event.EntMutation, event.Automation),
 	)
 	return srv
 }
@@ -80,9 +79,14 @@ func (s *Server) Shutdown(ctx context.Context) error {
 
 // HandleEvent implement ev.EventHandler interface.
 func (s *Server) HandleEvent(ctx context.Context, evt *ev.Event) error {
-	if evt.Name == event.EntMutation {
+	switch evt.Name {
+	case event.EntMutation:
 		if _, ok := evt.Object.(event.LogEntry); !ok {
 			return fmt.Errorf("event object %T must be a log entry", evt.Object)
+		}
+	case event.Automation:
+		if _, ok := evt.Object.(event.SignalEvent); !ok {
+			return fmt.Errorf("event object %T must be a signal event", evt.Object)
 		}
 	}
 
@@ -90,6 +94,7 @@ func (s *Server) HandleEvent(ctx context.Context, evt *ev.Event) error {
 		s.logger.For(ctx).Error("failed to handle event", zap.Error(err))
 	}
 	return nil
+
 }
 
 func (s *Server) handleEvent(ctx context.Context, evt *ev.Event) error {
@@ -100,7 +105,6 @@ func (s *Server) handleEvent(ctx context.Context, evt *ev.Event) error {
 		return fmt.Errorf("%s. tenant: %s", msg, evt.Tenant)
 	}
 	ctx = ent.NewContext(ctx, client)
-
 	var featureList []string
 	snapshot, err := s.features.Latest(ctx)
 	if err != nil {
@@ -111,11 +115,14 @@ func (s *Server) handleEvent(ctx context.Context, evt *ev.Event) error {
 			featureList = features
 		}
 	}
+
 	v := viewer.NewAutomation(evt.Tenant, ServiceName, user.RoleOwner,
 		viewer.WithFeatures(featureList...),
 	)
+
 	ctx = log.NewFieldsContext(ctx, zap.Object("viewer", v))
 	ctx = viewer.NewContext(ctx, v)
+
 	permissions, err := authz.Permissions(ctx)
 	if err != nil {
 		const msg = "cannot get permissions"

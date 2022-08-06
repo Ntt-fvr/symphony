@@ -80,7 +80,52 @@ func (r mutationResolver) RemoveKpi(ctx context.Context, id int) (int, error) {
 	if err != nil {
 		return id, errors.Wrapf(err, "has occurred error on process: %v", err)
 	}
-	// TODO: borrar o editar los edges relacionados
+
+	var formulas, err1 = t.Formulakpi(ctx)
+	if err1 != nil {
+		return 0, errors.Wrap(err1, "has occurred error on process: %v")
+	}
+
+	if len(formulas) > 0 {
+		for _, formula := range formulas {
+			countersFormulas, _ := formula.Counterformula(ctx)
+
+			for _, counterFormula := range countersFormulas {
+				if err := client.CounterFormula.DeleteOne(counterFormula).Exec(ctx); err != nil {
+					return id, errors.Wrap(err, "has occurred error on process: %v")
+				}
+			}
+
+			if err := client.Formula.DeleteOne(formula).Exec(ctx); err != nil {
+				return id, errors.Wrap(err, "has occurred error on process: %v")
+			}
+		}
+	}
+
+	var thresholds, err2 = t.Thresholdkpi(ctx)
+	if err2 != nil {
+		return 0, errors.Wrap(err1, "has occurred error on process: %v")
+	}
+	if thresholds != nil {
+		rules, _ := thresholds.Rulethreshold(ctx)
+		for _, rule := range rules {
+			rulesLimits, _ := rule.Rulelimitrule(ctx)
+
+			for _, ruleLimit := range rulesLimits {
+				if err := client.RuleLimit.DeleteOne(ruleLimit).Exec(ctx); err != nil {
+					return id, errors.Wrap(err, "has occurred error on process: %v")
+				}
+			}
+
+			if err := client.Rule.DeleteOne(rule).Exec(ctx); err != nil {
+				return id, errors.Wrap(err, "has occurred error on process: %v")
+			}
+		}
+
+		if err := client.Threshold.DeleteOne(thresholds).Exec(ctx); err != nil {
+			return id, errors.Wrap(err, "has occurred error on process: %v")
+		}
+	}
 
 	if err := client.Kpi.DeleteOne(t).Exec(ctx); err != nil {
 		return id, errors.Wrap(err, "has occurred error on process: %v")

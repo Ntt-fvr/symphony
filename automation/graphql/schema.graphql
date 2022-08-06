@@ -1,0 +1,287 @@
+scalar Cursor
+scalar Time
+
+enum FlowInstanceStatus {
+    RUNNING
+    FAILED
+    FAILING
+    COMPLETED
+    CANCELED
+    PAUSED
+    CLOSED
+}
+
+enum BlockInstanceStatus {
+    PENDING
+    IN_PROGRESS
+    FAILED
+    COMPLETED
+    WAITING
+}
+
+enum SignalType {
+    NOTIFICATION
+    WOCREATION
+    CRCREATION
+    WOUPDATE
+    CRUPDATE
+}
+
+enum SignalModule {
+    INVENTORY
+    CONFIGURATION
+}
+
+enum GoToType{
+    ORIGIN
+    DESTINATION
+}
+
+enum TimerBehavior {
+    FIXED_INTERVAL
+    SPECIFIC_DATETIME
+}
+
+enum AuthType {
+    BASIC
+    OIDC
+}
+
+enum UrlMethod {
+    GET
+    POST
+    PUT
+    DELETE
+    PATCH
+}
+
+enum KafkaMessageType {
+    EXPRESSION
+    INPUT
+    STATE
+}
+
+enum TransfStrategy {
+    REPLACE
+    MERGE
+}
+
+enum RetryUnit {
+    SECONDS
+    MINUTES
+    HOURS
+}
+
+enum AdditionMethod {
+    COMBINE
+    DISCARD_RESULT
+}
+
+input EditFlowInstanceInput {
+    id: ID!
+    bssCode: String
+    serviceInstanceCode: String
+    status: FlowInstanceStatus
+    endDate: Time
+}
+
+input AddBlockInstanceInput {
+    status: BlockInstanceStatus
+    inputJSON: String
+    outputJSON: String
+    blockId: ID!
+    startDate: Time!
+}
+
+input EditBlockInstanceInput {
+    id: ID!
+    status: BlockInstanceStatus
+    inputJSON: String
+    outputJSON: String
+    failure_reason: String
+    endDate: Time
+}
+
+type VariableExpression {
+    expression: String!
+}
+
+type VariableValue {
+    variableDefinitionKey: String!
+    value: String!
+}
+
+type ExitPoint {
+    id: ID!
+    index: Int
+    nextEntryPoints: [EntryPoint!]!
+    condition: VariableExpression
+}
+
+type EntryPoint {
+    id: ID!
+    parentBlock: Block!
+}
+
+type Connector {
+    source: ExitPoint!
+    target: EntryPoint!
+}
+
+type Flow {
+    id: ID!
+}
+
+type StartBlock {
+    exitPoint: ExitPoint!
+}
+
+type EndBlock {
+    params: [VariableExpression!]!
+}
+
+type GotoBlock {
+    target: Block
+}
+
+type DecisionRoute {
+    exitPoint: ExitPoint
+}
+
+type ChoiceBlock {
+    defaultExitPoint: ExitPoint!
+    rules: [DecisionRoute!]!
+}
+
+type TimerBlock {
+    behavior: TimerBehavior!
+    seconds: Int
+    datetime: Time
+    enableExpressionL: Boolean
+    expression: String
+    exitPoint: ExitPoint!
+}
+
+type ExecuteFlowBlock {
+    flow: Flow
+    params: [VariableExpression!]!
+    exitPoint: ExitPoint!
+}
+
+type InvokeRestAPIBlock {
+    method: UrlMethod!
+    url: String!
+    connectionTimeOut: Int!
+    body: String!
+    headers: [VariableValue!]!
+    authType: AuthType
+    user: String
+    password: String
+    clientId: String
+    clientSecret: String
+    oidcUrl: String
+    exitPoint: ExitPoint!
+}
+
+type ForEachBlock {
+    internalExitPoint: ExitPoint!
+    exitPoint: ExitPoint!
+}
+
+type ParallelBlock {
+    internalExitPoint: ExitPoint!
+    exitPoint: ExitPoint!
+}
+
+type WaitForSignalBlock {
+    exitPoint: ExitPoint!
+    type: SignalType
+    signalModule: SignalModule
+    customFilter: String
+    blocked: Boolean!
+}
+
+type KafkaBlock {
+    exitPoint: ExitPoint!
+    brokers: [String!]
+    topic: String!
+    message: String!
+    type: KafkaMessageType!
+}
+
+union BlockDetails =
+    StartBlock
+    | EndBlock
+    | GotoBlock
+    | ChoiceBlock
+    | TimerBlock
+    | WaitForSignalBlock
+    | InvokeRestAPIBlock
+    | ExecuteFlowBlock
+    | ForEachBlock
+    | ParallelBlock
+    | KafkaBlock
+
+type Block {
+    id: ID!
+    nextBlocks: [Block!]!
+    details: BlockDetails!
+    enableInputTransformation: Boolean!
+    inputTransfStrategy: TransfStrategy
+    inputTransformation: String
+    enableOutputTransformation: Boolean!
+    outputTransfStrategy: TransfStrategy
+    outputTransformation: String
+    enableInputStateTransformation: Boolean!
+    inputStateTransfStrategy: TransfStrategy
+    inputStateTransformation: String
+    enableOutputStateTransformation: Boolean!
+    outputStateTransfStrategy: TransfStrategy
+    outputStateTransformation: String
+    enableErrorHandling: Boolean
+    enableRetryPolicy: Boolean
+    retryInterval: Int
+    units: RetryUnit
+    maxAttemps: Int
+    backoffRate: Int
+    addInputToOutput: Boolean!
+    additionMethod: AdditionMethod
+}
+
+type FlowExecutionTemplate {
+    id: ID!
+    blocks: [Block!]!
+    connectors: [Connector!]!
+}
+
+type BlockInstance {
+    id: ID!
+    status: BlockInstanceStatus!
+    input_json: String
+    output_json: String
+    failure_reason: String
+    block: Block!
+    startDate: Time!
+    endDate: Time
+}
+
+type FlowInstance {
+    id: ID!
+    bssCode: String
+    serviceInstanceCode: String
+    status: FlowInstanceStatus!
+    template: FlowExecutionTemplate!
+    endDate: Time
+    startParams: [VariableValue!]
+}
+
+type Query {
+    node(id: ID!): FlowInstance
+}
+
+
+type Mutation {
+    editFlowInstance(input: EditFlowInstanceInput): FlowInstance!
+    addBlockInstance(flowInstanceId: ID!, input: AddBlockInstanceInput!): BlockInstance!
+    editBlockInstance(input: EditBlockInstanceInput!): BlockInstance!
+}

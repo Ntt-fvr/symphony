@@ -31,6 +31,7 @@ type EventRegistration = (
 export type Paper = $ReadOnly<{|
   el: HTMLElement,
   model: Graph,
+  embeddingMode: boolean,
   getContentArea: () => Rect,
   getContentBBox: () => Rect,
   scale: (
@@ -66,8 +67,10 @@ export type PaperEventCallback = (ExtendedMouseEvent, number, number) => void;
 export type PaperCtorType = ({
   el: HTMLElement,
   model: Graph,
+  embeddingMode: boolean,
   width: number | string,
   height: number | string,
   gridSize: number,
   interactive: boolean | (IShape => boolean),
+  drawGrid: boolean | object,
 }) => Paper;

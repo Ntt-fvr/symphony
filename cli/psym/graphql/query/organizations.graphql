@@ -1,0 +1,26 @@
+query organizations(
+$after: Cursor
+$first: Int
+$before: Cursor
+$last: Int
+$orderBy: OrganizationOrder
+$filterBy: [OrganizationFilterInput!]
+){
+organizations(after: $after, first: $first, before: $before, last: $last, orderBy: $orderBy, filterBy: $filterBy){
+totalCount
+edges{
+node{
+id
+  name
+  description
+}
+      cursor
+    }
+    pageInfo{
+      hasNextPage
+      hasPreviousPage
+      startCursor
+      endCursor
+    }
+  }
+}

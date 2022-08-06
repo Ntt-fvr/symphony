@@ -1,0 +1,3 @@
+mutation removeKqiPerspective($id: ID!) {
+  removeKqiPerspective(id: $id)
+}

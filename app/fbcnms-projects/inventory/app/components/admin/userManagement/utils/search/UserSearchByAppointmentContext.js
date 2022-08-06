@@ -85,7 +85,11 @@ const searchCallback = (searchTerm: string, filters: appointmentsFilters) => {
     if (response.usersAvailability.length < 1) {
       return [];
     }
-    return response.usersAvailability.map(user => user.user).filter(Boolean);
+    return response.usersAvailability
+      .map(user => {
+        return {...user.user, timeAvailability: user.slotStartDate};
+      })
+      .filter(Boolean);
   });
 };
 

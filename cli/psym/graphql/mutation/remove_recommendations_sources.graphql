@@ -1,0 +1,3 @@
+mutation removeRecommendationSources($id: ID!) {
+  removeRecommendationsSources(id: $id)
+}

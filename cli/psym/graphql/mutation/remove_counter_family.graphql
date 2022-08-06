@@ -1,0 +1,3 @@
+mutation removeCounterFamily($id: ID!) {
+  removeCounterFamily(id: $id)
+}

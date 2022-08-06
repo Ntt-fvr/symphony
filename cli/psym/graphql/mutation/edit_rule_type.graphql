@@ -1,0 +1,6 @@
+mutation editRuleType($input: EditRuleTypeInput!) {
+  editRuleType(input: $input) {
+    id
+    name
+  }
+}

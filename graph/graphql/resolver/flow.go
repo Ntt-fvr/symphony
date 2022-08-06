@@ -8,14 +8,16 @@ import (
 	"context"
 	"fmt"
 	"strconv"
+	"time"
 
 	"github.com/facebookincubator/symphony/graph/resolverutil"
+	"github.com/vektah/gqlparser/v2/gqlerror"
 
 	"github.com/pkg/errors"
 
-	"github.com/facebookincubator/symphony/pkg/ent/blockinstance"
-
+	"github.com/facebookincubator/symphony/pkg/ent/flowinstance"
 	"github.com/facebookincubator/symphony/pkg/ent/predicate"
+	"github.com/facebookincubator/symphony/pkg/viewer"
 
 	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
 	"github.com/facebookincubator/symphony/pkg/flowengine/actions"
@@ -85,10 +87,17 @@ func (r mutationResolver) AddFlowDraft(ctx context.Context, input models.AddFlow
 			return nil, fmt.Errorf("cannot creat a new draft for flow id: %d, as a draft already exists", input.FlowID)
 		}
 	} else {
+		v, ok := viewer.FromContext(ctx).(*viewer.UserViewer)
+		if !ok {
+			return nil, gqlerror.Errorf("could not be executed in automation")
+		}
+
 		newFlow, err := client.Flow.Create().
 			SetName(input.Name).
 			SetNillableDescription(input.Description).
 			SetEndParamDefinitions(input.EndParamDefinitions).
+			SetCreationDate(time.Now()).
+			SetAuthor(v.User()).
 			Save(ctx)
 		if err != nil {
 			return nil, fmt.Errorf("failed to create flow: %w", err)
@@ -140,6 +149,7 @@ func (r mutationResolver) PublishFlow(ctx context.Context, input models.PublishF
 		SetEndParamDefinitions(flowDraft.EndParamDefinitions).
 		SetStatus(flow.StatusPublished).
 		SetNewInstancesPolicy(input.FlowInstancesPolicy).
+		SetNillableCmType(input.CmType).
 		ClearBlocks().
 		Save(ctx)
 	if err != nil {
@@ -176,26 +186,11 @@ func (r mutationResolver) StartFlow(ctx context.Context, input models.StartFlowI
 	client := r.ClientFrom(ctx)
 	flowInstance, err := client.FlowInstance.Create().
 		SetFlowID(input.FlowID).
-		SetBssCode(input.BssCode).
+		SetNillableBssCode(input.BssCode).
 		SetStartDate(input.StartDate).
+		SetStartParams(input.Params).
 		Save(ctx)
 	if err != nil {
-		return nil, err
-	}
-	startBlock, err := flowInstance.QueryTemplate().
-		QueryBlocks().
-		Where(block.TypeEQ(block.TypeStart)).
-		Only(ctx)
-	if err != nil {
-		return nil, fmt.Errorf("failed to find flow start block. id=%q", flowInstance.ID)
-	}
-	if _, err = client.BlockInstance.Create().
-		SetBlock(startBlock).
-		SetFlowInstance(flowInstance).
-		SetStatus(blockinstance.StatusCompleted).
-		SetStartDate(input.StartDate).
-		SetInputs(input.Params).
-		Save(ctx); err != nil {
 		return nil, err
 	}
 	return flowInstance, nil
@@ -212,20 +207,6 @@ func (r queryResolver) FlowDrafts(
 		predicates = append(predicates, flowdraft.NameEQ(*name))
 	}
 	return r.ClientFrom(ctx).FlowDraft.Query().Where(flowdraft.Or(predicates...)).
-		Paginate(ctx, after, first, before, last)
-}
-
-func (r queryResolver) Flows(
-	ctx context.Context,
-	after *ent.Cursor, first *int,
-	before *ent.Cursor, last *int,
-	name *string,
-) (*ent.FlowConnection, error) {
-	var predicates []predicate.Flow
-	if name != nil {
-		predicates = append(predicates, flow.NameEQ(*name))
-	}
-	return r.ClientFrom(ctx).Flow.Query().Where(flow.Or(predicates...)).
 		Paginate(ctx, after, first, before, last)
 }
 
@@ -264,11 +245,6 @@ func (r mutationResolver) collectBlockVariables(input models.ImportFlowDraftInpu
 			blockVariableInputs = append(blockVariableInputs, variableExpression.BlockVariables...)
 		}
 	}
-	for _, blk := range input.SubflowBlocks {
-		for _, variableExpression := range blk.Params {
-			blockVariableInputs = append(blockVariableInputs, variableExpression.BlockVariables...)
-		}
-	}
 	for _, blk := range input.TriggerBlocks {
 		for _, variableExpression := range blk.Params {
 			blockVariableInputs = append(blockVariableInputs, variableExpression.BlockVariables...)
@@ -279,11 +255,32 @@ func (r mutationResolver) collectBlockVariables(input models.ImportFlowDraftInpu
 			blockVariableInputs = append(blockVariableInputs, variableExpression.BlockVariables...)
 		}
 	}
-	for _, blk := range input.DecisionBlocks {
+	for _, blk := range input.ChoiceBlocks {
 		for _, route := range blk.Routes {
 			blockVariableInputs = append(blockVariableInputs, route.Condition.BlockVariables...)
 		}
 	}
+	for _, blk := range input.ExecuteFlowBlocks {
+		for _, variableExpression := range blk.Params {
+			blockVariableInputs = append(blockVariableInputs, variableExpression.BlockVariables...)
+		}
+	}
+	for _, blk := range input.WaitForSignalBlocks {
+		for _, variableExpression := range blk.Params {
+			blockVariableInputs = append(blockVariableInputs, variableExpression.BlockVariables...)
+		}
+	}
+	for _, blk := range input.TimerBlocks {
+		for _, variableExpression := range blk.Params {
+			blockVariableInputs = append(blockVariableInputs, variableExpression.BlockVariables...)
+		}
+	}
+	for _, blk := range input.InvokeRestAPIBlocks {
+		for _, variableExpression := range blk.Params {
+			blockVariableInputs = append(blockVariableInputs, variableExpression.BlockVariables...)
+		}
+	}
+
 	return blockVariableInputs
 }
 
@@ -298,19 +295,28 @@ func (r mutationResolver) collectBlockCids(input models.ImportFlowDraftInput) []
 	for _, blk := range input.ActionBlocks {
 		blockCids = append(blockCids, blk.Cid)
 	}
-	for _, blk := range input.DecisionBlocks {
-		blockCids = append(blockCids, blk.Cid)
-	}
 	for _, blk := range input.GotoBlocks {
-		blockCids = append(blockCids, blk.Cid)
-	}
-	for _, blk := range input.SubflowBlocks {
 		blockCids = append(blockCids, blk.Cid)
 	}
 	for _, blk := range input.TriggerBlocks {
 		blockCids = append(blockCids, blk.Cid)
 	}
-	for _, blk := range input.TrueFalseBlocks {
+	for _, blk := range input.ChoiceBlocks {
+		blockCids = append(blockCids, blk.Cid)
+	}
+	for _, blk := range input.ExecuteFlowBlocks {
+		blockCids = append(blockCids, blk.Cid)
+	}
+	for _, blk := range input.ExecuteFlowBlocks {
+		blockCids = append(blockCids, blk.Cid)
+	}
+	for _, blk := range input.InvokeRestAPIBlocks {
+		blockCids = append(blockCids, blk.Cid)
+	}
+	for _, blk := range input.KafkaBlocks {
+		blockCids = append(blockCids, blk.Cid)
+	}
+	for _, blk := range input.WaitForSignalBlocks {
 		blockCids = append(blockCids, blk.Cid)
 	}
 	return blockCids
@@ -465,25 +471,6 @@ func (r mutationResolver) importBlocks(ctx context.Context, input models.ImportF
 				} else {
 					newBlockInputs = append(newBlockInputs, blkInput)
 				}
-			case *models.DecisionBlockInput:
-				routes := blkInput.Routes
-				var paramsDecision []*models.VariableExpressionInput
-				for _, route := range routes {
-					paramsDecision = append(paramsDecision, route.Condition)
-				}
-				if ok := r.paramsHaveDependencies(paramsDecision, createdBlockCIDs); ok {
-					if _, err := r.AddDecisionBlock(ctx, input.ID, *blkInput); err != nil {
-						return err
-					}
-					createdBlockCIDs[blkInput.Cid] = struct{}{}
-				} else {
-					newBlockInputs = append(newBlockInputs, blkInput)
-				}
-			case *models.TrueFalseBlockInput:
-				if _, err := r.AddTrueFalseBlock(ctx, input.ID, *blkInput); err != nil {
-					return err
-				}
-				createdBlockCIDs[blkInput.Cid] = struct{}{}
 			case *models.GotoBlockInput:
 				ok := true
 				if blkInput.TargetBlockCid != nil {
@@ -491,15 +478,6 @@ func (r mutationResolver) importBlocks(ctx context.Context, input models.ImportF
 				}
 				if ok {
 					if _, err := r.AddGotoBlock(ctx, input.ID, *blkInput); err != nil {
-						return err
-					}
-					createdBlockCIDs[blkInput.Cid] = struct{}{}
-				} else {
-					newBlockInputs = append(newBlockInputs, blkInput)
-				}
-			case *models.SubflowBlockInput:
-				if ok := r.paramsHaveDependencies(blkInput.Params, createdBlockCIDs); ok {
-					if _, err := r.AddSubflowBlock(ctx, input.ID, *blkInput); err != nil {
 						return err
 					}
 					createdBlockCIDs[blkInput.Cid] = struct{}{}
@@ -524,6 +502,65 @@ func (r mutationResolver) importBlocks(ctx context.Context, input models.ImportF
 				} else {
 					newBlockInputs = append(newBlockInputs, blkInput)
 				}
+			case *models.ChoiceBlockInput:
+				routes := blkInput.Routes
+				var paramsDecision []*models.VariableExpressionInput
+				for _, route := range routes {
+					paramsDecision = append(paramsDecision, route.Condition)
+				}
+				if ok := r.paramsHaveDependencies(paramsDecision, createdBlockCIDs); ok {
+					if _, err := r.AddChoiceBlock(ctx, input.ID, *blkInput); err != nil {
+						return err
+					}
+					createdBlockCIDs[blkInput.Cid] = struct{}{}
+				} else {
+					newBlockInputs = append(newBlockInputs, blkInput)
+				}
+			case *models.ExecuteFlowBlockInput:
+				if ok := r.paramsHaveDependencies(blkInput.Params, createdBlockCIDs); ok {
+					if _, err := r.AddExecuteFlowBlock(ctx, input.ID, *blkInput); err != nil {
+						return err
+					}
+					createdBlockCIDs[blkInput.Cid] = struct{}{}
+				} else {
+					newBlockInputs = append(newBlockInputs, blkInput)
+				}
+			case *models.TimerBlockInput:
+				if ok := r.paramsHaveDependencies(blkInput.Params, createdBlockCIDs); ok {
+					if _, err := r.AddTimerBlock(ctx, input.ID, *blkInput); err != nil {
+						return err
+					}
+					createdBlockCIDs[blkInput.Cid] = struct{}{}
+				} else {
+					newBlockInputs = append(newBlockInputs, blkInput)
+				}
+			case *models.InvokeRestAPIBlockInput:
+				if ok := r.paramsHaveDependencies(blkInput.Params, createdBlockCIDs); ok {
+					if _, err := r.AddInvokeRestAPIBlock(ctx, input.ID, *blkInput); err != nil {
+						return err
+					}
+					createdBlockCIDs[blkInput.Cid] = struct{}{}
+				} else {
+					newBlockInputs = append(newBlockInputs, blkInput)
+				}
+			case *models.WaitForSignalBlockInput:
+				if ok := r.paramsHaveDependencies(blkInput.Params, createdBlockCIDs); ok {
+					if _, err := r.AddWaitForSignalBlock(ctx, input.ID, *blkInput); err != nil {
+						return err
+					}
+					createdBlockCIDs[blkInput.Cid] = struct{}{}
+				} else {
+					newBlockInputs = append(newBlockInputs, blkInput)
+				}
+			case *models.KafkaBlockInput:
+				// if ok := r.paramsHaveDependencies(blkInput.Params, createdBlockCIDs); ok {
+				if _, err := r.AddKafkaBlock(ctx, input.ID, *blkInput); err != nil {
+					return err
+				}
+				createdBlockCIDs[blkInput.Cid] = struct{}{}
+				/*} else {
+					newBlockInputs = append(newBlockInputs, blkInput)
+				}*/
 			}
 		}
 		if len(blockInputs) == len(newBlockInputs) {
@@ -535,18 +572,12 @@ func (r mutationResolver) importBlocks(ctx context.Context, input models.ImportF
 	return nil
 }
 
-func (r mutationResolver) collectBlocksInputs(ctx context.Context, input models.ImportFlowDraftInput) []interface{} {
+func (r mutationResolver) collectBlocksInputs(_ context.Context, input models.ImportFlowDraftInput) []interface{} {
 	var blockInputs []interface{}
 	for _, blk := range input.EndBlocks {
 		blockInputs = append(blockInputs, blk)
 	}
-	for _, blk := range input.DecisionBlocks {
-		blockInputs = append(blockInputs, blk)
-	}
 	for _, blk := range input.GotoBlocks {
-		blockInputs = append(blockInputs, blk)
-	}
-	for _, blk := range input.SubflowBlocks {
 		blockInputs = append(blockInputs, blk)
 	}
 	for _, blk := range input.TriggerBlocks {
@@ -555,9 +586,25 @@ func (r mutationResolver) collectBlocksInputs(ctx context.Context, input models.
 	for _, blk := range input.ActionBlocks {
 		blockInputs = append(blockInputs, blk)
 	}
-	for _, blk := range input.TrueFalseBlocks {
+	for _, blk := range input.ChoiceBlocks {
 		blockInputs = append(blockInputs, blk)
 	}
+	for _, blk := range input.InvokeRestAPIBlocks {
+		blockInputs = append(blockInputs, blk)
+	}
+	for _, blk := range input.TimerBlocks {
+		blockInputs = append(blockInputs, blk)
+	}
+	for _, blk := range input.WaitForSignalBlocks {
+		blockInputs = append(blockInputs, blk)
+	}
+	for _, blk := range input.ExecuteFlowBlocks {
+		blockInputs = append(blockInputs, blk)
+	}
+	for _, blk := range input.KafkaBlocks {
+		blockInputs = append(blockInputs, blk)
+	}
+
 	return blockInputs
 }
 
@@ -622,7 +669,91 @@ func (r mutationResolver) EditFlowInstance(ctx context.Context, input *models.Ed
 		UpdateOne(fi).
 		SetNillableServiceInstanceCode(input.ServiceInstanceCode).
 		SetNillableStatus(input.Status).
-		SetNillableEndDate(input.EndDate)
+		SetNillableEndDate(input.EndDate).
+		SetNillableBssCode(input.BssCode)
+
+	if input.StartParams != nil {
+		mutation = mutation.SetStartParams(input.StartParams)
+	}
 
 	return mutation.Save(ctx)
+}
+
+func (flowResolver) RunningInstances(ctx context.Context, obj *ent.Flow) (int, error) {
+	instances, err := obj.Edges.InstanceOrErr()
+	if !ent.IsNotLoaded(err) {
+		return len(instances), err
+	}
+	return obj.QueryInstance().Where(flowinstance.StatusEQ(flowinstance.StatusRunning)).Count(ctx)
+}
+
+func (flowResolver) FailedInstances(ctx context.Context, obj *ent.Flow) (int, error) {
+	instances, err := obj.Edges.InstanceOrErr()
+	if !ent.IsNotLoaded(err) {
+		return len(instances), err
+	}
+	return obj.QueryInstance().Where(flowinstance.StatusEQ(flowinstance.StatusRunning)).Count(ctx)
+}
+
+func (r flowResolver) Editor(ctx context.Context, obj *ent.Flow) (*ent.User, error) {
+	e, err := obj.QueryEditor().Only(ctx)
+	return e, err
+}
+
+func (r mutationResolver) ArchiveFlow(ctx context.Context, input models.ArchiveFlowInput) (*ent.Flow, error) {
+	var err error
+	client := r.ClientFrom(ctx)
+
+	f, err := client.Flow.Get(ctx, input.FlowID)
+	if err != nil {
+		return nil, fmt.Errorf("flow not found: %w", err)
+	}
+
+	_, err = client.Flow.UpdateOne(f).SetStatus(flow.StatusArchived).
+		SetNewInstancesPolicy(flow.NewInstancesPolicyDisabled).Save(ctx)
+
+	if err != nil {
+		return nil, fmt.Errorf("failed to update flow: %w", err)
+	}
+
+	return f, nil
+}
+
+func (r mutationResolver) DuplicateFlow(ctx context.Context, input models.DuplicateFlowInput) (*ent.Flow, error) {
+	var err error
+	client := r.ClientFrom(ctx)
+
+	f, err := client.Flow.Get(ctx, input.FlowID)
+	if err != nil {
+		return nil, fmt.Errorf("flow not found: %w", err)
+	}
+
+	v, ok := viewer.FromContext(ctx).(*viewer.UserViewer)
+	if !ok {
+		return nil, gqlerror.Errorf("could not be executed in automation")
+	}
+	// editor, last edited, creation date
+	newFlow, err := client.Flow.Create().SetName(input.Name).
+		SetNillableDescription(input.Description).
+		SetStatus(flow.DefaultStatus).
+		SetAuthor(v.User()).
+		SetCreationDate(time.Now()).
+		Save(ctx)
+
+	if err != nil {
+		return nil, fmt.Errorf("failed to duplicate flow: %w", err)
+	}
+
+	blockQuery := client.Block.Query().
+		Where(block.HasFlowWith(flow.ID(f.ID)))
+	setFlowBlocks := func(b *ent.BlockCreate) {
+		b.SetFlow(newFlow)
+	}
+	count, _ := f.QueryBlocks().Count(ctx)
+	if count > 0 {
+		if err := flowengine.CopyBlocks(ctx, blockQuery, setFlowBlocks); err != nil {
+			return nil, err
+		}
+	}
+	return newFlow, nil
 }

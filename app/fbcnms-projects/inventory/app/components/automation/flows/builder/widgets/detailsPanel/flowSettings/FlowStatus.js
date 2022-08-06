@@ -57,7 +57,6 @@ export default function FlowStatus(props: Props) {
       actionItems={[
         <StatusTag className={classes.largeStatus} status={status} />,
       ]}
-      variant="fullWidth"
       className={className}
     />
   );

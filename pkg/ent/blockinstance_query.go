@@ -16,6 +16,7 @@ import (
 	"github.com/facebook/ent/dialect/sql"
 	"github.com/facebook/ent/dialect/sql/sqlgraph"
 	"github.com/facebook/ent/schema/field"
+	"github.com/facebookincubator/symphony/pkg/ent/automationactivity"
 	"github.com/facebookincubator/symphony/pkg/ent/block"
 	"github.com/facebookincubator/symphony/pkg/ent/blockinstance"
 	"github.com/facebookincubator/symphony/pkg/ent/flowinstance"
@@ -34,6 +35,7 @@ type BlockInstanceQuery struct {
 	withFlowInstance    *FlowInstanceQuery
 	withBlock           *BlockQuery
 	withSubflowInstance *FlowInstanceQuery
+	withBlockActivities *AutomationActivityQuery
 	withFKs             bool
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
@@ -123,6 +125,28 @@ func (biq *BlockInstanceQuery) QuerySubflowInstance() *FlowInstanceQuery {
 			sqlgraph.From(blockinstance.Table, blockinstance.FieldID, selector),
 			sqlgraph.To(flowinstance.Table, flowinstance.FieldID),
 			sqlgraph.Edge(sqlgraph.O2O, false, blockinstance.SubflowInstanceTable, blockinstance.SubflowInstanceColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(biq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryBlockActivities chains the current query on the block_activities edge.
+func (biq *BlockInstanceQuery) QueryBlockActivities() *AutomationActivityQuery {
+	query := &AutomationActivityQuery{config: biq.config}
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := biq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := biq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(blockinstance.Table, blockinstance.FieldID, selector),
+			sqlgraph.To(automationactivity.Table, automationactivity.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, blockinstance.BlockActivitiesTable, blockinstance.BlockActivitiesColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(biq.driver.Dialect(), step)
 		return fromU, nil
@@ -309,6 +333,7 @@ func (biq *BlockInstanceQuery) Clone() *BlockInstanceQuery {
 		withFlowInstance:    biq.withFlowInstance.Clone(),
 		withBlock:           biq.withBlock.Clone(),
 		withSubflowInstance: biq.withSubflowInstance.Clone(),
+		withBlockActivities: biq.withBlockActivities.Clone(),
 		// clone intermediate query.
 		sql:  biq.sql.Clone(),
 		path: biq.path,
@@ -345,6 +370,17 @@ func (biq *BlockInstanceQuery) WithSubflowInstance(opts ...func(*FlowInstanceQue
 		opt(query)
 	}
 	biq.withSubflowInstance = query
+	return biq
+}
+
+//  WithBlockActivities tells the query-builder to eager-loads the nodes that are connected to
+// the "block_activities" edge. The optional arguments used to configure the query builder of the edge.
+func (biq *BlockInstanceQuery) WithBlockActivities(opts ...func(*AutomationActivityQuery)) *BlockInstanceQuery {
+	query := &AutomationActivityQuery{config: biq.config}
+	for _, opt := range opts {
+		opt(query)
+	}
+	biq.withBlockActivities = query
 	return biq
 }
 
@@ -418,10 +454,11 @@ func (biq *BlockInstanceQuery) sqlAll(ctx context.Context) ([]*BlockInstance, er
 		nodes       = []*BlockInstance{}
 		withFKs     = biq.withFKs
 		_spec       = biq.querySpec()
-		loadedTypes = [3]bool{
+		loadedTypes = [4]bool{
 			biq.withFlowInstance != nil,
 			biq.withBlock != nil,
 			biq.withSubflowInstance != nil,
+			biq.withBlockActivities != nil,
 		}
 	)
 	if biq.withFlowInstance != nil || biq.withBlock != nil {
@@ -529,6 +566,35 @@ func (biq *BlockInstanceQuery) sqlAll(ctx context.Context) ([]*BlockInstance, er
 				return nil, fmt.Errorf(`unexpected foreign-key "block_instance_subflow_instance" returned %v for node %v`, *fk, n.ID)
 			}
 			node.Edges.SubflowInstance = n
+		}
+	}
+
+	if query := biq.withBlockActivities; query != nil {
+		fks := make([]driver.Value, 0, len(nodes))
+		nodeids := make(map[int]*BlockInstance)
+		for i := range nodes {
+			fks = append(fks, nodes[i].ID)
+			nodeids[nodes[i].ID] = nodes[i]
+			nodes[i].Edges.BlockActivities = []*AutomationActivity{}
+		}
+		query.withFKs = true
+		query.Where(predicate.AutomationActivity(func(s *sql.Selector) {
+			s.Where(sql.InValues(blockinstance.BlockActivitiesColumn, fks...))
+		}))
+		neighbors, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, n := range neighbors {
+			fk := n.block_instance_block_activities
+			if fk == nil {
+				return nil, fmt.Errorf(`foreign-key "block_instance_block_activities" is nil for node %v`, n.ID)
+			}
+			node, ok := nodeids[*fk]
+			if !ok {
+				return nil, fmt.Errorf(`unexpected foreign-key "block_instance_block_activities" returned %v for node %v`, *fk, n.ID)
+			}
+			node.Edges.BlockActivities = append(node.Edges.BlockActivities, n)
 		}
 	}
 

@@ -11,13 +11,10 @@
 import React from 'react';
 import {makeStyles} from '@material-ui/styles';
 
-import Button from '@symphony/design-system/components/Button';
 import Text from '@symphony/design-system/components/Text';
 
 const useStyles = makeStyles(() => ({
-  root: {
-    flexGrow: '1',
-  },
+  root: {},
   name: {
     marginRight: '7px',
   },
@@ -38,22 +35,22 @@ const DynamicPropertyTypes = (props: Props) => {
 
   return (
     <div className={(classes.root, className)}>
-      <div className={classes.container}>
-        <Text className={classes.name} variant="subtitle2">
-          {name}:
+      <Text
+        className={classes.container}
+        useEllipsis={true}
+        variant="subtitle2">
+        <span className={classes.name}>{name}:</span>
+
+        <Text weight={'bold'} color={'regular'}>
+          <span>{txt}</span>
         </Text>
-        {txt ? (
-          <Text weight={'bold'} color={'regular'}>
-            {txt}
+
+        <a style={{textDecoration: 'none'}} target="_blank">
+          <Text weight={'bold'} color={'primary'}>
+            <span>{btn}</span>
           </Text>
-        ) : (
-          <Button variant="text">
-            <Text weight={'bold'} color={'primary'}>
-              {btn}
-            </Text>
-          </Button>
-        )}
-      </div>
+        </a>
+      </Text>
     </div>
   );
 };

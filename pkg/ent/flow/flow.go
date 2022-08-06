@@ -34,11 +34,21 @@ const (
 	FieldStatus = "status"
 	// FieldNewInstancesPolicy holds the string denoting the newinstancespolicy field in the database.
 	FieldNewInstancesPolicy = "new_instances_policy"
+	// FieldCmType holds the string denoting the cm_type field in the database.
+	FieldCmType = "cm_type"
+	// FieldCreationDate holds the string denoting the creation_date field in the database.
+	FieldCreationDate = "creation_date"
 
 	// EdgeBlocks holds the string denoting the blocks edge name in mutations.
 	EdgeBlocks = "blocks"
 	// EdgeDraft holds the string denoting the draft edge name in mutations.
 	EdgeDraft = "draft"
+	// EdgeAuthor holds the string denoting the author edge name in mutations.
+	EdgeAuthor = "author"
+	// EdgeEditor holds the string denoting the editor edge name in mutations.
+	EdgeEditor = "editor"
+	// EdgeInstance holds the string denoting the instance edge name in mutations.
+	EdgeInstance = "instance"
 
 	// Table holds the table name of the flow in the database.
 	Table = "flows"
@@ -56,6 +66,27 @@ const (
 	DraftInverseTable = "flow_drafts"
 	// DraftColumn is the table column denoting the draft relation/edge.
 	DraftColumn = "flow_draft"
+	// AuthorTable is the table the holds the author relation/edge.
+	AuthorTable = "flows"
+	// AuthorInverseTable is the table name for the User entity.
+	// It exists in this package in order to avoid circular dependency with the "user" package.
+	AuthorInverseTable = "users"
+	// AuthorColumn is the table column denoting the author relation/edge.
+	AuthorColumn = "flow_author"
+	// EditorTable is the table the holds the editor relation/edge.
+	EditorTable = "users"
+	// EditorInverseTable is the table name for the User entity.
+	// It exists in this package in order to avoid circular dependency with the "user" package.
+	EditorInverseTable = "users"
+	// EditorColumn is the table column denoting the editor relation/edge.
+	EditorColumn = "flow_editor"
+	// InstanceTable is the table the holds the instance relation/edge.
+	InstanceTable = "flow_instances"
+	// InstanceInverseTable is the table name for the FlowInstance entity.
+	// It exists in this package in order to avoid circular dependency with the "flowinstance" package.
+	InstanceInverseTable = "flow_instances"
+	// InstanceColumn is the table column denoting the instance relation/edge.
+	InstanceColumn = "flow_instance_flow"
 )
 
 // Columns holds all SQL columns for flow fields.
@@ -68,12 +99,24 @@ var Columns = []string{
 	FieldEndParamDefinitions,
 	FieldStatus,
 	FieldNewInstancesPolicy,
+	FieldCmType,
+	FieldCreationDate,
+}
+
+// ForeignKeys holds the SQL foreign-keys that are owned by the Flow type.
+var ForeignKeys = []string{
+	"flow_author",
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
 func ValidColumn(column string) bool {
 	for i := range Columns {
 		if column == Columns[i] {
+			return true
+		}
+	}
+	for i := range ForeignKeys {
+		if column == ForeignKeys[i] {
 			return true
 		}
 	}
@@ -102,14 +145,16 @@ var (
 // Status defines the type for the status enum field.
 type Status string
 
-// StatusUnpublished is the default Status.
-const DefaultStatus = StatusUnpublished
+// StatusDraft is the default Status.
+const DefaultStatus = StatusDraft
 
 // Status values.
 const (
-	StatusPublished   Status = "PUBLISHED"
-	StatusUnpublished Status = "UNPUBLISHED"
-	StatusArchived    Status = "ARCHIVED"
+	StatusPublished Status = "PUBLISHED"
+	StatusDraft     Status = "DRAFT"
+	StatusArchived  Status = "ARCHIVED"
+	StatusOn_Hold   Status = "ON_HOLD"
+	StatusDeleted   Status = "DELETED"
 )
 
 func (s Status) String() string {
@@ -119,7 +164,7 @@ func (s Status) String() string {
 // StatusValidator is a validator for the "status" field enum values. It is called by the builders before save.
 func StatusValidator(s Status) error {
 	switch s {
-	case StatusPublished, StatusUnpublished, StatusArchived:
+	case StatusPublished, StatusDraft, StatusArchived, StatusOn_Hold, StatusDeleted:
 		return nil
 	default:
 		return fmt.Errorf("flow: invalid enum value for status field: %q", s)
@@ -149,6 +194,33 @@ func NewInstancesPolicyValidator(nip NewInstancesPolicy) error {
 		return nil
 	default:
 		return fmt.Errorf("flow: invalid enum value for newInstancesPolicy field: %q", nip)
+	}
+}
+
+// CmType defines the type for the cm_type enum field.
+type CmType string
+
+// CmTypeInitialConfig is the default CmType.
+const DefaultCmType = CmTypeInitialConfig
+
+// CmType values.
+const (
+	CmTypeInitialConfig  CmType = "INITIAL_CONFIG"
+	CmTypeGeneralCr      CmType = "GENERAL_CR"
+	CmTypeSyncParameters CmType = "SYNC_PARAMETERS"
+)
+
+func (ct CmType) String() string {
+	return string(ct)
+}
+
+// CmTypeValidator is a validator for the "cm_type" field enum values. It is called by the builders before save.
+func CmTypeValidator(ct CmType) error {
+	switch ct {
+	case CmTypeInitialConfig, CmTypeGeneralCr, CmTypeSyncParameters:
+		return nil
+	default:
+		return fmt.Errorf("flow: invalid enum value for cm_type field: %q", ct)
 	}
 }
 
@@ -184,6 +256,24 @@ func (nip *NewInstancesPolicy) UnmarshalGQL(val interface{}) error {
 	*nip = NewInstancesPolicy(str)
 	if err := NewInstancesPolicyValidator(*nip); err != nil {
 		return fmt.Errorf("%s is not a valid NewInstancesPolicy", str)
+	}
+	return nil
+}
+
+// MarshalGQL implements graphql.Marshaler interface.
+func (ct CmType) MarshalGQL(w io.Writer) {
+	io.WriteString(w, strconv.Quote(ct.String()))
+}
+
+// UnmarshalGQL implements graphql.Unmarshaler interface.
+func (ct *CmType) UnmarshalGQL(val interface{}) error {
+	str, ok := val.(string)
+	if !ok {
+		return fmt.Errorf("enum %T must be a string", val)
+	}
+	*ct = CmType(str)
+	if err := CmTypeValidator(*ct); err != nil {
+		return fmt.Errorf("%s is not a valid CmType", str)
 	}
 	return nil
 }

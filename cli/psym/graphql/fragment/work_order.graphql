@@ -21,6 +21,9 @@ fragment WorkOrderFragment on WorkOrder {
     assignedTo{
         id
     }
+    organizationFk{
+        id
+    }
     status
     priority
 }

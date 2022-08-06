@@ -1,0 +1,6 @@
+mutation addRecommendationsCategory($input: AddRecommendationsCategoryInput!) {
+  addRecommendationsCategory(input: $input) {
+    id
+    name
+  }
+}

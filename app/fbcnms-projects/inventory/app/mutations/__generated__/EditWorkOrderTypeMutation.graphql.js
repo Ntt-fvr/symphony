@@ -19,52 +19,66 @@ export type CheckListItemEnumSelectionMode = "multiple" | "single" | "%future ad
 export type CheckListItemType = "cell_scan" | "enum" | "files" | "simple" | "string" | "wifi_scan" | "yes_no" | "%future added value";
 export type PropertyKind = "bool" | "date" | "datetime_local" | "email" | "enum" | "float" | "gps_location" | "int" | "node" | "range" | "string" | "%future added value";
 export type EditWorkOrderTypeInput = {|
+  assigneeCanCompleteWorkOrder?: ?boolean,
+  checkListCategories?: ?$ReadOnlyArray<CheckListCategoryDefinitionInput>,
+  description?: ?string,
+  duration?: ?number,
   id: string,
   name: string,
-  description?: ?string,
   properties?: ?$ReadOnlyArray<?PropertyTypeInput>,
-  checkListCategories?: ?$ReadOnlyArray<CheckListCategoryDefinitionInput>,
-  assigneeCanCompleteWorkOrder?: ?boolean,
-  duration?: ?number,
-|};
-export type PropertyTypeInput = {|
-  id?: ?string,
-  externalId?: ?string,
-  name: string,
-  type: PropertyKind,
-  nodeType?: ?string,
-  index?: ?number,
-  category?: ?string,
-  stringValue?: ?string,
-  intValue?: ?number,
-  booleanValue?: ?boolean,
-  floatValue?: ?number,
-  latitudeValue?: ?number,
-  longitudeValue?: ?number,
-  rangeFromValue?: ?number,
-  rangeToValue?: ?number,
-  isEditable?: ?boolean,
-  isInstanceProperty?: ?boolean,
-  isMandatory?: ?boolean,
-  isDeleted?: ?boolean,
-  propertyCategoryID?: ?string,
-  isListable?: ?boolean,
 |};
 export type CheckListCategoryDefinitionInput = {|
+  checkList: $ReadOnlyArray<CheckListDefinitionInput>,
+  description?: ?string,
   id?: ?string,
   title: string,
-  description?: ?string,
-  checkList: $ReadOnlyArray<CheckListDefinitionInput>,
 |};
 export type CheckListDefinitionInput = {|
+  enumSelectionMode?: ?CheckListItemEnumSelectionMode,
+  enumValues?: ?string,
+  helpText?: ?string,
   id?: ?string,
-  title: string,
-  type: CheckListItemType,
   index?: ?number,
   isMandatory?: ?boolean,
-  enumValues?: ?string,
-  enumSelectionMode?: ?CheckListItemEnumSelectionMode,
-  helpText?: ?string,
+  title: string,
+  type: CheckListItemType,
+|};
+export type PropertyTypeInput = {|
+  booleanValue?: ?boolean,
+  category?: ?string,
+  dependencePropertyTypes?: ?$ReadOnlyArray<?PropertyTypeInput>,
+  externalId?: ?string,
+  floatValue?: ?number,
+  id?: ?string,
+  index?: ?number,
+  intValue?: ?number,
+  isDeleted?: ?boolean,
+  isEditable?: ?boolean,
+  isInstanceProperty?: ?boolean,
+  isListable?: ?boolean,
+  isMandatory?: ?boolean,
+  latitudeValue?: ?number,
+  longitudeValue?: ?number,
+  name: string,
+  nodeType?: ?string,
+  propertyCategoryID?: ?string,
+  propertyTypeValues?: ?$ReadOnlyArray<?AddPropertyTypeValueInput>,
+  rangeFromValue?: ?number,
+  rangeToValue?: ?number,
+  stringValue?: ?string,
+  type: PropertyKind,
+|};
+export type AddPropertyTypeValueInput = {|
+  id?: ?string,
+  isDeleted?: ?boolean,
+  name: string,
+  parentPropertyType?: ?$ReadOnlyArray<?ParentPropertyTypeValueInput>,
+  parentPropertyTypeValue?: ?$ReadOnlyArray<?string>,
+  propertyType?: ?string,
+|};
+export type ParentPropertyTypeValueInput = {|
+  parentPropertyType?: ?string,
+  parentPropertyTypeValue?: ?string,
 |};
 export type EditWorkOrderTypeMutationVariables = {|
   input: EditWorkOrderTypeInput
@@ -121,6 +135,50 @@ fragment AddEditWorkOrderTypeCard_workOrderType on WorkOrderType {
     isInstanceProperty
     isDeleted
     category
+    dependencePropertyTypes {
+      id
+      name
+      type
+      nodeType
+      index
+      stringValue
+      intValue
+      booleanValue
+      floatValue
+      latitudeValue
+      longitudeValue
+      rangeFromValue
+      rangeToValue
+      isEditable
+      isMandatory
+      isInstanceProperty
+      isDeleted
+      category
+      propertyTypeValues {
+        id
+        isDeleted
+        name
+        parentPropertyTypeValue {
+          id
+          isDeleted
+          name
+        }
+      }
+    }
+    propertyTypeValues {
+      id
+      isDeleted
+      name
+      parentPropertyTypeValue {
+        id
+        isDeleted
+        name
+      }
+    }
+    parentPropertyType {
+      id
+      name
+    }
   }
   checkListCategoryDefinitions {
     id
@@ -187,17 +245,136 @@ v6 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "index",
+  "name": "nodeType",
   "storageKey": null
 },
 v7 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "isMandatory",
+  "name": "index",
   "storageKey": null
 },
 v8 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "stringValue",
+  "storageKey": null
+},
+v9 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "intValue",
+  "storageKey": null
+},
+v10 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "booleanValue",
+  "storageKey": null
+},
+v11 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "floatValue",
+  "storageKey": null
+},
+v12 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "latitudeValue",
+  "storageKey": null
+},
+v13 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "longitudeValue",
+  "storageKey": null
+},
+v14 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "rangeFromValue",
+  "storageKey": null
+},
+v15 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "rangeToValue",
+  "storageKey": null
+},
+v16 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "isEditable",
+  "storageKey": null
+},
+v17 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "isMandatory",
+  "storageKey": null
+},
+v18 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "isInstanceProperty",
+  "storageKey": null
+},
+v19 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "isDeleted",
+  "storageKey": null
+},
+v20 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "category",
+  "storageKey": null
+},
+v21 = {
+  "alias": null,
+  "args": null,
+  "concreteType": "PropertyTypeValue",
+  "kind": "LinkedField",
+  "name": "propertyTypeValues",
+  "plural": true,
+  "selections": [
+    (v2/*: any*/),
+    (v19/*: any*/),
+    (v3/*: any*/),
+    {
+      "alias": null,
+      "args": null,
+      "concreteType": "PropertyTypeValue",
+      "kind": "LinkedField",
+      "name": "parentPropertyTypeValue",
+      "plural": true,
+      "selections": [
+        (v2/*: any*/),
+        (v19/*: any*/),
+        (v3/*: any*/)
+      ],
+      "storageKey": null
+    }
+  ],
+  "storageKey": null
+},
+v22 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
@@ -276,97 +453,63 @@ return {
               (v2/*: any*/),
               (v3/*: any*/),
               (v5/*: any*/),
-              {
-                "alias": null,
-                "args": null,
-                "kind": "ScalarField",
-                "name": "nodeType",
-                "storageKey": null
-              },
               (v6/*: any*/),
-              {
-                "alias": null,
-                "args": null,
-                "kind": "ScalarField",
-                "name": "stringValue",
-                "storageKey": null
-              },
-              {
-                "alias": null,
-                "args": null,
-                "kind": "ScalarField",
-                "name": "intValue",
-                "storageKey": null
-              },
-              {
-                "alias": null,
-                "args": null,
-                "kind": "ScalarField",
-                "name": "booleanValue",
-                "storageKey": null
-              },
-              {
-                "alias": null,
-                "args": null,
-                "kind": "ScalarField",
-                "name": "floatValue",
-                "storageKey": null
-              },
-              {
-                "alias": null,
-                "args": null,
-                "kind": "ScalarField",
-                "name": "latitudeValue",
-                "storageKey": null
-              },
-              {
-                "alias": null,
-                "args": null,
-                "kind": "ScalarField",
-                "name": "longitudeValue",
-                "storageKey": null
-              },
-              {
-                "alias": null,
-                "args": null,
-                "kind": "ScalarField",
-                "name": "rangeFromValue",
-                "storageKey": null
-              },
-              {
-                "alias": null,
-                "args": null,
-                "kind": "ScalarField",
-                "name": "rangeToValue",
-                "storageKey": null
-              },
-              {
-                "alias": null,
-                "args": null,
-                "kind": "ScalarField",
-                "name": "isEditable",
-                "storageKey": null
-              },
               (v7/*: any*/),
+              (v8/*: any*/),
+              (v9/*: any*/),
+              (v10/*: any*/),
+              (v11/*: any*/),
+              (v12/*: any*/),
+              (v13/*: any*/),
+              (v14/*: any*/),
+              (v15/*: any*/),
+              (v16/*: any*/),
+              (v17/*: any*/),
+              (v18/*: any*/),
+              (v19/*: any*/),
+              (v20/*: any*/),
               {
                 "alias": null,
                 "args": null,
-                "kind": "ScalarField",
-                "name": "isInstanceProperty",
+                "concreteType": "PropertyType",
+                "kind": "LinkedField",
+                "name": "dependencePropertyTypes",
+                "plural": true,
+                "selections": [
+                  (v2/*: any*/),
+                  (v3/*: any*/),
+                  (v5/*: any*/),
+                  (v6/*: any*/),
+                  (v7/*: any*/),
+                  (v8/*: any*/),
+                  (v9/*: any*/),
+                  (v10/*: any*/),
+                  (v11/*: any*/),
+                  (v12/*: any*/),
+                  (v13/*: any*/),
+                  (v14/*: any*/),
+                  (v15/*: any*/),
+                  (v16/*: any*/),
+                  (v17/*: any*/),
+                  (v18/*: any*/),
+                  (v19/*: any*/),
+                  (v20/*: any*/),
+                  (v21/*: any*/)
+                ],
                 "storageKey": null
               },
+              (v21/*: any*/),
               {
                 "alias": null,
                 "args": null,
-                "kind": "ScalarField",
-                "name": "isDeleted",
-                "storageKey": null
-              },
-              {
-                "alias": null,
-                "args": null,
-                "kind": "ScalarField",
-                "name": "category",
+                "concreteType": "PropertyType",
+                "kind": "LinkedField",
+                "name": "parentPropertyType",
+                "plural": false,
+                "selections": [
+                  (v2/*: any*/),
+                  (v3/*: any*/)
+                ],
                 "storageKey": null
               }
             ],
@@ -381,7 +524,7 @@ return {
             "plural": true,
             "selections": [
               (v2/*: any*/),
-              (v8/*: any*/),
+              (v22/*: any*/),
               (v4/*: any*/),
               {
                 "alias": null,
@@ -392,10 +535,10 @@ return {
                 "plural": true,
                 "selections": [
                   (v2/*: any*/),
-                  (v8/*: any*/),
+                  (v22/*: any*/),
                   (v5/*: any*/),
-                  (v6/*: any*/),
                   (v7/*: any*/),
+                  (v17/*: any*/),
                   {
                     "alias": null,
                     "args": null,
@@ -429,12 +572,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "4e3f87422e1e89f460a55060a274b995",
+    "cacheID": "8dedd1c06f9d75597d36ae086a2c7f41",
     "id": null,
     "metadata": {},
     "name": "EditWorkOrderTypeMutation",
     "operationKind": "mutation",
-    "text": "mutation EditWorkOrderTypeMutation(\n  $input: EditWorkOrderTypeInput!\n) {\n  editWorkOrderType(input: $input) {\n    id\n    name\n    description\n    ...AddEditWorkOrderTypeCard_workOrderType\n  }\n}\n\nfragment AddEditWorkOrderTypeCard_workOrderType on WorkOrderType {\n  id\n  name\n  description\n  assigneeCanCompleteWorkOrder\n  numberOfWorkOrders\n  propertyTypes {\n    id\n    name\n    type\n    nodeType\n    index\n    stringValue\n    intValue\n    booleanValue\n    floatValue\n    latitudeValue\n    longitudeValue\n    rangeFromValue\n    rangeToValue\n    isEditable\n    isMandatory\n    isInstanceProperty\n    isDeleted\n    category\n  }\n  checkListCategoryDefinitions {\n    id\n    title\n    description\n    checklistItemDefinitions {\n      id\n      title\n      type\n      index\n      isMandatory\n      enumValues\n      enumSelectionMode\n      helpText\n    }\n  }\n}\n"
+    "text": "mutation EditWorkOrderTypeMutation(\n  $input: EditWorkOrderTypeInput!\n) {\n  editWorkOrderType(input: $input) {\n    id\n    name\n    description\n    ...AddEditWorkOrderTypeCard_workOrderType\n  }\n}\n\nfragment AddEditWorkOrderTypeCard_workOrderType on WorkOrderType {\n  id\n  name\n  description\n  assigneeCanCompleteWorkOrder\n  numberOfWorkOrders\n  propertyTypes {\n    id\n    name\n    type\n    nodeType\n    index\n    stringValue\n    intValue\n    booleanValue\n    floatValue\n    latitudeValue\n    longitudeValue\n    rangeFromValue\n    rangeToValue\n    isEditable\n    isMandatory\n    isInstanceProperty\n    isDeleted\n    category\n    dependencePropertyTypes {\n      id\n      name\n      type\n      nodeType\n      index\n      stringValue\n      intValue\n      booleanValue\n      floatValue\n      latitudeValue\n      longitudeValue\n      rangeFromValue\n      rangeToValue\n      isEditable\n      isMandatory\n      isInstanceProperty\n      isDeleted\n      category\n      propertyTypeValues {\n        id\n        isDeleted\n        name\n        parentPropertyTypeValue {\n          id\n          isDeleted\n          name\n        }\n      }\n    }\n    propertyTypeValues {\n      id\n      isDeleted\n      name\n      parentPropertyTypeValue {\n        id\n        isDeleted\n        name\n      }\n    }\n    parentPropertyType {\n      id\n      name\n    }\n  }\n  checkListCategoryDefinitions {\n    id\n    title\n    description\n    checklistItemDefinitions {\n      id\n      title\n      type\n      index\n      isMandatory\n      enumValues\n      enumSelectionMode\n      helpText\n    }\n  }\n}\n"
   }
 };
 })();

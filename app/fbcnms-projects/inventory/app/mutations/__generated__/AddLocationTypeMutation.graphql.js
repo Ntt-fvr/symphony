@@ -19,54 +19,68 @@ type LocationTypeItem_locationType$ref = any;
 export type PropertyKind = "bool" | "date" | "datetime_local" | "email" | "enum" | "float" | "gps_location" | "int" | "node" | "range" | "string" | "%future added value";
 export type SurveyQuestionType = "BOOL" | "CELLULAR" | "COORDS" | "DATE" | "EMAIL" | "FLOAT" | "INTEGER" | "PHONE" | "PHOTO" | "TEXT" | "TEXTAREA" | "WIFI" | "%future added value";
 export type AddLocationTypeInput = {|
-  name: string,
+  documentCategories?: ?$ReadOnlyArray<DocumentCategoryInput>,
+  isSite?: ?boolean,
   mapType?: ?string,
   mapZoomLevel?: ?number,
-  isSite?: ?boolean,
-  documentCategories?: ?$ReadOnlyArray<DocumentCategoryInput>,
+  name: string,
   properties?: ?$ReadOnlyArray<PropertyTypeInput>,
   surveyTemplateCategories?: ?$ReadOnlyArray<SurveyTemplateCategoryInput>,
 |};
 export type DocumentCategoryInput = {|
   id?: ?string,
-  name: string,
   index: number,
+  name: string,
 |};
 export type PropertyTypeInput = {|
-  id?: ?string,
-  externalId?: ?string,
-  name: string,
-  type: PropertyKind,
-  nodeType?: ?string,
-  index?: ?number,
-  category?: ?string,
-  stringValue?: ?string,
-  intValue?: ?number,
   booleanValue?: ?boolean,
+  category?: ?string,
+  dependencePropertyTypes?: ?$ReadOnlyArray<?PropertyTypeInput>,
+  externalId?: ?string,
   floatValue?: ?number,
-  latitudeValue?: ?number,
-  longitudeValue?: ?number,
-  rangeFromValue?: ?number,
-  rangeToValue?: ?number,
+  id?: ?string,
+  index?: ?number,
+  intValue?: ?number,
+  isDeleted?: ?boolean,
   isEditable?: ?boolean,
   isInstanceProperty?: ?boolean,
-  isMandatory?: ?boolean,
-  isDeleted?: ?boolean,
-  propertyCategoryID?: ?string,
   isListable?: ?boolean,
+  isMandatory?: ?boolean,
+  latitudeValue?: ?number,
+  longitudeValue?: ?number,
+  name: string,
+  nodeType?: ?string,
+  propertyCategoryID?: ?string,
+  propertyTypeValues?: ?$ReadOnlyArray<?AddPropertyTypeValueInput>,
+  rangeFromValue?: ?number,
+  rangeToValue?: ?number,
+  stringValue?: ?string,
+  type: PropertyKind,
+|};
+export type AddPropertyTypeValueInput = {|
+  id?: ?string,
+  isDeleted?: ?boolean,
+  name: string,
+  parentPropertyType?: ?$ReadOnlyArray<?ParentPropertyTypeValueInput>,
+  parentPropertyTypeValue?: ?$ReadOnlyArray<?string>,
+  propertyType?: ?string,
+|};
+export type ParentPropertyTypeValueInput = {|
+  parentPropertyType?: ?string,
+  parentPropertyTypeValue?: ?string,
 |};
 export type SurveyTemplateCategoryInput = {|
-  id?: ?string,
-  categoryTitle: string,
   categoryDescription: string,
+  categoryTitle: string,
+  id?: ?string,
   surveyTemplateQuestions?: ?$ReadOnlyArray<?SurveyTemplateQuestionInput>,
 |};
 export type SurveyTemplateQuestionInput = {|
   id?: ?string,
-  questionTitle: string,
-  questionDescription: string,
-  questionType: SurveyQuestionType,
   index: number,
+  questionDescription: string,
+  questionTitle: string,
+  questionType: SurveyQuestionType,
 |};
 export type AddLocationTypeMutationVariables = {|
   input: AddLocationTypeInput

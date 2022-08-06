@@ -40,6 +40,7 @@ type Props = $ReadOnly<{|
   checkListCategories: ChecklistCategoriesStateType,
   locationId: ?string,
   appointmentData: AppointmentData,
+  setLoading: () => void,
 |}>;
 
 const WorkOrderSaveButton = (props: Props) => {
@@ -49,6 +50,7 @@ const WorkOrderSaveButton = (props: Props) => {
     checkListCategories,
     locationId,
     appointmentData,
+    setLoading,
   } = props;
   const enqueueSnackbar = useEnqueueSnackbar();
   const {history, match} = useRouter();
@@ -77,13 +79,14 @@ const WorkOrderSaveButton = (props: Props) => {
       project,
       organizationFk,
     } = workOrder;
+    setLoading(true);
     const variables: EditWorkOrderMutationVariables = {
       input: {
         id,
         name,
         description,
         organizationFk: organizationFk?.id || null,
-        ownerId: owner.id,
+        ownerId: owner?.id || null,
         installDate: installDate ? installDate.toString() : null,
         status,
         priority,
@@ -99,6 +102,7 @@ const WorkOrderSaveButton = (props: Props) => {
     const callbacks: MutationCallbacks<EditWorkOrderMutationResponse> = {
       onCompleted: (response, errors) => {
         if (errors && errors[0]) {
+          setLoading(false);
           enqueueError(errors[0].message);
         } else {
           // navigate to main page
@@ -106,6 +110,7 @@ const WorkOrderSaveButton = (props: Props) => {
         }
       },
       onError: (error: Error) => {
+        setLoading(false);
         enqueueError(getGraphError(error));
       },
     };
@@ -126,18 +131,26 @@ const WorkOrderSaveButton = (props: Props) => {
   const _saveAppointment = workorderID => {
     const assigneeID = workOrder?.assignedTo?.id;
     const {duration, date, saveAppointment} = appointmentData;
-    if (!saveAppointment || !assigneeID) return history.push(match.url);
-    const variables: AddAppointmentMutationVariables = {
-      input: {
-        workorderID,
-        assigneeID,
-        duration,
-        date,
-      },
-    };
-    AddAppointmentMutation(variables, {
-      onCompleted: () => history.push(match.url),
-    });
+    if (!saveAppointment || !assigneeID) {
+      setLoading(false);
+      return history.push(match.url);
+    } else {
+      const variables: AddAppointmentMutationVariables = {
+        input: {
+          workorderID,
+          assigneeID,
+          duration,
+          date,
+        },
+      };
+      AddAppointmentMutation(variables, {
+        onCompleted: () => {
+          setLoading(false);
+          return history.push(match.url);
+        },
+        onError: () => setLoading(false),
+      });
+    }
   };
 
   return (
