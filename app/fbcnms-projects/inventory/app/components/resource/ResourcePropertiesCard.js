@@ -19,6 +19,7 @@ import CardPorts from './ResourceCardPorts';
 import Grid from '@material-ui/core/Grid';
 import InventoryQueryRenderer from '../InventoryQueryRenderer';
 import ModalSteper from './ModalSteper';
+import MoveResource from './MoveResource.js';
 import PerfectScrollbar from 'react-perfect-scrollbar';
 import React, {useState} from 'react';
 import Tab from '@material-ui/core/Tab';
@@ -252,6 +253,7 @@ const ResourcePropertiesCard = (props: Props) => {
                     ]}
                     size="large"
                   />
+                  <MoveResource item={item} />
                   <Button onClick={() => onEditResource(item)}>
                     Edit Resource
                   </Button>
