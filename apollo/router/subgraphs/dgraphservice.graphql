@@ -1,16 +1,8 @@
-directive @search(by: [DgraphIndex!]) on FIELD_DEFINITION
-directive @withSubscription on OBJECT | INTERFACE | FIELD_DEFINITION
-directive @secret(field: String!, pred: String) on OBJECT | INTERFACE
 directive @generate(
   query: GenerateQueryParams
   mutation: GenerateMutationParams
   subscription: Boolean
 ) on OBJECT | INTERFACE
-directive @hasInverse(field: String!) on FIELD_DEFINITION
-directive @dgraph(
-  type: String
-  pred: String
-) on OBJECT | INTERFACE | FIELD_DEFINITION
 directive @id(interface: Boolean) on FIELD_DEFINITION
 directive @default(
   add: DgraphDefault
@@ -23,14 +15,22 @@ directive @auth(
   update: AuthRule
   delete: AuthRule
 ) on OBJECT | INTERFACE
+directive @lambda on FIELD_DEFINITION
+directive @hasInverse(field: String!) on FIELD_DEFINITION
+directive @withSubscription on OBJECT | INTERFACE | FIELD_DEFINITION
 directive @remote on OBJECT | INTERFACE | UNION | INPUT_OBJECT | ENUM
 directive @remoteResponse(name: String) on FIELD_DEFINITION
-directive @lambda on FIELD_DEFINITION
 directive @lambdaOnMutate(
   add: Boolean
   update: Boolean
   delete: Boolean
 ) on OBJECT | INTERFACE
+directive @search(by: [DgraphIndex!]) on FIELD_DEFINITION
+directive @secret(field: String!, pred: String) on OBJECT | INTERFACE
+directive @dgraph(
+  type: String
+  pred: String
+) on OBJECT | INTERFACE | FIELD_DEFINITION
 directive @custom(http: CustomHTTP, dql: String) on FIELD_DEFINITION
 enum _CancellationRequestOrdering {
   id_asc
@@ -976,6 +976,28 @@ type AddConfigurationParameterTypePayload {
   numUids: Int
 }
 
+input AddErrorMessageInput {
+  code: String
+  message: String
+  reason: String
+  referenceError: String
+  status: String
+  timestamp: DateTime
+  baseType: String
+  schemaLocation: String
+  type: String
+}
+
+type AddErrorMessagePayload {
+  errorMessage(
+    filter: ErrorMessageFilter
+    order: ErrorMessageOrder
+    first: Int
+    offset: Int
+  ): [ErrorMessage]
+  numUids: Int
+}
+
 input AddExternalReferenceInput {
   id: String!
   href: String
@@ -1013,6 +1035,7 @@ input AddFlowExecutionReferenceInput {
   domainId: String
   projectId: String
   runId: String
+  baseFlow: String
   workflowId: String
   creationDate: String
   executionDate: String
@@ -1048,6 +1071,7 @@ type AddGeometryPayload {
 
 input AddModificationRequestInput {
   type: String!
+  state: String
   externalId: String
   modifyReason: String!
   requestedCompletionDate: String!
@@ -1219,6 +1243,7 @@ input AddResourceOrderIMInput {
   description: String
   externalId: String
   resourceOrderItem: [ResourceOrderItemRef]
+  status: String
 }
 
 type AddResourceOrderIMPayload {
@@ -1235,6 +1260,8 @@ input AddResourceOrderItemInput {
   id: String!
   action: String
   service: SupportingServiceRef
+  status: String
+  errorMessage: [ErrorMessageRef]
 }
 
 type AddResourceOrderItemPayload {
@@ -1288,7 +1315,7 @@ type AddResourcePropertyPayload {
 input AddResourceReferenceInput {
   externalId: String
   href: String
-  name: String
+  type: String
 }
 
 type AddResourceReferencePayload {
@@ -1351,6 +1378,7 @@ input AddServiceOrderItemInput {
   action: String!
   service: ServiceSOMRef!
   state: String
+  errorMessage: [ErrorMessageRef]
 }
 
 type AddServiceOrderItemPayload {
@@ -2811,6 +2839,17 @@ type DeleteDefaultConfigPayload {
   numUids: Int
 }
 
+type DeleteErrorMessagePayload {
+  errorMessage(
+    filter: ErrorMessageFilter
+    order: ErrorMessageOrder
+    first: Int
+    offset: Int
+  ): [ErrorMessage]
+  msg: String
+  numUids: Int
+}
+
 type DeleteExternalReferencePayload {
   externalReference(
     filter: ExternalReferenceFilter
@@ -3113,6 +3152,104 @@ enum DgraphIndex {
   geo
 }
 
+type ErrorMessage {
+  id: ID!
+  code: String
+  message: String
+  reason: String
+  referenceError: String
+  status: String
+  timestamp: DateTime
+  baseType: String
+  schemaLocation: String
+  type: String
+}
+
+type ErrorMessageAggregateResult {
+  count: Int
+  codeMin: String
+  codeMax: String
+  messageMin: String
+  messageMax: String
+  reasonMin: String
+  reasonMax: String
+  referenceErrorMin: String
+  referenceErrorMax: String
+  statusMin: String
+  statusMax: String
+  timestampMin: DateTime
+  timestampMax: DateTime
+  baseTypeMin: String
+  baseTypeMax: String
+  schemaLocationMin: String
+  schemaLocationMax: String
+  typeMin: String
+  typeMax: String
+}
+
+input ErrorMessageFilter {
+  id: [ID!]
+  has: [ErrorMessageHasFilter]
+  and: [ErrorMessageFilter]
+  or: [ErrorMessageFilter]
+  not: ErrorMessageFilter
+}
+
+enum ErrorMessageHasFilter {
+  code
+  message
+  reason
+  referenceError
+  status
+  timestamp
+  baseType
+  schemaLocation
+  type
+}
+
+input ErrorMessageOrder {
+  asc: ErrorMessageOrderable
+  desc: ErrorMessageOrderable
+  then: ErrorMessageOrder
+}
+
+enum ErrorMessageOrderable {
+  code
+  message
+  reason
+  referenceError
+  status
+  timestamp
+  baseType
+  schemaLocation
+  type
+}
+
+input ErrorMessagePatch {
+  code: String
+  message: String
+  reason: String
+  referenceError: String
+  status: String
+  timestamp: DateTime
+  baseType: String
+  schemaLocation: String
+  type: String
+}
+
+input ErrorMessageRef {
+  id: ID
+  code: String
+  message: String
+  reason: String
+  referenceError: String
+  status: String
+  timestamp: DateTime
+  baseType: String
+  schemaLocation: String
+  type: String
+}
+
 type ExternalReference {
   id: String!
   href: String
@@ -3244,6 +3381,7 @@ type FlowExecutionReference {
   domainId: String
   projectId: String
   runId: String
+  baseFlow: String
   workflowId: String
   creationDate: String
   executionDate: String
@@ -3260,6 +3398,8 @@ type FlowExecutionReferenceAggregateResult {
   projectIdMax: String
   runIdMin: String
   runIdMax: String
+  baseFlowMin: String
+  baseFlowMax: String
   workflowIdMin: String
   workflowIdMax: String
   creationDateMin: String
@@ -3285,6 +3425,7 @@ enum FlowExecutionReferenceHasFilter {
   domainId
   projectId
   runId
+  baseFlow
   workflowId
   creationDate
   executionDate
@@ -3303,6 +3444,7 @@ enum FlowExecutionReferenceOrderable {
   domainId
   projectId
   runId
+  baseFlow
   workflowId
   creationDate
   executionDate
@@ -3313,6 +3455,7 @@ input FlowExecutionReferencePatch {
   domainId: String
   projectId: String
   runId: String
+  baseFlow: String
   workflowId: String
   creationDate: String
   executionDate: String
@@ -3326,6 +3469,7 @@ input FlowExecutionReferenceRef {
   domainId: String
   projectId: String
   runId: String
+  baseFlow: String
   workflowId: String
   creationDate: String
   executionDate: String
@@ -3458,6 +3602,7 @@ enum Mode {
 type ModificationRequest {
   id: ID!
   type: String!
+  state: String
   externalId: String
   modifyReason: String!
   requestedCompletionDate: String!
@@ -3476,6 +3621,8 @@ type ModificationRequestAggregateResult {
   count: Int
   typeMin: String
   typeMax: String
+  stateMin: String
+  stateMax: String
   externalIdMin: String
   externalIdMax: String
   modifyReasonMin: String
@@ -3495,6 +3642,7 @@ input ModificationRequestFilter {
 
 enum ModificationRequestHasFilter {
   type
+  state
   externalId
   modifyReason
   requestedCompletionDate
@@ -3509,6 +3657,7 @@ input ModificationRequestOrder {
 
 enum ModificationRequestOrderable {
   type
+  state
   externalId
   modifyReason
   requestedCompletionDate
@@ -3516,6 +3665,7 @@ enum ModificationRequestOrderable {
 
 input ModificationRequestPatch {
   type: String
+  state: String
   externalId: String
   modifyReason: String
   requestedCompletionDate: String
@@ -3525,6 +3675,7 @@ input ModificationRequestPatch {
 input ModificationRequestRef {
   id: ID
   type: String
+  state: String
   externalId: String
   modifyReason: String
   requestedCompletionDate: String
@@ -3785,6 +3936,9 @@ type Mutation {
   deleteResourceOrderItem(
     filter: ResourceOrderItemFilter!
   ): DeleteResourceOrderItemPayload
+  addErrorMessage(input: [AddErrorMessageInput!]!): AddErrorMessagePayload
+  updateErrorMessage(input: UpdateErrorMessageInput!): UpdateErrorMessagePayload
+  deleteErrorMessage(filter: ErrorMessageFilter!): DeleteErrorMessagePayload
   addActionTemplate(input: [AddActionTemplateInput!]!): AddActionTemplatePayload
   updateActionTemplate(
     input: UpdateActionTemplateInput!
@@ -4423,7 +4577,7 @@ type Query {
   aggregateDefaultConfig(
     filter: DefaultConfigFilter
   ): DefaultConfigAggregateResult
-  getResource(id: ID, name: String): Resource
+  getResource(id: ID, externalId: String): Resource
   queryResource(
     filter: ResourceFilter
     order: ResourceOrder
@@ -4732,7 +4886,7 @@ type Query {
   aggregateResourceOrderIM(
     filter: ResourceOrderIMFilter
   ): ResourceOrderIMAggregateResult
-  getResourceOrderItem(id: String!): ResourceOrderItem
+  getResourceOrderItem(resourceOrderItemId: ID, id: String): ResourceOrderItem
   queryResourceOrderItem(
     filter: ResourceOrderItemFilter
     order: ResourceOrderItemOrder
@@ -4742,6 +4896,14 @@ type Query {
   aggregateResourceOrderItem(
     filter: ResourceOrderItemFilter
   ): ResourceOrderItemAggregateResult
+  getErrorMessage(id: ID!): ErrorMessage
+  queryErrorMessage(
+    filter: ErrorMessageFilter
+    order: ErrorMessageOrder
+    first: Int
+    offset: Int
+  ): [ErrorMessage]
+  aggregateErrorMessage(filter: ErrorMessageFilter): ErrorMessageAggregateResult
   getActionTemplate(id: ID!): ActionTemplate
   queryActionTemplate(
     filter: ActionTemplateFilter
@@ -4941,8 +5103,8 @@ type ResourceAggregateResult {
 
 input ResourceFilter {
   id: [ID!]
-  name: StringHashFilter
-  externalId: StringHashFilter
+  name: StringHashFilter_StringRegExpFilter
+  externalId: StringHashFilter_StringRegExpFilter
   locatedIn: StringHashFilter
   resourceSpecification: StringHashFilter
   has: [ResourceHasFilter]
@@ -5008,6 +5170,7 @@ type ResourceOrderIM {
     first: Int
     offset: Int
   ): [ResourceOrderItem]
+  status: String
   resourceOrderItemAggregate(
     filter: ResourceOrderItemFilter
   ): ResourceOrderItemAggregateResult
@@ -5025,6 +5188,8 @@ type ResourceOrderIMAggregateResult {
   descriptionMax: String
   externalIdMin: String
   externalIdMax: String
+  statusMin: String
+  statusMax: String
 }
 
 input ResourceOrderIMFilter {
@@ -5044,6 +5209,7 @@ enum ResourceOrderIMHasFilter {
   description
   externalId
   resourceOrderItem
+  status
 }
 
 input ResourceOrderIMOrder {
@@ -5058,6 +5224,7 @@ enum ResourceOrderIMOrderable {
   category
   description
   externalId
+  status
 }
 
 input ResourceOrderIMPatch {
@@ -5067,6 +5234,7 @@ input ResourceOrderIMPatch {
   description: String
   externalId: String
   resourceOrderItem: [ResourceOrderItemRef]
+  status: String
 }
 
 input ResourceOrderIMRef {
@@ -5077,12 +5245,22 @@ input ResourceOrderIMRef {
   description: String
   externalId: String
   resourceOrderItem: [ResourceOrderItemRef]
+  status: String
 }
 
 type ResourceOrderItem {
+  resourceOrderItemId: ID!
   id: String!
   action: String
   service(filter: SupportingServiceFilter): SupportingService
+  status: String
+  errorMessage(
+    filter: ErrorMessageFilter
+    order: ErrorMessageOrder
+    first: Int
+    offset: Int
+  ): [ErrorMessage]
+  errorMessageAggregate(filter: ErrorMessageFilter): ErrorMessageAggregateResult
 }
 
 type ResourceOrderItemAggregateResult {
@@ -5091,9 +5269,12 @@ type ResourceOrderItemAggregateResult {
   idMax: String
   actionMin: String
   actionMax: String
+  statusMin: String
+  statusMax: String
 }
 
 input ResourceOrderItemFilter {
+  resourceOrderItemId: [ID!]
   id: StringHashFilter
   has: [ResourceOrderItemHasFilter]
   and: [ResourceOrderItemFilter]
@@ -5105,6 +5286,8 @@ enum ResourceOrderItemHasFilter {
   id
   action
   service
+  status
+  errorMessage
 }
 
 input ResourceOrderItemOrder {
@@ -5116,18 +5299,24 @@ input ResourceOrderItemOrder {
 enum ResourceOrderItemOrderable {
   id
   action
+  status
 }
 
 input ResourceOrderItemPatch {
   id: String
   action: String
   service: SupportingServiceRef
+  status: String
+  errorMessage: [ErrorMessageRef]
 }
 
 input ResourceOrderItemRef {
+  resourceOrderItemId: ID
   id: String
   action: String
   service: SupportingServiceRef
+  status: String
+  errorMessage: [ErrorMessageRef]
 }
 
 input ResourcePatch {
@@ -5335,7 +5524,7 @@ type ResourceReference {
   id: ID!
   externalId: String
   href: String
-  name: String
+  type: String
 }
 
 type ResourceReferenceAggregateResult {
@@ -5344,8 +5533,8 @@ type ResourceReferenceAggregateResult {
   externalIdMax: String
   hrefMin: String
   hrefMax: String
-  nameMin: String
-  nameMax: String
+  typeMin: String
+  typeMax: String
 }
 
 input ResourceReferenceFilter {
@@ -5360,7 +5549,7 @@ input ResourceReferenceFilter {
 enum ResourceReferenceHasFilter {
   externalId
   href
-  name
+  type
 }
 
 input ResourceReferenceOrder {
@@ -5372,20 +5561,20 @@ input ResourceReferenceOrder {
 enum ResourceReferenceOrderable {
   externalId
   href
-  name
+  type
 }
 
 input ResourceReferencePatch {
   externalId: String
   href: String
-  name: String
+  type: String
 }
 
 input ResourceReferenceRef {
   id: ID
   externalId: String
   href: String
-  name: String
+  type: String
 }
 
 enum RollbackPolicyConfig {
@@ -5601,6 +5790,13 @@ type ServiceOrderItem {
   action: String!
   service(filter: ServiceSOMFilter): ServiceSOM!
   state: String
+  errorMessage(
+    filter: ErrorMessageFilter
+    order: ErrorMessageOrder
+    first: Int
+    offset: Int
+  ): [ErrorMessage]
+  errorMessageAggregate(filter: ErrorMessageFilter): ErrorMessageAggregateResult
 }
 
 type ServiceOrderItemAggregateResult {
@@ -5636,6 +5832,7 @@ enum ServiceOrderItemHasFilter {
   action
   service
   state
+  errorMessage
 }
 
 input ServiceOrderItemOrder {
@@ -5660,6 +5857,7 @@ input ServiceOrderItemPatch {
   action: String
   service: ServiceSOMRef
   state: String
+  errorMessage: [ErrorMessageRef]
 }
 
 input ServiceOrderItemRef {
@@ -5671,6 +5869,7 @@ input ServiceOrderItemRef {
   action: String
   service: ServiceSOMRef
   state: String
+  errorMessage: [ErrorMessageRef]
 }
 
 input ServiceOrderOrder {
@@ -6308,6 +6507,12 @@ input StringHashFilter {
   in: [String]
 }
 
+input StringHashFilter_StringRegExpFilter {
+  eq: String
+  in: [String]
+  regexp: String
+}
+
 input StringRange {
   min: String!
   max: String!
@@ -6672,6 +6877,22 @@ type UpdateDefaultConfigPayload {
     first: Int
     offset: Int
   ): [DefaultConfig]
+  numUids: Int
+}
+
+input UpdateErrorMessageInput {
+  filter: ErrorMessageFilter!
+  set: ErrorMessagePatch
+  remove: ErrorMessagePatch
+}
+
+type UpdateErrorMessagePayload {
+  errorMessage(
+    filter: ErrorMessageFilter
+    order: ErrorMessageOrder
+    first: Int
+    offset: Int
+  ): [ErrorMessage]
   numUids: Int
 }
 
