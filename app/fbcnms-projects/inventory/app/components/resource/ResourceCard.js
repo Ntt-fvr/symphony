@@ -16,6 +16,7 @@ import CardHeader from '@material-ui/core/CardHeader';
 import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutline';
 import IconButton from '@material-ui/core/IconButton';
 import ModalSteper from './ModalSteper';
+import ModalDelete from './ModalDelete';
 import React, {useCallback, useEffect, useState} from 'react';
 import RelayEnvironment from '../../common/RelayEnvironment';
 import ResourcePropertiesCard from './ResourcePropertiesCard';
@@ -29,6 +30,10 @@ import Typography from '@material-ui/core/Typography';
 import symphony from '@symphony/design-system/theme/symphony';
 import {fetchQuery, graphql} from 'relay-runtime';
 import {makeStyles} from '@material-ui/styles';
+import { formatMultiSelectValue } from '@symphony/design-system/utils/displayUtils';
+import Text from '@symphony/design-system/components/Text';
+import fbt from 'fbt';
+
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -137,6 +142,8 @@ const ResourceCard = (props: Props) => {
   const [openDialog, setOpenDialog] = useState(false);
   const [resourceTypes, setResourceTypes] = useState({});
   const [dataEdit, setDataEdit] = useState({});
+  const [openDelete, setOpenDelete] = useState(false)
+  const [infoResource ,setInfoResource] = useState({})
 
   useEffect(() => {
     isCompleted();
@@ -274,6 +281,10 @@ const ResourceCard = (props: Props) => {
                           <IconButton>
                             <DeleteOutlinedIcon
                               style={{color: symphony.palette.B600}}
+                              onClick={() => {
+                                setOpenDelete(true);
+                                setInfoResource(item.data[0])
+                              }}
                             />
                           </IconButton>
                         </TableCell>
@@ -291,6 +302,23 @@ const ResourceCard = (props: Props) => {
               dataListStepper={resourceTypes}
               saveModal={onAddResource}
               titleSteps={['Resource type', 'Resource specification']}
+            />
+          )}
+          {openDelete && (
+            <ModalDelete
+              openModal={openDelete}
+              onClose={() => setOpenDeletefalse}
+              infoResource={infoResource}
+              text={
+                <Text variant="subtitle1">
+                  <fbt desc="">
+                    Are you sure you want to delete the current flow?{' '}
+                    <span style={{fontWeight: 'bold'}}>
+                      This option cannot be undone
+                    </span>
+                  </fbt>
+                </Text>
+              }
             />
           )}
         </div>
