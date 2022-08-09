@@ -37,32 +37,38 @@ const AddEditPropertyList = ({propertyTypes}: Props) => {
 
   return (
     <>
-      {propertyTypes.name === undefined ? null : (
-        <Grid container>
-          <Grid item xs={12}>
-            <CardHeader className={classes.cardHeader}>Properties</CardHeader>
-          </Grid>
-          {propertyTypes.map(property => (
-            <Grid key={property.id} className={classes.inputMargin} item xs={6}>
-              <PropertyValueInput
-                required={!!property?.propertyType?.isMandatory}
-                disabled={!property?.propertyType?.isInstanceProperty}
-                label={property.name}
-                className={classes.input}
-                inputType="Property"
-                property={property}
-                headlineVariant="form"
-                onChange={value =>
-                  dispatch({
-                    type: 'UPDATE_PROPERTY_TYPE',
-                    value,
-                  })
-                }
-              />
+      <Grid container>
+        {!propertyTypes[0].name ? null : (
+          <>
+            <Grid item xs={12}>
+              <CardHeader className={classes.cardHeader}>Properties</CardHeader>
             </Grid>
-          ))}
-        </Grid>
-      )}
+            {propertyTypes.map(property => (
+              <Grid
+                key={property.id}
+                className={classes.inputMargin}
+                item
+                xs={6}>
+                <PropertyValueInput
+                  required={!!property?.propertyType?.isMandatory}
+                  disabled={!property?.propertyType?.isInstanceProperty}
+                  label={property.name}
+                  className={classes.input}
+                  inputType="Property"
+                  property={property}
+                  headlineVariant="form"
+                  onChange={value =>
+                    dispatch({
+                      type: 'UPDATE_PROPERTY_TYPE',
+                      value,
+                    })
+                  }
+                />
+              </Grid>
+            ))}
+          </>
+        )}
+      </Grid>
     </>
   );
 };

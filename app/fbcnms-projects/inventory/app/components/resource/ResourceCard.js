@@ -68,6 +68,9 @@ const ResourceCardListQuery = graphql`
       planningSubStatus
       usageSubStatus
       operationalSubStatus
+      belongsTo {
+        id
+      }
     }
     resourceTypes {
       edges {
@@ -91,6 +94,13 @@ const ResourceCardListQuery = graphql`
               rangeToValue
               isMandatory
               isInstanceProperty
+            }
+            resourceSpecificationRelationship {
+              id
+              name
+              resourceSpecification {
+                id
+              }
             }
           }
         }
@@ -173,6 +183,7 @@ const ResourceCard = (props: Props) => {
         idResource: data.id,
         nameResource: data.name,
         locationId: data.locatedIn,
+        belongsTo: data.belongsTo,
       },
     ],
   }));
@@ -192,7 +203,11 @@ const ResourceCard = (props: Props) => {
 
   const newArrayDataForm = resourceId
     ?.map(mapResources)
-    .filter(data => data.data[0].locationId === selectedLocationId);
+    .filter(
+      data =>
+        data.data[0].locationId === selectedLocationId &&
+        !data.data[0].belongsTo,
+    );
 
   switch (mode) {
     case 'add':

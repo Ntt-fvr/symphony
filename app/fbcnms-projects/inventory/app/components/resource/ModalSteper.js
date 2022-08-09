@@ -246,6 +246,17 @@ const ModalSteper = (props: Props) => {
           .includes(searchData.toLocaleLowerCase()),
       ) || [];
 
+  const searchSpecificationOnly = text =>
+    dataListStepper?.resourceSpecifications?.edges
+      .map(item => item.node)
+      .filter(item => item?.resourceType?.resourceTypeClass?.includes(text))
+      .filter(item =>
+        item?.name
+          .toString()
+          .toLowerCase()
+          .includes(searchData.toLocaleLowerCase()),
+      ) || [];
+
   const searchRInstance =
     resourceInstance?.queryResource?.filter(item =>
       item?.name
@@ -360,7 +371,7 @@ const ModalSteper = (props: Props) => {
                 ))}
             </>
           ) : (
-            searchRSpecifications.map((item, index) => (
+            searchSpecificationOnly('SLOT').map((item, index) => (
               <List component="nav">
                 <ListItem
                   button

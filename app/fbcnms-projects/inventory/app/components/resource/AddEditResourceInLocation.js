@@ -8,7 +8,10 @@
  * @format
  */
 
-import type {AddResourceMutationVariables} from '../../mutations/__generated__/AddResourceMutation.graphql';
+import type {
+  AddResourceMutationResponse,
+  AddResourceMutationVariables,
+} from '../../mutations/__generated__/AddResourceMutation.graphql';
 import type {
   LifecycleStatus,
   OperationalSubStatus,
@@ -18,6 +21,8 @@ import type {
 } from '../../mutations/__generated__/AddResourceMutation.graphql';
 import type {UpdateResourceMutationVariables} from '../../mutations/__generated__/UpdateResourceMutation.graphql';
 import type {UpdateResourcePropertyMutationVariables} from '../../mutations/__generated__/UpdateResourcePropertyMutation.graphql';
+
+import type {MutationCallbacks} from '../../mutations/MutationCallbacks';
 
 import AddEditPropertyList from './AddEditPropertyList';
 import AddResourceMutation from '../../mutations/AddResourceMutation';
@@ -147,6 +152,22 @@ const AddEditResourceInLocation = (props: Props) => {
     })
     .map(o => omit(o, ['name', 'type', 'id', 'propertyType']));
 
+  const mapRelationshipsSlots = id =>
+    dataformModal.resourceSpecificationRelationship?.map(o => {
+      return {
+        name: o.name,
+        resourceSpecification: o.resourceSpecification.id,
+        locatedIn: selectedLocationId,
+        isDeleted: true,
+        resourceProperties: !spliceProperties[0].stringValue
+          ? null
+          : spliceProperties,
+        belongsTo: {
+          id: id,
+        },
+      };
+    });
+
   function handleCreateForm() {
     const variables: AddResourceMutationVariables = {
       input: [
@@ -167,13 +188,21 @@ const AddEditResourceInLocation = (props: Props) => {
         },
       ],
     };
-    AddResourceMutation(variables, {
-      onCompleted: () => {
-        isCompleted();
-        setResourceType({data: {}});
-        closeFormAddEdit();
+    const response: MutationCallbacks<AddResourceMutationResponse> = {
+      onCompleted: response => {
+        const resourceSlots: AddResourceMutationVariables = {
+          input: mapRelationshipsSlots(response.addResource?.resource[0]?.id),
+        };
+        AddResourceMutation(resourceSlots, {
+          onCompleted: () => {
+            isCompleted();
+            setResourceType({data: {}});
+            closeFormAddEdit();
+          },
+        });
       },
-    });
+    };
+    AddResourceMutation(variables, response);
   }
 
   const setDataFormEdit = {

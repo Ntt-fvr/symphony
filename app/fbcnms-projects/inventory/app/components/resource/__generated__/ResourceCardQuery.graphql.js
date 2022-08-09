@@ -33,6 +33,9 @@ export type ResourceCardQueryResponse = {|
     +planningSubStatus: ?PlanningSubStatus,
     +usageSubStatus: ?UsageSubStatus,
     +operationalSubStatus: ?OperationalSubStatus,
+    +belongsTo: ?{|
+      +id: string
+    |},
   |}>,
   +resourceTypes: {|
     +edges: $ReadOnlyArray<{|
@@ -56,6 +59,13 @@ export type ResourceCardQueryResponse = {|
             +rangeToValue: ?number,
             +isMandatory: ?boolean,
             +isInstanceProperty: ?boolean,
+          |}>,
+          +resourceSpecificationRelationship: ?$ReadOnlyArray<?{|
+            +id: string,
+            +name: string,
+            +resourceSpecification: {|
+              +id: string
+            |},
           |}>,
         |}>,
       |}
@@ -94,6 +104,9 @@ query ResourceCardQuery {
     planningSubStatus
     usageSubStatus
     operationalSubStatus
+    belongsTo {
+      id
+    }
   }
   resourceTypes {
     edges {
@@ -117,6 +130,13 @@ query ResourceCardQuery {
             rangeToValue
             isMandatory
             isInstanceProperty
+          }
+          resourceSpecificationRelationship {
+            id
+            name
+            resourceSpecification {
+              id
+            }
           }
         }
       }
@@ -153,6 +173,9 @@ v1 = {
   "storageKey": null
 },
 v2 = [
+  (v0/*: any*/)
+],
+v3 = [
   {
     "alias": null,
     "args": null,
@@ -217,6 +240,16 @@ v2 = [
         "args": null,
         "kind": "ScalarField",
         "name": "operationalSubStatus",
+        "storageKey": null
+      },
+      {
+        "alias": null,
+        "args": null,
+        "concreteType": "Resource",
+        "kind": "LinkedField",
+        "name": "belongsTo",
+        "plural": false,
+        "selections": (v2/*: any*/),
         "storageKey": null
       }
     ],
@@ -347,6 +380,29 @@ v2 = [
                       }
                     ],
                     "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "concreteType": "ResourceSpecificationRelationship",
+                    "kind": "LinkedField",
+                    "name": "resourceSpecificationRelationship",
+                    "plural": true,
+                    "selections": [
+                      (v0/*: any*/),
+                      (v1/*: any*/),
+                      {
+                        "alias": null,
+                        "args": null,
+                        "concreteType": "ResourceSpecification",
+                        "kind": "LinkedField",
+                        "name": "resourceSpecification",
+                        "plural": false,
+                        "selections": (v2/*: any*/),
+                        "storageKey": null
+                      }
+                    ],
+                    "storageKey": null
                   }
                 ],
                 "storageKey": null
@@ -415,7 +471,7 @@ return {
     "kind": "Fragment",
     "metadata": null,
     "name": "ResourceCardQuery",
-    "selections": (v2/*: any*/),
+    "selections": (v3/*: any*/),
     "type": "Query",
     "abstractKey": null
   },
@@ -424,19 +480,19 @@ return {
     "argumentDefinitions": [],
     "kind": "Operation",
     "name": "ResourceCardQuery",
-    "selections": (v2/*: any*/)
+    "selections": (v3/*: any*/)
   },
   "params": {
-    "cacheID": "aa18e598865b719dba0a6a6114d1adcc",
+    "cacheID": "aa1e666e9eb540931d5a8d5fdbb2505e",
     "id": null,
     "metadata": {},
     "name": "ResourceCardQuery",
     "operationKind": "query",
-    "text": "query ResourceCardQuery {\n  queryResource {\n    id\n    name\n    locatedIn\n    resourceSpecification\n    isDeleted\n    lifecycleStatus\n    typePlanningSubStatus\n    planningSubStatus\n    usageSubStatus\n    operationalSubStatus\n  }\n  resourceTypes {\n    edges {\n      node {\n        id\n        name\n        resourceSpecification {\n          id\n          name\n          resourcePropertyTypes {\n            id\n            name\n            type\n            stringValue\n            intValue\n            booleanValue\n            floatValue\n            latitudeValue\n            longitudeValue\n            rangeFromValue\n            rangeToValue\n            isMandatory\n            isInstanceProperty\n          }\n        }\n      }\n    }\n  }\n  resourceSpecifications {\n    edges {\n      node {\n        id\n        name\n        resourceType {\n          id\n          name\n        }\n      }\n    }\n  }\n}\n"
+    "text": "query ResourceCardQuery {\n  queryResource {\n    id\n    name\n    locatedIn\n    resourceSpecification\n    isDeleted\n    lifecycleStatus\n    typePlanningSubStatus\n    planningSubStatus\n    usageSubStatus\n    operationalSubStatus\n    belongsTo {\n      id\n    }\n  }\n  resourceTypes {\n    edges {\n      node {\n        id\n        name\n        resourceSpecification {\n          id\n          name\n          resourcePropertyTypes {\n            id\n            name\n            type\n            stringValue\n            intValue\n            booleanValue\n            floatValue\n            latitudeValue\n            longitudeValue\n            rangeFromValue\n            rangeToValue\n            isMandatory\n            isInstanceProperty\n          }\n          resourceSpecificationRelationship {\n            id\n            name\n            resourceSpecification {\n              id\n            }\n          }\n        }\n      }\n    }\n  }\n  resourceSpecifications {\n    edges {\n      node {\n        id\n        name\n        resourceType {\n          id\n          name\n        }\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = 'b2390069086e745940e8b827cad17b74';
+(node/*: any*/).hash = 'a03889f0e3d11fabcb9dc8fb44913cc4';
 
 module.exports = node;

@@ -50,6 +50,12 @@ const mutation = graphql`
           stringValue
           resourcePropertyType
         }
+        belongsTo {
+          id
+          name
+          resourceSpecification
+          locatedIn
+        }
         logicalLinks {
           name
         }
