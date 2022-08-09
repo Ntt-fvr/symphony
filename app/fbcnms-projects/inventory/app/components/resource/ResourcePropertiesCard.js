@@ -186,9 +186,9 @@ const ResourcePropertiesCard = (props: Props) => {
           .map(item => item?.node)
           .filter(item => item.id === getResourceData.resourceSpecification);
 
-        const filterSlots = dataListStepper?.queryResource?.filter(
-          item => item.belongsTo,
-        );
+        const filterSlots = dataListStepper.queryResource
+          ?.flatMap(item => item)
+          .filter(item => item?.belongsTo?.id === getResourceData.id);
 
         const propertySpecification = filterSpecificationById.flatMap(
           item => item.resourcePropertyTypes,
