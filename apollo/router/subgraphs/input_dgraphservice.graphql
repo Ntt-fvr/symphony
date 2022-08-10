@@ -40,8 +40,8 @@ id: ID!
 description: String
 limit: Int!
 customLimit: Int
-resources: [Resource!]!
-isDeleted: Boolean!
+resources: [Resource!]! @hasInverse(field: numericPools)
+isDeleted: Boolean @default(add: { value: false})
 statusNumericPools: [StatusNumericPool]
 }
 
@@ -78,7 +78,7 @@ type Resource implements DefaultConfig{
   crossconnectionInv: Resource @hasInverse(field: crossConnection)
   resourceSpecification: String! @search(by: [hash])
   resourceProperties: [ResourceProperty]
-  isDeleted: Boolean!
+  isDeleted: Boolean @default(add: { value: false})
   numericPools: [NumericPool]
   isEditable: Boolean @default(add: { value: true})
   actionScheduler: ActionScheduler
@@ -152,9 +152,9 @@ type ConfigurationParameterType implements DefaultConfig{
   longitudeValue: Float
   rangeFromValue: Float
   rangeToValue: Float
-  isEditable: Boolean
+  isEditable: Boolean @default(add: { value: true})
   isMandatory: Boolean
-  isDeleted: Boolean
+  isDeleted: Boolean @default(add: { value: false})
   isListable: Boolean
   isPrioritary: Boolean
   mappingIn: String
@@ -698,7 +698,7 @@ type ResourceOrderIM{
 
 type ResourceOrderItem{
   resourceOrderItemId: ID!
-  id: String! @id
+  id: String!
   action: String
   service: SupportingService
   status: String

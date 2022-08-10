@@ -1062,7 +1062,7 @@ type AddNotePayload {
 input AddNumericPoolInput {
   customLimit: Int
   description: String
-  isDeleted: Boolean!
+  isDeleted: Boolean
   limit: Int!
   resources: [ResourceRef!]!
   statusNumericPools: [StatusNumericPoolRef]
@@ -1224,7 +1224,7 @@ input AddResourceInput {
   crossConnection: ResourceRef
   crossconnectionInv: ResourceRef
   externalId: String
-  isDeleted: Boolean!
+  isDeleted: Boolean
   isEditable: Boolean
   lifecycleStatus: LifecycleStatus
   locatedIn: String
@@ -6424,7 +6424,7 @@ type Mutation {
   addReportFilter(input: ReportFilterInput!): ReportFilter! @join__field(graph: SYMPHONY)
   addResource(input: [AddResourceInput!]!, upsert: Boolean): AddResourcePayload @join__field(graph: DGRAPHSERVICE)
   addResourceOrderIM(input: [AddResourceOrderIMInput!]!): AddResourceOrderIMPayload @join__field(graph: DGRAPHSERVICE)
-  addResourceOrderItem(input: [AddResourceOrderItemInput!]!, upsert: Boolean): AddResourceOrderItemPayload @join__field(graph: DGRAPHSERVICE)
+  addResourceOrderItem(input: [AddResourceOrderItemInput!]!): AddResourceOrderItemPayload @join__field(graph: DGRAPHSERVICE)
   addResourceProperty(input: [AddResourcePropertyInput!]!): AddResourcePropertyPayload @join__field(graph: DGRAPHSERVICE)
   addResourceReference(input: [AddResourceReferenceInput!]!): AddResourceReferencePayload @join__field(graph: DGRAPHSERVICE)
   addResourceSpecification(input: AddResourceSpecificationInput!): ResourceSpecification! @join__field(graph: SYMPHONY)
@@ -6904,7 +6904,7 @@ type NumericPool {
   customLimit: Int
   description: String
   id: ID!
-  isDeleted: Boolean!
+  isDeleted: Boolean
   limit: Int!
   resources(filter: ResourceFilter, first: Int, offset: Int, order: ResourceOrder): [Resource!]!
   resourcesAggregate(filter: ResourceFilter): ResourceAggregateResult
@@ -8381,7 +8381,7 @@ type Query {
   getRelatedEntity(id: String!): RelatedEntity @join__field(graph: DGRAPHSERVICE)
   getResource(externalId: String, id: ID): Resource @join__field(graph: DGRAPHSERVICE)
   getResourceOrderIM(id: ID!): ResourceOrderIM @join__field(graph: DGRAPHSERVICE)
-  getResourceOrderItem(id: String, resourceOrderItemId: ID): ResourceOrderItem @join__field(graph: DGRAPHSERVICE)
+  getResourceOrderItem(resourceOrderItemId: ID!): ResourceOrderItem @join__field(graph: DGRAPHSERVICE)
   getResourceProperty(id: ID!): ResourceProperty @join__field(graph: DGRAPHSERVICE)
   getResourceReference(id: ID!): ResourceReference @join__field(graph: DGRAPHSERVICE)
   getSchedulerConfig(id: ID!): SchedulerConfig @join__field(graph: DGRAPHSERVICE)
@@ -9344,7 +9344,7 @@ type Resource implements DefaultConfig {
   crossconnectionInv(filter: ResourceFilter): Resource
   externalId: String
   id: ID!
-  isDeleted: Boolean!
+  isDeleted: Boolean
   isEditable: Boolean
   lifecycleStatus: LifecycleStatus
   locatedIn: String
@@ -9537,7 +9537,6 @@ type ResourceOrderItemAggregateResult {
 input ResourceOrderItemFilter {
   and: [ResourceOrderItemFilter]
   has: [ResourceOrderItemHasFilter]
-  id: StringHashFilter
   not: ResourceOrderItemFilter
   or: [ResourceOrderItemFilter]
   resourceOrderItemId: [ID!]
@@ -13225,6 +13224,6 @@ enum core__Purpose {
 scalar join__FieldSet
 
 enum join__Graph {
-  DGRAPHSERVICE @join__graph(name: "dgraphservice" url: "http://alpha:8080/graphql")
-  SYMPHONY @join__graph(name: "symphony" url: "http://graph/query")
+  DGRAPHSERVICE @join__graph(name: "dgraphservice" url: "http://dgraph-dgraph-alpha.dgraph.svc.cluster.local:8080/graphql")
+  SYMPHONY @join__graph(name: "symphony" url: "http://symphony-graph/query")
 }
