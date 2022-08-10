@@ -307,18 +307,8 @@ const ResourceCard = (props: Props) => {
           {openDelete && (
             <ModalDelete
               openModal={openDelete}
-              onClose={() => setOpenDeletefalse}
+              onClose={() => setOpenDelete(false)}
               infoResource={infoResource}
-              text={
-                <Text variant="subtitle1">
-                  <fbt desc="">
-                    Are you sure you want to delete the current flow?{' '}
-                    <span style={{fontWeight: 'bold'}}>
-                      This option cannot be undone
-                    </span>
-                  </fbt>
-                </Text>
-              }
             />
           )}
         </div>
