@@ -17,14 +17,19 @@ import type { ConcreteRequest } from 'relay-runtime';
 export type ResourceHasFilter = "actionScheduler" | "available" | "belongsTo" | "changeItems" | "composedOf" | "createTime" | "crossConnection" | "crossconnectionInv" | "externalId" | "isDeleted" | "isEditable" | "lifecycleStatus" | "locatedIn" | "logicalLinkInv" | "logicalLinks" | "name" | "numericPools" | "operationalSubStatus" | "physicalLink" | "physicalLinkInv" | "planningSubStatus" | "resourceProperties" | "resourceSpecification" | "typePlanningSubStatus" | "updateTime" | "usageSubStatus" | "%future added value";
 export type ResourceFilter = {|
   and?: ?$ReadOnlyArray<?ResourceFilter>,
-  externalId?: ?StringHashFilter,
+  externalId?: ?StringHashFilter_StringRegExpFilter,
   has?: ?$ReadOnlyArray<?ResourceHasFilter>,
   id?: ?$ReadOnlyArray<string>,
   locatedIn?: ?StringHashFilter,
-  name?: ?StringHashFilter,
+  name?: ?StringHashFilter_StringRegExpFilter,
   not?: ?ResourceFilter,
   or?: ?$ReadOnlyArray<?ResourceFilter>,
   resourceSpecification?: ?StringHashFilter,
+|};
+export type StringHashFilter_StringRegExpFilter = {|
+  eq?: ?string,
+  in?: ?$ReadOnlyArray<?string>,
+  regexp?: ?string,
 |};
 export type StringHashFilter = {|
   eq?: ?string,

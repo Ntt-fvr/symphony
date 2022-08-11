@@ -23,14 +23,19 @@ export type TypePlanningSubStatus = "DESIGNED" | "FEASIBILITY_CHECKED" | "ORDERE
 export type UsageSubStatus = "ASSIGNED" | "AVAILABLE" | "NO_AVAILABLE" | "RESERVED" | "TERMINATING" | "%future added value";
 export type ResourceFilter = {|
   and?: ?$ReadOnlyArray<?ResourceFilter>,
-  externalId?: ?StringHashFilter,
+  externalId?: ?StringHashFilter_StringRegExpFilter,
   has?: ?$ReadOnlyArray<?ResourceHasFilter>,
   id?: ?$ReadOnlyArray<string>,
   locatedIn?: ?StringHashFilter,
-  name?: ?StringHashFilter,
+  name?: ?StringHashFilter_StringRegExpFilter,
   not?: ?ResourceFilter,
   or?: ?$ReadOnlyArray<?ResourceFilter>,
   resourceSpecification?: ?StringHashFilter,
+|};
+export type StringHashFilter_StringRegExpFilter = {|
+  eq?: ?string,
+  in?: ?$ReadOnlyArray<?string>,
+  regexp?: ?string,
 |};
 export type StringHashFilter = {|
   eq?: ?string,

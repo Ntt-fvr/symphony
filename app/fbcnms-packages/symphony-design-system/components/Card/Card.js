@@ -39,6 +39,11 @@ const useStyles = makeStyles(_theme => ({
     borderColor: symphony.palette.B200,
     backgroundColor: symphony.palette.B50,
   },
+  warningVariant: {
+    border: '1px solid',
+    borderColor: symphony.palette.R600,
+    backgroundColor: '#FFE8E8'
+  },
   standardMargins: {
     padding: '24px',
   },
