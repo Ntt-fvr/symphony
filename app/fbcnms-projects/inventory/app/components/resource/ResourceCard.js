@@ -7,7 +7,6 @@
  * @flow
  * @format
  */
-
 import AddEditResourceInLocation from './AddEditResourceInLocation';
 import Button from '@symphony/design-system/components/Button';
 import Card from '@symphony/design-system/components/Card/Card';
@@ -28,6 +27,7 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Typography from '@material-ui/core/Typography';
 import symphony from '@symphony/design-system/theme/symphony';
+import {camelCase, startCase} from 'lodash';
 import {fetchQuery, graphql} from 'relay-runtime';
 import {makeStyles} from '@material-ui/styles';
 
@@ -55,12 +55,13 @@ const useStyles = makeStyles(theme => ({
     maxHeight: 440,
   },
 }));
-
 const ResourceCardListQuery = graphql`
   query ResourceCardQuery {
     queryResource {
       id
       name
+      isDeleted
+      resourceSpecification
       locatedIn
       resourceSpecification
       isDeleted
@@ -144,6 +145,7 @@ const ResourceCard = (props: Props) => {
     selectedLocationId,
     selectedResourceId,
   } = props;
+
   const classes = useStyles();
   const [openDialog, setOpenDialog] = useState(false);
   const [resourceTypes, setResourceTypes] = useState({});
@@ -160,25 +162,21 @@ const ResourceCard = (props: Props) => {
       setResourceTypes(data);
     });
   }, [setResourceTypes]);
-
   const editResource = resources => {
     onEditResource(setDataEdit(resources));
   };
-
   const nameResourceType = new Map(
     resourceTypes?.resourceSpecifications?.edges.map(data => [
       data.node.id,
       data.node.resourceType.name,
     ]),
   );
-
   const nameSpecification = new Map(
     resourceTypes?.resourceSpecifications?.edges.map(data => [
       data.node.id,
       data.node.name,
     ]),
   );
-
   const resourceId = resourceTypes?.queryResource?.map(data => ({
     items: [
       {
@@ -191,7 +189,6 @@ const ResourceCard = (props: Props) => {
       },
     ],
   }));
-
   const mapResources = ({items, ...rest}) => ({
     ...rest,
     data: items?.map(data =>
@@ -204,7 +201,6 @@ const ResourceCard = (props: Props) => {
         : data,
     ),
   });
-
   const newArrayDataForm = resourceId
     ?.map(mapResources)
     .filter(
@@ -213,7 +209,6 @@ const ResourceCard = (props: Props) => {
         !data.data[0].belongsTo &&
         data.data[0].status !== 'RETIRING',
     );
-
   switch (mode) {
     case 'add':
       return (
@@ -272,6 +267,9 @@ const ResourceCard = (props: Props) => {
                       </TableCell>
                       <TableCell className={classes.tableTitle}>Type</TableCell>
                       <TableCell className={classes.tableTitle}>
+                        Lifecycle Status
+                      </TableCell>
+                      <TableCell className={classes.tableTitle}>
                         Delete
                       </TableCell>
                     </TableRow>
@@ -290,6 +288,9 @@ const ResourceCard = (props: Props) => {
                         </TableCell>
                         <TableCell>{item.data[0].nameSpecification}</TableCell>
                         <TableCell>{item.data[0].nameResourceType}</TableCell>
+                        <TableCell>
+                          {startCase(camelCase(item?.data[0]?.status))}
+                        </TableCell>
                         <TableCell>
                           <IconButton>
                             <DeleteOutlinedIcon
@@ -329,5 +330,4 @@ const ResourceCard = (props: Props) => {
       );
   }
 };
-
 export default ResourceCard;
