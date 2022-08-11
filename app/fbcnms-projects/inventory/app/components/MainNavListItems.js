@@ -19,10 +19,12 @@ import SearchIcon from '@material-ui/icons/Search';
 import ViewListIcon from '@material-ui/icons/ViewList';
 import {LogEvents, ServerLogger} from '../common/LoggingUtils';
 import {useRelativeUrl} from '@fbcnms/ui/hooks/useRouter';
+import useFeatureFlag from '@fbcnms/ui/context/useFeatureFlag';
 
 export default function MainNavListItems() {
   const relativeUrl = useRelativeUrl();
   const servicesEnabled = useContext(AppContext).isFeatureEnabled('services');
+  const searchInventoryFlag = useFeatureFlag('search_inventory');
   return [
     <NavListItem
       key={1}
@@ -32,6 +34,7 @@ export default function MainNavListItems() {
       onClick={() => {
         ServerLogger.info(LogEvents.SEARCH_NAV_CLICKED);
       }}
+      hidden={!searchInventoryFlag}
     />,
     <NavListItem
       key={2}

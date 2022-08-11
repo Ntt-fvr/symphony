@@ -50,6 +50,7 @@ const LocationDetailsTab = (props: Props) => {
     onAddResource,
   } = props;
   const resourceCardFlag = useFeatureFlag('resource_inventory');
+  const EquipmentCardFlag = useFeatureFlag('equipment_&_ports_module');
   return (
     <div>
       <LocationDetailsCard className={classes.card} location={location} />
@@ -57,14 +58,17 @@ const LocationDetailsTab = (props: Props) => {
         <CardHeader>Properties</CardHeader>
         <DynamicPropertyCategoriesTable />
       </Card>
-      <LocationEquipmentCard
-        className={classes.card}
-        equipments={location.equipments}
-        selectedWorkOrderId={selectedWorkOrderId}
-        onEquipmentSelected={onEquipmentSelected}
-        onWorkOrderSelected={onWorkOrderSelected}
-        onAddEquipment={onAddEquipment}
-      />
+      {EquipmentCardFlag && (
+        <LocationEquipmentCard
+          className={classes.card}
+          equipments={location.equipments}
+          selectedWorkOrderId={selectedWorkOrderId}
+          onEquipmentSelected={onEquipmentSelected}
+          onWorkOrderSelected={onWorkOrderSelected}
+          onAddEquipment={onAddEquipment}
+        />
+      )}
+
       {resourceCardFlag && (
         <ResourceCard
           selectedLocationId={locationId}

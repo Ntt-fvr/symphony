@@ -31,6 +31,7 @@ import {getPropertyValue} from '../../common/Property';
 import {graphql} from 'relay-runtime';
 import {makeStyles} from '@material-ui/styles';
 import {useHistory} from 'react-router-dom';
+import useFeatureFlag from '@fbcnms/ui/context/useFeatureFlag';
 const useStyles = makeStyles(theme => ({
   root: {
     height: 'calc(100% - 92px)',
@@ -143,6 +144,7 @@ const ResourcePropertiesCard = (props: Props) => {
   const [selectedTab, setSelectedTab] = useState('details');
   const [openDialog, setOpenDialog] = useState(false);
   const history = useHistory();
+  const PortsTabFlag = useFeatureFlag('resource_port_management');
 
   const onClickHistory = id => {
     history.push(`/inventory/inventory?location=${id}`);
@@ -258,7 +260,7 @@ const ResourcePropertiesCard = (props: Props) => {
                   indicatorColor="primary"
                   textColor="primary">
                   <Tab label="Details" value="details" />
-                  <Tab label="Ports" value="ports" />
+                  {PortsTabFlag && <Tab label="Ports" value="ports" />}
                   <Tab label="Network" value="network" />
                 </Tabs>
                 <>
