@@ -9,7 +9,6 @@
  */
 import type {UpdateResourceMutationVariables} from '../../mutations/__generated__/UpdateResourceMutation.graphql';
 
-import UpdateResourceMutation from '../../mutations/UpdateResourceMutation';
 import Button from '@material-ui/core/Button';
 import Card from '@symphony/design-system/components/Card/Card';
 import CardHeader from '@symphony/design-system/components/Card/CardHeader';
@@ -19,8 +18,9 @@ import DialogActions from '@material-ui/core/DialogActions';
 import Grid from '@material-ui/core/Grid';
 import IconButton from '@material-ui/core/IconButton';
 import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined';
-import React, {useCallback, useState} from 'react';
+import React from 'react';
 import Text from '@symphony/design-system/components/Text';
+import UpdateResourceMutation from '../../mutations/UpdateResourceMutation';
 import {makeStyles} from '@material-ui/styles';
 
 const useStyles = makeStyles(() => ({
@@ -52,7 +52,7 @@ const useStyles = makeStyles(() => ({
 }));
 
 const ModalDelete = props => {
-  const {onClose, infoResource} = props;
+  const {onClose, infoResource, isCompleted} = props;
 
   const classes = useStyles();
 
@@ -63,24 +63,15 @@ const ModalDelete = props => {
           lifecycleStatus: 'RETIRING',
         },
         filter: {
-          id: infoResource.idResource
+          id: infoResource.idResource,
         },
       },
     };
 
-    console.log(JSON.stringify({
-      input: {
-        set: {
-          lifecycleStatus: 'RETIRING',
-        },
-        filter: {
-          id: infoResource.idResource
-        },
-      },
-    }))
     UpdateResourceMutation(variables, {
       onCompleted: () => {
-        window.location.reload();
+        isCompleted();
+        onClose();
       },
     });
   };

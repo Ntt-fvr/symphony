@@ -15,8 +15,8 @@ import CardContent from '@material-ui/core/CardContent';
 import CardHeader from '@material-ui/core/CardHeader';
 import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutline';
 import IconButton from '@material-ui/core/IconButton';
-import ModalSteper from './ModalSteper';
 import ModalDelete from './ModalDelete';
+import ModalSteper from './ModalSteper';
 import React, {useCallback, useEffect, useState} from 'react';
 import RelayEnvironment from '../../common/RelayEnvironment';
 import ResourcePropertiesCard from './ResourcePropertiesCard';
@@ -30,9 +30,6 @@ import Typography from '@material-ui/core/Typography';
 import symphony from '@symphony/design-system/theme/symphony';
 import {fetchQuery, graphql} from 'relay-runtime';
 import {makeStyles} from '@material-ui/styles';
-import {formatMultiSelectValue} from '@symphony/design-system/utils/displayUtils';
-import Text from '@symphony/design-system/components/Text';
-import fbt from 'fbt';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -205,8 +202,6 @@ const ResourceCard = (props: Props) => {
         data.data[0].status !== 'RETIRING',
     );
 
-  console.log(newArrayDataForm);
-
   switch (mode) {
     case 'add':
       return (
@@ -315,6 +310,7 @@ const ResourceCard = (props: Props) => {
               openModal={openDelete}
               onClose={() => setOpenDelete(false)}
               infoResource={infoResource}
+              isCompleted={isCompleted}
             />
           )}
         </div>
