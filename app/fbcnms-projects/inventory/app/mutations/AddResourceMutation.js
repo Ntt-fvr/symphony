@@ -26,6 +26,7 @@ const mutation = graphql`
     addResource(input: $input) {
       numUids
       resource {
+        id
         name
         externalId
         locatedIn
@@ -46,6 +47,12 @@ const mutation = graphql`
           rangeToValue
           stringValue
           resourcePropertyType
+        }
+        belongsTo {
+          id
+          name
+          resourceSpecification
+          locatedIn
         }
       }
     }

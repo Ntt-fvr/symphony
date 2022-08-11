@@ -73,6 +73,9 @@ const ResourceCardListQuery = graphql`
       planningSubStatus
       usageSubStatus
       operationalSubStatus
+      belongsTo {
+        id
+      }
       resourceProperties {
         booleanValue
         floatValue
@@ -96,6 +99,7 @@ const ResourceCardListQuery = graphql`
           resourceType {
             id
             name
+            resourceTypeClass
           }
           resourcePropertyTypes {
             id
@@ -183,6 +187,10 @@ const ResourcePropertiesCard = (props: Props) => {
         const filterSpecificationById = resourceData.resourceSpecifications.edges
           .map(item => item?.node)
           .filter(item => item.id === getResourceData.resourceSpecification);
+
+        const filterSlots = dataListStepper.queryResource
+          ?.flatMap(item => item)
+          .filter(item => item?.belongsTo?.id === getResourceData.id);
 
         const propertySpecification = filterSpecificationById.flatMap(
           item => item.resourcePropertyTypes,
@@ -312,50 +320,19 @@ const ResourcePropertiesCard = (props: Props) => {
                         </CardContent>
                         <CardActions>
                           <Grid container>
-                            <Grid item xs className={classes.gridContent}>
-                              Slot 1: <br /> Available
-                              <ActionButton
-                                action={'add'}
-                                onClick={() => {
-                                  onAddResourceSlot;
-                                  setOpenDialog(true);
-                                }}
-                              />
-                            </Grid>
-                            <Grid item xs className={classes.gridContent}>
-                              Slot 2: <br /> Available
-                              <ActionButton
-                                action={'add'}
-                                onClick={() => {
-                                  onAddResourceSlot;
-                                  setOpenDialog(true);
-                                }}
-                              />
-                            </Grid>
-                            <Grid item xs className={classes.gridContent}>
-                              Slot 3: <br /> Available
-                              <ActionButton
-                                action={'add'}
-                                onClick={() => {
-                                  onAddResourceSlot;
-                                  setOpenDialog(true);
-                                }}
-                              />
-                            </Grid>
-                            <Grid
-                              item
-                              xs
-                              className={classes.gridContent}
-                              style={{marginRight: '0'}}>
-                              Slot 4: <br /> Available
-                              <ActionButton
-                                action={'add'}
-                                onClick={() => {
-                                  onAddResourceSlot;
-                                  setOpenDialog(true);
-                                }}
-                              />
-                            </Grid>
+                            {filterSlots?.map(item => (
+                              <Grid item xs={3} className={classes.gridContent}>
+                                {item.name + ':'}
+                                <br /> AquiTa
+                                <ActionButton
+                                  action={'add'}
+                                  onClick={() => {
+                                    onAddResourceSlot;
+                                    setOpenDialog(true);
+                                  }}
+                                />
+                              </Grid>
+                            ))}
                           </Grid>
                         </CardActions>
                       </Card>
@@ -377,7 +354,7 @@ const ResourcePropertiesCard = (props: Props) => {
                       onClose={() => setOpenDialog(false)}
                       saveModal={onAddResourceSlot}
                       titleSteps={['Resource specification']}
-                      dataListStepper={dataListStepper}
+                      dataListStepper={resourceData}
                     />
                   )}
                 </>
