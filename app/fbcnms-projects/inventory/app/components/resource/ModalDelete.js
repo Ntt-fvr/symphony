@@ -7,9 +7,9 @@
  * @flow strict-local
  * @format
  */
-import type {DeleteResourceMutationVariables} from '../../mutations/__generated__/DeleteResourceMutation.graphql';
+import type {UpdateResourceMutationVariables} from '../../mutations/__generated__/UpdateResourceMutation.graphql';
 
-import DeleteResourceMutation from '../../mutations/DeleteResourceMutation';
+import UpdateResourceMutation from '../../mutations/UpdateResourceMutation';
 import Button from '@material-ui/core/Button';
 import Card from '@symphony/design-system/components/Card/Card';
 import CardHeader from '@symphony/design-system/components/Card/CardHeader';
@@ -57,17 +57,33 @@ const ModalDelete = props => {
   const classes = useStyles();
 
   const handleClick = () => {
-    const variables: DeleteResourceMutationVariables = {
-      filter: {id: infoResource.idResource},
+    const variables: UpdateResourceMutationVariables = {
+      input: {
+        set: {
+          lifecycleStatus: 'RETIRING',
+        },
+        filter: {
+          id: infoResource.idResource
+        },
+      },
     };
-    DeleteResourceMutation(variables, {
+
+    console.log(JSON.stringify({
+      input: {
+        set: {
+          lifecycleStatus: 'RETIRING',
+        },
+        filter: {
+          id: infoResource.idResource
+        },
+      },
+    }))
+    UpdateResourceMutation(variables, {
       onCompleted: () => {
-        window.location.reload()
+        window.location.reload();
       },
     });
   };
-
-
 
   return (
     <Dialog

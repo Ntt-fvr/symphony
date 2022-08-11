@@ -267,7 +267,7 @@ export const arrayConfigs = [
   {
     id: 'equipment_&_ports_module',
     title: 'Enable Equipment & Ports',
-    enabledByDefault: true,
+    enabledByDefault: false,
   },
   {
     id: 'ipt_import_project',

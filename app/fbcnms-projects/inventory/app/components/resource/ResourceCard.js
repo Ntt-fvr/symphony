@@ -30,10 +30,9 @@ import Typography from '@material-ui/core/Typography';
 import symphony from '@symphony/design-system/theme/symphony';
 import {fetchQuery, graphql} from 'relay-runtime';
 import {makeStyles} from '@material-ui/styles';
-import { formatMultiSelectValue } from '@symphony/design-system/utils/displayUtils';
+import {formatMultiSelectValue} from '@symphony/design-system/utils/displayUtils';
 import Text from '@symphony/design-system/components/Text';
 import fbt from 'fbt';
-
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -142,8 +141,8 @@ const ResourceCard = (props: Props) => {
   const [openDialog, setOpenDialog] = useState(false);
   const [resourceTypes, setResourceTypes] = useState({});
   const [dataEdit, setDataEdit] = useState({});
-  const [openDelete, setOpenDelete] = useState(false)
-  const [infoResource ,setInfoResource] = useState({})
+  const [openDelete, setOpenDelete] = useState(false);
+  const [infoResource, setInfoResource] = useState({});
 
   useEffect(() => {
     isCompleted();
@@ -180,6 +179,7 @@ const ResourceCard = (props: Props) => {
         idResource: data.id,
         nameResource: data.name,
         locationId: data.locatedIn,
+        status: data.lifecycleStatus,
       },
     ],
   }));
@@ -199,7 +199,13 @@ const ResourceCard = (props: Props) => {
 
   const newArrayDataForm = resourceId
     ?.map(mapResources)
-    .filter(data => data.data[0].locationId === selectedLocationId);
+    .filter(
+      data =>
+        data.data[0].locationId === selectedLocationId &&
+        data.data[0].status !== 'RETIRING',
+    );
+
+  console.log(newArrayDataForm);
 
   switch (mode) {
     case 'add':
@@ -283,7 +289,7 @@ const ResourceCard = (props: Props) => {
                               style={{color: symphony.palette.B600}}
                               onClick={() => {
                                 setOpenDelete(true);
-                                setInfoResource(item.data[0])
+                                setInfoResource(item.data[0]);
                               }}
                             />
                           </IconButton>
