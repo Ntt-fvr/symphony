@@ -15,6 +15,7 @@ import CardContent from '@material-ui/core/CardContent';
 import CardHeader from '@material-ui/core/CardHeader';
 import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutline';
 import IconButton from '@material-ui/core/IconButton';
+import ModalDelete from './ModalDelete';
 import ModalSteper from './ModalSteper';
 import React, {useCallback, useEffect, useState} from 'react';
 import RelayEnvironment from '../../common/RelayEnvironment';
@@ -147,6 +148,8 @@ const ResourceCard = (props: Props) => {
   const [openDialog, setOpenDialog] = useState(false);
   const [resourceTypes, setResourceTypes] = useState({});
   const [dataEdit, setDataEdit] = useState({});
+  const [openDelete, setOpenDelete] = useState(false);
+  const [infoResource, setInfoResource] = useState({});
 
   useEffect(() => {
     isCompleted();
@@ -184,6 +187,7 @@ const ResourceCard = (props: Props) => {
         nameResource: data.name,
         locationId: data.locatedIn,
         belongsTo: data.belongsTo,
+        status: data.lifecycleStatus,
       },
     ],
   }));
@@ -206,7 +210,8 @@ const ResourceCard = (props: Props) => {
     .filter(
       data =>
         data.data[0].locationId === selectedLocationId &&
-        !data.data[0].belongsTo,
+        !data.data[0].belongsTo &&
+        data.data[0].status !== 'RETIRING',
     );
 
   switch (mode) {
@@ -289,6 +294,10 @@ const ResourceCard = (props: Props) => {
                           <IconButton>
                             <DeleteOutlinedIcon
                               style={{color: symphony.palette.B600}}
+                              onClick={() => {
+                                setOpenDelete(true);
+                                setInfoResource(item.data[0]);
+                              }}
                             />
                           </IconButton>
                         </TableCell>
@@ -306,6 +315,14 @@ const ResourceCard = (props: Props) => {
               dataListStepper={resourceTypes}
               saveModal={onAddResource}
               titleSteps={['Resource type', 'Resource specification']}
+            />
+          )}
+          {openDelete && (
+            <ModalDelete
+              openModal={openDelete}
+              onClose={() => setOpenDelete(false)}
+              infoResource={infoResource}
+              isCompleted={isCompleted}
             />
           )}
         </div>

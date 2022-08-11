@@ -51,4 +51,6 @@ export type FeatureID =
   | 'property_combo'
   | 'equipment_&_ports_module'
   | 'resource_inventory'
-  | 'resource_port_management';
+  | 'resource_port_management'
+    'search_inventory'
+  ;

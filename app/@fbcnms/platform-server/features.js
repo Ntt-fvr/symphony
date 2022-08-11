@@ -267,7 +267,7 @@ export const arrayConfigs = [
   {
     id: 'equipment_&_ports_module',
     title: 'Enable Equipment & Ports',
-    enabledByDefault: true,
+    enabledByDefault: false,
   },
   {
     id: 'ipt_import_project',
@@ -281,13 +281,18 @@ export const arrayConfigs = [
   },
   {
     id: 'resource_inventory',
-    title: 'Resource Inventory',
+    title: 'Resource Inventory in location',
     enabledByDefault: true,
   },
   {
     id: 'resource_port_management',
     title: 'Port management',
     enabledByDefault: true,
+  },
+  {
+    id: 'search_inventory',
+    title: 'Search inventory',
+    enabledByDefault: false,
   },
 ];
 
