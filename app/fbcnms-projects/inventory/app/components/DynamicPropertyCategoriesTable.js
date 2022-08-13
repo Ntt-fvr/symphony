@@ -9,47 +9,31 @@
  */
 
 import type {Property} from '../common/Property';
+import type {PropertyByCategoriesQueryResponse} from '../common/__generated__/PropertyByCategoriesQuery.graphql';
+import type {PropertyCategoryNode} from '../common/PropertyCategory';
 import type {PropertyType} from '../common/PropertyType';
-import type {
-  PropertyCategory,
-  PropertyCategoryNode,
-} from '../common/PropertyCategory';
-import {
-  usePropertyCategoryNodes,
-  GENERAL_CATEGORY_LABEL,
-} from '../common/PropertyCategory';
-import type {
-  PropertyByCategoriesQuery,
-  PropertyByCategoriesQueryVariables,
-  PropertyByCategoriesQueryResponse,
-} from '../common/__generated__/PropertyByCategoriesQuery.graphql';
 import type {WithStyles} from '@material-ui/core';
-import PropertyFormField from './form/PropertyFormField';
+
+import ExpandingPanel from '@fbcnms/ui/components/ExpandingPanel';
+import LocationPropertyCategoryTable from './location/LocationPropertyCategoryTable';
+import MultiSelect from '@symphony/design-system/components/Select/MultiSelect';
 import React from 'react';
 import Text from '@symphony/design-system/components/Text';
-import {createFragmentContainer, graphql} from 'react-relay';
-import {getInitialPropertyFromType} from '../common/PropertyType';
-import {
-  getNonInstancePropertyTypes
-} from '../common/Property';
-import {withStyles} from '@material-ui/core/styles';
-import MultiSelect from '@symphony/design-system/components/Select/MultiSelect';
-import {useMemo, useEffect, useState} from 'react';
-import {useFormContext} from '../common/FormContext';
 import fbt from 'fbt';
 import {
-  usePropertyByCategoriesNodes,
-  fetchPropertyByCategories,
-} from '../common/Property';
+  GENERAL_CATEGORY_LABEL,
+  usePropertyCategoryNodes,
+} from '../common/PropertyCategory';
 import {extractEntityIdFromUrl} from '../common/RouterUtils';
-import {getPropertyValue} from '../common/Property';
-import NodePropertyValue from './NodePropertyValue';
-import LocationPropertyCategoryTable from './location/LocationPropertyCategoryTable';
-import ExpandingPanel from '@fbcnms/ui/components/ExpandingPanel';
+import {fetchPropertyByCategories} from '../common/Property';
+import {getInitialPropertyFromType} from '../common/PropertyType';
+import {useEffect, useMemo, useState} from 'react';
+import {useFormContext} from '../common/FormContext';
+import {withStyles} from '@material-ui/core/styles';
 
 type Props = {||} & WithStyles<typeof styles>;
 
-const styles = theme => ({
+const styles = () => ({
   title: {
     fontWeight: 'bold',
     fontFamily: 'Roboto',
@@ -73,7 +57,6 @@ const styles = theme => ({
   },
   expandingPanel: {
     boxShadow: 'none',
-    // borderBottom: '1px solid #9DA9BE',
   },
   borderLine: {
     borderBottom: '1px solid #9DA9BE',
@@ -93,6 +76,7 @@ const DynamicPropertyCategoriesTable = (props: Props) => {
       },
     }),
   );
+
   const [selectedValues, setSelectedValues] = useState([]);
   let isVisible = false;
   const [filters, setFilters] = useState<any>({
@@ -129,7 +113,7 @@ const DynamicPropertyCategoriesTable = (props: Props) => {
   }, []);
 
   useEffect(() => {
-    let ids = selectedValues
+    const ids = selectedValues
       .filter(e => e.value !== GENERAL_CATEGORY_LABEL)
       .map(e => e.value);
     const locationID = extractEntityIdFromUrl('location', location.search);
@@ -139,11 +123,11 @@ const DynamicPropertyCategoriesTable = (props: Props) => {
 
     const filterInput = {
       filters: [
-        {
-          filterType: 'LOCATION_ID',
-          operator: 'IS',
-          intValue: Number(locationID),
-        },
+        // {
+        //   filterType: 'LOCATION_ID',
+        //   operator: 'IS',
+        //   intValue: Number(locationID),
+        // },
       ],
     };
     if (ids.length > 0) {
@@ -161,7 +145,7 @@ const DynamicPropertyCategoriesTable = (props: Props) => {
       });
     }
     setFilters(filterInput);
-    fetchPropertyByCategories(filterInput).then(processProperties);
+    // fetchPropertyByCategories(filterInput).then(processProperties);
   }, [selectedValues]);
 
   const selectIsVisible = value => {
@@ -237,7 +221,7 @@ const DynamicPropertyCategoriesTable = (props: Props) => {
                   <LocationPropertyCategoryTable properties={prop.properties} />
                 </div>
               </ExpandingPanel>
-              <div className={classes.borderLine}></div>
+              <div className={classes.borderLine} />
             </div>
           ))}
       </div>

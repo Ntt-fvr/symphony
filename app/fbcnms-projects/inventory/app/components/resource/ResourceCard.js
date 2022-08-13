@@ -53,6 +53,7 @@ const useStyles = makeStyles(theme => ({
   },
   container: {
     maxHeight: 440,
+    margin: '10px 0',
   },
 }));
 const ResourceCardListQuery = graphql`
@@ -202,7 +203,7 @@ const ResourceCard = (props: Props) => {
   });
   const newArrayDataForm = resourceId
     ?.map(mapResources)
-    .filter(
+    ?.filter(
       data =>
         data.data[0].locationId === selectedLocationId &&
         !data.data[0].belongsTo &&
@@ -255,58 +256,68 @@ const ResourceCard = (props: Props) => {
                 </Button>
               }
             />
-            <CardContent>
-              <TableContainer className={classes.container}>
-                <Table stickyHeader>
-                  <TableHead>
-                    <TableRow>
-                      <TableCell className={classes.tableTitle}>Name</TableCell>
-                      <TableCell className={classes.tableTitle}>
-                        Specification
-                      </TableCell>
-                      <TableCell className={classes.tableTitle}>Type</TableCell>
-                      <TableCell className={classes.tableTitle}>
-                        Lifecycle Status
-                      </TableCell>
-                      <TableCell className={classes.tableTitle}>
-                        Delete
-                      </TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {newArrayDataForm?.flatMap((item, index) => (
-                      <TableRow hover key={index}>
-                        <TableCell>
-                          <Button
-                            variant="text"
-                            onClick={() =>
-                              onResourceSelected(item.data[0].idResource)
-                            }>
-                            <Typography>{item.data[0].nameResource}</Typography>
-                          </Button>
+            {!newArrayDataForm?.length ? null : (
+              <CardContent>
+                <TableContainer className={classes.container}>
+                  <Table size="small" stickyHeader>
+                    <TableHead>
+                      <TableRow>
+                        <TableCell className={classes.tableTitle}>
+                          Name
                         </TableCell>
-                        <TableCell>{item.data[0].nameSpecification}</TableCell>
-                        <TableCell>{item.data[0].nameResourceType}</TableCell>
-                        <TableCell>
-                          {startCase(camelCase(item?.data[0]?.status))}
+                        <TableCell className={classes.tableTitle}>
+                          Specification
                         </TableCell>
-                        <TableCell>
-                          <IconButton>
-                            <DeleteOutlinedIcon
-                              style={{color: symphony.palette.B600}}
-                              onClick={() => {
-                                setOpenDelete(true);
-                                setInfoResource(item.data[0]);
-                              }}
-                            />
-                          </IconButton>
+                        <TableCell className={classes.tableTitle}>
+                          Type
+                        </TableCell>
+                        <TableCell className={classes.tableTitle}>
+                          Lifecycle Status
+                        </TableCell>
+                        <TableCell className={classes.tableTitle}>
+                          Delete
                         </TableCell>
                       </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </TableContainer>
-            </CardContent>
+                    </TableHead>
+                    <TableBody>
+                      {newArrayDataForm?.flatMap((item, index) => (
+                        <TableRow hover key={index}>
+                          <TableCell>
+                            <Button
+                              variant="text"
+                              onClick={() =>
+                                onResourceSelected(item.data[0].idResource)
+                              }>
+                              <Typography>
+                                {item.data[0].nameResource}
+                              </Typography>
+                            </Button>
+                          </TableCell>
+                          <TableCell>
+                            {item.data[0].nameSpecification}
+                          </TableCell>
+                          <TableCell>{item.data[0].nameResourceType}</TableCell>
+                          <TableCell>
+                            {startCase(camelCase(item?.data[0]?.status))}
+                          </TableCell>
+                          <TableCell>
+                            <IconButton>
+                              <DeleteOutlinedIcon
+                                style={{color: symphony.palette.B600}}
+                                onClick={() => {
+                                  setOpenDelete(true);
+                                  setInfoResource(item.data[0]);
+                                }}
+                              />
+                            </IconButton>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </TableContainer>
+              </CardContent>
+            )}
           </Card>
           {openDialog && (
             <ModalSteper
