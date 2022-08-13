@@ -70,6 +70,11 @@ export type ResourceTypesQueryResponse = {|
       |}
     |}>
   |},
+  +queryResource: ?$ReadOnlyArray<?{|
+    +id: string,
+    +name: string,
+    +resourceSpecification: string,
+  |}>,
   +vendors: {|
     +edges: $ReadOnlyArray<{|
       +node: ?{|
@@ -138,6 +143,11 @@ query ResourceTypesQuery {
         }
       }
     }
+  }
+  queryResource {
+    id
+    name
+    resourceSpecification
   }
   vendors {
     edges {
@@ -417,6 +427,26 @@ v4 = [
   {
     "alias": null,
     "args": null,
+    "concreteType": "Resource",
+    "kind": "LinkedField",
+    "name": "queryResource",
+    "plural": true,
+    "selections": [
+      (v0/*: any*/),
+      (v1/*: any*/),
+      {
+        "alias": null,
+        "args": null,
+        "kind": "ScalarField",
+        "name": "resourceSpecification",
+        "storageKey": null
+      }
+    ],
+    "storageKey": null
+  },
+  {
+    "alias": null,
+    "args": null,
     "concreteType": "VendorConnection",
     "kind": "LinkedField",
     "name": "vendors",
@@ -465,16 +495,16 @@ return {
     "selections": (v4/*: any*/)
   },
   "params": {
-    "cacheID": "e481bb8094032b922ded019ad2b3286f",
+    "cacheID": "ad947305bea0ce9fb0e80854057f3ba0",
     "id": null,
     "metadata": {},
     "name": "ResourceTypesQuery",
     "operationKind": "query",
-    "text": "query ResourceTypesQuery {\n  resourceTypes {\n    edges {\n      node {\n        id\n        name\n        resourceTypeBaseType\n        resourceTypeClass\n        resourceSpecification {\n          id\n          name\n        }\n      }\n    }\n  }\n  resourceSpecifications {\n    edges {\n      node {\n        id\n        name\n        vendor {\n          id\n          name\n        }\n        resourceType {\n          id\n          name\n          resourceTypeClass\n        }\n        resourcePropertyTypes {\n          id\n          name\n          type\n          nodeType\n          index\n          stringValue\n          intValue\n          booleanValue\n          floatValue\n          latitudeValue\n          longitudeValue\n          rangeFromValue\n          rangeToValue\n          isEditable\n          isMandatory\n          isInstanceProperty\n          isDeleted\n          category\n        }\n      }\n    }\n  }\n  vendors {\n    edges {\n      node {\n        id\n        name\n      }\n    }\n  }\n}\n"
+    "text": "query ResourceTypesQuery {\n  resourceTypes {\n    edges {\n      node {\n        id\n        name\n        resourceTypeBaseType\n        resourceTypeClass\n        resourceSpecification {\n          id\n          name\n        }\n      }\n    }\n  }\n  resourceSpecifications {\n    edges {\n      node {\n        id\n        name\n        vendor {\n          id\n          name\n        }\n        resourceType {\n          id\n          name\n          resourceTypeClass\n        }\n        resourcePropertyTypes {\n          id\n          name\n          type\n          nodeType\n          index\n          stringValue\n          intValue\n          booleanValue\n          floatValue\n          latitudeValue\n          longitudeValue\n          rangeFromValue\n          rangeToValue\n          isEditable\n          isMandatory\n          isInstanceProperty\n          isDeleted\n          category\n        }\n      }\n    }\n  }\n  queryResource {\n    id\n    name\n    resourceSpecification\n  }\n  vendors {\n    edges {\n      node {\n        id\n        name\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = 'debeea1cb604091fcc70052ed0d95816';
+(node/*: any*/).hash = '3ba3fa0d6be0875907423adc94f19bbd';
 
 module.exports = node;

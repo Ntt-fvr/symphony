@@ -11,19 +11,24 @@
 import type {DataSelectorsForm} from './ResourceTypes';
 import type {EditResourceTypeMutationVariables} from '../../mutations/__generated__/EditResourceTypeMutation.graphql';
 import type {PropertyType} from '../../common/PropertyType';
+import type {RemoveResourceSpecificationMutationVariables} from '../../mutations/__generated__/RemoveResourceSpecificationMutation.graphql';
 
 import AddIcon from '@material-ui/icons/Add';
 import Button from '@material-ui/core/Button';
 import Card from '@symphony/design-system/components/Card/Card';
 import CardHeader from '@symphony/design-system/components/Card/CardHeader';
 import ConfigureTitleSubItem from '../assurance/common/ConfigureTitleSubItem';
+import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutline';
 import Divider from '@material-ui/core/Divider';
 import EditResourceTypeMutation from '../../mutations/EditResourceTypeMutation';
+import IconButton from '@symphony/design-system/components/IconButton';
 import React, {useState} from 'react';
+import RemoveResourceSpecificationMutation from '../../mutations/RemoveResourceSpecificationMutation';
 import SaveDialogConfirm from './SaveDialogConfirm';
 import Text from '@symphony/design-system/components/Text';
 import TextField from '@material-ui/core/TextField';
-import fbt from 'fbt';
+import VisibilityIcon from '@material-ui/icons/Visibility';
+import inventoryTheme from '../../common/theme';
 import symphony from '@symphony/design-system/theme/symphony';
 import {AddEditResourceSpecification} from './AddEditResourceSpecification';
 import {Grid, MenuItem} from '@material-ui/core';
@@ -39,33 +44,8 @@ const useStyles = makeStyles(() => ({
     margin: '0',
   },
   formField: {
-    margin: '0 22px',
-    '& .MuiOutlinedInput-notchedOutline': {
-      borderColor: '#B8C2D3',
-    },
-    '& .Mui-focused .MuiOutlinedInput-notchedOutline': {
-      borderColor: '#3984FF',
-    },
-    '& .MuiInputLabel-outlined.MuiInputLabel-shrink': {
-      transform: 'translate(14px, -3px) scale(0.75)',
-    },
-    '& .MuiFormControl-root': {
-      marginBottom: '41px',
-      '&:hover .MuiOutlinedInput-notchedOutline': {
-        borderColor: '#3984FF',
-      },
-    },
-    '& .MuiOutlinedInput-input': {
-      paddingTop: '7px',
-      paddingBottom: '7px',
-      fontSize: '14px',
-      display: 'flex',
-      alignItems: 'center',
-    },
-    '& label': {
-      fontSize: '14px',
-      lineHeight: '8px',
-    },
+    margin: '0 22px 41px 22px',
+    ...inventoryTheme.formField,
   },
   header: {
     marginBottom: '1rem',
@@ -80,12 +60,6 @@ const useStyles = makeStyles(() => ({
   buttonAdd: {
     '&.MuiButtonBase-root:hover': {
       backgroundColor: symphony.palette.B50,
-    },
-  },
-  buttonEdit: {
-    '&.MuiButtonBase-root:hover': {
-      backgroundColor: 'transparent',
-      color: symphony.palette.B600,
     },
   },
 }));
@@ -160,6 +134,26 @@ export const EditResourceTypeItem = (props: Props) => {
   const filterDataById = dataResourceSpecifications.filter(
     rsData => rsData?.resourceType?.id === formValues.id,
   );
+
+  const dataResource = dataFormQuery.queryResource.map(
+    item => item.resourceSpecification,
+  );
+
+  const spliceSpecification = filterDataById.map(item => {
+    return {
+      ...item,
+      disableButton: dataResource.includes(item.id),
+    };
+  });
+
+  const handleRemove = id => {
+    const variables: RemoveResourceSpecificationMutationVariables = {
+      id: id,
+    };
+    RemoveResourceSpecificationMutation(variables, {
+      onCompleted: () => isCompleted(),
+    });
+  };
 
   const showEditFormData = (dataForm: ResourceSpecifications) => {
     setOpenFormEdit(true);
@@ -308,22 +302,61 @@ export const EditResourceTypeItem = (props: Props) => {
             Resource specification
           </CardHeader>
           <Grid container direction="column" style={{padding: '0 49px'}}>
-            <Text
-              style={{padding: '0 0 15px 15px'}}
-              color="primary"
-              variant="body2">
-              Name
-            </Text>
+            <Grid
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                padding: '0 0 15px 15px',
+              }}>
+              <Text color="primary" variant="body2">
+                Name
+              </Text>
+              <Grid>
+                <Grid container>
+                  <Grid style={{marginRight: '1rem'}}>
+                    <Text color="primary" variant="body2">
+                      Edit
+                    </Text>
+                  </Grid>
+                  <Grid>
+                    <Text color="primary" variant="body2">
+                      Delete
+                    </Text>
+                  </Grid>
+                </Grid>
+              </Grid>
+            </Grid>
             <Divider />
-            {filterDataById.map((item, index) => (
-              <Grid item key={index}>
-                <Button
-                  className={classes.buttonEdit}
-                  disableRipple
-                  style={{padding: '11px'}}
-                  onClick={() => showEditFormData(item)}>
-                  {item?.name}
-                </Button>
+            {spliceSpecification.map((item, index) => (
+              <Grid xs={12} key={index}>
+                <Grid
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    padding: '11px',
+                  }}>
+                  <Text>{item?.name}</Text>
+                  <Grid>
+                    <Grid container>
+                      <Grid style={{marginRight: '1rem'}}>
+                        <IconButton
+                          skin="gray"
+                          icon={VisibilityIcon}
+                          onClick={() => showEditFormData(item)}
+                        />
+                      </Grid>
+                      <Grid>
+                        <IconButton
+                          disabled={item.disableButton}
+                          icon={DeleteOutlinedIcon}
+                          onClick={() => handleRemove(item.id)}
+                        />
+                      </Grid>
+                    </Grid>
+                  </Grid>
+                </Grid>
                 <Divider />
               </Grid>
             ))}

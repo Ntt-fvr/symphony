@@ -274,7 +274,6 @@ export const AddEditResourceSpecification = (props: Props) => {
             <form className={classes.formField} autoComplete="off">
               {editMode ? (
                 <TextField
-                  required
                   select
                   label="Vendor"
                   variant="outlined"
@@ -288,7 +287,6 @@ export const AddEditResourceSpecification = (props: Props) => {
                 </TextField>
               ) : (
                 <TextField
-                  required
                   select
                   label="Vendor"
                   name="vendor"

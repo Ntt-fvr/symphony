@@ -44,7 +44,6 @@ const useStyles = makeStyles(() => ({
   },
   deleteIcon: {
     marginRight: '1rem',
-    color: DARK.D300,
   },
   settingsIcon: {
     marginRight: '1rem',
@@ -106,12 +105,11 @@ export default function ResourceTypeItem(props: Props) {
               instances of the type
             </Grid>
             <Grid item xs={2} container justify="flex-end" alignItems="center">
-              <DeleteOutlinedIcon
+              <IconButton
                 className={classes.deleteIcon}
-                disabled="true"
-                onClick={
-                  dataForm.resourceSpecification.length ? null : handleDelete
-                }
+                disabled={!!dataForm.resourceSpecification.length}
+                icon={DeleteOutlinedIcon}
+                onClick={handleDelete}
               />
               <IconButton icon={EditIcon} onClick={edit} />
             </Grid>

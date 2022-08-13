@@ -85,6 +85,11 @@ const ResourceTypesQuery = graphql`
         }
       }
     }
+    queryResource {
+      id
+      name
+      resourceSpecification
+    }
     vendors {
       edges {
         node {
