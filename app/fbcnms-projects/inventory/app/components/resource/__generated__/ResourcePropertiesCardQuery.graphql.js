@@ -52,7 +52,7 @@ export type ResourcePropertiesCardQueryResponse = {|
     +locatedIn: ?string,
     +externalId: ?string,
     +resourceSpecification: string,
-    +isDeleted: boolean,
+    +isDeleted: ?boolean,
     +lifecycleStatus: ?LifecycleStatus,
     +typePlanningSubStatus: ?TypePlanningSubStatus,
     +planningSubStatus: ?PlanningSubStatus,

@@ -284,7 +284,7 @@ export type UpdateResourceMutationResponse = {|
       +externalId: ?string,
       +locatedIn: ?string,
       +resourceSpecification: string,
-      +isDeleted: boolean,
+      +isDeleted: ?boolean,
       +lifecycleStatus: ?LifecycleStatus,
       +planningSubStatus: ?PlanningSubStatus,
       +typePlanningSubStatus: ?TypePlanningSubStatus,
