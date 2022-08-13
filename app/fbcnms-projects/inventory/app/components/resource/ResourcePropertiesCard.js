@@ -24,6 +24,7 @@ import React, {useState} from 'react';
 import Tab from '@material-ui/core/Tab';
 import Tabs from '@material-ui/core/Tabs';
 import Typography from '@material-ui/core/Typography';
+import useFeatureFlag from '@fbcnms/ui/context/useFeatureFlag';
 import {LogEvents, ServerLogger} from '../../common/LoggingUtils';
 import {ResourceNetworkCard} from './ResourceNetworkCard';
 import {camelCase, startCase} from 'lodash';
@@ -31,7 +32,6 @@ import {getPropertyValue} from '../../common/Property';
 import {graphql} from 'relay-runtime';
 import {makeStyles} from '@material-ui/styles';
 import {useHistory} from 'react-router-dom';
-import useFeatureFlag from '@fbcnms/ui/context/useFeatureFlag';
 const useStyles = makeStyles(theme => ({
   root: {
     height: 'calc(100% - 92px)',
