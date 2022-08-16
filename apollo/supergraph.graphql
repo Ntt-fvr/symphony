@@ -186,6 +186,8 @@ type ActionScheduler implements DefaultConfig {
   description: String!
   id: ID!
   name: String!
+  resourceSpecificationName: String
+  resourceTypeName: String
   resources(filter: ResourceFilter, first: Int, offset: Int, order: ResourceOrder): [Resource!]!
   resourcesAggregate(filter: ResourceFilter): ResourceAggregateResult
   status: ActionSchedulerStatus!
@@ -205,6 +207,10 @@ type ActionSchedulerAggregateResult {
   descriptionMin: String
   nameMax: String
   nameMin: String
+  resourceSpecificationNameMax: String
+  resourceSpecificationNameMin: String
+  resourceTypeNameMax: String
+  resourceTypeNameMin: String
   updateTimeMax: DateTime
   updateTimeMin: DateTime
 }
@@ -215,6 +221,7 @@ input ActionSchedulerFilter {
   id: [ID!]
   not: ActionSchedulerFilter
   or: [ActionSchedulerFilter]
+  status: ActionSchedulerStatus_hash
 }
 
 enum ActionSchedulerHasFilter {
@@ -225,6 +232,8 @@ enum ActionSchedulerHasFilter {
   date
   description
   name
+  resourceSpecificationName
+  resourceTypeName
   resources
   status
   type
@@ -243,6 +252,8 @@ enum ActionSchedulerOrderable {
   date
   description
   name
+  resourceSpecificationName
+  resourceTypeName
   updateTime
 }
 
@@ -254,6 +265,8 @@ input ActionSchedulerPatch {
   date: DateTime
   description: String
   name: String
+  resourceSpecificationName: String
+  resourceTypeName: String
   resources: [ResourceRef!]
   status: ActionSchedulerStatus
   type: ActionSchedulerType
@@ -269,6 +282,8 @@ input ActionSchedulerRef {
   description: String
   id: ID
   name: String
+  resourceSpecificationName: String
+  resourceTypeName: String
   resources: [ResourceRef!]
   status: ActionSchedulerStatus
   type: ActionSchedulerType
@@ -278,6 +293,11 @@ input ActionSchedulerRef {
 enum ActionSchedulerStatus {
   ACTIVED
   DEACTIVATED
+}
+
+input ActionSchedulerStatus_hash {
+  eq: ActionSchedulerStatus
+  in: [ActionSchedulerStatus]
 }
 
 enum ActionSchedulerType {
@@ -293,6 +313,7 @@ type ActionTemplate implements DefaultConfig {
   actionTemplateItemsAggregate(filter: ActionTemplateItemFilter): ActionTemplateItemAggregateResult
   createTime: DateTime
   id: ID!
+  isDeleted: Boolean
   name: String!
   resourceSpecifications: String!
   type: ActionTemplateType!
@@ -324,6 +345,7 @@ enum ActionTemplateHasFilter {
   actionExecutions
   actionTemplateItems
   createTime
+  isDeleted
   name
   resourceSpecifications
   type
@@ -334,6 +356,7 @@ type ActionTemplateItem implements DefaultConfig {
   actionTemplate(filter: ActionTemplateFilter): ActionTemplate!
   createTime: DateTime
   id: ID!
+  isDeleted: Boolean
   parameters(filter: ConfigurationParameterTypeFilter): ConfigurationParameterType!
   updateTime: DateTime
   value(filter: ParameterFilter): Parameter!
@@ -358,6 +381,7 @@ input ActionTemplateItemFilter {
 enum ActionTemplateItemHasFilter {
   actionTemplate
   createTime
+  isDeleted
   parameters
   updateTime
   value
@@ -377,6 +401,7 @@ enum ActionTemplateItemOrderable {
 input ActionTemplateItemPatch {
   actionTemplate: ActionTemplateRef
   createTime: DateTime
+  isDeleted: Boolean
   parameters: ConfigurationParameterTypeRef
   updateTime: DateTime
   value: ParameterRef
@@ -386,6 +411,7 @@ input ActionTemplateItemRef {
   actionTemplate: ActionTemplateRef
   createTime: DateTime
   id: ID
+  isDeleted: Boolean
   parameters: ConfigurationParameterTypeRef
   updateTime: DateTime
   value: ParameterRef
@@ -408,6 +434,7 @@ input ActionTemplatePatch {
   actionExecutions: [ActionExecutionRef!]
   actionTemplateItems: [ActionTemplateItemRef!]
   createTime: DateTime
+  isDeleted: Boolean
   name: String
   resourceSpecifications: String
   type: ActionTemplateType
@@ -419,6 +446,7 @@ input ActionTemplateRef {
   actionTemplateItems: [ActionTemplateItemRef!]
   createTime: DateTime
   id: ID
+  isDeleted: Boolean
   name: String
   resourceSpecifications: String
   type: ActionTemplateType
@@ -511,6 +539,8 @@ input AddActionSchedulerInput {
   date: DateTime
   description: String!
   name: String!
+  resourceSpecificationName: String
+  resourceTypeName: String
   resources: [ResourceRef!]!
   status: ActionSchedulerStatus!
   type: ActionSchedulerType!
@@ -526,6 +556,7 @@ input AddActionTemplateInput {
   actionExecutions: [ActionExecutionRef!]
   actionTemplateItems: [ActionTemplateItemRef!]!
   createTime: DateTime
+  isDeleted: Boolean
   name: String!
   resourceSpecifications: String!
   type: ActionTemplateType!
@@ -535,6 +566,7 @@ input AddActionTemplateInput {
 input AddActionTemplateItemInput {
   actionTemplate: ActionTemplateRef!
   createTime: DateTime
+  isDeleted: Boolean
   parameters: ConfigurationParameterTypeRef!
   updateTime: DateTime
   value: ParameterRef!
@@ -1220,6 +1252,7 @@ input AddResourceInput {
   available: Boolean
   belongsTo: ResourceRef
   changeItems: [ChangeItemRef]
+  cmVersions: [CMVersionRef]
   composedOf: [ResourceRef]
   createTime: DateTime
   crossConnection: ResourceRef
@@ -9345,6 +9378,8 @@ type Resource implements DefaultConfig {
   belongsTo(filter: ResourceFilter): Resource
   changeItems(filter: ChangeItemFilter, first: Int, offset: Int, order: ChangeItemOrder): [ChangeItem]
   changeItemsAggregate(filter: ChangeItemFilter): ChangeItemAggregateResult
+  cmVersions(filter: CMVersionFilter, first: Int, offset: Int, order: CMVersionOrder): [CMVersion]
+  cmVersionsAggregate(filter: CMVersionFilter): CMVersionAggregateResult
   composedOf(filter: ResourceFilter, first: Int, offset: Int, order: ResourceOrder): [Resource]
   composedOfAggregate(filter: ResourceFilter): ResourceAggregateResult
   createTime: DateTime
@@ -9408,6 +9443,7 @@ enum ResourceHasFilter {
   available
   belongsTo
   changeItems
+  cmVersions
   composedOf
   createTime
   crossConnection
@@ -9601,6 +9637,7 @@ input ResourcePatch {
   available: Boolean
   belongsTo: ResourceRef
   changeItems: [ChangeItemRef]
+  cmVersions: [CMVersionRef]
   composedOf: [ResourceRef]
   createTime: DateTime
   crossConnection: ResourceRef
@@ -9812,6 +9849,7 @@ input ResourceRef {
   available: Boolean
   belongsTo: ResourceRef
   changeItems: [ChangeItemRef]
+  cmVersions: [CMVersionRef]
   composedOf: [ResourceRef]
   createTime: DateTime
   crossConnection: ResourceRef

@@ -82,6 +82,7 @@ type Resource implements DefaultConfig{
   isEditable: Boolean @default(add: { value: true})
   actionScheduler: ActionScheduler
   changeItems: [ChangeItem] @hasInverse(field: resource)
+  cmVersions: [CMVersion] @hasInverse(field: resource)
   administrativeSubStatus: AdministrativeSubStatus
 }
 type ResourceProperty implements DefaultConfig{
@@ -138,7 +139,7 @@ enum ParameterKind{
 }
 type ConfigurationParameterType implements DefaultConfig{
   externalId: String
-  name: String! @id
+  name: String! @id 
   type: ParameterKind!
   nodeType: String
   index: Int
@@ -728,6 +729,7 @@ enum ActionTemplateType {
 type ActionTemplate implements DefaultConfig{
   name:String!
   type:ActionTemplateType!
+  isDeleted: Boolean @default(add: { value: false})
   resourceSpecifications: String! @search(by: [hash])
   actionTemplateItems:[ActionTemplateItem!]!
   actionExecutions: [ActionExecution!]
@@ -735,6 +737,7 @@ type ActionTemplate implements DefaultConfig{
 type ActionTemplateItem implements DefaultConfig{
   parameters:ConfigurationParameterType!
   value:Parameter!
+  isDeleted: Boolean @default(add: { value: false})
   actionTemplate:ActionTemplate! @hasInverse(field: actionTemplateItems)
 }
 enum ActionSchedulerType {
@@ -752,8 +755,10 @@ type ActionScheduler implements DefaultConfig{
   type:ActionSchedulerType!
   date: DateTime
   cron: String
+  resourceTypeName:String
+  resourceSpecificationName:String
   actions:[ActionExecution!] @hasInverse(field: scheduler)
-  status: ActionSchedulerStatus! 
+  status: ActionSchedulerStatus! @search
   resources: [Resource!]!
   actionTemplate: ActionTemplate!
 }

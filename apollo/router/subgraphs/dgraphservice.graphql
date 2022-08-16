@@ -1,14 +1,13 @@
-directive @generate(
-  query: GenerateQueryParams
-  mutation: GenerateMutationParams
-  subscription: Boolean
-) on OBJECT | INTERFACE
-directive @search(by: [DgraphIndex!]) on FIELD_DEFINITION
+directive @secret(field: String!, pred: String) on OBJECT | INTERFACE
 directive @lambdaOnMutate(
   add: Boolean
   update: Boolean
   delete: Boolean
 ) on OBJECT | INTERFACE
+directive @default(
+  add: DgraphDefault
+  update: DgraphDefault
+) on FIELD_DEFINITION
 directive @auth(
   password: AuthRule
   query: AuthRule
@@ -16,22 +15,23 @@ directive @auth(
   update: AuthRule
   delete: AuthRule
 ) on OBJECT | INTERFACE
-directive @remote on OBJECT | INTERFACE | UNION | INPUT_OBJECT | ENUM
-directive @hasInverse(field: String!) on FIELD_DEFINITION
-directive @withSubscription on OBJECT | INTERFACE | FIELD_DEFINITION
-directive @lambda on FIELD_DEFINITION
-directive @id(interface: Boolean) on FIELD_DEFINITION
-directive @default(
-  add: DgraphDefault
-  update: DgraphDefault
-) on FIELD_DEFINITION
-directive @secret(field: String!, pred: String) on OBJECT | INTERFACE
+directive @custom(http: CustomHTTP, dql: String) on FIELD_DEFINITION
 directive @remoteResponse(name: String) on FIELD_DEFINITION
+directive @hasInverse(field: String!) on FIELD_DEFINITION
 directive @dgraph(
   type: String
   pred: String
 ) on OBJECT | INTERFACE | FIELD_DEFINITION
-directive @custom(http: CustomHTTP, dql: String) on FIELD_DEFINITION
+directive @withSubscription on OBJECT | INTERFACE | FIELD_DEFINITION
+directive @remote on OBJECT | INTERFACE | UNION | INPUT_OBJECT | ENUM
+directive @search(by: [DgraphIndex!]) on FIELD_DEFINITION
+directive @id(interface: Boolean) on FIELD_DEFINITION
+directive @lambda on FIELD_DEFINITION
+directive @generate(
+  query: GenerateQueryParams
+  mutation: GenerateMutationParams
+  subscription: Boolean
+) on OBJECT | INTERFACE
 enum _CancellationRequestOrdering {
   id_asc
   id_desc
@@ -383,6 +383,8 @@ type ActionScheduler implements DefaultConfig {
   type: ActionSchedulerType!
   date: DateTime
   cron: String
+  resourceTypeName: String
+  resourceSpecificationName: String
   actions(
     filter: ActionExecutionFilter
     order: ActionExecutionOrder
@@ -417,10 +419,15 @@ type ActionSchedulerAggregateResult {
   dateMax: DateTime
   cronMin: String
   cronMax: String
+  resourceTypeNameMin: String
+  resourceTypeNameMax: String
+  resourceSpecificationNameMin: String
+  resourceSpecificationNameMax: String
 }
 
 input ActionSchedulerFilter {
   id: [ID!]
+  status: ActionSchedulerStatus_hash
   has: [ActionSchedulerHasFilter]
   and: [ActionSchedulerFilter]
   or: [ActionSchedulerFilter]
@@ -435,6 +442,8 @@ enum ActionSchedulerHasFilter {
   type
   date
   cron
+  resourceTypeName
+  resourceSpecificationName
   actions
   status
   resources
@@ -454,6 +463,8 @@ enum ActionSchedulerOrderable {
   description
   date
   cron
+  resourceTypeName
+  resourceSpecificationName
 }
 
 input ActionSchedulerPatch {
@@ -464,6 +475,8 @@ input ActionSchedulerPatch {
   type: ActionSchedulerType
   date: DateTime
   cron: String
+  resourceTypeName: String
+  resourceSpecificationName: String
   actions: [ActionExecutionRef!]
   status: ActionSchedulerStatus
   resources: [ResourceRef!]
@@ -479,6 +492,8 @@ input ActionSchedulerRef {
   type: ActionSchedulerType
   date: DateTime
   cron: String
+  resourceTypeName: String
+  resourceSpecificationName: String
   actions: [ActionExecutionRef!]
   status: ActionSchedulerStatus
   resources: [ResourceRef!]
@@ -488,6 +503,11 @@ input ActionSchedulerRef {
 enum ActionSchedulerStatus {
   ACTIVED
   DEACTIVATED
+}
+
+input ActionSchedulerStatus_hash {
+  eq: ActionSchedulerStatus
+  in: [ActionSchedulerStatus]
 }
 
 enum ActionSchedulerType {
@@ -502,6 +522,7 @@ type ActionTemplate implements DefaultConfig {
   updateTime: DateTime
   name: String!
   type: ActionTemplateType!
+  isDeleted: Boolean
   resourceSpecifications: String!
   actionTemplateItems(
     filter: ActionTemplateItemFilter
@@ -549,6 +570,7 @@ enum ActionTemplateHasFilter {
   updateTime
   name
   type
+  isDeleted
   resourceSpecifications
   actionTemplateItems
   actionExecutions
@@ -562,6 +584,7 @@ type ActionTemplateItem implements DefaultConfig {
     filter: ConfigurationParameterTypeFilter
   ): ConfigurationParameterType!
   value(filter: ParameterFilter): Parameter!
+  isDeleted: Boolean
   actionTemplate(filter: ActionTemplateFilter): ActionTemplate!
 }
 
@@ -586,6 +609,7 @@ enum ActionTemplateItemHasFilter {
   updateTime
   parameters
   value
+  isDeleted
   actionTemplate
 }
 
@@ -605,6 +629,7 @@ input ActionTemplateItemPatch {
   updateTime: DateTime
   parameters: ConfigurationParameterTypeRef
   value: ParameterRef
+  isDeleted: Boolean
   actionTemplate: ActionTemplateRef
 }
 
@@ -614,6 +639,7 @@ input ActionTemplateItemRef {
   updateTime: DateTime
   parameters: ConfigurationParameterTypeRef
   value: ParameterRef
+  isDeleted: Boolean
   actionTemplate: ActionTemplateRef
 }
 
@@ -635,6 +661,7 @@ input ActionTemplatePatch {
   updateTime: DateTime
   name: String
   type: ActionTemplateType
+  isDeleted: Boolean
   resourceSpecifications: String
   actionTemplateItems: [ActionTemplateItemRef!]
   actionExecutions: [ActionExecutionRef!]
@@ -646,6 +673,7 @@ input ActionTemplateRef {
   updateTime: DateTime
   name: String
   type: ActionTemplateType
+  isDeleted: Boolean
   resourceSpecifications: String
   actionTemplateItems: [ActionTemplateItemRef!]
   actionExecutions: [ActionExecutionRef!]
@@ -702,6 +730,8 @@ input AddActionSchedulerInput {
   type: ActionSchedulerType!
   date: DateTime
   cron: String
+  resourceTypeName: String
+  resourceSpecificationName: String
   actions: [ActionExecutionRef!]
   status: ActionSchedulerStatus!
   resources: [ResourceRef!]!
@@ -723,6 +753,7 @@ input AddActionTemplateInput {
   updateTime: DateTime
   name: String!
   type: ActionTemplateType!
+  isDeleted: Boolean
   resourceSpecifications: String!
   actionTemplateItems: [ActionTemplateItemRef!]!
   actionExecutions: [ActionExecutionRef!]
@@ -733,6 +764,7 @@ input AddActionTemplateItemInput {
   updateTime: DateTime
   parameters: ConfigurationParameterTypeRef!
   value: ParameterRef!
+  isDeleted: Boolean
   actionTemplate: ActionTemplateRef!
 }
 
@@ -1233,6 +1265,7 @@ input AddResourceInput {
   isEditable: Boolean
   actionScheduler: ActionSchedulerRef
   changeItems: [ChangeItemRef]
+  cmVersions: [CMVersionRef]
   administrativeSubStatus: AdministrativeSubStatus
 }
 
@@ -5080,6 +5113,12 @@ type Resource implements DefaultConfig {
     first: Int
     offset: Int
   ): [ChangeItem]
+  cmVersions(
+    filter: CMVersionFilter
+    order: CMVersionOrder
+    first: Int
+    offset: Int
+  ): [CMVersion]
   administrativeSubStatus: AdministrativeSubStatus
   composedOfAggregate(filter: ResourceFilter): ResourceAggregateResult
   logicalLinksAggregate(filter: ResourceFilter): ResourceAggregateResult
@@ -5089,6 +5128,7 @@ type Resource implements DefaultConfig {
   ): ResourcePropertyAggregateResult
   numericPoolsAggregate(filter: NumericPoolFilter): NumericPoolAggregateResult
   changeItemsAggregate(filter: ChangeItemFilter): ChangeItemAggregateResult
+  cmVersionsAggregate(filter: CMVersionFilter): CMVersionAggregateResult
 }
 
 type ResourceAggregateResult {
@@ -5145,6 +5185,7 @@ enum ResourceHasFilter {
   isEditable
   actionScheduler
   changeItems
+  cmVersions
   administrativeSubStatus
 }
 
@@ -5350,6 +5391,7 @@ input ResourcePatch {
   isEditable: Boolean
   actionScheduler: ActionSchedulerRef
   changeItems: [ChangeItemRef]
+  cmVersions: [CMVersionRef]
   administrativeSubStatus: AdministrativeSubStatus
 }
 
@@ -5522,6 +5564,7 @@ input ResourceRef {
   isEditable: Boolean
   actionScheduler: ActionSchedulerRef
   changeItems: [ChangeItemRef]
+  cmVersions: [CMVersionRef]
   administrativeSubStatus: AdministrativeSubStatus
 }
 
