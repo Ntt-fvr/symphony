@@ -1216,6 +1216,7 @@ type AddRelatedEntityPayload {
 
 input AddResourceInput {
   actionScheduler: ActionSchedulerRef
+  administrativeSubStatus: AdministrativeSubStatus
   available: Boolean
   belongsTo: ResourceRef
   changeItems: [ChangeItemRef]
@@ -1238,7 +1239,6 @@ input AddResourceInput {
   planningSubStatus: PlanningSubStatus
   resourceProperties: [ResourcePropertyRef]
   resourceSpecification: String!
-  typePlanningSubStatus: TypePlanningSubStatus
   updateTime: DateTime
   usageSubStatus: UsageSubStatus
 }
@@ -1627,6 +1627,11 @@ input AddWorkerTypeInput {
 
 type AdministrativePolicy {
   access: BasicPermissionRule!
+}
+
+enum AdministrativeSubStatus {
+  ACTIVATED
+  DESACTIVATED
 }
 
 type AlarmFilter implements Node {
@@ -7506,8 +7511,10 @@ input PlaceRef {
 }
 
 enum PlanningSubStatus {
-  ACTIVATED
-  DESACTIVATED
+  DESIGNED
+  FEASIBILITY_CHECKED
+  ORDERED
+  PROPOSED
 }
 
 type Point {
@@ -9333,6 +9340,7 @@ input ReportFilterInput {
 
 type Resource implements DefaultConfig {
   actionScheduler(filter: ActionSchedulerFilter): ActionScheduler
+  administrativeSubStatus: AdministrativeSubStatus
   available: Boolean
   belongsTo(filter: ResourceFilter): Resource
   changeItems(filter: ChangeItemFilter, first: Int, offset: Int, order: ChangeItemOrder): [ChangeItem]
@@ -9362,7 +9370,6 @@ type Resource implements DefaultConfig {
   resourceProperties(filter: ResourcePropertyFilter, first: Int, offset: Int, order: ResourcePropertyOrder): [ResourceProperty]
   resourcePropertiesAggregate(filter: ResourcePropertyFilter): ResourcePropertyAggregateResult
   resourceSpecification: String!
-  typePlanningSubStatus: TypePlanningSubStatus
   updateTime: DateTime
   usageSubStatus: UsageSubStatus
 }
@@ -9397,6 +9404,7 @@ input ResourceFilter {
 
 enum ResourceHasFilter {
   actionScheduler
+  administrativeSubStatus
   available
   belongsTo
   changeItems
@@ -9419,7 +9427,6 @@ enum ResourceHasFilter {
   planningSubStatus
   resourceProperties
   resourceSpecification
-  typePlanningSubStatus
   updateTime
   usageSubStatus
 }
@@ -9590,6 +9597,7 @@ enum ResourceOrderable {
 
 input ResourcePatch {
   actionScheduler: ActionSchedulerRef
+  administrativeSubStatus: AdministrativeSubStatus
   available: Boolean
   belongsTo: ResourceRef
   changeItems: [ChangeItemRef]
@@ -9612,7 +9620,6 @@ input ResourcePatch {
   planningSubStatus: PlanningSubStatus
   resourceProperties: [ResourcePropertyRef]
   resourceSpecification: String
-  typePlanningSubStatus: TypePlanningSubStatus
   updateTime: DateTime
   usageSubStatus: UsageSubStatus
 }
@@ -9801,6 +9808,7 @@ type ResourcePropertyType implements Node {
 
 input ResourceRef {
   actionScheduler: ActionSchedulerRef
+  administrativeSubStatus: AdministrativeSubStatus
   available: Boolean
   belongsTo: ResourceRef
   changeItems: [ChangeItemRef]
@@ -9824,7 +9832,6 @@ input ResourceRef {
   planningSubStatus: PlanningSubStatus
   resourceProperties: [ResourcePropertyRef]
   resourceSpecification: String
-  typePlanningSubStatus: TypePlanningSubStatus
   updateTime: DateTime
   usageSubStatus: UsageSubStatus
 }
@@ -11939,13 +11946,6 @@ type TrueFalseBlock {
 input TrueFalseBlockInput {
   cid: String!
   uiRepresentation: BlockUIRepresentationInput
-}
-
-enum TypePlanningSubStatus {
-  DESIGNED
-  FEASIBILITY_CHECKED
-  ORDERED
-  PROPOSED
 }
 
 enum TypeSchedulerConfig {

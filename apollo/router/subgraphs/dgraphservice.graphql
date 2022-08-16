@@ -1,23 +1,14 @@
-directive @remoteResponse(name: String) on FIELD_DEFINITION
 directive @generate(
   query: GenerateQueryParams
   mutation: GenerateMutationParams
   subscription: Boolean
 ) on OBJECT | INTERFACE
-directive @withSubscription on OBJECT | INTERFACE | FIELD_DEFINITION
-directive @hasInverse(field: String!) on FIELD_DEFINITION
-directive @id(interface: Boolean) on FIELD_DEFINITION
-directive @remote on OBJECT | INTERFACE | UNION | INPUT_OBJECT | ENUM
-directive @lambda on FIELD_DEFINITION
-directive @dgraph(
-  type: String
-  pred: String
-) on OBJECT | INTERFACE | FIELD_DEFINITION
-directive @default(
-  add: DgraphDefault
-  update: DgraphDefault
-) on FIELD_DEFINITION
-directive @secret(field: String!, pred: String) on OBJECT | INTERFACE
+directive @search(by: [DgraphIndex!]) on FIELD_DEFINITION
+directive @lambdaOnMutate(
+  add: Boolean
+  update: Boolean
+  delete: Boolean
+) on OBJECT | INTERFACE
 directive @auth(
   password: AuthRule
   query: AuthRule
@@ -25,13 +16,22 @@ directive @auth(
   update: AuthRule
   delete: AuthRule
 ) on OBJECT | INTERFACE
+directive @remote on OBJECT | INTERFACE | UNION | INPUT_OBJECT | ENUM
+directive @hasInverse(field: String!) on FIELD_DEFINITION
+directive @withSubscription on OBJECT | INTERFACE | FIELD_DEFINITION
+directive @lambda on FIELD_DEFINITION
+directive @id(interface: Boolean) on FIELD_DEFINITION
+directive @default(
+  add: DgraphDefault
+  update: DgraphDefault
+) on FIELD_DEFINITION
+directive @secret(field: String!, pred: String) on OBJECT | INTERFACE
+directive @remoteResponse(name: String) on FIELD_DEFINITION
+directive @dgraph(
+  type: String
+  pred: String
+) on OBJECT | INTERFACE | FIELD_DEFINITION
 directive @custom(http: CustomHTTP, dql: String) on FIELD_DEFINITION
-directive @lambdaOnMutate(
-  add: Boolean
-  update: Boolean
-  delete: Boolean
-) on OBJECT | INTERFACE
-directive @search(by: [DgraphIndex!]) on FIELD_DEFINITION
 enum _CancellationRequestOrdering {
   id_asc
   id_desc
@@ -1214,7 +1214,6 @@ input AddResourceInput {
   available: Boolean
   externalId: String
   lifecycleStatus: LifecycleStatus
-  typePlanningSubStatus: TypePlanningSubStatus
   planningSubStatus: PlanningSubStatus
   operationalSubStatus: OperationalSubStatus
   usageSubStatus: UsageSubStatus
@@ -1234,6 +1233,7 @@ input AddResourceInput {
   isEditable: Boolean
   actionScheduler: ActionSchedulerRef
   changeItems: [ChangeItemRef]
+  administrativeSubStatus: AdministrativeSubStatus
 }
 
 input AddResourceOrderIMInput {
@@ -1540,6 +1540,11 @@ type AddSubscriberPayload {
     offset: Int
   ): [Subscriber]
   numUids: Int
+}
+
+enum AdministrativeSubStatus {
+  ACTIVATED
+  DESACTIVATED
 }
 
 type AppointmentRef {
@@ -4506,8 +4511,10 @@ input PlaceRef {
 }
 
 enum PlanningSubStatus {
-  ACTIVATED
-  DESACTIVATED
+  PROPOSED
+  FEASIBILITY_CHECKED
+  DESIGNED
+  ORDERED
 }
 
 type Point {
@@ -5024,7 +5031,6 @@ type Resource implements DefaultConfig {
   available: Boolean
   externalId: String
   lifecycleStatus: LifecycleStatus
-  typePlanningSubStatus: TypePlanningSubStatus
   planningSubStatus: PlanningSubStatus
   operationalSubStatus: OperationalSubStatus
   usageSubStatus: UsageSubStatus
@@ -5074,6 +5080,7 @@ type Resource implements DefaultConfig {
     first: Int
     offset: Int
   ): [ChangeItem]
+  administrativeSubStatus: AdministrativeSubStatus
   composedOfAggregate(filter: ResourceFilter): ResourceAggregateResult
   logicalLinksAggregate(filter: ResourceFilter): ResourceAggregateResult
   logicalLinkInvAggregate(filter: ResourceFilter): ResourceAggregateResult
@@ -5119,7 +5126,6 @@ enum ResourceHasFilter {
   available
   externalId
   lifecycleStatus
-  typePlanningSubStatus
   planningSubStatus
   operationalSubStatus
   usageSubStatus
@@ -5139,6 +5145,7 @@ enum ResourceHasFilter {
   isEditable
   actionScheduler
   changeItems
+  administrativeSubStatus
 }
 
 input ResourceOrder {
@@ -5324,7 +5331,6 @@ input ResourcePatch {
   available: Boolean
   externalId: String
   lifecycleStatus: LifecycleStatus
-  typePlanningSubStatus: TypePlanningSubStatus
   planningSubStatus: PlanningSubStatus
   operationalSubStatus: OperationalSubStatus
   usageSubStatus: UsageSubStatus
@@ -5344,6 +5350,7 @@ input ResourcePatch {
   isEditable: Boolean
   actionScheduler: ActionSchedulerRef
   changeItems: [ChangeItemRef]
+  administrativeSubStatus: AdministrativeSubStatus
 }
 
 type ResourceProperty implements DefaultConfig {
@@ -5496,7 +5503,6 @@ input ResourceRef {
   available: Boolean
   externalId: String
   lifecycleStatus: LifecycleStatus
-  typePlanningSubStatus: TypePlanningSubStatus
   planningSubStatus: PlanningSubStatus
   operationalSubStatus: OperationalSubStatus
   usageSubStatus: UsageSubStatus
@@ -5516,6 +5522,7 @@ input ResourceRef {
   isEditable: Boolean
   actionScheduler: ActionSchedulerRef
   changeItems: [ChangeItemRef]
+  administrativeSubStatus: AdministrativeSubStatus
 }
 
 type ResourceReference {
@@ -6607,13 +6614,6 @@ input SupportingServiceRef {
 enum SupportingServiceType {
   ServiceSOM
   ServiceReference
-}
-
-enum TypePlanningSubStatus {
-  PROPOSED
-  FEASIBILITY_CHECKED
-  DESIGNED
-  ORDERED
 }
 
 enum TypeSchedulerConfig {
