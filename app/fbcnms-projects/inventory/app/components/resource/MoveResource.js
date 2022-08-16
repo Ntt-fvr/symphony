@@ -9,6 +9,7 @@
  */
 
 import * as React from 'react';
+import Autocomplete from '@material-ui/lab/Autocomplete';
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
@@ -16,48 +17,39 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import FormControl from '@material-ui/core/FormControl';
-import InputBase from '@material-ui/core/InputBase';
-import InputLabel from '@material-ui/core/InputLabel';
-import MenuItem from '@material-ui/core/MenuItem';
-import Select from '@material-ui/core/Select';
-// import {graphql} from 'relay-runtime';
-import {makeStyles, withStyles} from '@material-ui/core/styles';
+import MuiAlert from '@material-ui/lab/Alert';
+import UpdateResourceMutation from '../../mutations/UpdateResourceMutation';
+import {Snackbar, TextField} from '@material-ui/core';
+import {graphql} from 'relay-runtime';
+import {makeStyles} from '@material-ui/core/styles';
+import {useLazyLoadQuery} from 'react-relay/hooks';
+import {useState} from 'react';
 
-// const LocationListQuery = graphql`
-//   query MoveResourceQuery {
-//     locations {
-//       edges {
-//         node {
-//           id
-//           name
-//         }
-//       }
-//     }
-//   }
-// `;
+const LocationTypes = graphql`
+  query MoveResourceLocationTypesQuery {
+    locationTypes {
+      edges {
+        node {
+          name
+          id
+        }
+      }
+    }
+  }
+`;
 
-// console.log(LocationListQuery);
-
-const LocationListQuery = {
-  data: {
-    locations: {
-      edges: [
-        {
-          node: {
-            id: '219043332096',
-            name: 'suba',
-          },
-        },
-        {
-          node: {
-            id: '219043332097',
-            name: 'san fernando',
-          },
-        },
-      ],
-    },
-  },
-};
+const LocationForType = graphql`
+  query MoveResourceLocationForTypeQuery($types: [ID!]) {
+    locations(types: $types) {
+      edges {
+        node {
+          id
+          name
+        }
+      }
+    }
+  }
+`;
 
 const useStyles = makeStyles(theme => ({
   margin: {
@@ -65,110 +57,236 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const BootstrapInput = withStyles(theme => ({
-  root: {
-    'label + &': {
-      marginTop: theme.spacing(3),
-    },
-  },
-  input: {
-    borderRadius: 4,
-    position: 'relative',
-    backgroundColor: theme.palette.background.paper,
-    width: 300,
-    border: '1px solid #ced4da',
-    fontSize: 16,
-    padding: '10px 26px 10px 12px',
-    transition: theme.transitions.create(['border-color', 'box-shadow']),
-    // Use the system font instead of the default Roboto font.
-    fontFamily: [
-      '-apple-system',
-      'BlinkMacSystemFont',
-      '"Segoe UI"',
-      'Roboto',
-      '"Helvetica Neue"',
-      'Arial',
-      'sans-serif',
-      '"Apple Color Emoji"',
-      '"Segoe UI Emoji"',
-      '"Segoe UI Symbol"',
-    ].join(','),
-    '&:focus': {
-      borderRadius: 4,
-      borderColor: '#80bdff',
-      boxShadow: '0 0 0 0.2rem rgba(0,123,255,.25)',
-    },
-  },
-}))(InputBase);
+export default function MoveResource({item, open, setOpen}) {
+  const classes = useStyles();
+  const [activeStep, setActiveStep] = useState(0);
+  const [typeLocation, setTypeLocation] = useState(null);
+  const [location, setLocation] = useState(null);
+  const [openSnack, setOpenSnack] = useState(false);
 
-export default function MoveResource({item}) {
-  const [open, setOpen] = React.useState(false);
-
-  const handleClickOpen = () => {
-    setOpen(true);
-  };
+  const Steps = [
+    {
+      title: 'Select Location Type',
+      state: typeLocation,
+    },
+    {
+      title: 'Select Location',
+      state: location,
+    },
+  ];
 
   const handleClose = () => {
+    setActiveStep(0);
+    setTypeLocation(null);
+    setLocation(null);
     setOpen(false);
   };
 
   const moveLocation = (id, newLocation) => {
-    alert(`se movio ${id} a ${newLocation}`);
+    const variables = {
+      input: {
+        set: {
+          locatedIn: newLocation,
+        },
+        filter: {
+          id: id,
+        },
+      },
+    };
+
+    UpdateResourceMutation(variables, {
+      onCompleted: () => {
+        setOpen(false);
+        setOpenSnack(true);
+      },
+      onError(e) {
+        console.error('error in UpdateResourceMutation', e);
+      },
+    });
   };
 
-  const classes = useStyles();
-  const [location, setLocation] = React.useState('');
-  const handleChange = event => {
-    setLocation(event.target.value);
+  const maxSteps = Steps.length - 1;
+
+  const handleNext = () => {
+    if (activeStep < maxSteps && Steps[activeStep].state) {
+      setActiveStep(activeStep + 1);
+    }
   };
 
   return (
-    <div>
-      <Button variant="outlined" color="primary" onClick={handleClickOpen}>
-        Move Resource
-      </Button>
+    <>
       <Dialog
         open={open}
         onClose={handleClose}
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description">
         <DialogTitle id="alert-dialog-title">Move Resource?</DialogTitle>
-
         <DialogContent>
-          Select Location type
+          {Steps[activeStep].title}
           <DialogContentText id="alert-dialog-description">
             <FormControl className={classes.margin}>
-              <InputLabel id="demo-customized-select-label">
-                Location
-              </InputLabel>
-              <Select
-                labelId="demo-customized-select-label"
-                id="demo-customized-select"
-                value={location}
-                onChange={handleChange}
-                input={<BootstrapInput />}>
-                {LocationListQuery.data.locations.edges.map(data => (
-                  <MenuItem value={data.node.id}>{data.node.name}</MenuItem>
-                ))}
-              </Select>
-              {location}
+              <ShowAutocomplete
+                activeStep={activeStep}
+                typeLocation={typeLocation}
+                location={location}
+                setLocation={setLocation}
+                setTypeLocation={setTypeLocation}
+                Steps={Steps}
+              />
             </FormControl>
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose} color="primary">
+          <Button variant="outlined" color="primary" onClick={handleClose}>
             Cancel
           </Button>
-          <Button
-            onClick={() => {
-              moveLocation(item.id, location);
-            }}
-            color="primary"
-            autoFocus>
-            Next
-          </Button>
+          {maxSteps > activeStep ? (
+            <Button
+              variant="contained"
+              color="primary"
+              disabled={Steps[activeStep].state ? false : true}
+              onClick={() => {
+                handleNext();
+              }}>
+              Next
+            </Button>
+          ) : (
+            <Button
+              variant="contained"
+              color="primary"
+              disabled={Steps[activeStep].state ? false : true}
+              onClick={() => {
+                moveLocation(item.id, location.id);
+              }}>
+              Move Resource
+            </Button>
+          )}
         </DialogActions>
       </Dialog>
+      <CustomizedSnackbars setOpenSnack={setOpenSnack} openSnack={openSnack} />
+    </>
+  );
+}
+
+function ShowAutocomplete({
+  activeStep,
+  typeLocation,
+  location,
+  setLocation,
+  setTypeLocation,
+  Steps,
+}) {
+  switch (activeStep) {
+    case 1:
+      return (
+        <Location
+          typeLocation={typeLocation}
+          location={location}
+          setLocation={setLocation}
+          activeStep={activeStep}
+          Steps={Steps}
+        />
+      );
+    default:
+      return (
+        <TypeLocation
+          typeLocation={typeLocation}
+          setTypeLocation={setTypeLocation}
+          activeStep={activeStep}
+          Steps={Steps}
+        />
+      );
+  }
+}
+
+function TypeLocation({typeLocation, setTypeLocation, activeStep, Steps}) {
+  const response = useLazyLoadQuery<locationTypes>(LocationTypes, {});
+
+  function refactorResponse() {
+    const newArray = [];
+    if (response) {
+      response.locationTypes.edges.forEach(element => {
+        newArray.push(element.node);
+      });
+    }
+    return newArray;
+  }
+
+  return (
+    <Autocomplete
+      options={refactorResponse()}
+      getOptionLabel={option => option.name}
+      style={{width: 300}}
+      value={typeLocation}
+      onChange={(event, newValue) => {
+        setTypeLocation(newValue);
+      }}
+      renderInput={params => (
+        <TextField
+          {...params}
+          label={Steps[activeStep].title}
+          variant="outlined"
+        />
+      )}
+    />
+  );
+}
+
+function Location({typeLocation, location, setLocation, activeStep, Steps}) {
+  const response = useLazyLoadQuery<locationTypes>(LocationForType, {
+    types: [typeLocation.id],
+  });
+
+  function refactorResponse() {
+    const newArray = [];
+    if (response) {
+      response.locations.edges.forEach(element => {
+        newArray.push(element.node);
+      });
+    }
+    return newArray;
+  }
+
+  return (
+    <Autocomplete
+      options={refactorResponse()}
+      getOptionLabel={option => option.name}
+      style={{width: 300}}
+      value={location}
+      onChange={(event, newValue) => {
+        setLocation(newValue);
+      }}
+      renderInput={params => (
+        <TextField
+          {...params}
+          label={Steps[activeStep].title}
+          variant="outlined"
+        />
+      )}
+    />
+  );
+}
+
+function Alert(props) {
+  return <MuiAlert elevation={6} variant="filled" {...props} />;
+}
+
+function CustomizedSnackbars({setOpenSnack, openSnack}) {
+  const handleClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+
+    setOpenSnack(false);
+  };
+
+  return (
+    <div>
+      <Snackbar open={openSnack} autoHideDuration={3000} onClose={handleClose}>
+        <Alert onClose={handleClose} severity="success">
+          The resource has been moved successfully!
+        </Alert>
+      </Snackbar>
     </div>
   );
 }
