@@ -6,7 +6,7 @@ enum LifecycleStatus
   RETIRING
 }
 
-enum TypePlanningSubStatus
+enum PlanningSubStatus
 {
   PROPOSED
   FEASIBILITY_CHECKED
@@ -14,7 +14,7 @@ enum TypePlanningSubStatus
   ORDERED
 }
 
-enum PlanningSubStatus
+enum AdministrativeSubStatus
 {
   ACTIVATED
   DESACTIVATED
@@ -63,7 +63,6 @@ type Resource implements DefaultConfig{
   available: Boolean
   externalId: String @id @search(by: [hash,regexp]) 
   lifecycleStatus: LifecycleStatus
-  typePlanningSubStatus: TypePlanningSubStatus
   planningSubStatus: PlanningSubStatus
   operationalSubStatus: OperationalSubStatus
   usageSubStatus: UsageSubStatus
@@ -83,6 +82,7 @@ type Resource implements DefaultConfig{
   isEditable: Boolean @default(add: { value: true})
   actionScheduler: ActionScheduler
   changeItems: [ChangeItem] @hasInverse(field: resource)
+  administrativeSubStatus: AdministrativeSubStatus
 }
 type ResourceProperty implements DefaultConfig{
   stringValue: String @search(by: [term])
