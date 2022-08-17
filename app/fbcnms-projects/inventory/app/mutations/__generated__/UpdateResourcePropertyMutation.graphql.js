@@ -18,13 +18,13 @@ export type ActionExecutionItemStatus = "FAILED" | "PENDING" | "SUCCESSFULL" | "
 export type ActionSchedulerStatus = "ACTIVED" | "DEACTIVATED" | "%future added value";
 export type ActionSchedulerType = "MANUAL_EXECUTION" | "ONE_TIME_EXECUTION" | "PERIODICAL_EXECUTION" | "%future added value";
 export type ActionTemplateType = "AUTOMATION_FLOW" | "CONFIGURATION_PARAMETER" | "%future added value";
+export type AdministrativeSubStatus = "ACTIVATED" | "DESACTIVATED" | "%future added value";
 export type ChangeItemStatus = "CANCELLED" | "FAILED" | "IN_EXECUTION" | "PENDING" | "SUCCESSFUL" | "%future added value";
 export type LifecycleStatus = "INSTALLING" | "OPERATING" | "PLANNING" | "RETIRING" | "%future added value";
 export type OperationalSubStatus = "NOT_WORKING" | "WORKING" | "%future added value";
 export type ParameterKind = "bool" | "date" | "datetime_local" | "email" | "enum" | "float" | "gps_location" | "int" | "range" | "string" | "%future added value";
-export type PlanningSubStatus = "ACTIVATED" | "DESACTIVATED" | "%future added value";
+export type PlanningSubStatus = "DESIGNED" | "FEASIBILITY_CHECKED" | "ORDERED" | "PROPOSED" | "%future added value";
 export type ResourcePropertyHasFilter = "booleanValue" | "createTime" | "floatValue" | "intValue" | "isInstanceProperty" | "isMandatory" | "latitudeValue" | "longitudeValue" | "rangeFromValue" | "rangeToValue" | "rawValue" | "resource" | "resourcePropertyType" | "stringValue" | "updateTime" | "%future added value";
-export type TypePlanningSubStatus = "DESIGNED" | "FEASIBILITY_CHECKED" | "ORDERED" | "PROPOSED" | "%future added value";
 export type UsageSubStatus = "ASSIGNED" | "AVAILABLE" | "NO_AVAILABLE" | "RESERVED" | "TERMINATING" | "%future added value";
 export type VersionStatus = "CURRENT" | "REPLACED" | "%future added value";
 export type UpdateResourcePropertyInput = {|
@@ -68,9 +68,11 @@ export type ResourcePropertyPatch = {|
 |};
 export type ResourceRef = {|
   actionScheduler?: ?ActionSchedulerRef,
+  administrativeSubStatus?: ?AdministrativeSubStatus,
   available?: ?boolean,
   belongsTo?: ?ResourceRef,
   changeItems?: ?$ReadOnlyArray<?ChangeItemRef>,
+  cmVersions?: ?$ReadOnlyArray<?CMVersionRef>,
   composedOf?: ?$ReadOnlyArray<?ResourceRef>,
   createTime?: ?any,
   crossConnection?: ?ResourceRef,
@@ -91,7 +93,6 @@ export type ResourceRef = {|
   planningSubStatus?: ?PlanningSubStatus,
   resourceProperties?: ?$ReadOnlyArray<?ResourcePropertyRef>,
   resourceSpecification?: ?string,
-  typePlanningSubStatus?: ?TypePlanningSubStatus,
   updateTime?: ?any,
   usageSubStatus?: ?UsageSubStatus,
 |};
@@ -104,6 +105,8 @@ export type ActionSchedulerRef = {|
   description?: ?string,
   id?: ?string,
   name?: ?string,
+  resourceSpecificationName?: ?string,
+  resourceTypeName?: ?string,
   resources?: ?$ReadOnlyArray<ResourceRef>,
   status?: ?ActionSchedulerStatus,
   type?: ?ActionSchedulerType,
@@ -114,6 +117,7 @@ export type ActionTemplateRef = {|
   actionTemplateItems?: ?$ReadOnlyArray<ActionTemplateItemRef>,
   createTime?: ?any,
   id?: ?string,
+  isDeleted?: ?boolean,
   name?: ?string,
   resourceSpecifications?: ?string,
   type?: ?ActionTemplateType,
@@ -141,6 +145,7 @@ export type ActionTemplateItemRef = {|
   actionTemplate?: ?ActionTemplateRef,
   createTime?: ?any,
   id?: ?string,
+  isDeleted?: ?boolean,
   parameters?: ?ConfigurationParameterTypeRef,
   updateTime?: ?any,
   value?: ?ParameterRef,

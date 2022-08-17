@@ -13,10 +13,10 @@ import type {
   AddResourceMutationVariables,
 } from '../../mutations/__generated__/AddResourceMutation.graphql';
 import type {
+  AdministrativeSubStatus,
   LifecycleStatus,
   OperationalSubStatus,
   PlanningSubStatus,
-  TypePlanningSubStatus,
   UsageSubStatus,
 } from '../../mutations/__generated__/AddResourceMutation.graphql';
 import type {UpdateResourceMutationVariables} from '../../mutations/__generated__/UpdateResourceMutation.graphql';
@@ -65,13 +65,8 @@ const useStyles = makeStyles(() => ({
 
 const selectListData = {
   lifecycleStatus: ['PLANNING', 'INSTALLING', 'OPERATING', 'RETIRING'],
-  typePlanningSubStatus: [
-    'PROPOSED',
-    'FEASIBILITY_CHECKED',
-    'DESIGNED',
-    'ORDERED',
-  ],
-  planningSubStatus: ['ACTIVATED', 'DESACTIVATED'],
+  planningSubStatus: ['PROPOSED', 'FEASIBILITY_CHECKED', 'DESIGNED', 'ORDERED'],
+  administrativeSubStatus: ['ACTIVATED', 'DESACTIVATED'],
   operationalSubStatus: ['WORKING', 'NOT_WORKING'],
   usageSubStatus: [
     'AVAILABLE',
@@ -89,7 +84,7 @@ type ResourceType = {
     externalId: string,
     administrativeSubstate: string,
     lifecycleStatus: LifecycleStatus,
-    typePlanningSubStatus: TypePlanningSubStatus,
+    administrativeSubStatus: AdministrativeSubStatus,
     planningSubStatus: PlanningSubStatus,
     operationalSubStatus: OperationalSubStatus,
     usageSubStatus: UsageSubStatus,
@@ -121,8 +116,8 @@ const AddEditResourceInLocation = (props: Props) => {
   const planningSubStatus = useFormInput(dataformModal.planningSubStatus);
   const operationalSubStatus = useFormInput(dataformModal.operationalSubStatus);
   const usageSubStatus = useFormInput(dataformModal.usageSubStatus);
-  const typePlanningSubStatus = useFormInput(
-    dataformModal.typePlanningSubStatus,
+  const administrativeSubStatus = useFormInput(
+    dataformModal.administrativeSubStatus,
   );
 
   function handleChange({target}) {
@@ -178,7 +173,7 @@ const AddEditResourceInLocation = (props: Props) => {
           isDeleted: true,
           externalId: resourceType.data.externalId,
           lifecycleStatus: resourceType.data.lifecycleStatus,
-          typePlanningSubStatus: resourceType.data.typePlanningSubStatus,
+          administrativeSubStatus: resourceType.data.administrativeSubStatus,
           planningSubStatus: resourceType.data.planningSubStatus,
           usageSubStatus: resourceType.data.usageSubStatus,
           operationalSubStatus: resourceType.data.operationalSubStatus,
@@ -208,7 +203,7 @@ const AddEditResourceInLocation = (props: Props) => {
   const setDataFormEdit = {
     externalId: externalId.value,
     lifecycleStatus: lifecycleStatus.value,
-    typePlanningSubStatus: typePlanningSubStatus.value,
+    administrativeSubStatus: administrativeSubStatus.value,
     planningSubStatus: planningSubStatus.value,
     usageSubStatus: usageSubStatus.value,
     operationalSubStatus: operationalSubStatus.value,
@@ -340,9 +335,9 @@ const AddEditResourceInLocation = (props: Props) => {
                 lifecycleStatus.value === 'PLANNING'
                   ? renderFormSelect(
                       'Planning Status',
-                      'typePlanningSubStatus',
-                      typePlanningSubStatus,
-                      selectListData.typePlanningSubStatus,
+                      'planningSubStatus',
+                      planningSubStatus,
+                      selectListData.planningSubStatus,
                     )
                   : null}
 
@@ -351,9 +346,9 @@ const AddEditResourceInLocation = (props: Props) => {
                   <>
                     {renderFormSelect(
                       'Administrative Status',
-                      'planningSubStatus',
-                      planningSubStatus,
-                      selectListData.planningSubStatus,
+                      'administrativeSubStatus',
+                      administrativeSubStatus,
+                      selectListData.administrativeSubStatus,
                     )}
                     {renderFormSelect(
                       'Operational Status',

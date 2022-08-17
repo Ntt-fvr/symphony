@@ -34,7 +34,7 @@ const mutation = graphql`
         isDeleted
         lifecycleStatus
         planningSubStatus
-        typePlanningSubStatus
+        administrativeSubStatus
         usageSubStatus
         operationalSubStatus
         resourceProperties {

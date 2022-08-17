@@ -69,7 +69,7 @@ const ResourceCardListQuery = graphql`
       resourceSpecification
       isDeleted
       lifecycleStatus
-      typePlanningSubStatus
+      administrativeSubStatus
       planningSubStatus
       usageSubStatus
       operationalSubStatus
@@ -290,11 +290,11 @@ const ResourcePropertiesCard = (props: Props) => {
                           )}
                           {validateForm(
                             'Planning Status:',
-                            item.typePlanningSubStatus,
+                            item.planningSubStatus,
                           )}
                           {validateForm(
                             'Administrative Status:',
-                            item.planningSubStatus,
+                            item.administrativeSubStatus,
                           )}
                           {validateForm(
                             'Operational Status:',
