@@ -18,19 +18,21 @@ export type ActionExecutionItemStatus = "FAILED" | "PENDING" | "SUCCESSFULL" | "
 export type ActionSchedulerStatus = "ACTIVED" | "DEACTIVATED" | "%future added value";
 export type ActionSchedulerType = "MANUAL_EXECUTION" | "ONE_TIME_EXECUTION" | "PERIODICAL_EXECUTION" | "%future added value";
 export type ActionTemplateType = "AUTOMATION_FLOW" | "CONFIGURATION_PARAMETER" | "%future added value";
+export type AdministrativeSubStatus = "ACTIVATED" | "DESACTIVATED" | "%future added value";
 export type ChangeItemStatus = "CANCELLED" | "FAILED" | "IN_EXECUTION" | "PENDING" | "SUCCESSFUL" | "%future added value";
 export type LifecycleStatus = "INSTALLING" | "OPERATING" | "PLANNING" | "RETIRING" | "%future added value";
 export type OperationalSubStatus = "NOT_WORKING" | "WORKING" | "%future added value";
 export type ParameterKind = "bool" | "date" | "datetime_local" | "email" | "enum" | "float" | "gps_location" | "int" | "range" | "string" | "%future added value";
-export type PlanningSubStatus = "ACTIVATED" | "DESACTIVATED" | "%future added value";
-export type TypePlanningSubStatus = "DESIGNED" | "FEASIBILITY_CHECKED" | "ORDERED" | "PROPOSED" | "%future added value";
+export type PlanningSubStatus = "DESIGNED" | "FEASIBILITY_CHECKED" | "ORDERED" | "PROPOSED" | "%future added value";
 export type UsageSubStatus = "ASSIGNED" | "AVAILABLE" | "NO_AVAILABLE" | "RESERVED" | "TERMINATING" | "%future added value";
 export type VersionStatus = "CURRENT" | "REPLACED" | "%future added value";
 export type AddResourceInput = {|
   actionScheduler?: ?ActionSchedulerRef,
+  administrativeSubStatus?: ?AdministrativeSubStatus,
   available?: ?boolean,
   belongsTo?: ?ResourceRef,
   changeItems?: ?$ReadOnlyArray<?ChangeItemRef>,
+  cmVersions?: ?$ReadOnlyArray<?CMVersionRef>,
   composedOf?: ?$ReadOnlyArray<?ResourceRef>,
   createTime?: ?any,
   crossConnection?: ?ResourceRef,
@@ -50,7 +52,6 @@ export type AddResourceInput = {|
   planningSubStatus?: ?PlanningSubStatus,
   resourceProperties?: ?$ReadOnlyArray<?ResourcePropertyRef>,
   resourceSpecification: string,
-  typePlanningSubStatus?: ?TypePlanningSubStatus,
   updateTime?: ?any,
   usageSubStatus?: ?UsageSubStatus,
 |};
@@ -63,6 +64,8 @@ export type ActionSchedulerRef = {|
   description?: ?string,
   id?: ?string,
   name?: ?string,
+  resourceSpecificationName?: ?string,
+  resourceTypeName?: ?string,
   resources?: ?$ReadOnlyArray<ResourceRef>,
   status?: ?ActionSchedulerStatus,
   type?: ?ActionSchedulerType,
@@ -73,6 +76,7 @@ export type ActionTemplateRef = {|
   actionTemplateItems?: ?$ReadOnlyArray<ActionTemplateItemRef>,
   createTime?: ?any,
   id?: ?string,
+  isDeleted?: ?boolean,
   name?: ?string,
   resourceSpecifications?: ?string,
   type?: ?ActionTemplateType,
@@ -98,9 +102,11 @@ export type ActionExecutionItemRef = {|
 |};
 export type ResourceRef = {|
   actionScheduler?: ?ActionSchedulerRef,
+  administrativeSubStatus?: ?AdministrativeSubStatus,
   available?: ?boolean,
   belongsTo?: ?ResourceRef,
   changeItems?: ?$ReadOnlyArray<?ChangeItemRef>,
+  cmVersions?: ?$ReadOnlyArray<?CMVersionRef>,
   composedOf?: ?$ReadOnlyArray<?ResourceRef>,
   createTime?: ?any,
   crossConnection?: ?ResourceRef,
@@ -121,7 +127,6 @@ export type ResourceRef = {|
   planningSubStatus?: ?PlanningSubStatus,
   resourceProperties?: ?$ReadOnlyArray<?ResourcePropertyRef>,
   resourceSpecification?: ?string,
-  typePlanningSubStatus?: ?TypePlanningSubStatus,
   updateTime?: ?any,
   usageSubStatus?: ?UsageSubStatus,
 |};
@@ -242,6 +247,7 @@ export type ActionTemplateItemRef = {|
   actionTemplate?: ?ActionTemplateRef,
   createTime?: ?any,
   id?: ?string,
+  isDeleted?: ?boolean,
   parameters?: ?ConfigurationParameterTypeRef,
   updateTime?: ?any,
   value?: ?ParameterRef,
@@ -261,7 +267,7 @@ export type AddResourceMutationResponse = {|
       +isDeleted: ?boolean,
       +lifecycleStatus: ?LifecycleStatus,
       +planningSubStatus: ?PlanningSubStatus,
-      +typePlanningSubStatus: ?TypePlanningSubStatus,
+      +administrativeSubStatus: ?AdministrativeSubStatus,
       +usageSubStatus: ?UsageSubStatus,
       +operationalSubStatus: ?OperationalSubStatus,
       +resourceProperties: ?$ReadOnlyArray<?{|
@@ -306,7 +312,7 @@ mutation AddResourceMutation(
       isDeleted
       lifecycleStatus
       planningSubStatus
-      typePlanningSubStatus
+      administrativeSubStatus
       usageSubStatus
       operationalSubStatus
       resourceProperties {
@@ -414,7 +420,7 @@ v11 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "typePlanningSubStatus",
+  "name": "administrativeSubStatus",
   "storageKey": null
 },
 v12 = {
@@ -640,16 +646,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "3e01b89e37b48b7529e23fa3414e35a2",
+    "cacheID": "b4d67e8e8e6bc2d7f55141c52fa89f30",
     "id": null,
     "metadata": {},
     "name": "AddResourceMutation",
     "operationKind": "mutation",
-    "text": "mutation AddResourceMutation(\n  $input: [AddResourceInput!]!\n) {\n  addResource(input: $input) {\n    numUids\n    resource {\n      id\n      name\n      externalId\n      locatedIn\n      resourceSpecification\n      isDeleted\n      lifecycleStatus\n      planningSubStatus\n      typePlanningSubStatus\n      usageSubStatus\n      operationalSubStatus\n      resourceProperties {\n        booleanValue\n        floatValue\n        intValue\n        latitudeValue\n        longitudeValue\n        rangeFromValue\n        rangeToValue\n        stringValue\n        resourcePropertyType\n        id\n      }\n      belongsTo {\n        id\n        name\n        resourceSpecification\n        locatedIn\n      }\n    }\n  }\n}\n"
+    "text": "mutation AddResourceMutation(\n  $input: [AddResourceInput!]!\n) {\n  addResource(input: $input) {\n    numUids\n    resource {\n      id\n      name\n      externalId\n      locatedIn\n      resourceSpecification\n      isDeleted\n      lifecycleStatus\n      planningSubStatus\n      administrativeSubStatus\n      usageSubStatus\n      operationalSubStatus\n      resourceProperties {\n        booleanValue\n        floatValue\n        intValue\n        latitudeValue\n        longitudeValue\n        rangeFromValue\n        rangeToValue\n        stringValue\n        resourcePropertyType\n        id\n      }\n      belongsTo {\n        id\n        name\n        resourceSpecification\n        locatedIn\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = 'be9a7d61a96b9746ccd9f298a295af79';
+(node/*: any*/).hash = '0e8e2384407ddca78c4ef729b51d0fce';
 
 module.exports = node;
