@@ -1,3 +1,4 @@
+
 schema
   @core(feature: "https://specs.apollo.dev/core/v0.2"),
   @core(feature: "https://specs.apollo.dev/join/v0.1", for: EXECUTION)
@@ -7757,7 +7758,7 @@ type PropertiesByCategories {
 input PropertiesByCategoryFilterInput {
   filterType: PropertiesByCategoryFilterType!
   idSet: [ID!]
-  intValue: Int
+  intValue: ID
   operator: FilterOperator!
   stringSet: [String!]
   stringValue: String
@@ -13262,6 +13263,6 @@ enum core__Purpose {
 scalar join__FieldSet
 
 enum join__Graph {
-  DGRAPHSERVICE @join__graph(name: "dgraphservice" url: "http://dgraph-dgraph-alpha.dgraph.svc.cluster.local:8080/graphql")
-  SYMPHONY @join__graph(name: "symphony" url: "http://symphony-graph/query")
+  DGRAPHSERVICE @join__graph(name: "dgraphservice" url: "http://alpha:8080/graphql")
+  SYMPHONY @join__graph(name: "symphony" url: "http://graph/query")
 }

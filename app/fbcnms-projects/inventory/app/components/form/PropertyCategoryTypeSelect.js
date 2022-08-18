@@ -60,7 +60,7 @@ export const PropertyCategoryTypeSelect = ({
     <Select
       options={options}
       selectedValue={
-        selectedValueIndex > -1 ? options[selectedValueIndex].value : null
+        selectedValueIndex > -1 ? options[selectedValueIndex].value : '@tmp'
       }
       onChange={data => {
         onCategoryChange &&

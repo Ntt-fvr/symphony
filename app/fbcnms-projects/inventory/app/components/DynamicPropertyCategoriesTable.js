@@ -116,18 +116,18 @@ const DynamicPropertyCategoriesTable = (props: Props) => {
     const ids = selectedValues
       .filter(e => e.value !== GENERAL_CATEGORY_LABEL)
       .map(e => e.value);
-    const locationID = extractEntityIdFromUrl('location', location.search);
+    const locationID = extractEntityIdFromUrl('location', location.search) || "";
     const generalCategory = selectedValues.filter(
       e => e.value === GENERAL_CATEGORY_LABEL,
     );
 
     const filterInput = {
       filters: [
-        // {
-        //   filterType: 'LOCATION_ID',
-        //   operator: 'IS',
-        //   intValue: Number(locationID),
-        // },
+        {
+          filterType: 'LOCATION_ID',
+          operator: 'IS',
+          intValue: locationID,
+        },
       ],
     };
     if (ids.length > 0) {
@@ -145,7 +145,7 @@ const DynamicPropertyCategoriesTable = (props: Props) => {
       });
     }
     setFilters(filterInput);
-    // fetchPropertyByCategories(filterInput).then(processProperties);
+    fetchPropertyByCategories(filterInput).then(processProperties);
   }, [selectedValues]);
 
   const selectIsVisible = value => {
