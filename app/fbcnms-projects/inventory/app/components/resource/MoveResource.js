@@ -61,7 +61,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-type Item = {
+type Item2 = {
   belongsTo: Any,
   externalId: Any,
   id: String,
@@ -80,13 +80,13 @@ type Item = {
   usageSubStatus: Any,
 };
 
-type Props = $ReadOnly<{|
-  item: Item,
-  open: Bolean,
-  SetOpen: void,
+type Props2 = $ReadOnly<{|
+  item: Item2,
+  setOpen: void => void,
+  open: Boolean,
 |}>;
 
-export default function MoveResource(props: Props) {
+export default function MoveResource(props: Props2) {
   const {item, open, setOpen} = props;
   const classes = useStyles();
   const [activeStep, setActiveStep] = useState(0);
@@ -197,15 +197,24 @@ export default function MoveResource(props: Props) {
     </>
   );
 }
+type Props3 = $ReadOnly<{
+  activeStep: number,
+  typeLocation: {}[],
+  location: {},
+  setLocation: void,
+  setTypeLocation: void,
+  Steps: {},
+}>;
+function ShowAutocomplete(props: Props3) {
+  const {
+    activeStep,
+    typeLocation,
+    location,
+    setLocation,
+    setTypeLocation,
+    Steps,
+  } = props;
 
-function ShowAutocomplete({
-  activeStep,
-  typeLocation,
-  location,
-  setLocation,
-  setTypeLocation,
-  Steps,
-}) {
   switch (activeStep) {
     case 1:
       return (
@@ -264,8 +273,16 @@ function TypeLocation({typeLocation, setTypeLocation, activeStep, Steps}) {
     />
   );
 }
+type Props4 = $ReadOnly<{
+  typeLocation: {}[],
+  location: {},
+  setLocation: void,
+  activeStep: Number,
+  Steps: {},
+}>;
 
-function Location({typeLocation, location, setLocation, activeStep, Steps}) {
+function Location(props: Props4) {
+  const {typeLocation, location, setLocation, activeStep, Steps} = props;
   const response = useLazyLoadQuery<MoveResourceLocationForTypeQuery>(
     LocationForType,
     {
