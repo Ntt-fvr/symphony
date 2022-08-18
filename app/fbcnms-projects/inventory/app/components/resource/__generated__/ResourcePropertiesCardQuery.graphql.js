@@ -14,13 +14,13 @@
 
 /*::
 import type { ConcreteRequest } from 'relay-runtime';
+export type AdministrativeSubStatus = "ACTIVATED" | "DESACTIVATED" | "%future added value";
 export type LifecycleStatus = "INSTALLING" | "OPERATING" | "PLANNING" | "RETIRING" | "%future added value";
 export type OperationalSubStatus = "NOT_WORKING" | "WORKING" | "%future added value";
-export type PlanningSubStatus = "ACTIVATED" | "DESACTIVATED" | "%future added value";
-export type ResourceHasFilter = "actionScheduler" | "available" | "belongsTo" | "changeItems" | "composedOf" | "createTime" | "crossConnection" | "crossconnectionInv" | "externalId" | "isDeleted" | "isEditable" | "lifecycleStatus" | "locatedIn" | "logicalLinkInv" | "logicalLinks" | "name" | "numericPools" | "operationalSubStatus" | "physicalLink" | "physicalLinkInv" | "planningSubStatus" | "resourceProperties" | "resourceSpecification" | "typePlanningSubStatus" | "updateTime" | "usageSubStatus" | "%future added value";
+export type PlanningSubStatus = "DESIGNED" | "FEASIBILITY_CHECKED" | "ORDERED" | "PROPOSED" | "%future added value";
+export type ResourceHasFilter = "actionScheduler" | "administrativeSubStatus" | "available" | "belongsTo" | "changeItems" | "cmVersions" | "composedOf" | "createTime" | "crossConnection" | "crossconnectionInv" | "externalId" | "isDeleted" | "isEditable" | "lifecycleStatus" | "locatedIn" | "logicalLinkInv" | "logicalLinks" | "name" | "numericPools" | "operationalSubStatus" | "physicalLink" | "physicalLinkInv" | "planningSubStatus" | "resourceProperties" | "resourceSpecification" | "updateTime" | "usageSubStatus" | "%future added value";
 export type ResourcePropertyKind = "bool" | "date" | "datetime_local" | "email" | "enum" | "float" | "gps_location" | "int" | "node" | "range" | "string" | "%future added value";
 export type ResourceTypeClassKind = "CARD" | "EQUIPMENT" | "NETWORK_FUNCTION" | "PORT" | "RACK" | "SLOT" | "VLAN" | "%future added value";
-export type TypePlanningSubStatus = "DESIGNED" | "FEASIBILITY_CHECKED" | "ORDERED" | "PROPOSED" | "%future added value";
 export type UsageSubStatus = "ASSIGNED" | "AVAILABLE" | "NO_AVAILABLE" | "RESERVED" | "TERMINATING" | "%future added value";
 export type ResourceFilter = {|
   and?: ?$ReadOnlyArray<?ResourceFilter>,
@@ -54,7 +54,7 @@ export type ResourcePropertiesCardQueryResponse = {|
     +resourceSpecification: string,
     +isDeleted: ?boolean,
     +lifecycleStatus: ?LifecycleStatus,
-    +typePlanningSubStatus: ?TypePlanningSubStatus,
+    +administrativeSubStatus: ?AdministrativeSubStatus,
     +planningSubStatus: ?PlanningSubStatus,
     +usageSubStatus: ?UsageSubStatus,
     +operationalSubStatus: ?OperationalSubStatus,
@@ -132,7 +132,7 @@ query ResourcePropertiesCardQuery(
     resourceSpecification
     isDeleted
     lifecycleStatus
-    typePlanningSubStatus
+    administrativeSubStatus
     planningSubStatus
     usageSubStatus
     operationalSubStatus
@@ -341,7 +341,7 @@ v13 = [
         "alias": null,
         "args": null,
         "kind": "ScalarField",
-        "name": "typePlanningSubStatus",
+        "name": "administrativeSubStatus",
         "storageKey": null
       },
       {
@@ -548,16 +548,16 @@ return {
     "selections": (v13/*: any*/)
   },
   "params": {
-    "cacheID": "95463659f2bb9ee2692556fadac8a8b1",
+    "cacheID": "5a29ce72402ddb5cb6c91cbf708905c6",
     "id": null,
     "metadata": {},
     "name": "ResourcePropertiesCardQuery",
     "operationKind": "query",
-    "text": "query ResourcePropertiesCardQuery(\n  $filterResource: ResourceFilter\n) {\n  queryResource(filter: $filterResource) {\n    id\n    name\n    locatedIn\n    externalId\n    resourceSpecification\n    isDeleted\n    lifecycleStatus\n    typePlanningSubStatus\n    planningSubStatus\n    usageSubStatus\n    operationalSubStatus\n    belongsTo {\n      id\n    }\n    resourceProperties {\n      booleanValue\n      floatValue\n      id\n      intValue\n      latitudeValue\n      longitudeValue\n      rangeFromValue\n      rangeToValue\n      stringValue\n      resourcePropertyType\n      isMandatory\n      isInstanceProperty\n    }\n  }\n  resourceSpecifications {\n    edges {\n      node {\n        id\n        name\n        resourceType {\n          id\n          name\n          resourceTypeClass\n        }\n        resourcePropertyTypes {\n          id\n          name\n          type\n          stringValue\n          intValue\n          booleanValue\n          floatValue\n          latitudeValue\n          longitudeValue\n          rangeFromValue\n          rangeToValue\n          isMandatory\n          isInstanceProperty\n        }\n      }\n    }\n  }\n  locations {\n    edges {\n      node {\n        id\n        name\n      }\n    }\n  }\n}\n"
+    "text": "query ResourcePropertiesCardQuery(\n  $filterResource: ResourceFilter\n) {\n  queryResource(filter: $filterResource) {\n    id\n    name\n    locatedIn\n    externalId\n    resourceSpecification\n    isDeleted\n    lifecycleStatus\n    administrativeSubStatus\n    planningSubStatus\n    usageSubStatus\n    operationalSubStatus\n    belongsTo {\n      id\n    }\n    resourceProperties {\n      booleanValue\n      floatValue\n      id\n      intValue\n      latitudeValue\n      longitudeValue\n      rangeFromValue\n      rangeToValue\n      stringValue\n      resourcePropertyType\n      isMandatory\n      isInstanceProperty\n    }\n  }\n  resourceSpecifications {\n    edges {\n      node {\n        id\n        name\n        resourceType {\n          id\n          name\n          resourceTypeClass\n        }\n        resourcePropertyTypes {\n          id\n          name\n          type\n          stringValue\n          intValue\n          booleanValue\n          floatValue\n          latitudeValue\n          longitudeValue\n          rangeFromValue\n          rangeToValue\n          isMandatory\n          isInstanceProperty\n        }\n      }\n    }\n  }\n  locations {\n    edges {\n      node {\n        id\n        name\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = 'b82cb78d37c89b4ae55b1e4971c27bcd';
+(node/*: any*/).hash = '9afaf823fa332f6e87aadc634d83af34';
 
 module.exports = node;

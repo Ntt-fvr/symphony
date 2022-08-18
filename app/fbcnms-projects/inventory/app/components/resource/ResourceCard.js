@@ -66,7 +66,7 @@ const ResourceCardListQuery = graphql`
       locatedIn
       isDeleted
       lifecycleStatus
-      typePlanningSubStatus
+      administrativeSubStatus
       planningSubStatus
       usageSubStatus
       operationalSubStatus
