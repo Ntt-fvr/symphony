@@ -19,6 +19,10 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import FormControl from '@material-ui/core/FormControl';
 import MuiAlert from '@material-ui/lab/Alert';
 import UpdateResourceMutation from '../../mutations/UpdateResourceMutation';
+
+import type {MoveResourceLocationForTypeQuery} from './__generated__/MoveResourceLocationForTypeQuery.graphql';
+import type {MoveResourceLocationTypesQuery} from './__generated__/MoveResourceLocationTypesQuery.graphql';
+
 import {Snackbar, TextField} from '@material-ui/core';
 import {graphql} from 'relay-runtime';
 import {makeStyles} from '@material-ui/core/styles';
@@ -57,7 +61,33 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function MoveResource({item, open, setOpen}) {
+type Item = {
+  belongsTo: Any,
+  externalId: Any,
+  id: String,
+  isDeleted: Boolean,
+  lifecycleStatus: Any,
+  locatedIn: String,
+  location: {id: String, name: String},
+  name: String,
+  operationalSubStatus: Any,
+  planningSubStatus: Any,
+  resourceProperties: {}[],
+  resourceSName: String,
+  resourceSpecification: String,
+  resourceTypeName: String,
+  typePlanningSubStatus: Any,
+  usageSubStatus: Any,
+};
+
+type Props = $ReadOnly<{|
+  item: Item,
+  open: Bolean,
+  SetOpen: void,
+|}>;
+
+export default function MoveResource(props: Props) {
+  const {item, open, setOpen} = props;
   const classes = useStyles();
   const [activeStep, setActiveStep] = useState(0);
   const [typeLocation, setTypeLocation] = useState(null);
@@ -83,7 +113,7 @@ export default function MoveResource({item, open, setOpen}) {
   };
 
   const moveLocation = (id, newLocation) => {
-    const variables = {
+    const variables: UpdateResourceMutation = {
       input: {
         set: {
           locatedIn: newLocation,
@@ -200,7 +230,10 @@ function ShowAutocomplete({
 }
 
 function TypeLocation({typeLocation, setTypeLocation, activeStep, Steps}) {
-  const response = useLazyLoadQuery<locationTypes>(LocationTypes, {});
+  const response = useLazyLoadQuery<MoveResourceLocationTypesQuery>(
+    LocationTypes,
+    {},
+  );
 
   function refactorResponse() {
     const newArray = [];
@@ -233,9 +266,12 @@ function TypeLocation({typeLocation, setTypeLocation, activeStep, Steps}) {
 }
 
 function Location({typeLocation, location, setLocation, activeStep, Steps}) {
-  const response = useLazyLoadQuery<locationTypes>(LocationForType, {
-    types: [typeLocation.id],
-  });
+  const response = useLazyLoadQuery<MoveResourceLocationForTypeQuery>(
+    LocationForType,
+    {
+      types: [typeLocation.id],
+    },
+  );
 
   function refactorResponse() {
     const newArray = [];

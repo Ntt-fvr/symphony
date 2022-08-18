@@ -32,7 +32,32 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function ResourceMenudots({item}) {
+type Item = {
+  belongsTo: Any,
+  externalId: Any,
+  id: String,
+  isDeleted: Boolean,
+  lifecycleStatus: Any,
+  locatedIn: String,
+  location: {id: String, name: String},
+  name: String,
+  operationalSubStatus: Any,
+  planningSubStatus: Any,
+  resourceProperties: {}[],
+  resourceSName: String,
+  resourceSpecification: String,
+  resourceTypeName: String,
+  typePlanningSubStatus: Any,
+  usageSubStatus: Any,
+};
+
+type Props = $ReadOnly<{|
+  item: Item,
+|}>;
+
+export default function ResourceMenudots(props: Props) {
+  const {item} = props;
+
   const classes = useStyles();
   const [open, setOpen] = useState(false);
   const anchorRef = useRef(null);
@@ -62,7 +87,6 @@ export default function ResourceMenudots({item}) {
     }
   }
 
-  // return focus to the button when we transitioned from !open -> open
   const prevOpen = useRef(open);
   useEffect(() => {
     if (prevOpen.current === true && open === false) {
