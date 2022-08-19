@@ -5210,7 +5210,7 @@ input PropertiesByCategoryFilterInput
   filterType: PropertiesByCategoryFilterType!
   operator: FilterOperator!
   stringValue: String
-  intValue: Int
+  intValue: ID
   idSet: [ID!]
   stringSet: [String!]
 }

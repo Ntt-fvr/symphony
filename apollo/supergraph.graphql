@@ -1,3 +1,4 @@
+
 schema
   @core(feature: "https://specs.apollo.dev/core/v0.2"),
   @core(feature: "https://specs.apollo.dev/join/v0.1", for: EXECUTION)
@@ -7757,7 +7758,7 @@ type PropertiesByCategories {
 input PropertiesByCategoryFilterInput {
   filterType: PropertiesByCategoryFilterType!
   idSet: [ID!]
-  intValue: Int
+  intValue: ID
   operator: FilterOperator!
   stringSet: [String!]
   stringValue: String

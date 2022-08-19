@@ -20348,7 +20348,7 @@ input PropertiesByCategoryFilterInput
   filterType: PropertiesByCategoryFilterType!
   operator: FilterOperator!
   stringValue: String
-  intValue: Int
+  intValue: ID
   idSet: [ID!]
   stringSet: [String!]
 }
@@ -99894,7 +99894,7 @@ func (ec *executionContext) unmarshalInputPropertiesByCategoryFilterInput(ctx co
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("intValue"))
-			it.IntValue, err = ec.unmarshalOInt2ᚖint(ctx, v)
+			it.IntValue, err = ec.unmarshalOID2ᚖint(ctx, v)
 			if err != nil {
 				return it, err
 			}
