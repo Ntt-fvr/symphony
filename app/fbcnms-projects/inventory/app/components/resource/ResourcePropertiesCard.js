@@ -21,6 +21,7 @@ import InventoryQueryRenderer from '../InventoryQueryRenderer';
 import ModalSteper from './ModalSteper';
 import PerfectScrollbar from 'react-perfect-scrollbar';
 import React, {useState} from 'react';
+import ResourceMenudots from './ResourceMenudots';
 import Tab from '@material-ui/core/Tab';
 import Tabs from '@material-ui/core/Tabs';
 import Typography from '@material-ui/core/Typography';
@@ -252,6 +253,7 @@ const ResourcePropertiesCard = (props: Props) => {
                     ]}
                     size="large"
                   />
+                  <ResourceMenudots item={item} />
                   <Button onClick={() => onEditResource(item)}>
                     Edit Resource
                   </Button>
