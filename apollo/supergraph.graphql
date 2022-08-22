@@ -1,4 +1,3 @@
-
 schema
   @core(feature: "https://specs.apollo.dev/core/v0.2"),
   @core(feature: "https://specs.apollo.dev/join/v0.1", for: EXECUTION)
@@ -12875,6 +12874,7 @@ enum WorkOrderFilterType {
   WORK_ORDER_ASSIGNED_TO
   WORK_ORDER_CLOSE_DATE
   WORK_ORDER_CREATION_DATE
+  WORK_ORDER_ID
   WORK_ORDER_LOCATION_INST
   WORK_ORDER_NAME
   WORK_ORDER_ORGANIZATION

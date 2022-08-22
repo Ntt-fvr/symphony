@@ -302,6 +302,7 @@ func (s ServiceFilterType) String() string {
 type WorkOrderFilterType string
 
 const (
+	WorkOrderFilterTypeWorkOrderId            WorkOrderFilterType = "WORK_ORDER_ID"
 	WorkOrderFilterTypeWorkOrderName          WorkOrderFilterType = "WORK_ORDER_NAME"
 	WorkOrderFilterTypeWorkOrderStatus        WorkOrderFilterType = "WORK_ORDER_STATUS"
 	WorkOrderFilterTypeWorkOrderOwnedBy       WorkOrderFilterType = "WORK_ORDER_OWNED_BY"
@@ -318,7 +319,7 @@ const (
 
 func (w WorkOrderFilterType) IsValid() bool {
 	switch w {
-	case WorkOrderFilterTypeWorkOrderName, WorkOrderFilterTypeWorkOrderStatus, WorkOrderFilterTypeWorkOrderOwnedBy, WorkOrderFilterTypeWorkOrderType, WorkOrderFilterTypeWorkOrderCreationDate, WorkOrderFilterTypeWorkOrderCloseDate, WorkOrderFilterTypeWorkOrderAssignedTo, WorkOrderFilterTypeWorkOrderLocationInst, WorkOrderFilterTypeWorkOrderPriority, WorkOrderFilterTypeLocationInst, WorkOrderFilterTypeLocationInstExternalID:
+	case WorkOrderFilterTypeWorkOrderId, WorkOrderFilterTypeWorkOrderName, WorkOrderFilterTypeWorkOrderStatus, WorkOrderFilterTypeWorkOrderOwnedBy, WorkOrderFilterTypeWorkOrderType, WorkOrderFilterTypeWorkOrderCreationDate, WorkOrderFilterTypeWorkOrderCloseDate, WorkOrderFilterTypeWorkOrderAssignedTo, WorkOrderFilterTypeWorkOrderLocationInst, WorkOrderFilterTypeWorkOrderPriority, WorkOrderFilterTypeLocationInst, WorkOrderFilterTypeLocationInstExternalID:
 		return true
 	}
 	return false
