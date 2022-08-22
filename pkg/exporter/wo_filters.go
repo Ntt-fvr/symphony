@@ -20,6 +20,9 @@ import (
 )
 
 func handleWorkOrderFilter(q *ent.WorkOrderQuery, filter *pkgmodels.WorkOrderFilterInput) (*ent.WorkOrderQuery, error) {
+	if filter.FilterType == enum.WorkOrderFilterTypeWorkOrderId {
+		return idFilter(q, filter)
+	}
 	if filter.FilterType == enum.WorkOrderFilterTypeWorkOrderName {
 		return nameFilter(q, filter)
 	}
@@ -51,6 +54,13 @@ func handleWorkOrderFilter(q *ent.WorkOrderQuery, filter *pkgmodels.WorkOrderFil
 		return organitationFilter(q, filter)
 	}
 	return nil, errors.Errorf("filter type is not supported: %s", filter.FilterType)
+}
+
+func idFilter(q *ent.WorkOrderQuery, filter *pkgmodels.WorkOrderFilterInput) (*ent.WorkOrderQuery, error) {
+	if filter.Operator == enum.FilterOperatorIsOneOf && filter.IDSet != nil {
+		return q.Where(workorder.IDIn(filter.IDSet...)), nil
+	}
+	return nil, errors.Errorf("operation is not supported: %s", filter.Operator)
 }
 
 func nameFilter(q *ent.WorkOrderQuery, filter *pkgmodels.WorkOrderFilterInput) (*ent.WorkOrderQuery, error) {

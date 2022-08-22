@@ -5163,6 +5163,7 @@ enum WorkOrderFilterType
   @goModel(
     model: "github.com/facebookincubator/symphony/pkg/ent/schema/enum.WorkOrderFilterType"
   ) {
+  WORK_ORDER_ID
   WORK_ORDER_NAME
   WORK_ORDER_STATUS
   WORK_ORDER_OWNED_BY
