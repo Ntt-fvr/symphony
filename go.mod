@@ -48,7 +48,7 @@ require (
 	github.com/uber/jaeger-lib v2.4.0+incompatible // indirect
 	github.com/uber/tchannel-go v1.20.1 // indirect
 	github.com/vektah/gqlparser/v2 v2.1.0
-	github.com/vmihailenco/msgpack/v5 v5.1.0
+	github.com/vmihailenco/msgpack/v5 v5.3.5
 	github.com/xuri/efp v0.0.0-20201016154823-031c29024257 // indirect
 	go.opencensus.io v0.22.5
 	go.uber.org/cadence v0.15.0
