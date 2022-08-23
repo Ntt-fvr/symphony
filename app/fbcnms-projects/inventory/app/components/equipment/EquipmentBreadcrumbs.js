@@ -8,23 +8,25 @@
  * @format
  */
 
-import type {Equipment} from '../../common/Equipment';
-import type {TextVariant} from '@symphony/design-system/theme/symphony';
-import type {WithStyles} from '@material-ui/core';
 
-import Breadcrumbs from '@fbcnms/ui/components/Breadcrumbs';
-import React from 'react';
-import Text from '@symphony/design-system/components/Text';
-import {LogEvents, ServerLogger} from '../../common/LoggingUtils';
-import {createFragmentContainer, graphql} from 'react-relay';
-import {withStyles} from '@material-ui/core/styles';
+ import type {Equipment} from '../../common/Equipment';
+ import type {TextVariant} from '@symphony/design-system/theme/symphony';
+ import type {WithStyles} from '@material-ui/core';
+ 
+ import Breadcrumbs from './Breadcrumbs';
+ import React from 'react';
+ import Text from '@symphony/design-system/components/Text';
+ import {LogEvents, ServerLogger} from '../../common/LoggingUtils';
+ import {createFragmentContainer, graphql} from 'react-relay';
+ import {withStyles} from '@material-ui/core/styles';
 
-import nullthrows from '@fbcnms/util/nullthrows';
+ import nullthrows from '@fbcnms/util/nullthrows';
+
 
 const styles = theme => ({
   breadcrumbs: {
-    display: 'flex',
-    alignItems: 'flex-start',
+    display:'contents', 
+    alignItems:'center', 
   },
   position: {
     display: 'flex',
@@ -38,7 +40,7 @@ const styles = theme => ({
     marginRight: '4px',
   },
   equipmentSubtext: {
-    display: 'flex',
+    display:'contents', 
     alignItems: 'center',
   },
   seperator: {

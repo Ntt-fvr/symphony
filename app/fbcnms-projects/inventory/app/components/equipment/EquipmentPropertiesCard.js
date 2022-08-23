@@ -15,6 +15,7 @@ import AppContext from '@fbcnms/ui/context/AppContext';
 import Button from '@symphony/design-system/components/Button';
 import Card from '@material-ui/core/Card';
 import EquipmentBreadcrumbs from './EquipmentBreadcrumbs';
+import EquipmentBreadcrumbsMUI from './BreadcrumbMUI';
 import EquipmentDetails from './EquipmentDetails';
 import EquipmentDocumentsCard from './EquipmentDocumentsCard';
 import EquipmentPortsTable from './EquipmentPortsTable';
@@ -241,6 +242,20 @@ const EquipmentPropertiesCard = (props: Props) => {
                           </Button>
                         </FormAction>
                       </div>
+
+                      <div className={classes.equipmentBreadcrumbs}>
+                      <EquipmentBreadcrumbsMUI
+                      onEquipmentClicked={onEquipmentClicked}
+                      onParentLocationClicked={onParentLocationClicked}
+                      equipment={equipment}
+                        /> 
+                        <FormAction>
+                          <Button onClick={props.onEdit}>
+                            <fbt desc="">Edit Equipment</fbt>
+                          </Button>
+                        </FormAction>
+                      </div>
+
                       {equipment.equipmentType.portDefinitions.length > 0 ||
                       equipment.positions.length > 0 ||
                       equipment.services.length > 0 ? (
