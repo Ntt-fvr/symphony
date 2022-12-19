@@ -17,7 +17,6 @@ require (
 	github.com/NYTimes/gziphandler v1.1.1
 	github.com/VividCortex/mysqlerr v0.0.0-20200629151747-c28746d985dd
 	github.com/alecthomas/kong v0.2.12
-	github.com/alecthomas/units v0.0.0-20201120081800-1786d5ef83d4 // indirect
 	github.com/anmitsu/go-shlex v0.0.0-20200514113438-38f4b401e2be // indirect
 	github.com/aws/aws-sdk-go v1.36.5
 	github.com/badoux/checkmail v1.2.1
@@ -36,13 +35,13 @@ require (
 	github.com/pborman/uuid v1.2.1 // indirect
 	github.com/pelletier/go-toml v1.8.1
 	github.com/pkg/errors v0.9.1
-	github.com/prometheus/client_golang v1.8.0
-	github.com/prometheus/common v0.15.0
+	github.com/prometheus/client_golang v1.14.0
+	github.com/prometheus/common v0.39.0 // indirect
 	github.com/prometheus/statsd_exporter v0.18.0 // indirect
 	github.com/scylladb/go-set v1.0.2
 	github.com/shurcooL/graphql v0.0.0-20200928012149-18c5c3165e3a
 	github.com/sirupsen/logrus v1.7.0 // indirect
-	github.com/stretchr/testify v1.6.1
+	github.com/stretchr/testify v1.8.0
 	github.com/uber-go/tally v3.3.17+incompatible // indirect
 	github.com/uber/jaeger-client-go v2.25.0+incompatible
 	github.com/uber/jaeger-lib v2.4.0+incompatible // indirect
@@ -56,17 +55,12 @@ require (
 	go.uber.org/zap v1.16.0
 	gocloud.dev v0.21.0
 	gocloud.dev/pubsub/natspubsub v0.21.0
-	golang.org/x/crypto v0.0.0-20201208171446-5f87f3452ae9 // indirect
 	golang.org/x/lint v0.0.0-20201208152925-83fdc39ff7b5 // indirect
-	golang.org/x/net v0.0.0-20201209123823-ac852fbbde11
-	golang.org/x/oauth2 v0.0.0-20201208152858-08078c50e5b5 // indirect
-	golang.org/x/sync v0.0.0-20201207232520-09787c993a3a
-	golang.org/x/sys v0.0.0-20201207223542-d4d67f95c62d // indirect
-	golang.org/x/text v0.3.4
+	golang.org/x/net v0.4.0
+	golang.org/x/sync v0.0.0-20220722155255-886fb9371eb4
+	golang.org/x/text v0.5.0
 	golang.org/x/time v0.0.0-20201208040808-7e3f01d25324 // indirect
-	golang.org/x/tools v0.0.0-20201208233053-a543418bbed2 // indirect
 	google.golang.org/genproto v0.0.0-20201209185603-f92720507ed4 // indirect
-	gopkg.in/yaml.v2 v2.4.0 // indirect
 	honnef.co/go/tools v0.0.1-2020.1.6 // indirect
 )
 
